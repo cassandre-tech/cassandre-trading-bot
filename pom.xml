@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- =========================================================================================================== -->
+	<!-- Project information -->
+	<groupId>tech.cassandre.trading.bot</groupId>
+	<artifactId>cassandre-trading-bot</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Cassandre trading bot</name>
+	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Source Code Management -->
+	<scm>
+		<connection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</connection>
+		<url>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</url>
+		<developerConnection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</developerConnection>
+	</scm>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Issue management -->
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/cassandre-tech/cassandre-trading-bot/issues</url>
+	</issueManagement>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Spring boot -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.4.RELEASE</version>
+		<relativePath/>
+	</parent>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Project configuration -->
+	<properties>
+		<java.version>11</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Modules -->
+	<modules>
+
+	</modules>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Build configuration -->
+	<build>
+		<!-- Plugins -->
+		<plugins>
+			<!-- Release plugin -->
+			<plugin>
+				<groupId>com.amashchenko.maven.plugin</groupId>
+				<artifactId>gitflow-maven-plugin</artifactId>
+				<version>1.14.0</version>
+				<configuration>
+					<gitFlowConfig>
+						<developmentBranch>development</developmentBranch>
+					</gitFlowConfig>
+					<commitMessages>
+						<featureStartMessage>Update versions for feature branch</featureStartMessage>
+						<featureFinishMessage>Update versions for development branch</featureFinishMessage>
+						<hotfixStartMessage>Update versions for hotfix</hotfixStartMessage>
+						<hotfixFinishMessage>Update for next development version</hotfixFinishMessage>
+						<releaseStartMessage>Update versions for release</releaseStartMessage>
+						<releaseFinishMessage>Ypdate for next development version</releaseFinishMessage>
+						<tagHotfixMessage>Tag hotfix</tagHotfixMessage>
+						<tagReleaseMessage>Tag release</tagReleaseMessage>
+					</commitMessages>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- =========================================================================================================== -->
+
+</project>
