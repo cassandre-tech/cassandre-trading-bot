@@ -19,12 +19,17 @@ entries:
         output: web
         folderitems:
 
-          - title: Install development tools
+          - title: How to install development tools
             url: /how_to_install_development_tools.html
             output: web
             type: page
 
-          - title: Setup documentation
+          - title: How to make a new release
+            url: /how_to_male_a_new_release.html
+            output: web
+            type: page
+
+          - title: How to setup documentation
             url: /how_to_setup_documentation.html
             output: web
             type: page

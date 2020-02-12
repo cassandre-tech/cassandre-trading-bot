@@ -1,5 +1,5 @@
 ---
-title: Setup documentation
+title: How to setup documentation
 summary: How to use documentation-theme-jekyll to generate the static website hosted on github pages
 sidebar: cassandre_sidebar
 permalink: how_to_setup_documentation.html

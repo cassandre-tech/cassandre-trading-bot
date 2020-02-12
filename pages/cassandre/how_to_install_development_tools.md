@@ -1,5 +1,5 @@
 ---
-title: Install development tools
+title: How to install development tools
 summary: How to install development tools on Linux (Ubuntu)
 sidebar: cassandre_sidebar
 permalink: how_to_install_development_tools.html
