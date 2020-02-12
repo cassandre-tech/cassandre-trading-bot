@@ -38,3 +38,8 @@ entries:
             url: /how_to_setup_documentation.html
             output: web
             type: page
+
+          - title: Create a sandbox account for kucoin
+            url: /how_to_create_an_exchange_sandbox_for_kucoin.html
+            output: web
+            type: page
