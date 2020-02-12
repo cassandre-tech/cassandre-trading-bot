@@ -1,0 +1,25 @@
+entries:
+  - title: sidebar
+    product:
+    version:
+    folders:
+
+      # ================================================================================================================
+      - title: Overview
+        output: web
+        folderitems:
+
+          - title: Bot features & roadmap
+            url: /overview_bot_features_and_roadmap.html
+            output: web
+            type: page
+
+      # ================================================================================================================
+      - title: How-to guides
+        output: web
+        folderitems:
+
+          - title: Setup documentation
+            url: /how_to_setup_documentation.html
+            output: web
+            type: page
