@@ -24,6 +24,11 @@ entries:
             output: web
             type: page
 
+          - title: How to build from sources
+            url: /how_to_build_cassandre_trading_bot.html
+            output: web
+            type: page
+
           - title: How to make a new release
             url: /how_to_male_a_new_release.html
             output: web
