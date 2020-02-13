@@ -7,10 +7,10 @@
 	<!-- =========================================================================================================== -->
 	<!-- Project information -->
 	<groupId>tech.cassandre.trading.bot</groupId>
-	<artifactId>cassandre-trading-bot</artifactId>
+	<artifactId>cassandre-trading-bot-project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Cassandre trading bot</name>
+	<name>Cassandre trading bot project</name>
 	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
 	<!-- =========================================================================================================== -->
 
@@ -53,7 +53,7 @@
 	<!-- =========================================================================================================== -->
 	<!-- Modules -->
 	<modules>
-
+		<module>bot</module>
 	</modules>
 	<!-- =========================================================================================================== -->
 
@@ -77,7 +77,7 @@
 						<hotfixStartMessage>Update versions for hotfix</hotfixStartMessage>
 						<hotfixFinishMessage>Update for next development version</hotfixFinishMessage>
 						<releaseStartMessage>Update versions for release</releaseStartMessage>
-						<releaseFinishMessage>Ypdate for next development version</releaseFinishMessage>
+						<releaseFinishMessage>Update for next development version</releaseFinishMessage>
 						<tagHotfixMessage>Tag hotfix</tagHotfixMessage>
 						<tagReleaseMessage>Tag release</tagReleaseMessage>
 					</commitMessages>
