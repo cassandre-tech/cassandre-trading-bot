@@ -6,9 +6,9 @@ permalink: how_to_create_an_exchange_sandbox_for_kucoin.html
 ---
 
 ## Create a Kucoin account.
-Go to [Kucoin sandbox](https://sandbox.kucoin.com/) and create an account.
+Go to [Kucoin sandbox](https://sandbox.kucoin.com/ucenter/signup) and create an account.
 
-Move your assets (ETH, BTC...) from your main account to your trading account (Click on `Trading Account` link and then click on `transfer` in front of the corresponding cryptocurrency).
+Move your assets (ETH, BTC...) from your main account to your trading account (Click on [Main Account](https://sandbox.kucoin.com/assets/main-account) link and then click on `transfer` in front of the corresponding cryptocurrency).
 
 ## Get API credentials.
 Click on your profile on the top right of the screen and then `API management`, you will have to setup security before accessing the `create API` menu
