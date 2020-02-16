@@ -6,17 +6,21 @@
 	<!-- =========================================================================================================== -->
 	<!-- Project information -->
 	<artifactId>cassandre-trading-bot</artifactId>
-	<packaging>jar</packaging>
-	<name>Cassandre trading bot</name>
-	<!-- =========================================================================================================== -->
-
-	<!-- =========================================================================================================== -->
-	<!-- Project dependencies -->
 	<dependencies>
 		<!-- Spring dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<!-- TODO : add to documentation -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.1.2.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>io.projectreactor</groupId>
@@ -66,6 +70,12 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<packaging>jar</packaging>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Project dependencies -->
+	<name>Cassandre trading bot</name>
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->

@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 public class BaseTest {
 
 	/** Application context. */
+	@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 	@Autowired
 	private ApplicationContext context;
 
