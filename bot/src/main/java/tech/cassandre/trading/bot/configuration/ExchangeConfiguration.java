@@ -1,10 +1,14 @@
 package tech.cassandre.trading.bot.configuration;
 
 import org.knowm.xchange.Exchange;
+import org.knowm.xchange.ExchangeFactory;
+import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.trade.TradeService;
 import org.springframework.context.annotation.Configuration;
+import si.mazi.rescu.HttpStatusIOException;
+import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
 
@@ -19,6 +23,9 @@ public class ExchangeConfiguration {
 
 	/** XChange passphrase parameter. */
 	private static final String PASSPHRASE_PARAMETER = "passphrase";
+
+	/** Unauthorized http status code. */
+	public static final int UNAUTHORIZED_STATUS_CODE = 401;
 
 	/** Exchange parameters. */
 	private final ExchangeParameters exchangeParameters;
@@ -37,6 +44,7 @@ public class ExchangeConfiguration {
 
 	/**
 	 * Constructor.
+	 *
 	 * @param newExchangeParameters exchange parameters
 	 */
 	public ExchangeConfiguration(final ExchangeParameters newExchangeParameters) {
@@ -48,6 +56,44 @@ public class ExchangeConfiguration {
 	 */
 	@PostConstruct
 	private void configure() {
+		try {
+			// Instantiate exchange.
+			@SuppressWarnings("rawtypes")
+			Class exchangeClass = Class.forName(getExchangeClassName());
+			//noinspection unchecked
+			ExchangeSpecification exchangeSpecification = new ExchangeSpecification(exchangeClass);
+
+			// Exchange configuration.
+			exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX_PARAMETER, exchangeParameters.isSandbox());
+			exchangeSpecification.setUserName(exchangeParameters.getUsername());
+			exchangeSpecification.setExchangeSpecificParametersItem(PASSPHRASE_PARAMETER, exchangeParameters.getPassphrase());
+			exchangeSpecification.setApiKey(exchangeParameters.getKey());
+			exchangeSpecification.setSecretKey(exchangeParameters.getSecret());
+			exchange = ExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
+
+			// Create services.
+			marketDataService = exchange.getMarketDataService();
+			accountService = exchange.getAccountService();
+			tradeService = exchange.getTradeService();
+
+			// Force login to check credentials.
+			accountService.getAccountInfo();
+		} catch (ClassNotFoundException e) {
+			// If we can't find the exchange class.
+			throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getName(),
+					"Choose a valid exchange (https://github.com/knowm/XChange) and/or add the dependency to Cassandre");
+		} catch (HttpStatusIOException e) {
+			if (e.getHttpStatusCode() == UNAUTHORIZED_STATUS_CODE) {
+				// Authorization failure.
+				throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getName(),
+						"Check your exchange credentials " + e.getMessage());
+			} else {
+				// Another HTTP failure.
+				throw new ConfigurationException("Error while connecting to the exchange " + e.getMessage());
+			}
+		} catch (Exception e) {
+			throw new ConfigurationException("Unknown Configuration error : " + e.getMessage());
+		}
 	}
 
 	/**

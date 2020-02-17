@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.test.configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.boot.SpringApplication;
 import tech.cassandre.trading.bot.CassandreTradingBot;
@@ -61,7 +62,7 @@ public class InvalidParametersTest extends BaseTest {
 	}
 
 	@Test
-	@DisplayName("One parameter missing (cassandre.trading.bot.exchange.name)")
+	@DisplayName("Invalid rates")
 	public void invalidRates() {
 		try {
 			System.setProperty("cassandre.trading.bot.exchange.rates.account", "-1");
@@ -86,7 +87,7 @@ public class InvalidParametersTest extends BaseTest {
 	}
 
 	@Test
-	@DisplayName("One parameter missing (account / ticker / order)")
+	@DisplayName("One parameter missing")
 	public void parameterNameMissing() {
 		try {
 			System.setProperty("cassandre.trading.bot.exchange.name", "");
@@ -104,6 +105,32 @@ public class InvalidParametersTest extends BaseTest {
 			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'rates.account'"));
 			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'rates.ticker'"));
 			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'rates.order'"));
+		}
+	}
+
+	@Test
+	@DisplayName("Unknown exchange class name")
+	public void unknownExchangeClassName() {
+		try {
+			System.setProperty("cassandre.trading.bot.exchange.name", "kucoine");
+			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+			application.run();
+		} catch (Exception e) {
+			assertTrue(e instanceof BeanCreationException);
+			assertTrue(e.getMessage().contains("Impossible to find the exchange you requested : kucoine"));
+		}
+	}
+
+	@Test
+	@DisplayName("Invalid credentials")
+	public void invalidCredentials() {
+		try {
+			System.setProperty("cassandre.trading.bot.exchange.secret", "kucoine");
+			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+			application.run();
+		} catch (Exception e) {
+			assertTrue(e instanceof BeanCreationException);
+			assertTrue(e.getMessage().contains("Invalid credentials for kucoin"));
 		}
 	}
 

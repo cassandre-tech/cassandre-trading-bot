@@ -24,14 +24,14 @@ public class ValidParametersTest extends BaseTest {
 		System.setProperty("cassandre.trading.bot.exchange.username", "cassandre.crypto.bot@gmail.com");
 		System.setProperty("cassandre.trading.bot.exchange.passphrase", "cassandre");
 		System.setProperty("cassandre.trading.bot.exchange.key", "5df8eea30092f40009cb3c6a");
-		System.setProperty("cassandre.trading.bot.exchange.secret", "WRONG_SECRET");
+		System.setProperty("cassandre.trading.bot.exchange.secret", "5f6e91e0-796b-4947-b75e-eaa5c06b6bed");
 		System.setProperty("cassandre.trading.bot.exchange.rates.account", "100");
 		System.setProperty("cassandre.trading.bot.exchange.rates.ticker", "101");
 		System.setProperty("cassandre.trading.bot.exchange.rates.order", "102");
 	}
 
 	@Test
-	@DisplayName("Retrieved values")
+	@DisplayName("Testing retrieved parameters & Kucoin connection")
 	void exchangeParameters() {
 		ExchangeParameters exchange = getContext().getBean(ExchangeParameters.class);
 		assertEquals("kucoin", exchange.getName());
@@ -39,7 +39,7 @@ public class ValidParametersTest extends BaseTest {
 		assertEquals("cassandre.crypto.bot@gmail.com", exchange.getUsername());
 		assertEquals("cassandre", exchange.getPassphrase());
 		assertEquals("5df8eea30092f40009cb3c6a", exchange.getKey());
-		assertEquals("WRONG_SECRET", exchange.getSecret());
+		assertEquals("5f6e91e0-796b-4947-b75e-eaa5c06b6bed", exchange.getSecret());
 		final int expectedAccountRate = 100;
 		final int expectedTickerRate = 101;
 		final int expectedOrderRate = 102;
