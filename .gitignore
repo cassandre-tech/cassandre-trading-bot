@@ -1,5 +1,6 @@
 # IDEs and editors
 target/
+bot/target/
 
 # eclipse specific git ignore
 bin/**
