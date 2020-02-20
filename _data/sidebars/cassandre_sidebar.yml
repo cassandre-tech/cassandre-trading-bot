@@ -44,6 +44,11 @@ entries:
             output: web
             type: page
 
+          - title: Step 04 - Market data & service
+            url: /bot_development_market_data_and_service.html
+            output: web
+            type: page
+
       # ================================================================================================================
       - title: How-to guides
         output: web
