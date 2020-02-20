@@ -1,6 +1,7 @@
-package tech.cassandre.trading.bot.dto.user;
+package tech.cassandre.trading.bot.service;
 
 import org.springframework.stereotype.Service;
+import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.util.base.BaseService;
 
 import java.io.IOException;

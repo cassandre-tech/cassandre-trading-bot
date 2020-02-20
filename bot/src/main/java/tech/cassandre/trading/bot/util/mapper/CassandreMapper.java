@@ -2,13 +2,19 @@ package tech.cassandre.trading.bot.util.mapper;
 
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.trade.LimitOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ValueMapping;
+import org.mapstruct.ValueMappings;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
@@ -83,5 +89,39 @@ public interface CassandreMapper {
 	 * @return TickerDTO
 	 */
 	TickerDTO mapToTickerDTO(Ticker source);
+
+	/**
+	 * Map Order to OrderDTO.
+	 *
+	 * @param source order
+	 * @return OrderDTO
+	 */
+	OrderDTO mapToOrderDTO(LimitOrder source);
+
+	/**
+	 * Map to OrderTypeDTO.
+	 *
+	 * @param source XChange order type
+	 * @return order type
+	 */
+	@ValueMappings({
+			@ValueMapping(source = "BID", target = "BID"),
+			@ValueMapping(source = "ASK", target = "ASK"),
+			@ValueMapping(source = "EXIT_BID", target = "BID"),
+			@ValueMapping(source = "EXIT_ASK", target = "ASK")
+	})
+	OrderTypeDTO mapToOrderTypeDTO(Order.OrderType source);
+
+	/**
+	 * Map to OrderTypeDTO.
+	 *
+	 * @param source order type
+	 * @return XChange order type
+	 */
+	@ValueMappings({
+			@ValueMapping(source = "BID", target = "BID"),
+			@ValueMapping(source = "ASK", target = "ASK")
+	})
+	Order.OrderType mapToOrderType(OrderTypeDTO source);
 
 }

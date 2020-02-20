@@ -1,4 +1,6 @@
-package tech.cassandre.trading.bot.dto.user;
+package tech.cassandre.trading.bot.service;
+
+import tech.cassandre.trading.bot.dto.user.UserDTO;
 
 import java.util.Optional;
 

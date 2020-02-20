@@ -8,6 +8,9 @@ import org.springframework.context.ApplicationContext;
  */
 public class BaseTest {
 
+	/** How much we should wait for tests to last. */
+	protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
+
 	/** Application context. */
 	@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 	@Autowired
