@@ -1,4 +1,4 @@
 /**
- * Util package for Cassandre trading bot.
+ * Cassandre trading bot utilities.
  */
 package tech.cassandre.trading.bot.util;
