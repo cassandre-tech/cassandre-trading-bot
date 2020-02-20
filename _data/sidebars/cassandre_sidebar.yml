@@ -19,6 +19,11 @@ entries:
         output: web
         folderitems:
 
+          - title: Project structure
+            url: /bot_development_project_structure.html
+            output: web
+            type: page
+
           - title: Tools, frameworks, and libraries
             url: /bot_development_tools_frameworks_and_libraries.html
             output: web
