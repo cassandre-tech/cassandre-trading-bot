@@ -39,6 +39,11 @@ entries:
             output: web
             type: page
 
+          - title: Step 03 - User data & service
+            url: /bot_development_user_data_and_service.html
+            output: web
+            type: page
+
       # ================================================================================================================
       - title: How-to guides
         output: web
