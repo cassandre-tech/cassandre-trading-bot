@@ -5,8 +5,10 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
+import org.knowm.xchange.dto.marketdata.Ticker;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
@@ -73,5 +75,13 @@ public interface CassandreMapper {
 	 * @return BalanceDTO
 	 */
 	BalanceDTO mapToBalanceDTO(Balance source);
+
+	/**
+	 * Map Ticker to TickerDTO.
+	 *
+	 * @param source Ticker
+	 * @return TickerDTO
+	 */
+	TickerDTO mapToTickerDTO(Ticker source);
 
 }
