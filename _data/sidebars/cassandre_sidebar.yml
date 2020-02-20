@@ -34,6 +34,11 @@ entries:
             output: web
             type: page
 
+          - title: Step 02 - Exchange service
+            url: /bot_development_exchange_service.html
+            output: web
+            type: page
+
       # ================================================================================================================
       - title: How-to guides
         output: web
