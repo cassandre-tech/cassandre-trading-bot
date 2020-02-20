@@ -6,6 +6,7 @@ import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.trade.TradeService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import si.mazi.rescu.HttpStatusIOException;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
@@ -117,6 +118,46 @@ public class ExchangeConfiguration {
 		} else {
 			return "";
 		}
+	}
+
+	/**
+	 * Getter for exchange.
+	 *
+	 * @return exchange
+	 */
+	@Bean
+	public Exchange getExchange() {
+		return exchange;
+	}
+
+	/**
+	 * Getter for marketDataService.
+	 *
+	 * @return marketDataService
+	 */
+	@Bean
+	public MarketDataService getMarketDataService() {
+		return marketDataService;
+	}
+
+	/**
+	 * Getter for accountService.
+	 *
+	 * @return accountService
+	 */
+	@Bean
+	public AccountService getAccountService() {
+		return accountService;
+	}
+
+	/**
+	 * Getter for tradeService.
+	 *
+	 * @return tradeService
+	 */
+	@Bean
+	public TradeService getTradeService() {
+		return tradeService;
 	}
 
 }

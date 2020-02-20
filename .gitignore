@@ -110,3 +110,6 @@ Supprimerait loose-touch.iml
 # aws
 output-*
 /.idea/
+
+# others
+_site
