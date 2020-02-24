@@ -2,8 +2,6 @@ package tech.cassandre.trading.bot.util.base;
 
 import org.knowm.xchange.currency.CurrencyPair;
 import org.mapstruct.factory.Mappers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
 
@@ -11,22 +9,10 @@ import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
  * Base service.
  */
 @SuppressWarnings("unused")
-public class BaseService {
-
-	/** Logger. */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+public class BaseService extends Base {
 
 	/** Mapper. */
 	private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);
-
-	/**
-	 * Getter logger.
-	 *
-	 * @return logger
-	 */
-	protected final Logger getLogger() {
-		return logger;
-	}
 
 	/**
 	 * Getter mapper.

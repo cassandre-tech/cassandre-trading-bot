@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.configuration;
+package tech.cassandre.trading.bot.test.configuration.exchange;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Valid application parameters tests.
+ * Configuration tests.
  */
 @SpringBootTest
 @DisplayName("Valid application parameters tests")
-public class ValidParametersTest extends BaseTest {
+public class ConfigurationTest extends BaseTest {
 
 	@BeforeAll
 	static void beforeAll() {
@@ -28,6 +28,7 @@ public class ValidParametersTest extends BaseTest {
 		System.setProperty("cassandre.trading.bot.exchange.rates.account", "100");
 		System.setProperty("cassandre.trading.bot.exchange.rates.ticker", "101");
 		System.setProperty("cassandre.trading.bot.exchange.rates.order", "102");
+		System.setProperty("testableStrategy.enabled", "true");
 	}
 
 	@Test

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.configuration;
+package tech.cassandre.trading.bot.test.configuration.exchange;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.test.util.BaseTest;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Invalid application parameters tests.
@@ -29,6 +30,7 @@ public class InvalidParametersTest extends BaseTest {
 		System.setProperty("cassandre.trading.bot.exchange.rates.account", "100");
 		System.setProperty("cassandre.trading.bot.exchange.rates.ticker", "101");
 		System.setProperty("cassandre.trading.bot.exchange.rates.order", "102");
+		System.setProperty("testableStrategy.enabled", "true");
 	}
 
 	@Test
@@ -46,6 +48,7 @@ public class InvalidParametersTest extends BaseTest {
 			System.setProperty("cassandre.trading.bot.exchange.rates.order", "");
 			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
 			application.run();
+			fail("Exception was not raised");
 		} catch (Exception e) {
 			assertTrue(e instanceof UnsatisfiedDependencyException);
 			final String message = getExceptionMessage(e);
@@ -70,10 +73,11 @@ public class InvalidParametersTest extends BaseTest {
 			System.setProperty("cassandre.trading.bot.exchange.rates.order", "-1");
 			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
 			application.run();
+			fail("Exception was not raised");
 		} catch (Exception e) {
 			assertTrue(e instanceof UnsatisfiedDependencyException);
 			final String message = getExceptionMessage(e);
-			System.out.println(message);
+			System.out.println("=> " + e.getMessage());
 			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'name'"));
 			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'sandbox'"));
 			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'username'"));
@@ -93,6 +97,7 @@ public class InvalidParametersTest extends BaseTest {
 			System.setProperty("cassandre.trading.bot.exchange.name", "");
 			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
 			application.run();
+			fail("Exception was not raised");
 		} catch (Exception e) {
 			assertTrue(e instanceof UnsatisfiedDependencyException);
 			final String message = getExceptionMessage(e);
@@ -115,6 +120,7 @@ public class InvalidParametersTest extends BaseTest {
 			System.setProperty("cassandre.trading.bot.exchange.name", "kucoine");
 			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
 			application.run();
+			fail("Exception was not raised");
 		} catch (Exception e) {
 			assertTrue(e instanceof BeanCreationException);
 			assertTrue(e.getMessage().contains("Impossible to find the exchange you requested : kucoine"));
@@ -128,6 +134,7 @@ public class InvalidParametersTest extends BaseTest {
 			System.setProperty("cassandre.trading.bot.exchange.secret", "kucoine");
 			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
 			application.run();
+			fail("Exception was not raised");
 		} catch (Exception e) {
 			assertTrue(e instanceof BeanCreationException);
 			assertTrue(e.getMessage().contains("Invalid credentials for kucoin"));

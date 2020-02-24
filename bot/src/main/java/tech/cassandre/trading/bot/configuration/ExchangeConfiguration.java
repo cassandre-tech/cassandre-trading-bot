@@ -9,6 +9,7 @@ import org.knowm.xchange.service.trade.TradeService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import si.mazi.rescu.HttpStatusIOException;
+import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
@@ -17,7 +18,7 @@ import javax.annotation.PostConstruct;
  * ExchangeConfiguration class configure exchange connection.
  */
 @Configuration
-public class ExchangeConfiguration {
+public class ExchangeConfiguration extends BaseConfiguration {
 
 	/** XChange user sandbox parameter. */
 	private static final String USE_SANDBOX_PARAMETER = "Use_Sandbox";
@@ -79,6 +80,7 @@ public class ExchangeConfiguration {
 
 			// Force login to check credentials.
 			accountService.getAccountInfo();
+
 		} catch (ClassNotFoundException e) {
 			// If we can't find the exchange class.
 			throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getName(),
