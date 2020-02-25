@@ -54,13 +54,28 @@ entries:
             output: web
             type: page
 
-          - title: Step 06 - Flux
+          - title: Step 06 - Flux (Account, ticker, order)
             url: /bot_development_flux.html
             output: web
             type: page
 
           - title: Step 07 - Strategy
             url: /bot_development_strategy.html
+            output: web
+            type: page
+
+      # ================================================================================================================
+      - title: Resources
+        output: web
+        folderitems:
+
+          - title: Articles
+            url: /resources_articles.html
+            output: web
+            type: page
+
+          - title: Books
+            url: /resources_books.html
             output: web
             type: page
 
