@@ -1,5 +1,5 @@
 ---
-title: Cassandre features
+title: Cassandre features & roadmap
 summary: This is the list of cassandre features and the roadmap
 sidebar: cassandre_sidebar
 permalink: overview_bot_features_and_roadmap.html
@@ -15,5 +15,5 @@ permalink: overview_bot_features_and_roadmap.html
   * Make it easy to create and execute your own strategy.
 
 ## Roadmap.
-  * Integration tests for Coinbase.
-  * Integration tests for Gemini.
+  * [Integration tests for Coinbase](https://github.com/cassandre-tech/cassandre-trading-bot/issues/30).
+  * [Integration tests for Gemini](https://github.com/cassandre-tech/cassandre-trading-bot/issues/31).
