@@ -158,9 +158,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<forkCount>1</forkCount>
+<!--					<forkCount>1</forkCount>
 					<reuseForks>false</reuseForks>
-					<useSystemClassLoader>false</useSystemClassLoader>
+					<useSystemClassLoader>false</useSystemClassLoader>-->
 					<excludes>
 						<exclude>**/integration/**</exclude>
 					</excludes>

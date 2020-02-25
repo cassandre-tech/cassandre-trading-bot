@@ -93,9 +93,9 @@ public class TradeServiceTest extends BaseTest {
 		// Making a buy limit order (Buy 0.0001 ETH).
 		// final int openOrdersCount = tradeService.getOpenOrders().size();
 		final OrderCreationResultDTO result1 = tradeService.createBuyLimitOrder(cp, new BigDecimal("0.0001"), new BigDecimal("0.000001"));
-		assertTrue(result1.getOrderId().isPresent());
 		assertTrue(result1.getErrorMessage().isEmpty());
 		assertTrue(result1.getException().isEmpty());
+		assertTrue(result1.getOrderId().isPresent());
 
 		// TODO Find why the new order doesn't appears in the open orders.
 		// with().pollInterval(fibonacci(SECONDS)).await()
