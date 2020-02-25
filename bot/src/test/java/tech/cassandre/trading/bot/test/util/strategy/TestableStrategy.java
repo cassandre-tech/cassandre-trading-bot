@@ -52,7 +52,7 @@ public class TestableStrategy extends CassandreStrategy {
 	@Override
 	public final void onAccountUpdate(final AccountDTO account) {
 		accountsUpdateReceived.add(account);
-		logger.info("> TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account);
+		logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account);
 		try {
 			Thread.sleep(METHOD_DURATION);
 		} catch (InterruptedException e) {
@@ -63,7 +63,7 @@ public class TestableStrategy extends CassandreStrategy {
 	@Override
 	public final void onTickerUpdate(final TickerDTO ticker) {
 		tickersUpdateReceived.add(ticker);
-		logger.info("> TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker);
+		logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker);
 		try {
 			Thread.sleep(METHOD_DURATION);
 		} catch (InterruptedException e) {
@@ -74,7 +74,7 @@ public class TestableStrategy extends CassandreStrategy {
 	@Override
 	public final void onOrderUpdate(final OrderDTO order) {
 		ordersUpdateReceived.add(order);
-		logger.info("> TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order);
+		logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order);
 		try {
 			Thread.sleep(METHOD_DURATION);
 		} catch (InterruptedException e) {
@@ -88,7 +88,7 @@ public class TestableStrategy extends CassandreStrategy {
 	 * @param list list to count
 	 * @return int value with format
 	 */
-	private String getCount(final List list) {
+	private String getCount(final List<?> list) {
 		return String.format("%03d", list.size());
 	}
 

@@ -80,10 +80,10 @@ public class ExchangeConfiguration extends BaseConfiguration {
 
 			// Force login to check credentials.
 			accountService.getAccountInfo();
-			getLogger().info("Connection to {} successful", exchangeParameters.getName());
+			getLogger().info("ExchangeConfiguration - Connection to {} successful", exchangeParameters.getName());
 
 			// Prints all the supported currency pairs.
-			getLogger().info("Supported currency pairs :");
+			getLogger().info("ExchangeConfiguration - Supported currency pairs :");
 			exchange.getExchangeMetaData()
 					.getCurrencyPairs()
 					.forEach((currencyPair, currencyPairMetaData) -> getLogger().info(" - {}", currencyPair));

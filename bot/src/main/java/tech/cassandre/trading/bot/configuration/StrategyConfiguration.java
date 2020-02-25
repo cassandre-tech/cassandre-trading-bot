@@ -92,10 +92,10 @@ public class StrategyConfiguration extends BaseConfiguration {
 
 		// Displaying strategy name.
 		Strategy strategyAnnotation = o.getClass().getAnnotation(Strategy.class);
-		getLogger().info("Running strategy '{}'", strategyAnnotation.name());
+		getLogger().info("StrategyConfiguration - Running strategy '{}'", strategyAnnotation.name());
 
 		// Displaying requested currency pairs.
-		getLogger().info("The strategy requires the following currency pair(s) : ");
+		getLogger().info("StrategyConfiguration - The strategy requires the following currency pair(s) : ");
 		strategy.getRequestedCurrencyPairs().forEach(cp -> getLogger().info("- " + cp));
 
 		// Setting up flux.
