@@ -54,6 +54,11 @@ entries:
             output: web
             type: page
 
+          - title: Step 06 - Strategy
+            url: /bot_development_strategy.html
+            output: web
+            type: page
+
       # ================================================================================================================
       - title: How-to guides
         output: web
