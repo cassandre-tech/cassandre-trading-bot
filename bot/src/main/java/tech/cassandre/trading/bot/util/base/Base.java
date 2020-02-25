@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
  * Base.
  */
 @SuppressWarnings("unused")
-public class Base {
+public abstract class Base {
 
 	/** Logger. */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());

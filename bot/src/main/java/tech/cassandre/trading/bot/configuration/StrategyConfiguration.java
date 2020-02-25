@@ -2,6 +2,11 @@ package tech.cassandre.trading.bot.configuration;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+import tech.cassandre.trading.bot.batch.AccountFlux;
+import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.Strategy;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
@@ -16,19 +21,40 @@ import java.util.Map;
 @Configuration
 public class StrategyConfiguration extends BaseConfiguration {
 
+	/** Number of threads. */
+	private static final int NUMBER_OF_THREADS = 3;
+
 	/** Application context. */
 	private final ApplicationContext applicationContext;
 
-	/** Cassandre strategy. */
-	private CassandreStrategy strategy;
+	/** Scheduler. */
+	private final Scheduler scheduler = Schedulers.newParallel("strategy-scheduler", NUMBER_OF_THREADS);
+
+	/** Account flux. */
+	private final AccountFlux accountFlux;
+
+	/** Ticker flux. */
+	private final TickerFlux tickerFlux;
+
+	/** Order flux. */
+	private final OrderFlux orderFlux;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param newApplicationContext application context
+	 * @param newAccountFlux        Account flux
+	 * @param newTickerFlux         Ticker flux
+	 * @param newOrderFlux          Order flux.
 	 */
-	public StrategyConfiguration(final ApplicationContext newApplicationContext) {
+	public StrategyConfiguration(final ApplicationContext newApplicationContext,
+	                             final AccountFlux newAccountFlux,
+	                             final TickerFlux newTickerFlux,
+	                             final OrderFlux newOrderFlux) {
 		this.applicationContext = newApplicationContext;
+		this.accountFlux = newAccountFlux;
+		this.tickerFlux = newTickerFlux;
+		this.orderFlux = newOrderFlux;
 	}
 
 	/**
@@ -62,7 +88,7 @@ public class StrategyConfiguration extends BaseConfiguration {
 		}
 
 		// Setting up the strategy.
-		strategy = (CassandreStrategy) o;
+		CassandreStrategy strategy = (CassandreStrategy) o;
 
 		// Displaying strategy name.
 		Strategy strategyAnnotation = o.getClass().getAnnotation(Strategy.class);
@@ -71,6 +97,21 @@ public class StrategyConfiguration extends BaseConfiguration {
 		// Displaying requested currency pairs.
 		getLogger().info("The strategy requires the following currency pair(s) : ");
 		strategy.getRequestedCurrencyPairs().forEach(cp -> getLogger().info("- " + cp));
+
+		// Setting up flux.
+		// Account flux.
+		accountFlux.getFlux()
+				.publishOn(scheduler)
+				.subscribe(strategy::onAccountUpdate);
+		// Ticker flux.
+		tickerFlux.updateRequestedCurrencyPairs(strategy.getRequestedCurrencyPairs());
+		tickerFlux.getFlux()
+				.publishOn(scheduler)
+				.subscribe(strategy::onTickerUpdate);
+		// Order flux.
+		orderFlux.getFlux()
+				.publishOn(scheduler)
+				.subscribe(strategy::onOrderUpdate);
 	}
 
 }

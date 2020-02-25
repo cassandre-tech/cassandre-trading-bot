@@ -9,7 +9,7 @@ import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
  * Base service.
  */
 @SuppressWarnings("unused")
-public class BaseService extends Base {
+public abstract class BaseService extends Base {
 
 	/** Mapper. */
 	private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);

@@ -80,6 +80,13 @@ public class ExchangeConfiguration extends BaseConfiguration {
 
 			// Force login to check credentials.
 			accountService.getAccountInfo();
+			getLogger().info("Connection to {} successful", exchangeParameters.getName());
+
+			// Prints all the supported currency pairs.
+			getLogger().info("Supported currency pairs :");
+			exchange.getExchangeMetaData()
+					.getCurrencyPairs()
+					.forEach((currencyPair, currencyPairMetaData) -> getLogger().info(" - {}", currencyPair));
 
 		} catch (ClassNotFoundException e) {
 			// If we can't find the exchange class.
@@ -110,16 +117,12 @@ public class ExchangeConfiguration extends BaseConfiguration {
 		final String xChangeCLassSuffix = "Exchange";
 
 		// Returns the XChange package name.
-		if (exchangeParameters.getName() != null) {
-			return xChangeClassPackage                                                      // Package (org.knowm.xchange.).
-					.concat(exchangeParameters.getName().toLowerCase())                     // domain (kucoin).
-					.concat(".")                                                            // A dot (.)
-					.concat(exchangeParameters.getName().substring(0, 1).toUpperCase())     // First letter uppercase (K).
-					.concat(exchangeParameters.getName().substring(1).toLowerCase())        // The rest of the exchange name (ucoin).
-					.concat(xChangeCLassSuffix);                                            // Adding exchange (Exchange).
-		} else {
-			return "";
-		}
+		return xChangeClassPackage                                                      // Package (org.knowm.xchange.).
+				.concat(exchangeParameters.getName().toLowerCase())                     // domain (kucoin).
+				.concat(".")                                                            // A dot (.)
+				.concat(exchangeParameters.getName().substring(0, 1).toUpperCase())     // First letter uppercase (K).
+				.concat(exchangeParameters.getName().substring(1).toLowerCase())        // The rest of the exchange name (ucoin).
+				.concat(xChangeCLassSuffix);                                            // Adding exchange (Exchange).
 	}
 
 	/**
