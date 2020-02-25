@@ -54,7 +54,12 @@ entries:
             output: web
             type: page
 
-          - title: Step 06 - Strategy
+          - title: Step 06 - Flux
+            url: /bot_development_flux.html
+            output: web
+            type: page
+
+          - title: Step 07 - Strategy
             url: /bot_development_strategy.html
             output: web
             type: page
