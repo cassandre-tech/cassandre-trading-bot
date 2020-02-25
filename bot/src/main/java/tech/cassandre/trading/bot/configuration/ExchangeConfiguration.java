@@ -13,6 +13,7 @@ import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
+import java.util.StringJoiner;
 
 /**
  * ExchangeConfiguration class configure exchange connection.
@@ -83,10 +84,11 @@ public class ExchangeConfiguration extends BaseConfiguration {
 			getLogger().info("ExchangeConfiguration - Connection to {} successful", exchangeParameters.getName());
 
 			// Prints all the supported currency pairs.
-			getLogger().info("ExchangeConfiguration - Supported currency pairs :");
+			StringJoiner currencyPairList = new StringJoiner(", ");
 			exchange.getExchangeMetaData()
 					.getCurrencyPairs()
-					.forEach((currencyPair, currencyPairMetaData) -> getLogger().info(" - {}", currencyPair));
+					.forEach((currencyPair, currencyPairMetaData) -> currencyPairList.add(currencyPair.toString()));
+			getLogger().info("ExchangeConfiguration - Supported currency pairs : " + currencyPairList);
 
 		} catch (ClassNotFoundException e) {
 			// If we can't find the exchange class.

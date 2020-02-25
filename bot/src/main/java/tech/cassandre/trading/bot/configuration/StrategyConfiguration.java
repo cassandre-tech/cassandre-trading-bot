@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * This class contains the strategy configuration..
@@ -95,8 +96,10 @@ public class StrategyConfiguration extends BaseConfiguration {
 		getLogger().info("StrategyConfiguration - Running strategy '{}'", strategyAnnotation.name());
 
 		// Displaying requested currency pairs.
-		getLogger().info("StrategyConfiguration - The strategy requires the following currency pair(s) : ");
-		strategy.getRequestedCurrencyPairs().forEach(cp -> getLogger().info("- " + cp));
+		StringJoiner currencyPairList = new StringJoiner(", ");
+		strategy.getRequestedCurrencyPairs()
+				.forEach(currencyPair -> currencyPairList.add(currencyPair.toString()));
+		getLogger().info("StrategyConfiguration - The strategy requires the following currency pair(s) : " + currencyPairList);
 
 		// Setting up flux.
 		// Account flux.
