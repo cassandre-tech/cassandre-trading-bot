@@ -44,7 +44,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 	public static final int UNAUTHORIZED_STATUS_CODE = 401;
 
 	/** Exchange parameters. */
-	private ExchangeParameters exchangeParameters;
+	private final ExchangeParameters exchangeParameters;
 
 	/** Exchange service. */
 	private ExchangeService exchangeService;

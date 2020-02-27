@@ -7,6 +7,7 @@ import reactor.core.scheduler.Schedulers;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.Strategy;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
@@ -31,6 +32,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 	/** Scheduler. */
 	private final Scheduler scheduler = Schedulers.newParallel("strategy-scheduler", NUMBER_OF_THREADS);
 
+	/** Trade service. */
+	private final TradeService tradeService;
+
 	/** Account flux. */
 	private final AccountFlux accountFlux;
 
@@ -44,15 +48,18 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 	 * Constructor.
 	 *
 	 * @param newApplicationContext application context
-	 * @param newAccountFlux        Account flux
-	 * @param newTickerFlux         Ticker flux
-	 * @param newOrderFlux          Order flux.
+	 * @param newTradeService       trade service
+	 * @param newAccountFlux        account flux
+	 * @param newTickerFlux         ticker flux
+	 * @param newOrderFlux          order flux.
 	 */
 	public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
+	                                 final TradeService newTradeService,
 	                                 final AccountFlux newAccountFlux,
 	                                 final TickerFlux newTickerFlux,
 	                                 final OrderFlux newOrderFlux) {
 		this.applicationContext = newApplicationContext;
+		this.tradeService = newTradeService;
 		this.accountFlux = newAccountFlux;
 		this.tickerFlux = newTickerFlux;
 		this.orderFlux = newOrderFlux;
@@ -106,7 +113,11 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 		getLogger().info("StrategyConfiguration - The strategy requires the following currency pair(s) : " + currencyPairList);
 
 		// =============================================================================================================
-		// Setting up flux.
+		// Setting up strategy.
+
+		// Setting service.
+		strategy.setTradeService(tradeService);
+
 		// Account flux.
 		accountFlux.getFlux()
 				.publishOn(scheduler)

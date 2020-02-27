@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.util.Set;
@@ -12,6 +13,29 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public abstract class CassandreStrategy {
+
+	/**
+	 * Trade service.
+	 */
+	private TradeService tradeService;
+
+	/**
+	 * Getter tradeService.
+	 *
+	 * @return tradeService
+	 */
+	public final TradeService getTradeService() {
+		return tradeService;
+	}
+
+	/**
+	 * Setter tradeService.
+	 *
+	 * @param newTradeService the tradeService to set
+	 */
+	public final void setTradeService(final TradeService newTradeService) {
+		tradeService = newTradeService;
+	}
 
 	/**
 	 * Implements this method to tell the bot which currency pairs your strategy will receive.
