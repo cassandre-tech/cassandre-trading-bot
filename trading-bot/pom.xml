@@ -106,7 +106,7 @@
 	<!-- Build configuration -->
 	<build>
 		<!-- Project final name -->
-		<finalName>cassandre-trading-bot</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<!-- Plugins -->
 		<plugins>
 			<!-- Checkstyle verification -->
@@ -164,9 +164,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<!--					<forkCount>1</forkCount>
-										<reuseForks>false</reuseForks>
-										<useSystemClassLoader>false</useSystemClassLoader>-->
 					<excludes>
 						<exclude>**/integration/**</exclude>
 					</excludes>

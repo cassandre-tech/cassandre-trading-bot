@@ -32,7 +32,7 @@
 	<!-- Build configuration -->
 	<build>
 		<!-- Project final name -->
-		<finalName>cassandre-trading-bot</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<!-- Plugins -->
 		<plugins>
 			<!-- Checkstyle verification -->
