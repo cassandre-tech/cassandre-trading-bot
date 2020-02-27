@@ -10,7 +10,7 @@
 	<artifactId>cassandre-trading-bot-project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Cassandre trading bot project</name>
+	<name>Cassandre trading bot</name>
 	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
 	<!-- =========================================================================================================== -->
 
@@ -54,8 +54,8 @@
 	<!-- Modules -->
 	<modules>
 		<module>trading-bot</module>
-		<module>spring-boot</module>
-		<module>cassandre-trading-bot-strategy-examples</module>
+		<module>trading-bot-spring-boot-starter</module>
+<!--		<module>cassandre-trading-bot-strategy-examples</module>-->
 	</modules>
 	<!-- =========================================================================================================== -->
 
