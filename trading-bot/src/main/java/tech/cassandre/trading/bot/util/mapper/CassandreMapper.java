@@ -69,8 +69,8 @@ public interface CassandreMapper {
 	/**
 	 * Map balance.
 	 *
-	 * @param source map(Map<org.knowm.xchange.currency.Currency, Balance>
-	 * @return Map<CurrencyDTO, BalanceDTO>
+	 * @param source map of Currency and Balance
+	 * @return Map of CurrencyDTO and BalanceDTO
 	 */
 	Map<CurrencyDTO, BalanceDTO> mapToCurrencyDTOAndBalanceDTO(Map<Currency, Balance> source);
 
