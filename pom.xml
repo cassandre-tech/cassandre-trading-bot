@@ -53,7 +53,9 @@
 	<!-- =========================================================================================================== -->
 	<!-- Modules -->
 	<modules>
-		<module>bot</module>
+		<module>trading-bot</module>
+		<module>spring-boot</module>
+		<module>cassandre-trading-bot-strategy-examples</module>
 	</modules>
 	<!-- =========================================================================================================== -->
 
