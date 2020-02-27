@@ -6,8 +6,9 @@
 
 	<!-- =========================================================================================================== -->
 	<!-- Project information -->
-	<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
-	<name>Trading bot spring boot starter</name>
+	<artifactId>cassandre-trading-bot-strategy-dumb</artifactId>
+	<packaging>jar</packaging>
+	<name>Trading bot - Strategies - Dumb strategy</name>
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->
@@ -16,14 +17,33 @@
 		<!-- Spring dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot</artifactId>
+			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
 		<!-- Cassandre trading bot -->
 		<dependency>
 			<groupId>tech.cassandre.trading.bot</groupId>
-			<artifactId>cassandre-trading-bot</artifactId>
+			<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Tests -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>4.0.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<!-- =========================================================================================================== -->
@@ -57,10 +77,15 @@
 				</executions>
 				<configuration>
 					<consoleOutput>true</consoleOutput>
-					<configLocation>${project.parent.basedir}/checkstyle_configuration.xml</configLocation>
+					<configLocation>${project.parent.parent.basedir}/checkstyle_configuration.xml</configLocation>
 					<failOnViolation>true</failOnViolation>
 					<violationSeverity>warning</violationSeverity>
 				</configuration>
+			</plugin>
+			<!-- Spring boot -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
@@ -70,7 +95,7 @@
 	<!-- Parent -->
 	<parent>
 		<groupId>tech.cassandre.trading.bot</groupId>
-		<artifactId>cassandre-trading-bot-project</artifactId>
+		<artifactId>trading-bot-strategies</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<!-- =========================================================================================================== -->
