@@ -50,7 +50,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 public class StrategyAutoConfigurationTest {
 
 	@Test
-	@DisplayName("Valid")
+	@DisplayName("Valid strategy")
 	public void validStrategy() {
 		try {
 			System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
@@ -79,7 +79,7 @@ public class StrategyAutoConfigurationTest {
 
 	@Test
 	@DisplayName("Two strategies found")
-	public void twoStrategyFound() {
+	public void twoStrategiesFound() {
 		try {
 			System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
 			System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "true");

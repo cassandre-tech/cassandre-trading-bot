@@ -23,7 +23,7 @@ public class OrderDTOTest {
 
 	@Test
 	@SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength" })
-	@DisplayName("EqualTo on order order")
+	@DisplayName("EqualTo on order")
 	public void equalToForOrder() {
 		// Currency pairs.
 		final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);

@@ -16,13 +16,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+
 /**
  * Testable strategy (used for tests).
  */
 @SuppressWarnings("unused")
 @Strategy(name = "Testable strategy")
 @ConditionalOnProperty(
-		value = "testableStrategy.enabled",
+		value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
 		havingValue = "true")
 public class TestableStrategy extends CassandreStrategy {
 

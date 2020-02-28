@@ -32,7 +32,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 
 /**
- * Testing that the trade service is set.
+ * Testing that the trade service is set in strategy.
  */
 @SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)

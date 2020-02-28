@@ -45,7 +45,7 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_D
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @DisplayName("Invalid rates")
-public class InvalidRatesParametersTest extends BaseTest {
+public class InvalidRatesTest extends BaseTest {
 
 	@Test
 	@DisplayName("Check error messages")
