@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.test.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -55,6 +57,9 @@ public class BaseTest {
 	/** How much we should wait for tests to last. */
 	protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
 
+	/** Logger. */
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
 	/** Application context. */
 	@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 	@Autowired
@@ -67,6 +72,16 @@ public class BaseTest {
 	 */
 	public final ApplicationContext getContext() {
 		return context;
+	}
+
+
+	/**
+	 * Getter logger.
+	 *
+	 * @return logger
+	 */
+	protected final Logger getLogger() {
+		return logger;
 	}
 
 	/**
