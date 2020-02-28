@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>org.junit-pioneer</groupId>
 			<artifactId>junit-pioneer</artifactId>
-			<version>0.5.1</version>
+			<version>0.5.4</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -185,7 +185,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
