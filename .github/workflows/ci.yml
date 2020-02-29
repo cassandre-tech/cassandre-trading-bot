@@ -39,4 +39,4 @@ jobs:
           KUCOIN_PASSPHRASE: ${{ secrets.KUCOIN_PASSPHRASE }}
           KUCOIN_KEY: ${{ secrets.KUCOIN_KEY }}
           KUCOIN_SECRET: ${{ secrets.KUCOIN_SECRET }}
-        run: mvn deploy -Pintegration -Dregistry=https://maven.pkg.github.com/cassandre-tech -Dtoken=GITHUB_TOKEN
+        run: mvn deploy -X -Dmaven.wagon.http.pool=false -Pintegration -Dregistry=https://maven.pkg.github.com/cassandre-tech -Dtoken=GITHUB_TOKEN
