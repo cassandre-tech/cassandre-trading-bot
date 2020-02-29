@@ -31,8 +31,6 @@
 	<!-- =========================================================================================================== -->
 	<!-- Build configuration -->
 	<build>
-		<!-- Project final name -->
-		<finalName>${project.artifactId}</finalName>
 		<!-- Plugins -->
 		<plugins>
 			<!-- Checkstyle verification -->
