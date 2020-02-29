@@ -18,7 +18,7 @@
 	<!-- Source Code Management -->
 	<scm>
 		<connection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</connection>
-		<url>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</url>
+		<url>https://maven.pkg.github.com/cassandre-trading-bot.git</url>
 		<developerConnection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</developerConnection>
 	</scm>
 	<!-- =========================================================================================================== -->
