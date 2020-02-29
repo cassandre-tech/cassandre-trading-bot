@@ -5,19 +5,64 @@ entries:
     folders:
 
       # ================================================================================================================
-      - title: Overview
-        output: web
-        folderitems:
+#      - title: Trading basics
+#        output: web
+#        folderitems:
+#
+#          - title: Overview
+#            url: /work_in_progress.html
+#            output: web
+#            type: page
 
-          - title: Bot features & roadmap
-            url: /overview_bot_features_and_roadmap.html
-            output: web
-            type: page
+      # ================================================================================================================
+#      - title: Create & run your first strategy
+#        output: web
+#        folderitems:
+#
+#          - title: Overview
+#            url: /work_in_progress.html
+#            output: web
+#            type: page
+
+      # ================================================================================================================
+#      - title: Technical analysis stratey
+#        output: web
+#        folderitems:
+#
+#          - title: Overview
+#            url: /work_in_progress.html
+#            output: web
+#            type: page
+
+      # ================================================================================================================
+#      - title: Machine learning stratey
+#        output: web
+#        folderitems:
+#
+#          - title: Overview
+#            url: /work_in_progress.html
+#            output: web
+#            type: page
+
+      # ================================================================================================================
+#      - title: Deep learning stratey
+#        output: web
+#        folderitems:
+#
+#          - title: Overview
+#            url: /work_in_progress.html
+#            output: web
+#            type: page
 
       # ================================================================================================================
       - title: Bot development
         output: web
         folderitems:
+
+          - title: Features & roadmap
+            url: /overview_bot_features_and_roadmap.html
+            output: web
+            type: page
 
           - title: Project structure
             url: /bot_development_project_structure.html

@@ -3,10 +3,10 @@
 topnav:
   - title: Topnav
     items:
-      - title: Cassandre
-        external_url: https://cassandre.tech/
       - title: GitHub
         external_url: https://github.com/cassandre-tech/cassandre-trading-bot
+      - title: Mailing list
+        external_url: http://eepurl.com/gUGiMb
       - title: Twitter
         external_url: https://twitter.com/CassandreTech
 
