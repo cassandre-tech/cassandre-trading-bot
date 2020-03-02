@@ -10,7 +10,7 @@
 	<artifactId>cassandre-trading-bot-strategy-dumb</artifactId>
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Trading bot - Strategies - Dumb strategy</name>
+	<name>Strategies - Dumb strategy</name>
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->
@@ -117,14 +117,12 @@
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->
-	<!-- Cassandre.tech maven packages -->
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/cassandre-tech/cassandre-trading-bot</url>
-		</repository>
-	</distributionManagement>
+	<!-- Parent -->
+	<parent>
+		<groupId>tech.cassandre.trading.bot</groupId>
+		<artifactId>trading-bot-strategies</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 	<!-- =========================================================================================================== -->
 
 </project>
