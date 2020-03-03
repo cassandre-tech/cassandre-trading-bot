@@ -116,4 +116,15 @@
 	</build>
 	<!-- =========================================================================================================== -->
 
+	<!-- =========================================================================================================== -->
+	<!-- Cassandre.tech maven packages distribution -->
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/cassandre-tech/cassandre-trading-bot</url>
+		</repository>
+	</distributionManagement>
+	<!-- =========================================================================================================== -->
+
 </project>
