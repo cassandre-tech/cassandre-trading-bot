@@ -28,7 +28,7 @@ import javax.annotation.PostConstruct;
 import java.util.StringJoiner;
 
 /**
- * ExchangeConfiguration class configure exchange connection.
+ * ExchangeConfiguration class configures the exchange connection.
  */
 @Configuration
 @EnableConfigurationProperties(ExchangeParameters.class)

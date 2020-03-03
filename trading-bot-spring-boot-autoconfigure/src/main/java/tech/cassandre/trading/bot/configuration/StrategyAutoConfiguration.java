@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 /**
- * This class contains the strategy configuration..
+ * ScheduleAutoConfiguration activates flux scheduler.
  */
 @Configuration
 public class StrategyAutoConfiguration extends BaseConfiguration {

@@ -9,7 +9,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 
 /**
- * Schedule configuration - Activate Spring scheduler.
+ * StrategyAutoConfiguration class configures the strategy.
  */
 @Configuration
 @Profile("!schedule-disabled")
