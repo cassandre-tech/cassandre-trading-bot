@@ -5,9 +5,9 @@
 
 	<!-- =========================================================================================================== -->
 	<!-- Project information -->
-	<artifactId>cassandre-trading-bot</artifactId>
+	<artifactId>cassandre-trading-bot-spring-boot-autoconfigure</artifactId>
 	<packaging>jar</packaging>
-	<name>Trading bot core</name>
+	<name>Trading bot spring boot autoconfigure</name>
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->

@@ -22,7 +22,7 @@
 		<!-- Cassandre trading bot -->
 		<dependency>
 			<groupId>tech.cassandre.trading.bot</groupId>
-			<artifactId>cassandre-trading-bot</artifactId>
+			<artifactId>cassandre-trading-bot-spring-boot-autoconfigure</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

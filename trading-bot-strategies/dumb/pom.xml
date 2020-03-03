@@ -6,8 +6,8 @@
 
 	<!-- =========================================================================================================== -->
 	<!-- Project information -->
-	<groupId>tech.cassandre.trading.bot</groupId>
-	<artifactId>cassandre-trading-bot-strategy-dumb</artifactId>
+	<groupId>tech.cassandre.trading.strategies</groupId>
+	<artifactId>cassandre-trading-strategy-dumb</artifactId>
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Strategies - Dumb strategy</name>
@@ -114,15 +114,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<!-- =========================================================================================================== -->
-
-	<!-- =========================================================================================================== -->
-	<!-- Parent -->
-	<parent>
-		<groupId>tech.cassandre.trading.bot</groupId>
-		<artifactId>trading-bot-strategies</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
 	<!-- =========================================================================================================== -->
 
 </project>

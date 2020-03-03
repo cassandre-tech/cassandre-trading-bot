@@ -8,7 +8,7 @@
 	<!-- Project information -->
 	<artifactId>cassandre-trading-bot-spring-boot-starter-archetype</artifactId>
 	<packaging>maven-archetype</packaging>
-	<name>Trading bot spring boot starter archetype</name>
+	<name>Trading bot maven archetype</name>
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->
