@@ -109,6 +109,11 @@ entries:
             output: web
             type: page
 
+          - title: Step 08 - Strategy configuration
+            url: /bot_development_strategy_configuration.html
+            output: web
+            type: page
+
       # ================================================================================================================
       - title: Resources
         output: web

@@ -7,7 +7,7 @@ permalink: bot_development_exchange_service.html
 
 ## Exchange service.
 
-[Exchange service](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/service/ExchangeService.java) and its [XChange implementation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/service/ExchangeServiceXChangeImplementation.java) :
+[Exchange service](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service/ExchangeService.java) and its [XChange implementation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service/ExchangeServiceXChangeImplementation.java) :
 
 | Method  | Description  |
 |-------|---------|

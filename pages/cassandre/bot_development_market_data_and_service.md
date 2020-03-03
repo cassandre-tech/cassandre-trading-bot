@@ -10,7 +10,7 @@ permalink: bot_development_market_data_and_service.html
 {% include image.html file="project_development/package_market.png" alt="Market package class diagram" caption="Market package class diagram" %}
 
 ### The TickerDTO class.
-[TickerDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/dto/market/TickerDTO.java) represents a stock ticker. A stock ticker is a report of the price of certain securities, updated continuously throughout the trading session by the various stock market exchanges. A "tick" is any change in the price of the security, whether that movement is up or down.
+[TickerDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/dto/market/TickerDTO.java) represents a stock ticker. A stock ticker is a report of the price of certain securities, updated continuously throughout the trading session by the various stock market exchanges. A "tick" is any change in the price of the security, whether that movement is up or down.
 
 | Field  | Description  |
 |-------|---------|
@@ -32,7 +32,7 @@ permalink: bot_development_market_data_and_service.html
 
 ### Market service.
 
-[Market service](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/service/MarketService.java) and its [XChange implementation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/service/MarketServiceXChangeImplementation.java) :
+[Market service](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service/MarketService.java) and its [XChange implementation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service/MarketServiceXChangeImplementation.java) :
 
 | Method  | Description  |
 |-------|---------|

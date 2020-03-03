@@ -10,7 +10,7 @@ permalink: bot_development_trade_data_and_service.html
 {% include image.html file="project_development/package_trade.png" alt="Trade package class diagram" caption="Trade package class diagram" %}
 
 ### OrderCreationResultDTO.
-[OrderCreationResultDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/dto/trade/OrderCreationResultDTO.java) is returned after an order is created. It contains either the order id or the error message.
+[OrderCreationResultDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/dto/trade/OrderCreationResultDTO.java) is returned after an order is created. It contains either the order id or the error message.
 
 | Field  | Description  |
 |-------|---------|
@@ -19,7 +19,7 @@ permalink: bot_development_trade_data_and_service.html
 | <code>exception</code>  |  Exception (filled if order creation failed)  |
   
 ### OrderDTO.
-[OrderDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/dto/trade/OrderDTO.java) represents order information from the exchange. A market order is a request by an investor to buy or sell in the current market.
+[OrderDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/dto/trade/OrderDTO.java) represents order information from the exchange. A market order is a request by an investor to buy or sell in the current market.
 
 | Field  | Description  |
 |-------|---------|
@@ -37,7 +37,7 @@ permalink: bot_development_trade_data_and_service.html
 | <code>limitPrice</code>  | The limit price  |
 
 ### OrderTypeDTO.
-[OrderTypeDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/dto/trade/OrderTypeDTO.java) describes the different types of order.
+[OrderTypeDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/dto/trade/OrderTypeDTO.java) describes the different types of order.
 
 | Field  | Description  |
 |-------|---------|
@@ -45,7 +45,7 @@ permalink: bot_development_trade_data_and_service.html
 | <code>ASK</code>  | Selling order  |
 
 ### OrderStatusDTO.
-[OrderStatusDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/dto/trade/OrderStatusDTO.java) describes the different status of an order.
+[OrderStatusDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/dto/trade/OrderStatusDTO.java) describes the different status of an order.
 
 | Field  | Description  |
 |-------|---------|
@@ -67,7 +67,7 @@ permalink: bot_development_trade_data_and_service.html
 
 ### Trade service.
 
-[Trade service](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/service/TradeService.java) and its [XChange implementation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/service/TradeServiceXChangeImplementation.java) :
+[Trade service](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service/TradeService.java) and its [XChange implementation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service/TradeServiceXChangeImplementation.java) :
 
 | Method  | Description  |
 |-------|---------|

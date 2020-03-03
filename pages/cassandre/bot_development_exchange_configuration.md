@@ -5,8 +5,8 @@ summary: Class managing the exchange configuration and connection.
 permalink: bot_development_exchange_configuration.html
 ---
 
-## Exchange configuration.
-[ExchangeConfiguration](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/configuration/ExchangeConfiguration.java) class configures the exchange connexion with the parameters specified in [application.properties](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/resources/application.properties) :
+## Exchange auto configuration.
+[ExchangeAutoConfiguration](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/configuration/ExchangeAutoConfiguration.java) class configures the exchange connexion with the parameters specified in [application.properties](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/resources/application.properties) :
 ```properties
 # Exchange configuration.
 #
@@ -25,6 +25,10 @@ cassandre.trading.bot.exchange.rates.ticker=101
 cassandre.trading.bot.exchange.rates.order=102
 ```
 
-Those parameters are read and validated by [ExchangeParameters](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/configuration/ExchangeParameters.java).
-
-{% include note.html content="ExchangeConfiguration also creates four [XChange](https://github.com/knowm/XChange) services : `exchange`, `marketDataService`, `accountService` and `tradeService`." %}
+This class does the following steps :
+  * Validate parameters values.
+  * Connect to the specified exchange.
+  * Creates the [services beans](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service).
+  * Creates the [flux](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/batch).
+  
+Those parameters are read and validated by [ExchangeParameters](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/util/parameters/ExchangeParameters.java).

@@ -10,7 +10,7 @@ permalink: bot_development_user_data_and_service.html
 {% include image.html file="project_development/package_user.png" alt="User package class diagram" caption="User package class diagram" %}
 
 ### The UserDTO class.
-[UserDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/dto/user/UserDTO.java) represents user information retrieved from the exchange.
+[UserDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/dto/user/UserDTO.java) represents user information retrieved from the exchange.
 
 | Field  | Description  |
 |-------|---------|
@@ -19,7 +19,7 @@ permalink: bot_development_user_data_and_service.html
 | <code>timestamp</code>   | The moment at which the account information was retrieved  |
 
 ### The AccountDTO class.
-[AccountDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/dto/user/AccountDTO.java) represents an account owned by a user.
+[AccountDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/dto/user/AccountDTO.java) represents an account owned by a user.
 
 | Field  | Description  |
 |-------|---------|
@@ -28,7 +28,7 @@ permalink: bot_development_user_data_and_service.html
 | <code>balances</code>   | Represents the different balances for each currency owned by the account  |
 
 ### The BalanceDTO class.
-[BalanceDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/dto/user/BalanceDTO.java) represents a balance in a currency for an account.
+[BalanceDTO](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/dto/user/BalanceDTO.java) represents a balance in a currency for an account.
 
 | Field  | Description  |
 |-------|---------|
@@ -45,7 +45,7 @@ permalink: bot_development_user_data_and_service.html
 
 ### User service.
 
-[User service](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/service/UserService.java) and its [XChange implementation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/bot/src/main/java/tech/cassandre/trading/bot/service/UserServiceXChangeImplementation.java)
+[User service](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service/UserService.java) and its [XChange implementation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/service/UserServiceXChangeImplementation.java)
 
 | Method  | Description  |
 |-------|---------|
