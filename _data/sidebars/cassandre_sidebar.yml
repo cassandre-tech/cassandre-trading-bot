@@ -35,14 +35,14 @@ entries:
 #            type: page
 
       # ================================================================================================================
-#      - title: Machine learning stratey
-#        output: web
-#        folderitems:
-#
-#          - title: Overview
-#            url: /work_in_progress.html
-#            output: web
-#            type: page
+      - title: Machine learning stratey
+        output: web
+        folderitems:
+
+          - title: Overview
+            url: /work_in_progress_machine_learning_strategy.html
+            output: web
+            type: page
 
       # ================================================================================================================
       - title: Deep learning stratey
