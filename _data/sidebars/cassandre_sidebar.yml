@@ -25,14 +25,14 @@ entries:
 #            type: page
 
       # ================================================================================================================
-#      - title: Technical analysis stratey
-#        output: web
-#        folderitems:
-#
-#          - title: Overview
-#            url: /work_in_progress.html
-#            output: web
-#            type: page
+      - title: Technical analysis stratey
+        output: web
+        folderitems:
+
+          - title: Overview
+            url: /work_in_progress_technical_analysis_strategy.html
+            output: web
+            type: page
 
       # ================================================================================================================
       - title: Machine learning stratey
