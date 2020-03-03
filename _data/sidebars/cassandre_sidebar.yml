@@ -15,14 +15,14 @@ entries:
 #            type: page
 
       # ================================================================================================================
-#      - title: Create & run your first strategy
-#        output: web
-#        folderitems:
-#
-#          - title: Overview
-#            url: /work_in_progress.html
-#            output: web
-#            type: page
+      - title: Create & run your first strategy
+        output: web
+        folderitems:
+
+          - title: Overview
+            url: /work_in_progress_create_and_run_your_first_strategy.html
+            output: web
+            type: page
 
       # ================================================================================================================
       - title: Technical analysis stratey
