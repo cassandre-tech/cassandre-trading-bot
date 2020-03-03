@@ -5,14 +5,14 @@ entries:
     folders:
 
       # ================================================================================================================
-#      - title: Trading basics
-#        output: web
-#        folderitems:
-#
-#          - title: Overview
-#            url: /work_in_progress.html
-#            output: web
-#            type: page
+      - title: Trading basics
+        output: web
+        folderitems:
+
+          - title: Overview
+            url: /work_in_progress_trading_basics.html
+            output: web
+            type: page
 
       # ================================================================================================================
       - title: Create & run your first strategy
