@@ -1,8 +1,8 @@
 ---
-title: Architecture
+title: Bot architecture
 sidebar: cassandre_sidebar
 summary: Details cassandre trading bot architecture.
-permalink: bot_development_architecture.html
+permalink: our_bot_architecture.html
 ---
 
 Cassandre trading bot is provided as a Spring boot starter. Once the starter is added to your Spring boot project, it will search for a class having the <code>@Strategy</code> annotation and implementing <code>CassandreStrategy</code>.

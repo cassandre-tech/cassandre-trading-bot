@@ -1,8 +1,8 @@
 ---
-title: Cassandre features & roadmap
+title: Bot features & roadmap
 summary: This is the list of cassandre features and the roadmap
 sidebar: cassandre_sidebar
-permalink: overview_bot_features_and_roadmap.html
+permalink: our_bot_features_and_roadmap.html
 ---
 
 ## Features.

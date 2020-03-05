@@ -15,6 +15,21 @@ entries:
             type: page
 
       # ================================================================================================================
+      - title: Our bot
+        output: web
+        folderitems:
+
+          - title: Architecture
+            url: /our_bot_architecture.html
+            output: web
+            type: page
+
+          - title: Features & roadmap
+            url: /our_bot_features_and_roadmap.html
+            output: web
+            type: page
+
+      # ================================================================================================================
       - title: Create & run your first strategy
         output: web
         folderitems:
@@ -58,16 +73,6 @@ entries:
       - title: Bot development
         output: web
         folderitems:
-
-          - title: Architecture
-            url: /bot_development_architecture.html
-            output: web
-            type: page
-
-          - title: Features & roadmap
-            url: /overview_bot_features_and_roadmap.html
-            output: web
-            type: page
 
           - title: Project structure
             url: /bot_development_project_structure.html
