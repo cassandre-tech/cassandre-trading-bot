@@ -32,11 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.with;
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
@@ -88,19 +85,14 @@ public class AllFluxTest extends BaseTest {
 	@Test
 	@DisplayName("Multithreaded test")
 	public void multithreadedTest() {
-		final int numberOfAccountsUpdateExpected = 3;
+		final int numberOfValuesExpected = 3;
 
 		// Wait for the strategy to have received all the account test values.
-		with().pollInterval(fibonacci(SECONDS)).await()
-				.atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-				.untilAsserted(() -> assertEquals(numberOfAccountsUpdateExpected, testableStrategy.getAccountsUpdatesReceived().size()));
+		with().await().untilAsserted(() -> assertEquals(numberOfValuesExpected, testableStrategy.getOrdersUpdateReceived().size()));
 
-		System.out.println(testableStrategy.getAccountsUpdatesReceived().size());
-		System.out.println(testableStrategy.getTickersUpdateReceived().size());
-		System.out.println(testableStrategy.getTickersUpdateReceived().size());
 		// Checking that all other data have been received.
-		assertFalse(testableStrategy.getTickersUpdateReceived().isEmpty());
-		assertFalse(testableStrategy.getOrdersUpdateReceived().isEmpty());
+		assertEquals(numberOfValuesExpected, testableStrategy.getTickersUpdateReceived().size());
+		assertEquals(numberOfValuesExpected, testableStrategy.getAccountsUpdatesReceived().size());
 	}
 
 	/**
