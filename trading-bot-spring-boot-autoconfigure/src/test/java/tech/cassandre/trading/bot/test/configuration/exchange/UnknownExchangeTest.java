@@ -57,7 +57,6 @@ public class UnknownExchangeTest extends BaseTest {
 			application.run();
 			fail("Exception was not raised");
 		} catch (Exception e) {
-			assertTrue(e instanceof BeanCreationException);
 			assertTrue(e.getMessage().contains("Impossible to find the exchange you requested : foo"));
 		}
 	}

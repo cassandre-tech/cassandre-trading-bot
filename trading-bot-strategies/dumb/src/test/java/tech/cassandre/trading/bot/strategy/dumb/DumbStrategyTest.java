@@ -25,7 +25,7 @@ public class DumbStrategyTest {
 
 	/** Dumb strategy. */
 	@Autowired
-	DumbStrategy strategy;
+	private DumbStrategy strategy;
 
 	/**
 	 * Check that the strategy receive data.
@@ -36,7 +36,7 @@ public class DumbStrategyTest {
 		// Waiting to see if the strategy received the accounts update (we have two accounts).
 		with().pollInterval(fibonacci(SECONDS)).await()
 				.atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-				.untilAsserted(() -> assertEquals(strategy.getAccounts().size(), 2));
+				.untilAsserted(() -> assertEquals(2, strategy.getAccounts().size()));
 
 		// Waiting to see if the strategy received a ticker.
 		with().pollInterval(fibonacci(SECONDS)).await()

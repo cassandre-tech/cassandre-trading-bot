@@ -58,7 +58,6 @@ public class InvalidCredentialsTest {
 			application.run();
 			fail("Exception was not raised");
 		} catch (Exception e) {
-			assertTrue(e instanceof BeanCreationException);
 			assertTrue(e.getMessage().contains("Invalid credentials for kucoin"));
 		}
 	}

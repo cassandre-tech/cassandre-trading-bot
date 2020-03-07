@@ -52,7 +52,7 @@ public class ValidConfigurationTest extends BaseTest {
 
 	@Test
 	@DisplayName("Testing Kucoin connection")
-	void exchangeParameters() {
+	public void exchangeParameters() {
 		try {
 			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
 			application.run();
