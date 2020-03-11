@@ -45,7 +45,7 @@ jobs:
           # Ossrh credentials.
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          # GPG
+          # GPG.
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           # Kucoin credentials.
           KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}
@@ -54,4 +54,3 @@ jobs:
           KUCOIN_KEY: ${{ secrets.KUCOIN_KEY }}
           KUCOIN_SECRET: ${{ secrets.KUCOIN_SECRET }}
         run: mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
-        #run: mvn install -Pintegration
