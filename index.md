@@ -11,7 +11,7 @@ Our goal with this project was to learn trading & data analysis by building an a
 Following this website, you will learn :
   * [The basics of trading](work_in_progress_trading_basics.html) (Work in progress).
   * [Our bot (architecture, features...)](our_bot_architecture.html).
-  * [How to create and run your first strategy](work_in_progress_create_and_run_your_first_strategy.html) (Work in progress).
+  * [How to create and run your first strategy](create_and_run_what_are_we_going_to_do.html).
   * [How to create a strategy using technical analysis](work_in_progress_technical_analysis_strategy.html) (Work in progress).
   * [How to create a strategy using machine learning](work_in_progress_machine_learning_strategy.html) (Work in progress).
   * [How to create a strategy using deep learning](work_in_progress_deep_learning_strategy.html) (Work in progress).
