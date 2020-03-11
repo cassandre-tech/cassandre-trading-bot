@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- =========================================================================================================== -->
+	<!-- Project information -->
+	<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
+	<name>Trading bot spring boot starter</name>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Dependencies -->
+	<dependencies>
+		<!-- Spring dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot</artifactId>
+		</dependency>
+
+		<!-- Cassandre trading bot -->
+		<dependency>
+			<groupId>tech.cassandre.trading.bot</groupId>
+			<artifactId>cassandre-trading-bot-spring-boot-autoconfigure</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Build configuration -->
+	<build>
+		<!-- Plugins -->
+		<plugins>
+			<!-- Checkstyle verification -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.1.1</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>8.30</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<consoleOutput>true</consoleOutput>
+					<configLocation>${project.parent.basedir}/checkstyle_configuration.xml</configLocation>
+					<failOnViolation>true</failOnViolation>
+					<violationSeverity>warning</violationSeverity>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Parent -->
+	<parent>
+		<groupId>tech.cassandre.trading.bot</groupId>
+		<artifactId>cassandre-trading-bot-project</artifactId>
+		<version>0.0.1</version>
+	</parent>
+	<!-- =========================================================================================================== -->
+
+</project>
