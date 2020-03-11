@@ -45,12 +45,12 @@
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-core</artifactId>
-			<version>4.4.1</version>
+			<version>4.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-kucoin</artifactId>
-			<version>4.4.1</version>
+			<version>4.4.2</version>
 		</dependency>
 
 		<!-- Util -->
