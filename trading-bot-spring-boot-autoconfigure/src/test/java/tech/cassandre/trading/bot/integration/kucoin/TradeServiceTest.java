@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,11 @@ public class TradeServiceTest extends BaseTest {
 	/** Trade service. */
 	@Autowired
 	private TradeService tradeService;
+
+	@BeforeEach
+	void setUp() {
+		tradeService.getOpenOrders().forEach(order -> tradeService.cancelOrder(order.getId()));
+	}
 
 	@Test
 	@DisplayName("Creates a buy / sell market order")
