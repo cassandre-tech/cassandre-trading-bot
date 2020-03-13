@@ -114,4 +114,5 @@ output-*
 # others
 index.md
 /pages/
+/_data/
 /_site/
