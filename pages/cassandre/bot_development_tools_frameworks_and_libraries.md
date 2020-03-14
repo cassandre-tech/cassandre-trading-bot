@@ -25,7 +25,8 @@ permalink: bot_development_tools_frameworks_and_libraries.html
 
 | Name  | Description  |
 |-------|---------|
-| [Awaitility](https://github.com/awaitility/awaitility)  | Awaitility is a small Java DSL for synchronizing asynchronous operations  |
-| [XChange](https://github.com/knowm/XChange)  | A Java library providing a simple and consistent API for interacting with 60+ Bitcoin and other crypto currency exchanges providing a consistent interface for trading and accessing market data  |
-| [MapStruct](https://github.com/mapstruct/mapstruct)  | MapStruct is a Java annotation processor for the generation of type-safe and performant mappers for Java bean classes. It saves you from writing mapping code by hand  |
 | [Hibernate validator](https://hibernate.org/validator/)  | Hibernate Validator allows to express and validate application constraints. It is used to validate application parameters.  |
+| [XChange](https://github.com/knowm/XChange)  | A Java library providing a simple and consistent API for interacting with 60+ Bitcoin and other crypto currency exchanges providing a consistent interface for trading and accessing market data  |
+| [Bucket4j](https://github.com/vladimir-bukhtoyarov/bucket4j)  | Java rate limiting library based on token/leaky-bucket algorithm  |
+| [MapStruct](https://github.com/mapstruct/mapstruct)  | MapStruct is a Java annotation processor for the generation of type-safe and performant mappers for Java bean classes. It saves you from writing mapping code by hand  |
+| [Awaitility](https://github.com/awaitility/awaitility)  | Awaitility is a small Java DSL for synchronizing asynchronous operations  |
