@@ -7,6 +7,8 @@ permalink: resources_books.html
 
 ## Trading.
 
+  * [Technical Analysis For Dummies](https://amzn.to/38TWaQm).
+
 ## Software development.
 
   * I bought a book named [Building Trading Bots Using Java](https://amzn.to/33PyJoW) to get an example of a trading bot architecture.
