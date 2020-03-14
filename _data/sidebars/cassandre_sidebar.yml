@@ -9,8 +9,33 @@ entries:
         output: web
         folderitems:
 
-          - title: Overview
-            url: /work_in_progress_trading_basics.html
+          - title: What is a cryptocurrency ?
+            url: /trading_basics_what_is_a_cryptocurrency.html
+            output: web
+            type: page
+
+          - title: What is trading ?
+            url: /trading_basics_what_is_trading.html
+            output: web
+            type: page
+
+          - title: What is an exchange ?
+            url: /trading_basics_what_is_an_exchange.html
+            output: web
+            type: page
+
+          - title: What is an account ?
+            url: /trading_basics_what_is_an_account.html
+            output: web
+            type: page
+
+          - title: What is a ticker ?
+            url: /trading_basics_what_is_a_ticker.html
+            output: web
+            type: page
+
+          - title: What is an order ?
+            url: /trading_basics_what_is_an_order.html
             output: web
             type: page
 
