@@ -112,4 +112,7 @@ output-*
 /.idea/
 
 # others
+index.md
+/pages/
+/_data/
 /_site/
