@@ -31,7 +31,7 @@ jobs:
           server-password: MAVEN_PASSWORD
 
       # ================================================================================================================
-      - name: Build, run tests, run integration tests & package with Maven
+      - name: Build, run tests, package and deploy to Maven central
         env: # Environment variables.
           # Ossrh credentials.
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
