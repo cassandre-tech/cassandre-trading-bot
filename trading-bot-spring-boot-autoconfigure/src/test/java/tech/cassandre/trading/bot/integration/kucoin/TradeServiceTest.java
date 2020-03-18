@@ -56,7 +56,7 @@ public class TradeServiceTest extends BaseTest {
 	private TradeService tradeService;
 
 	@BeforeEach
-	void setUp() {
+	public void setUp() {
 		tradeService.getOpenOrders().forEach(order -> tradeService.cancelOrder(order.getId()));
 	}
 

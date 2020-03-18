@@ -80,7 +80,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 	 * Instantiating the exchange based on the parameter.
 	 */
 	@PostConstruct
-	private void configure() {
+	public void configure() {
 		try {
 			// Instantiate exchange.
 			@SuppressWarnings("rawtypes")
