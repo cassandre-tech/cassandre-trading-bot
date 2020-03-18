@@ -48,11 +48,20 @@ public class BaseTest {
 	/** Rate for account parameter. */
 	public static final String PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE = "100";
 
+	/** Rate for account parameter (long value). */
+	public static final String PARAMETER_RATE_ACCOUNT_LONG_VALUE = "3000";
+
 	/** Rate for ticker parameter. */
 	public static final String PARAMETER_RATE_TICKER_DEFAULT_VALUE = "101";
 
+	/** Rate for ticker parameter (long value). */
+	public static final String PARAMETER_RATE_TICKER_LONG_VALUE = "3000";
+
 	/** Rate for order parameter. */
 	public static final String PARAMETER_RATE_ORDER_DEFAULT_VALUE = "102";
+
+	/** Rate for order parameter (long value). */
+	public static final String PARAMETER_RATE_ORDER_LONG_VALUE = "3000";
 
 	/** How much we should wait for tests to last. */
 	protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
@@ -73,7 +82,6 @@ public class BaseTest {
 	public final ApplicationContext getContext() {
 		return context;
 	}
-
 
 	/**
 	 * Getter logger.

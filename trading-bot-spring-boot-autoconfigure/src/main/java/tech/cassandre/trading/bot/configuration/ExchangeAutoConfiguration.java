@@ -103,9 +103,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
 			// Creates Cassandre services.
 			exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
-			userService = new UserServiceXChangeImplementation(xChangeAccountService);
-			marketService = new MarketServiceXChangeImplementation(xChangeMarketDataService);
-			tradeService = new TradeServiceXChangeImplementation(xChangeTradeService);
+			userService = new UserServiceXChangeImplementation(exchangeParameters.getRates().getAccount(), xChangeAccountService);
+			marketService = new MarketServiceXChangeImplementation(exchangeParameters.getRates().getTicker(), xChangeMarketDataService);
+			tradeService = new TradeServiceXChangeImplementation(exchangeParameters.getRates().getOrder(), xChangeTradeService);
 
 			// Creates Cassandre flux.
 			accountFlux = new AccountFlux(userService);
@@ -133,6 +133,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 						"Check your exchange credentials " + e.getMessage());
 			} else {
 				// Another HTTP failure.
+				e.printStackTrace();
 				throw new ConfigurationException("Error while connecting to the exchange " + e.getMessage());
 			}
 		} catch (Exception e) {

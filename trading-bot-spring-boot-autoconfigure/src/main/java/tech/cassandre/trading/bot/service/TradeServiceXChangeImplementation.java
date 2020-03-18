@@ -26,9 +26,11 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 	/**
 	 * Constructor.
 	 *
+	 * @param rate            rate in ms
 	 * @param newTradeService market data service
 	 */
-	public TradeServiceXChangeImplementation(final org.knowm.xchange.service.trade.TradeService newTradeService) {
+	public TradeServiceXChangeImplementation(final long rate, final org.knowm.xchange.service.trade.TradeService newTradeService) {
+		super(rate);
 		this.tradeService = newTradeService;
 	}
 
@@ -117,12 +119,19 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 	public final Set<OrderDTO> getOpenOrders() {
 		getLogger().debug("TradeServiceXChangeImplementation - Getting open orders from exchange");
 		try {
+			// Consume a token from the token bucket.
+			// If a token is not available this method will block until the refill adds one to the bucket.
+			getBucket().asScheduler().consume(1);
+
 			Set<OrderDTO> results = new LinkedHashSet<>();
 			tradeService.getOpenOrders().getOpenOrders().forEach(order -> results.add(getMapper().mapToOrderDTO(order)));
 			getLogger().debug("TradeServiceXChangeImplementation - {} order(s) found", results.size());
 			return results;
 		} catch (IOException e) {
 			getLogger().error("Error retrieving open orders : {}", e.getMessage());
+			return Collections.emptySet();
+		} catch (InterruptedException e) {
+			getLogger().error("InterruptedException : {}", e.getMessage());
 			return Collections.emptySet();
 		}
 	}
