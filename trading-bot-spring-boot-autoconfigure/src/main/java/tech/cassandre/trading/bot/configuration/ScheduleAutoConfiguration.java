@@ -43,7 +43,7 @@ public class ScheduleAutoConfiguration {
 	/**
 	 * Recurrent calls the account flux.
 	 */
-	@Scheduled(fixedRateString = "${cassandre.trading.bot.exchange.rates.account}")
+	@Scheduled(fixedDelay = 1)
 	public void setupAccountFlux() {
 		accountFlux.update();
 	}
@@ -51,7 +51,7 @@ public class ScheduleAutoConfiguration {
 	/**
 	 * Recurrent calls the ticker flux.
 	 */
-	@Scheduled(fixedRateString = "${cassandre.trading.bot.exchange.rates.ticker}")
+	@Scheduled(fixedDelay = 1)
 	public void setupTickerFlux() {
 		tickerFlux.update();
 	}
@@ -59,7 +59,7 @@ public class ScheduleAutoConfiguration {
 	/**
 	 * Recurrent calls the order flux.
 	 */
-	@Scheduled(fixedRateString = "${cassandre.trading.bot.exchange.rates.order}")
+	@Scheduled(fixedDelay = 1)
 	public void setupOrderFlux() {
 		orderFlux.update();
 	}
