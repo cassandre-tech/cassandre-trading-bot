@@ -10,7 +10,7 @@ permalink: create_and_run_create_with_archetype.html
 ## Create your project.
 Just type this command :
 ```sh
-mvn archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-archetype`
+mvn archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-archetype
 ```
 It will ask for the following parameters : 
   * <code>groupId</code> (example : com.mycompany.app).
