@@ -8,7 +8,7 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.strategy.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.BasicStrategy;
 import tech.cassandre.trading.bot.strategy.Strategy;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
@@ -93,14 +93,14 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Check if the strategy extends CassandreStrategy.
         Object o = strategyBeans.values().iterator().next();
-        if (!(o instanceof CassandreStrategy)) {
+        if (!(o instanceof BasicStrategy)) {
             throw new ConfigurationException("Your strategy doesn't extend CassandreStrategy",
                     o.getClass() + " must extend CassandreStrategy");
         }
 
         // =============================================================================================================
         // Getting strategy information.
-        CassandreStrategy strategy = (CassandreStrategy) o;
+        BasicStrategy strategy = (BasicStrategy) o;
 
         // Displaying strategy name.
         Strategy strategyAnnotation = o.getClass().getAnnotation(Strategy.class);
