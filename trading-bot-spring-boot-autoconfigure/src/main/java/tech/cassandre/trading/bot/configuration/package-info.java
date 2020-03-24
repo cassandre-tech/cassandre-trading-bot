@@ -1,4 +1,4 @@
 /**
- * Cassandre trading bot configuration.
+ * Configuration.
  */
 package tech.cassandre.trading.bot.configuration;

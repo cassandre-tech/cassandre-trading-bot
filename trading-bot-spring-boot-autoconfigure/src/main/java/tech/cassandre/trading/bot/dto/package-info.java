@@ -1,5 +1,4 @@
 /**
- * Cassandre trading bot dto.
- * Data transfer objects : Objects that carries data between processes.
+ * DTO.
  */
 package tech.cassandre.trading.bot.dto;
