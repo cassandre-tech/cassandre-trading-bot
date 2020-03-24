@@ -9,11 +9,11 @@ import java.util.Optional;
  */
 public interface UserService {
 
-	/**
-	 * Retrieve user information from exchange (user, accounts and balances).
-	 *
-	 * @return account from exchange
-	 */
-	Optional<UserDTO> getUser();
+    /**
+     * Retrieve user information from exchange (user, accounts and balances).
+     *
+     * @return account from exchange
+     */
+    Optional<UserDTO> getUser();
 
 }

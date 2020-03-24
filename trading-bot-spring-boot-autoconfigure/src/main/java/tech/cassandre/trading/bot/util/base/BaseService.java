@@ -16,58 +16,58 @@ import java.time.Duration;
 @SuppressWarnings("unused")
 public abstract class BaseService extends Base {
 
-	/** Mapper. */
-	private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);
+    /** Mapper. */
+    private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);
 
-	/** Bucket. */
-	private Bucket bucket;
+    /** Bucket. */
+    private Bucket bucket;
 
-	/**
-	 * Construct a base service without rate limit.
-	 */
-	public BaseService() {
-		Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(1));
-		bucket = Bucket4j.builder().addLimit(limit).build();
-	}
+    /**
+     * Construct a base service without rate limit.
+     */
+    public BaseService() {
+        Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(1));
+        bucket = Bucket4j.builder().addLimit(limit).build();
+    }
 
-	/**
-	 * Constructs a base service with a rate limit.
-	 *
-	 * @param rate rate in ms
-	 */
-	public BaseService(final long rate) {
-		Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(rate));
-		bucket = Bucket4j.builder().addLimit(limit).build();
-	}
+    /**
+     * Constructs a base service with a rate limit.
+     *
+     * @param rate rate in ms
+     */
+    public BaseService(final long rate) {
+        Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(rate));
+        bucket = Bucket4j.builder().addLimit(limit).build();
+    }
 
-	/**
-	 * Getter mapper.
-	 *
-	 * @return mapper
-	 */
-	protected final CassandreMapper getMapper() {
-		return mapper;
-	}
+    /**
+     * Getter mapper.
+     *
+     * @return mapper
+     */
+    protected final CassandreMapper getMapper() {
+        return mapper;
+    }
 
-	/**
-	 * Getter bucket.
-	 *
-	 * @return bucket
-	 */
-	public final Bucket getBucket() {
-		return bucket;
-	}
+    /**
+     * Getter bucket.
+     *
+     * @return bucket
+     */
+    public final Bucket getBucket() {
+        return bucket;
+    }
 
-	/**
-	 * Returns a XChange currency pair from a currency pair DTO.
-	 *
-	 * @param currencyPairDTO currency pair DTO
-	 * @return XChange currency pair
-	 */
-	protected CurrencyPair getCurrencyPair(final CurrencyPairDTO currencyPairDTO) {
-		// TODO Use a mapper instead of this method when MapStruct will allow it.
-		// https://github.com/mapstruct/mapstruct/issues/73
-		return new CurrencyPair(currencyPairDTO.getBaseCurrency().getCode(), currencyPairDTO.getQuoteCurrency().getCode());
-	}
+    /**
+     * Returns a XChange currency pair from a currency pair DTO.
+     *
+     * @param currencyPairDTO currency pair DTO
+     * @return XChange currency pair
+     */
+    protected CurrencyPair getCurrencyPair(final CurrencyPairDTO currencyPairDTO) {
+        // TODO Use a mapper instead of this method when MapStruct will allow it.
+        // https://github.com/mapstruct/mapstruct/issues/73
+        return new CurrencyPair(currencyPairDTO.getBaseCurrency().getCode(), currencyPairDTO.getQuoteCurrency().getCode());
+    }
 
 }

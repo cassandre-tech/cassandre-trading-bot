@@ -50,15 +50,15 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_D
 @DisplayName("Valid configuration test")
 public class ValidConfigurationTest extends BaseTest {
 
-	@Test
-	@DisplayName("Testing Kucoin connection")
-	public void exchangeParameters() {
-		try {
-			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-			application.run();
-		} catch (Exception e) {
-			fail("Exception was raised during application startup : " + e);
-		}
-	}
+    @Test
+    @DisplayName("Testing Kucoin connection")
+    public void exchangeParameters() {
+        try {
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+        } catch (Exception e) {
+            fail("Exception raised during application startup : " + e);
+        }
+    }
 
 }

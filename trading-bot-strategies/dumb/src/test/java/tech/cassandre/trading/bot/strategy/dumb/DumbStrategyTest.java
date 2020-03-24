@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DisplayName("Dumb strategy test")
 public class DumbStrategyTest {
 
-	/** How much we should wait for tests to last. */
+	/** How much we should wait. */
 	protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
 
 	/** Dumb strategy. */
@@ -28,7 +28,7 @@ public class DumbStrategyTest {
 	private DumbStrategy strategy;
 
 	/**
-	 * Check that the strategy receive data.
+	 * Check data retrieved.
 	 */
 	@Test
 	@DisplayName("Check data retrieved")

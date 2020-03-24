@@ -10,12 +10,12 @@ import java.util.Optional;
  */
 public interface MarketService {
 
-	/**
-	 * Returns a ticker for a currency pair.
-	 *
-	 * @param currencyPair currency pair
-	 * @return ticker
-	 */
-	Optional<TickerDTO> getTicker(CurrencyPairDTO currencyPair);
+    /**
+     * Returns a ticker for a currency pair.
+     *
+     * @param currencyPair currency pair
+     * @return ticker
+     */
+    Optional<TickerDTO> getTicker(CurrencyPairDTO currencyPair);
 
 }

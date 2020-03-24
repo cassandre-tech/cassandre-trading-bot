@@ -47,25 +47,25 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_D
 @DisplayName("Invalid rates")
 public class InvalidRatesTest extends BaseTest {
 
-	@Test
-	@DisplayName("Check error messages")
-	public void checkErrorMessages() {
-		try {
-			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-			application.run();
-			fail("Exception was not raised");
-		} catch (Exception e) {
-			final String message = getParametersExceptionMessage(e);
-			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'name'"));
-			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'sandbox'"));
-			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'username'"));
-			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'passphrase'"));
-			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'key'"));
-			assertFalse(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'secret'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange.rates' on field 'account'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange.rates' on field 'ticker'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange.rates' on field 'order'"));
-		}
-	}
+    @Test
+    @DisplayName("Check error messages")
+    public void checkErrorMessages() {
+        try {
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            final String message = getParametersExceptionMessage(e);
+            assertFalse(message.contains("'name'"));
+            assertFalse(message.contains("'sandbox'"));
+            assertFalse(message.contains("'username'"));
+            assertFalse(message.contains("'passphrase'"));
+            assertFalse(message.contains("'key'"));
+            assertFalse(message.contains("'secret'"));
+            assertTrue(message.contains("'account'"));
+            assertTrue(message.contains("'ticker'"));
+            assertTrue(message.contains("'order'"));
+        }
+    }
 
 }

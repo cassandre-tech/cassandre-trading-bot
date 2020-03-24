@@ -55,7 +55,7 @@ public class InvalidCredentialsTest {
 			System.setProperty("cassandre.trading.bot.exchange.secret", "none");
 			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
 			application.run();
-			fail("Exception was not raised");
+			fail("Exception not raised");
 		} catch (Exception e) {
 			assertTrue(e.getMessage().contains("Invalid credentials for kucoin"));
 		}

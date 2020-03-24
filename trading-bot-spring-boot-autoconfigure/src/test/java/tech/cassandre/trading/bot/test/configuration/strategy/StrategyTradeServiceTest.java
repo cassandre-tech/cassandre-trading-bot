@@ -32,7 +32,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 
 /**
- * Testing that the trade service is set in strategy.
+ * Testing the trade service strategy.
  */
 @SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
@@ -49,14 +49,14 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @DisplayName("Strategy trade service")
 public class StrategyTradeServiceTest {
 
-	/** Cassandre strategy. */
-	@Autowired
-	private TestableStrategy testableStrategy;
+    /** Cassandre strategy. */
+    @Autowired
+    private TestableStrategy testableStrategy;
 
-	@Test
-	@DisplayName("Check trade service is present")
-	public void checkErrorMessages() {
-		assertNotNull(testableStrategy.getTradeService());
-	}
+    @Test
+    @DisplayName("Check trade service is present")
+    public void checkErrorMessages() {
+        assertNotNull(testableStrategy.getTradeService());
+    }
 
 }

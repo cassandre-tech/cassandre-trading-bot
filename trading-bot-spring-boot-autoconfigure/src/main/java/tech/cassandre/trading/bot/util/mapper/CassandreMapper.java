@@ -30,98 +30,98 @@ import java.util.Map;
 @Mapper
 public interface CassandreMapper {
 
-	/**
-	 * Map CurrencyPair to CurrencyPairDTO.
-	 *
-	 * @param source CurrencyPair
-	 * @return CurrencyPairDTO
-	 */
-	@Mapping(source = "base", target = "baseCurrency")
-	@Mapping(source = "counter", target = "quoteCurrency")
-	CurrencyPairDTO mapToCurrencyPairDTO(CurrencyPair source);
+    /**
+     * Map CurrencyPair to CurrencyPairDTO.
+     *
+     * @param source CurrencyPair
+     * @return CurrencyPairDTO
+     */
+    @Mapping(source = "base", target = "baseCurrency")
+    @Mapping(source = "counter", target = "quoteCurrency")
+    CurrencyPairDTO mapToCurrencyPairDTO(CurrencyPair source);
 
-	/**
-	 * Map Currency to CurrencyDTO.
-	 *
-	 * @param source Currency
-	 * @return CurrencyDTO
-	 */
-	@Mapping(source = "currencyCode", target = "code")
-	CurrencyDTO mapToCurrencyDTO(Currency source);
+    /**
+     * Map Currency to CurrencyDTO.
+     *
+     * @param source Currency
+     * @return CurrencyDTO
+     */
+    @Mapping(source = "currencyCode", target = "code")
+    CurrencyDTO mapToCurrencyDTO(Currency source);
 
-	/**
-	 * Map AccountInfo to AccountDTO.
-	 *
-	 * @param source AccountInfo
-	 * @return AccountDTO
-	 */
-	@Mapping(source = "wallets", target = "accounts")
-	UserDTO mapToUserDTO(AccountInfo source);
+    /**
+     * Map AccountInfo to AccountDTO.
+     *
+     * @param source AccountInfo
+     * @return AccountDTO
+     */
+    @Mapping(source = "wallets", target = "accounts")
+    UserDTO mapToUserDTO(AccountInfo source);
 
-	/**
-	 * Map Wallet to WalletDTO.
-	 *
-	 * @param source Wallet
-	 * @return WalletDTO
-	 */
-	AccountDTO mapToWalletDTO(Wallet source);
+    /**
+     * Map Wallet to WalletDTO.
+     *
+     * @param source Wallet
+     * @return WalletDTO
+     */
+    AccountDTO mapToWalletDTO(Wallet source);
 
-	/**
-	 * Map balance.
-	 *
-	 * @param source map of Currency and Balance
-	 * @return Map of CurrencyDTO and BalanceDTO
-	 */
-	Map<CurrencyDTO, BalanceDTO> mapToCurrencyDTOAndBalanceDTO(Map<Currency, Balance> source);
+    /**
+     * Map balance.
+     *
+     * @param source map of Currency and Balance
+     * @return Map of CurrencyDTO and BalanceDTO
+     */
+    Map<CurrencyDTO, BalanceDTO> mapToCurrencyDTOAndBalanceDTO(Map<Currency, Balance> source);
 
-	/**
-	 * Map Balance to BalanceDTO.
-	 *
-	 * @param source source
-	 * @return BalanceDTO
-	 */
-	BalanceDTO mapToBalanceDTO(Balance source);
+    /**
+     * Map Balance to BalanceDTO.
+     *
+     * @param source source
+     * @return BalanceDTO
+     */
+    BalanceDTO mapToBalanceDTO(Balance source);
 
-	/**
-	 * Map Ticker to TickerDTO.
-	 *
-	 * @param source Ticker
-	 * @return TickerDTO
-	 */
-	TickerDTO mapToTickerDTO(Ticker source);
+    /**
+     * Map Ticker to TickerDTO.
+     *
+     * @param source Ticker
+     * @return TickerDTO
+     */
+    TickerDTO mapToTickerDTO(Ticker source);
 
-	/**
-	 * Map Order to OrderDTO.
-	 *
-	 * @param source order
-	 * @return OrderDTO
-	 */
-	OrderDTO mapToOrderDTO(LimitOrder source);
+    /**
+     * Map Order to OrderDTO.
+     *
+     * @param source order
+     * @return OrderDTO
+     */
+    OrderDTO mapToOrderDTO(LimitOrder source);
 
-	/**
-	 * Map to OrderTypeDTO.
-	 *
-	 * @param source XChange order type
-	 * @return order type
-	 */
-	@ValueMappings({
-			@ValueMapping(source = "BID", target = "BID"),
-			@ValueMapping(source = "ASK", target = "ASK"),
-			@ValueMapping(source = "EXIT_BID", target = "BID"),
-			@ValueMapping(source = "EXIT_ASK", target = "ASK")
-	})
-	OrderTypeDTO mapToOrderTypeDTO(Order.OrderType source);
+    /**
+     * Map to OrderTypeDTO.
+     *
+     * @param source XChange order type
+     * @return order type
+     */
+    @ValueMappings({
+            @ValueMapping(source = "BID", target = "BID"),
+            @ValueMapping(source = "ASK", target = "ASK"),
+            @ValueMapping(source = "EXIT_BID", target = "BID"),
+            @ValueMapping(source = "EXIT_ASK", target = "ASK")
+    })
+    OrderTypeDTO mapToOrderTypeDTO(Order.OrderType source);
 
-	/**
-	 * Map to OrderTypeDTO.
-	 *
-	 * @param source order type
-	 * @return XChange order type
-	 */
-	@ValueMappings({
-			@ValueMapping(source = "BID", target = "BID"),
-			@ValueMapping(source = "ASK", target = "ASK")
-	})
-	Order.OrderType mapToOrderType(OrderTypeDTO source);
+    /**
+     * Map to OrderTypeDTO.
+     *
+     * @param source order type
+     * @return XChange order type
+     */
+    @ValueMappings({
+            @ValueMapping(source = "BID", target = "BID"),
+            @ValueMapping(source = "ASK", target = "ASK")
+    })
+    Order.OrderType mapToOrderType(OrderTypeDTO source);
 
 }

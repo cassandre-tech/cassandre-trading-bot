@@ -49,62 +49,62 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @DisplayName("Strategy configuration tests")
 public class StrategyAutoConfigurationTest {
 
-	@Test
-	@DisplayName("Valid strategy")
-	public void validStrategy() {
-		try {
-			System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
-			System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
-			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-			application.run();
-		} catch (Exception e) {
-			fail("Exception was raised for valid strategy" + e);
-		}
-	}
+    @Test
+    @DisplayName("Valid strategy")
+    public void validStrategy() {
+        try {
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+        } catch (Exception e) {
+            fail("Exception raised for valid strategy" + e);
+        }
+    }
 
-	@Test
-	@DisplayName("No strategy found")
-	public void noStrategyFound() {
-		try {
-			System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
-			System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
-			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-			application.run();
-			fail("Exception was not raised");
-		} catch (Exception e) {
-			assertTrue(e.getCause() instanceof ConfigurationException);
-			assertTrue(e.getCause().getMessage().contains("No strategy found"));
-		}
-	}
+    @Test
+    @DisplayName("No strategy found")
+    public void noStrategyFound() {
+        try {
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+            assertTrue(e.getCause().getMessage().contains("No strategy found"));
+        }
+    }
 
-	@Test
-	@DisplayName("Two strategies found")
-	public void twoStrategiesFound() {
-		try {
-			System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
-			System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "true");
-			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-			application.run();
-			fail("Exception was not raised");
-		} catch (Exception e) {
-			assertTrue(e.getCause() instanceof ConfigurationException);
-			assertTrue(e.getCause().getMessage().contains("Several strategies were found"));
-		}
-	}
+    @Test
+    @DisplayName("Two strategies found")
+    public void twoStrategiesFound() {
+        try {
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "true");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+            assertTrue(e.getCause().getMessage().contains("Several strategies found"));
+        }
+    }
 
-	@Test
-	@DisplayName("Invalid strategy found")
-	public void invalidStrategyFound() {
-		try {
-			System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
-			System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "true");
-			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-			application.run();
-			fail("Exception was not raised");
-		} catch (Exception e) {
-			assertTrue(e.getCause() instanceof ConfigurationException);
-			assertTrue(e.getCause().getMessage().contains("Your strategy doesn't extends CassandreStrategy"));
-		}
-	}
+    @Test
+    @DisplayName("Invalid strategy found")
+    public void invalidStrategyFound() {
+        try {
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "true");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+            assertTrue(e.getCause().getMessage().contains("Your strategy doesn't extend CassandreStrategy"));
+        }
+    }
 
 }

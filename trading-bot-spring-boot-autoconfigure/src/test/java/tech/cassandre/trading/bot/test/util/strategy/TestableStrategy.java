@@ -24,101 +24,111 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
 @SuppressWarnings("unused")
 @Strategy(name = "Testable strategy")
 @ConditionalOnProperty(
-		value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
-		havingValue = "true")
+        value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
+        havingValue = "true")
 public class TestableStrategy extends CassandreStrategy {
 
-	/** Method duration. */
-	private static final long METHOD_DURATION = 1000;
+    /**
+     * Method duration.
+     */
+    private static final long METHOD_DURATION = 1000;
 
-	/** Logger. */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-	/** Accounts update received. */
-	private final List<AccountDTO> accountsUpdateReceived = new LinkedList<>();
+    /**
+     * Accounts update received.
+     */
+    private final List<AccountDTO> accountsUpdateReceived = new LinkedList<>();
 
-	/** Tickers update received. */
-	private final List<TickerDTO> tickersUpdateReceived = new LinkedList<>();
+    /**
+     * Tickers update received.
+     */
+    private final List<TickerDTO> tickersUpdateReceived = new LinkedList<>();
 
-	/** Orders update received. */
-	private final List<OrderDTO> ordersUpdateReceived = new LinkedList<>();
+    /**
+     * Orders update received.
+     */
+    private final List<OrderDTO> ordersUpdateReceived = new LinkedList<>();
 
-	@Override
-	public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-		Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
-		requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC));
-		requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT));
-		return requestedTickers;
-	}
+    @Override
+    public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
+        Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
+        requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC));
+        requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT));
+        return requestedTickers;
+    }
 
-	@Override
-	public final void onAccountUpdate(final AccountDTO account) {
-		accountsUpdateReceived.add(account);
-		logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account);
-		try {
-			Thread.sleep(METHOD_DURATION);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public final void onAccountUpdate(final AccountDTO account) {
+        accountsUpdateReceived.add(account);
+        logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account);
+        try {
+            Thread.sleep(METHOD_DURATION);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public final void onTickerUpdate(final TickerDTO ticker) {
-		tickersUpdateReceived.add(ticker);
-		logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker);
-		try {
-			Thread.sleep(METHOD_DURATION);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public final void onTickerUpdate(final TickerDTO ticker) {
+        tickersUpdateReceived.add(ticker);
+        logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker);
+        try {
+            Thread.sleep(METHOD_DURATION);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public final void onOrderUpdate(final OrderDTO order) {
-		ordersUpdateReceived.add(order);
-		logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order);
-		try {
-			Thread.sleep(METHOD_DURATION);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public final void onOrderUpdate(final OrderDTO order) {
+        ordersUpdateReceived.add(order);
+        logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order);
+        try {
+            Thread.sleep(METHOD_DURATION);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Return list count with format.
-	 *
-	 * @param list list to count
-	 * @return int value with format
-	 */
-	private String getCount(final List<?> list) {
-		return String.format("%03d", list.size());
-	}
+    /**
+     * Return formatted list count.
+     *
+     * @param list list to count
+     * @return int value with format
+     */
+    private String getCount(final List<?> list) {
+        return String.format("%03d", list.size());
+    }
 
-	/**
-	 * Getter lastAccountsReceived.
-	 *
-	 * @return last accounts received.
-	 */
-	public final List<AccountDTO> getAccountsUpdatesReceived() {
-		return accountsUpdateReceived;
-	}
+    /**
+     * Getter lastAccountsReceived.
+     *
+     * @return last accounts received.
+     */
+    public final List<AccountDTO> getAccountsUpdatesReceived() {
+        return accountsUpdateReceived;
+    }
 
-	/**
-	 * Getter lastTickersReceived.
-	 *
-	 * @return lastTickersReceived
-	 */
-	public final List<TickerDTO> getTickersUpdateReceived() {
-		return tickersUpdateReceived;
-	}
+    /**
+     * Getter lastTickersReceived.
+     *
+     * @return lastTickersReceived
+     */
+    public final List<TickerDTO> getTickersUpdateReceived() {
+        return tickersUpdateReceived;
+    }
 
-	/**
-	 * Getter lastOrdersReceived.
-	 *
-	 * @return lastOrderReceived
-	 */
-	public final List<OrderDTO> getOrdersUpdateReceived() {
-		return ordersUpdateReceived;
-	}
+    /**
+     * Getter lastOrdersReceived.
+     *
+     * @return lastOrderReceived
+     */
+    public final List<OrderDTO> getOrdersUpdateReceived() {
+        return ordersUpdateReceived;
+    }
 
 }

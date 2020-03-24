@@ -48,16 +48,16 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @DisplayName("Exchange name is unknown")
 public class UnknownExchangeTest extends BaseTest {
 
-	@Test
-	@DisplayName("Check error messages")
-	public void checkErrorMessages() {
-		try {
-			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-			application.run();
-			fail("Exception was not raised");
-		} catch (Exception e) {
-			assertTrue(e.getMessage().contains("Impossible to find the exchange you requested : foo"));
-		}
-	}
+    @Test
+    @DisplayName("Check error messages")
+    public void checkErrorMessages() {
+        try {
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Impossible to find the exchange you requested : foo"));
+        }
+    }
 
 }

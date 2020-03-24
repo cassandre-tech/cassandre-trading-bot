@@ -15,11 +15,11 @@ import java.lang.annotation.Target;
 @Component
 public @interface Strategy {
 
-	/**
-	 * Strategy name.
-	 *
-	 * @return strategy name
-	 */
-	String name() default "My strategy";
+    /**
+     * Strategy name.
+     *
+     * @return strategy name
+     */
+    String name() default "My strategy";
 
 }
