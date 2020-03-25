@@ -8,7 +8,10 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Base for tests.
@@ -95,8 +98,43 @@ public class BaseTest {
     protected static Optional<TickerDTO> getFakeTicker(final CurrencyPairDTO cp, final BigDecimal bid) {
         return Optional.of(TickerDTO.builder()
                 .currencyPair(cp)
+                .timestamp(getRandomDate())
                 .bid(bid)
                 .create());
+    }
+
+    /**
+     * Util method to return a fake ticker with date.
+     *
+     * @param timestamp timestamp
+     * @param cp        currency pair
+     * @param bid       bid price
+     * @return ticket
+     */
+    protected static Optional<TickerDTO> getFakeTicker(final Date timestamp, final CurrencyPairDTO cp, final BigDecimal bid) {
+        return Optional.of(TickerDTO.builder()
+                .currencyPair(cp)
+                .timestamp(timestamp)
+                .bid(bid)
+                .create());
+    }
+
+    /**
+     * Get random date.
+     *
+     * @return random date
+     */
+    public static Date getRandomDate() {
+        long aDay = TimeUnit.DAYS.toMillis(1);
+        long now = new Date().getTime();
+        Date hundredYearsAgo = new Date(now - aDay * 365 * 100);
+        Date tenDaysAgo = new Date(now - aDay * 10);
+        long startMillis = hundredYearsAgo.getTime();
+        long endMillis = tenDaysAgo.getTime();
+        long randomMillisSinceEpoch = ThreadLocalRandom
+                .current()
+                .nextLong(startMillis, endMillis);
+        return new Date(randomMillisSinceEpoch);
     }
 
     /**

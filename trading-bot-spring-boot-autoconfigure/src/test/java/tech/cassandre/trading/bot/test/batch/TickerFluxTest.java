@@ -23,6 +23,8 @@ import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -161,6 +163,7 @@ public class TickerFluxTest extends BaseTest {
 
         // Tenth value cp1 - 5.
         t = iterator.next();
+        System.out.println("==> " + t);
         assertEquals(cp1, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("5").compareTo(t.getBid()));
 
@@ -247,13 +250,15 @@ public class TickerFluxTest extends BaseTest {
 
             // Replies for ETH / BTC.
             final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
+            final Date time = Calendar.getInstance().getTime();
             given(marketService
                     .getTicker(cp1))
                     .willReturn(getFakeTicker(cp1, new BigDecimal("1")),
                             getFakeTicker(cp1, new BigDecimal("2")),
                             getFakeTicker(cp1, new BigDecimal("3")),
                             Optional.empty(),
-                            getFakeTicker(cp1, new BigDecimal("4")),
+                            getFakeTicker(time, cp1, new BigDecimal("4")),
+                            getFakeTicker(time, cp1, new BigDecimal("4")),
                             getFakeTicker(cp1, new BigDecimal("5")),
                             getFakeTicker(cp1, new BigDecimal("6")),
                             Optional.empty()
@@ -268,6 +273,7 @@ public class TickerFluxTest extends BaseTest {
                             getFakeTicker(cp2, new BigDecimal("30")),
                             getFakeTicker(cp2, new BigDecimal("40")),
                             getFakeTicker(cp2, new BigDecimal("50")),
+                            Optional.empty(),
                             getFakeTicker(cp2, new BigDecimal("60")),
                             Optional.empty(),
                             getFakeTicker(cp2, new BigDecimal("70"))

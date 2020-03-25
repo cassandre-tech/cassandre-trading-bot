@@ -5,9 +5,11 @@ import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.util.base.BaseFlux;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,10 +24,11 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
     /** Requested tickers. */
     private final List<CurrencyPairDTO> requestedCurrencyPairs = new LinkedList<>();
 
-    /**
-     * Last requested currency pair.
-     */
+    /** Last requested currency pair. */
     private CurrencyPairDTO lastRequestedCurrencyPairs = null;
+
+    /** Previous values. */
+    private final Map<CurrencyPairDTO, TickerDTO> previousValues = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -43,6 +46,7 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
      */
     public void updateRequestedCurrencyPairs(final Set<CurrencyPairDTO> newRequestedCurrencyPairs) {
         requestedCurrencyPairs.addAll(newRequestedCurrencyPairs);
+        requestedCurrencyPairs.forEach(cp -> previousValues.put(cp, null));
     }
 
     @Override
@@ -53,8 +57,11 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
         getCurrencyPairToTreat()
                 .flatMap(marketService::getTicker)
                 .ifPresent(t -> {
-                    getLogger().debug("TickerDTO - new ticker received : {}", t);
-                    newValues.add(t);
+                    if (!t.equals(previousValues.get(t.getCurrencyPair()))) {
+                        getLogger().debug("TickerDTO - new ticker received : {}", t);
+                        previousValues.replace(t.getCurrencyPair(), t);
+                        newValues.add(t);
+                    }
                 });
         return newValues;
     }
