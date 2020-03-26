@@ -31,7 +31,7 @@ public class SimpleStrategyTest {
 	SimpleStrategy strategy;
 
 	/**
-	 * Check that the strategy receive data.
+	 * Check data reception.
 	 */
 	@Test
 	@DisplayName("Check data reception")
