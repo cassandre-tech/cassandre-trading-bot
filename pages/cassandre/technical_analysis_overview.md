@@ -4,7 +4,7 @@ sidebar: cassandre_sidebar
 permalink: technical_analysis_overview.html
 ---
 
-_we learned the basics of technical analysis thanks to [Technical Analysis For Dummies](https://amzn.to/38TWaQm)._
+{% include note.html content="we learned the basics of technical analysis thanks to [Technical Analysis For Dummies](https://amzn.to/38TWaQm)." %}
 
 ## Introduction.
 

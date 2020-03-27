@@ -4,6 +4,8 @@ sidebar: cassandre_sidebar
 permalink: technical_analysis_add_time_series.html
 ---
 
+{% include note.html content="[ta4j sample project sources are availables here](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-strategies/technical_analysis/ta4j-strategy)." %}
+
 By creating your project with the Cassandre trading bot archetype, you should have a class named `SimpleStrategy` in `src/main/java/tech/cassandre/trading/strategy`.
 
 ## Creating a time series.

@@ -4,6 +4,8 @@ sidebar: cassandre_sidebar
 permalink: technical_analysis_add_indicators.html
 ---
 
+{% include note.html content="[ta4j sample project sources are availables here](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-strategies/technical_analysis/ta4j-strategy)." %}
+
 ## Adding simple moving average (SMA).
 
 We will add an indicator : simple moving average (SMA). Moving averages are one of the core indicators in technical analysis.  It is simply the average price over the specified period.

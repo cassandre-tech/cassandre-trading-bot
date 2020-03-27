@@ -4,6 +4,8 @@ sidebar: cassandre_sidebar
 permalink: technical_analysis_create_project.html
 ---
 
+{% include note.html content="[ta4j sample project sources are availables here](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-strategies/technical_analysis/ta4j-strategy)." %}
+
 ## Introduction.
 
 We are going to use [ta4j](https://ta4j.github.io/ta4j-wiki/), an open source Java library for technical analysis. It provides the basic components for creation, evaluation and execution of trading strategies.

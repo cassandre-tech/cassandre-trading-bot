@@ -4,6 +4,8 @@ sidebar: cassandre_sidebar
 permalink: technical_analysis_build_strategy.html
 ---
 
+{% include note.html content="[ta4j sample project sources are availables here](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-strategies/technical_analysis/ta4j-strategy)." %}
+
 ## Creating a strategy.
 
 The strategy allows you to define the rules your bot should follow to buy or sell asset. Those rules can use the indicators created with ta4j like we did for SMA.
@@ -13,7 +15,7 @@ For example, we will create a buy rule saying : "We want to buy if the 5-ticks S
 In `SimpleStrategy`, we add a new class variable : 
 ```java
 /** Strategy. */
-private org.ta4j.core.Strategy strategy;
+private Strategy strategy;
 ```
 
 In `SimpleStrategy` constructor, we will create the two rules and then creates the strategy : 
