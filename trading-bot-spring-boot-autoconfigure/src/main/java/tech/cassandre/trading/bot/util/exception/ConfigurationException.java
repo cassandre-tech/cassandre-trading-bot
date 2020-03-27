@@ -5,36 +5,36 @@ package tech.cassandre.trading.bot.util.exception;
  */
 public class ConfigurationException extends RuntimeException {
 
-	/** Advised action to fix the error. */
-	private String action;
+    /** Advised action to fix the error. */
+    private String action;
 
-	/**
-	 * Constructor without action.
-	 *
-	 * @param message error message
-	 */
-	public ConfigurationException(final String message) {
-		super(message);
-	}
+    /**
+     * Constructor without action.
+     *
+     * @param message error message
+     */
+    public ConfigurationException(final String message) {
+        super(message);
+    }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param message   error message
-	 * @param newAction advised action to fix this problem
-	 */
-	public ConfigurationException(final String message, final String newAction) {
-		super(message);
-		action = newAction;
-	}
+    /**
+     * Constructor.
+     *
+     * @param message   error message
+     * @param newAction advised action to fix this problem
+     */
+    public ConfigurationException(final String message, final String newAction) {
+        super(message);
+        action = newAction;
+    }
 
-	/**
-	 * Getter action.
-	 *
-	 * @return action
-	 */
-	public final String getAction() {
-		return action;
-	}
+    /**
+     * Getter action.
+     *
+     * @return action
+     */
+    public final String getAction() {
+        return action;
+    }
 
 }

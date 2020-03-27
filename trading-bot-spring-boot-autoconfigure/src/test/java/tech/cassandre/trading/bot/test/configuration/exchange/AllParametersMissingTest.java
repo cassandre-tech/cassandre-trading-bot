@@ -38,25 +38,25 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
 @DisplayName("All parameters are missing")
 public class AllParametersMissingTest extends BaseTest {
 
-	@Test
-	@DisplayName("Check error messages")
-	public void checkErrorMessages() {
-		try {
-			SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-			application.run();
-			fail("Exception was not raised");
-		} catch (Exception e) {
-			final String message = getParametersExceptionMessage(e);
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'name'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'sandbox'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'username'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'passphrase'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'key'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'secret'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'rates.account'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'rates.ticker'"));
-			assertTrue(message.contains("Field error in object 'cassandre.trading.bot.exchange' on field 'rates.order'"));
-		}
-	}
+    @Test
+    @DisplayName("Check error messages")
+    public void checkErrorMessages() {
+        try {
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            final String message = getParametersExceptionMessage(e);
+            assertTrue(message.contains("'name'"));
+            assertTrue(message.contains("'sandbox'"));
+            assertTrue(message.contains("'username'"));
+            assertTrue(message.contains("'passphrase'"));
+            assertTrue(message.contains("'key'"));
+            assertTrue(message.contains("'secret'"));
+            assertTrue(message.contains("'rates.account'"));
+            assertTrue(message.contains("'rates.ticker'"));
+            assertTrue(message.contains("'rates.order'"));
+        }
+    }
 
 }

@@ -9,11 +9,11 @@ import java.util.Set;
  */
 public interface ExchangeService {
 
-	/**
-	 * Get the list of available currency pairs for trading.
-	 *
-	 * @return list of currency pairs
-	 */
-	Set<CurrencyPairDTO> getAvailableCurrencyPairs();
+    /**
+     * Get the list of available currency pairs for trading.
+     *
+     * @return list of currency pairs
+     */
+    Set<CurrencyPairDTO> getAvailableCurrencyPairs();
 
 }

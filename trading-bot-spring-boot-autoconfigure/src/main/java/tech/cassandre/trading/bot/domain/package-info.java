@@ -1,5 +1,4 @@
 /**
- * Cassandre trading bot domain.
- * Domain objects : Objects from the business specific area that represent something we want to store.
+ * Domain objects.
  */
 package tech.cassandre.trading.bot.domain;

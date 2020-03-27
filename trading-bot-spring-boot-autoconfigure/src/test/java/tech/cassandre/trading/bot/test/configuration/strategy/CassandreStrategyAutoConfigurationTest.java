@@ -3,11 +3,12 @@ package tech.cassandre.trading.bot.test.configuration.strategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import tech.cassandre.trading.bot.test.util.strategy.TestableStrategy;
+import org.springframework.boot.SpringApplication;
+import tech.cassandre.trading.bot.CassandreTradingBot;
+import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAULT_VALUE;
@@ -32,7 +33,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 
 /**
- * Testing that the trade service is set in strategy.
+ * Strategy configuration tests.
  */
 @SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
@@ -45,18 +46,65 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_RATE_ORDER, value = PARAMETER_RATE_ORDER_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
-@SpringBootTest
-@DisplayName("Strategy trade service")
-public class StrategyTradeServiceTest {
+@DisplayName("Strategy configuration tests")
+public class CassandreStrategyAutoConfigurationTest {
 
-	/** Cassandre strategy. */
-	@Autowired
-	private TestableStrategy testableStrategy;
+    @Test
+    @DisplayName("Valid strategy")
+    public void validStrategy() {
+        try {
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+        } catch (Exception e) {
+            fail("Exception raised for valid strategy" + e);
+        }
+    }
 
-	@Test
-	@DisplayName("Check trade service is present")
-	public void checkErrorMessages() {
-		assertNotNull(testableStrategy.getTradeService());
-	}
+    @Test
+    @DisplayName("No strategy found")
+    public void noStrategyFound() {
+        try {
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+            assertTrue(e.getCause().getMessage().contains("No strategy found"));
+        }
+    }
+
+    @Test
+    @DisplayName("Two strategies found")
+    public void twoStrategiesFound() {
+        try {
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "true");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+            assertTrue(e.getCause().getMessage().contains("Several strategies found"));
+        }
+    }
+
+    @Test
+    @DisplayName("Invalid strategy found")
+    public void invalidStrategyFound() {
+        try {
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "true");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+            assertTrue(e.getCause().getMessage().contains("Your strategy doesn't extend CassandreStrategy"));
+        }
+    }
 
 }

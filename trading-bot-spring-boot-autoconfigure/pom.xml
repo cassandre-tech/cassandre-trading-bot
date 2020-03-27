@@ -55,6 +55,11 @@
 
 		<!-- Util -->
 		<dependency>
+			<groupId>com.github.vladimir-bukhtoyarov</groupId>
+			<artifactId>bucket4j-core</artifactId>
+			<version>4.10.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>1.3.1.Final</version>
@@ -94,7 +99,7 @@
 			<dependency>
 				<groupId>io.projectreactor</groupId>
 				<artifactId>reactor-bom</artifactId>
-				<version>Dysprosium-SR5</version>
+				<version>Dysprosium-SR6</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -196,7 +201,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>3.2.0</version>
 				<configuration>
 					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 				</configuration>
@@ -250,7 +255,7 @@
 	<parent>
 		<groupId>tech.cassandre.trading.bot</groupId>
 		<artifactId>cassandre-trading-bot-project</artifactId>
-		<version>0.0.5</version>
+		<version>0.0.6</version>
 	</parent>
 	<!-- =========================================================================================================== -->
 

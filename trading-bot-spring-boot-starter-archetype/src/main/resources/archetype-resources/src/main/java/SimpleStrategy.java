@@ -6,8 +6,8 @@ package ${package};
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
-import tech.cassandre.trading.bot.strategy.Strategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -20,8 +20,8 @@ import java.util.Set;
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
  * How to do it : https://trading-bot.cassandre.tech/how_to_create_an_exchange_sandbox_for_kucoin.html
  */
-@Strategy(name = "Simple strategy")
-public final class SimpleStrategy extends CassandreStrategy {
+@CassandreStrategy(name = "Simple strategy")
+public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	/** The accounts owned by the user. */
 	private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();

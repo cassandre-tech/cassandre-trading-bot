@@ -12,122 +12,124 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public final class UserDTO {
 
-	/** User ID (usually username). */
-	private final String id;
+    /** User ID (usually username). */
+    private final String id;
 
-	/** The accounts owned by the user. */
-	private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
+    /** The accounts owned by the user. */
+    private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
-	/** The moment at which the information was retrieved. */
-	private final ZonedDateTime timestamp;
+    /** Information timestamp. */
+    private final ZonedDateTime timestamp;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param builder Builder.
-	 */
-	protected UserDTO(final UserDTO.Builder builder) {
-		this.id = builder.id;
-		if (builder.accounts != null) {
-			this.accounts.putAll(builder.accounts);
-		}
-		if (builder.timestamp != null) {
-			timestamp = ZonedDateTime.ofInstant(builder.timestamp.toInstant(), ZoneId.systemDefault());
-		} else {
-			timestamp = ZonedDateTime.now();
-		}
-	}
+    /**
+     * Constructor.
+     *
+     * @param builder Builder.
+     */
+    protected UserDTO(final UserDTO.Builder builder) {
+        this.id = builder.id;
+        if (builder.accounts != null) {
+            this.accounts.putAll(builder.accounts);
+        }
+        if (builder.timestamp != null) {
+            timestamp = ZonedDateTime.ofInstant(builder.timestamp.toInstant(), ZoneId.systemDefault());
+        } else {
+            timestamp = ZonedDateTime.now();
+        }
+    }
 
-	/**
-	 * Returns builder.
-	 *
-	 * @return builder
-	 */
-	public static UserDTO.Builder builder() {
-		return new UserDTO.Builder();
-	}
+    /**
+     * Returns builder.
+     *
+     * @return builder
+     */
+    public static UserDTO.Builder builder() {
+        return new UserDTO.Builder();
+    }
 
-	/**
-	 * Getter for id.
-	 *
-	 * @return id
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * Getter for "id".
+     *
+     * @return id
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * Getter for accounts.
-	 *
-	 * @return accounts
-	 */
-	public Map<String, AccountDTO> getAccounts() {
-		return accounts;
-	}
+    /**
+     * Getter for accounts.
+     *
+     * @return accounts
+     */
+    public Map<String, AccountDTO> getAccounts() {
+        return accounts;
+    }
 
-	/**
-	 * Getter for timestamp.
-	 *
-	 * @return timestamp
-	 */
-	public ZonedDateTime getTimestamp() {
-		return timestamp;
-	}
+    /**
+     * Getter for "timestamp".
+     *
+     * @return timestamp
+     */
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
+    }
 
-	/** Builder. */
-	public static final class Builder {
+    /**
+     * Builder.
+     */
+    public static final class Builder {
 
-		/** User ID (usually username). */
-		private String id;
+        /** User ID (usually username). */
+        private String id;
 
-		/** The accounts owned by this user. */
-		private Map<String, AccountDTO> accounts = new LinkedHashMap<>();
+        /** The accounts owned by this user. */
+        private Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
-		/** The moment at which the information was retrieved. */
-		private Date timestamp;
+        /** Information timestamp. */
+        private Date timestamp;
 
-		/**
-		 * Id.
-		 *
-		 * @param newId id.
-		 * @return builder
-		 */
-		public Builder setId(final String newId) {
-			this.id = newId;
-			return this;
-		}
+        /**
+         * Id.
+         *
+         * @param newId id.
+         * @return builder
+         */
+        public Builder setId(final String newId) {
+            this.id = newId;
+            return this;
+        }
 
-		/**
-		 * Accounts.
-		 *
-		 * @param newAccounts accounts
-		 * @return builder
-		 */
-		public Builder setAccounts(final Map<String, AccountDTO> newAccounts) {
-			this.accounts = newAccounts;
-			return this;
-		}
+        /**
+         * Accounts.
+         *
+         * @param newAccounts accounts
+         * @return builder
+         */
+        public Builder setAccounts(final Map<String, AccountDTO> newAccounts) {
+            this.accounts = newAccounts;
+            return this;
+        }
 
-		/**
-		 * Timestamp.
-		 *
-		 * @param newTimestamp timestamp
-		 * @return builder
-		 */
-		public Builder timestamp(final Date newTimestamp) {
-			this.timestamp = newTimestamp;
-			return this;
-		}
+        /**
+         * Timestamp.
+         *
+         * @param newTimestamp timestamp
+         * @return builder
+         */
+        public Builder timestamp(final Date newTimestamp) {
+            this.timestamp = newTimestamp;
+            return this;
+        }
 
-		/**
-		 * Creates user.
-		 *
-		 * @return user
-		 */
-		public UserDTO create() {
-			return new UserDTO(this);
-		}
+        /**
+         * Creates user.
+         *
+         * @return user
+         */
+        public UserDTO create() {
+            return new UserDTO(this);
+        }
 
-	}
+    }
 
 }

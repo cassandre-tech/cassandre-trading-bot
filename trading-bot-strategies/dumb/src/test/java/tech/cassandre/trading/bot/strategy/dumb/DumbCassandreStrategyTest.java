@@ -18,17 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 @SpringBootTest
 @DisplayName("Dumb strategy test")
-public class DumbStrategyTest {
+public class DumbCassandreStrategyTest {
 
-	/** How much we should wait for tests to last. */
+	/** How much we should wait. */
 	protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
 
 	/** Dumb strategy. */
 	@Autowired
-	private DumbStrategy strategy;
+	private DumbCassandreStrategy strategy;
 
 	/**
-	 * Check that the strategy receive data.
+	 * Check data retrieved.
 	 */
 	@Test
 	@DisplayName("Check data retrieved")
