@@ -75,12 +75,42 @@ entries:
             type: page
 
       # ================================================================================================================
-      - title: Technical analysis stratey
+      - title: Technical analysis strategy
         output: web
         folderitems:
 
           - title: Overview
-            url: /work_in_progress_technical_analysis_strategy.html
+            url: /technical_analysis_overview.html
+            output: web
+            type: page
+
+          - title: Create project
+            url: /technical_analysis_create_project.html
+            output: web
+            type: page
+
+          - title: Add time series
+            url: /technical_analysis_add_time_series.html
+            output: web
+            type: page
+
+          - title: Add indicators
+            url: /technical_analysis_add_indicators.html
+            output: web
+            type: page
+
+          - title: Build a trading strategy
+            url: /technical_analysis_build_strategy.html
+            output: web
+            type: page
+
+          - title: Backtest strategy
+            url: /technical_analysis_backtest_strategy.html
+            output: web
+            type: page
+
+          - title: Analyze results
+            url: /technical_analysis_analyze_results.html
             output: web
             type: page
 
