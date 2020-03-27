@@ -12,3 +12,4 @@ trading-bot-spring-boot-starter
 trading-bot-spring-boot-starter-archetype
 trading-bot-strategies
 /cassandre-trading-bot.iml
+pom.xml
