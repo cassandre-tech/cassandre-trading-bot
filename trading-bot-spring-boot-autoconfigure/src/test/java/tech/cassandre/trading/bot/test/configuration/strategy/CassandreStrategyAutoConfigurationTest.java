@@ -47,7 +47,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @DisplayName("Strategy configuration tests")
-public class StrategyAutoConfigurationTest {
+public class CassandreStrategyAutoConfigurationTest {
 
     @Test
     @DisplayName("Valid strategy")

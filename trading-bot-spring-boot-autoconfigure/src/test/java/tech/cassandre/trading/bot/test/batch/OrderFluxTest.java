@@ -20,7 +20,7 @@ import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.BaseTest;
-import tech.cassandre.trading.bot.test.util.strategy.TestableStrategy;
+import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -86,7 +86,7 @@ public class OrderFluxTest extends BaseTest {
 
     /** Cassandre strategy. */
     @Autowired
-    private TestableStrategy testableStrategy;
+    private TestableCassandreStrategy testableStrategy;
 
     /** Trade service. */
     @Autowired

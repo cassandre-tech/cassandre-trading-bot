@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.strategy.BasicStrategy;
-import tech.cassandre.trading.bot.strategy.Strategy;
+import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -22,11 +22,11 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
  * Testable strategy (used for tests).
  */
 @SuppressWarnings("unused")
-@Strategy(name = "Testable strategy")
+@CassandreStrategy(name = "Testable strategy")
 @ConditionalOnProperty(
         value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
         havingValue = "true")
-public class TestableStrategy extends BasicStrategy {
+public class TestableCassandreStrategy extends BasicCassandreStrategy {
 
     /**
      * Method duration.

@@ -8,8 +8,8 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.strategy.BasicStrategy;
-import tech.cassandre.trading.bot.strategy.Strategy;
+import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
@@ -71,7 +71,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     @PostConstruct
     public void configure() {
         // Retrieving all the beans have the annotation @Strategy.
-        final Map<String, Object> strategyBeans = applicationContext.getBeansWithAnnotation(Strategy.class);
+        final Map<String, Object> strategyBeans = applicationContext.getBeansWithAnnotation(CassandreStrategy.class);
 
         // =============================================================================================================
         // Check if everything is ok.
@@ -93,18 +93,18 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Check if the strategy extends CassandreStrategy.
         Object o = strategyBeans.values().iterator().next();
-        if (!(o instanceof BasicStrategy)) {
+        if (!(o instanceof BasicCassandreStrategy)) {
             throw new ConfigurationException("Your strategy doesn't extend CassandreStrategy",
                     o.getClass() + " must extend CassandreStrategy");
         }
 
         // =============================================================================================================
         // Getting strategy information.
-        BasicStrategy strategy = (BasicStrategy) o;
+        BasicCassandreStrategy strategy = (BasicCassandreStrategy) o;
 
         // Displaying strategy name.
-        Strategy strategyAnnotation = o.getClass().getAnnotation(Strategy.class);
-        getLogger().info("StrategyConfiguration - Running strategy '{}'", strategyAnnotation.name());
+        CassandreStrategy cassandreStrategyAnnotation = o.getClass().getAnnotation(CassandreStrategy.class);
+        getLogger().info("StrategyConfiguration - Running strategy '{}'", cassandreStrategyAnnotation.name());
 
         // Displaying requested currency pairs.
         StringJoiner currencyPairList = new StringJoiner(", ");

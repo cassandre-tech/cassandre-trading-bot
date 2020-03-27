@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import tech.cassandre.trading.bot.test.util.strategy.TestableStrategy;
+import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
@@ -47,11 +47,11 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
 @DisplayName("Strategy trade service")
-public class StrategyTradeServiceTest {
+public class CassandreStrategyTradeServiceTest {
 
     /** Cassandre strategy. */
     @Autowired
-    private TestableStrategy testableStrategy;
+    private TestableCassandreStrategy testableStrategy;
 
     @Test
     @DisplayName("Check trade service is present")

@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Component
-public @interface Strategy {
+public @interface CassandreStrategy {
 
     /**
      * Strategy name.

@@ -3,23 +3,19 @@ package tech.cassandre.trading.strategy;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.BaseStrategy;
-import org.ta4j.core.BaseTradingRecord;
 import org.ta4j.core.Rule;
-import org.ta4j.core.TradingRecord;
+import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
-import org.ta4j.core.trading.rules.OverIndicatorRule;
-import org.ta4j.core.trading.rules.StopGainRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.strategy.BasicStrategy;
-import tech.cassandre.trading.bot.strategy.Strategy;
+import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -31,8 +27,8 @@ import java.util.Set;
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
  * How to do it : https://trading-bot.cassandre.tech/how_to_create_an_exchange_sandbox_for_kucoin.html
  */
-@Strategy(name = "Ta4j strategy")
-public final class SimpleStrategy extends BasicStrategy {
+@CassandreStrategy(name = "Ta4j strategy")
+public final class SimpleCassandreStrategy extends BasicCassandreStrategy {
 
     /** Currency pair we are trading. */
     private CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
@@ -41,12 +37,12 @@ public final class SimpleStrategy extends BasicStrategy {
     private BarSeries series;
 
     /** Strategy. */
-    private org.ta4j.core.Strategy strategy;
+    private Strategy strategy;
 
     /**
      * Constructor.
      */
-    public SimpleStrategy() {
+    public SimpleCassandreStrategy() {
         // Define series (we keep 100 bars).
         series = new BaseBarSeriesBuilder().withNumTypeOf(DoubleNum.class).withName("ETH/BTC").build();
         series.setMaximumBarCount(100);

@@ -12,7 +12,7 @@ import java.util.Set;
  * Basic strategy - Cassandre bot will run the first CassandreStrategy implementation found.
  */
 @SuppressWarnings("unused")
-public abstract class BasicStrategy {
+public abstract class BasicCassandreStrategy {
 
     /** Trade service. */
     private TradeService tradeService;
