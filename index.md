@@ -12,7 +12,7 @@ Following this website, you will learn :
   * [The basics of trading](trading_basics_what_is_a_cryptocurrency.html).
   * [Our bot (architecture, features...)](our_bot_architecture.html).
   * [How to create and run your first strategy](create_and_run_what_are_we_going_to_do.html).
-  * [How to create a strategy using technical analysis](work_in_progress_technical_analysis_strategy.html) (Work in progress).
+  * [How to create a strategy using technical analysis](technical_analysis_overview.html).
   * [How to create a strategy using machine learning](work_in_progress_machine_learning_strategy.html) (Work in progress).
   * [How to create a strategy using deep learning](work_in_progress_deep_learning_strategy.html) (Work in progress).
   * [How we developed our bot](bot_development_project_structure.html).

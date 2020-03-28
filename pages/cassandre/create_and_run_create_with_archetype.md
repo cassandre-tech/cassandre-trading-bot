@@ -123,7 +123,7 @@ public final class SimpleStrategy extends CassandreStrategy {
 
 }
 ```
-As described in the [architecture chapter](our_bot_architecture.html), a cassandre strategy is a class annotated with [@Strategy](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/Strategy.java) and implementing the [CassandreStrategy](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/CassandreStrategy.java) interface.
+As described in the [architecture chapter](our_bot_architecture.html), a cassandre strategy is a class annotated with [@CassandreStrategy](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/CassandreStrategy.java) and implementing the [BasicCassandreStrategy](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.java) interface.
 
 This is how it works : 
   * In the method <code>getRequestedCurrencyPairs()</code>, you have to return the list of currency pairs updates you want to receive.
@@ -133,7 +133,7 @@ This is how it works :
   * Inside this class, you can make an order by accessing the trade service with a call to <code>getTradeService()</code>.
 
 ## Edit the configuration.
-By default, we had setup our sandbox account in  <code>src/main/resources/application.properties</code> but you'd better create your own [Kucoin sandbox account](how_to_create_an_exchange_sandbox_for_kucoin.html). 
+By default, the bot is using our sandbox account (<code>src/main/resources/application.properties</code>), but you'd better create your own [Kucoin sandbox account](how_to_create_an_exchange_sandbox_for_kucoin.html). 
 ```properties
 #
 # Exchange configuration.

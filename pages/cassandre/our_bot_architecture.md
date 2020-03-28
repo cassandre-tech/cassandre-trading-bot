@@ -5,7 +5,7 @@ summary: Details cassandre trading bot architecture.
 permalink: our_bot_architecture.html
 ---
 
-Cassandre trading bot is provided as a Spring boot starter. Once the starter is added to your Spring boot project, it will search for a class having the <code>@Strategy</code> annotation and implementing <code>CassandreStrategy</code>.
+Cassandre trading bot is available as a Spring boot starter. Once the starter is added to your Spring boot project, it will search for a class having the <code>@CassandreStrategy</code> annotation and implementing [BasicCassandreStrategy](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.java).
 
 In the method <code>getRequestedCurrencyPairs()</code>, you have to return the list of currency pairs updates you want to receive.
 

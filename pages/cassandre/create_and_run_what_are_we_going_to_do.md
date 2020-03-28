@@ -11,4 +11,3 @@ In this chapter, you will see :
   * How to create an application from scratch thanks to our archetype. This will create a simple Spring boot application with an empty strategy.
   * How to add our bot to an already existing spring boot project.
   * How to write your own strategy.
-  * Run & package the bot and the strategy.

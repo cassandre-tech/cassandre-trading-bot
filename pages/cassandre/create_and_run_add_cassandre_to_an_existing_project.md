@@ -10,7 +10,7 @@ permalink: create_and_run_add_cassandre_to_an_existing_project.html
 ## Existing project.
 To demonstrate how to add Cassandre to an existing Spring project, we will create a project with [Spring boot initializr](https://start.spring.io/).
 
-{% include note.html content="[Click here for a simple pre configured spring boot project](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.2.5.RELEASE&packaging=jar&jvmVersion=1.8&groupId=com.mycompany.app&artifactId=my-app&name=my-app&description=Demo%20project%20for%20Spring%20Boot&packageName=com.mycompany.app.my-app)" %}
+{% include note.html content="[Click here for a simple pre configured spring boot project](https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.2.6.RELEASE&packaging=jar&jvmVersion=1.8&groupId=com.mycompany.app&artifactId=my-app&name=my-app&description=Demo%20project%20for%20Spring%20Boot&packageName=com.mycompany.app.my-app)" %}
 
 ## Project structure.
 ```
@@ -43,15 +43,19 @@ my-app
 The first step is to add our spring boot starter to the project. Add the following dependency to <code>pom.xml</code> in the <code>dependencies</code> section : 
 ```xml
 <dependencies>
-        ...
-		<dependency>
-			<groupId>tech.cassandre.trading.bot</groupId>
-			<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-        ...
+    ...
+	<dependency>
+		<groupId>tech.cassandre.trading.bot</groupId>
+		<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
+		<version>0.0.6</version>
+	</dependency>
+     ...
 </dependencies>
 ```
+
+The latest release is :
+
+[![Maven Central](https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-starter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.cassandre.trading.bot%22%20AND%20a:%22cassandre-trading-bot-spring-boot-starter%22).
 
 ## Add a strategy.
 Create a class named <code>MyStrategy</code> in <code>src/main/java</code> : 
@@ -73,8 +77,8 @@ import java.util.Set;
 /**
  * My strategy.
  */
-@Strategy
-public final class MyStrategy extends CassandreStrategy {
+@CassandreStrategy
+public final class MyStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
@@ -105,7 +109,7 @@ public final class MyStrategy extends CassandreStrategy {
 This strategy will only display the data received.
 
 ## Add configuration
-Setup our sandbox account in  <code>src/main/resources/application.properties</code> but you'd better create your own [Kucoin sandbox account](how_to_create_an_exchange_sandbox_for_kucoin.html). 
+Setup the sandbox account in <code>src/main/resources/application.properties</code>, but you'd better create your own [Kucoin sandbox account](how_to_create_an_exchange_sandbox_for_kucoin.html). 
 ```properties
 #
 # Exchange configuration.

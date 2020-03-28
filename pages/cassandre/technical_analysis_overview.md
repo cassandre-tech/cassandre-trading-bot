@@ -12,7 +12,7 @@ Technical analysis (also called charting, market timing or trend following) is t
 
 The key idea is that prices move in trends much of the time. Those trends can be identified with patterns you see repeatedly and with support and resistance trend lines. Primary trends (lasting months or years) are punctuated by secondary movements (lasting weeks or months) in the opposite direction of the primary trend. Trends remain in place until some major events happens (Part of [Dow theory](https://en.wikipedia.org/wiki/Dow_theory)). 
 
-At a very basic level, this is about drawing lines to guess where things are going. Of course, what happens depends on so many things that you can't be always right. No lines would have guessed the effects of the Coronavirus but peoples continues to try to guess what's newt, it's in humane nature to try to reduce uncertainty.
+At a very basic level, this is about drawing lines to guess where things are going. Of course, what happens depends on so many things that you can't be always right. No lines would have guessed the effects of the Coronavirus but peoples continues to try to guess what's next, it's in human nature to try to reduce uncertainty.
 
 Technical analysis focuses on the price of an asset rather than its fundamentals.
 

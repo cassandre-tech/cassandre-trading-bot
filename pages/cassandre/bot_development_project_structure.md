@@ -40,11 +40,11 @@ _Offers high level services :_
 
 ## Strategy ([tech.cassandre.trading.bot.strategy](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy)).
 _Strategy management :_
-  * [Strategy annotation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/Strategy.java) : this annotation allows cassandre trading bot to know which class is a strategy.
-  * [CassandreStrategy](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/CassandreStrategy.java) : cassandre bot will run the first CassandreStrategy implementation found that also have the @strategy annotation.
+  * [Strategy annotation](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/CassandreStrategy.java) : this annotation allows cassandre trading bot to know which class is a strategy.
+  * [CassandreStrategy](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.java) : cassandre bot will run the first CassandreStrategy implementation found that also have the @strategy annotation.
 
 ## Util ([tech.cassandre.trading.bot.util](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/util)).
-_Utility classes : _
+_Utility classes :_
   * [base](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/util/base) : base classes.
   * [dto](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/util/dto) : common dto.
   * [exception](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/util/exception) : exception management.

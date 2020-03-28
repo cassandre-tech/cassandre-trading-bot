@@ -6,7 +6,7 @@ permalink: trading_basics_what_is_an_exchange.html
 
 [Cryptocurrency exchanges](https://coinmarketcap.com/rankings/exchanges/) like [Coinbase](https://www.coinbase.com/) or [Kucoin](https://www.kucoin.com/) are online platforms in which you can exchange one kind of asset for another based on the market value.
 
-To make it simple, after creating an account, the exchange will allow you to buy an amount of a cryptocurrency in exchange for your euros/dollars (they usually take a fee for that). Be careful, in reality, you don't really "own" the cryptocurrency you will buy there : if you don't own the private key, you just have a "promise" that an exchange own you some assets.
+To make it simple, after creating an account, the exchange will allow you to buy an amount of a cryptocurrency in exchange for your euros/dollars (they usually take a fee for that). Be careful, in reality, you don't really "own" the cryptocurrency you will buy there : if you don't own the private key, you just have a "promise" that an exchange owe you some assets.
 
 Most exchanges also offers tools for trading cryptocurrency. For example, Coinbase offers [this tool](https://pro.coinbase.com/).
 

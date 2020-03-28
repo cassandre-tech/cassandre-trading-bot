@@ -62,7 +62,7 @@ public void onTickerUpdate(final TickerDTO ticker) {
     if (strategy.shouldEnter(endIndex)) {
     // Our strategy should enter
         OrderCreationResultDTO buyMarketOrder = getTradeService().createBuyMarketOrder(cp, new BigDecimal(1));
-        System.out.println("=> Strategy enter - order " + buyMarketOrder.getOrderId());
+        System.out.println("==> Strategy enter - order " + buyMarketOrder.getOrderId());
     } else if (strategy.shouldExit(endIndex)) {
         // Our strategy should exit
         OrderCreationResultDTO sellMarketOrder = getTradeService().createSellMarketOrder(cp, new BigDecimal(1));
