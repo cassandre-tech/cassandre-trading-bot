@@ -12,14 +12,14 @@ permalink: how_to_setup_documentation.html
 
   * Copy the content of the ZIP files to the `/docs` directory.
 
-  * Run the web site by running `docker-compose up` in the `docs` directory.
+  * Run the website by running `docker-compose up` in the `docs` directory.
 
   * Your site should now be running at [http://localhost:4000/](http://localhost:4000/).
 
 ## Configuration.
   * Edit `docs/_config.yml` and set your own parameters.
   
-  * In the sidebars parameter, add your sidebar name, for example : `cassandre_sidebar`. You can remove the others.
+  * In the sidebar's parameters, add your sidebar name, for example : `cassandre_sidebar`. You can remove the others.
   
   * Create `cassandre_sidebar.yml` in `docs/_data/sidebars`.
 

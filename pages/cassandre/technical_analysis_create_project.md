@@ -4,7 +4,7 @@ sidebar: cassandre_sidebar
 permalink: technical_analysis_create_project.html
 ---
 
-{% include note.html content="[ta4j sample project sources are availables here](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-strategies/technical_analysis/ta4j-strategy)." %}
+{% include note.html content="[ta4j sample project sources are available here](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-strategies/technical_analysis/ta4j-strategy)." %}
 
 ## Introduction.
 

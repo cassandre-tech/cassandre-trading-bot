@@ -8,7 +8,7 @@ permalink: bot_development_flux.html
 ## BaseFlux.
 All batches are using [Project reactor](https://projectreactor.io) and inherits from the [BaseFlux](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/util/base/BaseFlux.java) class. 
 
-The only method to implement for a flux is <code>getNewValues()</code>, it will be called by the bot and the values returned will be send to the user strategy throw the flux. 
+The only method to implement for a flux is <code>getNewValues()</code>, it will be called by the bot, and the values returned will be sent to the user strategy throw the flux. 
 
 ## AccountFlux.
 [AccountFlux](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-spring-boot-autoconfigure/src/main/java/tech/cassandre/trading/bot/batch/AccountFlux.java) is calling the exchange to retrieve accounts & balances. Any changes will result in a call to the method <code>onAccountUpdate()</code> of the user strategy.

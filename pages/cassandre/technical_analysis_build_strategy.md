@@ -4,7 +4,7 @@ sidebar: cassandre_sidebar
 permalink: technical_analysis_build_strategy.html
 ---
 
-{% include note.html content="[ta4j sample project sources are availables here](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-strategies/technical_analysis/ta4j-strategy)." %}
+{% include note.html content="[ta4j sample project sources are available here](https://github.com/cassandre-tech/cassandre-trading-bot/tree/development/trading-bot-strategies/technical_analysis/ta4j-strategy)." %}
 
 ## Creating a strategy.
 
@@ -46,7 +46,7 @@ public SimpleStrategy() {
 
 ## Using the strategy.
 
-At each new ticker, we will ask the strategy if we should enter or exit. Depending on the result, we use Cassandre trading service to make an order.
+At each new ticker quote, we will ask the strategy if we should enter or exit. Depending on the result, we use Cassandre trading service to create an order.
 
 ```java
 @Override

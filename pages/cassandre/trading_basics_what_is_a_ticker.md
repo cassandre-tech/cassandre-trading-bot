@@ -4,17 +4,17 @@ sidebar: cassandre_sidebar
 permalink: trading_basics_what_is_a_ticker.html
 ---
 
-A stock ticker is a report of the price of certain securities, updated continuously throughout the trading session by the various stock market exchanges. A "tick" is any change in the price of the security, whether that movement is up or down.
+A ticker, synonym for stock symbol, is the short form of full security (asset) name (e.g. full: Bitcoin, ticker: BTC). A ticker has a stream of quotes (AKA prices) attached to it, continuously updated throughout a trading session by the various exchanges. A “tick” is any change in the price of the security as observed from one trade to the next, whether that movement is up or down.
 
-These are the fields you can find on a ticker : 
+These are the fields you can find on a ticker quote:
 
 | Field  | Description  |
 |-------|---------|
 | <code>currencyPair</code>  | Currency pair  |
 | <code>open</code>  | The opening price is the first trade price that was recorded during the day’s trading  |
 | <code>last</code>  | Last trade field is the price at which the last trade was executed  |
-| <code>bid</code>  | The bid price shown represents the highest bid price  |
-| <code>ask</code>  | The ask price shown represents the lowest bid price  |
+| <code>bid</code>  | The bid price shown represents the highest price  |
+| <code>ask</code>  | The ask price shown represents the lowest price  |
 | <code>high</code>  | The day’s high price  |
 | <code>low</code>  | The day’s low price  |
 | <code>vwap</code>  | Volume-weighted average price (VWAP) is the ratio of the value traded to total volume traded over a particular time horizon (usually one day)  |

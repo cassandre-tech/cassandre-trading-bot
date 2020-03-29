@@ -1,5 +1,5 @@
 ---
-title: Tools, Frameworks, and Libraries 
+title: Tools, Frameworks, and Libraries
 summary: This is the list of tools, frameworks and libraries used to develop cassandre.
 sidebar: cassandre_sidebar
 permalink: bot_development_tools_frameworks_and_libraries.html
