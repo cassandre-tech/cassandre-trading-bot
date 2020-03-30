@@ -42,7 +42,7 @@
 					<dependency>
 						<groupId>com.puppycrawl.tools</groupId>
 						<artifactId>checkstyle</artifactId>
-						<version>8.30</version>
+						<version>8.31</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -111,7 +111,7 @@
 	<parent>
 		<groupId>tech.cassandre.trading.bot</groupId>
 		<artifactId>cassandre-trading-bot-project</artifactId>
-		<version>0.0.6</version>
+		<version>0.0.7</version>
 	</parent>
 	<!-- =========================================================================================================== -->
 
