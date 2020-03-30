@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>tech.cassandre.trading.bot</groupId>
 			<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
-			<version>0.0.8</version>
+			<version>0.0.9</version>
 		</dependency>
 
 		<dependency>
