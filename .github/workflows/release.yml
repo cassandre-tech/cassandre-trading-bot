@@ -37,6 +37,7 @@ jobs:
       - name: Build, run tests, package
         id: package
         env: # Environment variables.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Ossrh credentials.
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
