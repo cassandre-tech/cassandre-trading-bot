@@ -103,11 +103,6 @@ public class TradeServiceTest extends BaseTest {
         assertTrue(result1.getException().isEmpty());
         assertTrue(result1.getOrderId().isPresent());
 
-        // TODO Find why the new order doesn't appear in the open orders.
-        // with().pollInterval(fibonacci(SECONDS)).await()
-        //	.atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-        //	.untilAsserted(() -> assertEquals(openOrdersCount + 1, tradeService.getOpenOrders().size()));
-
         // =============================================================================================================
         // Getting a non existing order.
         assertFalse(tradeService.getOpenOrderByOrderId("").isPresent());
