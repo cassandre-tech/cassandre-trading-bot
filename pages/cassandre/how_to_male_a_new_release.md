@@ -17,4 +17,6 @@ To finish the release and push branches and tags, just run : `mvn gitflow:releas
 
 ## Update documentation.
 
+  * Edit release number in [Create a new project with Cassandre archetype](create_and_run_create_with_archetype.html).
   * Edit release number in [Add Cassandre to an existing project](create_and_run_add_cassandre_to_an_existing_project.html).
+  * Edit release number in [Technical analysis / Create project](technical_analysis_create_project.html).

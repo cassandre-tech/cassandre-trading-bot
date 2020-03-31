@@ -16,8 +16,12 @@ We are going to use [ta4j](https://ta4j.github.io/ta4j-wiki/), an open source Ja
 
 Just type this command :
 ```sh
-mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-archetype -DgroupId=tech.cassandre.trading.strategy -DartifactId=ta4j-strategy -Dversion=1.0-SNAPSHOT -Dpackage=tech.cassandre.trading.strategy
+mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-archetype -DarchetypeVersion=1.0.0 -DgroupId=tech.cassandre.trading.strategy -DartifactId=ta4j-strategy -Dversion=1.0-SNAPSHOT -Dpackage=tech.cassandre.trading.strategy
 ```
+
+The latest release is :
+
+[![Maven Central](https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-starter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.cassandre.trading.bot%22%20AND%20a:%22cassandre-trading-bot-spring-boot-starter%22).
 
 The created project is a spring boot project with the following structure : 
 ```

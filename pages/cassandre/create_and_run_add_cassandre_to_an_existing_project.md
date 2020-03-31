@@ -47,7 +47,7 @@ The first step is to add our spring boot starter to the project. Add the followi
 	<dependency>
 		<groupId>tech.cassandre.trading.bot</groupId>
 		<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
-		<version>0.0.6</version>
+		<version>1.0.0</version>
 	</dependency>
      ...
 </dependencies>
