@@ -34,6 +34,7 @@ import java.util.Set;
 
 import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -92,8 +93,8 @@ public class AllFluxTest extends BaseTest {
         with().await().untilAsserted(() -> assertEquals(numberOfValuesExpected, testableStrategy.getOrdersUpdateReceived().size()));
 
         // Checking that all other data have been received.
-        assertTrue(testableStrategy.getTickersUpdateReceived().size() > 1);
-        assertTrue(testableStrategy.getAccountsUpdatesReceived().size() > 1);
+        assertFalse(testableStrategy.getTickersUpdateReceived().isEmpty());
+        assertFalse(testableStrategy.getAccountsUpdatesReceived().isEmpty());
     }
 
     /**
