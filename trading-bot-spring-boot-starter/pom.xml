@@ -111,7 +111,7 @@
 	<parent>
 		<groupId>tech.cassandre.trading.bot</groupId>
 		<artifactId>cassandre-trading-bot-project</artifactId>
-		<version>0.0.13</version>
+		<version>1.0.0</version>
 	</parent>
 	<!-- =========================================================================================================== -->
 
