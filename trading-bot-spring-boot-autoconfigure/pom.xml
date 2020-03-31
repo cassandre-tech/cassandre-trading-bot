@@ -86,7 +86,7 @@
 		<dependency>
 			<groupId>org.junit-pioneer</groupId>
 			<artifactId>junit-pioneer</artifactId>
-			<version>0.5.4</version>
+			<version>0.5.5</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -255,7 +255,7 @@
 	<parent>
 		<groupId>tech.cassandre.trading.bot</groupId>
 		<artifactId>cassandre-trading-bot-project</artifactId>
-		<version>0.0.12</version>
+		<version>0.0.13</version>
 	</parent>
 	<!-- =========================================================================================================== -->
 
