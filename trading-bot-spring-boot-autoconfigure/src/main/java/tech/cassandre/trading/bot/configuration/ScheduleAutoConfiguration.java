@@ -9,7 +9,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 
 /**
- * StrategyAutoConfiguration class configures the strategy.
+ * ScheduleAutoConfiguration activates flux scheduler.
  */
 @Configuration
 @Profile("!schedule-disabled")
