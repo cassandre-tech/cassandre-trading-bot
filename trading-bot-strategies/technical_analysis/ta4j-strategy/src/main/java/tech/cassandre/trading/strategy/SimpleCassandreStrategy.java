@@ -70,6 +70,7 @@ public final class SimpleCassandreStrategy extends BasicCassandreStrategy {
 
     @Override
     public void onAccountUpdate(final AccountDTO account) {
+        System.out.println("Account information received " + account);
     }
 
     @Override
