@@ -11,9 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @DisplayName("Simple strategy test")
 public class SimpleCassandreStrategyTest {
 
-	/** How much we should wait for tests to last. */
-	protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
-
 	/**
 	 * Check data reception
 	 */
