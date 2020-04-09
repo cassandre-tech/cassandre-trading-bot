@@ -2,7 +2,6 @@ package tech.cassandre.trading.strategy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -14,10 +13,6 @@ public class SimpleCassandreStrategyTest {
 
 	/** How much we should wait for tests to last. */
 	protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
-
-	/** Dumb strategy. */
-	@Autowired
-	private SimpleCassandreStrategy strategy;
 
 	/**
 	 * Check data reception
