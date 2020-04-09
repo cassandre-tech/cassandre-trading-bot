@@ -73,13 +73,6 @@ public class BaseTest {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /**
-     * Application context.
-     */
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-    @Autowired
-    private ApplicationContext context;
-
-    /**
      * Getter logger.
      *
      * @return logger
