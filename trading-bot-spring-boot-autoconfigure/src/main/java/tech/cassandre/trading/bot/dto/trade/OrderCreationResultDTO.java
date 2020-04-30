@@ -67,6 +67,15 @@ public final class OrderCreationResultDTO {
         return Optional.ofNullable(exception);
     }
 
+    /**
+     * Returns successful.
+
+     * @return true if order creation was successful
+     */
+    public boolean isSuccessful() {
+        return getOrderId().isPresent();
+    }
+
     @Override
     public String toString() {
         return "OrderCreationResultDTO{"

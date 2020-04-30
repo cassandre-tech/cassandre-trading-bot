@@ -79,6 +79,7 @@ public class TradeServiceTest extends BaseTest {
         assertTrue(result2.getOrderId().isPresent());
         assertTrue(result2.getErrorMessage().isEmpty());
         assertTrue(result2.getException().isEmpty());
+        assertTrue(result2.isSuccessful());
 
         // Testing the order created.
         final String order2Id = result2.getOrderId().get();
