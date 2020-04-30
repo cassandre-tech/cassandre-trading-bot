@@ -20,7 +20,7 @@ public abstract class BaseService extends Base {
     private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);
 
     /** Bucket. */
-    private Bucket bucket;
+    private final Bucket bucket;
 
     /**
      * Construct a base service without rate limit.

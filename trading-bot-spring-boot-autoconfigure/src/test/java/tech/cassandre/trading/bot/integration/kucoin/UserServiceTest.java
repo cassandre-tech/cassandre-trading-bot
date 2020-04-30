@@ -19,6 +19,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.FUNDING;
+import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.TRADING;
 
 /**
  * User service tests.
@@ -72,10 +74,16 @@ public class UserServiceTest {
 		assertNotNull(mainWallet);
 		assertEquals("main", mainWallet.getId());
 		assertEquals("main", mainWallet.getName());
+		assertEquals(2, mainWallet.getFeatures().size());
+		assertTrue(mainWallet.getFeatures().contains(TRADING));
+		assertTrue(mainWallet.getFeatures().contains(FUNDING));
 		AccountDTO tradeWallet = wallets.get("trade");
 		assertNotNull(tradeWallet);
 		assertEquals("trade", tradeWallet.getId());
 		assertEquals("trade", tradeWallet.getName());
+		assertEquals(2, tradeWallet.getFeatures().size());
+		assertTrue(tradeWallet.getFeatures().contains(TRADING));
+		assertTrue(tradeWallet.getFeatures().contains(FUNDING));
 
 		// =============================================================================================================
 		// Testing balances.
