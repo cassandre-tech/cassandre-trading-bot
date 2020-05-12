@@ -10,6 +10,9 @@ import tech.cassandre.trading.bot.test.util.BaseTest;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE;
+import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_ORDER_DEFAULT_VALUE;
+import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TICKER_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
@@ -39,32 +42,32 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_D
 @SetSystemProperty(key = PARAMETER_PASSPHRASE, value = PARAMETER_PASSPHRASE_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_KEY, value = PARAMETER_KEY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SECRET, value = PARAMETER_SECRET_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ACCOUNT, value = "-1")
-@SetSystemProperty(key = PARAMETER_RATE_TICKER, value = "-2")
-@SetSystemProperty(key = PARAMETER_RATE_ORDER, value = "-3")
+@SetSystemProperty(key = PARAMETER_RATE_ACCOUNT, value = "AT20.345S")
+@SetSystemProperty(key = PARAMETER_RATE_TICKER, value = PARAMETER_RATE_TICKER_DEFAULT_VALUE)
+@SetSystemProperty(key = PARAMETER_RATE_ORDER, value = PARAMETER_RATE_ORDER_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
-@DisplayName("Invalid rates")
-public class InvalidRatesTest extends BaseTest {
+@DisplayName("Invalid account rate")
+public class InvalidAccountRateTest extends BaseTest {
 
     @Test
-    @DisplayName("Check error messages")
+    @DisplayName("Check error message")
     public void checkErrorMessages() {
         try {
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
-            final String message = getParametersExceptionMessage(e);
+            final String message = e.getCause().getMessage();
             assertFalse(message.contains("'name'"));
             assertFalse(message.contains("'sandbox'"));
             assertFalse(message.contains("'username'"));
             assertFalse(message.contains("'passphrase'"));
             assertFalse(message.contains("'key'"));
             assertFalse(message.contains("'secret'"));
-            assertTrue(message.contains("'account'"));
-            assertTrue(message.contains("'ticker'"));
-            assertTrue(message.contains("'order'"));
+            assertTrue(message.contains("Invalid account rate"));
+            assertFalse(message.contains("Invalid ticker rate"));
+            assertFalse(message.contains("Invalid order rate"));
         }
     }
 

@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -70,31 +69,28 @@ public class ExchangeParameters {
 
         /** Delay between calls to account API. */
         @NotNull(message = "Delay between calls to account API is mandatory")
-        @Min(value = 0L, message = "Delay between calls to account API must be positive")
-        private Long account;
+        private String account;
 
         /** Rate for ticker parameter. */
         public static final String PARAMETER_RATE_TICKER = "cassandre.trading.bot.exchange.rates.ticker";
 
         /** Delay between calls to ticker API. */
         @NotNull(message = "Delay between calls to ticker API is mandatory")
-        @Min(value = 0L, message = "Delay between calls to ticker API must be positive")
-        private Long ticker;
+        private String ticker;
 
         /** Rate for order parameter. */
         public static final String PARAMETER_RATE_ORDER = "cassandre.trading.bot.exchange.rates.order";
 
         /** Delay between calls to order API. */
         @NotNull(message = "Delay between calls to order API is mandatory")
-        @Min(value = 0L, message = "Delay between calls to order API must be positive")
-        private Long order;
+        private String order;
 
         /**
          * Getter account.
          *
          * @return account
          */
-        public long getAccount() {
+        public String getAccount() {
             return account;
         }
 
@@ -103,7 +99,7 @@ public class ExchangeParameters {
          *
          * @param newAccount the account to set
          */
-        public void setAccount(final Long newAccount) {
+        public void setAccount(final String newAccount) {
             account = newAccount;
         }
 
@@ -112,7 +108,7 @@ public class ExchangeParameters {
          *
          * @return ticker
          */
-        public Long getTicker() {
+        public String getTicker() {
             return ticker;
         }
 
@@ -121,7 +117,7 @@ public class ExchangeParameters {
          *
          * @param newTicker the ticker to set
          */
-        public void setTicker(final Long newTicker) {
+        public void setTicker(final String newTicker) {
             ticker = newTicker;
         }
 
@@ -130,7 +126,7 @@ public class ExchangeParameters {
          *
          * @return order
          */
-        public Long getOrder() {
+        public String getOrder() {
             return order;
         }
 
@@ -139,7 +135,7 @@ public class ExchangeParameters {
          *
          * @param newOrder the order
          */
-        public void setOrder(final Long newOrder) {
+        public void setOrder(final String newOrder) {
             order = newOrder;
         }
 

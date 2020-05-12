@@ -50,19 +50,19 @@ public class BaseTest {
     public static final String PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE = "100";
 
     /** Rate for account parameter (long value). */
-    public static final String PARAMETER_RATE_ACCOUNT_LONG_VALUE = "3000";
+    public static final String PARAMETER_RATE_ACCOUNT_LONG_VALUE = "PT5S";
 
     /** Rate for ticker parameter. */
     public static final String PARAMETER_RATE_TICKER_DEFAULT_VALUE = "101";
 
     /** Rate for ticker parameter (long value). */
-    public static final String PARAMETER_RATE_TICKER_LONG_VALUE = "3000";
+    public static final String PARAMETER_RATE_TICKER_LONG_VALUE = "PT5S";
 
     /** Rate for order parameter. */
     public static final String PARAMETER_RATE_ORDER_DEFAULT_VALUE = "102";
 
     /** Rate for order parameter (long value). */
-    public static final String PARAMETER_RATE_ORDER_LONG_VALUE = "3000";
+    public static final String PARAMETER_RATE_ORDER_LONG_VALUE = "PT5S";
 
     /** How much we should wait for tests until it ends. */
     protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;

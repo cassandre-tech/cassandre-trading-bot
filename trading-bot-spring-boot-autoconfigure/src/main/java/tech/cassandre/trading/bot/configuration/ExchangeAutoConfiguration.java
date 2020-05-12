@@ -25,6 +25,8 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 import java.util.StringJoiner;
 
 /**
@@ -101,11 +103,16 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             final MarketDataService xChangeMarketDataService = xChangeExchange.getMarketDataService();
             final org.knowm.xchange.service.trade.TradeService xChangeTradeService = xChangeExchange.getTradeService();
 
+            // Retrieve rates as string value.
+            long accountRate = getRateValue(exchangeParameters.getRates().getAccount(), "Invalid account rate");
+            long tickerRate = getRateValue(exchangeParameters.getRates().getTicker(), "Invalid ticker rate");
+            long orderRate = getRateValue(exchangeParameters.getRates().getOrder(), "Invalid order rate");
+
             // Creates Cassandre services.
             exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
-            userService = new UserServiceXChangeImplementation(exchangeParameters.getRates().getAccount(), xChangeAccountService);
-            marketService = new MarketServiceXChangeImplementation(exchangeParameters.getRates().getTicker(), xChangeMarketDataService);
-            tradeService = new TradeServiceXChangeImplementation(exchangeParameters.getRates().getOrder(), xChangeTradeService);
+            userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
+            marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
+            tradeService = new TradeServiceXChangeImplementation(orderRate, xChangeTradeService);
 
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(userService);
@@ -158,6 +165,45 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 .concat(exchangeParameters.getName().substring(0, 1).toUpperCase())     // First letter uppercase (K).
                 .concat(exchangeParameters.getName().substring(1).toLowerCase())        // The rest of the exchange name (ucoin).
                 .concat(xChangeCLassSuffix);                                            // Adding exchange (Exchange).
+    }
+
+    /**
+     * Return rate value.
+     *
+     * @param stringValue  string value
+     * @param errorMessage error message
+     * @return long value (ms)
+     */
+    private static long getRateValue(final String stringValue, final String errorMessage) {
+        if (isNumeric(stringValue)) {
+            return Long.parseLong(stringValue);
+        } else {
+            try {
+                return Duration.parse(stringValue).toMillis();
+            } catch (DateTimeParseException e) {
+                throw new ConfigurationException(errorMessage,
+                        "Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)");
+            }
+        }
+    }
+
+    /**
+     * Returns true is a string is a number.
+     *
+     * @param string string to test
+     * @return true if numeric
+     */
+    private static boolean isNumeric(final String string) {
+        // null or empty
+        if (string == null || string.length() == 0) {
+            return false;
+        }
+        for (char c : string.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
