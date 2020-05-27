@@ -26,7 +26,6 @@ import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
-import java.time.format.DateTimeParseException;
 import java.util.StringJoiner;
 
 /**
@@ -103,10 +102,10 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             final MarketDataService xChangeMarketDataService = xChangeExchange.getMarketDataService();
             final org.knowm.xchange.service.trade.TradeService xChangeTradeService = xChangeExchange.getTradeService();
 
-            // Retrieve rates as string value.
-            long accountRate = getRateValue(exchangeParameters.getRates().getAccount(), "Invalid account rate");
-            long tickerRate = getRateValue(exchangeParameters.getRates().getTicker(), "Invalid ticker rate");
-            long orderRate = getRateValue(exchangeParameters.getRates().getOrder(), "Invalid order rate");
+            // Retrieve rates.
+            long accountRate = getRateValue(exchangeParameters.getRates().getAccount());
+            long tickerRate = getRateValue(exchangeParameters.getRates().getTicker());
+            long orderRate = getRateValue(exchangeParameters.getRates().getOrder());
 
             // Creates Cassandre services.
             exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
@@ -171,19 +170,13 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * Return rate value.
      *
      * @param stringValue  string value
-     * @param errorMessage error message
      * @return long value (ms)
      */
-    private static long getRateValue(final String stringValue, final String errorMessage) {
+    private static long getRateValue(final String stringValue) {
         if (isNumeric(stringValue)) {
             return Long.parseLong(stringValue);
         } else {
-            try {
-                return Duration.parse(stringValue).toMillis();
-            } catch (DateTimeParseException e) {
-                throw new ConfigurationException(errorMessage,
-                        "Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)");
-            }
+            return Duration.parse(stringValue).toMillis();
         }
     }
 

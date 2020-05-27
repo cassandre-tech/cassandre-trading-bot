@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.util.parameters;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
+import tech.cassandre.trading.bot.util.validator.Rate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -69,6 +70,7 @@ public class ExchangeParameters {
 
         /** Delay between calls to account API. */
         @NotNull(message = "Delay between calls to account API is mandatory")
+        @Rate(message = "Invalid account rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String account;
 
         /** Rate for ticker parameter. */
@@ -76,6 +78,7 @@ public class ExchangeParameters {
 
         /** Delay between calls to ticker API. */
         @NotNull(message = "Delay between calls to ticker API is mandatory")
+        @Rate(message = "Invalid ticker rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String ticker;
 
         /** Rate for order parameter. */
@@ -83,6 +86,7 @@ public class ExchangeParameters {
 
         /** Delay between calls to order API. */
         @NotNull(message = "Delay between calls to order API is mandatory")
+        @Rate(message = "Invalid order rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String order;
 
         /**

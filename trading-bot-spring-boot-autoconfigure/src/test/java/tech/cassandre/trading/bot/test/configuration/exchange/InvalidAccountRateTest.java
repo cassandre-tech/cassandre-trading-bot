@@ -41,7 +41,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_PASSPHRASE, value = PARAMETER_PASSPHRASE_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_KEY, value = PARAMETER_KEY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SECRET, value = PARAMETER_SECRET_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ACCOUNT, value = "AT20.345S")
+@SetSystemProperty(key = PARAMETER_RATE_ACCOUNT, value = "O")
 @SetSystemProperty(key = PARAMETER_RATE_TICKER, value = PARAMETER_RATE_TICKER_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_RATE_ORDER, value = PARAMETER_RATE_ORDER_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
@@ -57,7 +57,7 @@ public class InvalidAccountRateTest extends BaseTest {
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
-            final String message = e.getCause().getMessage();
+            final String message = getParametersExceptionMessage(e);
             assertFalse(message.contains("'name'"));
             assertFalse(message.contains("'sandbox'"));
             assertFalse(message.contains("'username'"));

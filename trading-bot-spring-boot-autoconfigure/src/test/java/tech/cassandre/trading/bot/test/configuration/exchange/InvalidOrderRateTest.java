@@ -57,7 +57,7 @@ public class InvalidOrderRateTest extends BaseTest {
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
-            final String message = e.getCause().getMessage();
+            final String message = getParametersExceptionMessage(e);
             assertFalse(message.contains("'name'"));
             assertFalse(message.contains("'sandbox'"));
             assertFalse(message.contains("'username'"));

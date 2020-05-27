@@ -104,18 +104,6 @@ jobs:
           asset_content_type: application/java-archive
 
       # ================================================================================================================
-      # Upload cassandre-trading-bot-spring-boot-starter-archetype assets to the release (jar).
-      - name: Upload cassandre-trading-bot-spring-boot-starter-archetype jar
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: trading-bot-spring-boot-starter-archetype/target/cassandre-trading-bot-spring-boot-starter-archetype-${{ steps.package.outputs.version }}.jar
-          asset_name: cassandre-trading-bot-spring-boot-starter-archetype-${{ steps.package.outputs.version }}.jar
-          asset_content_type: application/java-archive
-
-      # ================================================================================================================
       - name : Publish the release announce on Twitter
         uses: ethomson/send-tweet-action@v1
         env:
