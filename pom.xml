@@ -58,6 +58,7 @@
 		<module>trading-bot-spring-boot-autoconfigure</module>
 		<module>trading-bot-spring-boot-starter</module>
 		<module>trading-bot-spring-boot-starter-archetype</module>
+		<module>trading-bot-spring-boot-starter-basic-ta4j-archetype</module>
 		<module>trading-bot-strategies/dumb</module>
 		<module>trading-bot-strategies/technical_analysis/ta4j-strategy</module>
 	</modules>
