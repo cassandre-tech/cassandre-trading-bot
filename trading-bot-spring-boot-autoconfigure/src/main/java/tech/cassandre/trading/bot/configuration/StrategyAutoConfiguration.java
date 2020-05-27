@@ -121,16 +121,16 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Account flux.
         accountFlux.getFlux()
                 .publishOn(scheduler)
-                .subscribe(strategy::onAccountUpdate);
+                .subscribe(strategy::accountUpdate);
         // Ticker flux.
         tickerFlux.updateRequestedCurrencyPairs(strategy.getRequestedCurrencyPairs());
         tickerFlux.getFlux()
                 .publishOn(scheduler)
-                .subscribe(strategy::onTickerUpdate);
+                .subscribe(strategy::tickerUpdate);
         // Order flux.
         orderFlux.getFlux()
                 .publishOn(scheduler)
-                .subscribe(strategy::onOrderUpdate);
+                .subscribe(strategy::orderUpdate);
     }
 
 }

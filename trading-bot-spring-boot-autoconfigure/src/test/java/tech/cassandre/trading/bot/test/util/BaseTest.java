@@ -16,11 +16,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class BaseTest {
 
+    /** Invalid strategy enabled parameter. */
+    public static final String PARAMETER_INVALID_STRATEGY_ENABLED = "invalidStrategy.enabled";
+
     /** Testable strategy enabled parameter. */
     public static final String PARAMETER_TESTABLE_STRATEGY_ENABLED = "testableStrategy.enabled";
 
-    /** Invalid strategy enabled parameter. */
-    public static final String PARAMETER_INVALID_STRATEGY_ENABLED = "invalidStrategy.enabled";
+    /** Testable ta4j strategy enabled parameter. */
+    public static final String PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED = "testableTa4jStrategy.enabled";
 
     /** Testable strategy enabled parameter. */
     public static final String PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE = "true";

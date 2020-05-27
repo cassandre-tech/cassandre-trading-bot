@@ -43,6 +43,33 @@ public abstract class BasicCassandreStrategy {
     public abstract Set<CurrencyPairDTO> getRequestedCurrencyPairs();
 
     /**
+     * Method called by streams at every account update.
+     *
+     * @param account account
+     */
+    public void accountUpdate(final AccountDTO account) {
+        onAccountUpdate(account);
+    }
+
+    /**
+     * Method called by streams at every ticker update.
+     *
+     * @param ticker ticker
+     */
+    public void tickerUpdate(final TickerDTO ticker) {
+        onTickerUpdate(ticker);
+    }
+
+    /**
+     * Method called by streams on every order update.
+     *
+     * @param order order
+     */
+    public void orderUpdate(final OrderDTO order) {
+        onOrderUpdate(order);
+    }
+
+    /**
      * Method triggered at every account update.
      *
      * @param account account

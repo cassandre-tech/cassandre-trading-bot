@@ -53,6 +53,13 @@
 			<version>4.4.2</version>
 		</dependency>
 
+		<!-- Ta4j -->
+		<dependency>
+			<groupId>org.ta4j</groupId>
+			<artifactId>ta4j-core</artifactId>
+			<version>0.13</version>
+		</dependency>
+
 		<!-- Util -->
 		<dependency>
 			<groupId>com.github.vladimir-bukhtoyarov</groupId>
