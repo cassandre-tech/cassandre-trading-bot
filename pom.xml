@@ -2,132 +2,131 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <!-- =========================================================================================================== -->
-    <!-- Project information -->
-    <groupId>tech.cassandre.trading.bot</groupId>
-    <artifactId>cassandre-trading-bot-project</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Cassandre trading bot</name>
-    <url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
-    <!-- =========================================================================================================== -->
+	<!-- =========================================================================================================== -->
+	<!-- Project information -->
+	<groupId>tech.cassandre.trading.bot</groupId>
+	<artifactId>cassandre-trading-bot-project</artifactId>
+	<version>1.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Cassandre trading bot</name>
+	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
+	<!-- =========================================================================================================== -->
 
-    <!-- =========================================================================================================== -->
-    <!-- Source Code Management -->
-    <scm>
-        <connection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</connection>
-        <url>https://maven.pkg.github.com/cassandre-trading-bot.git</url>
-        <developerConnection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</developerConnection>
-    </scm>
-    <!-- =========================================================================================================== -->
+	<!-- =========================================================================================================== -->
+	<!-- Source Code Management -->
+	<scm>
+		<connection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</connection>
+		<url>https://maven.pkg.github.com/cassandre-trading-bot.git</url>
+		<developerConnection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</developerConnection>
+	</scm>
+	<!-- =========================================================================================================== -->
 
-    <!-- =========================================================================================================== -->
-    <!-- Issue management -->
-    <issueManagement>
-        <system>GitHub Issues</system>
-        <url>https://github.com/cassandre-tech/cassandre-trading-bot/issues</url>
-    </issueManagement>
-    <!-- =========================================================================================================== -->
+	<!-- =========================================================================================================== -->
+	<!-- Issue management -->
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/cassandre-tech/cassandre-trading-bot/issues</url>
+	</issueManagement>
+	<!-- =========================================================================================================== -->
 
-    <!-- =========================================================================================================== -->
-    <!-- Spring boot -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.7.RELEASE</version>
-        <relativePath/>
-    </parent>
-    <!-- =========================================================================================================== -->
+	<!-- =========================================================================================================== -->
+	<!-- Spring boot -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.3.0.RELEASE</version>
+		<relativePath/>
+	</parent>
+	<!-- =========================================================================================================== -->
 
-    <!-- =========================================================================================================== -->
-    <!-- Project configuration -->
-    <properties>
-        <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.source>11</maven.compiler.source>
-        <java.version>11</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-    <!-- =========================================================================================================== -->
+	<!-- =========================================================================================================== -->
+	<!-- Project configuration -->
+	<properties>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<java.version>11</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+	<!-- =========================================================================================================== -->
 
-    <!-- =========================================================================================================== -->
-    <!-- Modules -->
-    <modules>
-        <module>trading-bot-spring-boot-autoconfigure</module>
-        <module>trading-bot-spring-boot-starter</module>
-        <module>trading-bot-spring-boot-starter-archetype</module>
-        <module>trading-bot-spring-boot-starter-basic-ta4j-archetype</module>
-        <module>trading-bot-strategies/dumb</module>
-        <module>trading-bot-strategies/technical_analysis/ta4j-strategy</module>
-    </modules>
-    <!-- =========================================================================================================== -->
+	<!-- =========================================================================================================== -->
+	<!-- Modules -->
+	<modules>
+		<module>trading-bot-spring-boot-autoconfigure</module>
+		<module>trading-bot-spring-boot-starter</module>
+		<module>trading-bot-spring-boot-starter-archetype</module>
+		<module>trading-bot-strategies/dumb</module>
+		<module>trading-bot-strategies/technical_analysis/ta4j-strategy</module>
+	</modules>
+	<!-- =========================================================================================================== -->
 
-    <!-- =========================================================================================================== -->
-    <!-- Build configuration -->
-    <build>
-        <!-- Plugins -->
-        <plugins>
-            <!-- Release plugin -->
-            <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.14.0</version>
-                <configuration>
-                    <gitFlowConfig>
-                        <developmentBranch>development</developmentBranch>
-                    </gitFlowConfig>
-                    <commitMessages>
-                        <featureStartMessage>Update versions for feature branch</featureStartMessage>
-                        <featureFinishMessage>Update versions for development branch</featureFinishMessage>
-                        <hotfixStartMessage>Update versions for hotfix</hotfixStartMessage>
-                        <hotfixFinishMessage>Update for next development version</hotfixFinishMessage>
-                        <releaseStartMessage>Update versions for release</releaseStartMessage>
-                        <releaseFinishMessage>Update for next development version</releaseFinishMessage>
-                        <tagHotfixMessage>Tag hotfix</tagHotfixMessage>
-                        <tagReleaseMessage>Tag release</tagReleaseMessage>
-                    </commitMessages>
-                </configuration>
-            </plugin>
-            <!-- GPG signing -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Prevent `gpg` from using pinentry programs -->
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-    <!-- =========================================================================================================== -->
+	<!-- =========================================================================================================== -->
+	<!-- Build configuration -->
+	<build>
+		<!-- Plugins -->
+		<plugins>
+			<!-- Release plugin -->
+			<plugin>
+				<groupId>com.amashchenko.maven.plugin</groupId>
+				<artifactId>gitflow-maven-plugin</artifactId>
+				<version>1.14.0</version>
+				<configuration>
+					<gitFlowConfig>
+						<developmentBranch>development</developmentBranch>
+					</gitFlowConfig>
+					<commitMessages>
+						<featureStartMessage>Update versions for feature branch</featureStartMessage>
+						<featureFinishMessage>Update versions for development branch</featureFinishMessage>
+						<hotfixStartMessage>Update versions for hotfix</hotfixStartMessage>
+						<hotfixFinishMessage>Update for next development version</hotfixFinishMessage>
+						<releaseStartMessage>Update versions for release</releaseStartMessage>
+						<releaseFinishMessage>Update for next development version</releaseFinishMessage>
+						<tagHotfixMessage>Tag hotfix</tagHotfixMessage>
+						<tagReleaseMessage>Tag release</tagReleaseMessage>
+					</commitMessages>
+				</configuration>
+			</plugin>
+			<!-- GPG signing -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<!-- Prevent `gpg` from using pinentry programs -->
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- =========================================================================================================== -->
 
-    <!-- =========================================================================================================== -->
-    <!-- Distribution management -->
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-    <!-- =========================================================================================================== -->
+	<!-- =========================================================================================================== -->
+	<!-- Distribution management -->
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+	<!-- =========================================================================================================== -->
 
 </project>
