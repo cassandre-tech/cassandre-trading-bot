@@ -10,8 +10,6 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,12 +23,6 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
 
     /** Strategy. */
     private final Strategy strategy;
-
-    /** The accounts owned by the user. */
-    private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
-
-    /** The orders owned by the user. */
-    private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -68,24 +60,6 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
      */
     public abstract Strategy getStrategy();
 
-    /**
-     * Getter of accounts.
-     *
-     * @return accounts
-     */
-    public final Map<String, AccountDTO> getAccounts() {
-        return accounts;
-    }
-
-    /**
-     * Getter of orders.
-     *
-     * @return orders
-     */
-    public final Map<String, OrderDTO> getOrders() {
-        return orders;
-    }
-
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
         // We only support one currency pair with this strategy.
@@ -94,7 +68,7 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
 
     @Override
     public final void onAccountUpdate(final AccountDTO account) {
-        accounts.put(account.getId(), account);
+
     }
 
     @Override
@@ -120,7 +94,7 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
 
     @Override
     public final void onOrderUpdate(final OrderDTO order) {
-        orders.put(order.getId(), order);
+
     }
 
     /**

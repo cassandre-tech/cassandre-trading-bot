@@ -23,9 +23,6 @@ import java.util.Set;
 @CassandreStrategy(name = "Simple strategy")
 public final class SimpleStrategy extends BasicCassandreStrategy {
 
-	/** The accounts owned by the user. */
-	private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
-
 	@Override
 	public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
 		// We only ask about ETC/BTC (Base currency : ETH / Quote currency : BTC).
@@ -36,7 +33,6 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	public void onAccountUpdate(final AccountDTO account) {
 		// Here, we will receive an AccountDTO each time there is a move on our account.
 		System.out.println("Received information about an account : " + account);
-		accounts.put(account.getId(), account);
 	}
 
 	@Override
@@ -49,15 +45,6 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	public void onOrderUpdate(final OrderDTO order) {
 		// Here, we will receive an OrderDTO each an Order data has changed in the exchange.
 		System.out.println("Received information about an order : " + order);
-	}
-
-	/**
-	 * Getter accounts.
-	 *
-	 * @return accounts
-	 */
-	public Map<String, AccountDTO> getAccounts() {
-		return accounts;
 	}
 
 }

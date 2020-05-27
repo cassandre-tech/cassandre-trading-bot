@@ -6,6 +6,8 @@ import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,6 +18,12 @@ public abstract class BasicCassandreStrategy {
 
     /** Trade service. */
     private TradeService tradeService;
+
+    /** The accounts owned by the user. */
+    private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
+
+    /** The orders owned by the user. */
+    private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
 
     /**
      * Getter tradeService.
@@ -48,6 +56,7 @@ public abstract class BasicCassandreStrategy {
      * @param account account
      */
     public void accountUpdate(final AccountDTO account) {
+        accounts.put(account.getId(), account);
         onAccountUpdate(account);
     }
 
@@ -66,7 +75,26 @@ public abstract class BasicCassandreStrategy {
      * @param order order
      */
     public void orderUpdate(final OrderDTO order) {
+        orders.put(order.getId(), order);
         onOrderUpdate(order);
+    }
+
+    /**
+     * Getter of accounts.
+     *
+     * @return accounts
+     */
+    public final Map<String, AccountDTO> getAccounts() {
+        return accounts;
+    }
+
+    /**
+     * Getter of orders.
+     *
+     * @return orders
+     */
+    public final Map<String, OrderDTO> getOrders() {
+        return orders;
     }
 
     /**
