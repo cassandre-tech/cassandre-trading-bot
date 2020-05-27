@@ -102,20 +102,20 @@ public abstract class BasicCassandreStrategy {
      *
      * @param account account
      */
-    public abstract void onAccountUpdate(AccountDTO account);
+    public void onAccountUpdate(final AccountDTO account) { }
 
     /**
      * Method triggered at every ticker update.
      *
      * @param ticker ticker
      */
-    public abstract void onTickerUpdate(TickerDTO ticker);
+    public void onTickerUpdate(final TickerDTO ticker) { }
 
     /**
      * Method triggered on every order update.
      *
      * @param order order
      */
-    public abstract void onOrderUpdate(OrderDTO order);
+    public void onOrderUpdate(final OrderDTO order) { }
 
 }

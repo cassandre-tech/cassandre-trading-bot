@@ -67,12 +67,14 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
     }
 
     @Override
-    public final void onAccountUpdate(final AccountDTO account) {
-
+    public final void accountUpdate(final AccountDTO account) {
+        getAccounts().put(account.getId(), account);
+        onAccountUpdate(account);
     }
 
     @Override
-    public final void onTickerUpdate(final TickerDTO ticker) {
+    public final void tickerUpdate(final TickerDTO ticker) {
+        super.tickerUpdate(ticker);
         // Add the ticker to the series.
         Number openPrice = MoreObjects.firstNonNull(ticker.getOpen(), 0);
         Number highPrice = MoreObjects.firstNonNull(ticker.getHigh(), 0);
@@ -93,8 +95,9 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
     }
 
     @Override
-    public final void onOrderUpdate(final OrderDTO order) {
-
+    public final void orderUpdate(final OrderDTO order) {
+        getOrders().put(order.getId(), order);
+        onOrderUpdate(order);
     }
 
     /**
