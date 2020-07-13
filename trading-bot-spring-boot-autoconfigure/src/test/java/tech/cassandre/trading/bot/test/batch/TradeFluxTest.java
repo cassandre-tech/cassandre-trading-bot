@@ -14,31 +14,28 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.dto.user.BalanceDTO;
-import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
-import java.math.BigDecimal;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.with;
+import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAULT_VALUE;
@@ -63,7 +60,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 
 /**
- * All configuration test.
+ * Trade flux test.
  */
 @SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
@@ -78,31 +75,52 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-@DisplayName("All flux tests")
-public class AllFluxTest extends BaseTest {
+@DisplayName("Trade flux")
+public class TradeFluxTest extends BaseTest {
 
     /** Cassandre strategy. */
     @Autowired
     private TestableCassandreStrategy testableStrategy;
 
+    /** Trade service. */
+    @Autowired
+    private TradeService tradeService;
+
     @Test
-    @DisplayName("multi thread test")
-    public void multiThreadTest() {
-        final int numberOfValuesExpected = 3;
+    @DisplayName("Received data")
+    public void testReceivedData() {
+        final int numberOfTradeExpected = 7;
+        final int numberOfTradeServiceCalls = 4;
 
-        // Wait for the strategy to have received all the account test values.
-        with().await().untilAsserted(() -> assertEquals(numberOfValuesExpected, testableStrategy.getOrdersUpdateReceived().size()));
+        // Waiting for the trade service to have been called with all the test data.
+        with().pollInterval(fibonacci(SECONDS)).await()
+                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
+                .untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getTrades());
 
-        // Checking that all other data have been received.
-        assertFalse(testableStrategy.getTickersUpdateReceived().isEmpty());
-        assertFalse(testableStrategy.getAccountsUpdatesReceived().isEmpty());
-        assertFalse(testableStrategy.getTradesUpdateReceived().isEmpty());
+        // Checking that somme tickers have already been treated (to verify we work on a single thread).
+        assertTrue(testableStrategy.getTradesUpdateReceived().size() < numberOfTradeExpected);
+        assertTrue(testableStrategy.getTradesUpdateReceived().size() > 0);
+
+        // Wait for the strategy to have received all the test values.
+        with().pollInterval(fibonacci(SECONDS)).await()
+                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
+                .untilAsserted(() -> assertTrue(testableStrategy.getTradesUpdateReceived().size() >= numberOfTradeExpected));
+
+        // Test all values received.
+        final Iterator<TradeDTO> iterator = testableStrategy.getTradesUpdateReceived().iterator();
+
+        assertEquals("0000001", iterator.next().getId());
+        assertEquals("0000002", iterator.next().getId());
+        assertEquals("0000003", iterator.next().getId());
+        assertEquals("0000004", iterator.next().getId());
+        assertEquals("0000005", iterator.next().getId());
+        assertEquals("0000006", iterator.next().getId());
+        assertEquals("0000008", iterator.next().getId());
     }
 
     /**
      * Change configuration to integrate mocks.
      */
-    @SuppressWarnings("unchecked")
     @TestConfiguration
     public static class TestConfig {
 
@@ -155,45 +173,12 @@ public class AllFluxTest extends BaseTest {
          *
          * @return mocked service
          */
-        @SuppressWarnings("unchecked")
         @Bean
         @Primary
         public UserService userService() {
-            Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
-            final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
-            UserService userService = mock(UserService.class);
-            // Returns three updates.
-
-            // Account 01.
-            BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-            balances.put(CurrencyDTO.BTC, account01Balance1);
-            AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).create();
-            accounts.put("01", account01);
-            UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
-            balances.clear();
-            accounts.clear();
-
-            // Account 02.
-            BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-            balances.put(CurrencyDTO.BTC, account02Balance1);
-            AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).create();
-            accounts.put("02", account02);
-            UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
-            balances.clear();
-            accounts.clear();
-
-            // Account 03.
-            BalanceDTO account03Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-            balances.put(CurrencyDTO.BTC, account03Balance1);
-            AccountDTO account03 = AccountDTO.builder().id("03").balances(balances).create();
-            accounts.put("03", account03);
-            UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
-            balances.clear();
-            accounts.clear();
-
-            // Mock replies.
-            given(userService.getUser()).willReturn(Optional.of(user01), Optional.of(user02), Optional.of(user03));
-            return userService;
+            UserService service = mock(UserService.class);
+            given(service.getUser()).willReturn(Optional.empty());
+            return service;
         }
 
         /**
@@ -205,13 +190,7 @@ public class AllFluxTest extends BaseTest {
         @Primary
         public MarketService marketService() {
             MarketService service = mock(MarketService.class);
-            // Returns three values.
-            final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
-            given(service.getTicker(cp1)).willReturn(
-                    getFakeTicker(cp1, new BigDecimal("1")),    // Ticker 01.
-                    getFakeTicker(cp1, new BigDecimal("2")),    // Ticker 02.
-                    getFakeTicker(cp1, new BigDecimal("3"))     // Ticker 03.
-            );
+            given(service.getTicker(any())).willReturn(Optional.empty());
             return service;
         }
 
@@ -220,29 +199,53 @@ public class AllFluxTest extends BaseTest {
          *
          * @return mocked service
          */
+        @SuppressWarnings("unchecked")
         @Bean
         @Primary
         public TradeService tradeService() {
-            TradeService service = mock(TradeService.class);
+            // Creates the mock.
+            TradeService tradeService = mock(TradeService.class);
 
-            // Returns three values for getOpenOrders.
-            Set<OrderDTO> replyGetOpenOrders = new LinkedHashSet<>();
-            replyGetOpenOrders.add(OrderDTO.builder().id("000001").create());   // Order 01.
-            replyGetOpenOrders.add(OrderDTO.builder().id("000002").create());   // Order 02.
-            replyGetOpenOrders.add(OrderDTO.builder().id("000003").create());   // Order 03.
-            given(service.getOpenOrders()).willReturn(replyGetOpenOrders);
+            // =========================================================================================================
+            // First reply : 2 trades.
+            TradeDTO trade01 = TradeDTO.builder().id("0000001").create();
+            TradeDTO trade02 = TradeDTO.builder().id("0000002").create();
 
-            // Returns three values for getTrades().
-            Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-            replyGetTrades.add(TradeDTO.builder().id("0000001").create());      // Trade 01.
-            replyGetTrades.add(TradeDTO.builder().id("0000002").create());      // Trade 02.
-            replyGetTrades.add(TradeDTO.builder().id("0000003").create());      // Trade 03.
-            given(service.getTrades()).willReturn(replyGetTrades);
+            Set<TradeDTO> reply01 = new LinkedHashSet<>();
+            reply01.add(trade01);
+            reply01.add(trade02);
 
-            return service;
+            // =========================================================================================================
+            // First reply : 3 trades.
+            TradeDTO trade03 = TradeDTO.builder().id("0000003").create();
+            TradeDTO trade04 = TradeDTO.builder().id("0000004").create();
+            TradeDTO trade05 = TradeDTO.builder().id("0000005").create();
+
+            Set<TradeDTO> reply02 = new LinkedHashSet<>();
+            reply02.add(trade03);
+            reply02.add(trade04);
+            reply02.add(trade05);
+
+            // =========================================================================================================
+            // First reply : 3 trades - Trade07 is again trade 0000003.
+            TradeDTO trade06 = TradeDTO.builder().id("0000006").create();
+            TradeDTO trade07 = TradeDTO.builder().id("0000003").create();
+            TradeDTO trade08 = TradeDTO.builder().id("0000008").create();
+
+            Set<TradeDTO> reply03 = new LinkedHashSet<>();
+            reply02.add(trade06);
+            reply02.add(trade07);
+            reply02.add(trade08);
+
+            // =========================================================================================================
+            // Creating the mock.
+            given(tradeService.getTrades())
+                    .willReturn(reply01,
+                            new LinkedHashSet<>(),
+                            reply02,
+                            reply03);
+            return tradeService;
         }
-
-
     }
 
 }

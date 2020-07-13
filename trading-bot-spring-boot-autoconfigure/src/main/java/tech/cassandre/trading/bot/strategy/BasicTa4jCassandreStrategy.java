@@ -51,6 +51,7 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
      *
      * @return maximum bar count.
      */
+    @SuppressWarnings("SameReturnValue")
     public abstract int getMaximumBarCount();
 
     /**

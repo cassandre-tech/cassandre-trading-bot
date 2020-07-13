@@ -43,8 +43,8 @@ public final class UserDTO {
      *
      * @return builder
      */
-    public static UserDTO.Builder builder() {
-        return new UserDTO.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**

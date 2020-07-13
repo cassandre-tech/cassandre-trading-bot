@@ -12,6 +12,7 @@ import si.mazi.rescu.HttpStatusIOException;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.ExchangeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.MarketService;
@@ -68,6 +69,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Order flux. */
     private OrderFlux orderFlux;
 
+    /** Trade flux. */
+    private TradeFlux tradeFlux;
+
     /**
      * Constructor.
      *
@@ -117,6 +121,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             accountFlux = new AccountFlux(userService);
             tickerFlux = new TickerFlux(marketService);
             orderFlux = new OrderFlux(tradeService);
+            tradeFlux = new TradeFlux(tradeService);
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();
@@ -267,6 +272,16 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     @Bean
     public OrderFlux getOrderFlux() {
         return orderFlux;
+    }
+
+    /**
+     * Getter tradeFlux.
+     *
+     * @return tradeFlux
+     */
+    @Bean
+    public TradeFlux getTradeFlux() {
+        return tradeFlux;
     }
 
 }

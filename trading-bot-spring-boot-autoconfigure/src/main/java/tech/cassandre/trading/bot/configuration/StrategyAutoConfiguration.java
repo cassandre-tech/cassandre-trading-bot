@@ -7,6 +7,7 @@ import reactor.core.scheduler.Schedulers;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
@@ -24,7 +25,7 @@ import java.util.StringJoiner;
 public class StrategyAutoConfiguration extends BaseConfiguration {
 
     /** Number of threads. */
-    private static final int NUMBER_OF_THREADS = 3;
+    private static final int NUMBER_OF_THREADS = 4;
 
     /** Application context. */
     private final ApplicationContext applicationContext;
@@ -44,6 +45,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     /** Order flux. */
     private final OrderFlux orderFlux;
 
+    /** Trade flux. */
+    private final TradeFlux tradeFlux;
+
     /**
      * Constructor.
      *
@@ -52,17 +56,20 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      * @param newAccountFlux        account flux
      * @param newTickerFlux         ticker flux
      * @param newOrderFlux          order flux.
+     * @param newTradeFlux          trade flux.
      */
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
                                      final TradeService newTradeService,
                                      final AccountFlux newAccountFlux,
                                      final TickerFlux newTickerFlux,
-                                     final OrderFlux newOrderFlux) {
+                                     final OrderFlux newOrderFlux,
+                                     final TradeFlux newTradeFlux) {
         this.applicationContext = newApplicationContext;
         this.tradeService = newTradeService;
         this.accountFlux = newAccountFlux;
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
+        this.tradeFlux = newTradeFlux;
     }
 
     /**
@@ -131,6 +138,10 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         orderFlux.getFlux()
                 .publishOn(scheduler)
                 .subscribe(strategy::orderUpdate);
+        // Trade flux.
+        tradeFlux.getFlux()
+                .publishOn(scheduler)
+                .subscribe(strategy::tradeUpdate);
     }
 
 }

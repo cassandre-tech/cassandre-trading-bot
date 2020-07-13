@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.strategy;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
@@ -24,6 +25,9 @@ public abstract class BasicCassandreStrategy {
 
     /** The orders owned by the user. */
     private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
+
+    /** The trades owned by the user. */
+    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
 
     /**
      * Getter tradeService.
@@ -80,6 +84,16 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
+     * Method called by streams on every trade update.
+     *
+     * @param trade trade
+     */
+    public void tradeUpdate(final TradeDTO trade) {
+        trades.put(trade.getId(), trade);
+        onTradeUpdate(trade);
+    }
+
+    /**
      * Getter of accounts.
      *
      * @return accounts
@@ -98,24 +112,44 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
+     * Getter trades.
+     *
+     * @return trades
+     */
+    public final Map<String, TradeDTO> getTrades() {
+        return trades;
+    }
+
+    /**
      * Method triggered at every account update.
      *
      * @param account account
      */
-    public void onAccountUpdate(final AccountDTO account) { }
+    public void onAccountUpdate(final AccountDTO account) {
+    }
 
     /**
      * Method triggered at every ticker update.
      *
      * @param ticker ticker
      */
-    public void onTickerUpdate(final TickerDTO ticker) { }
+    public void onTickerUpdate(final TickerDTO ticker) {
+    }
 
     /**
      * Method triggered on every order update.
      *
      * @param order order
      */
-    public void onOrderUpdate(final OrderDTO order) { }
+    public void onOrderUpdate(final OrderDTO order) {
+    }
+
+    /**
+     * Method triggered on trade order update.
+     *
+     * @param trade trade
+     */
+    public void onTradeUpdate(final TradeDTO trade) {
+    }
 
 }

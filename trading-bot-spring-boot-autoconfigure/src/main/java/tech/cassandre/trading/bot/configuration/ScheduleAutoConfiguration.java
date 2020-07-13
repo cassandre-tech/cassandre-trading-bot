@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 
 /**
  * ScheduleAutoConfiguration activates flux scheduler.
@@ -25,19 +26,25 @@ public class ScheduleAutoConfiguration {
     /** Order flux. */
     private final OrderFlux orderFlux;
 
+    /** Trade flux. */
+    private final TradeFlux tradeFlux;
+
     /**
      * Constructor.
      *
      * @param newAccountFlux account flux
      * @param newTickerFlux  ticker flux
      * @param newOrderFlux   order flux
+     * @param newTradeFlux   trade flux
      */
     public ScheduleAutoConfiguration(final AccountFlux newAccountFlux,
                                      final TickerFlux newTickerFlux,
-                                     final OrderFlux newOrderFlux) {
+                                     final OrderFlux newOrderFlux,
+                                     final TradeFlux newTradeFlux) {
         this.accountFlux = newAccountFlux;
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
+        this.tradeFlux = newTradeFlux;
     }
 
     /**
@@ -62,6 +69,14 @@ public class ScheduleAutoConfiguration {
     @Scheduled(fixedDelay = 1)
     public void setupOrderFlux() {
         orderFlux.update();
+    }
+
+    /**
+     * Recurrent calls the trade flux.
+     */
+    @Scheduled(fixedDelay = 1)
+    public void setupTradeFlux() {
+        tradeFlux.update();
     }
 
 }

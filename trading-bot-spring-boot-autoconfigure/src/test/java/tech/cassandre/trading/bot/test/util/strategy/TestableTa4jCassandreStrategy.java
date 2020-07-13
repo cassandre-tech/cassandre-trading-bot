@@ -66,7 +66,7 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
     }
 
     /**
-     * Getter de la propriété enterCount.
+     * Getter enterCount.
      *
      * @return enterCount
      */
@@ -75,7 +75,7 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
     }
 
     /**
-     * Getter de la propriété exitCount.
+     * Getter exitCount.
      *
      * @return exitCount
      */

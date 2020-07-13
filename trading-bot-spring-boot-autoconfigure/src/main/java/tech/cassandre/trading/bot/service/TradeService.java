@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.service;
 
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -73,5 +74,12 @@ public interface TradeService {
      * @return true if cancelled
      */
     boolean cancelOrder(String orderId);
+
+    /**
+     * Get last week trades.
+     *
+     * @return trades
+     */
+    Set<TradeDTO> getTrades();
 
 }

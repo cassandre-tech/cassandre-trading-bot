@@ -156,4 +156,25 @@ public class TradeServiceTest extends BaseTest {
         assertFalse(tradeService.cancelOrder(result1.getOrderId().get()));
     }
 
+    @Test
+    @DisplayName("Get trades")
+    public void testGetTrades() {
+        final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+
+        // Creates two orders of the same amount (one buy, one sell).
+        final OrderCreationResultDTO result1 = tradeService.createBuyMarketOrder(cp, new BigDecimal("0.0001"));
+        final OrderCreationResultDTO result2 = tradeService.createSellMarketOrder(cp, new BigDecimal("0.0001"));
+
+        // Check that the two orders appears in the trade history.
+        assertTrue(result1.getOrderId().isPresent());
+        with().pollInterval(fibonacci(SECONDS)).await()
+                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
+                .untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrderId().get()))));
+
+        assertTrue(result2.getOrderId().isPresent());
+        with().pollInterval(fibonacci(SECONDS)).await()
+                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
+                .untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrderId().get()))));
+    }
+
 }

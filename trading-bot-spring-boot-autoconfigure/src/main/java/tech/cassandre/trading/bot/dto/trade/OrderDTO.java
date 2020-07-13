@@ -74,8 +74,8 @@ public final class OrderDTO {
      *
      * @return builder
      */
-    public static OrderDTO.Builder builder() {
-        return new OrderDTO.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -184,6 +184,52 @@ public final class OrderDTO {
      */
     public BigDecimal getLimitPrice() {
         return limitPrice;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final OrderDTO orderDTO = (OrderDTO) o;
+        return getType() == orderDTO.getType()
+                && Objects.equals(getOriginalAmount(), orderDTO.getOriginalAmount())
+                && Objects.equals(getCurrencyPair(), orderDTO.getCurrencyPair())
+                && Objects.equals(getId(), orderDTO.getId())
+                && Objects.equals(getUserReference(), orderDTO.getUserReference())
+                && Objects.equals(getTimestamp(), orderDTO.getTimestamp())
+                && getStatus() == orderDTO.getStatus()
+                && Objects.equals(getCumulativeAmount(), orderDTO.getCumulativeAmount())
+                && Objects.equals(getAveragePrice(), orderDTO.getAveragePrice())
+                && Objects.equals(getFee(), orderDTO.getFee())
+                && Objects.equals(getLeverage(), orderDTO.getLeverage())
+                && Objects.equals(getLimitPrice(), orderDTO.getLimitPrice());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    @Override
+    public String toString() {
+        return "OrderDTO{"
+                + " type=" + type
+                + ", originalAmount=" + originalAmount
+                + ", currencyPair=" + currencyPair
+                + ", id='" + id + '\''
+                + ", userReference='" + userReference + '\''
+                + ", timestamp=" + timestamp
+                + ", status=" + status
+                + ", cumulativeAmount=" + cumulativeAmount
+                + ", averagePrice=" + averagePrice
+                + ", fee=" + fee
+                + ", leverage='" + leverage + '\''
+                + ", limitPrice=" + limitPrice
+                + '}';
     }
 
     /**
@@ -349,7 +395,7 @@ public final class OrderDTO {
         }
 
         /**
-         * Price.
+         * Limit price.
          *
          * @param newLimitPrice limit price
          * @return builder
@@ -368,52 +414,6 @@ public final class OrderDTO {
             return new OrderDTO(this);
         }
 
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final OrderDTO orderDTO = (OrderDTO) o;
-        return getType() == orderDTO.getType()
-                && Objects.equals(getOriginalAmount(), orderDTO.getOriginalAmount())
-                && Objects.equals(getCurrencyPair(), orderDTO.getCurrencyPair())
-                && Objects.equals(getId(), orderDTO.getId())
-                && Objects.equals(getUserReference(), orderDTO.getUserReference())
-                && Objects.equals(getTimestamp(), orderDTO.getTimestamp())
-                && getStatus() == orderDTO.getStatus()
-                && Objects.equals(getCumulativeAmount(), orderDTO.getCumulativeAmount())
-                && Objects.equals(getAveragePrice(), orderDTO.getAveragePrice())
-                && Objects.equals(getFee(), orderDTO.getFee())
-                && Objects.equals(getLeverage(), orderDTO.getLeverage())
-                && Objects.equals(getLimitPrice(), orderDTO.getLimitPrice());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "OrderDTO{"
-                + " type=" + type
-                + ", originalAmount=" + originalAmount
-                + ", currencyPair=" + currencyPair
-                + ", id='" + id + '\''
-                + ", userReference='" + userReference + '\''
-                + ", timestamp=" + timestamp
-                + ", status=" + status
-                + ", cumulativeAmount=" + cumulativeAmount
-                + ", averagePrice=" + averagePrice
-                + ", fee=" + fee
-                + ", leverage='" + leverage + '\''
-                + ", limitPrice=" + limitPrice
-                + '}';
     }
 
 }
