@@ -26,10 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.awaitility.Awaitility.with;
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;

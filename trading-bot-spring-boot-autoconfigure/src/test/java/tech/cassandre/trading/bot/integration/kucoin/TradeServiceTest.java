@@ -18,10 +18,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.awaitility.Awaitility.with;
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

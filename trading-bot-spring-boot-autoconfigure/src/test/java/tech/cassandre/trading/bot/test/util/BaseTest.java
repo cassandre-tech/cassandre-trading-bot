@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 
 /**
