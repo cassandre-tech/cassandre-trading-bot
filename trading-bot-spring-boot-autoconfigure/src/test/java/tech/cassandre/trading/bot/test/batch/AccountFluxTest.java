@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -98,18 +99,14 @@ public class AccountFluxTest extends BaseTest {
         final int numberOfUserServiceCallsExpected = 6;
 
         // Waiting for the user service to have been called with all the test data.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> verify(userService, atLeast(numberOfUserServiceCallsExpected)).getUser());
+        await().untilAsserted(() -> verify(userService, atLeast(numberOfUserServiceCallsExpected)).getUser());
 
         // Checking that somme accounts update have already been treated (to verify we work on a single thread).
         assertTrue(testableStrategy.getAccountsUpdatesReceived().size() < numberOfAccountsUpdateExpected);
         assertTrue(testableStrategy.getAccountsUpdatesReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertEquals(numberOfAccountsUpdateExpected, testableStrategy.getAccountsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(numberOfAccountsUpdateExpected, testableStrategy.getAccountsUpdatesReceived().size()));
 
         // Checking values.
         final Iterator<AccountDTO> iterator = testableStrategy.getAccountsUpdatesReceived().iterator();

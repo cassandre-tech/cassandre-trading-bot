@@ -19,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -140,17 +141,13 @@ public class TradeServiceTest extends BaseTest {
         assertTrue(result1.getOrderId().isPresent());
 
         // The order must exist.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertTrue(tradeService.getOpenOrderByOrderId(result1.getOrderId().get()).isPresent()));
+        await().untilAsserted(() -> assertTrue(tradeService.getOpenOrderByOrderId(result1.getOrderId().get()).isPresent()));
 
         // Cancel the order.
         assertTrue(tradeService.cancelOrder(result1.getOrderId().get()));
 
         // The order must have disappeared.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertFalse(tradeService.getOpenOrderByOrderId(result1.getOrderId().get()).isPresent()));
+        await().untilAsserted(() -> assertFalse(tradeService.getOpenOrderByOrderId(result1.getOrderId().get()).isPresent()));
 
         // Cancel the order again and check it gives false.
         assertFalse(tradeService.cancelOrder(result1.getOrderId().get()));
@@ -167,14 +164,10 @@ public class TradeServiceTest extends BaseTest {
 
         // Check that the two orders appears in the trade history.
         assertTrue(result1.getOrderId().isPresent());
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrderId().get()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrderId().get()))));
 
         assertTrue(result2.getOrderId().isPresent());
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrderId().get()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrderId().get()))));
     }
 
 }

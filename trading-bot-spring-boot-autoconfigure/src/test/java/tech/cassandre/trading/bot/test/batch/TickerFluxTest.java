@@ -30,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,18 +101,14 @@ public class TickerFluxTest extends BaseTest {
         final CurrencyPairDTO cp2 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT);
 
         // Waiting for the market service to have been called with all the test data.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> verify(marketService, atLeast(numberOfMarketServiceCalls)).getTicker(any()));
+        await().untilAsserted(() -> verify(marketService, atLeast(numberOfMarketServiceCalls)).getTicker(any()));
 
         // Checking that somme tickers have already been treated (to verify we work on a single thread).
         assertTrue(testableStrategy.getTickersUpdateReceived().size() < numberOfTickersExpected);
         assertTrue(testableStrategy.getTickersUpdateReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertTrue(testableStrategy.getTickersUpdateReceived().size() >= numberOfTickersExpected));
+        await().untilAsserted(() -> assertTrue(testableStrategy.getTickersUpdateReceived().size() >= numberOfTickersExpected));
 
         // Test all values received.
         final Iterator<TickerDTO> iterator = testableStrategy.getTickersUpdateReceived().iterator();

@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,18 +100,14 @@ public class OrderFluxTest extends BaseTest {
         final int numberOfTradeServiceCalls = 3;
 
         // Waiting for the trade service to have been called with all the test data.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getOpenOrders());
+        await().untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getOpenOrders());
 
         // Checking that somme tickers have already been treated (to verify we work on a single thread).
         assertTrue(testableStrategy.getOrdersUpdateReceived().size() < numberOfOrdersExpected);
         assertTrue(testableStrategy.getOrdersUpdateReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertTrue(testableStrategy.getOrdersUpdateReceived().size() >= numberOfOrdersExpected));
+        await().untilAsserted(() -> assertTrue(testableStrategy.getOrdersUpdateReceived().size() >= numberOfOrdersExpected));
 
         // Test all values received.
         final Iterator<OrderDTO> iterator = testableStrategy.getOrdersUpdateReceived().iterator();

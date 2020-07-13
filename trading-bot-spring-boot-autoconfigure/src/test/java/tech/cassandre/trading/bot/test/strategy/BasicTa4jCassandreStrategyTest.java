@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,18 +94,10 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
     @Test
     @DisplayName("should enter and should exit test")
     public void strategyTest() {
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertEquals(testableStrategy.getEnterCount(), 5));
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertEquals(testableStrategy.getExitCount(), 2));
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertEquals(testableStrategy.getAccounts().size(), 3));
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertEquals(testableStrategy.getOrders().size(), 4));
+        await().untilAsserted(() -> assertEquals(testableStrategy.getEnterCount(), 5));
+        await().untilAsserted(() -> assertEquals(testableStrategy.getExitCount(), 2));
+        await().untilAsserted(() -> assertEquals(testableStrategy.getAccounts().size(), 3));
+        await().untilAsserted(() -> assertEquals(testableStrategy.getOrders().size(), 4));
     }
 
     /**

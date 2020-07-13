@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.util;
 
+import org.awaitility.Awaitility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -10,6 +11,10 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.with;
+import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 
 /**
  * Base for tests.
@@ -72,6 +77,15 @@ public class BaseTest {
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    /**
+     * Constructor.
+     */
+    public BaseTest() {
+        // Configure Awaitility.
+        Awaitility.setDefaultPollInterval(fibonacci(SECONDS));
+        Awaitility.setDefaultTimeout(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS);
+    }
 
     /**
      * Getter logger.
