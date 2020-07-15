@@ -163,6 +163,10 @@ public class TradeServiceTest extends BaseTest {
         assertTrue(result1.getOrderId().isPresent());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrderId().get()))));
 
+/*        tradeService.getTrades().stream()
+                .filter(t -> t.getOrderId().equals(result1.getOrderId().get()))
+                .forEach(tradeDTO -> System.out.println(tradeDTO));*/
+
         assertTrue(result2.getOrderId().isPresent());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrderId().get()))));
     }

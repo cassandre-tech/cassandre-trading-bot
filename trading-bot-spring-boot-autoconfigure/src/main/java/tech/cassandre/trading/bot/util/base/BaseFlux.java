@@ -48,7 +48,7 @@ public abstract class BaseFlux<T> extends Base {
      *
      * @param newValue new value
      */
-    protected void emitValue(final T newValue) {
+    public void emitValue(final T newValue) {
         getLogger().debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
         fluxSink.next(newValue);
     }

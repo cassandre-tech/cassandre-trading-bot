@@ -7,6 +7,8 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,6 +21,9 @@ import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
  * Base for tests.
  */
 public class BaseTest {
+
+    /** Three seconds wait. */
+    protected static final long FIVE_SECOND = 5000;
 
     /** Invalid strategy enabled parameter. */
     public static final String PARAMETER_INVALID_STRATEGY_ENABLED = "invalidStrategy.enabled";
@@ -152,6 +157,16 @@ public class BaseTest {
      */
     protected String getParametersExceptionMessage(Exception e) {
         return e.getCause().getCause().getCause().getMessage();
+    }
+
+
+    /**
+     * Generate a date in 2020 with a day.
+     * @param day day
+     * @return date
+     */
+    protected static Date createDay(final int day) {
+        return Date.from(ZonedDateTime.of(2020, 1, day, 9, 0, 0, 0, ZoneId.systemDefault()).toInstant());
     }
 
 }

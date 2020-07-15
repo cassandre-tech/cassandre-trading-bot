@@ -44,7 +44,7 @@ public class ExchangeServiceTest {
 
 	@Test
 	@DisplayName("Get available currency pairs")
-	@Disabled("Bug in XChange currency pairs list") // TODO Fix when issue https://github.com/knowm/XChange/issues/3609 is fixed
+	@Disabled("Bug in XChange currency pairs list") // TODO Fix when issue https://github.com/knowm/XChange/issues/3609 is fixed	
 	public void testGetAvailableCurrencyPairs() {
 		// Expected values.
 		final int expectedMinimumNumberOfAvailableCurrencyPairs = 15;

@@ -17,6 +17,8 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.ExchangeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.MarketServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.PositionServiceImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
@@ -59,6 +61,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** Trade service. */
     private TradeService tradeService;
+
+    /** Position service. */
+    private PositionService positionService;
 
     /** Account flux. */
     private AccountFlux accountFlux;
@@ -116,6 +121,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
             marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
             tradeService = new TradeServiceXChangeImplementation(orderRate, xChangeTradeService);
+            positionService = new PositionServiceImplementation(tradeService);
 
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(userService);
@@ -282,6 +288,16 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     @Bean
     public TradeFlux getTradeFlux() {
         return tradeFlux;
+    }
+
+    /**
+     * Getter positionService.
+     *
+     * @return positionService
+     */
+    @Bean
+    public PositionService getPositionService() {
+        return positionService;
     }
 
 }

@@ -94,7 +94,7 @@ public class TradeFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getTrades());
 
         // Checking that somme tickers have already been treated (to verify we work on a single thread).
-        assertTrue(testableStrategy.getTradesUpdateReceived().size() < numberOfTradeExpected);
+        assertTrue(testableStrategy.getTradesUpdateReceived().size() <= numberOfTradeExpected);
         assertTrue(testableStrategy.getTradesUpdateReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.

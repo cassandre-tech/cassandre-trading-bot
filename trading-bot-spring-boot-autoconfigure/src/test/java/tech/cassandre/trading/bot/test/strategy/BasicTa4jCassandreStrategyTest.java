@@ -27,9 +27,6 @@ import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -275,15 +272,6 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
             return service;
         }
 
-    }
-
-    /**
-     * Generate a date in 2020 with a day.
-     * @param day day
-     * @return date
-     */
-    private static Date createDay(final int day) {
-        return Date.from(ZonedDateTime.of(2020, 1, day, 9, 0, 0, 0, ZoneId.systemDefault()).toInstant());
     }
 
 }

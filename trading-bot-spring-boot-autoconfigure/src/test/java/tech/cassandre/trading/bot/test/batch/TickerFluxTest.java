@@ -101,7 +101,7 @@ public class TickerFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(marketService, atLeast(numberOfMarketServiceCalls)).getTicker(any()));
 
         // Checking that somme tickers have already been treated (to verify we work on a single thread).
-        assertTrue(testableStrategy.getTickersUpdateReceived().size() < numberOfTickersExpected);
+        assertTrue(testableStrategy.getTickersUpdateReceived().size() <= numberOfTickersExpected);
         assertTrue(testableStrategy.getTickersUpdateReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.
