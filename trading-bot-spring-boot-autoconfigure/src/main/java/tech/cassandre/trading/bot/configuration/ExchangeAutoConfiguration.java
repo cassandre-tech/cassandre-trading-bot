@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import si.mazi.rescu.HttpStatusIOException;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.service.ExchangeService;
@@ -77,6 +78,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Trade flux. */
     private TradeFlux tradeFlux;
 
+    /** Position flux. */
+    private PositionFlux positionFlux;
+
     /**
      * Constructor.
      *
@@ -128,6 +132,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             tickerFlux = new TickerFlux(marketService);
             orderFlux = new OrderFlux(tradeService);
             tradeFlux = new TradeFlux(tradeService);
+            positionFlux = new PositionFlux(positionService);
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();
@@ -298,6 +303,16 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     @Bean
     public PositionService getPositionService() {
         return positionService;
+    }
+
+    /**
+     * Getter positionFlux.
+     *
+     * @return positionFlux
+     */
+    @Bean
+    public PositionFlux getPositionFlux() {
+        return positionFlux;
     }
 
 }

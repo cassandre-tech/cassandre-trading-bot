@@ -4,6 +4,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 
 import java.math.RoundingMode;
+import java.util.Objects;
 
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
@@ -148,6 +149,35 @@ public class PositionDTO {
      */
     public final TradeDTO getCloseTrade() {
         return closeTrade;
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PositionDTO that = (PositionDTO) o;
+        return id == that.id && status == that.status;
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public final String toString() {
+        return "PositionDTO{"
+                + " id=" + id
+                + ", status=" + status
+                + ", openOrderId='" + openOrderId + '\''
+                + ", openTrade=" + openTrade
+                + ", closeOrderId='" + closeOrderId + '\''
+                + ", closeTrade=" + closeTrade
+                + '}';
     }
 
 }

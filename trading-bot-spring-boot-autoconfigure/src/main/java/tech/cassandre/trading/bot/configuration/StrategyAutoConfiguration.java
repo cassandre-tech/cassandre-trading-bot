@@ -7,6 +7,7 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -55,6 +56,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     /** Trade flux. */
     private final TradeFlux tradeFlux;
 
+    /** Position flux. */
+    private final PositionFlux positionFlux;
+
     /**
      * Constructor.
      *
@@ -63,16 +67,19 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      * @param newPositionService    position service
      * @param newAccountFlux        account flux
      * @param newTickerFlux         ticker flux
-     * @param newOrderFlux          order flux.
-     * @param newTradeFlux          trade flux.
+     * @param newOrderFlux          order flux
+     * @param newTradeFlux          trade flux
+     * @param newPositionFlux          position flux
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
                                      final TradeService newTradeService,
                                      final PositionService newPositionService,
                                      final AccountFlux newAccountFlux,
                                      final TickerFlux newTickerFlux,
                                      final OrderFlux newOrderFlux,
-                                     final TradeFlux newTradeFlux) {
+                                     final TradeFlux newTradeFlux,
+                                     final PositionFlux newPositionFlux) {
         this.applicationContext = newApplicationContext;
         this.tradeService = newTradeService;
         this.positionService = newPositionService;
@@ -80,6 +87,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
         this.tradeFlux = newTradeFlux;
+        this.positionFlux = newPositionFlux;
     }
 
     /**
@@ -157,6 +165,11 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
         connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.
         connectableTradeFlux.connect();
+
+        // Position flux.
+        positionFlux.getFlux()
+                .publishOn(scheduler)
+                .subscribe(strategy::positionUpdate);
     }
 
 }

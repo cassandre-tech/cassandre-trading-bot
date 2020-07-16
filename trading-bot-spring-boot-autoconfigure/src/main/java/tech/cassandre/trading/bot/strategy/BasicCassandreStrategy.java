@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.strategy;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -28,6 +29,10 @@ public abstract class BasicCassandreStrategy {
 
     /** The trades owned by the user. */
     private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
+Add position flux#136
+
+    /** The positions owned by the user. */
+    private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
     /**
      * Getter tradeService.
@@ -94,6 +99,16 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
+     * Method called by streams on every position update.
+     *
+     * @param position trade
+     */
+    public void positionUpdate(final PositionDTO position) {
+        positions.put(position.getId(), position);
+        onPositionUpdate(position);
+    }
+
+    /**
      * Getter of accounts.
      *
      * @return accounts
@@ -112,12 +127,21 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
-     * Getter trades.
+     * Getter of trades.
      *
      * @return trades
      */
     public final Map<String, TradeDTO> getTrades() {
         return trades;
+    }
+
+    /**
+     * Getter of positions.
+     *
+     * @return positions
+     */
+    public final Map<Long, PositionDTO> getPositions() {
+        return positions;
     }
 
     /**
@@ -145,11 +169,19 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
-     * Method triggered on trade order update.
+     * Method triggered on every trade update.
      *
      * @param trade trade
      */
     public void onTradeUpdate(final TradeDTO trade) {
+    }
+
+    /**
+     * Method triggered on every position update.
+     *
+     * @param position position
+     */
+    public void onPositionUpdate(final PositionDTO position) {
     }
 
 }

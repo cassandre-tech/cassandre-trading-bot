@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -46,6 +47,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
 
     /** Trades update received. */
     private final List<TradeDTO> tradesUpdateReceived = new LinkedList<>();
+
+    /** Positions update received. */
+    private final List<PositionDTO> positionsUpdateReceived = new LinkedList<>();
 
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
@@ -99,6 +103,17 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         }
     }
 
+    @Override
+    public void onPositionUpdate(PositionDTO position) {
+        positionsUpdateReceived.add(position);
+        logger.info("TestableStrategy-onPositionUpdate " + getCount(tradesUpdateReceived) + " : " + position);
+        try {
+            Thread.sleep(METHOD_DURATION);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Return formatted list count.
      *
@@ -143,6 +158,24 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
      */
     public final List<TradeDTO> getTradesUpdateReceived() {
         return tradesUpdateReceived;
+    }
+
+    /**
+     * Getter accountsUpdateReceived.
+     *
+     * @return accountsUpdateReceived
+     */
+    public final List<AccountDTO> getAccountsUpdateReceived() {
+        return accountsUpdateReceived;
+    }
+
+    /**
+     * Getter positionsUpdateReceived.
+     *
+     * @return positionsUpdateReceived
+     */
+    public final List<PositionDTO> getPositionsUpdateReceived() {
+        return positionsUpdateReceived;
     }
 
 }

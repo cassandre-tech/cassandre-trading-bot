@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -182,4 +183,22 @@ public class PositionDTOTest {
         assertTrue(p.shouldBeClosed(t03));
     }
 
+    @Test
+    @DisplayName("PositionDTO equalTo")
+    public void equalTo() {
+        PositionDTO p1 = new PositionDTO(1, "O000001", noRules);
+        PositionDTO p1Bis = new PositionDTO(1, "O000001", noRules);
+        PositionDTO p2 = new PositionDTO(2, "O000002", noRules);
+
+        // Same position.
+        assertEquals(p1, p1);
+        assertEquals(p1, p1Bis);
+
+        // Two different positions.
+        assertNotEquals(p1, p2);
+
+        // Status changed - for P1.
+        p1.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000001").create());
+        assertNotEquals(p1, p1Bis);
+    }
 }
