@@ -3,7 +3,7 @@ package tech.cassandre.trading.bot.dto.position;
 /**
  * Position creation result.
  */
-public class PositionCreationResultDTO {
+public final class PositionCreationResultDTO {
 
     /** Position ID (filled if order creation is successful). */
     private final Long positionId;
@@ -17,7 +17,7 @@ public class PositionCreationResultDTO {
     /** Exception (filled if order creation failed). */
     private final Exception exception;
 
-    /** Indicates if the transaction was successful or not. */
+    /** Indicates if the position creation was successful or not. */
     private final boolean successful;
 
     /**
@@ -53,7 +53,7 @@ public class PositionCreationResultDTO {
      *
      * @return positionId
      */
-    public final Long getPositionId() {
+    public Long getPositionId() {
         return positionId;
     }
 
@@ -62,7 +62,7 @@ public class PositionCreationResultDTO {
      *
      * @return orderId
      */
-    public final String getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
@@ -71,7 +71,7 @@ public class PositionCreationResultDTO {
      *
      * @return errorMessage
      */
-    public final String getErrorMessage() {
+    public String getErrorMessage() {
         return errorMessage;
     }
 
@@ -80,7 +80,7 @@ public class PositionCreationResultDTO {
      *
      * @return exception
      */
-    public final Exception getException() {
+    public Exception getException() {
         return exception;
     }
 
@@ -94,7 +94,7 @@ public class PositionCreationResultDTO {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return "PositionCreationResultDTO{"
                 + " positionId='" + positionId + '\''
                 + ", orderId='" + orderId + '\''

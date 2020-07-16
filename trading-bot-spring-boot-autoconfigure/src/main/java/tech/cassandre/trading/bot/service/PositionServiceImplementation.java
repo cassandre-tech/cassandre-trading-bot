@@ -56,17 +56,17 @@ public class PositionServiceImplementation extends BaseService implements Positi
         final OrderCreationResultDTO orderCreationResult = tradeService.createBuyMarketOrder(currencyPair, amount);
 
         // If it works, create the position.
-        if (orderCreationResult.getOrderId().isPresent()) {
+        if (orderCreationResult.isSuccessful()) {
             // Creates the position.
-            PositionDTO p = new PositionDTO(positionCounter.getAndIncrement(), orderCreationResult.getOrderId().get(), rules);
+            PositionDTO p = new PositionDTO(positionCounter.getAndIncrement(), orderCreationResult.getOrderId(), rules);
             positions.put(p.getId(), p);
-            getLogger().info("Position {} opened with order {}", p.getId(), orderCreationResult.getOrderId().get());
+            getLogger().info("Position {} opened with order {}", p.getId(), orderCreationResult.getOrderId());
 
             // Creates the result.
-            return new PositionCreationResultDTO(p.getId(), orderCreationResult.getOrderId().get());
+            return new PositionCreationResultDTO(p.getId(), orderCreationResult.getOrderId());
         } else {
             // If it doesn't work, returns the error.
-            return new PositionCreationResultDTO(orderCreationResult.getErrorMessage().get(), orderCreationResult.getException().get());
+            return new PositionCreationResultDTO(orderCreationResult.getErrorMessage(), orderCreationResult.getException());
         }
     }
 
@@ -76,9 +76,9 @@ public class PositionServiceImplementation extends BaseService implements Positi
                 .filter(p -> p.shouldBeClosed(ticker))
                 .forEach(p -> {
                     final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(ticker.getCurrencyPair(), p.getOpenTrade().getOriginalAmount());
-                    if (orderCreationResult.getOrderId().isPresent()) {
-                        p.setCloseOrderId(orderCreationResult.getOrderId().get());
-                        getLogger().info("Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId().get());
+                    if (orderCreationResult.isSuccessful()) {
+                        p.setCloseOrderId(orderCreationResult.getOrderId());
+                        getLogger().info("Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId());
                     }
                 });
     }
