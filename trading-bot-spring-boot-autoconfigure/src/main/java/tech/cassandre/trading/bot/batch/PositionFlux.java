@@ -30,6 +30,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
     }
 
     @Override
+    @SuppressWarnings("unused")
     protected final Set<PositionDTO> getNewValues() {
         getLogger().debug("PositionFlux - Retrieving new values");
         Set<PositionDTO> newValues = new LinkedHashSet<>();
@@ -39,7 +40,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
             getLogger().debug("PositionFlux - Treating position : {}", position.getId());
             PositionDTO existingPosition = previousValues.get(position.getId());
             if (existingPosition == null || !existingPosition.equals(position)) {
-                getLogger().debug("PositionFlux - flux {} has changed : {}", position.getId(), position);
+                getLogger().debug("PositionFlux - Flux {} has changed : {}", position.getId(), position);
                 previousValues.put(position.getId(), position);
                 newValues.add(position);
             }

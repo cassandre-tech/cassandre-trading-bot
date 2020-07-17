@@ -30,7 +30,7 @@ import java.util.StringJoiner;
 public class StrategyAutoConfiguration extends BaseConfiguration {
 
     /** Number of threads. */
-    private static final int NUMBER_OF_THREADS = 7;
+    private static final int NUMBER_OF_THREADS = 3;
 
     /** Application context. */
     private final ApplicationContext applicationContext;
@@ -147,6 +147,26 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         accountFlux.getFlux()
                 .publishOn(scheduler)
                 .subscribe(strategy::accountUpdate);
+        getLogger().info("Account flux started");
+
+        // Position flux.
+        positionFlux.getFlux()
+                .publishOn(scheduler)
+                .subscribe(strategy::positionUpdate);
+        getLogger().info("Position flux started");
+
+        // Order flux.
+        orderFlux.getFlux()
+                .publishOn(scheduler)
+                .subscribe(strategy::orderUpdate);
+        getLogger().info("Order flux started");
+
+        // Trade flux to strategy.
+        final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
+        connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
+        connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.
+        connectableTradeFlux.connect();
+        getLogger().info("Trade flux started");
 
         // Ticker flux.
         tickerFlux.updateRequestedCurrencyPairs(strategy.getRequestedCurrencyPairs());
@@ -154,22 +174,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         connectableTickerFlux.subscribe(strategy::tickerUpdate);            // For strategy.
         connectableTickerFlux.subscribe(positionService::tickerUpdate);     // For position service.
         connectableTickerFlux.connect();
-
-        // Order flux.
-        orderFlux.getFlux()
-                .publishOn(scheduler)
-                .subscribe(strategy::orderUpdate);
-
-        // Trade flux to strategy.
-        final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
-        connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
-        connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.
-        connectableTradeFlux.connect();
-
-        // Position flux.
-        positionFlux.getFlux()
-                .publishOn(scheduler)
-                .subscribe(strategy::positionUpdate);
+        getLogger().info("Ticker flux started");
     }
 
 }

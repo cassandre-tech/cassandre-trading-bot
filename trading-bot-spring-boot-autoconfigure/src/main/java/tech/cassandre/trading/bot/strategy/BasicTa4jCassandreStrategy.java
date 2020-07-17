@@ -6,7 +6,6 @@ import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.num.DoubleNum;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -93,12 +92,6 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
             // Our strategy should exit.
             shouldExit();
         }
-    }
-
-    @Override
-    public final void orderUpdate(final OrderDTO order) {
-        getOrders().put(order.getId(), order);
-        onOrderUpdate(order);
     }
 
     /**

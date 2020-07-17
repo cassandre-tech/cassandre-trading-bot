@@ -50,15 +50,15 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             MarketOrder m = new MarketOrder(getMapper().mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair));
-            getLogger().debug("TradeServiceXChangeImplementation - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            getLogger().debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
             final OrderCreationResultDTO result = new OrderCreationResultDTO(tradeService.placeMarketOrder(m));
-            getLogger().debug("TradeServiceXChangeImplementation - Order creation result : {}", result);
+            getLogger().debug("TradeService - Order created : {}", result);
             return result;
         } catch (Exception e) {
-            getLogger().error("Error calling createBuyMarketOrder : {}", e.getMessage());
-            return new OrderCreationResultDTO("Error calling createBuyMarketOrder : " + e.getMessage(), e);
+            getLogger().error("TradeService - Error calling createBuyMarketOrder : {}", e.getMessage());
+            return new OrderCreationResultDTO("TradeService - Error calling createBuyMarketOrder : " + e.getMessage(), e);
         }
     }
 
@@ -75,15 +75,15 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             LimitOrder l = new LimitOrder(getMapper().mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair), null, null, limitPrice);
-            getLogger().debug("TradeServiceXChangeImplementation - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            getLogger().debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
             final OrderCreationResultDTO result = new OrderCreationResultDTO(tradeService.placeLimitOrder(l));
-            getLogger().debug("TradeServiceXChangeImplementation - Order creation result : {}", result);
+            getLogger().debug("TradeService - Order creation result : {}", result);
             return result;
         } catch (Exception e) {
-            getLogger().error("Error calling createLimitOrder : {}", e.getMessage());
-            return new OrderCreationResultDTO("Error calling createLimitOrder : " + e.getMessage(), e);
+            getLogger().error("TradeService - Error calling createLimitOrder : {}", e.getMessage());
+            return new OrderCreationResultDTO("TradeService - Error calling createLimitOrder : " + e.getMessage(), e);
         }
     }
 
@@ -121,7 +121,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     public final Set<OrderDTO> getOpenOrders() {
-        getLogger().debug("TradeServiceXChangeImplementation - Getting open orders from exchange");
+        getLogger().debug("TradeService - Getting open orders from exchange");
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
@@ -131,23 +131,23 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             tradeService.getOpenOrders()
                     .getOpenOrders()
                     .forEach(order -> results.add(getMapper().mapToOrderDTO(order)));
-            getLogger().debug("TradeServiceXChangeImplementation - {} order(s) found", results.size());
+            getLogger().debug("TradeService - {} order(s) found", results.size());
             return results;
         } catch (IOException e) {
-            getLogger().error("Error retrieving open orders : {}", e.getMessage());
+            getLogger().error("TradeService - Error retrieving open orders : {}", e.getMessage());
             return Collections.emptySet();
         } catch (InterruptedException e) {
-            getLogger().error("InterruptedException : {}", e.getMessage());
+            getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
     }
 
     @Override
     public final boolean cancelOrder(final String orderId) {
-        getLogger().debug("TradeServiceXChangeImplementation - Canceling order {}", orderId);
+        getLogger().debug("TradeService - Canceling order {}", orderId);
         if (orderId != null) {
             try {
-                getLogger().debug("TradeServiceXChangeImplementation - Successfully canceled order {}", orderId);
+                getLogger().debug("TradeService - Successfully canceled order {}", orderId);
                 return tradeService.cancelOrder(orderId);
             } catch (Exception e) {
                 getLogger().error("Error canceling order {} : {}", orderId, e.getMessage());
@@ -161,7 +161,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     public final Set<TradeDTO> getTrades() {
-        getLogger().debug("TradeServiceXChangeImplementation - Getting trades from exchange");
+        getLogger().debug("TradeService - Getting trades from exchange");
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
@@ -177,13 +177,13 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             tradeService.getTradeHistory(params)
                     .getUserTrades()
                     .forEach(userTrade -> results.add(getMapper().mapToTradeDTO(userTrade)));
-            getLogger().debug("TradeServiceXChangeImplementation - {} trade(s) found", results.size());
+            getLogger().debug("TradeService - {} trade(s) found", results.size());
             return results;
         } catch (IOException e) {
-            getLogger().error("Error retrieving trades : {}", e.getMessage());
+            getLogger().error("TradeService - Error retrieving trades : {}", e.getMessage());
             return Collections.emptySet();
         } catch (InterruptedException e) {
-            getLogger().error("InterruptedException : {}", e.getMessage());
+            getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
     }

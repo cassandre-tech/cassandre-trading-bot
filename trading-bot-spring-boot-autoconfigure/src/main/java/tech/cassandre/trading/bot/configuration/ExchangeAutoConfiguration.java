@@ -151,6 +151,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
         } catch (HttpStatusIOException e) {
             if (e.getHttpStatusCode() == UNAUTHORIZED_STATUS_CODE) {
                 // Authorization failure.
+                e.printStackTrace();
                 throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getName(),
                         "Check your exchange credentials " + e.getMessage());
             } else {
@@ -159,6 +160,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 throw new ConfigurationException("Error while connecting to the exchange " + e.getMessage());
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ConfigurationException("Unknown Configuration error : " + e.getMessage());
         }
     }

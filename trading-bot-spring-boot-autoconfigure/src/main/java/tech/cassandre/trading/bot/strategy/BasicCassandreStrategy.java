@@ -29,7 +29,6 @@ public abstract class BasicCassandreStrategy {
 
     /** The trades owned by the user. */
     private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
-Add position flux#136
 
     /** The positions owned by the user. */
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();

@@ -17,7 +17,6 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -203,8 +202,7 @@ public class PositionFluxTest extends BaseTest {
         @Primary
         public TradeService tradeService() {
             // Creates the mock.
-            TradeService tradeService = mock(TradeService.class);
-            return tradeService;
+            return mock(TradeService.class);
         }
 
         /**

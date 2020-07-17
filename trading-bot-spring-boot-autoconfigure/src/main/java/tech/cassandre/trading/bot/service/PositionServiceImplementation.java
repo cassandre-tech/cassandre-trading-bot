@@ -42,17 +42,20 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final Set<PositionDTO> getPositions() {
+        getLogger().debug("PositionService - Retrieving all positions");
         return new LinkedHashSet<>(positions.values());
     }
 
     @Override
     public final Optional<PositionDTO> getPositionById(final long id) {
+        getLogger().debug("PositionService - Retrieving position {}", id);
         return Optional.ofNullable(positions.get(id));
     }
 
     @Override
     public final PositionCreationResultDTO createPosition(final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
         // Trying to create an order.
+        getLogger().debug("PositionService - Creating a position for {} on {} with the rules : {}", amount, currencyPair, rules);
         final OrderCreationResultDTO orderCreationResult = tradeService.createBuyMarketOrder(currencyPair, amount);
 
         // If it works, create the position.
@@ -60,11 +63,12 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // Creates the position.
             PositionDTO p = new PositionDTO(positionCounter.getAndIncrement(), orderCreationResult.getOrderId(), rules);
             positions.put(p.getId(), p);
-            getLogger().info("Position {} opened with order {}", p.getId(), orderCreationResult.getOrderId());
+            getLogger().info("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrderId());
 
             // Creates the result.
             return new PositionCreationResultDTO(p.getId(), orderCreationResult.getOrderId());
         } else {
+            getLogger().error("PositionService - Position creation failure : {}", orderCreationResult.getErrorMessage());
             // If it doesn't work, returns the error.
             return new PositionCreationResultDTO(orderCreationResult.getErrorMessage(), orderCreationResult.getException());
         }
@@ -78,7 +82,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(ticker.getCurrencyPair(), p.getOpenTrade().getOriginalAmount());
                     if (orderCreationResult.isSuccessful()) {
                         p.setCloseOrderId(orderCreationResult.getOrderId());
-                        getLogger().info("Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId());
+                        getLogger().info("PositionService - Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId());
                     }
                 });
     }

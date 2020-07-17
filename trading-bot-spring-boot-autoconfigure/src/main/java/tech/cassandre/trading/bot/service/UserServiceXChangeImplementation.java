@@ -32,15 +32,15 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             // If a token is not available this method will block until the refill adds one to the bucket.
             getBucket().asScheduler().consume(1);
 
-            getLogger().debug("UserServiceXChangeImplementation - Retrieving account information");
+            getLogger().debug("UserService - Retrieving account information");
             final UserDTO user = getMapper().mapToUserDTO(xChangeAccountService.getAccountInfo());
-            getLogger().debug("UserServiceXChangeImplementation - Account information retrieved " + user);
+            getLogger().debug("UserService - Account information retrieved " + user);
             return Optional.ofNullable(user);
         } catch (IOException e) {
-            getLogger().error("Error retrieving account information : {}", e.getMessage());
+            getLogger().error("UserService - Error retrieving account information : {}", e.getMessage());
             return Optional.empty();
         } catch (InterruptedException e) {
-            getLogger().error("InterruptedException : {}", e.getMessage());
+            getLogger().error("UserService - InterruptedException : {}", e.getMessage());
             return Optional.empty();
         }
     }

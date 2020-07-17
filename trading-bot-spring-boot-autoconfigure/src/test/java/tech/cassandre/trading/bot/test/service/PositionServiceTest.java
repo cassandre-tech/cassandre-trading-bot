@@ -128,6 +128,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals("ORDER00020", p2.getOrderId());
         assertNull(p2.getErrorMessage());
         assertNull(p2.getException());
+        assertTrue(positionService.getPositionById(2).isPresent());
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Creates position 3 (ETH/BTC, 0.0003, 30% stop gain, 30% stop loss).
@@ -167,6 +168,7 @@ public class PositionServiceTest extends BaseTest {
         assertFalse(positionService.getPositionById(3).isPresent());
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
     @DisplayName("Trade update")
     public void tradeUpdateTest() {
@@ -201,6 +203,7 @@ public class PositionServiceTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
     @DisplayName("Close position")
     public void closePositionTest() throws InterruptedException {
@@ -221,16 +224,19 @@ public class PositionServiceTest extends BaseTest {
         // A first ticker arrives with a gain of 100% but for the wrong CP.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).ask(new BigDecimal("0.5")).create());
         Thread.sleep(FIVE_SECOND);
+        assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
 
         // A second ticker arrives with a gain of 25%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).ask(new BigDecimal("0.3")).create());
         Thread.sleep(FIVE_SECOND);
+        assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
 
         // A third ticker arrives with a gain of 100%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).ask(new BigDecimal("0.5")).create());
         Thread.sleep(FIVE_SECOND);
+        assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSING, positionService.getPositionById(1).get().getStatus());
 
         // The close trade arrives, change the status and set the price.

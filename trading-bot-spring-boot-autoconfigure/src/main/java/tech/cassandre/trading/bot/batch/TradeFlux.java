@@ -39,12 +39,11 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
             getLogger().debug("TradeFlux - Treating trade : {}", trade.getId());
             TradeDTO existingTrade = previousValues.get(trade.getId());
             if (existingTrade == null || !existingTrade.equals(trade)) {
-                getLogger().debug("TradeFlux - trade {} has changed : {}", trade.getId(), trade);
+                getLogger().debug("TradeFlux - Trade {} has changed : {}", trade.getId(), trade);
                 previousValues.put(trade.getId(), trade);
                 newValues.add(trade);
             }
         });
-        // TODO Removing all the trades no more returned by the exchange.
         getLogger().debug("TradeFlux - {} trade(s) updated", newValues.size());
         return newValues;
     }
