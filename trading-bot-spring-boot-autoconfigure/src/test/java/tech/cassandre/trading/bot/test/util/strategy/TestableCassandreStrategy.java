@@ -106,7 +106,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     @Override
     public void onPositionUpdate(PositionDTO position) {
         positionsUpdateReceived.add(position);
-        logger.info("TestableStrategy-onPositionUpdate " + getCount(tradesUpdateReceived) + " : " + position);
+        logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position);
         try {
             Thread.sleep(METHOD_DURATION);
         } catch (InterruptedException e) {

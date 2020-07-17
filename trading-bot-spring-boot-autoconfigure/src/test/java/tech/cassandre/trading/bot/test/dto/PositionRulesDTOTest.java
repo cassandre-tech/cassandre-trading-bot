@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * PositionRulesDTO test.
  */
-@DisplayName("PositionRules DTO tests")
+@DisplayName("PositionRules DTO")
 public class PositionRulesDTOTest {
 
     @Test

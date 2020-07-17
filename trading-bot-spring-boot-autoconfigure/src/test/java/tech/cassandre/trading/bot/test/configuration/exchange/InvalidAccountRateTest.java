@@ -47,7 +47,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 public class InvalidAccountRateTest extends BaseTest {
 
     @Test
-    @DisplayName("Check error message")
+    @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);

@@ -3,15 +3,16 @@ package tech.cassandre.trading.bot.configuration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.ConnectableFlux;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
@@ -29,14 +30,8 @@ import java.util.StringJoiner;
 @Configuration
 public class StrategyAutoConfiguration extends BaseConfiguration {
 
-    /** Number of threads. */
-    private static final int NUMBER_OF_THREADS = 3;
-
     /** Application context. */
     private final ApplicationContext applicationContext;
-
-    /** Scheduler. */
-    private final Scheduler scheduler = Schedulers.newParallel("strategy-scheduler", NUMBER_OF_THREADS);
 
     /** Trade service. */
     private final TradeService tradeService;
@@ -144,29 +139,25 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         strategy.setTradeService(tradeService);
 
         // Account flux.
-        accountFlux.getFlux()
-                .publishOn(scheduler)
-                .subscribe(strategy::accountUpdate);
-        getLogger().info("Account flux started");
+        final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();
+        connectableAccountFlux.subscribe(strategy::accountUpdate);
+        connectableAccountFlux.connect();
 
         // Position flux.
-        positionFlux.getFlux()
-                .publishOn(scheduler)
-                .subscribe(strategy::positionUpdate);
-        getLogger().info("Position flux started");
+        final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publish();
+        connectablePositionFlux.subscribe(strategy::positionUpdate);
+        connectablePositionFlux.connect();
 
         // Order flux.
-        orderFlux.getFlux()
-                .publishOn(scheduler)
-                .subscribe(strategy::orderUpdate);
-        getLogger().info("Order flux started");
+        final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
+        connectableOrderFlux.subscribe(strategy::orderUpdate);
+        connectableOrderFlux.connect();
 
         // Trade flux to strategy.
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
         connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
         connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.
         connectableTradeFlux.connect();
-        getLogger().info("Trade flux started");
 
         // Ticker flux.
         tickerFlux.updateRequestedCurrencyPairs(strategy.getRequestedCurrencyPairs());
@@ -174,7 +165,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         connectableTickerFlux.subscribe(strategy::tickerUpdate);            // For strategy.
         connectableTickerFlux.subscribe(positionService::tickerUpdate);     // For position service.
         connectableTickerFlux.connect();
-        getLogger().info("Ticker flux started");
     }
 
 }

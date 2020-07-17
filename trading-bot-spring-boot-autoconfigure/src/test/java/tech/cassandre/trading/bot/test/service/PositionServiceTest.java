@@ -5,25 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import tech.cassandre.trading.bot.batch.AccountFlux;
-import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.PositionServiceImplementation;
-import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -34,8 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -78,9 +67,10 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
+@Import(PositionServiceTestMock.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
-@DisplayName("Position tests")
+@DisplayName("Position service")
 public class PositionServiceTest extends BaseTest {
 
     /** Position service. */
@@ -96,10 +86,10 @@ public class PositionServiceTest extends BaseTest {
     private TickerFlux tickerFlux;
 
     /** Currency pair 1 used for test. */
-    private static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+    static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
     /** Currency pair 1 used for test. */
-    private static final CurrencyPairDTO cp2 = new CurrencyPairDTO(USD, BTC);
+    static final CurrencyPairDTO cp2 = new CurrencyPairDTO(USD, BTC);
 
     @Test
     @DisplayName("Position creation")
@@ -242,108 +232,6 @@ public class PositionServiceTest extends BaseTest {
                 .currencyPair(cp1)
                 .create());
         await().untilAsserted(() -> assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus()));
-    }
-
-    /**
-     * Change configuration to integrate mocks.
-     */
-    @TestConfiguration
-    public static class TestConfig {
-
-        /**
-         * Replace ticker flux by mock.
-         *
-         * @return mock
-         */
-        @Bean
-        @Primary
-        public TickerFlux tickerFlux() {
-            return new TickerFlux(marketService());
-        }
-
-        /**
-         * Replace account flux by mock.
-         *
-         * @return mock
-         */
-        @Bean
-        @Primary
-        public AccountFlux accountFlux() {
-            return new AccountFlux(userService());
-        }
-
-        /**
-         * Replace order flux by mock.
-         *
-         * @return mock
-         */
-        @Bean
-        @Primary
-        public OrderFlux orderFlux() {
-            return new OrderFlux(tradeService());
-        }
-
-        /**
-         * Replace position service with a
-         * @return mock
-         */
-        @Bean
-        @Primary
-        public PositionService positionService() {
-            return new PositionServiceImplementation(tradeService());
-        }
-
-        /**
-         * UserService mock.
-         *
-         * @return mocked service
-         */
-        @Bean
-        @Primary
-        public UserService userService() {
-            return mock(UserService.class);
-        }
-
-        /**
-         * MarketService mock.
-         *
-         * @return mocked service
-         */
-        @Bean
-        @Primary
-        public MarketService marketService() {
-            return mock(MarketService.class);
-        }
-
-        /**
-         * TradeService mock.
-         *
-         * @return mocked service
-         */
-        @Bean
-        @Primary
-        public TradeService tradeService() {
-            TradeService service = mock(TradeService.class);
-
-            // Position 1 creation reply (order ORDER00010).
-            given(service.createBuyMarketOrder(cp1, new BigDecimal("0.0001")))
-                    .willReturn(new OrderCreationResultDTO("ORDER00010"));
-
-            // Position 2 creation reply (order ORDER00020).
-            given(service.createBuyMarketOrder(cp2, new BigDecimal("0.0002")))
-                    .willReturn(new OrderCreationResultDTO("ORDER00020"));
-
-            // Position 3 creation reply (order ORDER00030).
-            given(service.createBuyMarketOrder(cp1, new BigDecimal("0.0003")))
-                    .willReturn(new OrderCreationResultDTO("Error message", new RuntimeException("Error exception")));
-
-            // Position 1 closed reply (ORDER00011).
-            given(service.createSellMarketOrder(cp1, new BigDecimal("0.0001")))
-                    .willReturn(new OrderCreationResultDTO("ORDER00011"));
-
-            return service;
-        }
-
     }
 
 }

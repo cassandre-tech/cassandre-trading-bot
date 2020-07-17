@@ -13,11 +13,11 @@ import java.time.ZonedDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@DisplayName("Trade DTO tests")
+@DisplayName("Trade DTO")
 public class TradeDTOTest {
 
     @Test
-    @DisplayName("EqualTo on trade")
+    @DisplayName("EqualTo")
     public void equalToForTrades() {
         // Test that only id is important when testing.
         TradeDTO t1 = TradeDTO.builder().id("0000001").create();

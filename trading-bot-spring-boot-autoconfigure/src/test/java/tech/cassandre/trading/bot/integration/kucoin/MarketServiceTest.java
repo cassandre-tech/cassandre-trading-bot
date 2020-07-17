@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "cassandre.trading.bot.exchange.rates.order=102",
         "testableStrategy.enabled=true",
         "invalidStrategy.enabled=false"
-
 })
 @DisplayName("Kucoin - Market service")
 public class MarketServiceTest {

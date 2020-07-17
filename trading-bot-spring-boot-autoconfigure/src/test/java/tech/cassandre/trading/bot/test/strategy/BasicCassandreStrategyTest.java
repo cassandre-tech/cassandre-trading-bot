@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.test.strategy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -6,19 +6,12 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
 
-import java.math.BigDecimal;
-import java.util.Iterator;
-
-import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAULT_VALUE;
@@ -54,67 +47,28 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
-@Import(OrderFluxTestMock.class)
-@DisplayName("Order flux")
-public class OrderFluxTest extends BaseTest {
+@Import(BasicCassandreStrategyMock.class)
+@DisplayName("All flux tests")
+public class BasicCassandreStrategyTest extends BaseTest {
 
     /** Cassandre strategy. */
     @Autowired
     private TestableCassandreStrategy testableStrategy;
 
-    /** Trade service. */
-    @Autowired
-    private TradeService tradeService;
-
     @Test
-    @DisplayName("Received data")
-    public void testReceivedData() {
-        final int numberOfOrdersExpected = 7;
-        final int numberOfTradeServiceCalls = 3;
+    @DisplayName("multi thread test")
+    public void multiThreadTest() {
+        final int numberOfValuesExpected = 6;
 
-        // Waiting for the trade service to have been called with all the test data.
-        await().untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getOpenOrders());
+        // Wait for the strategy to have received all the account test values.
+        with().await().untilAsserted(() -> assertEquals(numberOfValuesExpected, testableStrategy.getTickersUpdateReceived().size()));
 
-        // Checking that somme tickers have already been treated (to verify we work on a single thread).
-        assertTrue(testableStrategy.getOrdersUpdateReceived().size() < numberOfOrdersExpected);
-        assertTrue(testableStrategy.getOrdersUpdateReceived().size() > 0);
-
-        // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(testableStrategy.getOrdersUpdateReceived().size() >= numberOfOrdersExpected));
-
-        // Test all values received.
-        final Iterator<OrderDTO> iterator = testableStrategy.getOrdersUpdateReceived().iterator();
-
-        // Value 1.
-        OrderDTO order = iterator.next();
-        assertEquals("000001", order.getId());
-
-        // Value 2.
-        order = iterator.next();
-        assertEquals("000002", order.getId());
-
-        // Value 3.
-        order = iterator.next();
-        assertEquals("000003", order.getId());
-
-        // Value 3 : the original amount changed.
-        order = iterator.next();
-        assertEquals("000003", order.getId());
-        assertEquals(new BigDecimal(2), order.getOriginalAmount());
-
-        // Value 4 : new order.
-        order = iterator.next();
-        assertEquals("000004", order.getId());
-
-        // Value 5 : average price changed.
-        order = iterator.next();
-        assertEquals("000002", order.getId());
-        assertEquals(new BigDecimal(1), order.getAveragePrice());
-
-        // Value 6 : fee changed.
-        order = iterator.next();
-        assertEquals("000004", order.getId());
-        assertEquals(new BigDecimal(1), order.getFee());
+        // Checking that all other data have been received.
+        assertFalse(testableStrategy.getOrdersUpdateReceived().isEmpty());
+        assertFalse(testableStrategy.getAccountsUpdatesReceived().isEmpty());
+        assertFalse(testableStrategy.getOrdersUpdateReceived().isEmpty());
+        assertFalse(testableStrategy.getTradesUpdateReceived().isEmpty());
+        assertFalse(testableStrategy.getPositionsUpdateReceived().isEmpty());
     }
 
 }

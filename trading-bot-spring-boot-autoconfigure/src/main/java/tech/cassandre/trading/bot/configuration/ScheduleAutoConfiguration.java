@@ -19,7 +19,7 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 public class ScheduleAutoConfiguration {
 
     /** Position update delay. */
-    private static final long POSITION_UPDATE_DELAY = 1_000;
+    private static final long ONE_SECOND = 1_000;
 
     /** Account flux. */
     private final AccountFlux accountFlux;
@@ -60,7 +60,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the account flux.
      */
-    @Scheduled(fixedDelay = 1)
+    @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
     public void setupAccountFlux() {
         accountFlux.update();
     }
@@ -68,7 +68,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the ticker flux.
      */
-    @Scheduled(fixedDelay = 1)
+    @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
     public void setupTickerFlux() {
         tickerFlux.update();
     }
@@ -76,7 +76,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the order flux.
      */
-    @Scheduled(fixedDelay = 1)
+    @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
     public void setupOrderFlux() {
         orderFlux.update();
     }
@@ -84,7 +84,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the trade flux.
      */
-    @Scheduled(fixedDelay = 1)
+    @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
     public void setupTradeFlux() {
         tradeFlux.update();
     }
@@ -92,7 +92,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the position flux.
      */
-    @Scheduled(fixedDelay = POSITION_UPDATE_DELAY)
+    @Scheduled(fixedDelay = ONE_SECOND, initialDelay = ONE_SECOND)
     public void setPositionFlux() {
         positionFlux.update();
     }

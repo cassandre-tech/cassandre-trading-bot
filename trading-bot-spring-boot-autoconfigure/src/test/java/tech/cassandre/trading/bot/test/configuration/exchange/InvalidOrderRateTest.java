@@ -43,11 +43,11 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_RATE_ORDER, value = "A")
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
-@DisplayName("Invalid ticker rate")
+@DisplayName("Invalid order rate")
 public class InvalidOrderRateTest extends BaseTest {
 
     @Test
-    @DisplayName("Check error message")
+    @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);

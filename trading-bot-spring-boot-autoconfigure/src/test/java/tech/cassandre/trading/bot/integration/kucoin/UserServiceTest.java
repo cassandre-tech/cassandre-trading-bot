@@ -45,8 +45,8 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    @DisplayName("Get user")
-    public void testGetAccount() {
+    @DisplayName("Get user, accounts and balances")
+    public void testGetUser() {
         // Expected values.
         final int expectedAccounts = 2;
         final int expectedWalletsInTradingAccount = 2;

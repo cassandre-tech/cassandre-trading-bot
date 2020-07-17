@@ -54,7 +54,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
-@DisplayName("Rates tests")
+@DisplayName("Rates")
 @Disabled("Disable as it's not working on the command line") // TODO Fix this for CI.
 public class RatesTest {
 
@@ -74,7 +74,7 @@ public class RatesTest {
 	private TradeService tradeService;
 
 	@Test
-	@DisplayName("Account service rate test")
+	@DisplayName("Account service rate")
 	public void accountServiceRateTest() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
@@ -101,7 +101,7 @@ public class RatesTest {
 	}
 
 	@Test
-	@DisplayName("Market service rate test")
+	@DisplayName("Market service rate")
 	public void marketServiceRateTest() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 		final CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
@@ -129,7 +129,7 @@ public class RatesTest {
 	}
 
 	@Test
-	@DisplayName("Trade service rate test")
+	@DisplayName("Trade service rate")
 	public void tradeServiceRateTest() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 

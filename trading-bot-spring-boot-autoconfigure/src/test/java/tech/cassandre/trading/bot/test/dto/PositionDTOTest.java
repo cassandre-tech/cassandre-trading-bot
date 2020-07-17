@@ -24,7 +24,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 
-@DisplayName("Position DTO tests")
+@DisplayName("Position DTO")
 public class PositionDTOTest {
 
     /** Currency pair used for test. */
@@ -37,7 +37,7 @@ public class PositionDTOTest {
     final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
 
     @Test
-    @DisplayName("Testing the status change")
+    @DisplayName("Testing status change")
     public void statusChange() {
         // We create a position that was opened with the order O000001.
         PositionDTO p = new PositionDTO(1, "O000001", noRules);
@@ -181,7 +181,7 @@ public class PositionDTOTest {
     }
 
     @Test
-    @DisplayName("PositionDTO equalTo")
+    @DisplayName("EqualTo")
     public void equalTo() {
         PositionDTO p1 = new PositionDTO(1, "O000001", noRules);
         PositionDTO p1Bis = new PositionDTO(1, "O000001", noRules);
