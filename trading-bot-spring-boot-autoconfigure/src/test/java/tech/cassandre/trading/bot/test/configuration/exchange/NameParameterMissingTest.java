@@ -33,9 +33,6 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_DEFAULT_VALUE;
 
-/**
- * Testing errors if one parameter (name) is missing.
- */
 @ClearSystemProperty(key = PARAMETER_NAME)
 @SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_USERNAME, value = PARAMETER_USERNAME_DEFAULT_VALUE)

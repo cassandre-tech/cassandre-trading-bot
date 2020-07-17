@@ -3,7 +3,11 @@ package tech.cassandre.trading.bot.dto.position;
 import java.text.DecimalFormat;
 
 /**
- * Position rules used to know if cassandre should close a position.
+ * Position rules for {@link PositionDTO}.
+ * It is used to know if cassandre should close a position.
+ * Supported rules :
+ * - Stop gain with percentage.
+ * - Stop loss with percentage.
  */
 public class PositionRulesDTO {
 
@@ -41,7 +45,7 @@ public class PositionRulesDTO {
     }
 
     /**
-     * Getter stopGainPercentageSet.
+     * Getter for stopGainPercentageSet.
      *
      * @return stopGainPercentageSet
      */
@@ -50,7 +54,7 @@ public class PositionRulesDTO {
     }
 
     /**
-     * Getter stopGainPercentage.
+     * Getter for stopGainPercentage.
      *
      * @return stopGainPercentage
      */
@@ -59,7 +63,7 @@ public class PositionRulesDTO {
     }
 
     /**
-     * Getter stopLossPercentageSet.
+     * Getter for stopLossPercentageSet.
      *
      * @return stopLossPercentageSet
      */
@@ -68,7 +72,7 @@ public class PositionRulesDTO {
     }
 
     /**
-     * Getter stopLossPercentage.
+     * Getter for stopLossPercentage.
      *
      * @return stopLossPercentage
      */

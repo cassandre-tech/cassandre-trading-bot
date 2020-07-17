@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.dto.trade;
 
 /**
- * Order creation result.
+ * Order creation result for {@link OrderDTO}.
  */
 @SuppressWarnings("unused")
 public final class OrderCreationResultDTO {
@@ -44,7 +44,7 @@ public final class OrderCreationResultDTO {
     }
 
     /**
-     * Getter orderId.
+     * Getter for orderId.
      *
      * @return orderId
      */
@@ -53,7 +53,7 @@ public final class OrderCreationResultDTO {
     }
 
     /**
-     * Getter errorMessage.
+     * Getter for errorMessage.
      *
      * @return errorMessage
      */
@@ -62,7 +62,7 @@ public final class OrderCreationResultDTO {
     }
 
     /**
-     * Getter exception.
+     * Getter for exception.
      *
      * @return exception
      */
@@ -71,7 +71,7 @@ public final class OrderCreationResultDTO {
     }
 
     /**
-     * Getter successful.
+     * Getter for successful.
      *
      * @return successful
      */

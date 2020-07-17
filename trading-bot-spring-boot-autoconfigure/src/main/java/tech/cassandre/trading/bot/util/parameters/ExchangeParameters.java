@@ -90,7 +90,7 @@ public class ExchangeParameters {
         private String order;
 
         /**
-         * Getter account.
+         * Getter for account.
          *
          * @return account
          */
@@ -99,7 +99,7 @@ public class ExchangeParameters {
         }
 
         /**
-         * Setter account.
+         * Setter for account.
          *
          * @param newAccount the account to set
          */
@@ -108,7 +108,7 @@ public class ExchangeParameters {
         }
 
         /**
-         * Getter ticker.
+         * Getter for ticker.
          *
          * @return ticker
          */
@@ -117,7 +117,7 @@ public class ExchangeParameters {
         }
 
         /**
-         * Setter ticker.
+         * Setter for ticker.
          *
          * @param newTicker the ticker to set
          */
@@ -126,7 +126,7 @@ public class ExchangeParameters {
         }
 
         /**
-         * Getter order.
+         * Getter for order.
          *
          * @return order
          */
@@ -135,7 +135,7 @@ public class ExchangeParameters {
         }
 
         /**
-         * Setter order.
+         * Setter for order.
          *
          * @param newOrder the order
          */
@@ -155,7 +155,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Getter name.
+     * Getter for name.
      *
      * @return name
      */
@@ -164,7 +164,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Setter name.
+     * Setter for name.
      *
      * @param newName the name to set
      */
@@ -173,7 +173,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Getter sandbox.
+     * Getter for sandbox.
      *
      * @return sandbox
      */
@@ -182,7 +182,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Setter sandbox.
+     * Setter for sandbox.
      *
      * @param newSandbox the sandbox to set
      */
@@ -191,7 +191,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Getter username.
+     * Getter for username.
      *
      * @return username
      */
@@ -200,7 +200,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Setter username.
+     * Setter for username.
      *
      * @param newUsername the username to set
      */
@@ -209,7 +209,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Getter passphrase.
+     * Getter for passphrase.
      *
      * @return passphrase
      */
@@ -218,7 +218,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Setter passphrase.
+     * Setter for passphrase.
      *
      * @param newPassphrase the passphrase to set
      */
@@ -227,7 +227,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Getter key.
+     * Getter for key.
      *
      * @return key
      */
@@ -236,7 +236,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Setter key.
+     * Setter for key.
      *
      * @param newKey the key to set
      */
@@ -245,7 +245,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Getter secret.
+     * Getter for secret.
      *
      * @return secret
      */
@@ -254,7 +254,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Setter secret.
+     * Setter for secret.
      *
      * @param newSecret the secret to set
      */
@@ -263,7 +263,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Getter rate.
+     * Getter for rate.
      *
      * @return rate
      */
@@ -272,7 +272,7 @@ public class ExchangeParameters {
     }
 
     /**
-     * Setter rate.
+     * Setter for rate.
      *
      * @param newRates the rate to set
      */

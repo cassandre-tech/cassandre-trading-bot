@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Basic strategy - Cassandre bot will run the first CassandreStrategy implementation found.
+ * Basic strategy - Cassandre bot will run the first BasicCassandreStrategy implementation found.
  */
 @SuppressWarnings("unused")
 public abstract class BasicCassandreStrategy {
@@ -34,7 +34,7 @@ public abstract class BasicCassandreStrategy {
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
     /**
-     * Getter tradeService.
+     * Getter for tradeService.
      *
      * @return tradeService
      */
@@ -43,7 +43,7 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
-     * Setter tradeService.
+     * Setter for tradeService.
      *
      * @param newTradeService the tradeService to set
      */
@@ -108,7 +108,7 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
-     * Getter of accounts.
+     * Getter for of accounts.
      *
      * @return accounts
      */
@@ -117,7 +117,7 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
-     * Getter of orders.
+     * Getter for of orders.
      *
      * @return orders
      */
@@ -126,7 +126,7 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
-     * Getter of trades.
+     * Getter for of trades.
      *
      * @return trades
      */
@@ -135,7 +135,7 @@ public abstract class BasicCassandreStrategy {
     }
 
     /**
-     * Getter of positions.
+     * Getter for of positions.
      *
      * @return positions
      */

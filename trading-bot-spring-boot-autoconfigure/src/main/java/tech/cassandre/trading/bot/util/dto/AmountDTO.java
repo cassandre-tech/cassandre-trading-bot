@@ -39,7 +39,7 @@ public class AmountDTO {
     }
 
     /**
-     * Getter value.
+     * Getter for value.
      *
      * @return value
      */
@@ -48,7 +48,7 @@ public class AmountDTO {
     }
 
     /**
-     * Getter currency.
+     * Getter for currency.
      *
      * @return currency
      */
@@ -57,7 +57,7 @@ public class AmountDTO {
     }
 
     /**
-     * Getter valueProvided.
+     * Getter for valueProvided.
      *
      * @return valueProvided
      */

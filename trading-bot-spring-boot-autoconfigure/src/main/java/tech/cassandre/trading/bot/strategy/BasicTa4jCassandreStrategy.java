@@ -105,7 +105,7 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
     public abstract void shouldExit();
 
     /**
-     * Getter series.
+     * Getter for series.
      *
      * @return series
      */

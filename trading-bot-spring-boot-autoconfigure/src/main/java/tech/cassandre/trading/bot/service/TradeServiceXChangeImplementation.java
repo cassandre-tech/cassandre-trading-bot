@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
 
-    /** XChange Trade data service. */
+    /** XChange service. */
     private final org.knowm.xchange.service.trade.TradeService tradeService;
 
     /**

@@ -11,7 +11,7 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 
 /**
- * ScheduleAutoConfiguration activates flux scheduler.
+ * ScheduleAutoConfiguration configures the flux calls.
  */
 @Configuration
 @Profile("!schedule-disabled")

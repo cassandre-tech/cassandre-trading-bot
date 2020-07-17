@@ -53,7 +53,7 @@ public final class AccountDTO {
     }
 
     /**
-     * Getter for "id".
+     * Getter for id.
      *
      * @return id
      */
@@ -62,7 +62,7 @@ public final class AccountDTO {
     }
 
     /**
-     * Getter for "name".
+     * Getter for name.
      *
      * @return name
      */

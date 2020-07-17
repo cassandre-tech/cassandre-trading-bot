@@ -28,12 +28,8 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 
-/**
- * Trade service tests.
- */
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
-@DisplayName("Kucoin - Trade service")
 @TestPropertySource(properties = {
         "cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
         "cassandre.trading.bot.exchange.sandbox=true",
@@ -47,6 +43,7 @@ import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
         "testableStrategy.enabled=true",
         "invalidStrategy.enabled=false"
 })
+@DisplayName("Kucoin - Trade service")
 public class TradeServiceTest extends BaseTest {
 
     /** Trade service. */

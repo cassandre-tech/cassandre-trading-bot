@@ -15,9 +15,6 @@ import java.text.SimpleDateFormat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-/**
- * TickerDTO tests.
- */
 @DisplayName("Ticker DTO tests")
 public class TickerDTOTest {
 

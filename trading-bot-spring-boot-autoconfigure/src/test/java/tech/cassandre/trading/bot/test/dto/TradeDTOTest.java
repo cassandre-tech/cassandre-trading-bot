@@ -13,9 +13,6 @@ import java.time.ZonedDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-/**
- * TradeDTO tests.
- */
 @DisplayName("Trade DTO tests")
 public class TradeDTOTest {
 

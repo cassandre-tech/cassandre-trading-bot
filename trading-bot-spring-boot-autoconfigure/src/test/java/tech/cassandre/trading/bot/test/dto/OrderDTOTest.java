@@ -15,9 +15,6 @@ import java.time.ZonedDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-/**
- * OrderDTO tests.
- */
 @DisplayName("Order DTO tests")
 public class OrderDTOTest {
 

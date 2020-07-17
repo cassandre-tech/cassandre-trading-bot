@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * DTO representing a balance in a currency for an {@link AccountDTO}.
+ * DTO representing a balance in a {@link CurrencyDTO} for an {@link AccountDTO}.
  */
 @SuppressWarnings("unused")
 public final class BalanceDTO {

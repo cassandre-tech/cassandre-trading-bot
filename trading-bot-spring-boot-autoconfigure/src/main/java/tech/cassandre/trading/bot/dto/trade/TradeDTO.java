@@ -69,7 +69,7 @@ public class TradeDTO {
     }
 
     /**
-     * Getter id.
+     * Getter for id.
      *
      * @return id
      */
@@ -78,7 +78,7 @@ public class TradeDTO {
     }
 
     /**
-     * Getter orderId.
+     * Getter for orderId.
      *
      * @return orderId
      */
@@ -87,7 +87,7 @@ public class TradeDTO {
     }
 
     /**
-     * Getter type.
+     * Getter for type.
      *
      * @return type
      */
@@ -96,7 +96,7 @@ public class TradeDTO {
     }
 
     /**
-     * Getter originalAmount.
+     * Getter for originalAmount.
      *
      * @return originalAmount
      */
@@ -105,7 +105,7 @@ public class TradeDTO {
     }
 
     /**
-     * Getter currencyPair.
+     * Getter for currencyPair.
      *
      * @return currencyPair
      */
@@ -114,7 +114,7 @@ public class TradeDTO {
     }
 
     /**
-     * Getter price.
+     * Getter for price.
      *
      * @return price
      */
@@ -123,7 +123,7 @@ public class TradeDTO {
     }
 
     /**
-     * Getter timestamp.
+     * Getter for timestamp.
      *
      * @return timestamp
      */
@@ -132,7 +132,7 @@ public class TradeDTO {
     }
 
     /**
-     * Getter fee.
+     * Getter for fee.
      *
      * @return fee
      */

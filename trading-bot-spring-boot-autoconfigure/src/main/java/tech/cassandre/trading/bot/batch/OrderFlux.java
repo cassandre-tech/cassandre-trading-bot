@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Order flux.
+ * Order flux - push {@link OrderDTO}.
  */
 public class OrderFlux extends BaseFlux<OrderDTO> {
 

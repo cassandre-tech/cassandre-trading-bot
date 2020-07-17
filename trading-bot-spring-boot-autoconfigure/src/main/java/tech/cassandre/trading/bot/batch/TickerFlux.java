@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Ticker flux.
+ * Ticker flux - push {@link TickerDTO}.
  */
 public class TickerFlux extends BaseFlux<TickerDTO> {
 

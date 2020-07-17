@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.dto.position;
 
 /**
- * Position creation result.
+ * Position creation result for {@link PositionDTO}.
  */
 public final class PositionCreationResultDTO {
 
@@ -11,10 +11,10 @@ public final class PositionCreationResultDTO {
     /** Order ID (filled if order creation is successful). */
     private final String orderId;
 
-    /** Error message (filled if order creation failed). */
+    /** Error message (filled if position creation failed). */
     private final String errorMessage;
 
-    /** Exception (filled if order creation failed). */
+    /** Exception (filled if position creation failed). */
     private final Exception exception;
 
     /** Indicates if the position creation was successful or not. */
@@ -24,7 +24,7 @@ public final class PositionCreationResultDTO {
      * Constructor for successful position creation.
      *
      * @param newPositionId position id.
-     * @param newOrderId order id.
+     * @param newOrderId    order id.
      */
     public PositionCreationResultDTO(final long newPositionId, final String newOrderId) {
         successful = true;
@@ -38,7 +38,7 @@ public final class PositionCreationResultDTO {
      * Constructor for unsuccessful position creation.
      *
      * @param newErrorMessage error message
-     * @param newException exception
+     * @param newException    exception
      */
     public PositionCreationResultDTO(final String newErrorMessage, final Exception newException) {
         successful = false;
@@ -49,7 +49,7 @@ public final class PositionCreationResultDTO {
     }
 
     /**
-     * Getter positionId.
+     * Getter for positionId.
      *
      * @return positionId
      */
@@ -58,7 +58,7 @@ public final class PositionCreationResultDTO {
     }
 
     /**
-     * Getter orderId.
+     * Getter for orderId.
      *
      * @return orderId
      */
@@ -67,7 +67,7 @@ public final class PositionCreationResultDTO {
     }
 
     /**
-     * Getter errorMessage.
+     * Getter for errorMessage.
      *
      * @return errorMessage
      */
@@ -76,7 +76,7 @@ public final class PositionCreationResultDTO {
     }
 
     /**
-     * Getter exception.
+     * Getter for exception.
      *
      * @return exception
      */
@@ -86,7 +86,7 @@ public final class PositionCreationResultDTO {
 
     /**
      * Returns successful.
-
+     *
      * @return true if order creation was successful
      */
     public boolean isSuccessful() {

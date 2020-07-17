@@ -24,9 +24,6 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 
-/**
- * Position DTO test.
- */
 @DisplayName("Position DTO tests")
 public class PositionDTOTest {
 
@@ -201,4 +198,5 @@ public class PositionDTOTest {
         p1.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000001").create());
         assertNotEquals(p1, p1Bis);
     }
+
 }

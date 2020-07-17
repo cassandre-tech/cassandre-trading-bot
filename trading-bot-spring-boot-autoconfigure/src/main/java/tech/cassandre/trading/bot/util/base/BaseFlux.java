@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Base flux.
  *
- * @param <T> Event type
+ * @param <T> flux type
  */
 @SuppressWarnings("unused")
 public abstract class BaseFlux<T> extends Base {
@@ -61,7 +61,7 @@ public abstract class BaseFlux<T> extends Base {
     }
 
     /**
-     * Getter flux.
+     * Getter for flux.
      *
      * @return flux
      */

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Trade flux.
+ * Trade flux - push {@link TradeDTO}.
  */
 public class TradeFlux extends BaseFlux<TradeDTO> {
 
@@ -22,6 +22,7 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
 
     /**
      * Constructor.
+     *
      * @param newTradeService trade service
      */
     public TradeFlux(final TradeService newTradeService) {

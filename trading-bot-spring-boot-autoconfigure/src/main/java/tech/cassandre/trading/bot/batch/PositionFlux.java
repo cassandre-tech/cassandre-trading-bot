@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Position flux.
+ * Position flux - push {@link PositionDTO}.
  */
 public class PositionFlux extends BaseFlux<PositionDTO> {
 

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 /**
- * StrategyAutoConfiguration class configures the strategy.
+ * StrategyAutoConfiguration configures the strategy.
  */
 @Configuration
 public class StrategyAutoConfiguration extends BaseConfiguration {
@@ -69,7 +69,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      * @param newTickerFlux         ticker flux
      * @param newOrderFlux          order flux
      * @param newTradeFlux          trade flux
-     * @param newPositionFlux          position flux
+     * @param newPositionFlux       position flux
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
@@ -91,7 +91,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Search for the strategy and instantiate it.
+     * Search for the strategy and runs it.
      */
     @PostConstruct
     public void configure() {
@@ -119,8 +119,8 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Check if the strategy extends CassandreStrategy.
         Object o = strategyBeans.values().iterator().next();
         if (!(o instanceof BasicCassandreStrategy)) {
-            throw new ConfigurationException("Your strategy doesn't extend CassandreStrategy",
-                    o.getClass() + " must extend CassandreStrategy");
+            throw new ConfigurationException("Your strategy doesn't extend BasicCassandreStrategy or subclass",
+                    o.getClass() + " must extend BasicCassandreStrategy or subclass");
         }
 
         // =============================================================================================================

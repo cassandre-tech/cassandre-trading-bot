@@ -17,12 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Exchange service test.
- */
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
-@DisplayName("Kucoin - Exchange service")
 @TestPropertySource(properties = {
 		"cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
 		"cassandre.trading.bot.exchange.sandbox=true",
@@ -36,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 		"testableStrategy.enabled=true",
 		"invalidStrategy.enabled=false"
 })
+@DisplayName("Kucoin - Exchange service")
 public class ExchangeServiceTest {
 
 	/** Exchange service. */

@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
- * DTO representing order information from the exchange.
+ * DTO representing order information.
  * A market order is a request by an investor to buy or sell in the current market.
  */
 @SuppressWarnings("unused")
@@ -106,7 +106,7 @@ public final class OrderDTO {
     }
 
     /**
-     * Getter for "id".
+     * Getter for id.
      *
      * @return id
      */
@@ -124,7 +124,7 @@ public final class OrderDTO {
     }
 
     /**
-     * Getter for "timestamp".
+     * Getter for timestamp.
      *
      * @return timestamp
      */
@@ -133,7 +133,7 @@ public final class OrderDTO {
     }
 
     /**
-     * Getter for "status".
+     * Getter for status.
      *
      * @return status
      */

@@ -14,7 +14,7 @@ import java.util.Optional;
  */
 public class MarketServiceXChangeImplementation extends BaseService implements MarketService {
 
-    /** XChange Market data service. */
+    /** XChange service. */
     private final MarketDataService marketDataService;
 
     /**

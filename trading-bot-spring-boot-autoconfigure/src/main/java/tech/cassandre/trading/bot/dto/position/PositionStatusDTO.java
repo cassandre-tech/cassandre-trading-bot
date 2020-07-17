@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.dto.position;
 
 /**
- * Position status.
+ * Position status for {@link PositionDTO}.
  */
 @SuppressWarnings("unused")
 public enum PositionStatusDTO {

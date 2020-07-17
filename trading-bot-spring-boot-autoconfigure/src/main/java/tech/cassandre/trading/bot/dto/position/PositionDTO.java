@@ -20,10 +20,10 @@ public class PositionDTO {
     /** An identifier that uniquely identifies the position. */
     private final long id;
 
-    /** The position status. */
+    /** Position status. */
     private PositionStatusDTO status = OPENING;
 
-    /** Position riles. */
+    /** Position rules. */
     private final PositionRulesDTO rules;
 
     /** The order id that opened the position. */
@@ -58,7 +58,7 @@ public class PositionDTO {
     }
 
     /**
-     * Setter closeOrderId.
+     * Setter for closeOrderId.
      *
      * @param newCloseOrderId the closeOrderId to set
      */
@@ -116,7 +116,7 @@ public class PositionDTO {
     }
 
     /**
-     * Getter id.
+     * Getter for id.
      *
      * @return id
      */
@@ -125,7 +125,7 @@ public class PositionDTO {
     }
 
     /**
-     * Getter status.
+     * Getter for status.
      *
      * @return status
      */
@@ -134,7 +134,7 @@ public class PositionDTO {
     }
 
     /**
-     * Getter openTrade.
+     * Getter for openTrade.
      *
      * @return openTrade
      */
@@ -143,7 +143,7 @@ public class PositionDTO {
     }
 
     /**
-     * Getter closeTrade.
+     * Getter for closeTrade.
      *
      * @return closeTrade
      */

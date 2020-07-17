@@ -12,9 +12,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-/**
- * AccountDTO tests.
- */
+
 @DisplayName("Account DTO tests")
 public class AccountDTOTest {
 

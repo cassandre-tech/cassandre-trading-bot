@@ -33,7 +33,7 @@ import java.time.Duration;
 import java.util.StringJoiner;
 
 /**
- * ExchangeConfiguration class configures the exchange connection.
+ * ExchangeConfiguration configures the exchange connection.
  */
 @Configuration
 @EnableConfigurationProperties(ExchangeParameters.class)
@@ -187,7 +187,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /**
      * Return rate value.
      *
-     * @param stringValue  string value
+     * @param stringValue string value
      * @return long value (ms)
      */
     private static long getRateValue(final String stringValue) {
@@ -199,7 +199,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Returns true is a string is a number.
+     * Returns true if a string is a number.
      *
      * @param string string to test
      * @return true if numeric
@@ -218,7 +218,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter exchangeService.
+     * Getter for exchangeService.
      *
      * @return exchangeService
      */
@@ -228,7 +228,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter userService.
+     * Getter for userService.
      *
      * @return userService
      */
@@ -238,7 +238,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter marketService.
+     * Getter for marketService.
      *
      * @return marketService
      */
@@ -248,7 +248,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter tradeService.
+     * Getter for tradeService.
      *
      * @return tradeService
      */
@@ -258,7 +258,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter accountFlux.
+     * Getter for accountFlux.
      *
      * @return accountFlux
      */
@@ -268,7 +268,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter tickerFlux.
+     * Getter for tickerFlux.
      *
      * @return tickerFlux
      */
@@ -278,7 +278,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter orderFlux.
+     * Getter for orderFlux.
      *
      * @return orderFlux
      */
@@ -288,7 +288,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter tradeFlux.
+     * Getter for tradeFlux.
      *
      * @return tradeFlux
      */
@@ -298,7 +298,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter positionService.
+     * Getter for positionService.
      *
      * @return positionService
      */
@@ -308,7 +308,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Getter positionFlux.
+     * Getter for positionFlux.
      *
      * @return positionFlux
      */

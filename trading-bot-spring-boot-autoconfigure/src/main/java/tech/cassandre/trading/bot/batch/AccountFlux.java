@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Account flux.
+ * Account flux - push {@link AccountDTO}.
  */
 public class AccountFlux extends BaseFlux<AccountDTO> {
 
