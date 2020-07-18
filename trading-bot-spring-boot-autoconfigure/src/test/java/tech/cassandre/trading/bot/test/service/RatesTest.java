@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.service;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
@@ -24,8 +23,8 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAUL
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_NAME_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_PASSPHRASE_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_ACCOUNT_LONG_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TRADE_LONG_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TICKER_LONG_VALUE;
+import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TRADE_LONG_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SANDBOX_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SECRET_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE;
@@ -55,7 +54,6 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @DisplayName("Rates")
-@Disabled("Disable as it's not working on the command line") // TODO Fix this for CI.
 public class RatesTest {
 
 	/** Waiting time. */
@@ -76,6 +74,7 @@ public class RatesTest {
 	@Test
 	@DisplayName("Account service rate")
 	public void accountServiceRateTest() throws InterruptedException {
+		Thread.sleep(2 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
@@ -103,6 +102,7 @@ public class RatesTest {
 	@Test
 	@DisplayName("Market service rate")
 	public void marketServiceRateTest() throws InterruptedException {
+		Thread.sleep(2 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 		final CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
 
@@ -131,6 +131,7 @@ public class RatesTest {
 	@Test
 	@DisplayName("Trade service rate")
 	public void tradeServiceRateTest() throws InterruptedException {
+		Thread.sleep(2 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.

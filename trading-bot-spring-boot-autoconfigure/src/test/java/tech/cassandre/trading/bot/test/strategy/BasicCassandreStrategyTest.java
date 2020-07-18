@@ -48,7 +48,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
 @Import(BasicCassandreStrategyMock.class)
-@DisplayName("All flux tests")
+@DisplayName("Basic cassandre strategy")
 public class BasicCassandreStrategyTest extends BaseTest {
 
     /** Cassandre strategy. */
@@ -56,7 +56,7 @@ public class BasicCassandreStrategyTest extends BaseTest {
     private TestableCassandreStrategy testableStrategy;
 
     @Test
-    @DisplayName("multi thread test")
+    @DisplayName("Data & multi thread test")
     public void multiThreadTest() {
         final int numberOfValuesExpected = 6;
 
