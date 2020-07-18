@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 		"cassandre.trading.bot.exchange.secret=${KUCOIN_SECRET}",
 		"cassandre.trading.bot.exchange.rates.account=100",
 		"cassandre.trading.bot.exchange.rates.ticker=101",
-		"cassandre.trading.bot.exchange.rates.order=102",
+		"cassandre.trading.bot.exchange.rates.trade=102",
 		"testableStrategy.enabled=true",
 		"invalidStrategy.enabled=false"
 })

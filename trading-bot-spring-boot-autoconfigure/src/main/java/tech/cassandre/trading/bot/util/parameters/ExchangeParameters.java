@@ -82,12 +82,12 @@ public class ExchangeParameters {
         private String ticker;
 
         /** Rate for order parameter. */
-        public static final String PARAMETER_RATE_ORDER = "cassandre.trading.bot.exchange.rates.order";
+        public static final String PARAMETER_RATE_ORDER = "cassandre.trading.bot.exchange.rates.trade";
 
-        /** Delay between calls to order API. */
-        @NotNull(message = "Delay between calls to order API is mandatory")
-        @Rate(message = "Invalid order rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
-        private String order;
+        /** Delay between calls to trade API. */
+        @NotNull(message = "Delay between calls to trade API is mandatory")
+        @Rate(message = "Invalid trade rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
+        private String trade;
 
         /**
          * Getter for account.
@@ -130,8 +130,8 @@ public class ExchangeParameters {
          *
          * @return order
          */
-        public String getOrder() {
-            return order;
+        public String getTrade() {
+            return trade;
         }
 
         /**
@@ -139,8 +139,8 @@ public class ExchangeParameters {
          *
          * @param newOrder the order
          */
-        public void setOrder(final String newOrder) {
-            order = newOrder;
+        public void setTrade(final String newOrder) {
+            trade = newOrder;
         }
 
         @Override
@@ -148,7 +148,7 @@ public class ExchangeParameters {
             return "Rate{"
                     + " account=" + getAccount()
                     + ", ticker=" + getTicker()
-                    + ", order=" + getOrder()
+                    + ", order=" + getTrade()
                     + '}';
         }
 

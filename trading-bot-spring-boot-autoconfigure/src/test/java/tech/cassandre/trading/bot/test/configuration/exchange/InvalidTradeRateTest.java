@@ -43,8 +43,8 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_RATE_ORDER, value = "A")
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
-@DisplayName("Invalid order rate")
-public class InvalidOrderRateTest extends BaseTest {
+@DisplayName("Invalid trade rate")
+public class InvalidTradeRateTest extends BaseTest {
 
     @Test
     @DisplayName("Check error messages")
@@ -63,7 +63,7 @@ public class InvalidOrderRateTest extends BaseTest {
             assertFalse(message.contains("'secret'"));
             assertFalse(message.contains("Invalid account rate"));
             assertFalse(message.contains("Invalid ticker rate"));
-            assertTrue(message.contains("Invalid order rate"));
+            assertTrue(message.contains("Invalid trade rate"));
         }
     }
 
