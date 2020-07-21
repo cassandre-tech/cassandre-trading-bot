@@ -74,7 +74,7 @@ public class RatesTest {
 	@Test
 	@DisplayName("Account service rate")
 	public void accountServiceRateTest() throws InterruptedException {
-		Thread.sleep(2 * WAITING_TIME);
+		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
@@ -102,7 +102,7 @@ public class RatesTest {
 	@Test
 	@DisplayName("Market service rate")
 	public void marketServiceRateTest() throws InterruptedException {
-		Thread.sleep(2 * WAITING_TIME);
+		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 		final CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
 
@@ -131,7 +131,7 @@ public class RatesTest {
 	@Test
 	@DisplayName("Trade service rate")
 	public void tradeServiceRateTest() throws InterruptedException {
-		Thread.sleep(2 * WAITING_TIME);
+		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
