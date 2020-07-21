@@ -6,17 +6,15 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Basic strategy - Cassandre bot will run the first BasicCassandreStrategy implementation found.
  */
 @SuppressWarnings("unused")
-public abstract class BasicCassandreStrategy {
+public abstract class BasicCassandreStrategy implements CassandreStrategyInterface {
 
     /** Trade service. */
     private TradeService tradeService;
@@ -33,76 +31,41 @@ public abstract class BasicCassandreStrategy {
     /** The positions owned by the user. */
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
-    /**
-     * Getter for tradeService.
-     *
-     * @return tradeService
-     */
+    @Override
     public final TradeService getTradeService() {
         return tradeService;
     }
 
-    /**
-     * Setter for tradeService.
-     *
-     * @param newTradeService the tradeService to set
-     */
+    @Override
     public final void setTradeService(final TradeService newTradeService) {
         tradeService = newTradeService;
     }
 
-    /**
-     * Implements this method to tell the bot which currency pairs your strategy will receive.
-     *
-     * @return the list of currency pairs tickers your want to receive
-     */
-    public abstract Set<CurrencyPairDTO> getRequestedCurrencyPairs();
-
-    /**
-     * Method called by streams at every account update.
-     *
-     * @param account account
-     */
-    public void accountUpdate(final AccountDTO account) {
+    @Override
+    public final void accountUpdate(final AccountDTO account) {
         accounts.put(account.getId(), account);
         onAccountUpdate(account);
     }
 
-    /**
-     * Method called by streams at every ticker update.
-     *
-     * @param ticker ticker
-     */
-    public void tickerUpdate(final TickerDTO ticker) {
+    @Override
+    public final void tickerUpdate(final TickerDTO ticker) {
         onTickerUpdate(ticker);
     }
 
-    /**
-     * Method called by streams on every order update.
-     *
-     * @param order order
-     */
-    public void orderUpdate(final OrderDTO order) {
+    @Override
+    public final void orderUpdate(final OrderDTO order) {
         orders.put(order.getId(), order);
         onOrderUpdate(order);
     }
 
-    /**
-     * Method called by streams on every trade update.
-     *
-     * @param trade trade
-     */
-    public void tradeUpdate(final TradeDTO trade) {
+    @Override
+    public final void tradeUpdate(final TradeDTO trade) {
         trades.put(trade.getId(), trade);
         onTradeUpdate(trade);
     }
 
-    /**
-     * Method called by streams on every position update.
-     *
-     * @param position trade
-     */
-    public void positionUpdate(final PositionDTO position) {
+    @Override
+    public final void positionUpdate(final PositionDTO position) {
         positions.put(position.getId(), position);
         onPositionUpdate(position);
     }
@@ -143,44 +106,29 @@ public abstract class BasicCassandreStrategy {
         return positions;
     }
 
-    /**
-     * Method triggered at every account update.
-     *
-     * @param account account
-     */
+    @Override
     public void onAccountUpdate(final AccountDTO account) {
+
     }
 
-    /**
-     * Method triggered at every ticker update.
-     *
-     * @param ticker ticker
-     */
+    @Override
     public void onTickerUpdate(final TickerDTO ticker) {
+
     }
 
-    /**
-     * Method triggered on every order update.
-     *
-     * @param order order
-     */
+    @Override
     public void onOrderUpdate(final OrderDTO order) {
+
     }
 
-    /**
-     * Method triggered on every trade update.
-     *
-     * @param trade trade
-     */
+    @Override
     public void onTradeUpdate(final TradeDTO trade) {
+
     }
 
-    /**
-     * Method triggered on every position update.
-     *
-     * @param position position
-     */
+    @Override
     public void onPositionUpdate(final PositionDTO position) {
+
     }
 
 }

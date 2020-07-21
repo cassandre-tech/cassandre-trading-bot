@@ -6,16 +6,37 @@ import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.num.DoubleNum;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Basic ta4j strategy.
  */
 @SuppressWarnings("unused")
-public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy {
+public abstract class BasicTa4jCassandreStrategy implements CassandreStrategyInterface {
+
+    /** Trade service. */
+    private TradeService tradeService;
+
+    /** The accounts owned by the user. */
+    private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
+
+    /** The orders owned by the user. */
+    private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
+
+    /** The trades owned by the user. */
+    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
+
+    /** The positions owned by the user. */
+    private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
     /** Series. */
     private final BarSeries series;
@@ -34,7 +55,7 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
                 .build();
         series.setMaximumBarCount(getMaximumBarCount());
 
-        // Build the strategy.
+        // Build the strategy.public abstract
         strategy = getStrategy();
     }
 
@@ -44,6 +65,11 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
      * @return the list of currency pairs tickers your want to receive
      */
     public abstract CurrencyPairDTO getRequestedCurrencyPair();
+
+    @Override
+    public final TradeService getTradeService() {
+        return tradeService;
+    }
 
     /**
      * Implements this method to tell the bot how many bars you want to keep in your bar series.
@@ -61,6 +87,11 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
     public abstract Strategy getStrategy();
 
     @Override
+    public final void setTradeService(final TradeService newTradeService) {
+        tradeService = newTradeService;
+    }
+
+    @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
         // We only support one currency pair with this strategy.
         return Set.of(getRequestedCurrencyPair());
@@ -68,13 +99,12 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
 
     @Override
     public final void accountUpdate(final AccountDTO account) {
-        getAccounts().put(account.getId(), account);
+        accounts.put(account.getId(), account);
         onAccountUpdate(account);
     }
 
     @Override
     public final void tickerUpdate(final TickerDTO ticker) {
-        super.tickerUpdate(ticker);
         // Add the ticker to the series.
         Number openPrice = MoreObjects.firstNonNull(ticker.getOpen(), 0);
         Number highPrice = MoreObjects.firstNonNull(ticker.getHigh(), 0);
@@ -94,6 +124,60 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
         }
     }
 
+    @Override
+    public final void orderUpdate(final OrderDTO order) {
+        orders.put(order.getId(), order);
+        onOrderUpdate(order);
+    }
+
+    @Override
+    public final void tradeUpdate(final TradeDTO trade) {
+        trades.put(trade.getId(), trade);
+        onTradeUpdate(trade);
+    }
+
+    @Override
+    public final void positionUpdate(final PositionDTO position) {
+        positions.put(position.getId(), position);
+        onPositionUpdate(position);
+    }
+
+    /**
+     * Getter accounts.
+     *
+     * @return accounts
+     */
+    public final Map<String, AccountDTO> getAccounts() {
+        return accounts;
+    }
+
+    /**
+     * Getter orders.
+     *
+     * @return orders
+     */
+    public final Map<String, OrderDTO> getOrders() {
+        return orders;
+    }
+
+    /**
+     * Getter trades.
+     *
+     * @return trades
+     */
+    public final Map<String, TradeDTO> getTrades() {
+        return trades;
+    }
+
+    /**
+     * Getter positions.
+     *
+     * @return positions
+     */
+    public final Map<Long, PositionDTO> getPositions() {
+        return positions;
+    }
+
     /**
      * Called when your strategy says you should enter.
      */
@@ -111,6 +195,31 @@ public abstract class BasicTa4jCassandreStrategy extends BasicCassandreStrategy 
      */
     public final BarSeries getSeries() {
         return series;
+    }
+
+    @Override
+    public void onAccountUpdate(final AccountDTO account) {
+
+    }
+
+    @Override
+    public void onTickerUpdate(final TickerDTO ticker) {
+
+    }
+
+    @Override
+    public void onOrderUpdate(final OrderDTO order) {
+
+    }
+
+    @Override
+    public void onTradeUpdate(final TradeDTO trade) {
+
+    }
+
+    @Override
+    public void onPositionUpdate(final PositionDTO position) {
+
     }
 
 }

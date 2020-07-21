@@ -15,8 +15,8 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
@@ -113,14 +113,14 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Check if the strategy extends CassandreStrategy.
         Object o = strategyBeans.values().iterator().next();
-        if (!(o instanceof BasicCassandreStrategy)) {
-            throw new ConfigurationException("Your strategy doesn't extend BasicCassandreStrategy or subclass",
-                    o.getClass() + " must extend BasicCassandreStrategy or subclass");
+        if (!(o instanceof CassandreStrategyInterface)) {
+            throw new ConfigurationException("Your strategy doesn't extend BasicCassandreStrategy or BasicTa4jCassandreStrategy",
+                    o.getClass() + " must extend BasicCassandreStrategy or BasicTa4jCassandreStrategy");
         }
 
         // =============================================================================================================
         // Getting strategy information.
-        BasicCassandreStrategy strategy = (BasicCassandreStrategy) o;
+        CassandreStrategyInterface strategy = (CassandreStrategyInterface) o;
 
         // Displaying strategy name.
         CassandreStrategy cassandreStrategyAnnotation = o.getClass().getAnnotation(CassandreStrategy.class);
