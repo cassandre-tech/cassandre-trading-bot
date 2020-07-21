@@ -103,7 +103,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             ExchangeSpecification exchangeSpecification = new ExchangeSpecification(exchangeClass);
 
             // Exchange configuration.
-            exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX_PARAMETER, exchangeParameters.isSandbox());
+            exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX_PARAMETER, exchangeParameters.getModes().isSandbox());
             exchangeSpecification.setUserName(exchangeParameters.getUsername());
             exchangeSpecification.setExchangeSpecificParametersItem(PASSPHRASE_PARAMETER, exchangeParameters.getPassphrase());
             exchangeSpecification.setApiKey(exchangeParameters.getKey());

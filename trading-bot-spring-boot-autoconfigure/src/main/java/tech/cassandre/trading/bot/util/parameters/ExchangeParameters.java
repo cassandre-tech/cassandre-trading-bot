@@ -23,12 +23,46 @@ public class ExchangeParameters {
     @NotEmpty(message = "Exchange name required, for example : coinbase, kraken, kucoin...")
     private String name;
 
-    /** Sandbox parameter. */
-    public static final String PARAMETER_SANDBOX = "cassandre.trading.bot.exchange.sandbox";
+    /** Modes. */
+    @Valid
+    private Modes modes = new Modes();
 
-    /** Set it to true to use the sandbox. */
-    @NotNull(message = "Sandbox required, set it to true to use the sandbox")
-    private Boolean sandbox;
+    /** Exchange API rate calls. */
+    public static class Modes {
+
+        /** Sandbox parameter. */
+        public static final String PARAMETER_SANDBOX = "cassandre.trading.bot.exchange.modes.sandbox";
+
+        /** Set it to true to use the sandbox. */
+        @NotNull(message = "Sandbox required, set it to true to use the sandbox")
+        private Boolean sandbox;
+
+        /**
+         * Getter for sandbox.
+         *
+         * @return sandbox
+         */
+        public Boolean isSandbox() {
+            return sandbox;
+        }
+
+        /**
+         * Setter for sandbox.
+         *
+         * @param newSandbox the sandbox to set
+         */
+        public void setSandbox(final Boolean newSandbox) {
+            sandbox = newSandbox;
+        }
+
+        @Override
+        public final String toString() {
+            return "Modes{"
+                    + " sandbox=" + isSandbox()
+                    + '}';
+        }
+
+    }
 
     /** Username parameter. */
     public static final String PARAMETER_USERNAME = "cassandre.trading.bot.exchange.username";
@@ -173,21 +207,21 @@ public class ExchangeParameters {
     }
 
     /**
-     * Getter for sandbox.
+     * Getter modes.
      *
-     * @return sandbox
+     * @return mode
      */
-    public Boolean isSandbox() {
-        return sandbox;
+    public Modes getModes() {
+        return modes;
     }
 
     /**
-     * Setter for sandbox.
+     * Setter modes.
      *
-     * @param newSandbox the sandbox to set
+     * @param newModes the modes to set
      */
-    public void setSandbox(final Boolean newSandbox) {
-        sandbox = newSandbox;
+    public void setModes(final Modes newModes) {
+        modes = newModes;
     }
 
     /**
@@ -284,14 +318,13 @@ public class ExchangeParameters {
     public final String toString() {
         return "ExchangeParameters{"
                 + " name='" + getName() + '\''
-                + ", sandbox=" + isSandbox()
+                + ", modes=" + getModes()
                 + ", username='" + getUsername() + '\''
                 + ", passphrase='" + getPassphrase() + '\''
                 + ", key='" + getKey() + '\''
                 + ", secret='" + getSecret() + '\''
-                + ", rate=" + getRates()
+                + ", rates=" + getRates()
                 + '}';
     }
 
 }
-

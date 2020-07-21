@@ -26,7 +26,7 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_D
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SANDBOX;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SECRET;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_USERNAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;

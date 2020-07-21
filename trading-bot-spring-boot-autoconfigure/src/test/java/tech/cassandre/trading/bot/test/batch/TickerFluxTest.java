@@ -38,7 +38,7 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_D
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SANDBOX;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SECRET;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_USERNAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
@@ -139,7 +139,6 @@ public class TickerFluxTest extends BaseTest {
 
         // Tenth value cp1 - 5.
         t = iterator.next();
-        System.out.println("==> " + t);
         assertEquals(cp1, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("5").compareTo(t.getBid()));
 
