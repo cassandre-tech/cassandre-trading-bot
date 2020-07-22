@@ -1,6 +1,6 @@
 package tech.cassandre.trading.bot.dto.trade;
 
-import tech.cassandre.trading.bot.util.dto.AmountDTO;
+import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -37,7 +37,7 @@ public class TradeDTO {
     private final ZonedDateTime timestamp;
 
     /** The fee that was charged by the exchange for this trade. */
-    private final AmountDTO fee;
+    private final CurrencyAmountDTO fee;
 
     /**
      * Builder constructor.
@@ -53,9 +53,9 @@ public class TradeDTO {
         this.price = builder.price;
         this.timestamp = builder.timestamp;
         if (builder.feeAmount != null || builder.feeCurrency != null) {
-            this.fee = new AmountDTO(builder.feeAmount, builder.feeCurrency);
+            this.fee = new CurrencyAmountDTO(builder.feeAmount, builder.feeCurrency);
         } else {
-            this.fee = new AmountDTO();
+            this.fee = new CurrencyAmountDTO();
         }
     }
 
@@ -136,7 +136,7 @@ public class TradeDTO {
      *
      * @return fee
      */
-    public final AmountDTO getFee() {
+    public final CurrencyAmountDTO getFee() {
         return fee;
     }
 
