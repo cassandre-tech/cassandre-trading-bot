@@ -14,6 +14,7 @@ import java.util.Set;
  * Cassandre strategy interface.
  * This allows the framework to communicate with the strategy.
  */
+@SuppressWarnings("unused")
 public interface CassandreStrategyInterface {
 
     /**

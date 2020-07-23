@@ -15,6 +15,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.service.TradeServiceInDryMode;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
@@ -164,6 +165,11 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
         connectableTickerFlux.subscribe(strategy::tickerUpdate);            // For strategy.
         connectableTickerFlux.subscribe(positionService::tickerUpdate);     // For position service.
+        // if in dry mode, we send the ticker to the dry mode.
+        if (tradeService instanceof TradeServiceInDryMode) {
+            connectableTickerFlux.subscribe(((TradeServiceInDryMode) tradeService)::tickerUpdate);
+        }
+
         connectableTickerFlux.connect();
     }
 

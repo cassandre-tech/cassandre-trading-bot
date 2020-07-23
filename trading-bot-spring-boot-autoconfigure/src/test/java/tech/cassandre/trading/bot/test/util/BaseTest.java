@@ -22,8 +22,8 @@ import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
  */
 public class BaseTest {
 
-    /** Three seconds wait. */
-    protected static final long FIVE_SECOND = 5000;
+    /** Ten seconds wait. */
+    protected static final long TEN_SECONDS = 10000L;
 
     /** Invalid strategy enabled parameter. */
     public static final String PARAMETER_INVALID_STRATEGY_ENABLED = "invalidStrategy.enabled";
@@ -45,6 +45,9 @@ public class BaseTest {
 
     /** Sandbox parameter. */
     public static final String PARAMETER_SANDBOX_DEFAULT_VALUE = "true";
+
+    /** Dry parameter. */
+    public static final String PARAMETER_DRY_DEFAULT_VALUE = "false";
 
     /** Username parameter. */
     public static final String PARAMETER_USERNAME_DEFAULT_VALUE = "cassandre.crypto.bot@gmail.com";

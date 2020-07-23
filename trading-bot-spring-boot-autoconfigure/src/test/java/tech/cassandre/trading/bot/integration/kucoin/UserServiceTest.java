@@ -27,6 +27,7 @@ import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.TRADING;
 @TestPropertySource(properties = {
         "cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
+        "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
         "cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
         "cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",

@@ -34,8 +34,15 @@ public class ExchangeParameters {
         public static final String PARAMETER_SANDBOX = "cassandre.trading.bot.exchange.modes.sandbox";
 
         /** Set it to true to use the sandbox. */
-        @NotNull(message = "Sandbox required, set it to true to use the sandbox")
+        @NotNull(message = "Sandbox parameter required, set it to true to use the sandbox")
         private Boolean sandbox;
+
+        /** Dry parameter. */
+        public static final String PARAMETER_DRY = "cassandre.trading.bot.exchange.modes.dry";
+
+        /** Set it to true to use the dry mode. */
+        @NotNull(message = "Dry parameter required, set it to true to use the dry mode")
+        private Boolean dry;
 
         /**
          * Getter for sandbox.
@@ -55,10 +62,29 @@ public class ExchangeParameters {
             sandbox = newSandbox;
         }
 
+        /**
+         * Getter dry.
+         *
+         * @return dry
+         */
+        public Boolean isDry() {
+            return dry;
+        }
+
+        /**
+         * Setter dry.
+         *
+         * @param newDry the dry to set
+         */
+        public void setDry(final Boolean newDry) {
+            dry = newDry;
+        }
+
         @Override
         public final String toString() {
             return "Modes{"
-                    + " sandbox=" + isSandbox()
+                    + " sandbox=" + sandbox
+                    + ", dry=" + dry
                     + '}';
         }
 

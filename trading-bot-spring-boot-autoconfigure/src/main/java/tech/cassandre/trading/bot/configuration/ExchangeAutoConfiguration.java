@@ -21,6 +21,7 @@ import tech.cassandre.trading.bot.service.MarketServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.PositionServiceImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.service.TradeServiceInDryMode;
 import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.UserServiceXChangeImplementation;
@@ -121,11 +122,23 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             long tradeRate = getRateValue(exchangeParameters.getRates().getTrade());
 
             // Creates Cassandre services.
-            exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
-            userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
-            marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-            tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService);
-            positionService = new PositionServiceImplementation(tradeService);
+            TradeServiceInDryMode tradeServiceInDryMode = null;
+            if (!exchangeParameters.getModes().isDry()) {
+                // Normal mode.
+                exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
+                userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
+                marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
+                tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService);
+                positionService = new PositionServiceImplementation(tradeService);
+            } else {
+                // Dry mode.
+                exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
+                userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
+                marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
+                tradeServiceInDryMode = new TradeServiceInDryMode();
+                this.tradeService = tradeServiceInDryMode;
+                positionService = new PositionServiceImplementation(tradeService);
+            }
 
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(userService);
@@ -144,6 +157,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                     .forEach(currencyPairDTO -> currencyPairList.add(currencyPairDTO.toString()));
             getLogger().info("ExchangeConfiguration - Supported currency pairs : " + currencyPairList);
 
+            // if in dry mode, we set dependencies.
+            if (tradeService instanceof TradeServiceInDryMode) {
+                assert tradeServiceInDryMode != null;
+                tradeServiceInDryMode.setDependencies(orderFlux, tradeFlux);
+            }
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.
             throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getName(),

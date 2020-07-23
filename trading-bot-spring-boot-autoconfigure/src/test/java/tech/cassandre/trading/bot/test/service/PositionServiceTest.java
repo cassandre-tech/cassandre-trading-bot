@@ -29,6 +29,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_DRY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAULT_VALUE;
@@ -45,6 +46,7 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_D
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USD;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
@@ -57,6 +59,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 
 @SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
+@SetSystemProperty(key = PARAMETER_DRY, value = PARAMETER_DRY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_USERNAME, value = PARAMETER_USERNAME_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_PASSPHRASE, value = PARAMETER_PASSPHRASE_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_KEY, value = PARAMETER_KEY_DEFAULT_VALUE)
@@ -210,19 +213,19 @@ public class PositionServiceTest extends BaseTest {
 
         // A first ticker arrives with a gain of 100% but for the wrong CP.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).ask(new BigDecimal("0.5")).create());
-        Thread.sleep(FIVE_SECOND);
+        Thread.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
 
-        // A second ticker arrives with a gain of 25%.
+        // A second ticker arrives with a gain of 50%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).ask(new BigDecimal("0.3")).create());
-        Thread.sleep(FIVE_SECOND);
+        Thread.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
 
         // A third ticker arrives with a gain of 100%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).ask(new BigDecimal("0.5")).create());
-        Thread.sleep(FIVE_SECOND);
+        Thread.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSING, positionService.getPositionById(1).get().getStatus());
 
