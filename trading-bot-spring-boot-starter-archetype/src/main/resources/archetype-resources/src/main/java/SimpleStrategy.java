@@ -4,7 +4,9 @@
 package ${package};
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
@@ -31,7 +33,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public void onAccountUpdate(final AccountDTO account) {
-		// Here, we will receive an AccountDTO each time there is a move on our account.
+		// Here, we will receive an AccountDTO each time there is a change on your account.
 		System.out.println("Received information about an account : " + account);
 	}
 
@@ -43,8 +45,20 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public void onOrderUpdate(final OrderDTO order) {
-		// Here, we will receive an OrderDTO each an Order data has changed in the exchange.
+		// Here, we will receive an OrderDTO each time an order data has changed in the exchange.
 		System.out.println("Received information about an order : " + order);
+	}
+
+	@Override
+	public void onTradeUpdate(final TradeDTO trade) {
+		// Here, we will receive a TradeDTO each time a trade data has changed in the exchange.
+		System.out.println("Received information about a trade : " + trade);
+	}
+
+	@Override
+	public void onPositionUpdate(final PositionDTO position) {
+		// Here, we will receive an PositionDTO each a position has changed.
+		System.out.println("Received information about a position : " + position);
 	}
 
 }
