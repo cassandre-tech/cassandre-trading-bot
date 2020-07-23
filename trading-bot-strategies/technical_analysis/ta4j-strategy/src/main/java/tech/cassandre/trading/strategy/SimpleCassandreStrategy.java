@@ -69,11 +69,6 @@ public final class SimpleCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public void onAccountUpdate(final AccountDTO account) {
-        System.out.println("Account information received " + account);
-    }
-
-    @Override
     public void onTickerUpdate(final TickerDTO ticker) {
         // Here we will receive a TickerDTO each time a new one is available.
         // TODO there is a bug with Kucoin Xchange lib, open is always null.
@@ -92,10 +87,6 @@ public final class SimpleCassandreStrategy extends BasicCassandreStrategy {
             OrderCreationResultDTO sellMarketOrder = getTradeService().createSellMarketOrder(cp, new BigDecimal(1));
             System.out.println("=> Strategy exit - order " + sellMarketOrder.getOrderId());
         }
-    }
-
-    @Override
-    public void onOrderUpdate(final OrderDTO order) {
     }
 
 }
