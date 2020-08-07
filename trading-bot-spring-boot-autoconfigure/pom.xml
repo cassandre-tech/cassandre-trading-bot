@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>org.junit-pioneer</groupId>
 			<artifactId>junit-pioneer</artifactId>
-			<version>0.7.0</version>
+			<version>0.8.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -128,7 +128,7 @@
 					<dependency>
 						<groupId>com.puppycrawl.tools</groupId>
 						<artifactId>checkstyle</artifactId>
-						<version>8.34</version>
+						<version>8.35</version>
 					</dependency>
 				</dependencies>
 				<executions>
