@@ -2,14 +2,22 @@ package tech.cassandre.trading.bot.configuration;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
+import reactor.core.publisher.ConnectableFlux;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
+import tech.cassandre.trading.bot.service.TradeServiceInDryMode;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
@@ -18,22 +26,19 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 /**
- * ScheduleAutoConfiguration activates flux scheduler.
+ * StrategyAutoConfiguration configures the strategy.
  */
 @Configuration
 public class StrategyAutoConfiguration extends BaseConfiguration {
 
-    /** Number of threads. */
-    private static final int NUMBER_OF_THREADS = 3;
-
     /** Application context. */
     private final ApplicationContext applicationContext;
 
-    /** Scheduler. */
-    private final Scheduler scheduler = Schedulers.newParallel("strategy-scheduler", NUMBER_OF_THREADS);
-
     /** Trade service. */
     private final TradeService tradeService;
+
+    /** Position service. */
+    private final PositionService positionService;
 
     /** Account flux. */
     private final AccountFlux accountFlux;
@@ -44,29 +49,45 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     /** Order flux. */
     private final OrderFlux orderFlux;
 
+    /** Trade flux. */
+    private final TradeFlux tradeFlux;
+
+    /** Position flux. */
+    private final PositionFlux positionFlux;
+
     /**
      * Constructor.
      *
      * @param newApplicationContext application context
      * @param newTradeService       trade service
+     * @param newPositionService    position service
      * @param newAccountFlux        account flux
      * @param newTickerFlux         ticker flux
-     * @param newOrderFlux          order flux.
+     * @param newOrderFlux          order flux
+     * @param newTradeFlux          trade flux
+     * @param newPositionFlux       position flux
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
                                      final TradeService newTradeService,
+                                     final PositionService newPositionService,
                                      final AccountFlux newAccountFlux,
                                      final TickerFlux newTickerFlux,
-                                     final OrderFlux newOrderFlux) {
+                                     final OrderFlux newOrderFlux,
+                                     final TradeFlux newTradeFlux,
+                                     final PositionFlux newPositionFlux) {
         this.applicationContext = newApplicationContext;
         this.tradeService = newTradeService;
+        this.positionService = newPositionService;
         this.accountFlux = newAccountFlux;
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
+        this.tradeFlux = newTradeFlux;
+        this.positionFlux = newPositionFlux;
     }
 
     /**
-     * Search for the strategy and instantiate it.
+     * Search for the strategy and runs it.
      */
     @PostConstruct
     public void configure() {
@@ -93,14 +114,14 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Check if the strategy extends CassandreStrategy.
         Object o = strategyBeans.values().iterator().next();
-        if (!(o instanceof BasicCassandreStrategy)) {
-            throw new ConfigurationException("Your strategy doesn't extend CassandreStrategy",
-                    o.getClass() + " must extend CassandreStrategy");
+        if (!(o instanceof CassandreStrategyInterface)) {
+            throw new ConfigurationException("Your strategy doesn't extend BasicCassandreStrategy or BasicTa4jCassandreStrategy",
+                    o.getClass() + " must extend BasicCassandreStrategy or BasicTa4jCassandreStrategy");
         }
 
         // =============================================================================================================
         // Getting strategy information.
-        BasicCassandreStrategy strategy = (BasicCassandreStrategy) o;
+        CassandreStrategyInterface strategy = (CassandreStrategyInterface) o;
 
         // Displaying strategy name.
         CassandreStrategy cassandreStrategyAnnotation = o.getClass().getAnnotation(CassandreStrategy.class);
@@ -115,22 +136,42 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // =============================================================================================================
         // Setting up strategy.
 
-        // Setting service.
+        // Setting services.
         strategy.setTradeService(tradeService);
+        strategy.setPositionService(positionService);
 
         // Account flux.
-        accountFlux.getFlux()
-                .publishOn(scheduler)
-                .subscribe(strategy::onAccountUpdate);
+        final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();
+        connectableAccountFlux.subscribe(strategy::accountUpdate);
+        connectableAccountFlux.connect();
+
+        // Position flux.
+        final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publish();
+        connectablePositionFlux.subscribe(strategy::positionUpdate);
+        connectablePositionFlux.connect();
+
+        // Order flux.
+        final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
+        connectableOrderFlux.subscribe(strategy::orderUpdate);
+        connectableOrderFlux.connect();
+
+        // Trade flux to strategy.
+        final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
+        connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
+        connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.
+        connectableTradeFlux.connect();
+
         // Ticker flux.
         tickerFlux.updateRequestedCurrencyPairs(strategy.getRequestedCurrencyPairs());
-        tickerFlux.getFlux()
-                .publishOn(scheduler)
-                .subscribe(strategy::onTickerUpdate);
-        // Order flux.
-        orderFlux.getFlux()
-                .publishOn(scheduler)
-                .subscribe(strategy::onOrderUpdate);
+        final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
+        connectableTickerFlux.subscribe(strategy::tickerUpdate);            // For strategy.
+        connectableTickerFlux.subscribe(positionService::tickerUpdate);     // For position service.
+        // if in dry mode, we send the ticker to the dry mode.
+        if (tradeService instanceof TradeServiceInDryMode) {
+            connectableTickerFlux.subscribe(((TradeServiceInDryMode) tradeService)::tickerUpdate);
+        }
+
+        connectableTickerFlux.connect();
     }
 
 }

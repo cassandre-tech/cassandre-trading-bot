@@ -29,7 +29,7 @@ public class ConfigurationException extends RuntimeException {
     }
 
     /**
-     * Getter action.
+     * Getter for action.
      *
      * @return action
      */

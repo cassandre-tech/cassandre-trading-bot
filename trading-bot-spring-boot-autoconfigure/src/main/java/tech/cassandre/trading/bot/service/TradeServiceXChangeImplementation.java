@@ -1,16 +1,20 @@
 package tech.cassandre.trading.bot.service;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.util.base.BaseService;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -20,7 +24,7 @@ import java.util.Set;
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
 
-    /** XChange Trade data service. */
+    /** XChange service. */
     private final org.knowm.xchange.service.trade.TradeService tradeService;
 
     /**
@@ -46,15 +50,15 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             MarketOrder m = new MarketOrder(getMapper().mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair));
-            getLogger().debug("TradeServiceXChangeImplementation - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            getLogger().debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
             final OrderCreationResultDTO result = new OrderCreationResultDTO(tradeService.placeMarketOrder(m));
-            getLogger().debug("TradeServiceXChangeImplementation - Order creation result : {}", result);
+            getLogger().debug("TradeService - Order created : {}", result);
             return result;
         } catch (Exception e) {
-            getLogger().error("Error calling createBuyMarketOrder : {}", e.getMessage());
-            return new OrderCreationResultDTO("Error calling createBuyMarketOrder : " + e.getMessage(), e);
+            getLogger().error("TradeService - Error calling createBuyMarketOrder : {}", e.getMessage());
+            return new OrderCreationResultDTO("TradeService - Error calling createBuyMarketOrder : " + e.getMessage(), e);
         }
     }
 
@@ -71,15 +75,15 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             LimitOrder l = new LimitOrder(getMapper().mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair), null, null, limitPrice);
-            getLogger().debug("TradeServiceXChangeImplementation - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            getLogger().debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
             final OrderCreationResultDTO result = new OrderCreationResultDTO(tradeService.placeLimitOrder(l));
-            getLogger().debug("TradeServiceXChangeImplementation - Order creation result : {}", result);
+            getLogger().debug("TradeService - Order creation result : {}", result);
             return result;
         } catch (Exception e) {
-            getLogger().error("Error calling createLimitOrder : {}", e.getMessage());
-            return new OrderCreationResultDTO("Error calling createLimitOrder : " + e.getMessage(), e);
+            getLogger().error("TradeService - Error calling createLimitOrder : {}", e.getMessage());
+            return new OrderCreationResultDTO("TradeService - Error calling createLimitOrder : " + e.getMessage(), e);
         }
     }
 
@@ -117,39 +121,70 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     public final Set<OrderDTO> getOpenOrders() {
-        getLogger().debug("TradeServiceXChangeImplementation - Getting open orders from exchange");
+        getLogger().debug("TradeService - Getting open orders from exchange");
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
             getBucket().asScheduler().consume(1);
 
             Set<OrderDTO> results = new LinkedHashSet<>();
-            tradeService.getOpenOrders().getOpenOrders().forEach(order -> results.add(getMapper().mapToOrderDTO(order)));
-            getLogger().debug("TradeServiceXChangeImplementation - {} order(s) found", results.size());
+            tradeService.getOpenOrders()
+                    .getOpenOrders()
+                    .forEach(order -> results.add(getMapper().mapToOrderDTO(order)));
+            getLogger().debug("TradeService - {} order(s) found", results.size());
             return results;
         } catch (IOException e) {
-            getLogger().error("Error retrieving open orders : {}", e.getMessage());
+            getLogger().error("TradeService - Error retrieving open orders : {}", e.getMessage());
             return Collections.emptySet();
         } catch (InterruptedException e) {
-            getLogger().error("InterruptedException : {}", e.getMessage());
+            getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
     }
 
     @Override
     public final boolean cancelOrder(final String orderId) {
-        getLogger().debug("TradeServiceXChangeImplementation - Canceling order {}", orderId);
+        getLogger().debug("TradeService - Canceling order {}", orderId);
         if (orderId != null) {
             try {
-                getLogger().debug("TradeServiceXChangeImplementation - Successfully canceled order {}", orderId);
+                getLogger().debug("TradeService - Successfully canceled order {}", orderId);
                 return tradeService.cancelOrder(orderId);
             } catch (Exception e) {
                 getLogger().error("Error canceling order {} : {}", orderId, e.getMessage());
                 return false;
             }
         } else {
-            getLogger().error("Error canceling order, order id is null");
+            getLogger().error("Error canceling order, order id provided is null");
             return false;
+        }
+    }
+
+    @Override
+    public final Set<TradeDTO> getTrades() {
+        getLogger().debug("TradeService - Getting trades from exchange");
+        try {
+            // Consume a token from the token bucket.
+            // If a token is not available this method will block until the refill adds one to the bucket.
+            getBucket().asScheduler().consume(1);
+
+            // Query 1 week of trades.
+            Set<TradeDTO> results = new LinkedHashSet<>();
+            TradeHistoryParamsAll params = new TradeHistoryParamsAll();
+            Date startDate = DateUtils.addWeeks(new Date(), -1);
+            Date endDate = new Date();
+            params.setStartTime(startDate);
+            params.setEndTime(endDate);
+            tradeService.getTradeHistory(params)
+                    .getUserTrades()
+                    .forEach(userTrade -> results.add(getMapper().mapToTradeDTO(userTrade)));
+            getLogger().debug("TradeService - {} trade(s) found", results.size());
+            return results;
+        } catch (IOException e) {
+            getLogger().error("TradeService - Error retrieving trades : {}", e.getMessage());
+            return Collections.emptySet();
+        } catch (InterruptedException e) {
+            getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
+            return Collections.emptySet();
         }
     }
 

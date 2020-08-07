@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Ticker flux.
+ * Ticker flux - push {@link TickerDTO}.
  */
 public class TickerFlux extends BaseFlux<TickerDTO> {
 
@@ -52,13 +52,13 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
     @Override
     @SuppressWarnings("unused")
     protected final Set<TickerDTO> getNewValues() {
-        getLogger().debug("TickerDTO - Retrieving new values");
+        getLogger().debug("TickerFlux - Retrieving new values");
         Set<TickerDTO> newValues = new LinkedHashSet<>();
         getCurrencyPairToTreat()
                 .flatMap(marketService::getTicker)
                 .ifPresent(t -> {
                     if (!t.equals(previousValues.get(t.getCurrencyPair()))) {
-                        getLogger().debug("TickerDTO - new ticker received : {}", t);
+                        getLogger().debug("TickerFlux - New ticker received : {}", t);
                         previousValues.replace(t.getCurrencyPair(), t);
                         newValues.add(t);
                     }
@@ -72,7 +72,6 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
      * @return currency pair to treat.
      */
     private Optional<CurrencyPairDTO> getCurrencyPairToTreat() {
-        // TODO Optimize this.
         final CurrencyPairDTO nextCurrencyPairToTreat;
 
         // No currency pairs required.

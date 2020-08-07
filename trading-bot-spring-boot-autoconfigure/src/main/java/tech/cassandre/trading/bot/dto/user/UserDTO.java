@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * DTO representing user information retrieved from the exchange.
+ * DTO representing user information.
  */
 @SuppressWarnings("unused")
 public final class UserDTO {
@@ -43,12 +43,12 @@ public final class UserDTO {
      *
      * @return builder
      */
-    public static UserDTO.Builder builder() {
-        return new UserDTO.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
-     * Getter for "id".
+     * Getter for id.
      *
      * @return id
      */
@@ -66,7 +66,7 @@ public final class UserDTO {
     }
 
     /**
-     * Getter for "timestamp".
+     * Getter for timestamp.
      *
      * @return timestamp
      */

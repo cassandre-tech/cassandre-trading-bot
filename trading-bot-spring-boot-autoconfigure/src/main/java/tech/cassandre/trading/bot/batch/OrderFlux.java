@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Order flux.
+ * Order flux - push {@link OrderDTO}.
  */
 public class OrderFlux extends BaseFlux<OrderDTO> {
 
@@ -41,12 +41,11 @@ public class OrderFlux extends BaseFlux<OrderDTO> {
             OrderDTO existingOrder = previousValues.get(order.getId());
             // If it does not exist or something changed, we do it.
             if (existingOrder == null || !existingOrder.equals(order)) {
-                getLogger().debug("OrderFlux - order {} has changed : {}", order.getId(), order);
+                getLogger().debug("OrderFlux - Order {} has changed : {}", order.getId(), order);
                 previousValues.put(order.getId(), order);
                 newValues.add(order);
             }
         });
-        // TODO Removing all the orders no more returned by the exchange.
         getLogger().debug("OrderFlux - {} order(s) updated", newValues.size());
         return newValues;
     }

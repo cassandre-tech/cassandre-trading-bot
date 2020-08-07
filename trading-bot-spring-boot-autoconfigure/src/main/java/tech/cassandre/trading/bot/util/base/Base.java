@@ -9,16 +9,16 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unused")
 public abstract class Base {
 
-	/** Logger. */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    /** Logger. */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-	/**
-	 * Getter logger.
-	 *
-	 * @return logger
-	 */
-	protected final Logger getLogger() {
-		return logger;
-	}
+    /**
+     * Getter for logger.
+     *
+     * @return logger
+     */
+    protected final Logger getLogger() {
+        return logger;
+    }
 
 }

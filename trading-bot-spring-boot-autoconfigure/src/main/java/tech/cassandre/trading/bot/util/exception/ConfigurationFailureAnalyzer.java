@@ -8,9 +8,9 @@ import org.springframework.boot.diagnostics.FailureAnalysis;
  */
 public class ConfigurationFailureAnalyzer extends AbstractFailureAnalyzer<ConfigurationException> {
 
-	@Override
-	protected final FailureAnalysis analyze(final Throwable rootFailure, final ConfigurationException cause) {
-		return new FailureAnalysis(cause.getMessage(), cause.getAction(), rootFailure);
-	}
+    @Override
+    protected final FailureAnalysis analyze(final Throwable rootFailure, final ConfigurationException cause) {
+        return new FailureAnalysis(cause.getMessage(), cause.getAction(), rootFailure);
+    }
 
 }

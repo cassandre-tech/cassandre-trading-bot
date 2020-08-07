@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,28 +13,27 @@ import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Exchange service test.
- */
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
-@DisplayName("Kucoin - Exchange service")
 @TestPropertySource(properties = {
 		"cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
-		"cassandre.trading.bot.exchange.sandbox=true",
+		"cassandre.trading.bot.exchange.modes.sandbox=true",
+		"cassandre.trading.bot.exchange.modes.dry=false",
 		"cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
 		"cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
 		"cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",
 		"cassandre.trading.bot.exchange.secret=${KUCOIN_SECRET}",
 		"cassandre.trading.bot.exchange.rates.account=100",
 		"cassandre.trading.bot.exchange.rates.ticker=101",
-		"cassandre.trading.bot.exchange.rates.order=102",
+		"cassandre.trading.bot.exchange.rates.trade=102",
 		"testableStrategy.enabled=true",
 		"invalidStrategy.enabled=false"
 })
+@DisplayName("Kucoin - Exchange service")
 public class ExchangeServiceTest {
 
 	/** Exchange service. */
@@ -42,6 +42,7 @@ public class ExchangeServiceTest {
 
 	@Test
 	@DisplayName("Get available currency pairs")
+	@Disabled("Bug in XChange currency pairs list") // TODO Fix when issue https://github.com/knowm/XChange/issues/3609 is fixed	
 	public void testGetAvailableCurrencyPairs() {
 		// Expected values.
 		final int expectedMinimumNumberOfAvailableCurrencyPairs = 15;
@@ -50,9 +51,9 @@ public class ExchangeServiceTest {
 		// Retrieve the available currency pairs.
 		Set<CurrencyPairDTO> currencyPairs = exchangeService.getAvailableCurrencyPairs();
 
-		// =============================================================================================================
+		// ====================================symbols=========================================================================
 		// Tests results.
-		assertTrue(currencyPairs.size() >= expectedMinimumNumberOfAvailableCurrencyPairs);
+		assertEquals(expectedMinimumNumberOfAvailableCurrencyPairs, currencyPairs.size());
 		// EOS.
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("EOS", "BTC")));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.EOS, CurrencyDTO.BTC)));

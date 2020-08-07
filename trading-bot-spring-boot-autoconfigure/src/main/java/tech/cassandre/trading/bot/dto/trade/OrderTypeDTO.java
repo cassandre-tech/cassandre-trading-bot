@@ -1,15 +1,15 @@
 package tech.cassandre.trading.bot.dto.trade;
 
 /**
- * Order types.
+ * Order types for {@link OrderDTO}.
  */
 @SuppressWarnings("unused")
 public enum OrderTypeDTO {
 
-	/** Buying order. */
-	BID,
+    /** Buying order. */
+    BID,
 
-	/** Selling order. */
-	ASK
+    /** Selling order. */
+    ASK
 
 }

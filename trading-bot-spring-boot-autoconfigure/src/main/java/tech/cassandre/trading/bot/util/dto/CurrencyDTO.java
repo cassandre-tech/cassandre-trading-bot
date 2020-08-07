@@ -917,7 +917,7 @@ public final class CurrencyDTO {
      */
     public static CurrencyDTO getInstance(final String currencyCode) {
         CurrencyDTO currency = getInstanceNoCreate(currencyCode.toUpperCase());
-		return Objects.requireNonNullElseGet(currency, () -> createCurrency(currencyCode.toUpperCase(), null, null));
+        return Objects.requireNonNullElseGet(currency, () -> createCurrency(currencyCode.toUpperCase(), null, null));
     }
 
     /**
@@ -1027,7 +1027,7 @@ public final class CurrencyDTO {
     }
 
     /**
-     * Getter code.
+     * Getter for code.
      *
      * @return code
      */

@@ -84,12 +84,12 @@ public final class TickerDTO {
      *
      * @return builder
      */
-    public static TickerDTO.Builder builder() {
-        return new TickerDTO.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
-     * Getter for "currencyPair".
+     * Getter for currencyPair.
      *
      * @return currencyPair
      */
@@ -98,7 +98,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "open".
+     * Getter for open.
      *
      * @return open
      */
@@ -107,7 +107,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "last".
+     * Getter for last.
      *
      * @return last
      */
@@ -116,7 +116,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "bid".
+     * Getter for bid.
      *
      * @return bid
      */
@@ -125,7 +125,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "ask".
+     * Getter for ask.
      *
      * @return ask
      */
@@ -134,7 +134,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "high".
+     * Getter for high.
      *
      * @return high
      */
@@ -143,7 +143,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "low".
+     * Getter for low.
      *
      * @return low
      */
@@ -152,7 +152,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "vwap".
+     * Getter for vwap.
      *
      * @return vwap
      */
@@ -161,7 +161,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "volume".
+     * Getter for volume.
      *
      * @return volume
      */
@@ -170,7 +170,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "quoteVolume".
+     * Getter for quoteVolume.
      *
      * @return quoteVolume
      */
@@ -179,8 +179,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Requested tickers
-     * Getter for "bidSize".
+     * Getter for bidSize.
      *
      * @return bidSize
      */
@@ -189,7 +188,7 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "askSize".
+     * Getter for askSize.
      *
      * @return askSize
      */
@@ -198,12 +197,49 @@ public final class TickerDTO {
     }
 
     /**
-     * Getter for "timestamp".
+     * Getter for timestamp.
      *
      * @return timestamp
      */
     public ZonedDateTime getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TickerDTO tickerDTO = (TickerDTO) o;
+        return Objects.equals(getCurrencyPair(), tickerDTO.getCurrencyPair())
+                && getTimestamp().equals(tickerDTO.getTimestamp());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCurrencyPair(), getTimestamp());
+    }
+
+    @Override
+    public String toString() {
+        return "TickerDTO{"
+                + " currencyPair=" + currencyPair
+                + ", open=" + open
+                + ", last=" + last
+                + ", bid=" + bid
+                + ", ask=" + ask
+                + ", high=" + high
+                + ", low=" + low
+                + ", vwap=" + vwap
+                + ", volume=" + volume
+                + ", quoteVolume=" + quoteVolume
+                + ", bidSize=" + bidSize
+                + ", askSize=" + askSize
+                + ", timestamp=" + timestamp
+                + '}';
     }
 
     /**
@@ -402,43 +438,6 @@ public final class TickerDTO {
             return new TickerDTO(this);
         }
 
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final TickerDTO tickerDTO = (TickerDTO) o;
-        return Objects.equals(getCurrencyPair(), tickerDTO.getCurrencyPair())
-                && getTimestamp().equals(tickerDTO.getTimestamp());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getCurrencyPair(), getTimestamp());
-    }
-
-    @Override
-    public String toString() {
-        return "TickerDTO{"
-                + " currencyPair=" + currencyPair
-                + ", open=" + open
-                + ", last=" + last
-                + ", bid=" + bid
-                + ", ask=" + ask
-                + ", high=" + high
-                + ", low=" + low
-                + ", vwap=" + vwap
-                + ", volume=" + volume
-                + ", quoteVolume=" + quoteVolume
-                + ", bidSize=" + bidSize
-                + ", askSize=" + askSize
-                + ", timestamp=" + timestamp
-                + '}';
     }
 
 }

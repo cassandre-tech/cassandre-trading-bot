@@ -18,9 +18,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.with;
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,25 +28,23 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 
-/**
- * Trade service tests.
- */
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
-@DisplayName("Kucoin - Trade service")
 @TestPropertySource(properties = {
         "cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
-        "cassandre.trading.bot.exchange.sandbox=true",
+        "cassandre.trading.bot.exchange.modes.sandbox=true",
+        "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
         "cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
         "cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",
         "cassandre.trading.bot.exchange.secret=${KUCOIN_SECRET}",
         "cassandre.trading.bot.exchange.rates.account=100",
         "cassandre.trading.bot.exchange.rates.ticker=101",
-        "cassandre.trading.bot.exchange.rates.order=102",
+        "cassandre.trading.bot.exchange.rates.trade=102",
         "testableStrategy.enabled=true",
         "invalidStrategy.enabled=false"
 })
+@DisplayName("Kucoin - Trade service")
 public class TradeServiceTest extends BaseTest {
 
     /** Trade service. */
@@ -68,26 +64,23 @@ public class TradeServiceTest extends BaseTest {
         // =============================================================================================================
         // Making a buy market order with a size below the minimum requirement. Testing error management.
         final OrderCreationResultDTO result1 = tradeService.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
-        assertTrue(result1.getOrderId().isEmpty());
-        assertTrue(result1.getErrorMessage().isPresent());
-        assertEquals("Error calling createBuyMarketOrder : Order size below the minimum requirement.", result1.getErrorMessage().get());
-        assertTrue(result1.getException().isPresent());
+        assertFalse(result1.isSuccessful());
+        assertNull(result1.getOrderId());
+        assertEquals("TradeService - Error calling createBuyMarketOrder : Order size below the minimum requirement.", result1.getErrorMessage());
+        assertNotNull(result1.getException());
 
         // =============================================================================================================
         // Making a buy market order (Buy 0.0001 ETH).
         final OrderCreationResultDTO result2 = tradeService.createBuyMarketOrder(cp, new BigDecimal("0.0001"));
-        assertTrue(result2.getOrderId().isPresent());
-        assertTrue(result2.getErrorMessage().isEmpty());
-        assertTrue(result2.getException().isEmpty());
-
-        // Testing the order created.
-        final String order2Id = result2.getOrderId().get();
-        assertNotNull(order2Id);
+        assertTrue(result2.isSuccessful());
+        assertNotNull(result2.getOrderId());
+        assertNull(result2.getErrorMessage());
+        assertNull(result2.getException());
 
         // =============================================================================================================
         // Refunding the account.
         final OrderCreationResultDTO result3 = tradeService.createSellMarketOrder(cp, new BigDecimal("0.0001"));
-        assertTrue(result3.getOrderId().isPresent());
+        assertTrue(result3.isSuccessful());
     }
 
     @Test
@@ -99,9 +92,10 @@ public class TradeServiceTest extends BaseTest {
         // Making a buy limit order (Buy 0.0001 ETH).
         final OrderCreationResultDTO result1 = tradeService.createBuyLimitOrder(cp, new BigDecimal("0.0001"), new BigDecimal("0.000001"));
         getLogger().info("Error message : " + result1.getErrorMessage());
-        assertTrue(result1.getErrorMessage().isEmpty());
-        assertTrue(result1.getException().isEmpty());
-        assertTrue(result1.getOrderId().isPresent());
+        assertTrue(result1.isSuccessful());
+        assertNull(result1.getErrorMessage());
+        assertNull(result1.getException());
+        assertNotNull(result1.getOrderId());
 
         // =============================================================================================================
         // Getting a non existing order.
@@ -109,12 +103,12 @@ public class TradeServiceTest extends BaseTest {
 
         // =============================================================================================================
         // Getting the order and testing the data.
-        final Optional<OrderDTO> order1 = tradeService.getOpenOrderByOrderId(result1.getOrderId().get());
+        final Optional<OrderDTO> order1 = tradeService.getOpenOrderByOrderId(result1.getOrderId());
         assertTrue(order1.isPresent());
         assertEquals(BID, order1.get().getType());
         assertEquals(0, order1.get().getOriginalAmount().compareTo(new BigDecimal("0.0001")));
         assertEquals(cp, order1.get().getCurrencyPair());
-        assertEquals(result1.getOrderId().get(), order1.get().getId());
+        assertEquals(result1.getOrderId(), order1.get().getId());
         assertNull(order1.get().getUserReference());
         assertNotNull(order1.get().getTimestamp());
         assertTrue(order1.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
@@ -126,7 +120,7 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(0, order1.get().getLimitPrice().compareTo(new BigDecimal("0.000001")));
 
         // Cancel the order.
-        tradeService.cancelOrder(result1.getOrderId().get());
+        tradeService.cancelOrder(result1.getOrderId());
     }
 
     @Test
@@ -136,23 +130,40 @@ public class TradeServiceTest extends BaseTest {
 
         // Making a buy limit order (Buy 0.0001 ETH).
         final OrderCreationResultDTO result1 = tradeService.createSellLimitOrder(cp, new BigDecimal("0.0001"), new BigDecimal("10000000"));
-        assertTrue(result1.getOrderId().isPresent());
+        assertNotNull(result1.getOrderId());
 
         // The order must exist.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertTrue(tradeService.getOpenOrderByOrderId(result1.getOrderId().get()).isPresent()));
+        await().untilAsserted(() -> assertTrue(tradeService.getOpenOrderByOrderId(result1.getOrderId()).isPresent()));
 
         // Cancel the order.
-        assertTrue(tradeService.cancelOrder(result1.getOrderId().get()));
+        assertTrue(tradeService.cancelOrder(result1.getOrderId()));
 
         // The order must have disappeared.
-        with().pollInterval(fibonacci(SECONDS)).await()
-                .atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-                .untilAsserted(() -> assertFalse(tradeService.getOpenOrderByOrderId(result1.getOrderId().get()).isPresent()));
+        await().untilAsserted(() -> assertFalse(tradeService.getOpenOrderByOrderId(result1.getOrderId()).isPresent()));
 
         // Cancel the order again and check it gives false.
-        assertFalse(tradeService.cancelOrder(result1.getOrderId().get()));
+        assertFalse(tradeService.cancelOrder(result1.getOrderId()));
+    }
+
+    @Test
+    @DisplayName("Get trades")
+    public void testGetTrades() {
+        final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+
+        // Creates two orders of the same amount (one buy, one sell).
+        final OrderCreationResultDTO result1 = tradeService.createBuyMarketOrder(cp, new BigDecimal("0.0001"));
+        final OrderCreationResultDTO result2 = tradeService.createSellMarketOrder(cp, new BigDecimal("0.0001"));
+
+        // Check that the two orders appears in the trade history.
+        assertTrue(result1.isSuccessful());
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrderId()))));
+
+/*        tradeService.getTrades().stream()
+                .filter(t -> t.getOrderId().equals(result1.getOrderId().get()))
+                .forEach(tradeDTO -> System.out.println(tradeDTO));*/
+
+        assertNotNull(result2.getOrderId());
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrderId()))));
     }
 
 }

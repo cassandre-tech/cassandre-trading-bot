@@ -8,6 +8,7 @@ import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.dto.trade.UserTrade;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;
@@ -15,6 +16,7 @@ import org.mapstruct.ValueMappings;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
@@ -77,7 +79,7 @@ public interface CassandreMapper {
     /**
      * Map Balance to BalanceDTO.
      *
-     * @param source source
+     * @param source Balance
      * @return BalanceDTO
      */
     BalanceDTO mapToBalanceDTO(Balance source);
@@ -93,16 +95,24 @@ public interface CassandreMapper {
     /**
      * Map Order to OrderDTO.
      *
-     * @param source order
+     * @param source LimitOrder
      * @return OrderDTO
      */
     OrderDTO mapToOrderDTO(LimitOrder source);
 
     /**
+     * Map UserTrade to TradeDTO.
+     *
+     * @param source UserTrade
+     * @return TradeDTO
+     */
+    TradeDTO mapToTradeDTO(UserTrade source);
+
+    /**
      * Map to OrderTypeDTO.
      *
      * @param source XChange order type
-     * @return order type
+     * @return OrderTypeDTO
      */
     @ValueMappings({
             @ValueMapping(source = "BID", target = "BID"),
@@ -116,7 +126,7 @@ public interface CassandreMapper {
      * Map to OrderTypeDTO.
      *
      * @param source order type
-     * @return XChange order type
+     * @return OrderType
      */
     @ValueMappings({
             @ValueMapping(source = "BID", target = "BID"),

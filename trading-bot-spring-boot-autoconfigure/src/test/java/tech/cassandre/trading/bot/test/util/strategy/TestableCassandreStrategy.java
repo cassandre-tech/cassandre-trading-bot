@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
@@ -28,30 +30,26 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
         havingValue = "true")
 public class TestableCassandreStrategy extends BasicCassandreStrategy {
 
-    /**
-     * Method duration.
-     */
+    /** Method duration. */
     private static final long METHOD_DURATION = 1000;
 
-    /**
-     * Logger.
-     */
+    /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    /**
-     * Accounts update received.
-     */
+    /** Accounts update received. */
     private final List<AccountDTO> accountsUpdateReceived = new LinkedList<>();
 
-    /**
-     * Tickers update received.
-     */
+    /** Tickers update received. */
     private final List<TickerDTO> tickersUpdateReceived = new LinkedList<>();
 
-    /**
-     * Orders update received.
-     */
+    /** Orders update received. */
     private final List<OrderDTO> ordersUpdateReceived = new LinkedList<>();
+
+    /** Trades update received. */
+    private final List<TradeDTO> tradesUpdateReceived = new LinkedList<>();
+
+    /** Positions update received. */
+    private final List<PositionDTO> positionsUpdateReceived = new LinkedList<>();
 
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
@@ -94,6 +92,28 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         }
     }
 
+    @Override
+    public void onTradeUpdate(TradeDTO trade) {
+        tradesUpdateReceived.add(trade);
+        logger.info("TestableStrategy-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade);
+        try {
+            Thread.sleep(METHOD_DURATION);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onPositionUpdate(PositionDTO position) {
+        positionsUpdateReceived.add(position);
+        logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position);
+        try {
+            Thread.sleep(METHOD_DURATION);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Return formatted list count.
      *
@@ -129,6 +149,33 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
      */
     public final List<OrderDTO> getOrdersUpdateReceived() {
         return ordersUpdateReceived;
+    }
+
+    /**
+     * Getter tradesUpdateReceived.
+     *
+     * @return tradesUpdateReceived
+     */
+    public final List<TradeDTO> getTradesUpdateReceived() {
+        return tradesUpdateReceived;
+    }
+
+    /**
+     * Getter accountsUpdateReceived.
+     *
+     * @return accountsUpdateReceived
+     */
+    public final List<AccountDTO> getAccountsUpdateReceived() {
+        return accountsUpdateReceived;
+    }
+
+    /**
+     * Getter positionsUpdateReceived.
+     *
+     * @return positionsUpdateReceived
+     */
+    public final List<PositionDTO> getPositionsUpdateReceived() {
+        return positionsUpdateReceived;
     }
 
 }

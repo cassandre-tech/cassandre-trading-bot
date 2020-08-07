@@ -15,14 +15,11 @@ import java.text.SimpleDateFormat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-/**
- * TickerDTO tests.
- */
-@DisplayName("Ticker DTO tests")
+@DisplayName("Ticker DTO")
 public class TickerDTOTest {
 
 	@Test
-	@DisplayName("EqualTo on ticker")
+	@DisplayName("EqualTo")
 	public void equalToForTickers() throws ParseException {
 		// Currency pairs.
 		final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);

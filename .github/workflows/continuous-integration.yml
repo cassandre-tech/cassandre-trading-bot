@@ -47,4 +47,18 @@ jobs:
           KUCOIN_PASSPHRASE: ${{ secrets.KUCOIN_PASSPHRASE }}
           KUCOIN_KEY: ${{ secrets.KUCOIN_KEY }}
           KUCOIN_SECRET: ${{ secrets.KUCOIN_SECRET }}
-        run: mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
+        run: |
+          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
+          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+
+      # ================================================================================================================
+      - name : Test Cassandre trading bot maven archetype - basic strategy
+        run: |
+          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-archetype -DarchetypeVersion=${{ steps.package.outputs.version }} -DgroupId=tech.cassandre -DartifactId=archetype-test-basic -Dversion=1.0-SNAPSHOT -Dpackage=tech.cassandre
+          mvn -f archetype-test-basic/pom.xml test
+
+      # ================================================================================================================
+      - name : Test Cassandre trading bot maven archetype - basic ta4j strategy
+        run: |
+          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype -DarchetypeVersion=${{ steps.package.outputs.version }} -DgroupId=tech.cassandre -DartifactId=archetype-test-ta4j-basic -Dversion=1.0-SNAPSHOT -Dpackage=tech.cassandre
+          mvn -f archetype-test-ta4j-basic/pom.xml test

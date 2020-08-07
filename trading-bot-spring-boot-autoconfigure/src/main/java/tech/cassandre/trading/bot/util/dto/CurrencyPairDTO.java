@@ -50,7 +50,7 @@ public final class CurrencyPairDTO {
     }
 
     /**
-     * Getter baseCurrency.
+     * Getter for baseCurrency.
      *
      * @return baseCurrency
      */
@@ -59,7 +59,7 @@ public final class CurrencyPairDTO {
     }
 
     /**
-     * Getter quoteCurrency.
+     * Getter for quoteCurrency.
      *
      * @return quoteCurrency
      */

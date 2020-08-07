@@ -17,46 +17,46 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_DRY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_NAME_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_PASSPHRASE_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_ACCOUNT_LONG_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_ORDER_LONG_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TICKER_LONG_VALUE;
+import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TRADE_LONG_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SANDBOX_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SECRET_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_DEFAULT_VALUE;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SECRET;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_USERNAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ORDER;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 
-/**
- * Account test rate.
- */
 @SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
+@SetSystemProperty(key = PARAMETER_DRY, value = PARAMETER_DRY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_USERNAME, value = PARAMETER_USERNAME_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_PASSPHRASE, value = PARAMETER_PASSPHRASE_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_KEY, value = PARAMETER_KEY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_SECRET, value = PARAMETER_SECRET_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_RATE_ACCOUNT, value = PARAMETER_RATE_ACCOUNT_LONG_VALUE)
 @SetSystemProperty(key = PARAMETER_RATE_TICKER, value = PARAMETER_RATE_TICKER_LONG_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ORDER, value = PARAMETER_RATE_ORDER_LONG_VALUE)
+@SetSystemProperty(key = PARAMETER_RATE_ORDER, value = PARAMETER_RATE_TRADE_LONG_VALUE)
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
-@DisplayName("Rates tests")
+@DisplayName("Rates")
 public class RatesTest {
 
 	/** Waiting time. */
@@ -75,12 +75,13 @@ public class RatesTest {
 	private TradeService tradeService;
 
 	@Test
-	@DisplayName("Account service rate test")
+	@DisplayName("Account service rate")
 	public void accountServiceRateTest() throws InterruptedException {
+		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
-		ExecutorService executor = Executors.newFixedThreadPool(3);
+		ExecutorService executor = Executors.newFixedThreadPool(2);
 		// Call number 1.
 		executor.submit(() -> {
 			userService.getUser();
@@ -102,13 +103,14 @@ public class RatesTest {
 	}
 
 	@Test
-	@DisplayName("Market service rate test")
+	@DisplayName("Market service rate")
 	public void marketServiceRateTest() throws InterruptedException {
+		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 		final CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
 
 		// Executing service calls in parallel.
-		ExecutorService executor = Executors.newFixedThreadPool(3);
+		ExecutorService executor = Executors.newFixedThreadPool(2);
 		// Call number 1.
 		executor.submit(() -> {
 			marketService.getTicker(cp);
@@ -130,12 +132,13 @@ public class RatesTest {
 	}
 
 	@Test
-	@DisplayName("Trade service rate test")
+	@DisplayName("Trade service rate")
 	public void tradeServiceRateTest() throws InterruptedException {
+		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
-		ExecutorService executor = Executors.newFixedThreadPool(3);
+		ExecutorService executor = Executors.newFixedThreadPool(2);
 		// Call number 1.
 		executor.submit(() -> {
 			tradeService.getOpenOrders();

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * DTO representing a balance in a currency for an {@link AccountDTO}.
+ * DTO representing a balance in a {@link CurrencyDTO} for an {@link AccountDTO}.
  */
 @SuppressWarnings("unused")
 public final class BalanceDTO {
@@ -56,8 +56,8 @@ public final class BalanceDTO {
      *
      * @return builder
      */
-    public static BalanceDTO.Builder builder() {
-        return new BalanceDTO.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -130,6 +130,45 @@ public final class BalanceDTO {
      */
     public BigDecimal getDepositing() {
         return depositing;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final BalanceDTO that = (BalanceDTO) o;
+        return Objects.equals(getCurrency(), that.getCurrency())
+                && Objects.equals(getTotal(), that.getTotal())
+                && Objects.equals(getAvailable(), that.getAvailable())
+                && Objects.equals(getFrozen(), that.getFrozen())
+                && Objects.equals(getLoaned(), that.getLoaned())
+                && Objects.equals(getBorrowed(), that.getBorrowed())
+                && Objects.equals(getWithdrawing(), that.getWithdrawing())
+                && Objects.equals(getDepositing(), that.getDepositing());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCurrency(), getTotal(), getAvailable(), getFrozen(), getLoaned(), getBorrowed(), getWithdrawing(), getDepositing());
+    }
+
+    @Override
+    public String toString() {
+        return "BalanceDTO{"
+                + " currency=" + currency
+                + ", total=" + total
+                + ", available=" + available
+                + ", frozen=" + frozen
+                + ", loaned=" + loaned
+                + ", borrowed=" + borrowed
+                + ", withdrawing=" + withdrawing
+                + ", depositing=" + depositing
+                + '}';
     }
 
     /**
@@ -258,45 +297,6 @@ public final class BalanceDTO {
             return new BalanceDTO(this);
         }
 
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final BalanceDTO that = (BalanceDTO) o;
-        return Objects.equals(getCurrency(), that.getCurrency())
-                && Objects.equals(getTotal(), that.getTotal())
-                && Objects.equals(getAvailable(), that.getAvailable())
-                && Objects.equals(getFrozen(), that.getFrozen())
-                && Objects.equals(getLoaned(), that.getLoaned())
-                && Objects.equals(getBorrowed(), that.getBorrowed())
-                && Objects.equals(getWithdrawing(), that.getWithdrawing())
-                && Objects.equals(getDepositing(), that.getDepositing());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getCurrency(), getTotal(), getAvailable(), getFrozen(), getLoaned(), getBorrowed(), getWithdrawing(), getDepositing());
-    }
-
-    @Override
-    public String toString() {
-        return "BalanceDTO{"
-                + " currency=" + currency
-                + ", total=" + total
-                + ", available=" + available
-                + ", frozen=" + frozen
-                + ", loaned=" + loaned
-                + ", borrowed=" + borrowed
-                + ", withdrawing=" + withdrawing
-                + ", depositing=" + depositing
-                + '}';
     }
 
 }

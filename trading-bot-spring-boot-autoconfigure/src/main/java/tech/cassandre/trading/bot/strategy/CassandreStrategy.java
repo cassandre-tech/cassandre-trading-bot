@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Strategy annotation.
+ * Cassandre strategy annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

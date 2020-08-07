@@ -1,9 +1,7 @@
 package tech.cassandre.trading.bot.dto.trade;
 
-import java.util.Optional;
-
 /**
- * Order creation result.
+ * Order creation result for {@link OrderDTO}.
  */
 @SuppressWarnings("unused")
 public final class OrderCreationResultDTO {
@@ -17,12 +15,16 @@ public final class OrderCreationResultDTO {
     /** Exception (filled if order creation failed). */
     private final Exception exception;
 
+    /** Indicates if the position creation was successful or not. */
+    private final boolean successful;
+
     /**
      * Constructor for successful order creation.
      *
      * @param newOrderId order id.
      */
     public OrderCreationResultDTO(final String newOrderId) {
+        successful = true;
         this.orderId = newOrderId;
         this.errorMessage = null;
         this.exception = null;
@@ -35,6 +37,7 @@ public final class OrderCreationResultDTO {
      * @param newException    exception
      */
     public OrderCreationResultDTO(final String newErrorMessage, final Exception newException) {
+        successful = false;
         this.orderId = null;
         this.errorMessage = newErrorMessage;
         this.exception = newException;
@@ -45,8 +48,8 @@ public final class OrderCreationResultDTO {
      *
      * @return orderId
      */
-    public Optional<String> getOrderId() {
-        return Optional.ofNullable(orderId);
+    public String getOrderId() {
+        return orderId;
     }
 
     /**
@@ -54,8 +57,8 @@ public final class OrderCreationResultDTO {
      *
      * @return errorMessage
      */
-    public Optional<String> getErrorMessage() {
-        return Optional.ofNullable(errorMessage);
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
     /**
@@ -63,8 +66,17 @@ public final class OrderCreationResultDTO {
      *
      * @return exception
      */
-    public Optional<Exception> getException() {
-        return Optional.ofNullable(exception);
+    public Exception getException() {
+        return exception;
+    }
+
+    /**
+     * Getter for successful.
+     *
+     * @return successful
+     */
+    public boolean isSuccessful() {
+        return successful;
     }
 
     @Override
@@ -73,6 +85,7 @@ public final class OrderCreationResultDTO {
                 + " orderId='" + orderId + '\''
                 + ", errorMessage='" + errorMessage + '\''
                 + ", exception=" + exception
+                + ", successful=" + successful
                 + '}';
     }
 
