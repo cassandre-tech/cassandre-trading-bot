@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategy.TestableTa4jCassandreStrategy;
 
 import static org.awaitility.Awaitility.await;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_DRY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
@@ -66,6 +67,10 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(testableStrategy.getOrders().size(), 4));
         await().untilAsserted(() -> assertEquals(testableStrategy.getTrades().size(), 3));
         await().untilAsserted(() -> assertEquals(testableStrategy.getPositions().size(), 3));
+
+        // Checking that services are available.
+        assertNotNull(testableStrategy.getTradeService());
+        assertNotNull(testableStrategy.getPositionService());
     }
 
 }

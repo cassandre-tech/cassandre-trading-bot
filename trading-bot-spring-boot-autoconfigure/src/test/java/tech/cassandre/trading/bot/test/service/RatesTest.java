@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.service;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
@@ -33,10 +32,10 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SECRET;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_USERNAME;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
@@ -58,7 +57,6 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @DisplayName("Rates")
-@Disabled("Sometimes, tests are failing on this")
 public class RatesTest {
 
 	/** Waiting time. */

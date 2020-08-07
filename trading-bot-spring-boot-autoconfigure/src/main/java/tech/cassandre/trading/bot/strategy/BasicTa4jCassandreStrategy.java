@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -25,6 +26,9 @@ public abstract class BasicTa4jCassandreStrategy implements CassandreStrategyInt
 
     /** Trade service. */
     private TradeService tradeService;
+
+    /** Position service. */
+    private PositionService positionService;
 
     /** The accounts owned by the user. */
     private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
@@ -59,17 +63,32 @@ public abstract class BasicTa4jCassandreStrategy implements CassandreStrategyInt
         strategy = getStrategy();
     }
 
+    @Override
+    public final void setTradeService(final TradeService newTradeService) {
+        this.tradeService = newTradeService;
+    }
+
+    @Override
+    public final void setPositionService(final PositionService newPositionService) {
+        this.positionService = newPositionService;
+    }
+
+    @Override
+    public final TradeService getTradeService() {
+        return tradeService;
+    }
+
+    @Override
+    public final PositionService getPositionService() {
+        return positionService;
+    }
+
     /**
      * Implements this method to tell the bot which currency pair your strategy will receive.
      *
      * @return the list of currency pairs tickers your want to receive
      */
     public abstract CurrencyPairDTO getRequestedCurrencyPair();
-
-    @Override
-    public final TradeService getTradeService() {
-        return tradeService;
-    }
 
     /**
      * Implements this method to tell the bot how many bars you want to keep in your bar series.
@@ -85,11 +104,6 @@ public abstract class BasicTa4jCassandreStrategy implements CassandreStrategyInt
      * @return strategy
      */
     public abstract Strategy getStrategy();
-
-    @Override
-    public final void setTradeService(final TradeService newTradeService) {
-        tradeService = newTradeService;
-    }
 
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {

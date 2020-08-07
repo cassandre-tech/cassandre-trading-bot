@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
 
 import static org.awaitility.Awaitility.with;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_DRY_DEFAULT_VALUE;
@@ -72,6 +73,10 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertFalse(testableStrategy.getTickersUpdateReceived().isEmpty());
         assertFalse(testableStrategy.getTradesUpdateReceived().isEmpty());
         assertFalse(testableStrategy.getPositionsUpdateReceived().isEmpty());
+
+        // Checking that services are available.
+        assertNotNull(testableStrategy.getTradeService());
+        assertNotNull(testableStrategy.getPositionService());
     }
 
 }

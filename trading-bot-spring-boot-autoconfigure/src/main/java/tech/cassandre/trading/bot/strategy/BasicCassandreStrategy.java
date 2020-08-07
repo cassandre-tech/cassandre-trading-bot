@@ -5,6 +5,7 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 
 import java.util.LinkedHashMap;
@@ -19,6 +20,9 @@ public abstract class BasicCassandreStrategy implements CassandreStrategyInterfa
     /** Trade service. */
     private TradeService tradeService;
 
+    /** Position service. */
+    private PositionService positionService;
+
     /** The accounts owned by the user. */
     private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
@@ -32,13 +36,23 @@ public abstract class BasicCassandreStrategy implements CassandreStrategyInterfa
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
     @Override
+    public final void setTradeService(final TradeService newTradeService) {
+        this.tradeService = newTradeService;
+    }
+
+    @Override
+    public final void setPositionService(final PositionService newPositionService) {
+        this.positionService = newPositionService;
+    }
+
+    @Override
     public final TradeService getTradeService() {
         return tradeService;
     }
 
     @Override
-    public final void setTradeService(final TradeService newTradeService) {
-        tradeService = newTradeService;
+    public final PositionService getPositionService() {
+        return positionService;
     }
 
     @Override

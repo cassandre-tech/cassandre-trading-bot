@@ -79,7 +79,7 @@ public class OrderFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getOpenOrders());
 
         // Checking that somme tickers have already been treated (to verify we work on a single thread).
-        assertTrue(testableStrategy.getOrdersUpdateReceived().size() < numberOfOrdersExpected);
+        assertTrue(testableStrategy.getOrdersUpdateReceived().size() <= numberOfOrdersExpected);
         assertTrue(testableStrategy.getOrdersUpdateReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.

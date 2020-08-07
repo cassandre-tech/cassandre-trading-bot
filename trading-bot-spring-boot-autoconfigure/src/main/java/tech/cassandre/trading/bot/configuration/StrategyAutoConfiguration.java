@@ -136,8 +136,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // =============================================================================================================
         // Setting up strategy.
 
-        // Setting service.
+        // Setting services.
         strategy.setTradeService(tradeService);
+        strategy.setPositionService(positionService);
 
         // Account flux.
         final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();

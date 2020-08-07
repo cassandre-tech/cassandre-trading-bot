@@ -5,6 +5,7 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -18,6 +19,21 @@ import java.util.Set;
 public interface CassandreStrategyInterface {
 
     /**
+     * Setter for tradeService.
+     *
+     * @param newTradeService the tradeService to set
+     */
+    void setTradeService(TradeService newTradeService);
+
+
+    /**
+     * Setter for positionService.
+     *
+     * @param newPositionService position service
+     */
+    void setPositionService(PositionService newPositionService);
+
+    /**
      * Getter for tradeService.
      *
      * @return tradeService
@@ -25,11 +41,11 @@ public interface CassandreStrategyInterface {
     TradeService getTradeService();
 
     /**
-     * Setter for tradeService.
+     * Getter for positionService.
      *
-     * @param newTradeService the tradeService to set
+     * @return positionService
      */
-    void setTradeService(TradeService newTradeService);
+    PositionService getPositionService();
 
     /**
      * Method called by streams at every account update.
