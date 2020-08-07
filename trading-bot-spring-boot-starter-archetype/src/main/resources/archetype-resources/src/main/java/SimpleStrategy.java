@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Simple strategy.
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
- * How to do it : https://trading-bot.cassandre.tech/how_to_create_an_exchange_sandbox_for_kucoin.html
+ * How to do it : https://trading-bot.cassandre.tech/how-tos/how-to-create-a-kucoin-sandbox-account
  */
 @CassandreStrategy(name = "Simple strategy")
 public final class SimpleStrategy extends BasicCassandreStrategy {
