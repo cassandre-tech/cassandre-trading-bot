@@ -49,4 +49,34 @@ public class TickerDTOTest {
 		assertNotEquals(t04, t01);
 	}
 
+	@Test
+	@DisplayName("Builder with String and epoch")
+	public void builderWithStringAndEpoch() throws ParseException {
+		TickerDTO t01 = TickerDTO.builder()
+				.lastAsString("0.1")
+				.askAsString("0.2")
+				.askSizeAsString("0.3")
+				.bidAsString("0.4")
+				.bidSizeAsString("0.5")
+				.highAsString("0.6")
+				.low("0.7")
+				.openAsString("0.8")
+				.quoteVolumeAsString("0.9")
+				.timestampAsEpochInSeconds(1596499200)
+				.create();
+		assertEquals(BigDecimal.valueOf(0.1), t01.getLast());
+		assertEquals(BigDecimal.valueOf(0.2), t01.getAsk());
+		assertEquals(BigDecimal.valueOf(0.3), t01.getAskSize());
+		assertEquals(BigDecimal.valueOf(0.4), t01.getBid());
+		assertEquals(BigDecimal.valueOf(0.5), t01.getBidSize());
+		assertEquals(BigDecimal.valueOf(0.6), t01.getHigh());
+		assertEquals(BigDecimal.valueOf(0.7), t01.getLow());
+		assertEquals(BigDecimal.valueOf(0.8), t01.getOpen());
+		assertEquals(BigDecimal.valueOf(0.9), t01.getQuoteVolume());
+		// Date.
+		assertEquals(2020, t01.getTimestamp().getYear());
+		assertEquals(8, t01.getTimestamp().getMonthValue());
+		assertEquals(4, t01.getTimestamp().getDayOfMonth());
+	}
+
 }

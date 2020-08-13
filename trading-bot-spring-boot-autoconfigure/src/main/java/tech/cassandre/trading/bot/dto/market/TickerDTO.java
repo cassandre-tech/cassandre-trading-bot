@@ -247,6 +247,9 @@ public final class TickerDTO {
      */
     public static final class Builder {
 
+        /** To milliseconds. */
+        public static final int MILLISECONDS = 1000;
+
         /** Currency pair. */
         private CurrencyPairDTO currencyPair;
 
@@ -309,6 +312,17 @@ public final class TickerDTO {
         }
 
         /**
+         * open (with string).
+         *
+         * @param newOpen open
+         * @return builder
+         */
+        public Builder openAsString(final String newOpen) {
+            this.open = toBigDecimal(newOpen);
+            return this;
+        }
+
+        /**
          * last.
          *
          * @param newLast newLast
@@ -316,6 +330,17 @@ public final class TickerDTO {
          */
         public Builder last(final BigDecimal newLast) {
             this.last = newLast;
+            return this;
+        }
+
+        /**
+         * last (with string).
+         *
+         * @param newLast newLast
+         * @return builder
+         */
+        public Builder lastAsString(final String newLast) {
+            this.last = toBigDecimal(newLast);
             return this;
         }
 
@@ -331,6 +356,17 @@ public final class TickerDTO {
         }
 
         /**
+         * bid (with string).
+         *
+         * @param newBid newBid
+         * @return builder
+         */
+        public Builder bidAsString(final String newBid) {
+            this.bid = toBigDecimal(newBid);
+            return this;
+        }
+
+        /**
          * ask.
          *
          * @param newAsk newAsk
@@ -338,6 +374,17 @@ public final class TickerDTO {
          */
         public Builder ask(final BigDecimal newAsk) {
             this.ask = newAsk;
+            return this;
+        }
+
+        /**
+         * ask (with string).
+         *
+         * @param newAsk newAsk
+         * @return builder
+         */
+        public Builder askAsString(final String newAsk) {
+            this.ask = toBigDecimal(newAsk);
             return this;
         }
 
@@ -353,6 +400,17 @@ public final class TickerDTO {
         }
 
         /**
+         * high (with string).
+         *
+         * @param newHigh newHigh
+         * @return builder
+         */
+        public Builder highAsString(final String newHigh) {
+            this.high = toBigDecimal(newHigh);
+            return this;
+        }
+
+        /**
          * low.
          *
          * @param newLow newLow
@@ -364,13 +422,35 @@ public final class TickerDTO {
         }
 
         /**
-         * vwap.
+         * low (with string).
          *
-         * @param newWwap newWwap
+         * @param newLow newLow
          * @return builder
          */
-        public Builder vwap(final BigDecimal newWwap) {
-            this.vwap = newWwap;
+        public Builder low(final String newLow) {
+            this.low = toBigDecimal(newLow);
+            return this;
+        }
+
+        /**
+         * vwap.
+         *
+         * @param newVwap newWwap
+         * @return builder
+         */
+        public Builder vwap(final BigDecimal newVwap) {
+            this.vwap = newVwap;
+            return this;
+        }
+
+        /**
+         * vwap (with string).
+         *
+         * @param newVwap newVwap
+         * @return builder
+         */
+        public Builder vwapAsString(final String newVwap) {
+            this.vwap = toBigDecimal(newVwap);
             return this;
         }
 
@@ -386,6 +466,17 @@ public final class TickerDTO {
         }
 
         /**
+         * volume (with string).
+         *
+         * @param newVolume newVolume
+         * @return builder
+         */
+        public Builder volumeAsString(final String newVolume) {
+            this.volume = toBigDecimal(newVolume);
+            return this;
+        }
+
+        /**
          * quoteVolume.
          *
          * @param newQuoteVolume quoteVolume
@@ -397,6 +488,17 @@ public final class TickerDTO {
         }
 
         /**
+         * quoteVolume (with string).
+         *
+         * @param newQuoteVolume quoteVolume
+         * @return builder
+         */
+        public Builder quoteVolumeAsString(final String newQuoteVolume) {
+            this.quoteVolume = toBigDecimal(newQuoteVolume);
+            return this;
+        }
+
+        /**
          * bidSize.
          *
          * @param newBidSize bidSize
@@ -404,6 +506,18 @@ public final class TickerDTO {
          */
         public Builder bidSize(final BigDecimal newBidSize) {
             this.bidSize = newBidSize;
+            return this;
+        }
+
+
+        /**
+         * bidSize (with string).
+         *
+         * @param newBidSize bidSize
+         * @return builder
+         */
+        public Builder bidSizeAsString(final String newBidSize) {
+            this.bidSize = toBigDecimal(newBidSize);
             return this;
         }
 
@@ -419,7 +533,18 @@ public final class TickerDTO {
         }
 
         /**
-         * timestamp.
+         * askSize (with string).
+         *
+         * @param newAskSize askSize
+         * @return builder
+         */
+        public Builder askSizeAsString(final String newAskSize) {
+            this.askSize = toBigDecimal(newAskSize);
+            return this;
+        }
+
+        /**
+         * timestamp (with Date).
          *
          * @param newTimestamp timestamp
          * @return builder
@@ -430,12 +555,33 @@ public final class TickerDTO {
         }
 
         /**
+         * timestamp (with epoch in seconds).
+         *
+         * @param newTimestamp timestamp
+         * @return builder
+         */
+        public Builder timestampAsEpochInSeconds(final long newTimestamp) {
+            this.timestamp = new Date(newTimestamp * MILLISECONDS);
+            return this;
+        }
+
+        /**
          * Creates ticker.
          *
          * @return ticker
          */
         public TickerDTO create() {
             return new TickerDTO(this);
+        }
+
+        /**
+         * Transforms a String in a BigDecimal.
+         *
+         * @param stringValue float value
+         * @return big decimal value
+         */
+        private BigDecimal toBigDecimal(final String stringValue) {
+            return new BigDecimal(stringValue);
         }
 
     }
