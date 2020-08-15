@@ -18,6 +18,7 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,11 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 	@Override
 	public int getMaximumBarCount() {
 		return 8;
+	}
+
+	@Override
+	public Duration getDelayBetweenTwoBars() {
+		return Duration.ofDays(2);
 	}
 
 	@Override
