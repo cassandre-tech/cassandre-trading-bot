@@ -61,12 +61,17 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
     @Test
     @DisplayName("should enter and should exit test")
     public void strategyTest() {
-        await().untilAsserted(() -> assertEquals(testableStrategy.getEnterCount(), 5));
-        await().untilAsserted(() -> assertEquals(testableStrategy.getExitCount(), 2));
-        await().untilAsserted(() -> assertEquals(testableStrategy.getAccounts().size(), 3));
-        await().untilAsserted(() -> assertEquals(testableStrategy.getOrders().size(), 4));
-        await().untilAsserted(() -> assertEquals(testableStrategy.getTrades().size(), 3));
-        await().untilAsserted(() -> assertEquals(testableStrategy.getPositions().size(), 3));
+        // Checking received data.
+        await().untilAsserted(() -> assertEquals(3, testableStrategy.getAccounts().size()));
+        await().untilAsserted(() -> assertEquals(4, testableStrategy.getOrders().size()));
+        await().untilAsserted(() -> assertEquals(3, testableStrategy.getTrades().size()));
+        await().untilAsserted(() -> assertEquals(3, testableStrategy.getPositions().size()));
+        await().untilAsserted(() -> assertEquals(15, testableStrategy.getTickersUpdateReceived().size()));
+
+        // Checking ta4j results.
+        await().untilAsserted(() -> assertEquals(5, testableStrategy.getEnterCount()));
+        await().untilAsserted(() -> assertEquals(2, testableStrategy.getExitCount()));
+        await().untilAsserted(() -> assertEquals(8, testableStrategy.getSeries().getBarCount()));
 
         // Checking that services are available.
         assertNotNull(testableStrategy.getTradeService());

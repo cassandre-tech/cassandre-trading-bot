@@ -9,9 +9,14 @@ import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.trading.rules.OverIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+
+import java.time.Duration;
+import java.util.LinkedList;
+import java.util.List;
 
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
@@ -36,6 +41,14 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
     /** Exit count. */
     private int exitCount = 0;
 
+    /** Tickers update received. */
+    private final List<TickerDTO> tickersUpdateReceived = new LinkedList<>();
+
+    @Override
+    public void onTickerUpdate(TickerDTO ticker) {
+        tickersUpdateReceived.add(ticker);
+    }
+
     @Override
     public CurrencyPairDTO getRequestedCurrencyPair() {
         return new CurrencyPairDTO(BTC, USDT);
@@ -44,6 +57,11 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
     @Override
     public int getMaximumBarCount() {
         return 8;
+    }
+
+    @Override
+    public Duration getDelayBetweenTwoBars() {
+        return Duration.ofDays(2);
     }
 
     @Override
@@ -81,6 +99,15 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
      */
     public final int getExitCount() {
         return exitCount;
+    }
+
+    /**
+     * Getter tickersUpdateReceived.
+     *
+     * @return tickersUpdateReceived
+     */
+    public final List<TickerDTO> getTickersUpdateReceived() {
+        return tickersUpdateReceived;
     }
 
 }
