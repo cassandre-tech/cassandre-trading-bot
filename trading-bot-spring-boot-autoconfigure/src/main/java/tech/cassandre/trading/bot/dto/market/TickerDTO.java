@@ -317,7 +317,7 @@ public final class TickerDTO {
          * @param newOpen open
          * @return builder
          */
-        public Builder openAsString(final String newOpen) {
+        public Builder open(final String newOpen) {
             this.open = toBigDecimal(newOpen);
             return this;
         }
@@ -339,7 +339,7 @@ public final class TickerDTO {
          * @param newLast newLast
          * @return builder
          */
-        public Builder lastAsString(final String newLast) {
+        public Builder last(final String newLast) {
             this.last = toBigDecimal(newLast);
             return this;
         }
@@ -361,7 +361,7 @@ public final class TickerDTO {
          * @param newBid newBid
          * @return builder
          */
-        public Builder bidAsString(final String newBid) {
+        public Builder bid(final String newBid) {
             this.bid = toBigDecimal(newBid);
             return this;
         }
@@ -383,7 +383,7 @@ public final class TickerDTO {
          * @param newAsk newAsk
          * @return builder
          */
-        public Builder askAsString(final String newAsk) {
+        public Builder ask(final String newAsk) {
             this.ask = toBigDecimal(newAsk);
             return this;
         }
@@ -405,7 +405,7 @@ public final class TickerDTO {
          * @param newHigh newHigh
          * @return builder
          */
-        public Builder highAsString(final String newHigh) {
+        public Builder high(final String newHigh) {
             this.high = toBigDecimal(newHigh);
             return this;
         }
@@ -449,7 +449,7 @@ public final class TickerDTO {
          * @param newVwap newVwap
          * @return builder
          */
-        public Builder vwapAsString(final String newVwap) {
+        public Builder vwap(final String newVwap) {
             this.vwap = toBigDecimal(newVwap);
             return this;
         }
@@ -471,7 +471,7 @@ public final class TickerDTO {
          * @param newVolume newVolume
          * @return builder
          */
-        public Builder volumeAsString(final String newVolume) {
+        public Builder volume(final String newVolume) {
             this.volume = toBigDecimal(newVolume);
             return this;
         }
@@ -493,7 +493,7 @@ public final class TickerDTO {
          * @param newQuoteVolume quoteVolume
          * @return builder
          */
-        public Builder quoteVolumeAsString(final String newQuoteVolume) {
+        public Builder quoteVolume(final String newQuoteVolume) {
             this.quoteVolume = toBigDecimal(newQuoteVolume);
             return this;
         }
@@ -516,7 +516,7 @@ public final class TickerDTO {
          * @param newBidSize bidSize
          * @return builder
          */
-        public Builder bidSizeAsString(final String newBidSize) {
+        public Builder bidSize(final String newBidSize) {
             this.bidSize = toBigDecimal(newBidSize);
             return this;
         }
@@ -538,7 +538,7 @@ public final class TickerDTO {
          * @param newAskSize askSize
          * @return builder
          */
-        public Builder askSizeAsString(final String newAskSize) {
+        public Builder askSize(final String newAskSize) {
             this.askSize = toBigDecimal(newAskSize);
             return this;
         }

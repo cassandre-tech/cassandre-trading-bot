@@ -53,15 +53,15 @@ public class TickerDTOTest {
 	@DisplayName("Builder with String and epoch")
 	public void builderWithStringAndEpoch() throws ParseException {
 		TickerDTO t01 = TickerDTO.builder()
-				.lastAsString("0.1")
-				.askAsString("0.2")
-				.askSizeAsString("0.3")
-				.bidAsString("0.4")
-				.bidSizeAsString("0.5")
-				.highAsString("0.6")
+				.last("0.1")
+				.ask("0.2")
+				.askSize("0.3")
+				.bid("0.4")
+				.bidSize("0.5")
+				.high("0.6")
 				.low("0.7")
-				.openAsString("0.8")
-				.quoteVolumeAsString("0.9")
+				.open("0.8")
+				.quoteVolume("0.9")
 				.timestampAsEpochInSeconds(1596499200)
 				.create();
 		assertEquals(BigDecimal.valueOf(0.1), t01.getLast());
