@@ -2,7 +2,9 @@ package tech.cassandre.trading.bot.dto.position;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
@@ -116,6 +118,43 @@ public class PositionDTO {
     }
 
     /**
+     * Returns the gain of the position.
+     * Of course the position should be closed to have a gain.
+     *
+     * @return gain
+     */
+    public PositionGainDTO getPositionGain() {
+        if (status == CLOSED) {
+            // Gain calculation for currency pair : ETH-BTC
+            // The first listed currency of a currency pair is called the base currency.
+            // The second currency is called the quote currency.
+
+            // Price is 0.035547 means 1 Ether equals 0.035547 Bitcoin
+            // If you buy a currency pair, you buy the base currency and implicitly sell the quoted currency.
+
+            // - Bought 10 ETH with a price of 5 BTC -> costs 50 BTC.
+            // - Sold 10 ETH with a price of 6 BTC -> earns 60 BTC.
+            // Gain in percentage = (6-5)/5 = 20 %.
+            double percentage = (closeTrade.getPrice().subtract(openTrade.getPrice()))
+                    .divide(openTrade.getPrice(), BIGINTEGER_SCALE, RoundingMode.FLOOR)
+                    .floatValue() * ONE_HUNDRED;
+            // Gain in amount = (10*6)-(10*5)= 10 BTC.
+            BigDecimal amount = ((closeTrade.getOriginalAmount().multiply(closeTrade.getPrice()))
+                    .subtract((openTrade.getOriginalAmount()).multiply(openTrade.getPrice())));
+            // Fees : open trade fees + close trade fees.
+            BigDecimal fees = openTrade.getFee().getValue().add(closeTrade.getFee().getValue());
+
+            // Return position gain.
+            return new PositionGainDTO(percentage,
+                    new CurrencyAmountDTO(amount, openTrade.getCurrencyPair().getQuoteCurrency()),
+                    new CurrencyAmountDTO(fees, openTrade.getCurrencyPair().getQuoteCurrency()));
+        } else {
+            // No gain for the moment !
+            return new PositionGainDTO();
+        }
+    }
+
+    /**
      * Getter for id.
      *
      * @return id
@@ -149,6 +188,24 @@ public class PositionDTO {
      */
     public final TradeDTO getCloseTrade() {
         return closeTrade;
+    }
+
+    /**
+     * Getter openOrderId.
+     *
+     * @return openOrderId
+     */
+    public final String getOpenOrderId() {
+        return openOrderId;
+    }
+
+    /**
+     * Getter closeOrderId.
+     *
+     * @return closeOrderId
+     */
+    public final String getCloseOrderId() {
+        return closeOrderId;
     }
 
     @Override
