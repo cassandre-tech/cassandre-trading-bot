@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -74,11 +76,14 @@ public class PositionServiceDryModeTest extends BaseTest {
 
     /** Cassandre strategy. */
     @Autowired
-    private TestableCassandreStrategy testableStrategy;
+    private TestableCassandreStrategy strategy;
 
     /** Ticker flux. */
     @Autowired
     private TickerFlux tickerFlux;
+
+    @Autowired
+    private PositionFlux positionFlux;
 
     @Autowired
     private MarketService marketService;
@@ -109,6 +114,13 @@ public class PositionServiceDryModeTest extends BaseTest {
         await().untilAsserted(() -> assertTrue(positionService.getPositionById(1).isPresent()));
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
 
+        // Check position flux.
+        positionFlux.update();
+        await().untilAsserted(() -> assertEquals(1, strategy.getPositionsUpdateReceived().size()));
+        assertNotNull(strategy.getPositionsUpdateReceived().get(0));
+        assertEquals(1, strategy.getPositionsUpdateReceived().get(0).getId());
+        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(0).getStatus());
+
         // Step 2 - Creates position 2 (ETH/BTC, 0.0002, 20% stop loss, price of 0.2).
         // As the order is validated and the trade arrives, the position should be opened.
         final PositionCreationResultDTO p2 = positionService.createPosition(cp2,
@@ -121,6 +133,12 @@ public class PositionServiceDryModeTest extends BaseTest {
         await().untilAsserted(() -> assertTrue(positionService.getPositionById(2).isPresent()));
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
 
+        // Check position flux.
+        positionFlux.update();
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        assertNotNull(strategy.getPositionsUpdateReceived().get(1));
+        assertEquals(2, strategy.getPositionsUpdateReceived().get(1).getId());
+        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(1).getStatus());
 
         // Second tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.3 - 50% gain.
@@ -157,6 +175,16 @@ public class PositionServiceDryModeTest extends BaseTest {
         assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());
         assertEquals(CLOSED, positionService.getPositionById(2).get().getStatus());
+
+        // Check position flux.
+        positionFlux.update();
+        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdateReceived().size()));
+        assertNotNull(strategy.getPositionsUpdateReceived().get(2));
+        assertEquals(1, strategy.getPositionsUpdateReceived().get(2).getId());
+        assertEquals(CLOSED, strategy.getPositionsUpdateReceived().get(2).getStatus());
+        assertNotNull(strategy.getPositionsUpdateReceived().get(3));
+        assertEquals(2, strategy.getPositionsUpdateReceived().get(3).getId());
+        assertEquals(CLOSED, strategy.getPositionsUpdateReceived().get(3).getStatus());
     }
 
 }
