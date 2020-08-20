@@ -89,10 +89,10 @@ public class PositionServiceTest extends BaseTest {
     private TickerFlux tickerFlux;
 
     /** Currency pair 1 used for test. */
-    static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
     /** Currency pair 1 used for test. */
-    static final CurrencyPairDTO cp2 = new CurrencyPairDTO(USD, BTC);
+    public static final CurrencyPairDTO cp2 = new CurrencyPairDTO(USD, BTC);
 
     @Test
     @DisplayName("Position creation")

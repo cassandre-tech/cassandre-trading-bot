@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.dto.position;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
+import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -67,7 +68,7 @@ public class PositionDTO {
     public final void setCloseOrderId(final String newCloseOrderId) {
         // This method should only be called when in status OPENED.
         if (status != OPENED) {
-            throw new RuntimeException("Impossible to set close order id for position " + id);
+            throw new PositionException("Impossible to set close order id for position " + id);
         }
         status = CLOSING;
         closeOrderId = newCloseOrderId;

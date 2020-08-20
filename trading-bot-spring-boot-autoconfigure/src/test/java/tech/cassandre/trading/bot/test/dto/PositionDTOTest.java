@@ -35,7 +35,7 @@ public class PositionDTOTest {
     private final BigDecimal amount = new BigDecimal("0.0001");
 
     /** Empty rules. */
-    final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
+    private final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
 
     @Test
     @DisplayName("Testing status change")

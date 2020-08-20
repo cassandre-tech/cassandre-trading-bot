@@ -1,30 +1,13 @@
 package tech.cassandre.trading.bot.test.strategy;
 
-import org.ta4j.core.BaseStrategy;
-import org.ta4j.core.Strategy;
-import org.ta4j.core.indicators.SMAIndicator;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.trading.rules.OverIndicatorRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
-
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
-import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;

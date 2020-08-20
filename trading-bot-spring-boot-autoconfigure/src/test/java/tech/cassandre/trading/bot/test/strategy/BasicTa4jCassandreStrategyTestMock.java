@@ -114,7 +114,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account01Balance1);
+        balances.put(BTC, account01Balance1);
         AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).create();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
@@ -123,7 +123,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Account 02.
         BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account02Balance1);
+        balances.put(BTC, account02Balance1);
         AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).create();
         accounts.put("02", account02);
         UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
@@ -132,7 +132,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Account 03.
         BalanceDTO account03Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account03Balance1);
+        balances.put(BTC, account03Balance1);
         AccountDTO account03 = AccountDTO.builder().id("03").balances(balances).create();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();

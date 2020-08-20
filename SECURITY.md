@@ -9,4 +9,4 @@
 
 ## Reporting a Vulnerability
 
-Send an email to contact@cassandre.tech and we will reply within 24 hours.
+Email [contact@cassandre.tech](mailto:contact@cassandre.tech) and we will reply within 24 hours.
