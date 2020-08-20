@@ -30,17 +30,16 @@ jobs:
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
-      # Override language selection by uncommenting this and choosing your languages
-      # with:
-      #   languages: go, javascript, csharp, python, cpp, java
+      with:
+        languages: java
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11.0.x
 
     - name: Build, run tests, package and deploy to Maven central
       env: # Environment variables.
-        # Ossrh credentials.
-        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        # GPG.
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         # Kucoin credentials.
         KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}
         KUCOIN_USERNAME: ${{ secrets.KUCOIN_USERNAME }}
@@ -48,7 +47,7 @@ jobs:
         KUCOIN_KEY: ${{ secrets.KUCOIN_KEY }}
         KUCOIN_SECRET: ${{ secrets.KUCOIN_SECRET }}
       run: |
-        mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
+        mvn package
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
