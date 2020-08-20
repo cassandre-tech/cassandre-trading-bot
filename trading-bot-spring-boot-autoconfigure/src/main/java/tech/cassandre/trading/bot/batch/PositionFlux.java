@@ -41,7 +41,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
             getLogger().debug("PositionFlux - Treating position : {}", position.getId());
             PositionStatusDTO previousPosition = previousValues.get(position.getId());
             if (previousPosition == null || !previousPosition.equals(position.getStatus())) {
-                getLogger().info("PositionFlux - Flux {} has changed : {}", position.getId(), position);
+                getLogger().debug("PositionFlux - Flux {} has changed : {}", position.getId(), position);
                 previousValues.put(position.getId(), position.getStatus());
                 newValues.add(position);
             }
