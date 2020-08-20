@@ -44,7 +44,7 @@ jobs:
         # Kucoin credentials.
         KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}
         KUCOIN_USERNAME: ${{ secrets.KUCOIN_USERNAME }}
-        KUCOIN_PASSPHRASE: ${{ secrets.KUCOIN_PASSPHRASE }
+        KUCOIN_PASSPHRASE: ${{ secrets.KUCOIN_PASSPHRASE }}
         KUCOIN_KEY: ${{ secrets.KUCOIN_KEY }}
         KUCOIN_SECRET: ${{ secrets.KUCOIN_SECRET }}
       run: |
