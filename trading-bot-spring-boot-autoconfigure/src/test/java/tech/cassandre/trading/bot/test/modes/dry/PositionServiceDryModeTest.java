@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
