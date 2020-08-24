@@ -221,9 +221,9 @@ public class PositionDTOTest {
         p.tradeUpdate(trade01);
         assertEquals(OPENED, p.getStatus());
         assertEquals("T000001", p.getOpenTrade().getId());
-        assertEquals(0, p.getPositionGain().getPercentage());
-        assertEquals(BigDecimal.ZERO, p.getPositionGain().getAmount().getValue());
-        assertEquals(BigDecimal.ZERO, p.getPositionGain().getFees().getValue());
+        assertEquals(0, p.getGain().getPercentage());
+        assertEquals(BigDecimal.ZERO, p.getGain().getAmount().getValue());
+        assertEquals(BigDecimal.ZERO, p.getGain().getFees().getValue());
 
         // We tell the position that it will be closed with order O000012.
         p.setCloseOrderId("O000012");
@@ -240,12 +240,12 @@ public class PositionDTOTest {
         p.tradeUpdate(trade02);
         assertEquals(CLOSED, p.getStatus());
         assertEquals("T000002", p.getCloseTrade().getId());
-        GainDTO gainDTO = p.getPositionGain();
+        GainDTO gainDTO = p.getGain();
         assertEquals(20, gainDTO.getPercentage());
         assertEquals(new BigDecimal("10"), gainDTO.getAmount().getValue());
-        assertEquals(BTC, p.getPositionGain().getAmount().getCurrency());
+        assertEquals(BTC, p.getGain().getAmount().getCurrency());
         assertEquals(new BigDecimal("3"), gainDTO.getFees().getValue());
-        assertEquals(BTC, p.getPositionGain().getFees().getCurrency());
+        assertEquals(BTC, p.getGain().getFees().getCurrency());
     }
 
     @Test
@@ -269,9 +269,9 @@ public class PositionDTOTest {
         p.tradeUpdate(trade01);
         assertEquals(OPENED, p.getStatus());
         assertEquals("T000001", p.getOpenTrade().getId());
-        assertEquals(0, p.getPositionGain().getPercentage());
-        assertEquals(BigDecimal.ZERO, p.getPositionGain().getAmount().getValue());
-        assertEquals(BigDecimal.ZERO, p.getPositionGain().getFees().getValue());
+        assertEquals(0, p.getGain().getPercentage());
+        assertEquals(BigDecimal.ZERO, p.getGain().getAmount().getValue());
+        assertEquals(BigDecimal.ZERO, p.getGain().getFees().getValue());
 
         // We tell the position that it will be closed with order O000012.
         p.setCloseOrderId("O000012");
@@ -288,12 +288,12 @@ public class PositionDTOTest {
         p.tradeUpdate(trade02);
         assertEquals(CLOSED, p.getStatus());
         assertEquals("T000002", p.getCloseTrade().getId());
-        GainDTO gainDTO = p.getPositionGain();
+        GainDTO gainDTO = p.getGain();
         assertEquals(-20, gainDTO.getPercentage());
         assertEquals(new BigDecimal("-10"), gainDTO.getAmount().getValue());
-        assertEquals(BTC, p.getPositionGain().getAmount().getCurrency());
+        assertEquals(BTC, p.getGain().getAmount().getCurrency());
         assertEquals(new BigDecimal("3"), gainDTO.getFees().getValue());
-        assertEquals(BTC, p.getPositionGain().getFees().getCurrency());
+        assertEquals(BTC, p.getGain().getFees().getCurrency());
     }
 
 }

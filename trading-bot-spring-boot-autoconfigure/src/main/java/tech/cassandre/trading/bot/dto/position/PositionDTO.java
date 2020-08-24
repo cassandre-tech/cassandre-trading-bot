@@ -125,7 +125,7 @@ public class PositionDTO {
      *
      * @return gain
      */
-    public GainDTO getPositionGain() {
+    public GainDTO getGain() {
         if (status == CLOSED) {
             // Gain calculation for currency pair : ETH-BTC
             // The first listed currency of a currency pair is called the base currency.
