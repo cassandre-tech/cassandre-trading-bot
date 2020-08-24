@@ -1,26 +1,26 @@
-package tech.cassandre.trading.bot.dto.position;
+package tech.cassandre.trading.bot.dto.util;
 
 import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
 
 /**
- * Position gain for {@link PositionDTO}.
+ * Gain.
  */
 @SuppressWarnings("unused")
-public class PositionGainDTO {
+public class GainDTO {
 
-    /** Gain made with this position (percentage). */
+    /** Gain made (percentage). */
     private final double percentage;
 
-    /** Gain made with this position (amount). */
+    /** Gain made (amount). */
     private final CurrencyAmountDTO amount;
 
-    /** Fees of the position. */
+    /** Fees. */
     private final CurrencyAmountDTO fees;
 
     /**
      * Constructor (for no gain).
      */
-    public PositionGainDTO() {
+    public GainDTO() {
         percentage = 0;
         amount = new CurrencyAmountDTO();
         fees = new CurrencyAmountDTO();
@@ -33,7 +33,7 @@ public class PositionGainDTO {
      * @param newAmount     gain (amount)
      * @param newFees       fees
      */
-    public PositionGainDTO(final double newPercentage, final CurrencyAmountDTO newAmount, final CurrencyAmountDTO newFees) {
+    public GainDTO(final double newPercentage, final CurrencyAmountDTO newAmount, final CurrencyAmountDTO newFees) {
         this.amount = newAmount;
         this.percentage = newPercentage;
         this.fees = newFees;

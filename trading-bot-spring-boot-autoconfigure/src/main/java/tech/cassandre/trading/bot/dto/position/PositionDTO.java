@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.dto.position;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
@@ -124,7 +125,7 @@ public class PositionDTO {
      *
      * @return gain
      */
-    public PositionGainDTO getPositionGain() {
+    public GainDTO getPositionGain() {
         if (status == CLOSED) {
             // Gain calculation for currency pair : ETH-BTC
             // The first listed currency of a currency pair is called the base currency.
@@ -146,12 +147,12 @@ public class PositionDTO {
             BigDecimal fees = openTrade.getFee().getValue().add(closeTrade.getFee().getValue());
 
             // Return position gain.
-            return new PositionGainDTO(percentage,
+            return new GainDTO(percentage,
                     new CurrencyAmountDTO(amount, openTrade.getCurrencyPair().getQuoteCurrency()),
                     new CurrencyAmountDTO(fees, openTrade.getCurrencyPair().getQuoteCurrency()));
         } else {
             // No gain for the moment !
-            return new PositionGainDTO();
+            return new GainDTO();
         }
     }
 

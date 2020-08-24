@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionGainDTO;
+import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -240,11 +240,11 @@ public class PositionDTOTest {
         p.tradeUpdate(trade02);
         assertEquals(CLOSED, p.getStatus());
         assertEquals("T000002", p.getCloseTrade().getId());
-        PositionGainDTO positionGainDTO = p.getPositionGain();
-        assertEquals(20, positionGainDTO.getPercentage());
-        assertEquals(new BigDecimal("10"), positionGainDTO.getAmount().getValue());
+        GainDTO gainDTO = p.getPositionGain();
+        assertEquals(20, gainDTO.getPercentage());
+        assertEquals(new BigDecimal("10"), gainDTO.getAmount().getValue());
         assertEquals(BTC, p.getPositionGain().getAmount().getCurrency());
-        assertEquals(new BigDecimal("3"), positionGainDTO.getFees().getValue());
+        assertEquals(new BigDecimal("3"), gainDTO.getFees().getValue());
         assertEquals(BTC, p.getPositionGain().getFees().getCurrency());
     }
 
@@ -288,11 +288,11 @@ public class PositionDTOTest {
         p.tradeUpdate(trade02);
         assertEquals(CLOSED, p.getStatus());
         assertEquals("T000002", p.getCloseTrade().getId());
-        PositionGainDTO positionGainDTO = p.getPositionGain();
-        assertEquals(-20, positionGainDTO.getPercentage());
-        assertEquals(new BigDecimal("-10"), positionGainDTO.getAmount().getValue());
+        GainDTO gainDTO = p.getPositionGain();
+        assertEquals(-20, gainDTO.getPercentage());
+        assertEquals(new BigDecimal("-10"), gainDTO.getAmount().getValue());
         assertEquals(BTC, p.getPositionGain().getAmount().getCurrency());
-        assertEquals(new BigDecimal("3"), positionGainDTO.getFees().getValue());
+        assertEquals(new BigDecimal("3"), gainDTO.getFees().getValue());
         assertEquals(BTC, p.getPositionGain().getFees().getCurrency());
     }
 
