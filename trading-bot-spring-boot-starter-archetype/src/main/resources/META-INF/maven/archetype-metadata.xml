@@ -21,17 +21,5 @@
         <include>**/*.java</include>
       </includes>
     </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory></directory>
-      <includes>
-        <include>checkstyle_configuration.xml</include>
-      </includes>
-    </fileSet>
-    <fileSet encoding="UTF-8">
-      <directory></directory>
-      <includes>
-        <include>dumb.iml</include>
-      </includes>
-    </fileSet>
   </fileSets>
 </archetype-descriptor>
