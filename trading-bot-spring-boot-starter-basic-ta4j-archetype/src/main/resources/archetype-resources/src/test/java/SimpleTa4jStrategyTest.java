@@ -7,39 +7,51 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import org.springframework.context.annotation.Import;
+import tech.cassandre.trading.bot.test.mock.TickerFluxMock;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.with;
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.math.BigDecimal;
+
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 
 /**
  * Basic Ta4j strategy test.
  */
 @SpringBootTest
-@DisplayName("Simple strategy test")
+@Import(TickerFluxMock.class)
+@DisplayName("Simple ta4j strategy test")
 public class SimpleTa4jStrategyTest {
 
-	/** How much we should wait for tests to last. */
-	protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
-
-	/** Simple Ta4j strategy. */
 	@Autowired
-	SimpleTa4jStrategy strategy;
+	private SimpleTa4jStrategy strategy;
 
-	/**
-	 * Check data reception.
-	 */
+	@Autowired
+	private TickerFluxMock tickerFluxMock;
+
 	@Test
-	@DisplayName("Check data reception")
-	public void receivedData() {
-		// Waiting to see if the strategy received the accounts update (we have two accounts).
-		with().pollInterval(fibonacci(SECONDS)).await()
-				.atMost(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS)
-				.untilAsserted(() -> assertEquals(strategy.getAccounts().size(), 2));
+	@DisplayName("Check gains")
+	public void gainTest() {
+		await().forever().until(() -> tickerFluxMock.isFluxDone());
+
+		final BigDecimal gains = strategy.getPositions()
+				.values()
+				.stream()
+				.filter(p -> p.getStatus().equals(CLOSED))
+				.map(p -> p.getGain().getAmount().getValue())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		System.out.println("Cumulated gains > " + gains);
+		assertTrue(gains.compareTo(BigDecimal.ZERO) > 0);
+
+		System.out.println("Position still opened :");
+		strategy.getPositions()
+				.values()
+				.stream()
+				.filter(p -> p.getStatus().equals(OPENED))
+				.forEach(p -> System.out.println(" - " + p.getId()));
 	}
 
 }

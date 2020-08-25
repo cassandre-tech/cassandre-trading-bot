@@ -3,10 +3,11 @@ package tech.cassandre.trading.bot.test.dto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.util.GainDTO;
+import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -34,7 +35,7 @@ public class PositionDTOTest {
     private final BigDecimal amount = new BigDecimal("0.0001");
 
     /** Empty rules. */
-    final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
+    private final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
 
     @Test
     @DisplayName("Testing status change")
@@ -197,6 +198,102 @@ public class PositionDTOTest {
         // Status changed - for P1.
         p1.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000001").create());
         assertNotEquals(p1, p1Bis);
+    }
+
+    @Test
+    @DisplayName("get positive position gain")
+    public void getPositivePositionGain() {
+        // Position 1.
+        // Rule : 10% gain.
+        PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopGainPercentage(10).create());
+
+        // Position opened with this trade.
+        // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
+        // We bought 10 Ether with the price : 1 Ether = 5 Bitcoin.
+        final TradeDTO trade01 = TradeDTO.builder().id("T000001")
+                .orderId("O000011")                         // Closing opening order O000011
+                .type(OrderTypeDTO.BID)                     // Buying.
+                .currencyPair(cp)                           // ETH / BTC.
+                .originalAmount(new BigDecimal(10))     // 10.
+                .price(new BigDecimal("5"))             // Price 5.
+                .feeAmount(new BigDecimal(1))           // Fee 1.
+                .create();
+        p.tradeUpdate(trade01);
+        assertEquals(OPENED, p.getStatus());
+        assertEquals("T000001", p.getOpenTrade().getId());
+        assertEquals(0, p.getGain().getPercentage());
+        assertEquals(BigDecimal.ZERO, p.getGain().getAmount().getValue());
+        assertEquals(BigDecimal.ZERO, p.getGain().getFees().getValue());
+
+        // We tell the position that it will be closed with order O000012.
+        p.setCloseOrderId("O000012");
+
+        // Position closed with this trade.
+        final TradeDTO trade02 = TradeDTO.builder().id("T000002")
+                .orderId("O000012")                         // Closing opening order O000011
+                .type(OrderTypeDTO.BID)                     // Buying.
+                .currencyPair(cp)                           // ETH / BTC.
+                .originalAmount(new BigDecimal(10))     // 10.
+                .price(new BigDecimal("6"))             // Price 6.
+                .feeAmount(new BigDecimal(2))           // Fee 2.
+                .create();
+        p.tradeUpdate(trade02);
+        assertEquals(CLOSED, p.getStatus());
+        assertEquals("T000002", p.getCloseTrade().getId());
+        GainDTO gainDTO = p.getGain();
+        assertEquals(20, gainDTO.getPercentage());
+        assertEquals(new BigDecimal("10"), gainDTO.getAmount().getValue());
+        assertEquals(BTC, p.getGain().getAmount().getCurrency());
+        assertEquals(new BigDecimal("3"), gainDTO.getFees().getValue());
+        assertEquals(BTC, p.getGain().getFees().getCurrency());
+    }
+
+    @Test
+    @DisplayName("get negative position gain")
+    public void getNegativePositionGain() {
+        // Position 1.
+        // Rule : 10% lost.
+        PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopLossPercentage(10).create());
+
+        // Position opened with this trade.
+        // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
+        // We bought 10 Ether with the price : 1 Ether = 5 Bitcoin.
+        final TradeDTO trade01 = TradeDTO.builder().id("T000001")
+                .orderId("O000011")                         // Closing opening order O000011
+                .type(OrderTypeDTO.BID)                     // Buying.
+                .currencyPair(cp)                           // ETH / BTC.
+                .originalAmount(new BigDecimal(10))     // 10.
+                .price(new BigDecimal("5"))             // Price 5.
+                .feeAmount(new BigDecimal(1))           // Fee 1.
+                .create();
+        p.tradeUpdate(trade01);
+        assertEquals(OPENED, p.getStatus());
+        assertEquals("T000001", p.getOpenTrade().getId());
+        assertEquals(0, p.getGain().getPercentage());
+        assertEquals(BigDecimal.ZERO, p.getGain().getAmount().getValue());
+        assertEquals(BigDecimal.ZERO, p.getGain().getFees().getValue());
+
+        // We tell the position that it will be closed with order O000012.
+        p.setCloseOrderId("O000012");
+
+        // Position closed with this trade.
+        final TradeDTO trade02 = TradeDTO.builder().id("T000002")
+                .orderId("O000012")                         // Closing opening order O000011
+                .type(OrderTypeDTO.BID)                     // Buying.
+                .currencyPair(cp)                           // ETH / BTC.
+                .originalAmount(new BigDecimal(10))     // 10.
+                .price(new BigDecimal("4"))             // Price 6.
+                .feeAmount(new BigDecimal(2))           // Fee 2.
+                .create();
+        p.tradeUpdate(trade02);
+        assertEquals(CLOSED, p.getStatus());
+        assertEquals("T000002", p.getCloseTrade().getId());
+        GainDTO gainDTO = p.getGain();
+        assertEquals(-20, gainDTO.getPercentage());
+        assertEquals(new BigDecimal("-10"), gainDTO.getAmount().getValue());
+        assertEquals(BTC, p.getGain().getAmount().getCurrency());
+        assertEquals(new BigDecimal("3"), gainDTO.getFees().getValue());
+        assertEquals(BTC, p.getGain().getFees().getCurrency());
     }
 
 }

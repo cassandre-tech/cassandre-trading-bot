@@ -69,7 +69,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @DisplayName("tradeService in dry mode")
 public class TradeServiceDryModeTest extends BaseTest {
 
-    static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+    private static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
     @Autowired
     private TradeService tradeService;

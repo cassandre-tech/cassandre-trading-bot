@@ -19,13 +19,45 @@ public class ExchangeParameters {
     /** Exchange name parameter. */
     public static final String PARAMETER_NAME = "cassandre.trading.bot.exchange.name";
 
+    /** Username parameter. */
+    public static final String PARAMETER_USERNAME = "cassandre.trading.bot.exchange.username";
+
+    /** Passphrase parameter. */
+    public static final String PARAMETER_PASSPHRASE = "cassandre.trading.bot.exchange.passphrase";
+
+    /** Key parameter. */
+    public static final String PARAMETER_KEY = "cassandre.trading.bot.exchange.key";
+
+    /** Secret parameter. */
+    public static final String PARAMETER_SECRET = "cassandre.trading.bot.exchange.secret";
+
     /** Exchange name. For example : coinbase, kraken, kucoin. */
     @NotEmpty(message = "Exchange name required, for example : coinbase, kraken, kucoin...")
     private String name;
 
+    /** API username. */
+    @NotEmpty(message = "API username required")
+    private String username;
+
+    /** API passphrase. */
+    @NotEmpty(message = "API passphrase required")
+    private String passphrase;
+
+    /** API key. */
+    @NotEmpty(message = "API key required")
+    private String key;
+
+    /** API secret. */
+    @NotEmpty(message = "API secret required")
+    private String secret;
+
     /** Modes. */
     @Valid
     private Modes modes = new Modes();
+
+    /** API Calls rates. */
+    @Valid
+    private Rates rates = new Rates();
 
     /** Exchange API rate calls. */
     public static class Modes {
@@ -33,12 +65,12 @@ public class ExchangeParameters {
         /** Sandbox parameter. */
         public static final String PARAMETER_SANDBOX = "cassandre.trading.bot.exchange.modes.sandbox";
 
+        /** Dry parameter. */
+        public static final String PARAMETER_DRY = "cassandre.trading.bot.exchange.modes.dry";
+
         /** Set it to true to use the sandbox. */
         @NotNull(message = "Sandbox parameter required, set it to true to use the sandbox")
         private Boolean sandbox;
-
-        /** Dry parameter. */
-        public static final String PARAMETER_DRY = "cassandre.trading.bot.exchange.modes.dry";
 
         /** Set it to true to use the dry mode. */
         @NotNull(message = "Dry parameter required, set it to true to use the dry mode")
@@ -90,59 +122,27 @@ public class ExchangeParameters {
 
     }
 
-    /** Username parameter. */
-    public static final String PARAMETER_USERNAME = "cassandre.trading.bot.exchange.username";
-
-    /** API username. */
-    @NotEmpty(message = "API username required")
-    private String username;
-
-    /** Passphrase parameter. */
-    public static final String PARAMETER_PASSPHRASE = "cassandre.trading.bot.exchange.passphrase";
-
-    /** API passphrase. */
-    @NotEmpty(message = "API passphrase required")
-    private String passphrase;
-
-    /** Key parameter. */
-    public static final String PARAMETER_KEY = "cassandre.trading.bot.exchange.key";
-
-    /** API key. */
-    @NotEmpty(message = "API key required")
-    private String key;
-
-    /** Secret parameter. */
-    public static final String PARAMETER_SECRET = "cassandre.trading.bot.exchange.secret";
-
-    /** API secret. */
-    @NotEmpty(message = "API secret required")
-    private String secret;
-
-    /** API Calls rates. */
-    @Valid
-    private Rates rates = new Rates();
-
     /** Exchange API rate calls. */
     public static class Rates {
 
         /** Rate for account parameter. */
         public static final String PARAMETER_RATE_ACCOUNT = "cassandre.trading.bot.exchange.rates.account";
 
+        /** Rate for ticker parameter. */
+        public static final String PARAMETER_RATE_TICKER = "cassandre.trading.bot.exchange.rates.ticker";
+
+        /** Rate for order parameter. */
+        public static final String PARAMETER_RATE_ORDER = "cassandre.trading.bot.exchange.rates.trade";
+
         /** Delay between calls to account API. */
         @NotNull(message = "Delay between calls to account API is mandatory")
         @Rate(message = "Invalid account rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String account;
 
-        /** Rate for ticker parameter. */
-        public static final String PARAMETER_RATE_TICKER = "cassandre.trading.bot.exchange.rates.ticker";
-
         /** Delay between calls to ticker API. */
         @NotNull(message = "Delay between calls to ticker API is mandatory")
         @Rate(message = "Invalid ticker rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String ticker;
-
-        /** Rate for order parameter. */
-        public static final String PARAMETER_RATE_ORDER = "cassandre.trading.bot.exchange.rates.trade";
 
         /** Delay between calls to trade API. */
         @NotNull(message = "Delay between calls to trade API is mandatory")
@@ -344,11 +344,11 @@ public class ExchangeParameters {
     public final String toString() {
         return "ExchangeParameters{"
                 + " name='" + getName() + '\''
-                + ", modes=" + getModes()
                 + ", username='" + getUsername() + '\''
                 + ", passphrase='" + getPassphrase() + '\''
                 + ", key='" + getKey() + '\''
                 + ", secret='" + getSecret() + '\''
+                + ", modes=" + getModes()
                 + ", rates=" + getRates()
                 + '}';
     }

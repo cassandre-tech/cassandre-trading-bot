@@ -114,7 +114,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account01Balance1);
+        balances.put(BTC, account01Balance1);
         AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).create();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
@@ -123,7 +123,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Account 02.
         BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account02Balance1);
+        balances.put(BTC, account02Balance1);
         AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).create();
         accounts.put("02", account02);
         UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
@@ -132,7 +132,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Account 03.
         BalanceDTO account03Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account03Balance1);
+        balances.put(BTC, account03Balance1);
         AccountDTO account03 = AccountDTO.builder().id("03").balances(balances).create();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
@@ -165,48 +165,97 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1060)).create()),
                 Optional.of(TickerDTO.builder().currencyPair(cp1)
                         .timestamp(BaseTest.createDay(2))
+                        .open(new BigDecimal(100))
+                        .high(new BigDecimal(100))
+                        .low(new BigDecimal(100))
+                        .last(new BigDecimal(100))
+                        .volume(new BigDecimal(1060)).create()),
+                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                        .timestamp(BaseTest.createDay(3))
                         .open(new BigDecimal(110))
                         .high(new BigDecimal(110))
                         .low(new BigDecimal(110))
                         .last(new BigDecimal(110))
                         .volume(new BigDecimal(1070)).create()),
                 Optional.of(TickerDTO.builder().currencyPair(cp1)
-                        .timestamp(BaseTest.createDay(3))
+                        .timestamp(BaseTest.createDay(4))
+                        .open(new BigDecimal(100))
+                        .high(new BigDecimal(100))
+                        .low(new BigDecimal(100))
+                        .last(new BigDecimal(100))
+                        .volume(new BigDecimal(1060)).create()),
+                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                        .timestamp(BaseTest.createDay(5))
                         .open(new BigDecimal(140))
                         .high(new BigDecimal(140))
                         .low(new BigDecimal(140))
                         .last(new BigDecimal(140))
                         .volume(new BigDecimal(1080)).create()),
                 Optional.of(TickerDTO.builder().currencyPair(cp1)
-                        .timestamp(BaseTest.createDay(4))
+                        .timestamp(BaseTest.createDay(6))
+                        .open(new BigDecimal(100))
+                        .high(new BigDecimal(100))
+                        .low(new BigDecimal(100))
+                        .last(new BigDecimal(100))
+                        .volume(new BigDecimal(1060)).create()),
+                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                        .timestamp(BaseTest.createDay(7))
                         .open(new BigDecimal(119))
                         .high(new BigDecimal(119))
                         .low(new BigDecimal(119))
                         .last(new BigDecimal(119))
                         .volume(new BigDecimal(1090)).create()),
                 Optional.of(TickerDTO.builder().currencyPair(cp1)
-                        .timestamp(BaseTest.createDay(5))
+                        .timestamp(BaseTest.createDay(8))
+                        .open(new BigDecimal(100))
+                        .high(new BigDecimal(100))
+                        .low(new BigDecimal(100))
+                        .last(new BigDecimal(100))
+                        .volume(new BigDecimal(1060)).create()),
+                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                        .timestamp(BaseTest.createDay(9))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1100)).create()),
                 Optional.of(TickerDTO.builder().currencyPair(cp1)
-                        .timestamp(BaseTest.createDay(6))
+                        .timestamp(BaseTest.createDay(10))
+                        .open(new BigDecimal(100))
+                        .high(new BigDecimal(100))
+                        .low(new BigDecimal(100))
+                        .last(new BigDecimal(100))
+                        .volume(new BigDecimal(1060)).create()),
+                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                        .timestamp(BaseTest.createDay(11))
                         .open(new BigDecimal(110))
                         .high(new BigDecimal(110))
                         .low(new BigDecimal(110))
                         .last(new BigDecimal(110))
                         .volume(new BigDecimal(1100)).create()),
                 Optional.of(TickerDTO.builder().currencyPair(cp1)
-                        .timestamp(BaseTest.createDay(7))
+                        .timestamp(BaseTest.createDay(12))
+                        .open(new BigDecimal(100))
+                        .high(new BigDecimal(100))
+                        .low(new BigDecimal(100))
+                        .last(new BigDecimal(100))
+                        .volume(new BigDecimal(1060)).create()),
+                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                        .timestamp(BaseTest.createDay(13))
                         .open(new BigDecimal(120))
                         .high(new BigDecimal(120))
                         .low(new BigDecimal(120))
                         .last(new BigDecimal(120))
                         .volume(new BigDecimal(1120)).create()),
                 Optional.of(TickerDTO.builder().currencyPair(cp1)
-                        .timestamp(BaseTest.createDay(8))
+                        .timestamp(BaseTest.createDay(14))
+                        .open(new BigDecimal(100))
+                        .high(new BigDecimal(100))
+                        .low(new BigDecimal(100))
+                        .last(new BigDecimal(100))
+                        .volume(new BigDecimal(1060)).create()),
+                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                        .timestamp(BaseTest.createDay(15))
                         .open(new BigDecimal(130))
                         .high(new BigDecimal(130))
                         .low(new BigDecimal(130))

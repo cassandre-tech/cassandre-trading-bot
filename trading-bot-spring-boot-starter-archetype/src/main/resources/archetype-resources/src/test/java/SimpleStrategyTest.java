@@ -28,7 +28,7 @@ public class SimpleStrategyTest {
 
 	/** Dumb strategy. */
 	@Autowired
-	SimpleStrategy strategy;
+	private SimpleStrategy strategy;
 
 	/**
 	 * Check data reception.
