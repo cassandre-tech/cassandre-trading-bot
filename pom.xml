@@ -93,6 +93,18 @@
 					</commitMessages>
 				</configuration>
 			</plugin>
+			<!-- Deploy to sonartype -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.8</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
 			<!-- GPG signing -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
