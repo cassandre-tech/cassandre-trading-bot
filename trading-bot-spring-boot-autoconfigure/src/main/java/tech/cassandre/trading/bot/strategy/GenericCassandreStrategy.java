@@ -5,6 +5,7 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
@@ -138,6 +139,54 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
             // Make the calculation.
             return Optional.of(new CurrencyAmountDTO(ticker.getLast().multiply(amount),
                     currencyPair.getQuoteCurrency()));
+        }
+    }
+
+    /**
+     * Returns true if we have enough assets to buy.
+     *
+     * @param account      account
+     * @param currencyPair currency pair
+     * @param amount       amount
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canBuy(final AccountDTO account,
+                                final CurrencyPairDTO currencyPair,
+                                final BigDecimal amount) {
+        return canBuy(account, currencyPair, amount, BigDecimal.ZERO);
+    }
+
+    /**
+     * Returns true if we have enough assets to buy and if minimumBalanceAfter is left on the account after.
+     *
+     * @param account             account
+     * @param currencyPair        currency pair
+     * @param amount              amount
+     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canBuy(final AccountDTO account,
+                                final CurrencyPairDTO currencyPair,
+                                final BigDecimal amount,
+                                final BigDecimal minimumBalanceAfter) {
+        // We get the amount.
+        final Optional<BalanceDTO> balance = account.getBalance(currencyPair.getQuoteCurrency());
+        if (balance.isPresent()) {
+            // We get the estimated cost of buying.
+            final Optional<CurrencyAmountDTO> estimatedBuyingCost = getEstimatedBuyingCost(currencyPair, amount);
+
+            // We calculate.
+            // Balance in the account
+            // Minus
+            // Estimated cost
+            // Must be superior to zero
+            // If there is no way to calculate the price for the moment (no ticker).
+            return estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
+                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter))
+                    .compareTo(BigDecimal.ZERO) > 0).isPresent();
+        } else {
+            // If the is no balance in this currency, we can't buy.
+            return false;
         }
     }
 

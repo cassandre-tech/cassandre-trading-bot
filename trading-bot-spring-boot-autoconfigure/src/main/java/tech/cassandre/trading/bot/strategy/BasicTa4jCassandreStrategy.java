@@ -19,7 +19,6 @@ import java.util.Set;
 /**
  * Basic ta4j strategy.
  */
-@SuppressWarnings("unused")
 public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrategy {
 
     /** Timestamp of the last added bar. */

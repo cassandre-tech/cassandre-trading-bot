@@ -32,6 +32,9 @@ import java.util.Set;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
 /**
  * Flux and services mocks.
@@ -111,7 +114,7 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
 
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account01Balance1);
+        balances.put(BTC, account01Balance1);
         AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).create();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
@@ -120,7 +123,7 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
 
         // Account 02.
         BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account02Balance1);
+        balances.put(BTC, account02Balance1);
         AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).create();
         accounts.put("02", account02);
         UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
@@ -128,8 +131,9 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         accounts.clear();
 
         // Account 03.
-        BalanceDTO account03Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(CurrencyDTO.BTC, account03Balance1);
+        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).create());
+        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).create());
+        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).create());
         AccountDTO account03 = AccountDTO.builder().id("03").balances(balances).create();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
@@ -151,14 +155,15 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
     public MarketService marketService() {
         MarketService service = mock(MarketService.class);
         // Returns three values.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
+        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
         given(service.getTicker(cp1)).willReturn(
                 BaseTest.getFakeTicker(cp1, new BigDecimal("1")),   // Ticker 01.
                 BaseTest.getFakeTicker(cp1, new BigDecimal("2")),   // Ticker 02.
                 BaseTest.getFakeTicker(cp1, new BigDecimal("3")),   // Ticker 03.
                 BaseTest.getFakeTicker(cp1, new BigDecimal("4")),   // Ticker 04.
                 BaseTest.getFakeTicker(cp1, new BigDecimal("5")),   // Ticker 05.
-                BaseTest.getFakeTicker(cp1, new BigDecimal("6"))    // Ticker 06.
+                BaseTest.getFakeTicker(cp1, new BigDecimal("6")),    // Ticker 06.
+                BaseTest.getFakeTicker(new CurrencyPairDTO(BTC, USDT), new BigDecimal("10000"))    // Ticker 07.
         );
         return service;
     }
