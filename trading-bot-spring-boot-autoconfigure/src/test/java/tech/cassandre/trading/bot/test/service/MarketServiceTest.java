@@ -92,9 +92,8 @@ public class MarketServiceTest {
         assertTrue(ticker.isPresent());
         final Optional<CurrencyAmountDTO> cost = marketService.getEstimatedBuyingCost(currencyPair, amount);
         assertTrue(cost.isPresent());
-        assertTrue(cost.get().getCurrency().equals(BTC));
+        assertEquals(BTC, cost.get().getCurrency());
         assertEquals(0, (ticker.get().getLast().multiply(amount)).compareTo(cost.get().getValue()));
-
     }
 
 }
