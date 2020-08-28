@@ -38,7 +38,7 @@ import static org.mockito.Mockito.mock;
  */
 @SuppressWarnings("unchecked")
 @TestConfiguration
-public class BasicCassandreStrategyMock extends BaseTest {
+public class BasicCassandreStrategyTestMock extends BaseTest {
 
     /**
      * Replace ticker flux by mock.

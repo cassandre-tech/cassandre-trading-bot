@@ -7,6 +7,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,6 +35,9 @@ public abstract class BasicCassandreStrategy implements CassandreStrategyInterfa
 
     /** The positions owned by the user. */
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
+
+    /** Last ticker received. */
+    private final Map<CurrencyPairDTO, TickerDTO> lastTicker = new LinkedHashMap<>();
 
     @Override
     public final void setTradeService(final TradeService newTradeService) {
@@ -63,6 +67,7 @@ public abstract class BasicCassandreStrategy implements CassandreStrategyInterfa
 
     @Override
     public final void tickerUpdate(final TickerDTO ticker) {
+        lastTicker.put(ticker.getCurrencyPair(), ticker);
         onTickerUpdate(ticker);
     }
 
@@ -118,6 +123,15 @@ public abstract class BasicCassandreStrategy implements CassandreStrategyInterfa
      */
     public final Map<Long, PositionDTO> getPositions() {
         return positions;
+    }
+
+    /**
+     * Getter for lastTickers.
+     *
+     * @return lastTickers
+     */
+    public final Map<CurrencyPairDTO, TickerDTO> getLastTicker() {
+        return lastTicker;
     }
 
     @Override

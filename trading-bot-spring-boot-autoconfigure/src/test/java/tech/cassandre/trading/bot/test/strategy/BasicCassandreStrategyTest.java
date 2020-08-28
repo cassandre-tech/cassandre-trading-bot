@@ -8,6 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
+import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+
+import java.math.BigDecimal;
 
 import static org.awaitility.Awaitility.with;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -27,6 +31,8 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SECRET_DEF
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_DEFAULT_VALUE;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
@@ -51,7 +57,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
-@Import(BasicCassandreStrategyMock.class)
+@Import(BasicCassandreStrategyTestMock.class)
 @DisplayName("Basic cassandre strategy")
 public class BasicCassandreStrategyTest extends BaseTest {
 
@@ -73,6 +79,8 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertFalse(testableStrategy.getTickersUpdateReceived().isEmpty());
         assertFalse(testableStrategy.getTradesUpdateReceived().isEmpty());
         assertFalse(testableStrategy.getPositionsUpdateReceived().isEmpty());
+        assertEquals(1, testableStrategy.getLastTicker().size());
+        assertEquals(0, new BigDecimal("6").compareTo(testableStrategy.getLastTicker().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
 
         // Checking that services are available.
         assertNotNull(testableStrategy.getTradeService());

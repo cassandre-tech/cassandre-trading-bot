@@ -44,6 +44,9 @@ public abstract class BasicTa4jCassandreStrategy implements CassandreStrategyInt
     /** The positions owned by the user. */
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
+    /** Last tickers received. */
+    private final Map<CurrencyPairDTO, TickerDTO> lastTicker = new LinkedHashMap<>();
+
     /** Timestamp of the last added bar. */
     private ZonedDateTime lastAddedBarTimestamp;
 
@@ -131,6 +134,7 @@ public abstract class BasicTa4jCassandreStrategy implements CassandreStrategyInt
 
     @Override
     public final void tickerUpdate(final TickerDTO ticker) {
+        lastTicker.put(ticker.getCurrencyPair(), ticker);
         // If there is no bar or if the duration between the last bar and the ticker is enough.
         if (lastAddedBarTimestamp == null
                 || ticker.getTimestamp().isEqual(lastAddedBarTimestamp.plus(getDelayBetweenTwoBars()))
@@ -210,6 +214,15 @@ public abstract class BasicTa4jCassandreStrategy implements CassandreStrategyInt
      */
     public final Map<Long, PositionDTO> getPositions() {
         return positions;
+    }
+
+    /**
+     * Getter for lastTickers.
+     *
+     * @return lastTickers
+     */
+    public final Map<CurrencyPairDTO, TickerDTO> getLastTicker() {
+        return lastTicker;
     }
 
     /**
