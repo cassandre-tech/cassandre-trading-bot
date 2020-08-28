@@ -83,6 +83,9 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         // Checking that services are available.
         assertNotNull(testableStrategy.getTradeService());
         assertNotNull(testableStrategy.getPositionService());
+
+        // Check getEstimatedBuyingCost()
+        assertEquals(0, new BigDecimal("390").compareTo(testableStrategy.getEstimatedBuyingCost(new CurrencyPairDTO(BTC, USDT), new BigDecimal(3)).get().getValue()));
     }
 
 }

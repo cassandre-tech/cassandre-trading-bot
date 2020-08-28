@@ -115,6 +115,7 @@ public class BaseTest {
                 .currencyPair(cp)
                 .timestamp(getRandomDate())
                 .bid(bid)
+                .last(bid)
                 .create());
     }
 
@@ -131,6 +132,7 @@ public class BaseTest {
                 .currencyPair(cp)
                 .timestamp(timestamp)
                 .bid(bid)
+                .last(bid)
                 .create());
     }
 
