@@ -30,7 +30,6 @@ public class AccountFlux extends BaseFlux<AccountDTO> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     protected final Set<AccountDTO> getNewValues() {
         getLogger().debug("AccountFlux - Retrieving new values");
         Set<AccountDTO> newValues = new LinkedHashSet<>();

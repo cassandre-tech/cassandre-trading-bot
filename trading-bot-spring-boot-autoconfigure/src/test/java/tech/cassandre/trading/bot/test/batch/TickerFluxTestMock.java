@@ -23,49 +23,29 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
- * Flux and services mocks.
+ * Mocks used by tests.
  */
 @TestConfiguration
 public class TickerFluxTestMock extends BaseTest {
 
-    /**
-     * Replace ticker flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
 
-    /**
-     * Replace account flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public AccountFlux accountFlux() {
         return new AccountFlux(userService());
     }
 
-    /**
-     * Replace order flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public OrderFlux orderFlux() {
         return new OrderFlux(tradeService());
     }
 
-    /**
-     * UserService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public UserService userService() {
@@ -74,11 +54,6 @@ public class TickerFluxTestMock extends BaseTest {
         return service;
     }
 
-    /**
-     * MarketService mock.
-     *
-     * @return mocked market service
-     */
     @SuppressWarnings("unchecked")
     @Bean
     @Primary
@@ -119,11 +94,6 @@ public class TickerFluxTestMock extends BaseTest {
         return marketService;
     }
 
-    /**
-     * TradeService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public TradeService tradeService() {

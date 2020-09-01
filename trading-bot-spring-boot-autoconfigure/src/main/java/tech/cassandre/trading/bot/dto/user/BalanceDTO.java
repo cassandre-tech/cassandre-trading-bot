@@ -8,7 +8,6 @@ import java.util.Objects;
 /**
  * DTO representing a balance in a {@link CurrencyDTO} for an {@link AccountDTO}.
  */
-@SuppressWarnings("unused")
 public final class BalanceDTO {
 
     /** Currency. */

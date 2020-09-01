@@ -37,7 +37,9 @@ import java.util.StringJoiner;
  * ExchangeConfiguration configures the exchange connection.
  */
 @Configuration
-@EnableConfigurationProperties(ExchangeParameters.class)
+@EnableConfigurationProperties({ExchangeParameters.class,
+        ExchangeParameters.Modes.class,
+        ExchangeParameters.Rates.class})
 public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** XChange user sandbox parameter. */

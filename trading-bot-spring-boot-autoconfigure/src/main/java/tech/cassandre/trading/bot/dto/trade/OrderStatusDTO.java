@@ -3,7 +3,6 @@ package tech.cassandre.trading.bot.dto.trade;
 /**
  * Order status for {@link OrderDTO}.
  */
-@SuppressWarnings("unused")
 public enum OrderStatusDTO {
 
     /** Initial order when instantiated. */

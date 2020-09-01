@@ -26,49 +26,29 @@ import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 
 /**
- * Flux and services mocks.
+ * Mocks used by tests.
  */
 @TestConfiguration
 public class AccountFluxTestMock {
 
-    /**
-     * Replace ticker flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
 
-    /**
-     * Replace account flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public AccountFlux accountFlux() {
         return new AccountFlux(userService());
     }
 
-    /**
-     * Replace order flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public OrderFlux orderFlux() {
         return new OrderFlux(tradeService());
     }
 
-    /**
-     * UserService mock.
-     *
-     * @return mocked service
-     */
     @SuppressWarnings("unchecked")
     @Bean
     @Primary
@@ -409,11 +389,6 @@ public class AccountFluxTestMock {
         return userService;
     }
 
-    /**
-     * MarketService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public MarketService marketService() {
@@ -422,11 +397,6 @@ public class AccountFluxTestMock {
         return service;
     }
 
-    /**
-     * TradeService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public TradeService tradeService() {

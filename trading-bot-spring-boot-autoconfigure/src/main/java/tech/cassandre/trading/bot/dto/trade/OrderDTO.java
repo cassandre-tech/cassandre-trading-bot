@@ -10,7 +10,6 @@ import java.util.Objects;
  * DTO representing order information.
  * A market order is a request by an investor to buy or sell in the current market.
  */
-@SuppressWarnings("unused")
 public final class OrderDTO {
 
     /** Order type i.e. bid or ask. */

@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Constraint(validatedBy = RateValidator.class)
 @Documented
-@SuppressWarnings({"checkstyle:WhitespaceAround", "unused"})
+@SuppressWarnings({"checkstyle:WhitespaceAround"})
 public @interface Rate {
 
     String message();

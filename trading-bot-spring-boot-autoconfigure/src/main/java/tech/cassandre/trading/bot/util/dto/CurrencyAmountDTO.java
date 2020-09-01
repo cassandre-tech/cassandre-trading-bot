@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 /**
  * Currency amount (amount value + currency).
  */
-@SuppressWarnings("unused")
 public class CurrencyAmountDTO {
 
     /** Amount value. */

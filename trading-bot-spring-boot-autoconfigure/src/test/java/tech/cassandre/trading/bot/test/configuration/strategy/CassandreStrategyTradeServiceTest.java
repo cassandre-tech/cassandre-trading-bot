@@ -49,14 +49,19 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @DisplayName("Strategy trade service")
 public class CassandreStrategyTradeServiceTest {
 
-    /** Cassandre strategy. */
     @Autowired
-    private TestableCassandreStrategy testableStrategy;
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check trade service is present")
-    public void checkErrorMessages() {
-        assertNotNull(testableStrategy.getTradeService());
+    public void checkTradeService() {
+        assertNotNull(strategy.getTradeService());
+    }
+
+    @Test
+    @DisplayName("Check position service is present")
+    public void checkPositionService() {
+        assertNotNull(strategy.getPositionService());
     }
 
 }

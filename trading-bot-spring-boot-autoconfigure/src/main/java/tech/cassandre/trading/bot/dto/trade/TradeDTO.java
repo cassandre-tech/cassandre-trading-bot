@@ -12,7 +12,6 @@ import java.util.Objects;
  * DTO representing a trade.
  * A trade is the action of buying and selling goods and services.
  */
-@SuppressWarnings("unused")
 public class TradeDTO {
 
     /** An identifier set by the exchange that uniquely identifies the trade. */

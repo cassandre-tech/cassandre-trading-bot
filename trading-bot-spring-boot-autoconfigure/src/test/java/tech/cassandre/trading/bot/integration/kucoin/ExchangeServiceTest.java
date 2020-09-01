@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -36,16 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Kucoin - Exchange service")
 public class ExchangeServiceTest {
 
-	/** Exchange service. */
 	@Autowired
 	private ExchangeService exchangeService;
 
 	@Test
 	@DisplayName("Get available currency pairs")
-	@Disabled("Bug in XChange currency pairs list") // TODO Fix when issue https://github.com/knowm/XChange/issues/3609 is fixed	
 	public void testGetAvailableCurrencyPairs() {
 		// Expected values.
-		final int expectedMinimumNumberOfAvailableCurrencyPairs = 15;
+		final int expectedMinimumNumberOfAvailableCurrencyPairs = 4;
 
 		// =============================================================================================================
 		// Retrieve the available currency pairs.
@@ -54,46 +50,15 @@ public class ExchangeServiceTest {
 		// ====================================symbols=========================================================================
 		// Tests results.
 		assertEquals(expectedMinimumNumberOfAvailableCurrencyPairs, currencyPairs.size());
-		// EOS.
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("EOS", "BTC")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.EOS, CurrencyDTO.BTC)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("EOS", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.EOS, CurrencyDTO.USDT)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("EOS", "ETH")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.EOS, CurrencyDTO.ETH)));
-		// LTC.
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("LTC", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.LTC, CurrencyDTO.USDT)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("LTC", "ETH")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.LTC, CurrencyDTO.ETH)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("LTC", "BTC")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.LTC, CurrencyDTO.BTC)));
-		// KCS.
+
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("KCS", "USDT")));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.KCS, CurrencyDTO.USDT)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("KCS", "ETH")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.KCS, CurrencyDTO.ETH)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("KCS", "BTC")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.KCS, CurrencyDTO.BTC)));
-		// ETH.
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "USDT")));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "BTC")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC)));
-		// BTC.
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("BTC", "USDT")));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.BTC, CurrencyDTO.USDT)));
-		// XRP.
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("XRP", "BTC")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.XRP, CurrencyDTO.BTC)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("XRP", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.XRP, CurrencyDTO.USDT)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("XRP", "ETH")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.XRP, CurrencyDTO.ETH)));
-		// Non existing.
-		assertFalse(currencyPairs.contains(new CurrencyPairDTO("ABC", "DEF")));
-		assertFalse(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.BGN, CurrencyDTO.AFN)));
-		assertFalse(currencyPairs.contains(new CurrencyPairDTO("BGN", "AFN")));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "BTC")));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC)));
 	}
 
 }

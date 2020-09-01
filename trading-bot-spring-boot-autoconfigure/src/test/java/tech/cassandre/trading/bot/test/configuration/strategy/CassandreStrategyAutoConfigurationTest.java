@@ -50,7 +50,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 public class CassandreStrategyAutoConfigurationTest {
 
     @Test
-    @DisplayName("Valid strategy")
+    @DisplayName("Valid strategy found")
     public void validStrategy() {
         try {
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");

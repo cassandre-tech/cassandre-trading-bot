@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * DTO representing user information.
  */
-@SuppressWarnings("unused")
 public final class UserDTO {
 
     /** User ID (usually username). */

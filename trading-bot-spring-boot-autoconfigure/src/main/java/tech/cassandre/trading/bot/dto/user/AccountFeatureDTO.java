@@ -3,7 +3,6 @@ package tech.cassandre.trading.bot.dto.user;
 /**
  * {@link AccountDTO} features.
  */
-@SuppressWarnings("unused")
 public enum AccountFeatureDTO {
 
     /** The wallet has the ability to deposit external funds and withdraw funds allocated on it. */

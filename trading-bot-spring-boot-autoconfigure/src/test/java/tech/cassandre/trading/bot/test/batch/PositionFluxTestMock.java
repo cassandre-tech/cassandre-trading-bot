@@ -24,71 +24,41 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
- * Flux and services mocks.
+ * Mocks used by tests.
  */
 @TestConfiguration
 public class PositionFluxTestMock {
 
-    /**
-     * Replace ticker flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
 
-    /**
-     * Replace account flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public AccountFlux accountFlux() {
         return new AccountFlux(userService());
     }
 
-    /**
-     * Replace order flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public OrderFlux orderFlux() {
         return new OrderFlux(tradeService());
     }
 
-    /**
-     * Replace trade flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TradeFlux tradeFlux() {
         return new TradeFlux(tradeService());
     }
 
-    /**
-     * Replace the flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public PositionFlux positionFlux() {
         return new PositionFlux(positionService());
     }
 
-    /**
-     * UserService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public UserService userService() {
@@ -97,11 +67,6 @@ public class PositionFluxTestMock {
         return service;
     }
 
-    /**
-     * MarketService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public MarketService marketService() {
@@ -110,11 +75,6 @@ public class PositionFluxTestMock {
         return service;
     }
 
-    /**
-     * TradeService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public TradeService tradeService() {
@@ -122,11 +82,6 @@ public class PositionFluxTestMock {
         return mock(TradeService.class);
     }
 
-    /**
-     * PositionService mock.
-     *
-     * @return mocked service
-     */
     @SuppressWarnings("unchecked")
     @Bean
     @Primary

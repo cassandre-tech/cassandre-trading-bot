@@ -41,7 +41,6 @@ import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.TRADING;
 @DisplayName("Kucoin - User service")
 public class UserServiceTest {
 
-    /** Account service. */
     @Autowired
     private UserService userService;
 

@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Kucoin - Market service")
 public class MarketServiceTest {
 
-    /** Account service. */
     @Autowired
     private MarketService marketService;
 

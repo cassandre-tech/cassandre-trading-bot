@@ -61,31 +61,31 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
 
     /** Cassandre ta4j strategy. */
     @Autowired
-    private TestableTa4jCassandreStrategy testableStrategy;
+    private TestableTa4jCassandreStrategy strategy;
 
     @Test
-    @DisplayName("should enter and should exit test")
+    @DisplayName("Strategy test")
     public void strategyTest() {
         // Checking received data.
-        await().untilAsserted(() -> assertEquals(3, testableStrategy.getAccounts().size()));
-        await().untilAsserted(() -> assertEquals(4, testableStrategy.getOrders().size()));
-        await().untilAsserted(() -> assertEquals(3, testableStrategy.getTrades().size()));
-        await().untilAsserted(() -> assertEquals(3, testableStrategy.getPositions().size()));
-        await().untilAsserted(() -> assertEquals(15, testableStrategy.getTickersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(1, testableStrategy.getLastTicker().size()));
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(testableStrategy.getLastTicker().get(new CurrencyPairDTO(BTC, USDT)).getLast())));
+        await().untilAsserted(() -> assertEquals(3, strategy.getAccounts().size()));
+        await().untilAsserted(() -> assertEquals(4, strategy.getOrders().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy.getPositions().size()));
+        await().untilAsserted(() -> assertEquals(15, strategy.getTickersUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getLastTicker().size()));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTicker().get(new CurrencyPairDTO(BTC, USDT)).getLast())));
 
         // Checking ta4j results.
-        await().untilAsserted(() -> assertEquals(5, testableStrategy.getEnterCount()));
-        await().untilAsserted(() -> assertEquals(2, testableStrategy.getExitCount()));
-        await().untilAsserted(() -> assertEquals(8, testableStrategy.getSeries().getBarCount()));
+        await().untilAsserted(() -> assertEquals(5, strategy.getEnterCount()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getExitCount()));
+        await().untilAsserted(() -> assertEquals(8, strategy.getSeries().getBarCount()));
 
         // Checking that services are available.
-        assertNotNull(testableStrategy.getTradeService());
-        assertNotNull(testableStrategy.getPositionService());
+        assertNotNull(strategy.getTradeService());
+        assertNotNull(strategy.getPositionService());
 
         // Check getEstimatedBuyingCost()
-        assertEquals(0, new BigDecimal("390").compareTo(testableStrategy.getEstimatedBuyingCost(new CurrencyPairDTO(BTC, USDT), new BigDecimal(3)).get().getValue()));
+        assertEquals(0, new BigDecimal("390").compareTo(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(BTC, USDT), new BigDecimal(3)).get().getValue()));
     }
 
 }

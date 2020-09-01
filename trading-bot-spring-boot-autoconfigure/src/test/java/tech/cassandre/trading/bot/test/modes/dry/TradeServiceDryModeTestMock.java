@@ -17,27 +17,17 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
- * Ticker flux mock.
+ * Mocks used by tests.
  */
 @TestConfiguration
 public class TradeServiceDryModeTestMock {
 
-    /**
-     * Replace ticker flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
 
-    /**
-     * MarketService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public MarketService marketService() {

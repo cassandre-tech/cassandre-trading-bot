@@ -5,7 +5,6 @@ import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
 /**
  * Gain.
  */
-@SuppressWarnings("unused")
 public class GainDTO {
 
     /** Gain made (percentage). */

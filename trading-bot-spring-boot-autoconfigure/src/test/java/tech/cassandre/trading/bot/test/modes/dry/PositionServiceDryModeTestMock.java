@@ -19,27 +19,17 @@ import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
 /**
- * Ticker flux mock.
+ * Mocks used by tests.
  */
 @TestConfiguration
-public class PositionDryModeTestMock extends BaseTest {
+public class PositionServiceDryModeTestMock extends BaseTest {
 
-    /**
-     * Replace ticker flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
 
-    /**
-     * MarketService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public MarketService marketService() {

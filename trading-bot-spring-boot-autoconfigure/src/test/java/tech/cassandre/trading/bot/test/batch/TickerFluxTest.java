@@ -66,7 +66,7 @@ public class TickerFluxTest extends BaseTest {
 
     /** Cassandre strategy. */
     @Autowired
-    private TestableCassandreStrategy testableStrategy;
+    private TestableCassandreStrategy strategy;
 
     /** Market service. */
     @Autowired
@@ -86,14 +86,14 @@ public class TickerFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(marketService, atLeast(numberOfMarketServiceCalls)).getTicker(any()));
 
         // Checking that somme tickers have already been treated (to verify we work on a single thread).
-        assertTrue(testableStrategy.getTickersUpdateReceived().size() <= numberOfTickersExpected);
-        assertTrue(testableStrategy.getTickersUpdateReceived().size() > 0);
+        assertTrue(strategy.getTickersUpdateReceived().size() <= numberOfTickersExpected);
+        assertTrue(strategy.getTickersUpdateReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(testableStrategy.getTickersUpdateReceived().size() >= numberOfTickersExpected));
+        await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfTickersExpected));
 
         // Test all values received.
-        final Iterator<TickerDTO> iterator = testableStrategy.getTickersUpdateReceived().iterator();
+        final Iterator<TickerDTO> iterator = strategy.getTickersUpdateReceived().iterator();
 
         // First value cp1 - 1.
         TickerDTO t = iterator.next();

@@ -3,7 +3,6 @@ package tech.cassandre.trading.bot.dto.trade;
 /**
  * Order creation result for {@link OrderDTO}.
  */
-@SuppressWarnings("unused")
 public final class OrderCreationResultDTO {
 
     /** Order ID (filled if order creation is successful). */

@@ -51,7 +51,7 @@ public class TickerDTOTest {
 
 	@Test
 	@DisplayName("Builder with String and epoch")
-	public void builderWithStringAndEpoch() throws ParseException {
+	public void builderWithStringAndEpoch() {
 		TickerDTO t01 = TickerDTO.builder()
 				.last("0.1")
 				.ask("0.2")

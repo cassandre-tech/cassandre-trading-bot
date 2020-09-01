@@ -12,7 +12,6 @@ import java.util.Set;
 /**
  * DTO representing an account owned by a {@link UserDTO}.
  */
-@SuppressWarnings("unused")
 public final class AccountDTO {
 
     /** A unique identifier for this account. */

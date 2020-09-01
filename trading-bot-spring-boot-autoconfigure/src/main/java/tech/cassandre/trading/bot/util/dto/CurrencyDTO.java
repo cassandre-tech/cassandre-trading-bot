@@ -12,7 +12,6 @@ import java.util.TreeSet;
 /**
  * Currency.
  */
-@SuppressWarnings("unused")
 public final class CurrencyDTO {
 
     /** List of currencies. */

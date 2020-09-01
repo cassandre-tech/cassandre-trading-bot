@@ -61,11 +61,9 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @DisplayName("Order flux")
 public class OrderFluxTest extends BaseTest {
 
-    /** Cassandre strategy. */
     @Autowired
-    private TestableCassandreStrategy testableStrategy;
+    private TestableCassandreStrategy strategy;
 
-    /** Trade service. */
     @Autowired
     private TradeService tradeService;
 
@@ -79,14 +77,14 @@ public class OrderFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getOpenOrders());
 
         // Checking that somme tickers have already been treated (to verify we work on a single thread).
-        assertTrue(testableStrategy.getOrdersUpdateReceived().size() <= numberOfOrdersExpected);
-        assertTrue(testableStrategy.getOrdersUpdateReceived().size() > 0);
+        assertTrue(strategy.getOrdersUpdateReceived().size() <= numberOfOrdersExpected);
+        assertTrue(strategy.getOrdersUpdateReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(testableStrategy.getOrdersUpdateReceived().size() >= numberOfOrdersExpected));
+        await().untilAsserted(() -> assertTrue(strategy.getOrdersUpdateReceived().size() >= numberOfOrdersExpected));
 
         // Test all values received.
-        final Iterator<OrderDTO> iterator = testableStrategy.getOrdersUpdateReceived().iterator();
+        final Iterator<OrderDTO> iterator = strategy.getOrdersUpdateReceived().iterator();
 
         // Value 1.
         OrderDTO order = iterator.next();

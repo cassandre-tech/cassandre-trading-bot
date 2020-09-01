@@ -13,7 +13,6 @@ import java.time.Duration;
 /**
  * Base service.
  */
-@SuppressWarnings("unused")
 public abstract class BaseService extends Base {
 
     /** Mapper. */

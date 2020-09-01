@@ -19,81 +19,47 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
- * Flux and services mocks.
+ * Mocks used by tests.
  */
 @TestConfiguration
 public class PositionServiceTestMock {
 
-    /**
-     * Replace ticker flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
 
-    /**
-     * Replace account flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public AccountFlux accountFlux() {
         return new AccountFlux(userService());
     }
 
-    /**
-     * Replace order flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public OrderFlux orderFlux() {
         return new OrderFlux(tradeService());
     }
 
-    /**
-     * Replace position service with a
-     * @return mock
-     */
     @Bean
     @Primary
     public PositionService positionService() {
         return new PositionServiceImplementation(tradeService());
     }
 
-    /**
-     * UserService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public UserService userService() {
         return mock(UserService.class);
     }
 
-    /**
-     * MarketService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public MarketService marketService() {
         return mock(MarketService.class);
     }
 
-    /**
-     * TradeService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public TradeService tradeService() {

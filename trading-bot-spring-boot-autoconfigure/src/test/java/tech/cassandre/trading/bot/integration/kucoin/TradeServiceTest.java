@@ -47,7 +47,6 @@ import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 @DisplayName("Kucoin - Trade service")
 public class TradeServiceTest extends BaseTest {
 
-    /** Trade service. */
     @Autowired
     private TradeService tradeService;
 
@@ -157,11 +156,6 @@ public class TradeServiceTest extends BaseTest {
         // Check that the two orders appears in the trade history.
         assertTrue(result1.isSuccessful());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrderId()))));
-
-/*        tradeService.getTrades().stream()
-                .filter(t -> t.getOrderId().equals(result1.getOrderId().get()))
-                .forEach(tradeDTO -> System.out.println(tradeDTO));*/
-
         assertNotNull(result2.getOrderId());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrderId()))));
     }

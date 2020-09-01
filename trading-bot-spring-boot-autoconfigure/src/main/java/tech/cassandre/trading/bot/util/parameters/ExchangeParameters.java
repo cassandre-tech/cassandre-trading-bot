@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 /**
  * Exchange parameters from application.properties.
  */
-@SuppressWarnings("unused")
 @Validated
 @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange")
 public class ExchangeParameters {
@@ -53,13 +52,14 @@ public class ExchangeParameters {
 
     /** Modes. */
     @Valid
-    private Modes modes = new Modes();
+    private static Modes modes = new Modes();
 
     /** API Calls rates. */
     @Valid
-    private Rates rates = new Rates();
+    private static Rates rates = new Rates();
 
     /** Exchange API rate calls. */
+    @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.modes")
     public static class Modes {
 
         /** Sandbox parameter. */
@@ -123,6 +123,7 @@ public class ExchangeParameters {
     }
 
     /** Exchange API rate calls. */
+    @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.rates")
     public static class Rates {
 
         /** Rate for account parameter. */

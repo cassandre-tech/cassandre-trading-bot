@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * Cassandre mapper.
  */
-@SuppressWarnings("unused")
 @Mapper
 public interface CassandreMapper {
 

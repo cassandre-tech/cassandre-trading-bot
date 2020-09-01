@@ -51,7 +51,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 public class ValidConfigurationTest extends BaseTest {
 
     @Test
-    @DisplayName("Testing Kucoin connection")
+    @DisplayName("Testing connection")
     public void exchangeParameters() {
         try {
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);

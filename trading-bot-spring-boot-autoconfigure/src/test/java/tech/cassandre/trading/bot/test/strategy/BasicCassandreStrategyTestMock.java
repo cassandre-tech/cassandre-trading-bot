@@ -37,72 +37,42 @@ import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
 /**
- * Flux and services mocks.
+ * Mocks used by tests.
  */
 @SuppressWarnings("unchecked")
 @TestConfiguration
 public class BasicCassandreStrategyTestMock extends BaseTest {
 
-    /**
-     * Replace ticker flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
 
-    /**
-     * Replace account flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public AccountFlux accountFlux() {
         return new AccountFlux(userService());
     }
 
-    /**
-     * Replace order flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public OrderFlux orderFlux() {
         return new OrderFlux(tradeService());
     }
 
-    /**
-     * Replace trade flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public TradeFlux tradeFlux() {
         return new TradeFlux(tradeService());
     }
 
-    /**
-     * Replace the flux by mock.
-     *
-     * @return mock
-     */
     @Bean
     @Primary
     public PositionFlux positionFlux() {
         return new PositionFlux(positionService());
     }
 
-    /**
-     * UserService mock.
-     *
-     * @return mocked service
-     */
     @SuppressWarnings("unchecked")
     @Bean
     @Primary
@@ -145,11 +115,6 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         return userService;
     }
 
-    /**
-     * MarketService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public MarketService marketService() {
@@ -168,11 +133,6 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         return service;
     }
 
-    /**
-     * TradeService mock.
-     *
-     * @return mocked service
-     */
     @Bean
     @Primary
     public TradeService tradeService() {
@@ -195,11 +155,6 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         return service;
     }
 
-    /**
-     * PositionService mock.
-     *
-     * @return mocked service
-     */
     @SuppressWarnings("unchecked")
     @Bean
     @Primary

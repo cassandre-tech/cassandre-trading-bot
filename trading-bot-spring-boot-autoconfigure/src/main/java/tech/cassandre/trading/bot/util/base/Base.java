@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Base.
  */
-@SuppressWarnings("unused")
 public abstract class Base {
 
     /** Logger. */

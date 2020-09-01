@@ -62,7 +62,7 @@ public class TradeFluxTest extends BaseTest {
 
     /** Cassandre strategy. */
     @Autowired
-    private TestableCassandreStrategy testableStrategy;
+    private TestableCassandreStrategy strategy;
 
     /** Trade service. */
     @Autowired
@@ -78,14 +78,14 @@ public class TradeFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getTrades());
 
         // Checking that somme tickers have already been treated (to verify we work on a single thread).
-        assertTrue(testableStrategy.getTradesUpdateReceived().size() <= numberOfTradeExpected);
-        assertTrue(testableStrategy.getTradesUpdateReceived().size() > 0);
+        assertTrue(strategy.getTradesUpdateReceived().size() <= numberOfTradeExpected);
+        assertTrue(strategy.getTradesUpdateReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(testableStrategy.getTradesUpdateReceived().size() >= numberOfTradeExpected));
+        await().untilAsserted(() -> assertTrue(strategy.getTradesUpdateReceived().size() >= numberOfTradeExpected));
 
         // Test all values received.
-        final Iterator<TradeDTO> iterator = testableStrategy.getTradesUpdateReceived().iterator();
+        final Iterator<TradeDTO> iterator = strategy.getTradesUpdateReceived().iterator();
 
         assertEquals("0000001", iterator.next().getId());
         assertEquals("0000002", iterator.next().getId());

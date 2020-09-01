@@ -12,7 +12,6 @@ import java.util.Objects;
  * DTO representing a stock ticker.
  * A ticker is a report of the price of certain securities, updated continuously throughout the trading session.
  */
-@SuppressWarnings("unused")
 public final class TickerDTO {
 
     /** Currency pair. */

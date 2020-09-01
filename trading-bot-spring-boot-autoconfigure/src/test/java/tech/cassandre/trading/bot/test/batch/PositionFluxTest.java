@@ -62,7 +62,7 @@ public class PositionFluxTest extends BaseTest {
 
     /** Cassandre strategy. */
     @Autowired
-    private TestableCassandreStrategy testableStrategy;
+    private TestableCassandreStrategy strategy;
 
     /** Position service. */
     @Autowired
@@ -78,10 +78,10 @@ public class PositionFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(positionService, atLeast(numberOfPositionServiceCalls)).getPositions());
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(testableStrategy.getPositionsUpdateReceived().size() >= numberOfPositionExpected));
+        await().untilAsserted(() -> assertTrue(strategy.getPositionsUpdateReceived().size() >= numberOfPositionExpected));
 
         // Test all values received.
-        final Iterator<PositionDTO> iterator = testableStrategy.getPositionsUpdateReceived().iterator();
+        final Iterator<PositionDTO> iterator = strategy.getPositionsUpdateReceived().iterator();
         assertEquals(1, iterator.next().getId());
         assertEquals(2, iterator.next().getId());
         assertEquals(3, iterator.next().getId());

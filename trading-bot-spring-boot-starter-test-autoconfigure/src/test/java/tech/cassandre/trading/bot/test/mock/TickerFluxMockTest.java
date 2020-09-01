@@ -23,9 +23,6 @@ import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
-/**
- * Tests fpr ticker flux.
- */
 @SpringBootTest
 @Import(TickerFluxMock.class)
 @DisplayName("Ticker flux mock test")
@@ -36,7 +33,6 @@ public class TickerFluxMockTest extends BaseTest {
 
     @Autowired
     private TickerFluxMock tickerFluxMock;
-
 
     @Test
     @DisplayName("Check tickers received")

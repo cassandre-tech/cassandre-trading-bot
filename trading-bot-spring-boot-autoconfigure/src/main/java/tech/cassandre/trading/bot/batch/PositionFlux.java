@@ -31,7 +31,6 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     protected final Set<PositionDTO> getNewValues() {
         getLogger().debug("PositionFlux - Retrieving new values");
         Set<PositionDTO> newValues = new LinkedHashSet<>();

@@ -10,7 +10,6 @@ import java.util.Set;
  *
  * @param <T> flux type
  */
-@SuppressWarnings("unused")
 public abstract class BaseFlux<T> extends Base {
 
     /** Flux. */

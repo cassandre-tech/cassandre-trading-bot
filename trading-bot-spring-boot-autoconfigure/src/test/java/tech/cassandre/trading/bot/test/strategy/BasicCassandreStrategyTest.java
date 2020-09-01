@@ -63,13 +63,12 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @DisplayName("Basic cassandre strategy")
 public class BasicCassandreStrategyTest extends BaseTest {
 
-    /** Cassandre strategy. */
     @Autowired
     private TestableCassandreStrategy testableStrategy;
 
     @Test
-    @DisplayName("Data & multi thread test")
-    public void multiThreadTest() {
+    @DisplayName("strategy test")
+    public void strategyTest() {
         final int numberOfValuesExpected = 7;
 
         // Wait for the strategy to have received all the account test values.
@@ -108,7 +107,6 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertFalse(testableStrategy.canBuy(account, cp2, new BigDecimal("0.1"), new BigDecimal("1000")));
 
         testableStrategy.getLastTicker().values().forEach(System.out::println);
-
     }
 
 }

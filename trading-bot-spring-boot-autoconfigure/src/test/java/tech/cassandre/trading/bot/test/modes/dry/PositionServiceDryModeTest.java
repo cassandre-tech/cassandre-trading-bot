@@ -65,30 +65,27 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
-@Import(PositionDryModeTestMock.class)
+@Import(PositionServiceDryModeTestMock.class)
 @DisplayName("positionService in dry mode")
 public class PositionServiceDryModeTest extends BaseTest {
-
-    /** Position service. */
-    @Autowired
-    private PositionService positionService;
-
-    /** Cassandre strategy. */
-    @Autowired
-    private TestableCassandreStrategy strategy;
-
-    /** Ticker flux. */
-    @Autowired
-    private TickerFlux tickerFlux;
-
-    @Autowired
-    private PositionFlux positionFlux;
 
     /** Currency pair 1 used for test. */
     public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
     /** Currency pair 1 used for test. */
     public static final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
+
+    @Autowired
+    private PositionService positionService;
+
+    @Autowired
+    private TestableCassandreStrategy strategy;
+
+    @Autowired
+    private TickerFlux tickerFlux;
+
+    @Autowired
+    private PositionFlux positionFlux;
 
     @Test
     @DisplayName("Position lifecycle in dry mode")

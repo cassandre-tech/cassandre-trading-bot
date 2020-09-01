@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.service;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
@@ -58,7 +57,6 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @DisplayName("Rates")
-@Disabled
 public class RatesTest {
 
 	/** Waiting time. */

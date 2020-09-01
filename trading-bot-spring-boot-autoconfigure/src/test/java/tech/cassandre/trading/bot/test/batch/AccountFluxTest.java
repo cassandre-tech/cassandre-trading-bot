@@ -63,11 +63,9 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @DisplayName("Account flux")
 public class AccountFluxTest extends BaseTest {
 
-    /** Cassandre strategy. */
     @Autowired
-    private TestableCassandreStrategy testableStrategy;
+    private TestableCassandreStrategy strategy;
 
-    /** User service. */
     @Autowired
     private UserService userService;
 
@@ -81,14 +79,14 @@ public class AccountFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(userService, atLeast(numberOfUserServiceCallsExpected)).getUser());
 
         // Checking that somme accounts update have already been treated (to verify we work on a single thread).
-        assertTrue(testableStrategy.getAccountsUpdatesReceived().size() <= numberOfAccountsUpdateExpected);
-        assertTrue(testableStrategy.getAccountsUpdatesReceived().size() > 0);
+        assertTrue(strategy.getAccountsUpdatesReceived().size() <= numberOfAccountsUpdateExpected);
+        assertTrue(strategy.getAccountsUpdatesReceived().size() > 0);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertEquals(numberOfAccountsUpdateExpected, testableStrategy.getAccountsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(numberOfAccountsUpdateExpected, strategy.getAccountsUpdatesReceived().size()));
 
         // Checking values.
-        final Iterator<AccountDTO> iterator = testableStrategy.getAccountsUpdatesReceived().iterator();
+        final Iterator<AccountDTO> iterator = strategy.getAccountsUpdatesReceived().iterator();
 
         // Check update 1.
         AccountDTO accountUpdate = iterator.next();

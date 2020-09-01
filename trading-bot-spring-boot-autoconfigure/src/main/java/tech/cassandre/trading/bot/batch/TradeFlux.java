@@ -30,7 +30,6 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     protected final Set<TradeDTO> getNewValues() {
         getLogger().debug("TradeFlux - Retrieving new values");
         Set<TradeDTO> newValues = new LinkedHashSet<>();

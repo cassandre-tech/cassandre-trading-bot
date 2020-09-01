@@ -30,7 +30,6 @@ public class OrderFlux extends BaseFlux<OrderDTO> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     protected final Set<OrderDTO> getNewValues() {
         getLogger().debug("OrderFlux - Retrieving new values");
         Set<OrderDTO> newValues = new LinkedHashSet<>();

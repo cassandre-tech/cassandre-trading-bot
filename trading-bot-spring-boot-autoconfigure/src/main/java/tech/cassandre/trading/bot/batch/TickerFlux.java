@@ -50,7 +50,6 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     protected final Set<TickerDTO> getNewValues() {
         getLogger().debug("TickerFlux - Retrieving new values");
         Set<TickerDTO> newValues = new LinkedHashSet<>();
