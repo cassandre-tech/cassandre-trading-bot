@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Setup timezone
+      uses: zcong1993/setup-timezone@master
+      with:
+        timezone: Europe/Paris
+
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
