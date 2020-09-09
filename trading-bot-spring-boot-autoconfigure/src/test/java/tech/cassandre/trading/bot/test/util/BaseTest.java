@@ -7,8 +7,10 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -172,6 +174,17 @@ public class BaseTest {
      */
     protected static Date createDay(final int day) {
         return Date.from(ZonedDateTime.of(2020, 1, day, 9, 0, 0, 0, ZoneId.systemDefault()).toInstant());
+    }
+
+
+    /**
+     * Returns ZonedDateTime.
+     * @param date date with format dd-MM-yyyy
+     * @return ZonedDateTime
+     */
+    protected ZonedDateTime getZonedDateTime(final String date) {
+        LocalDateTime ldt = LocalDateTime.parse(date + " 00:00", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+        return ldt.atZone(ZoneId.of("Europe/Paris"));
     }
 
 }

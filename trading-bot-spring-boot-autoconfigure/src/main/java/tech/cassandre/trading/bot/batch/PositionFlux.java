@@ -50,4 +50,13 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
         return newValues;
     }
 
+    /**
+     * Restore position.
+     *
+     * @param position position
+     */
+    public final void restorePosition(final PositionDTO position) {
+        previousValues.put(position.getId(), position.getStatus());
+    }
+
 }

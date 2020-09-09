@@ -47,6 +47,20 @@ public interface CassandreStrategyInterface {
     PositionService getPositionService();
 
     /**
+     * Restore trade from database.
+     *
+     * @param trade trade to restore
+     */
+    void restoreTrade(TradeDTO trade);
+
+    /**
+     * Restore position from database.
+     *
+     * @param position position to restore
+     */
+    void restorePosition(PositionDTO position);
+
+    /**
      * Method called by streams at every account update.
      *
      * @param account account

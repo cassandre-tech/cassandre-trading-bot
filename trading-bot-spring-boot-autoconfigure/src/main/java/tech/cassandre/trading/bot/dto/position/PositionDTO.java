@@ -175,6 +175,15 @@ public class PositionDTO {
     }
 
     /**
+     * Getter rules.
+     *
+     * @return rules
+     */
+    public final PositionRulesDTO getRules() {
+        return rules;
+    }
+
+    /**
      * Getter for openTrade.
      *
      * @return openTrade

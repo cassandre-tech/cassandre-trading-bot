@@ -104,7 +104,6 @@ public class TradeServiceInDryMode implements TradeService {
                     .feeCurrency(currencyPair.getBaseCurrency())
                     .create();
 
-
             // Sending the results after the return.
             Executors.newFixedThreadPool(1).submit(() -> {
                 try {
@@ -192,6 +191,16 @@ public class TradeServiceInDryMode implements TradeService {
      */
     public void tickerUpdate(final TickerDTO ticker) {
         lastTickers.put(ticker.getCurrencyPair(), ticker);
+    }
+
+    @Override
+    public final void restoreTrade(final TradeDTO trade) {
+        trades.put(trade.getId(), trade);
+    }
+
+    @Override
+    public void backupTrade(final TradeDTO trade) {
+        // No backup in dry mode.
     }
 
 }

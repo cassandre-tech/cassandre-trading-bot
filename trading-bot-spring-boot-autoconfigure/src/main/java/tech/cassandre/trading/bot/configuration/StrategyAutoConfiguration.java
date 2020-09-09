@@ -10,18 +10,25 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.TradeServiceInDryMode;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
+import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
+import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -55,6 +62,12 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     /** Position flux. */
     private final PositionFlux positionFlux;
 
+    /** Position repository. */
+    private final PositionRepository positionRepository;
+
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
+
     /**
      * Constructor.
      *
@@ -66,6 +79,8 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      * @param newOrderFlux          order flux
      * @param newTradeFlux          trade flux
      * @param newPositionFlux       position flux
+     * @param newPositionRepository position repository
+     * @param newTradeRepository    trade repository
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
@@ -75,7 +90,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                                      final TickerFlux newTickerFlux,
                                      final OrderFlux newOrderFlux,
                                      final TradeFlux newTradeFlux,
-                                     final PositionFlux newPositionFlux) {
+                                     final PositionFlux newPositionFlux,
+                                     final PositionRepository newPositionRepository,
+                                     final TradeRepository newTradeRepository) {
         this.applicationContext = newApplicationContext;
         this.tradeService = newTradeService;
         this.positionService = newPositionService;
@@ -84,6 +101,8 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         this.orderFlux = newOrderFlux;
         this.tradeFlux = newTradeFlux;
         this.positionFlux = newPositionFlux;
+        this.positionRepository = newPositionRepository;
+        this.tradeRepository = newTradeRepository;
     }
 
     /**
@@ -139,6 +158,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Setting services.
         strategy.setTradeService(tradeService);
         strategy.setPositionService(positionService);
+        restoreData(strategy);
 
         // Account flux.
         final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();
@@ -147,7 +167,8 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Position flux.
         final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publish();
-        connectablePositionFlux.subscribe(strategy::positionUpdate);
+        connectablePositionFlux.subscribe(strategy::positionUpdate);        // For strategy.
+        connectablePositionFlux.subscribe(positionService::backupPosition); // For position backup.
         connectablePositionFlux.connect();
 
         // Order flux.
@@ -159,6 +180,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
         connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
         connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.
+        connectableTradeFlux.subscribe(tradeService::backupTrade);          // For trade backup.
         connectableTradeFlux.connect();
 
         // Ticker flux.
@@ -166,12 +188,79 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
         connectableTickerFlux.subscribe(strategy::tickerUpdate);            // For strategy.
         connectableTickerFlux.subscribe(positionService::tickerUpdate);     // For position service.
-        // if in dry mode, we send the ticker to the dry mode.
+        // if in dry mode, we also send the ticker to the dry mode.
         if (tradeService instanceof TradeServiceInDryMode) {
             connectableTickerFlux.subscribe(((TradeServiceInDryMode) tradeService)::tickerUpdate);
         }
-
         connectableTickerFlux.connect();
+    }
+
+    /**
+     * Restore data from database.
+     *
+     * @param strategy strategy
+     */
+    private void restoreData(final CassandreStrategyInterface strategy) {
+        // Restoring all trades.
+        final Map<String, TradeDTO> tradesByOrderId = new LinkedHashMap<>();
+        tradeRepository.findByOrderByTimestampAsc()
+                .forEach(trade -> {
+                    TradeDTO t = TradeDTO.builder()
+                            .id(trade.getId())
+                            .orderId(trade.getOrderId())
+                            .type(OrderTypeDTO.valueOf(trade.getType()))
+                            .originalAmount(trade.getOriginalAmount())
+                            .currencyPair(new CurrencyPairDTO(trade.getCurrencyPair()))
+                            .price(trade.getPrice())
+                            .timestamp(trade.getTimestamp())
+                            .feeAmount(trade.getFeeAmount())
+                            .feeCurrency(new CurrencyDTO(trade.getFeeCurrency()))
+                            .create();
+                    tradesByOrderId.put(t.getOrderId(), t);
+                    strategy.restoreTrade(t);
+                    tradeService.restoreTrade(t);
+                    tradeFlux.restoreTrade(t);
+                });
+
+        // Restoring data from databases.
+        positionRepository.findAll().forEach(position -> {
+            PositionRulesDTO rules = PositionRulesDTO.builder().create();
+            boolean stopGainRuleSet = position.getStopGainPercentageRule() != null;
+            boolean stopLossRuleSet = position.getStopLossPercentageRule() != null;
+            // Two rules set.
+            if (stopGainRuleSet && stopLossRuleSet) {
+                rules = PositionRulesDTO.builder()
+                        .stopGainPercentage(position.getStopGainPercentageRule())
+                        .stopLossPercentage(position.getStopLossPercentageRule())
+                        .create();
+            }
+            // Stop gain set.
+            if (stopGainRuleSet && !stopLossRuleSet) {
+                rules = PositionRulesDTO.builder()
+                        .stopGainPercentage(position.getStopGainPercentageRule())
+                        .create();
+            }
+            // Stop loss set.
+            if (!stopGainRuleSet && stopLossRuleSet) {
+                rules = PositionRulesDTO.builder()
+                        .stopLossPercentage(position.getStopLossPercentageRule())
+                        .create();
+            }
+            PositionDTO p = new PositionDTO(position.getId(), position.getOpenOrderId(), rules);
+            positionService.restorePosition(p);
+            // If open order is present.
+            if (tradesByOrderId.containsKey(position.getOpenOrderId())) {
+                positionService.tradeUpdate(tradesByOrderId.get(position.getOpenOrderId()));
+            }
+            if (position.getCloseOrderId() != null) {
+                p.setCloseOrderId(position.getCloseOrderId());
+                if (tradesByOrderId.containsKey(position.getCloseOrderId())) {
+                    positionService.tradeUpdate(tradesByOrderId.get(p.getCloseOrderId()));
+                }
+            }
+            strategy.restorePosition(p);
+            positionFlux.restorePosition(p);
+        });
     }
 
 }

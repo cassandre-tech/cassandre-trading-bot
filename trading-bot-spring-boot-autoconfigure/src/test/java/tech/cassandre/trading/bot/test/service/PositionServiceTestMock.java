@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -7,6 +8,7 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.PositionServiceImplementation;
@@ -23,6 +25,10 @@ import static org.mockito.Mockito.mock;
  */
 @TestConfiguration
 public class PositionServiceTestMock {
+
+    /** Position repository. */
+    @Autowired
+    private PositionRepository positionRepository;
 
     @Bean
     @Primary
@@ -45,7 +51,7 @@ public class PositionServiceTestMock {
     @Bean
     @Primary
     public PositionService positionService() {
-        return new PositionServiceImplementation(tradeService());
+        return new PositionServiceImplementation(tradeService(), positionRepository);
     }
 
     @Bean

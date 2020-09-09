@@ -23,7 +23,6 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
 /**
  * Testable strategy (used for tests).
  */
-@SuppressWarnings("unused")
 @CassandreStrategy(name = "Testable strategy")
 @ConditionalOnProperty(
         value = PARAMETER_TESTABLE_STRATEGY_ENABLED,

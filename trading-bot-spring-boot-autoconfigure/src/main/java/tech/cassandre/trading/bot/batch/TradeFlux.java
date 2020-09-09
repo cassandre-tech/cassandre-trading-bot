@@ -48,4 +48,13 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
         return newValues;
     }
 
+    /**
+     * Restore trade.
+     *
+     * @param trade trade
+     */
+    public final void restoreTrade(final TradeDTO trade) {
+        previousValues.put(trade.getId(), trade);
+    }
+
 }

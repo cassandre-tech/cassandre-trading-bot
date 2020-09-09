@@ -105,8 +105,6 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertTrue(testableStrategy.canBuy(account, cp2, new BigDecimal("0.1")));
         // Trying to buy a 0.1 bitcoin that costs 1 000 USDT (we have 2 000 USDT). But we want to have 1 000 USDT left.
         assertFalse(testableStrategy.canBuy(account, cp2, new BigDecimal("0.1"), new BigDecimal("1000")));
-
-        testableStrategy.getLastTicker().values().forEach(System.out::println);
     }
 
 }

@@ -19,6 +19,15 @@ public final class CurrencyPairDTO {
     private final CurrencyDTO quoteCurrency;
 
     /**
+     * Constructor.
+     *
+     * @param currencyPair currency pair
+     */
+    public CurrencyPairDTO(final String currencyPair) {
+        this(currencyPair.split(CURRENCY_PAIR_SEPARATOR)[0], currencyPair.split(CURRENCY_PAIR_SEPARATOR)[1]);
+    }
+
+    /**
      * Constructor with {@link CurrencyDTO}.
      *
      * @param newBaseCurrency  The base currency

@@ -55,4 +55,18 @@ public interface PositionService {
      */
     void tradeUpdate(TradeDTO trade);
 
+    /**
+     * Restore position.
+     *
+     * @param position position
+     */
+    void restorePosition(PositionDTO position);
+
+    /**
+     * Backup position.
+     *
+     * @param position position
+     */
+    void backupPosition(PositionDTO position);
+
 }

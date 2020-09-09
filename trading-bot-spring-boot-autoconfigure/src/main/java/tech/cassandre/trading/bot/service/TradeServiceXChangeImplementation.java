@@ -4,10 +4,12 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
+import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.util.base.BaseService;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -27,15 +29,25 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     /** XChange service. */
     private final org.knowm.xchange.service.trade.TradeService tradeService;
 
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
+
+    /** The trades restored from backup. */
+    private final Set<TradeDTO> tradesFromBackup = new LinkedHashSet<>();
+
     /**
      * Constructor.
      *
-     * @param rate            rate in ms
-     * @param newTradeService market data service
+     * @param rate               rate in ms
+     * @param newTradeService    market data service
+     * @param newTradeRepository new trade repository
      */
-    public TradeServiceXChangeImplementation(final long rate, final org.knowm.xchange.service.trade.TradeService newTradeService) {
+    public TradeServiceXChangeImplementation(final long rate,
+                                             final org.knowm.xchange.service.trade.TradeService newTradeService,
+                                             final TradeRepository newTradeRepository) {
         super(rate);
         this.tradeService = newTradeService;
+        this.tradeRepository = newTradeRepository;
     }
 
     /**
@@ -169,6 +181,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
             // Query 1 week of trades.
             Set<TradeDTO> results = new LinkedHashSet<>();
+            results.addAll(tradesFromBackup);
             TradeHistoryParamsAll params = new TradeHistoryParamsAll();
             Date startDate = DateUtils.addWeeks(new Date(), -1);
             Date endDate = new Date();
@@ -186,6 +199,26 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
+    }
+
+    @Override
+    public final void restoreTrade(final TradeDTO trade) {
+        tradesFromBackup.add(trade);
+    }
+
+    @Override
+    public final void backupTrade(final TradeDTO trade) {
+        Trade t = new Trade();
+        t.setId(trade.getId());
+        t.setOrderId(trade.getOrderId());
+        t.setType(trade.getType().toString());
+        t.setOriginalAmount(trade.getOriginalAmount());
+        t.setCurrencyPair(trade.getCurrencyPair().toString());
+        t.setPrice(trade.getPrice());
+        t.setTimestamp(trade.getTimestamp());
+        t.setFeeAmount(trade.getFee().getValue());
+        t.setFeeCurrency(trade.getFee().getCurrency().toString());
+        tradeRepository.save(t);
     }
 
 }

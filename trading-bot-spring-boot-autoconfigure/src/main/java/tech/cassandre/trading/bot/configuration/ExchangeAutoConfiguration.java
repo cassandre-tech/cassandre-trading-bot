@@ -5,15 +5,19 @@ import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import si.mazi.rescu.HttpStatusIOException;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.ExchangeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.MarketService;
@@ -37,6 +41,8 @@ import java.util.StringJoiner;
  * ExchangeConfiguration configures the exchange connection.
  */
 @Configuration
+@EntityScan(basePackages = "tech.cassandre.trading.bot.domain")
+@EnableJpaRepositories(basePackages = "tech.cassandre.trading.bot.repository")
 @EnableConfigurationProperties({ExchangeParameters.class,
         ExchangeParameters.Modes.class,
         ExchangeParameters.Rates.class})
@@ -84,13 +90,25 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Position flux. */
     private PositionFlux positionFlux;
 
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
+
+    /** Position repository. */
+    private final PositionRepository positionRepository;
+
     /**
      * Constructor.
      *
      * @param newExchangeParameters exchange parameters
+     * @param newTradeRepository    trade repository
+     * @param newPositionRepository position repository
      */
-    public ExchangeAutoConfiguration(final ExchangeParameters newExchangeParameters) {
+    public ExchangeAutoConfiguration(final ExchangeParameters newExchangeParameters,
+                                     final TradeRepository newTradeRepository,
+                                     final PositionRepository newPositionRepository) {
         this.exchangeParameters = newExchangeParameters;
+        this.tradeRepository = newTradeRepository;
+        this.positionRepository = newPositionRepository;
     }
 
     /**
@@ -130,8 +148,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
                 userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService);
-                positionService = new PositionServiceImplementation(tradeService);
+                tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService, tradeRepository);
+                positionService = new PositionServiceImplementation(tradeService, positionRepository);
             } else {
                 // Dry mode.
                 exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
@@ -139,7 +157,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
                 tradeServiceInDryMode = new TradeServiceInDryMode();
                 this.tradeService = tradeServiceInDryMode;
-                positionService = new PositionServiceImplementation(tradeService);
+                positionService = new PositionServiceImplementation(tradeService, positionRepository);
             }
 
             // Creates Cassandre flux.
