@@ -184,7 +184,7 @@ public class BaseTest {
      */
     protected ZonedDateTime getZonedDateTime(final String date) {
         LocalDateTime ldt = LocalDateTime.parse(date + " 00:00", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-        return ldt.atZone(ZoneId.of("Europe/Paris"));
+        return ldt.atZone(ZoneId.systemDefault());
     }
 
 }
