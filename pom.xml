@@ -56,14 +56,14 @@
 	<!-- Modules -->
 	<modules>
 		<!-- Trading bot spring boot starter -->
-		<module>trading-bot-spring-boot-autoconfigure</module>
-		<module>trading-bot-spring-boot-starter</module>
+		<module>spring-boot-starter/autoconfigure</module>
+		<module>spring-boot-starter/starter</module>
 		<!-- Trading bot spring boot starter test -->
-		<module>trading-bot-spring-boot-starter-test-autoconfigure</module>
-		<module>trading-bot-spring-boot-starter-test</module>
+		<module>spring-boot-starter-test/autoconfigure</module>
+		<module>spring-boot-starter-test/starter</module>
 		<!-- Archetypes -->
-		<module>trading-bot-spring-boot-starter-archetype</module>
-		<module>trading-bot-spring-boot-starter-basic-ta4j-archetype</module>
+		<module>archetypes/basic-archetype</module>
+		<module>archetypes/basic-ta4j-archetype</module>
 	</modules>
 	<!-- =========================================================================================================== -->
 

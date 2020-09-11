@@ -6,9 +6,9 @@
 
 	<!-- =========================================================================================================== -->
 	<!-- Project information -->
-	<artifactId>cassandre-trading-bot-spring-boot-starter-archetype</artifactId>
+	<artifactId>cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype</artifactId>
 	<packaging>maven-archetype</packaging>
-	<name>Trading bot spring boot archetype</name>
+	<name>Cassandre trading bot basic ta4j archetype</name>
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->
@@ -104,6 +104,7 @@
 		<groupId>tech.cassandre.trading.bot</groupId>
 		<artifactId>cassandre-trading-bot-project</artifactId>
 		<version>2.0.3-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<!-- =========================================================================================================== -->
 

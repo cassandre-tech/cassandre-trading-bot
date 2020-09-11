@@ -77,7 +77,7 @@
                 <configuration>
                     <excludes>**/mapper/**/*</excludes>
                     <consoleOutput>true</consoleOutput>
-                    <configLocation>${project.parent.basedir}/checkstyle_configuration.xml</configLocation>
+                    <configLocation>../../checkstyle_configuration.xml</configLocation>
                     <failOnViolation>true</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
                 </configuration>
@@ -134,6 +134,7 @@
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
         <version>2.0.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->
 
