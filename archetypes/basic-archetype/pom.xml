@@ -6,7 +6,7 @@
 
 	<!-- =========================================================================================================== -->
 	<!-- Project information -->
-	<artifactId>cassandre-trading-bot-spring-boot-starter-archetype</artifactId>
+	<artifactId>cassandre-trading-bot-spring-boot-starter-basic-archetype</artifactId>
 	<packaging>maven-archetype</packaging>
 	<name>Cassandre trading bot basic archetype</name>
 	<!-- =========================================================================================================== -->
