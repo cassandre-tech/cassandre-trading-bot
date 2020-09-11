@@ -64,19 +64,10 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 public class DatabaseTest extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private PositionService positionService;
-
-    @Autowired
     private TradeRepository tradeRepository;
 
     @Autowired
     private PositionRepository positionRepository;
-
-    @Autowired
-    private TradeFlux tradeFlux;
 
     @Test
     @DisplayName("Check trades in database")

@@ -89,13 +89,7 @@ public class PositionBackupTest extends BaseTest {
     private PositionService positionService;
 
     @Autowired
-    private TradeRepository tradeRepository;
-
-    @Autowired
     private PositionRepository positionRepository;
-
-    @Autowired
-    private TradeFlux tradeFlux;
 
     @Autowired
     private PositionFlux positionFlux;

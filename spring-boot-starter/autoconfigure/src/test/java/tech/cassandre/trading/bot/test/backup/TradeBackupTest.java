@@ -79,13 +79,7 @@ public class TradeBackupTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Autowired
-    private PositionService positionService;
-
-    @Autowired
     private TradeRepository tradeRepository;
-
-    @Autowired
-    private PositionRepository positionRepository;
 
     @Autowired
     private TradeFlux tradeFlux;

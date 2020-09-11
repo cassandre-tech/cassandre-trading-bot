@@ -70,9 +70,6 @@ public class MarketServiceTest {
     @Autowired
     private MarketService marketService;
 
-    @Autowired
-    private TickerFlux tickerFlux;
-
     @Test
     @DisplayName("get estimated buying cost")
     public void testGetEstimatedBuyingCost() {
