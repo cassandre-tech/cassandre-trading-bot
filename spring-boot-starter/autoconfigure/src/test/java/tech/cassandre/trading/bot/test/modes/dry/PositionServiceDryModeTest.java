@@ -6,6 +6,7 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
@@ -66,6 +67,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @Import(PositionServiceDryModeTestMock.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @DisplayName("positionService in dry mode")
 public class PositionServiceDryModeTest extends BaseTest {
 

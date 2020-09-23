@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -88,6 +89,11 @@ public class TickerFluxMock {
 
                         @Override
                         public Object answer(final InvocationOnMock invocationOnMock) {
+                            try {
+                                TimeUnit.SECONDS.sleep(1);
+                            } catch (InterruptedException e) {
+                                logger.debug("InterruptedException");
+                            }
                             if (tickers.hasNext()) {
                                 return Optional.of(tickers.next());
                             } else {

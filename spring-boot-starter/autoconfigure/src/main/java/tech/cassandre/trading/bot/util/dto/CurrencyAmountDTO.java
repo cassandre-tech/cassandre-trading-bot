@@ -67,7 +67,7 @@ public class CurrencyAmountDTO {
     @Override
     public final String toString() {
         if (isValueProvided()) {
-            return value + " " + currency;
+            return value.toString() + " " + currency;
         } else {
             return "Not provided";
         }

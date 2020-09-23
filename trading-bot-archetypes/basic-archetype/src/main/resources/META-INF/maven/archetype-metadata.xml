@@ -21,5 +21,11 @@
         <include>**/*.java</include>
       </includes>
     </fileSet>
+    <fileSet filtered="false" packaged="false" encoding="UTF-8">
+      <directory>src/test/resources</directory>
+      <includes>
+        <include>*.tsv</include>
+      </includes>
+    </fileSet>
   </fileSets>
 </archetype-descriptor>

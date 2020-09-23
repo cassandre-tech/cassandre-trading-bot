@@ -6,12 +6,18 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.user.BalanceDTO;
+import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
@@ -40,6 +46,7 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
@@ -66,13 +73,17 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @Import(TradeServiceDryModeTestMock.class)
-@DisplayName("tradeService in dry mode")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DisplayName("tradeService (dry mode)")
 public class TradeServiceDryModeTest extends BaseTest {
 
     private static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
     @Autowired
     private TradeService tradeService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private TickerFlux tickerFlux;

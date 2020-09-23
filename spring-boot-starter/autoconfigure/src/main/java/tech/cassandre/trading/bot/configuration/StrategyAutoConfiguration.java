@@ -19,9 +19,12 @@ import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.TradeServiceInDryMode;
+import tech.cassandre.trading.bot.service.TradeServiceDryModeImplementation;
+import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.service.UserServiceDryModeImplementation;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
+import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
@@ -46,6 +49,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
     /** Position service. */
     private final PositionService positionService;
+
+    /** User service. */
+    private final UserService userService;
 
     /** Account flux. */
     private final AccountFlux accountFlux;
@@ -72,6 +78,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      * Constructor.
      *
      * @param newApplicationContext application context
+     * @param newUserService        user service
      * @param newTradeService       trade service
      * @param newPositionService    position service
      * @param newAccountFlux        account flux
@@ -84,6 +91,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
+                                     final UserService newUserService,
                                      final TradeService newTradeService,
                                      final PositionService newPositionService,
                                      final AccountFlux newAccountFlux,
@@ -94,6 +102,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                                      final PositionRepository newPositionRepository,
                                      final TradeRepository newTradeRepository) {
         this.applicationContext = newApplicationContext;
+        this.userService = newUserService;
         this.tradeService = newTradeService;
         this.positionService = newPositionService;
         this.accountFlux = newAccountFlux;
@@ -189,10 +198,15 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         connectableTickerFlux.subscribe(strategy::tickerUpdate);            // For strategy.
         connectableTickerFlux.subscribe(positionService::tickerUpdate);     // For position service.
         // if in dry mode, we also send the ticker to the dry mode.
-        if (tradeService instanceof TradeServiceInDryMode) {
-            connectableTickerFlux.subscribe(((TradeServiceInDryMode) tradeService)::tickerUpdate);
+        if (tradeService instanceof TradeServiceDryModeImplementation) {
+            connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickerUpdate);
         }
         connectableTickerFlux.connect();
+
+        // If in dry mode, we setup dependencies.
+        if (userService instanceof UserServiceDryModeImplementation) {
+            ((UserServiceDryModeImplementation) userService).setDependencies((GenericCassandreStrategy) strategy);
+        }
     }
 
     /**

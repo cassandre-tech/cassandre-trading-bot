@@ -38,7 +38,7 @@ public class TradeServiceDryModeTestMock {
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
         given(marketService
                 .getTicker(cp1))
-                .willReturn(Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(Calendar.getInstance().getTime()).bid(new BigDecimal("0.2")).create())
+                .willReturn(Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(Calendar.getInstance().getTime()).last(new BigDecimal("0.2")).create())
                 );
         return marketService;
     }
