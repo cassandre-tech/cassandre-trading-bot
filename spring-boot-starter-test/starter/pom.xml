@@ -28,7 +28,6 @@
 			<groupId>tech.cassandre.trading.bot</groupId>
 			<artifactId>cassandre-trading-bot-spring-boot-starter-test-autoconfigure</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 	<!-- =========================================================================================================== -->

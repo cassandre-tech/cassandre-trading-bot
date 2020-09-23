@@ -30,6 +30,12 @@ public class ExchangeParameters {
     /** Secret parameter. */
     public static final String PARAMETER_SECRET = "cassandre.trading.bot.exchange.secret";
 
+    /** Proxy host. */
+    public static final String PARAMETER_PROXY_HOST = "cassandre.trading.bot.exchange.proxyHost";
+
+    /** Proxy port. */
+    public static final String PARAMETER_PROXY_PORT = "cassandre.trading.bot.exchange.proxyPort";
+
     /** Exchange name. For example : coinbase, kraken, kucoin. */
     @NotEmpty(message = "Exchange name required, for example : coinbase, kraken, kucoin...")
     private String name;
@@ -49,6 +55,12 @@ public class ExchangeParameters {
     /** API secret. */
     @NotEmpty(message = "API secret required")
     private String secret;
+
+    /** Proxy host. */
+    private String proxyHost;
+
+    /** Proxy port. */
+    private Integer proxyPort;
 
     /** Modes. */
     @Valid
@@ -321,6 +333,42 @@ public class ExchangeParameters {
      */
     public void setSecret(final String newSecret) {
         secret = newSecret;
+    }
+
+    /**
+     * Getter proxyHost.
+     *
+     * @return proxyHost
+     */
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * Setter proxyHost.
+     *
+     * @param newProxyHost the proxyHost to set
+     */
+    public void setProxyHost(final String newProxyHost) {
+        proxyHost = newProxyHost;
+    }
+
+    /**
+     * Getter proxyPort.
+     *
+     * @return proxyPort
+     */
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * Setter proxyPort.
+     *
+     * @param newProxyPort the proxyPort to set
+     */
+    public void setProxyPort(final Integer newProxyPort) {
+        proxyPort = newProxyPort;
     }
 
     /**

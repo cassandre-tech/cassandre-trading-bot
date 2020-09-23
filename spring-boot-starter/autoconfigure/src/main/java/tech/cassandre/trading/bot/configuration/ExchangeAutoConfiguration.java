@@ -131,6 +131,14 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             exchangeSpecification.setApiKey(exchangeParameters.getKey());
             exchangeSpecification.setSecretKey(exchangeParameters.getSecret());
 
+            // Specific parameters.
+            if (exchangeParameters.getProxyHost() != null) {
+                exchangeSpecification.setProxyHost(exchangeParameters.getProxyHost());
+            }
+            if (exchangeParameters.getProxyPort() != null) {
+                exchangeSpecification.setProxyPort(exchangeParameters.getProxyPort());
+            }
+
             // Creates XChange services.
             final Exchange xChangeExchange = ExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
             final AccountService xChangeAccountService = xChangeExchange.getAccountService();

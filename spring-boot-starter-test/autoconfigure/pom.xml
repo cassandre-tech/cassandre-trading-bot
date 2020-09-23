@@ -23,6 +23,7 @@
             <groupId>tech.cassandre.trading.bot</groupId>
             <artifactId>cassandre-trading-bot-spring-boot-autoconfigure</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Tests -->
