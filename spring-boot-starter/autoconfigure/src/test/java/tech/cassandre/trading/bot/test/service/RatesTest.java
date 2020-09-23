@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.service;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,27 +11,32 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TRADE;
 
 @SpringBootTest
 @DisplayName("Services - Rates")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
-		@Property(key = PARAMETER_DRY, value = "true")
+		@Property(key = PARAMETER_RATE_ACCOUNT, value = "PT10S"),	// 10 seconds.
+		@Property(key = PARAMETER_RATE_TICKER, value = "PT15S"),	// 15 seconds.
+		@Property(key = PARAMETER_RATE_TRADE, value = "PT20S")		// 20 seconds.
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@Disabled
 public class RatesTest {
 
-	private static final long WAITING_TIME = 2900;
+	private static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
 	@Autowired
 	private UserService userService;
@@ -46,7 +50,6 @@ public class RatesTest {
 	@Test
 	@DisplayName("Check account service rate")
 	public void checkAccountServiceRateTest() throws InterruptedException {
-		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
@@ -62,21 +65,19 @@ public class RatesTest {
 			numberOfCalls.incrementAndGet();
 		});
 
-		// Right after, one call must have been made.
-		Thread.sleep(WAITING_TIME);
+		// One call must have been made.
+		TimeUnit.SECONDS.sleep(9);
 		assertEquals(1, numberOfCalls.intValue());
 
-		// After waiting the rate time, we should have two calls.
-		Thread.sleep(WAITING_TIME);
+		// Second call should have been made.
+		TimeUnit.SECONDS.sleep(21);
 		assertEquals(2, numberOfCalls.intValue());
 	}
 
 	@Test
 	@DisplayName("Check market service rate")
 	public void checkMarketServiceRateTest() throws InterruptedException {
-		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
-		final CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
 
 		// Executing service calls in parallel.
 		ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -91,19 +92,18 @@ public class RatesTest {
 			numberOfCalls.incrementAndGet();
 		});
 
-		// Right after, one call must have been made.
-		Thread.sleep(WAITING_TIME);
+		// One call must have been made.
+		TimeUnit.SECONDS.sleep(14);
 		assertEquals(1, numberOfCalls.intValue());
 
-		// After waiting the rate time, we should have two calls.
-		Thread.sleep(WAITING_TIME);
+		// Second call should have been made.
+		TimeUnit.SECONDS.sleep(31);
 		assertEquals(2, numberOfCalls.intValue());
 	}
 
 	@Test
 	@DisplayName("Check trade service rate")
 	public void checkTradeServiceRateTest() throws InterruptedException {
-		Thread.sleep(3 * WAITING_TIME);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
@@ -119,12 +119,12 @@ public class RatesTest {
 			numberOfCalls.incrementAndGet();
 		});
 
-		// Right after, one call must have been made.
-		Thread.sleep(WAITING_TIME);
+		// One call must have been made.
+		TimeUnit.SECONDS.sleep(19);
 		assertEquals(1, numberOfCalls.intValue());
 
-		// After waiting the rate time, we should have two calls.
-		Thread.sleep(WAITING_TIME);
+		// Second call should have been made.
+		TimeUnit.SECONDS.sleep(41);
 		assertEquals(2, numberOfCalls.intValue());
 	}
 
