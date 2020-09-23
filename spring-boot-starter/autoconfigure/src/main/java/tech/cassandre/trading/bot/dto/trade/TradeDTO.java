@@ -18,17 +18,17 @@ import java.util.Objects;
  * last=0.034797 (Last trade field is the price set during the last trade).
  *
  * - Account before buying
- * BTC => 0.99963006
- * ETH => 10
+ * BTC : 0.99963006
+ * ETH : 10
  *
  * - Buying 0.004 Bitcoin (should costs 0.05748 ether).
- * TradeDTO{currencyPair=ETH/BTC,  originalAmount=0.004, price=0.034797}
+ * TradeDTO{currencyPair=ETH/BTC, originalAmount=0.004, price=0.034797}
  *
  * - Account after buying
- * BTC => 0.99949078
- * ETH => 10.004
+ * BTC : 0.99949078
+ * ETH : 10.004
  * It cost me 0.00013928 BTC (0.99949078 - 0.99963006).
- * price * amount => 0.034797 * 0.004
+ * price * amount = 0.034797 * 0.004
  */
 public class TradeDTO {
 
