@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.strategy;
+package tech.cassandre.trading.bot.test.strategy.mocks;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.test.util.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -36,9 +36,6 @@ import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
-/**
- * Mocks used by tests.
- */
 @SuppressWarnings("unchecked")
 @TestConfiguration
 public class BasicTa4jCassandreStrategyTestMock extends BaseTest {

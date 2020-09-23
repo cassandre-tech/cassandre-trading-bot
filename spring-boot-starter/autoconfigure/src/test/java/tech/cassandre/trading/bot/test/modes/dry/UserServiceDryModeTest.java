@@ -2,7 +2,6 @@ package tech.cassandre.trading.bot.test.modes.dry;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -18,8 +17,11 @@ import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.test.util.BaseTest;
-import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.modes.dry.mocks.TradeServiceDryModeTestMock;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -33,51 +35,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_NAME_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_PASSPHRASE_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_ACCOUNT_LONG_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TICKER_LONG_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TRADE_LONG_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SANDBOX_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SECRET_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.EUR;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SECRET;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_USERNAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ORDER;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 
-@SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_DRY, value = "true")
-@SetSystemProperty(key = PARAMETER_USERNAME, value = PARAMETER_USERNAME_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_PASSPHRASE, value = PARAMETER_PASSPHRASE_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_KEY, value = PARAMETER_KEY_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_SECRET, value = PARAMETER_SECRET_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ACCOUNT, value = PARAMETER_RATE_ACCOUNT_LONG_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_TICKER, value = PARAMETER_RATE_TICKER_LONG_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ORDER, value = PARAMETER_RATE_TRADE_LONG_VALUE)
-@SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
 @SpringBootTest
+@DisplayName("Dry mode - User service")
 @ActiveProfiles("schedule-disabled")
-@Import(TradeServiceDryModeTestMock.class)
+@Configuration({
+        @Property(key = PARAMETER_DRY, value = "true")
+})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@DisplayName("userService (dry mode)")
+@Import(TradeServiceDryModeTestMock.class)
 public class UserServiceDryModeTest extends BaseTest {
 
     private static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
@@ -98,8 +69,8 @@ public class UserServiceDryModeTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("Import user data")
-    public void importUserDataTest() {
+    @DisplayName("Check imported user data")
+    public void checkImportUserDataTest() {
         // Retrieve user.
         final Optional<UserDTO> user = userService.getUser();
         assertTrue(user.isPresent());
@@ -131,8 +102,8 @@ public class UserServiceDryModeTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Account update test")
-    public void accountUpdateTest() {
+    @DisplayName("Check balances updates")
+    public void checkBalancesUpdate() {
         // We retrieve the account information in the strategy.
         assertTrue(strategy.getAccountsUpdatesReceived().isEmpty());
         accountFlux.update();
@@ -269,8 +240,8 @@ public class UserServiceDryModeTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Buying error")
-    public void buyingError() {
+    @DisplayName("Check buying error")
+    public void checkBuyingError() {
         // =============================================================================================================
         // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032661 BTC.
         // last = 0.032661 (Last trade field is the price set during the last trade)
@@ -315,8 +286,8 @@ public class UserServiceDryModeTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Selling error")
-    public void sellingError() {
+    @DisplayName("Check selling error")
+    public void CheckSellingError() {
         // =============================================================================================================
         // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032661 BTC.
         // last = 0.032661 (Last trade field is the price set during the last trade)

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.service;
+package tech.cassandre.trading.bot.test.service.mocks;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -14,19 +14,16 @@ import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.PositionServiceImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.test.service.PositionServiceTest;
 
 import java.math.BigDecimal;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-/**
- * Mocks used by tests.
- */
 @TestConfiguration
 public class PositionServiceTestMock {
 
-    /** Position repository. */
     @Autowired
     private PositionRepository positionRepository;
 

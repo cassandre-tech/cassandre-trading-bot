@@ -15,13 +15,13 @@ import java.time.ZonedDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@DisplayName("Order DTO")
+@DisplayName("DTO - OrderDTO")
 public class OrderDTOTest {
 
 	@Test
 	@SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength" })
-	@DisplayName("EqualTo")
-	public void equalToForOrder() {
+	@DisplayName("Check equalTo")
+	public void checkEqualToForOrder() {
 		// Currency pairs.
 		final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
 		final CurrencyPairDTO cp2 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT);

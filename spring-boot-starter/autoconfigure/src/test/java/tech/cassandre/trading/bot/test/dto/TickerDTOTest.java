@@ -15,12 +15,12 @@ import java.text.SimpleDateFormat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@DisplayName("Ticker DTO")
+@DisplayName("DTO - TickerDTO")
 public class TickerDTOTest {
 
 	@Test
-	@DisplayName("EqualTo")
-	public void equalToForTickers() throws ParseException {
+	@DisplayName("Check equalTo")
+	public void checkEqualToForTickers() throws ParseException {
 		// Currency pairs.
 		final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
 		final CurrencyPairDTO cp2 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT);
@@ -50,8 +50,8 @@ public class TickerDTOTest {
 	}
 
 	@Test
-	@DisplayName("Builder with String and epoch")
-	public void builderWithStringAndEpoch() {
+	@DisplayName("Check builder with String and epoch")
+	public void checkBuilderWithStringAndEpoch() {
 		TickerDTO t01 = TickerDTO.builder()
 				.last("0.1")
 				.ask("0.2")

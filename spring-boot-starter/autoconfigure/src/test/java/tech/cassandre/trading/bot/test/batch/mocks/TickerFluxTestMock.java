@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.test.batch.mocks;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +9,7 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.test.util.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
@@ -22,9 +22,6 @@ import java.util.Optional;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-/**
- * Mocks used by tests.
- */
 @TestConfiguration
 public class TickerFluxTestMock extends BaseTest {
 

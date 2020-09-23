@@ -43,8 +43,8 @@ public class MarketServiceTest {
     private MarketService marketService;
 
     @Test
-    @DisplayName("Get ticker")
-    public void testGetTicker() {
+    @DisplayName("Check get ticker")
+    public void checkGetTicker() {
         CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
         Optional<TickerDTO> result = marketService.getTicker(cp);
         assertTrue(result.isPresent());

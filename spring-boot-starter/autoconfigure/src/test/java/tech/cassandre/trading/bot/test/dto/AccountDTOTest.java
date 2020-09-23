@@ -13,12 +13,12 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@DisplayName("Account DTO")
+@DisplayName("DTO - AccountDTO")
 public class AccountDTOTest {
 
 	@Test
-	@DisplayName("EqualTo on account id & name")
-	public void equalToForAccountIdAndName() {
+	@DisplayName("Check equalTo on account id & name")
+	public void checkEqualToForAccountIdAndName() {
 		// Account 1 (null).
 		AccountDTO account1 = AccountDTO.builder().id(null).name(null).balances(null).create();
 		// Account 2.
@@ -40,8 +40,8 @@ public class AccountDTOTest {
 	}
 
 	@Test
-	@DisplayName("EqualTo on balances list")
-	public void equalToForBalancesList() {
+	@DisplayName("Check equalTo on balances list")
+	public void checkEqualToForBalancesList() {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
 		// Account 1 - No balances.
@@ -79,8 +79,8 @@ public class AccountDTOTest {
 
 	@Test
 	@SuppressWarnings("checkstyle:MethodLength")
-	@DisplayName("EqualTo on balances values")
-	public void equalToForBalancesValues() {
+	@DisplayName("Check equalTo on balances values")
+	public void checkEqualToForBalancesValues() {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
 		// Account 1 .

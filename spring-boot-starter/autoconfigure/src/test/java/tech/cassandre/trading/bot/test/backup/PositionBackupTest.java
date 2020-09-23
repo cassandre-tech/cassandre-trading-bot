@@ -2,22 +2,22 @@ package tech.cassandre.trading.bot.test.backup;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.PositionFlux;
-import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.test.util.BaseTest;
-import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.backup.mocks.PositionBackupMock;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -33,54 +33,20 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_NAME_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_PASSPHRASE_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TICKER_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TRADE_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SANDBOX_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SECRET_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SECRET;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_USERNAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ORDER;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 
-@SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_DRY, value = "false")
-@SetSystemProperty(key = PARAMETER_USERNAME, value = PARAMETER_USERNAME_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_PASSPHRASE, value = PARAMETER_PASSPHRASE_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_KEY, value = PARAMETER_KEY_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_SECRET, value = PARAMETER_SECRET_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ACCOUNT, value = PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_TICKER, value = PARAMETER_RATE_TICKER_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ORDER, value = PARAMETER_RATE_TRADE_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
-@SetSystemProperty(key = "spring.datasource.data", value = "classpath:/backup.sql")
-@SetSystemProperty(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
 @SpringBootTest
-@Import(PositionBackupMock.class)
+@DisplayName("Backup - Positions")
+@Configuration({
+        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
+        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
+})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@DisplayName("Backup (positions)")
+@Import(PositionBackupMock.class)
 public class PositionBackupTest extends BaseTest {
 
-    /** Currency pair 1 used for test. */
-    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+    public static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
     @Autowired
     private TestableCassandreStrategy strategy;
@@ -174,7 +140,7 @@ public class PositionBackupTest extends BaseTest {
         // Add a position.
         long positionCount = positionRepository.count();
         PositionRulesDTO rules = PositionRulesDTO.builder().stopGainPercentage(1).stopLossPercentage(2).create();
-        PositionCreationResultDTO creationResult1 = positionService.createPosition(cp1, new BigDecimal("0.0001"), rules);
+        PositionCreationResultDTO creationResult1 = positionService.createPosition(cp, new BigDecimal("0.0001"), rules);
         assertTrue(creationResult1.isSuccessful());
         assertEquals("ORDER00010", creationResult1.getOrderId());
 
@@ -190,7 +156,7 @@ public class PositionBackupTest extends BaseTest {
 
         // =============================================================================================================
         // Add another position.
-        PositionCreationResultDTO creationResult2 = positionService.createPosition(cp1, new BigDecimal("0.0002"), PositionRulesDTO.builder().create());
+        PositionCreationResultDTO creationResult2 = positionService.createPosition(cp, new BigDecimal("0.0002"), PositionRulesDTO.builder().create());
         assertTrue(creationResult2.isSuccessful());
         assertEquals("ORDER00020", creationResult2.getOrderId());
 

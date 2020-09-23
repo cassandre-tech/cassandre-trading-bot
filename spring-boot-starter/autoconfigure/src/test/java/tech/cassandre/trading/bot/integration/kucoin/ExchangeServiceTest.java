@@ -38,8 +38,8 @@ public class ExchangeServiceTest {
 	private ExchangeService exchangeService;
 
 	@Test
-	@DisplayName("Get available currency pairs")
-	public void testGetAvailableCurrencyPairs() {
+	@DisplayName("Check get available currency pairs")
+	public void checkGetAvailableCurrencyPairs() {
 		// Expected values.
 		final int expectedMinimumNumberOfAvailableCurrencyPairs = 4;
 

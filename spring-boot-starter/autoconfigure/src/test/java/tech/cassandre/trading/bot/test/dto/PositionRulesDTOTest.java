@@ -8,15 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * PositionRulesDTO test.
- */
-@DisplayName("PositionRules DTO")
+@DisplayName("DTO - PositionRulesDTO")
 public class PositionRulesDTOTest {
 
     @Test
-    @DisplayName("No rules & toString()")
-    public void noRules() {
+    @DisplayName("Check no rules & toString()")
+    public void checkNoRules() {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder().create();
         // Tests.
@@ -26,8 +23,8 @@ public class PositionRulesDTOTest {
     }
 
     @Test
-    @DisplayName("Stop gain rule & toString()")
-    public void stopGainRule() {
+    @DisplayName("Check stop gain rule & toString()")
+    public void checkStopGainRule() {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopGainPercentage(1f)
@@ -39,8 +36,8 @@ public class PositionRulesDTOTest {
     }
 
     @Test
-    @DisplayName("Stop loss rule & toString()")
-    public void stopLossRule() {
+    @DisplayName("Check stop loss rule & toString()")
+    public void checkStopLossRule() {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopLossPercentage(2f)
@@ -52,8 +49,8 @@ public class PositionRulesDTOTest {
     }
 
     @Test
-    @DisplayName("All rules & toString()")
-    public void allRules() {
+    @DisplayName("Check tll rules & toString()")
+    public void checkAllRules() {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopGainPercentage(10f)

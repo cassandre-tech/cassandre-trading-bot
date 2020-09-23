@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.util;
+package tech.cassandre.trading.bot.test.util.junit;
 
 import org.awaitility.Awaitility;
 import org.slf4j.Logger;
@@ -36,52 +36,7 @@ public class BaseTest {
     /** Testable ta4j strategy enabled parameter. */
     public static final String PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED = "testableTa4jStrategy.enabled";
 
-    /** Testable strategy enabled parameter. */
-    public static final String PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE = "true";
-
-    /** Invalid strategy enabled parameter. */
-    public static final String PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE = "false";
-
-    /** Exchange name parameter. */
-    public static final String PARAMETER_NAME_DEFAULT_VALUE = "kucoin";
-
-    /** Sandbox parameter. */
-    public static final String PARAMETER_SANDBOX_DEFAULT_VALUE = "true";
-
-    /** Dry parameter. */
-    public static final String PARAMETER_DRY_DEFAULT_VALUE = "false";
-
-    /** Username parameter. */
-    public static final String PARAMETER_USERNAME_DEFAULT_VALUE = "cassandre.crypto.bot@gmail.com";
-
-    /** Passphrase parameter. */
-    public static final String PARAMETER_PASSPHRASE_DEFAULT_VALUE = "cassandre";
-
-    /** Key parameter. */
-    public static final String PARAMETER_KEY_DEFAULT_VALUE = "5df8eea30092f40009cb3c6a";
-
-    /** Secret parameter. */
-    public static final String PARAMETER_SECRET_DEFAULT_VALUE = "5f6e91e0-796b-4947-b75e-eaa5c06b6bed";
-
-    /** Rate for account parameter. */
-    public static final String PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE = "100";
-
-    /** Rate for account parameter (long value). */
-    public static final String PARAMETER_RATE_ACCOUNT_LONG_VALUE = "PT5S";
-
-    /** Rate for ticker parameter. */
-    public static final String PARAMETER_RATE_TICKER_DEFAULT_VALUE = "101";
-
-    /** Rate for ticker parameter (long value). */
-    public static final String PARAMETER_RATE_TICKER_LONG_VALUE = "PT5S";
-
-    /** Rate for trade parameter. */
-    public static final String PARAMETER_RATE_TRADE_DEFAULT_VALUE = "102";
-
-    /** Rate for trade parameter (long value). */
-    public static final String PARAMETER_RATE_TRADE_LONG_VALUE = "PT5S";
-
-    /** How much we should wait for tests until it ends. */
+    /** How much we should wait for tests until it is declared as failed. */
     protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
 
     /** Logger. */
@@ -178,11 +133,11 @@ public class BaseTest {
 
 
     /**
-     * Returns ZonedDateTime.
+     * Generates a ZonedDateTime.
      * @param date date with format dd-MM-yyyy
      * @return ZonedDateTime
      */
-    protected ZonedDateTime getZonedDateTime(final String date) {
+    protected ZonedDateTime createZonedDateTime(final String date) {
         LocalDateTime ldt = LocalDateTime.parse(date + " 00:00", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
         return ldt.atZone(ZoneId.systemDefault());
     }

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.util.strategy;
+package tech.cassandre.trading.bot.test.util.strategies;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
@@ -66,7 +66,7 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
     @Override
     public Strategy getStrategy() {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(getSeries());
-        SMAIndicator sma = new SMAIndicator(closePrice, 3); // On 3 days.
+        SMAIndicator sma = new SMAIndicator(closePrice, 3);
         return new BaseStrategy(new UnderIndicatorRule(sma, closePrice), new OverIndicatorRule(sma, closePrice));
     }
 

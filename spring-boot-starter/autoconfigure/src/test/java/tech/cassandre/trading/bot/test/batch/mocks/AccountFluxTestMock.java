@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.test.batch.mocks;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -25,9 +25,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 
-/**
- * Mocks used by tests.
- */
 @TestConfiguration
 public class AccountFluxTestMock {
 

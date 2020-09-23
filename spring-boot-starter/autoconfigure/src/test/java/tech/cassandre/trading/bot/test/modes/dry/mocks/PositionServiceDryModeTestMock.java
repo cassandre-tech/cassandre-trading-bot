@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.modes.dry;
+package tech.cassandre.trading.bot.test.modes.dry.mocks;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.test.util.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -18,9 +18,7 @@ import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
-/**
- * Mocks used by tests.
- */
+@SuppressWarnings("unchecked")
 @TestConfiguration
 public class PositionServiceDryModeTestMock extends BaseTest {
 

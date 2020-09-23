@@ -11,7 +11,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.util.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -56,8 +56,8 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Creates a buy / sell market order")
-    public void testCreateBuySellMarketOrder() {
+    @DisplayName("Check creates a buy / sell market order")
+    public void checkCreateBuySellMarketOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
         // =============================================================================================================
@@ -83,8 +83,8 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Creates a buy limit order")
-    public void testCreateBuyLimitOrder() {
+    @DisplayName("Check creates a buy limit order")
+    public void checkCreateBuyLimitOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
         // =============================================================================================================
@@ -123,8 +123,8 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Cancel an order")
-    public void testCancelOrder() {
+    @DisplayName("Check cancel an order")
+    public void checkCancelOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
         // Making a buy limit order (Buy 0.0001 ETH).
@@ -145,8 +145,8 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Get trades")
-    public void testGetTrades() {
+    @DisplayName("Check get trades")
+    public void checkGetTrades() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
         // Creates two orders of the same amount (one buy, one sell).

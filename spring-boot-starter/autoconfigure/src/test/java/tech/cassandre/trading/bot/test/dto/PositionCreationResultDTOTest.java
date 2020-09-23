@@ -8,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("PositionCreationResult DTO")
+@DisplayName("DTO - PositionCreationResultDTO")
 public class PositionCreationResultDTOTest {
 
     @Test
-    @DisplayName("successful position creation")
-    public void successfulPositionCreation() {
+    @DisplayName("Check successful position creation")
+    public void checkSuccessfulPositionCreation() {
         final PositionCreationResultDTO p = new PositionCreationResultDTO(1, "2");
         assertEquals(1, p.getPositionId());
         assertEquals("2", p.getOrderId());
@@ -21,8 +21,8 @@ public class PositionCreationResultDTOTest {
     }
 
     @Test
-    @DisplayName("unsuccessful position creation")
-    public void unsuccessfulPositionCreation() {
+    @DisplayName("Check unsuccessful position creation")
+    public void checkUnsuccessfulPositionCreation() {
         final PositionCreationResultDTO p = new PositionCreationResultDTO("Error message", new RuntimeException("Exception"));
         assertEquals("Error message", p.getErrorMessage());
         assertEquals(RuntimeException.class, p.getException().getClass());

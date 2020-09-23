@@ -2,66 +2,32 @@ package tech.cassandre.trading.bot.test.backup;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.test.util.BaseTest;
-import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_KEY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_NAME_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_PASSPHRASE_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TICKER_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_RATE_TRADE_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SANDBOX_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_SECRET_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_USERNAME_DEFAULT_VALUE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_SANDBOX;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_KEY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PASSPHRASE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_SECRET;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_USERNAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ORDER;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 
-@SetSystemProperty(key = PARAMETER_NAME, value = PARAMETER_NAME_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_SANDBOX, value = PARAMETER_SANDBOX_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_DRY, value = "false")
-@SetSystemProperty(key = PARAMETER_USERNAME, value = PARAMETER_USERNAME_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_PASSPHRASE, value = PARAMETER_PASSPHRASE_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_KEY, value = PARAMETER_KEY_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_SECRET, value = PARAMETER_SECRET_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ACCOUNT, value = PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_TICKER, value = PARAMETER_RATE_TICKER_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_RATE_ORDER, value = PARAMETER_RATE_TRADE_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE)
-@SetSystemProperty(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE)
-@SetSystemProperty(key = "spring.datasource.data", value = "classpath:/backup.sql")
-@SetSystemProperty(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
+
 @SpringBootTest
+@DisplayName("Backup - Imported data")
+@Configuration({
+        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
+        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
+})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@DisplayName("Backup (database)")
-public class DatabaseTest extends BaseTest {
+public class ImportedDataTest extends BaseTest {
 
     @Autowired
     private TradeRepository tradeRepository;
@@ -70,8 +36,8 @@ public class DatabaseTest extends BaseTest {
     private PositionRepository positionRepository;
 
     @Test
-    @DisplayName("Check trades in database")
-    public void checkTradesInDatabase() {
+    @DisplayName("Check trades from imported data")
+    public void checkImportedTrades() {
         // Trades.
         final Iterator<Trade> trades = tradeRepository.findByOrderByTimestampAsc().iterator();
         assertEquals(5, tradeRepository.count());
@@ -84,7 +50,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals("BACKUP_OPEN_ORDER_02", t.getOrderId());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("12")));
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("13")));
-        assertEquals(getZonedDateTime("01-08-2020"), t.getTimestamp());
+        assertEquals(createZonedDateTime("01-08-2020"), t.getTimestamp());
         assertEquals("BID", t.getType());
         // Trade 02.
         t = trades.next();
@@ -95,7 +61,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals("BACKUP_OPEN_ORDER_03", t.getOrderId());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("22")));
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("23")));
-        assertEquals(getZonedDateTime("02-08-2020"), t.getTimestamp());
+        assertEquals(createZonedDateTime("02-08-2020"), t.getTimestamp());
         assertEquals("BID", t.getType());
         // Trade 03.
         t = trades.next();
@@ -106,7 +72,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals("BACKUP_OPEN_ORDER_04", t.getOrderId());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("32")));
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("33")));
-        assertEquals(getZonedDateTime("03-08-2020"), t.getTimestamp());
+        assertEquals(createZonedDateTime("03-08-2020"), t.getTimestamp());
         assertEquals("BID", t.getType());
         // Trade 04.
         t = trades.next();
@@ -117,7 +83,7 @@ public class DatabaseTest extends BaseTest {
         assertEquals("BACKUP_OPEN_ORDER_05", t.getOrderId());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("42")));
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("43")));
-        assertEquals(getZonedDateTime("04-08-2020"), t.getTimestamp());
+        assertEquals(createZonedDateTime("04-08-2020"), t.getTimestamp());
         assertEquals("ASK", t.getType());
         // Trade 05.
         t = trades.next();
@@ -128,13 +94,13 @@ public class DatabaseTest extends BaseTest {
         assertEquals("TEMP", t.getOrderId());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("52")));
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("53")));
-        assertEquals(getZonedDateTime("05-08-2020"), t.getTimestamp());
+        assertEquals(createZonedDateTime("05-08-2020"), t.getTimestamp());
         assertEquals("ASK", t.getType());
     }
 
     @Test
-    @DisplayName("Check positions in database")
-    public void checkPositionsInDatabase() {
+    @DisplayName("Check positions from imported data")
+    public void checkImportedPositions() {
         // Positions.
         final Iterator<Position> positions = positionRepository.findAll().iterator();
         assertEquals(6, positionRepository.count());

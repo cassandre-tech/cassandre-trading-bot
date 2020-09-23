@@ -145,7 +145,7 @@ public class ExchangeParameters {
         public static final String PARAMETER_RATE_TICKER = "cassandre.trading.bot.exchange.rates.ticker";
 
         /** Rate for order parameter. */
-        public static final String PARAMETER_RATE_ORDER = "cassandre.trading.bot.exchange.rates.trade";
+        public static final String PARAMETER_RATE_TRADE = "cassandre.trading.bot.exchange.rates.trade";
 
         /** Delay between calls to account API. */
         @NotNull(message = "Delay between calls to account API is mandatory")

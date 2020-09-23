@@ -25,21 +25,18 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
 
-@DisplayName("Position DTO")
+@DisplayName("DTO - PositionDTO")
 public class PositionDTOTest {
 
-    /** Currency pair used for test. */
     private final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
-    /** Amount used for test. */
     private final BigDecimal amount = new BigDecimal("0.0001");
 
-    /** Empty rules. */
     private final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
 
     @Test
-    @DisplayName("Testing status change")
-    public void statusChange() {
+    @DisplayName("Check testing status change")
+    public void checkStatusChange() {
         // We create a position that was opened with the order O000001.
         PositionDTO p = new PositionDTO(1, "O000001", noRules);
 
@@ -87,8 +84,8 @@ public class PositionDTOTest {
     }
 
     @Test
-    @DisplayName("Close order update limited to OPENED position")
-    public void closeOrderIdUpdate() {
+    @DisplayName("Check that close order update limited to OPENED position")
+    public void checkCloseOrderIdUpdate() {
         // We create a position that was opened with the order O000001.
         PositionDTO p = new PositionDTO(1, "O000001", noRules);
 
@@ -114,8 +111,8 @@ public class PositionDTOTest {
     }
 
     @Test
-    @DisplayName("Position should be closed (max gain rules)")
-    public void shouldBeClosedWithGainRules() {
+    @DisplayName("Check that position should be closed (max gain rules)")
+    public void checkShouldBeClosedWithGainRules() {
         // Position 1.
         // Rule : 70% gain.
         PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopGainPercentage(70).create());
@@ -148,8 +145,8 @@ public class PositionDTOTest {
     }
 
     @Test
-    @DisplayName("Position should be closed (max lost rules)")
-    public void shouldBeClosedWithLostRules() {
+    @DisplayName("Check that position should be closed (max lost rules)")
+    public void checkShouldBeClosedWithLostRules() {
         // Position 1.
         // Rule : 70% loss.
         PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopLossPercentage(70).create());
@@ -182,8 +179,8 @@ public class PositionDTOTest {
     }
 
     @Test
-    @DisplayName("EqualTo")
-    public void equalTo() {
+    @DisplayName("Check equalTo")
+    public void checkEqualTo() {
         PositionDTO p1 = new PositionDTO(1, "O000001", noRules);
         PositionDTO p1Bis = new PositionDTO(1, "O000001", noRules);
         PositionDTO p2 = new PositionDTO(2, "O000002", noRules);
@@ -201,8 +198,8 @@ public class PositionDTOTest {
     }
 
     @Test
-    @DisplayName("get positive position gain")
-    public void getPositivePositionGain() {
+    @DisplayName("Check get positive position gain")
+    public void checkGetPositivePositionGain() {
         // Position 1.
         // Rule : 10% gain.
         PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopGainPercentage(10).create());
@@ -249,8 +246,8 @@ public class PositionDTOTest {
     }
 
     @Test
-    @DisplayName("get negative position gain")
-    public void getNegativePositionGain() {
+    @DisplayName("Check get negative position gain")
+    public void checkGetNegativePositionGain() {
         // Position 1.
         // Rule : 10% lost.
         PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopLossPercentage(10).create());
