@@ -19,6 +19,7 @@ import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -213,19 +214,19 @@ public class PositionServiceTest extends BaseTest {
 
         // A first ticker arrives with a gain of 100% but for the wrong CP.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).ask(new BigDecimal("0.5")).create());
-        Thread.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
 
         // A second ticker arrives with a gain of 50%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).ask(new BigDecimal("0.3")).create());
-        Thread.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
 
         // A third ticker arrives with a gain of 100%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).ask(new BigDecimal("0.5")).create());
-        Thread.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSING, positionService.getPositionById(1).get().getStatus());
 

@@ -24,6 +24,7 @@ import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -150,7 +151,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(ASK, trade02.get().getType());
 
         // Testing retrieve methods.
-        Thread.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertEquals(2, tradeService.getOpenOrders().size());
         assertFalse(tradeService.getOpenOrderByOrderId("NON_EXISTING").isPresent());
         assertTrue(tradeService.getOpenOrderByOrderId(orderId01).isPresent());

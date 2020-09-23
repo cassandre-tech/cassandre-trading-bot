@@ -18,6 +18,7 @@ import tech.cassandre.trading.bot.test.util.strategy.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -141,7 +142,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        Thread.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -153,7 +154,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        Thread.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -165,7 +166,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        Thread.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());

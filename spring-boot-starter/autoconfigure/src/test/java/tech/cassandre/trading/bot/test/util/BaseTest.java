@@ -25,7 +25,7 @@ import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 public class BaseTest {
 
     /** Ten seconds wait. */
-    protected static final long TEN_SECONDS = 10000L;
+    protected static final long TEN_SECONDS = 10L;
 
     /** Invalid strategy enabled parameter. */
     public static final String PARAMETER_INVALID_STRATEGY_ENABLED = "invalidStrategy.enabled";

@@ -17,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 
@@ -28,9 +29,6 @@ import static tech.cassandre.trading.bot.test.util.BaseTest.PARAMETER_TESTABLE_S
         value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
         havingValue = "true")
 public class TestableCassandreStrategy extends BasicCassandreStrategy {
-
-    /** Method duration. */
-    private static final long METHOD_DURATION = 1000;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -63,9 +61,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         accountsUpdateReceived.add(account);
         logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account);
         try {
-            Thread.sleep(METHOD_DURATION);
+            TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.debug("InterruptedException");
         }
     }
 
@@ -74,9 +72,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         tickersUpdateReceived.add(ticker);
         logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker);
         try {
-            Thread.sleep(METHOD_DURATION);
+            TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.debug("InterruptedException");
         }
     }
 
@@ -85,9 +83,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         ordersUpdateReceived.add(order);
         logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order);
         try {
-            Thread.sleep(METHOD_DURATION);
+            TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.debug("InterruptedException");
         }
     }
 
@@ -96,9 +94,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         tradesUpdateReceived.add(trade);
         logger.info("TestableStrategy-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade);
         try {
-            Thread.sleep(METHOD_DURATION);
+            TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.debug("InterruptedException");
         }
     }
 
@@ -107,9 +105,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         positionsUpdateReceived.add(position);
         logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position);
         try {
-            Thread.sleep(METHOD_DURATION);
+            TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.debug("InterruptedException");
         }
     }
 
