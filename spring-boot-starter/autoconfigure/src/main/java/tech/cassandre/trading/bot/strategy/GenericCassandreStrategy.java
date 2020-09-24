@@ -232,15 +232,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
                                  final BigDecimal minimumBalanceAfter) {
         // We get the amount.
         final Optional<BalanceDTO> balance = account.getBalance(currency);
-        if (balance.isPresent()) {
-            // public int compareTo(BigDecimal bg) returns
-            // 1 : if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
-            return balance.get().getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) > 0
-                    || balance.get().getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) == 0;
-        } else {
-            // If the is no balance in this currency, we can't buy.
-            return false;
-        }
+        // public int compareTo(BigDecimal bg) returns
+        // 1 : if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
+        // If the is no balance in this currency, we can't buy.
+        return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) > 0
+                || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) == 0).isPresent();
     }
 
 }

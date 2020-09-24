@@ -180,8 +180,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             getBucket().asScheduler().consume(1);
 
             // Query 1 week of trades.
-            Set<TradeDTO> results = new LinkedHashSet<>();
-            results.addAll(tradesFromBackup);
+            Set<TradeDTO> results = new LinkedHashSet<>(tradesFromBackup);
             TradeHistoryParamsAll params = new TradeHistoryParamsAll();
             Date startDate = DateUtils.addWeeks(new Date(), -1);
             Date endDate = new Date();

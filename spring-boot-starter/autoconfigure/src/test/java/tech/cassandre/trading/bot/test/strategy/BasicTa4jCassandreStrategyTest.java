@@ -63,6 +63,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         assertNotNull(strategy.getPositionService());
 
         // Check getEstimatedBuyingCost()
+        assertTrue(strategy.getEstimatedBuyingCost(cp, new BigDecimal(3)).isPresent());
         assertEquals(0, new BigDecimal("390").compareTo(strategy.getEstimatedBuyingCost(cp, new BigDecimal(3)).get().getValue()));
 
         // Test for simplified canBuy() & canSell().

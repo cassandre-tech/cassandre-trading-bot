@@ -63,6 +63,7 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertNotNull(strategy.getPositionService());
 
         // Check getEstimatedBuyingCost()
+        assertTrue(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).isPresent());
         assertEquals(0, new BigDecimal("12").compareTo(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).get().getValue()));
 
         // Test canBuy() & canSell().

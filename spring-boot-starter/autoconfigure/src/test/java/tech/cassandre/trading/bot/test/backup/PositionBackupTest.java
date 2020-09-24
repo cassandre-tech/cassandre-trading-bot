@@ -180,6 +180,7 @@ public class PositionBackupTest extends BaseTest {
         positionDTO2.get().setCloseOrderId("CLOSE_ORDER_FOR_POSITION_2");
         assertEquals(CLOSING, positionDTO2.get().getStatus());
         positionFlux.emitValue(positionDTO2.get());
+        assertTrue(positionRepository.findById(2L).isPresent());
         await().untilAsserted(() -> assertEquals("CLOSE_ORDER_FOR_POSITION_2", positionRepository.findById(2L).get().getCloseOrderId()));
     }
 

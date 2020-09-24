@@ -1,6 +1,5 @@
 -- =====================================================================================================================
 -- Insert trades.
-DELETE FROM TRADES;
 INSERT INTO TRADES(ID, CURRENCY_PAIR, FEE_AMOUNT, FEE_CURRENCY, ORDER_ID, ORIGINAL_AMOUNT, PRICE, ORDER_TIMESTAMP, ORDER_TYPE)
 VALUES  ('BACKUP_TRADE_00', 'ETH/USD', 51, 'USD', 'TEMP', 52, 53, DATE '2020-08-05', 'ASK'),                    -- Useless.
         ('BACKUP_TRADE_01', 'BTC/USDT', 11, 'USDT', 'BACKUP_OPEN_ORDER_02', 12, 13, DATE '2020-08-01', 'BID'),  -- Set trade 2 to opened.
@@ -10,7 +9,6 @@ VALUES  ('BACKUP_TRADE_00', 'ETH/USD', 51, 'USD', 'TEMP', 52, 53, DATE '2020-08-
 
 -- =====================================================================================================================
 -- Insert positions.
-DELETE FROM POSITIONS;
 INSERT INTO POSITIONS(ID, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, OPEN_ORDER_ID, CLOSE_ORDER_ID)
 VALUES  (5, 51, 52,  'BACKUP_OPEN_ORDER_51', null),                     -- Useless position.
         (6, 61, 62,  'BACKUP_OPEN_ORDER_61', null),                     -- Useless position.

@@ -35,7 +35,6 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.SYP;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USD;
 
 @SpringBootTest
