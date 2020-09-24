@@ -194,7 +194,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
             // If there is no way to calculate the price for the moment (no ticker).
             return estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
                     .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter))
-                    .compareTo(BigDecimal.ZERO) > 0).isPresent();
+                    .compareTo(BigDecimal.ZERO) > 0).isPresent() || estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
+                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter))
+                    .compareTo(BigDecimal.ZERO) == 0).isPresent();
         } else {
             // If the is no balance in this currency, we can't buy.
             return false;
@@ -202,7 +204,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     /**
-     * Returns true if we have enough assets to semm.
+     * Returns true if we have enough assets to sell.
      *
      * @param account  account
      * @param currency currency pair
@@ -210,8 +212,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return true if we there is enough money to buy
      */
     public final boolean canSell(final AccountDTO account,
-                                final CurrencyDTO currency,
-                                final BigDecimal amount) {
+                                 final CurrencyDTO currency,
+                                 final BigDecimal amount) {
         return canSell(account, currency, amount, BigDecimal.ZERO);
     }
 
@@ -233,10 +235,12 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         if (balance.isPresent()) {
             // public int compareTo(BigDecimal bg) returns
             // 1 : if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
-            return balance.get().getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) > 0;
+            return balance.get().getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) > 0
+                    || balance.get().getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) == 0;
         } else {
             // If the is no balance in this currency, we can't buy.
             return false;
         }
     }
+
 }

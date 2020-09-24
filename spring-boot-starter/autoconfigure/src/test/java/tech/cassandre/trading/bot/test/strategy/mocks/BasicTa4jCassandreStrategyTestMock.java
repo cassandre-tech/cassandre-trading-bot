@@ -100,6 +100,8 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         // Account 03.
         BalanceDTO account03Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
         balances.put(BTC, account03Balance1);
+        BalanceDTO account03Balance2 = BalanceDTO.builder().available(new BigDecimal("150")).create();
+        balances.put(USDT, account03Balance2);
         AccountDTO account03 = AccountDTO.builder().id("03").balances(balances).create();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();

@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -134,7 +135,60 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
         onPositionUpdate(position);
     }
 
-     /**
+    /**
+     * Returns true if we have enough assets to buy.
+     *
+     * @param account account
+     * @param amount  amount
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canBuy(final AccountDTO account,
+                                final BigDecimal amount) {
+        return canBuy(account, getRequestedCurrencyPair(), amount);
+    }
+
+    /**
+     * Returns true if we have enough assets to buy and if minimumBalanceAfter is left on the account after.
+     *
+     * @param account             account
+     * @param amount              amount
+     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canBuy(final AccountDTO account,
+                                final BigDecimal amount,
+                                final BigDecimal minimumBalanceAfter) {
+        return canBuy(account, getRequestedCurrencyPair(), amount, minimumBalanceAfter);
+    }
+
+    /**
+     * Returns true if we have enough assets to sell.
+     *
+     * @param account  account
+     * @param amount   amount
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canSell(final AccountDTO account,
+                                 final BigDecimal amount) {
+        return canSell(account, getRequestedCurrencyPair().getBaseCurrency(), amount);
+    }
+
+    /**
+     * Returns true if we have enough assets to sell and if minimumBalanceAfter is left on the account after.
+     *
+     * @param account             account
+     * @param amount              amount
+     * @param minimumBalanceAfter minimum balance that should be left after selling
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canSell(final AccountDTO account,
+                                 final BigDecimal amount,
+                                 final BigDecimal minimumBalanceAfter) {
+        System.out.println(getRequestedCurrencyPair().getBaseCurrency());
+        return canSell(account, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceAfter);
+    }
+
+    /**
      * Called when your strategy says you should enter.
      */
     public abstract void shouldEnter();

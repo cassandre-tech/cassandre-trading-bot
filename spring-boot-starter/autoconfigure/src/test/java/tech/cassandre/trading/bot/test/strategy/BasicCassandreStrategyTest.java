@@ -39,7 +39,7 @@ import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 public class BasicCassandreStrategyTest extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy testableStrategy;
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("check strategy behavior")
@@ -47,26 +47,26 @@ public class BasicCassandreStrategyTest extends BaseTest {
         final int numberOfValuesExpected = 7;
 
         // Wait for the strategy to have received all the account test values.
-        with().await().untilAsserted(() -> assertEquals(numberOfValuesExpected, testableStrategy.getTickersUpdateReceived().size()));
+        with().await().untilAsserted(() -> assertEquals(numberOfValuesExpected, strategy.getTickersUpdateReceived().size()));
 
         // Checking that all other data have been received.
-        assertFalse(testableStrategy.getOrdersUpdateReceived().isEmpty());
-        assertFalse(testableStrategy.getAccountsUpdatesReceived().isEmpty());
-        assertFalse(testableStrategy.getTickersUpdateReceived().isEmpty());
-        assertFalse(testableStrategy.getTradesUpdateReceived().isEmpty());
-        assertFalse(testableStrategy.getPositionsUpdateReceived().isEmpty());
-        assertEquals(2, testableStrategy.getLastTicker().size());
-        assertEquals(0, new BigDecimal("6").compareTo(testableStrategy.getLastTicker().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
+        assertFalse(strategy.getOrdersUpdateReceived().isEmpty());
+        assertFalse(strategy.getAccountsUpdatesReceived().isEmpty());
+        assertFalse(strategy.getTickersUpdateReceived().isEmpty());
+        assertFalse(strategy.getTradesUpdateReceived().isEmpty());
+        assertFalse(strategy.getPositionsUpdateReceived().isEmpty());
+        assertEquals(2, strategy.getLastTicker().size());
+        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTicker().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
 
         // Checking that services are available.
-        assertNotNull(testableStrategy.getTradeService());
-        assertNotNull(testableStrategy.getPositionService());
+        assertNotNull(strategy.getTradeService());
+        assertNotNull(strategy.getPositionService());
 
         // Check getEstimatedBuyingCost()
-        assertEquals(0, new BigDecimal("12").compareTo(testableStrategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).get().getValue()));
+        assertEquals(0, new BigDecimal("12").compareTo(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).get().getValue()));
 
         // Test canBuy() & canSell().
-        final AccountDTO account = testableStrategy.getAccounts().get("03");
+        final AccountDTO account = strategy.getAccounts().get("03");
         assertNotNull(account);
         assertEquals(3, account.getBalances().size());
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, ETH);
@@ -74,23 +74,23 @@ public class BasicCassandreStrategyTest extends BaseTest {
 
         // canBuy().
         // Buying something for an asset we don't have.
-        assertFalse(testableStrategy.canBuy(account, cp1, new BigDecimal("0.00001")));
+        assertFalse(strategy.canBuy(account, cp1, new BigDecimal("0.00001")));
         // Trying to buy a full bitcoin but we only have 2 000 USDT.
-        assertFalse(testableStrategy.canBuy(account, cp2, new BigDecimal("1")));
+        assertFalse(strategy.canBuy(account, cp2, new BigDecimal("1")));
         // Trying to buy a 0.1 bitcoin that costs 1 000 USDT and we have 2 000 USDT.
-        assertTrue(testableStrategy.canBuy(account, cp2, new BigDecimal("0.1")));
-        // Trying to buy a 0.1 bitcoin that costs 1 000 USDT (we have 2 000 USDT). But we want to have 1 000 USDT left.
-        assertFalse(testableStrategy.canBuy(account, cp2, new BigDecimal("0.1"), new BigDecimal("1000")));
+        assertTrue(strategy.canBuy(account, cp2, new BigDecimal("0.1")));
+        // Trying to buy a 0.1 bitcoin that costs 1 001 USDT (we have 2 000 USDT). But we want to have 1 000 USDT left.
+        assertFalse(strategy.canBuy(account, cp2, new BigDecimal("0.1"), new BigDecimal("1001")));
 
         // canSell().
         // Selling  an asset we don't have.
-        assertFalse(testableStrategy.canSell(account, EUR, new BigDecimal("0.00001")));
+        assertFalse(strategy.canSell(account, EUR, new BigDecimal("0.00001")));
         // Trying to sell 1 BTC (we have them).
-        assertTrue(testableStrategy.canSell(account, BTC, new BigDecimal("1")));
+        assertTrue(strategy.canSell(account, BTC, new BigDecimal("1")));
         // Trying to sell 3 BTC (we don't have them).
-        assertFalse(testableStrategy.canSell(account, BTC, new BigDecimal("3")));
+        assertFalse(strategy.canSell(account, BTC, new BigDecimal("3")));
         // Trying to sell 1 BTC and still have 1 (not possible).
-        assertFalse(testableStrategy.canSell(account, BTC, new BigDecimal("1"), new BigDecimal("2")));
+        assertFalse(strategy.canSell(account, BTC, new BigDecimal("1"), new BigDecimal("2")));
     }
 
 }
