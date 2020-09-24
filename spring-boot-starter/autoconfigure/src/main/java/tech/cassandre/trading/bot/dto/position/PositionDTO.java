@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.util.exception.PositionException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
+import java.util.Optional;
 
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
@@ -63,7 +64,6 @@ public class PositionDTO {
         this.id = newId;
         this.openOrderId = newOpenOrderId;
         this.rules = newRules;
-        this.lastCalculatedGain = new GainDTO();
     }
 
     /**
@@ -236,8 +236,8 @@ public class PositionDTO {
      *
      * @return lastCalculatedGain
      */
-    public final GainDTO getLastCalculatedGain() {
-        return lastCalculatedGain;
+    public final Optional<GainDTO> getLastCalculatedGain() {
+        return Optional.ofNullable(lastCalculatedGain);
     }
 
     /**

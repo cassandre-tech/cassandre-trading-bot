@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.service.mocks.PositionServiceTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
@@ -22,6 +23,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -184,9 +186,8 @@ public class PositionServiceTest extends BaseTest {
         PositionDTO p = positionService.getPositionById(1).get();
         assertEquals(OPENED, p.getStatus());
         // We check the last calculated gain - should be zero.
-        assertEquals(0, p.getLastCalculatedGain().getPercentage());
-        assertFalse(p.getLastCalculatedGain().getAmount().isValueProvided());
-        assertFalse(p.getLastCalculatedGain().getFees().isValueProvided());
+        Optional<GainDTO> gain = p.getLastCalculatedGain();
+        assertFalse(gain.isPresent());
 
         // A second ticker arrives with a gain of 50%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.3")).create());
@@ -195,11 +196,13 @@ public class PositionServiceTest extends BaseTest {
         p = positionService.getPositionById(1).get();
         assertEquals(OPENED, p.getStatus());
         // We check the last calculated gain - should be 50%.
-        assertEquals(50, p.getLastCalculatedGain().getPercentage());
-        assertEquals(0, new BigDecimal("0.00001").compareTo(p.getLastCalculatedGain().getAmount().getValue()));
-        assertEquals(BTC, p.getLastCalculatedGain().getAmount().getCurrency());
-        assertEquals(BigDecimal.ZERO, p.getLastCalculatedGain().getFees().getValue());
-        assertEquals(BTC, p.getLastCalculatedGain().getAmount().getCurrency());
+        gain = p.getLastCalculatedGain();
+        assertTrue(gain.isPresent());
+        assertEquals(50, gain.get().getPercentage());
+        assertEquals(0, new BigDecimal("0.00001").compareTo(gain.get().getAmount().getValue()));
+        assertEquals(BTC, gain.get().getAmount().getCurrency());
+        assertEquals(BigDecimal.ZERO, gain.get().getFees().getValue());
+        assertEquals(BTC, gain.get().getAmount().getCurrency());
 
         // A third ticker arrives with a gain of 100%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.5")).create());
