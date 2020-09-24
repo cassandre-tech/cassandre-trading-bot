@@ -136,11 +136,11 @@ public class PositionDTOTest {
         assertFalse(p.shouldBeClosed(t01));
 
         // New ticker for the right currency pair but with a profit of 50%.
-        TickerDTO t02 = TickerDTO.builder().currencyPair(cp).ask(new BigDecimal("0.036")).create();
+        TickerDTO t02 = TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.036")).create();
         assertFalse(p.shouldBeClosed(t02));
 
         // New ticker for the right currency pair with a profit of 100% - should be closed.
-        TickerDTO t03 = TickerDTO.builder().currencyPair(cp).ask(new BigDecimal("0.05")).create();
+        TickerDTO t03 = TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.05")).create();
         assertTrue(p.shouldBeClosed(t03));
     }
 
@@ -166,15 +166,15 @@ public class PositionDTOTest {
         assertEquals("T000001", p.getOpenTrade().getId());
 
         // New ticker for a currency pair that is not the one of T000001.
-        TickerDTO t01 = TickerDTO.builder().currencyPair(new CurrencyPairDTO(BTC, ETH)).bid(new BigDecimal("0.001")).create();
+        TickerDTO t01 = TickerDTO.builder().currencyPair(new CurrencyPairDTO(BTC, ETH)).last(new BigDecimal("0.001")).create();
         assertFalse(p.shouldBeClosed(t01));
 
         // New ticker for the right currency pair but with a loss of 50%.
-        TickerDTO t02 = TickerDTO.builder().currencyPair(cp).ask(new BigDecimal("0.012")).create();
+        TickerDTO t02 = TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.012")).create();
         assertFalse(p.shouldBeClosed(t02));
 
         // New ticker for the right currency pair with a profit of 50% - should be closed.
-        TickerDTO t03 = TickerDTO.builder().currencyPair(cp).ask(new BigDecimal("0.001")).create();
+        TickerDTO t03 = TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.001")).create();
         assertTrue(p.shouldBeClosed(t03));
     }
 

@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.service.PositionService;
@@ -34,6 +35,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.SYP;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USD;
 
 @SpringBootTest
@@ -163,7 +165,7 @@ public class PositionServiceTest extends BaseTest {
     @DisplayName("Check close position")
     public void checkClosePositionTest() throws InterruptedException {
         // Creates position 1 (ETH/BTC, 0.0001, 100% stop gain).
-        positionService.createPosition(cp1,
+        final PositionCreationResultDTO position = positionService.createPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100).create());
 
@@ -177,19 +179,31 @@ public class PositionServiceTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
 
         // A first ticker arrives with a gain of 100% but for the wrong CP.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).ask(new BigDecimal("0.5")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("0.5")).create());
         TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
-        assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
+        PositionDTO p = positionService.getPositionById(1).get();
+        assertEquals(OPENED, p.getStatus());
+        // We check the last calculated gain - should be zero.
+        assertEquals(0, p.getLastCalculatedGain().getPercentage());
+        assertFalse(p.getLastCalculatedGain().getAmount().isValueProvided());
+        assertFalse(p.getLastCalculatedGain().getFees().isValueProvided());
 
         // A second ticker arrives with a gain of 50%.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).ask(new BigDecimal("0.3")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.3")).create());
         TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
-        assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
+        p = positionService.getPositionById(1).get();
+        assertEquals(OPENED, p.getStatus());
+        // We check the last calculated gain - should be 50%.
+        assertEquals(50, p.getLastCalculatedGain().getPercentage());
+        assertEquals(0, new BigDecimal("0.00001").compareTo(p.getLastCalculatedGain().getAmount().getValue()));
+        assertEquals(BTC, p.getLastCalculatedGain().getAmount().getCurrency());
+        assertEquals(BigDecimal.ZERO, p.getLastCalculatedGain().getFees().getValue());
+        assertEquals(BTC, p.getLastCalculatedGain().getAmount().getCurrency());
 
         // A third ticker arrives with a gain of 100%.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).ask(new BigDecimal("0.5")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.5")).create());
         TimeUnit.SECONDS.sleep(TEN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSING, positionService.getPositionById(1).get().getStatus());

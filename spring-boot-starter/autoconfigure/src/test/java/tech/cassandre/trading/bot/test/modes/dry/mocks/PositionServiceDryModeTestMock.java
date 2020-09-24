@@ -39,20 +39,20 @@ public class PositionServiceDryModeTestMock extends BaseTest {
         given(marketService
                 .getTicker(cp1))
                 .willReturn(
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createDay(1)).last(new BigDecimal("0.2")).ask(new BigDecimal("0.2")).create()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createDay(2)).last(new BigDecimal("0.2")).ask(new BigDecimal("0.3")).create()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createDay(3)).last(new BigDecimal("0.2")).ask(new BigDecimal("0.4")).create()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createDay(4)).last(new BigDecimal("0.2")).ask(new BigDecimal("0.4")).create())
+                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createDay(1)).last(new BigDecimal("0.2")).create()),
+                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createDay(2)).last(new BigDecimal("0.3")).create()),
+                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createDay(3)).last(new BigDecimal("0.4")).create()),
+                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createDay(4)).last(new BigDecimal("0.4")).create())
                 );
         // Replies for ETH / USDT.
         final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
         given(marketService
                 .getTicker(cp2))
                 .willReturn(
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createDay(5)).last(new BigDecimal("0.3")).ask(new BigDecimal("0.3")).create()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createDay(6)).last(new BigDecimal("0.3")).ask(new BigDecimal("0.3")).create()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createDay(7)).last(new BigDecimal("0.3")).ask(new BigDecimal("0.6")).create()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createDay(8)).last(new BigDecimal("0.3")).ask(new BigDecimal("0.1")).create())
+                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createDay(5)).last(new BigDecimal("0.3")).create()),
+                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createDay(6)).last(new BigDecimal("0.3")).create()),
+                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createDay(7)).last(new BigDecimal("0.6")).create()),
+                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createDay(8)).last(new BigDecimal("0.1")).create())
                 );
         return marketService;
     }

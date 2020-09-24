@@ -4,6 +4,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
+import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -42,6 +43,9 @@ public class PositionDTO {
     /** The trade that closed the position. */
     private TradeDTO closeTrade;
 
+    /** Last calculated gain from the last ticker received. */
+    private GainDTO lastCalculatedGain;
+
     /** Percentage. */
     private static final int ONE_HUNDRED = 100;
 
@@ -59,6 +63,7 @@ public class PositionDTO {
         this.id = newId;
         this.openOrderId = newOpenOrderId;
         this.rules = newRules;
+        this.lastCalculatedGain = new GainDTO();
     }
 
     /**
@@ -109,13 +114,20 @@ public class PositionDTO {
             //  - Bought 10 ETH with a price of 5 -> Amount of 50.
             //  - Sold 10 ETH with a price of 6 -> Amount of 60.
             //  Gain = (6-5)/5 = 20%.
-            float gain = (ticker.getAsk().subtract(openTrade.getPrice()))
+            float percentage = (ticker.getLast().subtract(openTrade.getPrice()))
                     .divide(openTrade.getPrice(), BIGINTEGER_SCALE, RoundingMode.FLOOR)
                     .floatValue() * ONE_HUNDRED;
+            BigDecimal amount = ((openTrade.getOriginalAmount().multiply(ticker.getLast()))
+                    .subtract((openTrade.getOriginalAmount()).multiply(openTrade.getPrice())));
+
+            // We save the last calculated gain.
+            this.lastCalculatedGain = new GainDTO(percentage,
+                    new CurrencyAmountDTO(amount, openTrade.getCurrencyPair().getQuoteCurrency()),
+                    new CurrencyAmountDTO(BigDecimal.ZERO, openTrade.getCurrencyPair().getQuoteCurrency()));
 
             // Check with max gain and max lost rules.
-            return rules.isStopGainPercentageSet() && gain >= rules.getStopGainPercentage()
-                    || rules.isStopLossPercentageSet() && gain <= -rules.getStopLossPercentage();
+            return rules.isStopGainPercentageSet() && percentage >= rules.getStopGainPercentage()
+                    || rules.isStopLossPercentageSet() && percentage <= -rules.getStopLossPercentage();
         }
     }
 
@@ -175,6 +187,15 @@ public class PositionDTO {
     }
 
     /**
+     * Get currency pair.
+     *
+     * @return currency pair
+     */
+    public final CurrencyPairDTO getCurrencyPair() {
+        return openTrade.getCurrencyPair();
+    }
+
+    /**
      * Getter rules.
      *
      * @return rules
@@ -208,6 +229,15 @@ public class PositionDTO {
      */
     public final String getOpenOrderId() {
         return openOrderId;
+    }
+
+    /**
+     * Getter last calculated gain from the last ticker received.
+     *
+     * @return lastCalculatedGain
+     */
+    public final GainDTO getLastCalculatedGain() {
+        return lastCalculatedGain;
     }
 
     /**
