@@ -13,12 +13,6 @@ jobs:
 
     steps:
       # ================================================================================================================
-      - name: Setup timezone
-        uses: zcong1993/setup-timezone@master
-        with:
-          timezone: Europe/Paris
-
-      # ================================================================================================================
       - name: Setup GPG
         run: |
           echo "$GPG_PRIVATE_KEY" > private.asc
