@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
+import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -200,4 +201,42 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         }
     }
 
+    /**
+     * Returns true if we have enough assets to semm.
+     *
+     * @param account  account
+     * @param currency currency pair
+     * @param amount   amount
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canSell(final AccountDTO account,
+                                final CurrencyDTO currency,
+                                final BigDecimal amount) {
+        return canSell(account, currency, amount, BigDecimal.ZERO);
+    }
+
+    /**
+     * Returns true if we have enough assets to sell and if minimumBalanceAfter is left on the account after.
+     *
+     * @param account             account
+     * @param currency            currency
+     * @param amount              amount
+     * @param minimumBalanceAfter minimum balance that should be left after selling
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canSell(final AccountDTO account,
+                                 final CurrencyDTO currency,
+                                 final BigDecimal amount,
+                                 final BigDecimal minimumBalanceAfter) {
+        // We get the amount.
+        final Optional<BalanceDTO> balance = account.getBalance(currency);
+        if (balance.isPresent()) {
+            // public int compareTo(BigDecimal bg) returns
+            // 1 : if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
+            return balance.get().getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) > 0;
+        } else {
+            // If the is no balance in this currency, we can't buy.
+            return false;
+        }
+    }
 }

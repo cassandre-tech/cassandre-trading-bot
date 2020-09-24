@@ -25,6 +25,7 @@ import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TEST
 import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.EUR;
 import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
 
 @SpringBootTest
@@ -64,14 +65,15 @@ public class BasicCassandreStrategyTest extends BaseTest {
         // Check getEstimatedBuyingCost()
         assertEquals(0, new BigDecimal("12").compareTo(testableStrategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).get().getValue()));
 
-        // Test canBuyMethod().
+        // Test canBuy() & canSell().
         final AccountDTO account = testableStrategy.getAccounts().get("03");
         assertNotNull(account);
         assertEquals(3, account.getBalances().size());
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, ETH);
         final CurrencyPairDTO cp2 = new CurrencyPairDTO(BTC, USDT);
 
-        // Buying something for a ticker we don't have.
+        // canBuy().
+        // Buying something for an asset we don't have.
         assertFalse(testableStrategy.canBuy(account, cp1, new BigDecimal("0.00001")));
         // Trying to buy a full bitcoin but we only have 2 000 USDT.
         assertFalse(testableStrategy.canBuy(account, cp2, new BigDecimal("1")));
@@ -79,6 +81,16 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertTrue(testableStrategy.canBuy(account, cp2, new BigDecimal("0.1")));
         // Trying to buy a 0.1 bitcoin that costs 1 000 USDT (we have 2 000 USDT). But we want to have 1 000 USDT left.
         assertFalse(testableStrategy.canBuy(account, cp2, new BigDecimal("0.1"), new BigDecimal("1000")));
+
+        // canSell().
+        // Selling  an asset we don't have.
+        assertFalse(testableStrategy.canSell(account, EUR, new BigDecimal("0.00001")));
+        // Trying to sell 1 BTC (we have them).
+        assertTrue(testableStrategy.canSell(account, BTC, new BigDecimal("1")));
+        // Trying to sell 3 BTC (we don't have them).
+        assertFalse(testableStrategy.canSell(account, BTC, new BigDecimal("3")));
+        // Trying to sell 1 BTC and still have 1 (not possible).
+        assertFalse(testableStrategy.canSell(account, BTC, new BigDecimal("1"), new BigDecimal("2")));
     }
 
 }
