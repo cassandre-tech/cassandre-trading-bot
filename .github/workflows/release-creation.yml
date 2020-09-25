@@ -67,7 +67,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: trading-bot-spring-boot-autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}.jar
+          asset_path: spring-boot-starter/autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}.jar
           asset_name: cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}.jar
           asset_content_type: application/java-archive
 
@@ -77,7 +77,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: trading-bot-spring-boot-autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-sources.jar
+          asset_path: spring-boot-starter/autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-sources.jar
           asset_name: cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-sources.jar
           asset_content_type: application/java-archive
 
@@ -87,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: trading-bot-spring-boot-autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-javadoc.jar
+          asset_path: spring-boot-starter/autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-javadoc.jar
           asset_name: cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-javadoc.jar
           asset_content_type: application/java-archive
 
@@ -99,7 +99,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: trading-bot-spring-boot-starter/target/cassandre-trading-bot-spring-boot-starter-${{ steps.package.outputs.version }}.jar
+          asset_path: spring-boot-starter/starter/target/cassandre-trading-bot-spring-boot-starter-${{ steps.package.outputs.version }}.jar
           asset_name: cassandre-trading-bot-spring-boot-starter-${{ steps.package.outputs.version }}.jar
           asset_content_type: application/java-archive
 
