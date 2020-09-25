@@ -20,7 +20,7 @@ tmp/**/*
 # External tool builders
 .externalToolBuilders/
 
-# Locally stored "Eclipse launch configurations"
+# Locally stored "Eclipse launch configuration"
 *.launch
 
 # Mobile Tools for Java (J2ME)
