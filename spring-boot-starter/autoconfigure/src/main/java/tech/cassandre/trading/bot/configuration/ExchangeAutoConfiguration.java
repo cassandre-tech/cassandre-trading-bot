@@ -5,11 +5,9 @@ import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import si.mazi.rescu.HttpStatusIOException;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
@@ -42,8 +40,6 @@ import java.util.StringJoiner;
  * ExchangeConfiguration configures the exchange connection.
  */
 @Configuration
-@EntityScan(basePackages = "tech.cassandre.trading.bot.domain")
-@EnableJpaRepositories(basePackages = "tech.cassandre.trading.bot.repository")
 @EnableConfigurationProperties({ExchangeParameters.class,
         ExchangeParameters.Modes.class,
         ExchangeParameters.Rates.class})

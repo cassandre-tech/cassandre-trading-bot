@@ -96,6 +96,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     public final void tickerUpdate(final TickerDTO ticker) {
         // With the ticker received, we check for every position, if it should be closed.
         positions.values().stream()
+                .filter(p -> p.getCurrencyPair() != null)
                 .filter(p -> p.getCurrencyPair().equals(ticker.getCurrencyPair()))
                 .filter(p -> p.shouldBeClosed(ticker))
                 .forEach(p -> {

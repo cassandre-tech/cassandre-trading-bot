@@ -192,7 +192,11 @@ public class PositionDTO {
      * @return currency pair
      */
     public final CurrencyPairDTO getCurrencyPair() {
-        return openTrade.getCurrencyPair();
+        if (openTrade != null) {
+            return openTrade.getCurrencyPair();
+        } else {
+            return null;
+        }
     }
 
     /**
