@@ -27,6 +27,5 @@
 
 <p align="center">
   <a href="https://trading-bot.cassandre.tech/">Home Site</a> |
-  <a href="https://trading-bot.cassandre.tech/learn/quickstart">Quick Start</a> |
-  <a href="https://trading-bot.cassandre.tech/project/project-structure">Developer Guide</a>
+  <a href="https://trading-bot.cassandre.tech/learn/quickstart">Quick Start</a>
 </p>
