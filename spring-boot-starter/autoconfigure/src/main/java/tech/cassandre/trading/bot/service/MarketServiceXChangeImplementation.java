@@ -4,8 +4,8 @@ import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.util.base.BaseService;
-import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.io.IOException;
 import java.math.BigDecimal;

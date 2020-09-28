@@ -1,6 +1,6 @@
 package tech.cassandre.trading.bot.service;
 
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.Set;
 

@@ -7,7 +7,7 @@ import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.BaseService;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

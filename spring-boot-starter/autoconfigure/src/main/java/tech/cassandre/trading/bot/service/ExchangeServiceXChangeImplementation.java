@@ -2,8 +2,8 @@ package tech.cassandre.trading.bot.service;
 
 import org.knowm.xchange.Exchange;
 import tech.cassandre.trading.bot.util.base.BaseService;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

@@ -7,9 +7,9 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.util.base.BaseService;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -17,6 +17,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 
 /**
  * Position service implementation.
@@ -96,6 +98,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     public final void tickerUpdate(final TickerDTO ticker) {
         // With the ticker received, we check for every position, if it should be closed.
         positions.values().stream()
+                .filter(p -> p.getStatus().equals(OPENED))
                 .filter(p -> p.getCurrencyPair() != null)
                 .filter(p -> p.getCurrencyPair().equals(ticker.getCurrencyPair()))
                 .filter(p -> p.shouldBeClosed(ticker))

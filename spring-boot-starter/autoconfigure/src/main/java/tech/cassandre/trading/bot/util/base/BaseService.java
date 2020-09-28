@@ -5,7 +5,7 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.mapstruct.factory.Mappers;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
 
 import java.time.Duration;
