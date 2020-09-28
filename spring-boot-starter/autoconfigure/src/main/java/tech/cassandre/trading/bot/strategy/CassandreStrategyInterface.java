@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -101,6 +102,14 @@ public interface CassandreStrategyInterface {
      * @return the list of currency pairs tickers your want to receive
      */
     Set<CurrencyPairDTO> getRequestedCurrencyPairs();
+
+    /**
+     * Implements this method to tell the bot which account from the accounts your own is the trading one.
+     *
+     * @param accounts all your accounts
+     * @return trading account
+     */
+    Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts);
 
     /**
      * Method triggered at every account update.

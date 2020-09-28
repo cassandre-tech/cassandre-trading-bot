@@ -15,6 +15,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -32,6 +33,11 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
 		// We only ask about ETC/BTC (Base currency : ETH / Quote currency : BTC).
 		return Set.of(new CurrencyPairDTO(BTC, USDT));
+	}
+
+	@Override
+	public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
+		return accounts.stream().filter(a -> a.getId().equals("trade")).findFirst();
 	}
 
 	@Override

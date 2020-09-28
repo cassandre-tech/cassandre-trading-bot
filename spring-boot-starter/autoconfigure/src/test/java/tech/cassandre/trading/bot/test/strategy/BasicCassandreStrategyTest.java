@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.test.strategy.mocks.BasicCassandreStrategyTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 
@@ -20,20 +20,22 @@ import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Strategy - Basic cassandre strategy")
 @Configuration({
         @Property(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "true"),
-        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "false")
+        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "false"),
+        @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false")
 })
 @Import(BasicCassandreStrategyTestMock.class)
 public class BasicCassandreStrategyTest extends BaseTest {
@@ -47,7 +49,7 @@ public class BasicCassandreStrategyTest extends BaseTest {
         final int numberOfValuesExpected = 7;
 
         // Wait for the strategy to have received all the account test values.
-        with().await().untilAsserted(() -> assertEquals(numberOfValuesExpected, strategy.getTickersUpdateReceived().size()));
+        with().await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfValuesExpected));
 
         // Checking that all other data have been received.
         assertFalse(strategy.getOrdersUpdateReceived().isEmpty());

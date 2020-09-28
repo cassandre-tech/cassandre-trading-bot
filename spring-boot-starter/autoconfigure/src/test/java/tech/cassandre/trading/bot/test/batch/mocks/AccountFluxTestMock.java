@@ -55,7 +55,14 @@ public class AccountFluxTestMock {
         final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
         UserService userService = mock(UserService.class);
 
-        // =========================================================================================================
+        // =============================================================================================================
+        // Account retrieved by configuration.
+        AccountDTO tempAccount = AccountDTO.builder().id("trade").name("trade").create();
+        accounts.put("trade", tempAccount);
+        UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
+        accounts.clear();;
+
+        // =============================================================================================================
         // Account 1 with 2 balances.
         // Account 2 with 1 balance.
         BalanceDTO account01Balance1 = BalanceDTO.builder()
@@ -374,7 +381,8 @@ public class AccountFluxTestMock {
 
         // Mock.
         given(userService.getUser())
-                .willReturn(Optional.of(user01),
+                .willReturn(Optional.of(tempUser),
+                        Optional.of(user01),
                         Optional.empty(),
                         Optional.of(user02),
                         Optional.of(user03),

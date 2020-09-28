@@ -50,6 +50,8 @@ public class RatesTest {
 	@Test
 	@DisplayName("Check account service rate")
 	public void checkAccountServiceRateTest() throws InterruptedException {
+		TimeUnit.SECONDS.sleep(20);
+
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.

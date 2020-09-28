@@ -8,18 +8,19 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
-import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 
 /**
  * Testable strategy (used for tests).
@@ -29,6 +30,9 @@ import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TEST
         value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
         havingValue = "true")
 public class TestableCassandreStrategy extends BasicCassandreStrategy {
+
+    /** Testable strategy enabled parameter. */
+    public static final String PARAMETER_TESTABLE_STRATEGY_ENABLED = "testableStrategy.enabled";
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -54,6 +58,11 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC));
         requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT));
         return requestedTickers;
+    }
+
+    @Override
+    public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
+        return accounts.stream().filter(a -> a.getName().equals("trade")).findFirst();
     }
 
     @Override

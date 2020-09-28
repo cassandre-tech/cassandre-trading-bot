@@ -82,7 +82,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).create();
+        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
         balances.clear();

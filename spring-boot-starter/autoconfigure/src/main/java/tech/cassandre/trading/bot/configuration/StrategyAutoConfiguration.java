@@ -15,6 +15,9 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
@@ -26,13 +29,13 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 /**
@@ -146,6 +149,20 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             throw new ConfigurationException("Your strategy doesn't extend BasicCassandreStrategy or BasicTa4jCassandreStrategy",
                     o.getClass() + " must extend BasicCassandreStrategy or BasicTa4jCassandreStrategy");
         }
+
+        // Check that the trading account the strategy asks for really exists.
+        final Optional<UserDTO> user = userService.getUser();
+        if (user.isPresent()) {
+            final Optional<AccountDTO> tradeAccount = ((CassandreStrategyInterface) o).getTradeAccount(new LinkedHashSet<>(user.get().getAccounts().values()));
+            if (tradeAccount.isEmpty()) {
+                throw new ConfigurationException("Your strategy specifies a trading account that doesn't exist",
+                        "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result");
+            }
+        } else {
+            throw new ConfigurationException("Impossible to retrieve your user information",
+                    "Impossible to retrieve your user information. Check logs.");
+        }
+
 
         // =============================================================================================================
         // Getting strategy information.

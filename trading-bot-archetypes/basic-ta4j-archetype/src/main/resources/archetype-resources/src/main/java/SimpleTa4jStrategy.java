@@ -12,12 +12,15 @@ import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.Optional;
+import java.util.Set;
 
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -35,6 +38,11 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
     @Override
     public CurrencyPairDTO getRequestedCurrencyPair() {
         return new CurrencyPairDTO(BTC, USDT);
+    }
+
+    @Override
+    public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
+        return accounts.stream().filter(a -> a.getId().equals("trade")).findFirst();
     }
 
     @Override

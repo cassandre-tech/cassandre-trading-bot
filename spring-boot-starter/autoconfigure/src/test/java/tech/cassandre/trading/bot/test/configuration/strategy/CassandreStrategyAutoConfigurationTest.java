@@ -10,15 +10,17 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @DisplayName("Strategy configuration - Autoconfiguration")
 @Configuration({
-        @Property(key = PARAMETER_INVALID_STRATEGY_ENABLED),
-        @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED),
-        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED)
+        @Property(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = "false"),
+        @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
+        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "false"),
+        @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false"),
 })
 public class CassandreStrategyAutoConfigurationTest {
 
@@ -29,6 +31,7 @@ public class CassandreStrategyAutoConfigurationTest {
             System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
             System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "false");
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
         } catch (Exception e) {
@@ -43,6 +46,7 @@ public class CassandreStrategyAutoConfigurationTest {
             System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "false");
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
             fail("Exception not raised");
@@ -59,6 +63,7 @@ public class CassandreStrategyAutoConfigurationTest {
             System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
             System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "true");
+            System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "false");
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
             fail("Exception not raised");
@@ -75,12 +80,30 @@ public class CassandreStrategyAutoConfigurationTest {
             System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "true");
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "false");
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
             assertTrue(e.getCause() instanceof ConfigurationException);
             assertTrue(e.getCause().getMessage().contains("Your strategy doesn't extend BasicCassandreStrategy"));
+        }
+    }
+
+    @Test
+    @DisplayName("Check error is a strategy has an invalid trade account")
+    public void checkStrategyWithInvalidTradeAccount() {
+        try {
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "true");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+            assertTrue(e.getCause().getMessage().contains("Your strategy specifies a trading account that doesn't exist"));
         }
     }
 
