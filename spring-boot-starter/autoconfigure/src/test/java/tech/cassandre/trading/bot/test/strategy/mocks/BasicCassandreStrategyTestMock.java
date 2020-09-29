@@ -79,10 +79,17 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         UserService userService = mock(UserService.class);
         // Returns three updates.
 
+        // =============================================================================================================
+        // Account retrieved by configuration.
+        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").create();
+        accounts.put("trade", tempAccount);
+        UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
+        accounts.clear();
+
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
+        AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).create();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
         balances.clear();
@@ -91,7 +98,7 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         // Account 02.
         BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
         balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).create();
+        AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).create();
         accounts.put("02", account02);
         UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
         balances.clear();
@@ -108,7 +115,7 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         accounts.clear();
 
         // Mock replies.
-        given(userService.getUser()).willReturn(Optional.of(user01), Optional.of(user02), Optional.of(user03));
+        given(userService.getUser()).willReturn(Optional.of(tempUser), Optional.of(user01), Optional.of(user02), Optional.of(user03));
         return userService;
     }
 

@@ -15,6 +15,8 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -138,6 +140,30 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     /**
      * Returns true if we have enough assets to buy.
      *
+     * @param amount amount
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canBuy(final BigDecimal amount) {
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+        return tradeAccount.filter(accountDTO -> canBuy(accountDTO, getRequestedCurrencyPair(), amount)).isPresent();
+    }
+
+    /**
+     * Returns true if we have enough assets to buy.
+     *
+     * @param amount              amount
+     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canBuy(final BigDecimal amount,
+                                final BigDecimal minimumBalanceAfter) {
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+        return tradeAccount.filter(accountDTO -> canBuy(accountDTO, getRequestedCurrencyPair(), amount, minimumBalanceAfter)).isPresent();
+    }
+
+    /**
+     * Returns true if we have enough assets to buy.
+     *
      * @param account account
      * @param amount  amount
      * @return true if we there is enough money to buy
@@ -164,8 +190,32 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     /**
      * Returns true if we have enough assets to sell.
      *
-     * @param account  account
-     * @param amount   amount
+     * @param amount              amount
+     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canSell(final BigDecimal amount,
+                                 final BigDecimal minimumBalanceAfter) {
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+        return tradeAccount.filter(accountDTO -> canSell(accountDTO, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceAfter)).isPresent();
+    }
+
+    /**
+     * Returns true if we have enough assets to sell.
+     *
+     * @param amount amount
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canSell(final BigDecimal amount) {
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+        return tradeAccount.filter(accountDTO -> canSell(accountDTO, getRequestedCurrencyPair().getBaseCurrency(), amount)).isPresent();
+    }
+
+    /**
+     * Returns true if we have enough assets to sell.
+     *
+     * @param account account
+     * @param amount  amount
      * @return true if we there is enough money to buy
      */
     public final boolean canSell(final AccountDTO account,

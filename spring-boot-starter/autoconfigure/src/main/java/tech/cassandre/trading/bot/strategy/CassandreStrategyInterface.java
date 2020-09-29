@@ -112,6 +112,13 @@ public interface CassandreStrategyInterface {
     Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts);
 
     /**
+     * Returns your trading account.
+     *
+     * @return trading account
+     */
+    Optional<AccountDTO> getTradeAccount();
+
+    /**
      * Method triggered at every account update.
      *
      * @param account account

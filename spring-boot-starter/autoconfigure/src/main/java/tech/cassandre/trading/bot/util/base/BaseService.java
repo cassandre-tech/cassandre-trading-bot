@@ -64,8 +64,6 @@ public abstract class BaseService extends Base {
      * @return XChange currency pair
      */
     protected CurrencyPair getCurrencyPair(final CurrencyPairDTO currencyPairDTO) {
-        // TODO Use a mapper instead of this method when MapStruct will allow it.
-        // https://github.com/mapstruct/mapstruct/issues/73
         return new CurrencyPair(currencyPairDTO.getBaseCurrency().getCode(), currencyPairDTO.getQuoteCurrency().getCode());
     }
 

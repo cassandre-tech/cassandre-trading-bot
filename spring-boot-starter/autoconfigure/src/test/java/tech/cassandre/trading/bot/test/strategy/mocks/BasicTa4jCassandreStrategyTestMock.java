@@ -79,6 +79,13 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         UserService userService = mock(UserService.class);
         // Returns three updates.
 
+        // =============================================================================================================
+        // Account retrieved by configuration.
+        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").create();
+        accounts.put("trade", tempAccount);
+        UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
+        accounts.clear();
+
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
         balances.put(BTC, account01Balance1);
@@ -102,7 +109,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         balances.put(BTC, account03Balance1);
         BalanceDTO account03Balance2 = BalanceDTO.builder().available(new BigDecimal("150")).create();
         balances.put(USDT, account03Balance2);
-        AccountDTO account03 = AccountDTO.builder().id("03").balances(balances).create();
+        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
         balances.clear();

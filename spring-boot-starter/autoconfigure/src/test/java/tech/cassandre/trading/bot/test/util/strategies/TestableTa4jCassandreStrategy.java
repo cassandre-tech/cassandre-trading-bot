@@ -60,7 +60,7 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-        return accounts.stream().filter(a -> a.getName().equals("trade")).findFirst();
+        return accounts.stream().filter(a -> "trade".equals(a.getName())).findFirst();
     }
 
     @Override

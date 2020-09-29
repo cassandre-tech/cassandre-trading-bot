@@ -9,10 +9,10 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -60,7 +60,7 @@ public class AccountFluxTestMock {
         AccountDTO tempAccount = AccountDTO.builder().id("trade").name("trade").create();
         accounts.put("trade", tempAccount);
         UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
-        accounts.clear();;
+        accounts.clear();
 
         // =============================================================================================================
         // Account 1 with 2 balances.
