@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.batch;
 
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.util.base.BaseFlux;
 
@@ -19,7 +18,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
     private final PositionService positionService;
 
     /** Previous values. */
-    private final Map<Long, PositionStatusDTO> previousValues = new LinkedHashMap<>();
+    private final Map<Long, Long> previousValues = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -38,10 +37,10 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
         // Finding which positions has been updated.
         positionService.getPositions().forEach(position -> {
             getLogger().debug("PositionFlux - Treating position : {}", position.getId());
-            PositionStatusDTO previousPosition = previousValues.get(position.getId());
-            if (previousPosition == null || !previousPosition.equals(position.getStatus())) {
+            Long previousVersion = previousValues.get(position.getId());
+            if (previousVersion == null || !previousVersion.equals(position.getVersion())) {
                 getLogger().debug("PositionFlux - Flux {} has changed : {}", position.getId(), position);
-                previousValues.put(position.getId(), position.getStatus());
+                previousValues.put(position.getId(), position.getVersion());
                 newValues.add(position);
             }
         });
@@ -56,7 +55,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
      * @param position position
      */
     public final void restorePosition(final PositionDTO position) {
-        previousValues.put(position.getId(), position.getStatus());
+        previousValues.put(position.getId(), position.getVersion());
     }
 
 }

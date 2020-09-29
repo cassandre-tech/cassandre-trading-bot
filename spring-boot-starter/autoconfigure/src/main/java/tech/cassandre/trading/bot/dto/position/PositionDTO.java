@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
@@ -25,6 +26,9 @@ public class PositionDTO {
 
     /** An identifier that uniquely identifies the position. */
     private final long id;
+
+    /** Position version (used for database backup). */
+    private AtomicLong version = new AtomicLong(0L);
 
     /** Position status. */
     private PositionStatusDTO status = OPENING;
@@ -64,6 +68,7 @@ public class PositionDTO {
         this.id = newId;
         this.openOrderId = newOpenOrderId;
         this.rules = newRules;
+        version.incrementAndGet();
     }
 
     /**
@@ -78,6 +83,7 @@ public class PositionDTO {
         }
         status = CLOSING;
         closeOrderId = newCloseOrderId;
+        version.incrementAndGet();
     }
 
     /**
@@ -90,11 +96,13 @@ public class PositionDTO {
         if (trade.getOrderId().equals(openOrderId) && status == OPENING) {
             openTrade = trade;
             status = OPENED;
+            version.incrementAndGet();
         }
         // If status is CLOSING and the trade for the close order arrives ==> status = CLOSED.
         if (trade.getOrderId().equals(closeOrderId) && status == CLOSING) {
             closeTrade = trade;
             status = CLOSED;
+            version.incrementAndGet();
         }
     }
 
@@ -251,6 +259,15 @@ public class PositionDTO {
      */
     public final String getCloseOrderId() {
         return closeOrderId;
+    }
+
+    /**
+     * Getter version.
+     *
+     * @return version
+     */
+    public final Long getVersion() {
+        return version.longValue();
     }
 
     @Override
