@@ -1,6 +1,7 @@
-package tech.cassandre.trading.bot.service;
+package tech.cassandre.trading.bot.service.xchange;
 
 import org.knowm.xchange.Exchange;
+import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;

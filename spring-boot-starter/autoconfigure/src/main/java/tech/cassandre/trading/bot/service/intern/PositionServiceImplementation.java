@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.service;
+package tech.cassandre.trading.bot.service.intern;
 
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -9,6 +9,8 @@ import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
 
 import java.math.BigDecimal;

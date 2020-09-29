@@ -20,6 +20,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 
 /**
@@ -55,8 +58,8 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
         Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
-        requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC));
-        requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT));
+        requestedTickers.add(new CurrencyPairDTO(ETH, BTC));
+        requestedTickers.add(new CurrencyPairDTO(ETH, USDT));
         return requestedTickers;
     }
 

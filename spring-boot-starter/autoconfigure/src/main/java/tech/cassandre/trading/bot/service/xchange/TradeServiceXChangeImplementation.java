@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.service;
+package tech.cassandre.trading.bot.service.xchange;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 

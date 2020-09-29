@@ -6,6 +6,7 @@ import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import si.mazi.rescu.HttpStatusIOException;
@@ -17,17 +18,18 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
-import tech.cassandre.trading.bot.service.ExchangeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.service.MarketServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.PositionServiceImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.TradeServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.UserServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.UserServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.dry.ExchangeServiceDryModeImplementation;
+import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
+import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
+import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
+import tech.cassandre.trading.bot.service.xchange.ExchangeServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.xchange.MarketServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.xchange.UserServiceXChangeImplementation;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
@@ -53,6 +55,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** Unauthorized http status code. */
     public static final int UNAUTHORIZED_STATUS_CODE = 401;
+
+    /** Application context. */
+    private final ApplicationContext applicationContext;
 
     /** Exchange parameters. */
     private final ExchangeParameters exchangeParameters;
@@ -96,13 +101,16 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /**
      * Constructor.
      *
+     * @param newApplicationContext application context
      * @param newExchangeParameters exchange parameters
      * @param newTradeRepository    trade repository
      * @param newPositionRepository position repository
      */
-    public ExchangeAutoConfiguration(final ExchangeParameters newExchangeParameters,
+    public ExchangeAutoConfiguration(final ApplicationContext newApplicationContext,
+                                     final ExchangeParameters newExchangeParameters,
                                      final TradeRepository newTradeRepository,
                                      final PositionRepository newPositionRepository) {
+        this.applicationContext = newApplicationContext;
         this.exchangeParameters = newExchangeParameters;
         this.tradeRepository = newTradeRepository;
         this.positionRepository = newPositionRepository;
@@ -147,8 +155,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             long tradeRate = getRateValue(exchangeParameters.getRates().getTrade());
 
             // Creates Cassandre services.
-            UserServiceDryModeImplementation userServiceDryModeImplementation;
-            TradeServiceDryModeImplementation tradeServiceDryModeImplementation = null;
+            UserServiceDryModeImplementation userServiceDryMode;
+            TradeServiceDryModeImplementation tradeServiceDryMode = null;
             if (!exchangeParameters.getModes().isDry()) {
                 // Normal mode.
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
@@ -158,12 +166,12 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
             } else {
                 // Dry mode.
-                this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
-                userServiceDryModeImplementation = new UserServiceDryModeImplementation();
-                this.userService = userServiceDryModeImplementation;
+                this.exchangeService = new ExchangeServiceDryModeImplementation(applicationContext);
+                userServiceDryMode = new UserServiceDryModeImplementation();
+                this.userService = userServiceDryMode;
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                tradeServiceDryModeImplementation = new TradeServiceDryModeImplementation(userServiceDryModeImplementation);
-                this.tradeService = tradeServiceDryModeImplementation;
+                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode);
+                this.tradeService = tradeServiceDryMode;
                 this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
             }
 
@@ -186,8 +194,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
             // if in dry mode, we set dependencies.
             if (tradeService instanceof TradeServiceDryModeImplementation) {
-                assert tradeServiceDryModeImplementation != null;
-                tradeServiceDryModeImplementation.setDependencies(orderFlux, tradeFlux);
+                assert tradeServiceDryMode != null;
+                tradeServiceDryMode.setDependencies(orderFlux, tradeFlux);
             }
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.

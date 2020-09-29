@@ -1,10 +1,11 @@
-package tech.cassandre.trading.bot.service;
+package tech.cassandre.trading.bot.service.dry;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.BaseService;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
