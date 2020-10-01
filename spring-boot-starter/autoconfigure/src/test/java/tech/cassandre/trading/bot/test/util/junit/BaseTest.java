@@ -25,7 +25,7 @@ import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 public class BaseTest {
 
     /** Ten seconds wait. */
-    protected static final long TEN_SECONDS = 10L;
+    protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
     /** How much we should wait for tests until it is declared as failed. */
     protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;

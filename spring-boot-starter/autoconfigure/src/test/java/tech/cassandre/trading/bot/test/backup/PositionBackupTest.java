@@ -216,7 +216,7 @@ public class PositionBackupTest extends BaseTest {
 
         // Check saved position.
         positionFlux.emitValue(positionDTO.get());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         Optional<Position> p = positionRepository.findById(positionId);
         assertTrue(p.isPresent());
         assertEquals(5, p.get().getId());
@@ -239,7 +239,7 @@ public class PositionBackupTest extends BaseTest {
 
         // Check saved position.
         positionFlux.emitValue(positionDTO.get());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         p = positionRepository.findById(positionId);
         assertTrue(p.isPresent());
         assertEquals(5, p.get().getId());
@@ -265,7 +265,7 @@ public class PositionBackupTest extends BaseTest {
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.015")).create());
         // Firth ticker arrives (600% gain) - max gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.21")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionDTO.get().getLowestCalculatedGain().isPresent());
         assertTrue(positionDTO.get().getHighestCalculatedGain().isPresent());
         assertEquals(-50, positionDTO.get().getLowestCalculatedGain().get().getPercentage());
@@ -273,7 +273,7 @@ public class PositionBackupTest extends BaseTest {
 
         // Closing the trade - min and max should not change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("100")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(CLOSING, positionDTO.get().getStatus());
 
         // The close trade arrives, change the status and set the price.
@@ -285,7 +285,7 @@ public class PositionBackupTest extends BaseTest {
 
         // Check saved position.
         positionFlux.emitValue(positionDTO.get());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         p = positionRepository.findById(positionId);
         assertTrue(p.isPresent());
         assertEquals(5, p.get().getId());
@@ -308,7 +308,7 @@ public class PositionBackupTest extends BaseTest {
 
         // We now check the value in database.
         positionFlux.emitValue(positionDTO.get());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         p = positionRepository.findById(positionId);
         assertTrue(p.isPresent());
         assertEquals(5, p.get().getId());

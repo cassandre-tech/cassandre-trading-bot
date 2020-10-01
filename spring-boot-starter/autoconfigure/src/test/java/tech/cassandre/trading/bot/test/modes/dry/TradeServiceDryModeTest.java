@@ -117,7 +117,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(ASK, trade02.get().getType());
 
         // Testing retrieve methods.
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(2, tradeService.getOpenOrders().size());
         assertFalse(tradeService.getOpenOrderByOrderId("NON_EXISTING").isPresent());
         assertTrue(tradeService.getOpenOrderByOrderId(orderId01).isPresent());

@@ -185,7 +185,7 @@ public class PositionServiceTest extends BaseTest {
 
         // A first ticker arrives with a gain of 100% but for the wrong CP.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("0.5")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         PositionDTO p = positionService.getPositionById(1).get();
         assertEquals(OPENED, p.getStatus());
@@ -195,7 +195,7 @@ public class PositionServiceTest extends BaseTest {
 
         // A second ticker arrives with a gain of 50%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.3")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         p = positionService.getPositionById(1).get();
         assertEquals(OPENED, p.getStatus());
@@ -210,7 +210,7 @@ public class PositionServiceTest extends BaseTest {
 
         // A third ticker arrives with a gain of 100%.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.5")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSING, positionService.getPositionById(1).get().getStatus());
 
@@ -237,7 +237,7 @@ public class PositionServiceTest extends BaseTest {
         // Two tickers arrived - min and max gain should not be set.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).create());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.000001")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
 
         // Trade arrives, position is now opened.
         tradeFlux.emitValue(TradeDTO.builder().id("000001")
@@ -256,7 +256,7 @@ public class PositionServiceTest extends BaseTest {
 
         // First ticker arrives (500% gain) - min and max gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.18")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(position.get().getLowestCalculatedGain().isPresent());
         assertTrue(position.get().getHighestCalculatedGain().isPresent());
         assertEquals(500, position.get().getLowestCalculatedGain().get().getPercentage());
@@ -264,7 +264,7 @@ public class PositionServiceTest extends BaseTest {
 
         // Second ticker arrives (100% gain) - min gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(position.get().getLowestCalculatedGain().isPresent());
         assertTrue(position.get().getHighestCalculatedGain().isPresent());
         assertEquals(100, position.get().getLowestCalculatedGain().get().getPercentage());
@@ -272,7 +272,7 @@ public class PositionServiceTest extends BaseTest {
 
         // Third ticker arrives (200% gain) - nothing should change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.09")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(position.get().getLowestCalculatedGain().isPresent());
         assertTrue(position.get().getHighestCalculatedGain().isPresent());
         assertEquals(100, position.get().getLowestCalculatedGain().get().getPercentage());
@@ -280,7 +280,7 @@ public class PositionServiceTest extends BaseTest {
 
         // Fourth ticker arrives (50% loss) - min gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.015")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(position.get().getLowestCalculatedGain().isPresent());
         assertTrue(position.get().getHighestCalculatedGain().isPresent());
         assertEquals(-50, position.get().getLowestCalculatedGain().get().getPercentage());
@@ -288,7 +288,7 @@ public class PositionServiceTest extends BaseTest {
 
         // Firth ticker arrives (600% gain) - max gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.21")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(position.get().getLowestCalculatedGain().isPresent());
         assertTrue(position.get().getHighestCalculatedGain().isPresent());
         assertEquals(-50, position.get().getLowestCalculatedGain().get().getPercentage());
@@ -296,7 +296,7 @@ public class PositionServiceTest extends BaseTest {
 
         // Closing the trade - min and max should not change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(CLOSING, position.get().getStatus());
 
         // The close trade arrives, change the status and set the price.
@@ -308,7 +308,7 @@ public class PositionServiceTest extends BaseTest {
 
         // Sixth ticker arrives (800% gain) - min and max should not change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.27")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(position.get().getLowestCalculatedGain().isPresent());
         assertTrue(position.get().getHighestCalculatedGain().isPresent());
         assertEquals(-50, position.get().getLowestCalculatedGain().get().getPercentage());
@@ -316,7 +316,7 @@ public class PositionServiceTest extends BaseTest {
 
         // Seventh ticker arrives (90% loss) - min and max should not change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.003")).create());
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(position.get().getLowestCalculatedGain().isPresent());
         assertTrue(position.get().getHighestCalculatedGain().isPresent());
         assertEquals(-50, position.get().getLowestCalculatedGain().get().getPercentage());

@@ -112,7 +112,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -124,7 +124,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -136,7 +136,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());
