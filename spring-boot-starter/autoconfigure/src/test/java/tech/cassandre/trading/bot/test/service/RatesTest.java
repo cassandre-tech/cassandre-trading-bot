@@ -49,7 +49,7 @@ public class RatesTest {
 
 	@Test
 	@DisplayName("Check account service rate")
-	public void checkAccountServiceRateTest() throws InterruptedException {
+	public void checkAccountServiceRate() throws InterruptedException {
 		TimeUnit.SECONDS.sleep(20);
 
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
@@ -78,7 +78,7 @@ public class RatesTest {
 
 	@Test
 	@DisplayName("Check market service rate")
-	public void checkMarketServiceRateTest() throws InterruptedException {
+	public void checkMarketServiceRate() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
@@ -105,7 +105,7 @@ public class RatesTest {
 
 	@Test
 	@DisplayName("Check trade service rate")
-	public void checkTradeServiceRateTest() throws InterruptedException {
+	public void checkTradeServiceRate() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.

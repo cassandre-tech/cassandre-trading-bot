@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -277,18 +278,16 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                         .stopLossPercentage(position.getStopLossPercentageRule())
                         .create();
             }
-            PositionDTO p = new PositionDTO(position.getId(), position.getOpenOrderId(), rules);
+            PositionDTO p = new PositionDTO(position.getId(),
+                    PositionStatusDTO.valueOf(position.getStatus()),
+                    rules,
+                    position.getOpenOrderId(),
+                    tradesByOrderId.get(position.getOpenOrderId()),
+                    position.getCloseOrderId(),
+                    tradesByOrderId.get(position.getCloseOrderId()),
+                    position.getLowestPrice(),
+                    position.getHighestPrice());
             positionService.restorePosition(p);
-            // If open order is present.
-            if (tradesByOrderId.containsKey(position.getOpenOrderId())) {
-                positionService.tradeUpdate(tradesByOrderId.get(position.getOpenOrderId()));
-            }
-            if (position.getCloseOrderId() != null) {
-                p.setCloseOrderId(position.getCloseOrderId());
-                if (tradesByOrderId.containsKey(position.getCloseOrderId())) {
-                    positionService.tradeUpdate(tradesByOrderId.get(p.getCloseOrderId()));
-                }
-            }
             strategy.restorePosition(p);
             positionFlux.restorePosition(p);
         });

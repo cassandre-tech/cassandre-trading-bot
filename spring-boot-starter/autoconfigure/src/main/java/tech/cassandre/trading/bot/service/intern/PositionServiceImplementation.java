@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 
 /**
  * Position service implementation.
@@ -68,11 +69,12 @@ public class PositionServiceImplementation extends BaseService implements Positi
         // Trying to create an order.
         getLogger().debug("PositionService - Creating a position for {} on {} with the rules : {}", amount, currencyPair, rules);
         final OrderCreationResultDTO orderCreationResult = tradeService.createBuyMarketOrder(currencyPair, amount);
-
         // If it works, create the position.
         if (orderCreationResult.isSuccessful()) {
+            // =========================================================================================================
             // Creates the position in database.
             Position position = new Position();
+            position.setStatus(OPENING.toString());
             if (rules.isStopGainPercentageSet()) {
                 position.setStopGainPercentageRule(rules.getStopGainPercentage());
             }
@@ -81,12 +83,15 @@ public class PositionServiceImplementation extends BaseService implements Positi
             }
             position.setOpenOrderId(orderCreationResult.getOrderId());
             position = positionRepository.save(position);
+            // =========================================================================================================
 
+            // =========================================================================================================
             // Creates the position dto.
             PositionDTO p = new PositionDTO(position.getId(), orderCreationResult.getOrderId(), rules);
             positions.put(p.getId(), p);
             getLogger().debug("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrderId());
 
+            // =========================================================================================================
             // Creates the result.
             return new PositionCreationResultDTO(p.getId(), orderCreationResult.getOrderId());
         } else {
@@ -125,17 +130,25 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final void backupPosition(final PositionDTO position) {
-        Position p = new Position();
-        p.setId(position.getId());
-        if (position.getRules().isStopGainPercentageSet()) {
-            p.setStopGainPercentageRule(position.getRules().getStopGainPercentage());
+        Optional<Position> p = positionRepository.findById(position.getId());
+        if (p.isPresent()) {
+            p.get().setId(position.getId());
+            p.get().setStatus(position.getStatus().toString());
+            if (position.getRules().isStopGainPercentageSet()) {
+                p.get().setStopGainPercentageRule(position.getRules().getStopGainPercentage());
+            }
+            if (position.getRules().isStopLossPercentageSet()) {
+                p.get().setStopLossPercentageRule(position.getRules().getStopLossPercentage());
+            }
+            p.get().setOpenOrderId(position.getOpenOrderId());
+            p.get().setCloseOrderId(position.getCloseOrderId());
+            p.get().setLowestPrice(position.getLowestPrice());
+            p.get().setHighestPrice(position.getHighestPrice());
+            positionRepository.save(p.get());
+        } else {
+            // Position was not found.
+            getLogger().error("Position {} was not saved because it was not found in database", position.getId());
         }
-        if (position.getRules().isStopLossPercentageSet()) {
-            p.setStopGainPercentageRule(position.getRules().getStopLossPercentage());
-        }
-        p.setOpenOrderId(position.getOpenOrderId());
-        p.setCloseOrderId(position.getCloseOrderId());
-        positionRepository.save(p);
     }
 
 }

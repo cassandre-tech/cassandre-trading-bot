@@ -62,7 +62,7 @@ public class PositionServiceDryModeTest extends BaseTest {
 
     @Test
     @DisplayName("Check position lifecycle")
-    public void checkPositionLifecycleTest() throws InterruptedException {
+    public void checkPositionLifecycle() throws InterruptedException {
         // First tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.2.
         // ETH, USDT - bid 0,3 / ask 0.3.

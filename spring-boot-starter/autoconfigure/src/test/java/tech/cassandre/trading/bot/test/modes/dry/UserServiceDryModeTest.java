@@ -70,7 +70,7 @@ public class UserServiceDryModeTest extends BaseTest {
 
     @Test
     @DisplayName("Check imported user data")
-    public void checkImportUserDataTest() {
+    public void checkImportUserData() {
         // Retrieve user.
         final Optional<UserDTO> user = userService.getUser();
         assertTrue(user.isPresent());

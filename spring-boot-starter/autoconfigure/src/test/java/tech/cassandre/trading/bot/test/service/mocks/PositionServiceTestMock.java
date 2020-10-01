@@ -130,6 +130,13 @@ public class PositionServiceTestMock {
         given(service.createSellMarketOrder(PositionServiceTest.cp1, new BigDecimal("0.0001")))
                 .willReturn(new OrderCreationResultDTO("ORDER00011"));
 
+        // Position 1 closed reply (ORDER00011) - used for max and min gain test.
+        given(service.createBuyMarketOrder(PositionServiceTest.cp1, new BigDecimal("10")))
+                .willReturn(new OrderCreationResultDTO("ORDER00010"));
+        // Position 1 closed reply (ORDER00011) - used for max and min gain test.
+        given(service.createSellMarketOrder(PositionServiceTest.cp1, new BigDecimal("10")))
+                .willReturn(new OrderCreationResultDTO("ORDER00011"));
+
         return service;
     }
 

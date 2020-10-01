@@ -234,7 +234,6 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     public final boolean canSell(final AccountDTO account,
                                  final BigDecimal amount,
                                  final BigDecimal minimumBalanceAfter) {
-        System.out.println(getRequestedCurrencyPair().getBaseCurrency());
         return canSell(account, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceAfter);
     }
 

@@ -60,7 +60,7 @@ public class TradeServiceDryModeTest extends BaseTest {
 
     @Test
     @DisplayName("Check buy and sell order creation")
-    public void checkCreateBuyAndSellOrderTest() throws InterruptedException {
+    public void checkCreateBuyAndSellOrder() throws InterruptedException {
         tickerFlux.update();
 
         // What we expect.
