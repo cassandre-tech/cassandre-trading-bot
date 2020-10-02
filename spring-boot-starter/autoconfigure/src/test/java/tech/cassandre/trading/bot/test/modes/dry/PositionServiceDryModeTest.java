@@ -11,13 +11,13 @@ import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.modes.dry.mocks.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;

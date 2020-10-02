@@ -209,6 +209,7 @@ public class PositionBackupTest extends BaseTest {
         final long positionId = positionResult.getPositionId();
         final Optional<PositionDTO> positionDTO = positionService.getPositionById(positionId);
         assertTrue(positionDTO.isPresent());
+        assertTrue(positionRepository.findById(positionId).isPresent());
 
         // Two tickers arrived - min and max gain should not be set.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("100")).create());
@@ -216,7 +217,8 @@ public class PositionBackupTest extends BaseTest {
 
         // Check saved position.
         positionFlux.emitValue(positionDTO.get());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        await().until(() -> positionRepository.findById(positionId).isPresent() &&
+                positionRepository.findById(positionId).get().getStatus().equals(OPENING.toString()));
         Optional<Position> p = positionRepository.findById(positionId);
         assertTrue(p.isPresent());
         assertEquals(5, p.get().getId());
@@ -228,7 +230,7 @@ public class PositionBackupTest extends BaseTest {
         assertNull(p.get().getLowestPrice());
         assertNull(p.get().getHighestPrice());
 
-        // Trade arrives, position is now opened.
+        // Trade arrives, position will be opened.
         tradeFlux.emitValue(TradeDTO.builder().id("000001")
                 .orderId("ORDER00010")
                 .currencyPair(cp)
@@ -236,10 +238,11 @@ public class PositionBackupTest extends BaseTest {
                 .price(new BigDecimal("0.03"))
                 .create());
         await().untilAsserted(() -> assertEquals(OPENED, positionDTO.get().getStatus()));
+        positionFlux.emitValue(positionDTO.get());
 
         // Check saved position.
-        positionFlux.emitValue(positionDTO.get());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        await().until(() -> positionRepository.findById(positionId).isPresent() &&
+                positionRepository.findById(positionId).get().getStatus().equals(OPENED.toString()));
         p = positionRepository.findById(positionId);
         assertTrue(p.isPresent());
         assertEquals(5, p.get().getId());
@@ -251,10 +254,6 @@ public class PositionBackupTest extends BaseTest {
         assertNull(p.get().getLowestPrice());
         assertNull(p.get().getHighestPrice());
 
-        // The two tickers arrived during the OPENING status should not have change highest and lowest gain.
-        assertTrue(positionDTO.get().getLowestCalculatedGain().isEmpty());
-        assertTrue(positionDTO.get().getHighestCalculatedGain().isEmpty());
-
         // First ticker arrives (500% gain) - min and max gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.18")).create());
         // Second ticker arrives (100% gain) - min gain should be set to that value.
@@ -265,7 +264,8 @@ public class PositionBackupTest extends BaseTest {
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.015")).create());
         // Firth ticker arrives (600% gain) - max gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.21")).create());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        await().until(() -> strategy.getTickersUpdateReceived().size() == 7);
+
         assertTrue(positionDTO.get().getLowestCalculatedGain().isPresent());
         assertTrue(positionDTO.get().getHighestCalculatedGain().isPresent());
         assertEquals(-50, positionDTO.get().getLowestCalculatedGain().get().getPercentage());
@@ -273,7 +273,7 @@ public class PositionBackupTest extends BaseTest {
 
         // Closing the trade - min and max should not change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("100")).create());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        await().untilAsserted(() -> assertEquals(CLOSING, positionDTO.get().getStatus()));
         assertEquals(CLOSING, positionDTO.get().getStatus());
 
         // The close trade arrives, change the status and set the price.
@@ -285,34 +285,12 @@ public class PositionBackupTest extends BaseTest {
 
         // Check saved position.
         positionFlux.emitValue(positionDTO.get());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        await().until(() -> positionRepository.findById(positionId).isPresent() &&
+                positionRepository.findById(positionId).get().getStatus().equals(CLOSED.toString()));
         p = positionRepository.findById(positionId);
         assertTrue(p.isPresent());
         assertEquals(5, p.get().getId());
         assertEquals(CLOSED.toString(), p.get().getStatus());
-        assertEquals(1000, p.get().getStopGainPercentageRule());
-        assertEquals(100, p.get().getStopLossPercentageRule());
-        assertEquals("ORDER00010", p.get().getOpenOrderId());
-        assertEquals("ORDER00011", p.get().getCloseOrderId());
-        assertEquals(0, new BigDecimal("0.015").compareTo(p.get().getLowestPrice()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p.get().getHighestPrice()));
-
-        // Sixth ticker arrives (800% gain) - min and max should not change as position is closed.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.27")).create());
-        // Seventh ticker arrives (90% loss) - min and max should not change as position is closed.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.003")).create());
-        assertTrue(positionDTO.get().getLowestCalculatedGain().isPresent());
-        assertTrue(positionDTO.get().getHighestCalculatedGain().isPresent());
-        assertEquals(-50, positionDTO.get().getLowestCalculatedGain().get().getPercentage());
-        assertEquals(600, positionDTO.get().getHighestCalculatedGain().get().getPercentage());
-
-        // We now check the value in database.
-        positionFlux.emitValue(positionDTO.get());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        p = positionRepository.findById(positionId);
-        assertTrue(p.isPresent());
-        assertEquals(5, p.get().getId());
-        assertEquals(p.get().getStatus(), CLOSED.toString());
         assertEquals(1000, p.get().getStopGainPercentageRule());
         assertEquals(100, p.get().getStopLossPercentageRule());
         assertEquals("ORDER00010", p.get().getOpenOrderId());
