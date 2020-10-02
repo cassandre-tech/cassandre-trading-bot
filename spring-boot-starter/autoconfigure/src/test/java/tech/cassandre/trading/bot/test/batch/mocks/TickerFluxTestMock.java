@@ -9,12 +9,12 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -101,7 +101,7 @@ public class TickerFluxTestMock extends BaseTest {
         MarketService marketService = mock(MarketService.class);
 
         // Replies for ETH / BTC.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
+        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
         final Date time = Calendar.getInstance().getTime();
         given(marketService
                 .getTicker(cp1))
@@ -117,7 +117,7 @@ public class TickerFluxTestMock extends BaseTest {
                 );
 
         // Replies for ETH / USDT.
-        final CurrencyPairDTO cp2 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT);
+        final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
         given(marketService
                 .getTicker(cp2))
                 .willReturn(BaseTest.getFakeTicker(cp2, new BigDecimal("10")),

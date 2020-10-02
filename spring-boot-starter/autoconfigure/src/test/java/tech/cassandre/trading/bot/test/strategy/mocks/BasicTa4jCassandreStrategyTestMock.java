@@ -83,7 +83,6 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         // Account retrieved by configuration.
         AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").create();
         accounts.put("trade", tempAccount);
-        UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
         accounts.clear();
 
         // Account 01.

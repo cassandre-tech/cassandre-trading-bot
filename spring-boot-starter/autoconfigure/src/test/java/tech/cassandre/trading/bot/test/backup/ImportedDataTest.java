@@ -18,9 +18,6 @@ import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 
 
 @SpringBootTest

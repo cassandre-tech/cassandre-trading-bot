@@ -21,7 +21,6 @@ import tech.cassandre.trading.bot.test.service.mocks.PositionServiceTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -49,9 +48,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 @Import(PositionServiceTestMock.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PositionServiceTest extends BaseTest {
-
-    @Autowired
-    private TestableCassandreStrategy strategy;
 
     @Autowired
     private PositionService positionService;
@@ -170,7 +166,7 @@ public class PositionServiceTest extends BaseTest {
     @DisplayName("Check close position")
     public void checkClosePosition() throws InterruptedException {
         // Creates position 1 (ETH/BTC, 0.0001, 100% stop gain).
-        final PositionCreationResultDTO position = positionService.createPosition(cp1,
+        positionService.createPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100).create());
 
@@ -227,7 +223,7 @@ public class PositionServiceTest extends BaseTest {
     public void checkMinAndMaxGain() throws InterruptedException {
         // A position is opening on ETH/BTC.
         // We buy 10 ETH for 100 BTC.
-        final PositionCreationResultDTO positionResult = positionService.createPosition(cp1,
+        positionService.createPosition(cp1,
                 new BigDecimal("10"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000)   // 1 000% max gain.
@@ -303,6 +299,8 @@ public class PositionServiceTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("ORDER00011")
                 .currencyPair(cp1)
+                .originalAmount(new BigDecimal("10"))
+                .price(new BigDecimal("20"))
                 .create());
         await().untilAsserted(() -> assertEquals(CLOSED, position.get().getStatus()));
 

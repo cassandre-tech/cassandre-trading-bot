@@ -37,9 +37,6 @@ public class PositionServiceImplementation extends BaseService implements Positi
     /** Position repository. */
     private final PositionRepository positionRepository;
 
-    /** Trades. */
-    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
-
     /**
      * Constructor.
      *

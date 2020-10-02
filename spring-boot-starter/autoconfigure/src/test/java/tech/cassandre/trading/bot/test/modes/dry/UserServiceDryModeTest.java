@@ -287,7 +287,7 @@ public class UserServiceDryModeTest extends BaseTest {
 
     @Test
     @DisplayName("Check selling error")
-    public void CheckSellingError() {
+    public void checkSellingError() {
         // =============================================================================================================
         // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032661 BTC.
         // last = 0.032661 (Last trade field is the price set during the last trade)

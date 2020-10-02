@@ -27,7 +27,6 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -156,7 +155,7 @@ public class PositionBackupTest extends BaseTest {
         Optional<Position> p = positionRepository.findById(5L);
         assertTrue(p.isPresent());
         assertEquals(5L, p.get().getId());
-        assertTrue(OPENING.toString().equals(p.get().getStatus()));
+        assertEquals(p.get().getStatus(), OPENING.toString());
         assertEquals(1, p.get().getStopGainPercentageRule());
         assertEquals(2, p.get().getStopLossPercentageRule());
         assertEquals("ORDER00010", p.get().getOpenOrderId());
@@ -173,7 +172,7 @@ public class PositionBackupTest extends BaseTest {
         p = positionRepository.findById(6L);
         assertTrue(p.isPresent());
         assertEquals(6L, p.get().getId());
-        assertTrue(OPENING.toString().equals(p.get().getStatus()));
+        assertEquals(p.get().getStatus(), OPENING.toString());
         assertNull(p.get().getStopGainPercentageRule());
         assertNull(p.get().getStopLossPercentageRule());
         assertEquals("ORDER00020", p.get().getOpenOrderId());
@@ -195,7 +194,7 @@ public class PositionBackupTest extends BaseTest {
 
     @Test
     @DisplayName("Check saved data during position lifecycle")
-    public void checkSavedDataDuringPositionLifecycle() throws InterruptedException {
+    public void checkSavedDataDuringPositionLifecycle() {
         // A position is opening on ETH/BTC.
         // We buy 10 ETH for 100 BTC.
         final PositionCreationResultDTO positionResult = positionService.createPosition(cp,
@@ -279,7 +278,9 @@ public class PositionBackupTest extends BaseTest {
         // The close trade arrives, change the status and set the price.
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("ORDER00011")
+                .originalAmount(new BigDecimal("10"))
                 .currencyPair(cp)
+                .price(new BigDecimal("1"))
                 .create());
         await().untilAsserted(() -> assertEquals(CLOSED, positionDTO.get().getStatus()));
 

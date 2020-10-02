@@ -22,14 +22,14 @@ import static org.mockito.Mockito.mock;
 @TestConfiguration
 public class PositionBackupMock {
 
+    @Autowired
+    private PositionRepository positionRepository;
+
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
-
-    @Autowired
-    private PositionRepository positionRepository;
 
     @Bean
     @Primary

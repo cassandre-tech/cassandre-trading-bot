@@ -12,7 +12,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -31,9 +30,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class MarketServiceTest {
-
-    @Autowired
-    private TestableCassandreStrategy strategy;
 
     @Autowired
     private MarketService marketService;
