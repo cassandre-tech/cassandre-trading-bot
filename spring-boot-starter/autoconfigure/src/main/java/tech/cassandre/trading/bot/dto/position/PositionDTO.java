@@ -414,45 +414,49 @@ public class PositionDTO {
 
     @Override
     public final String toString() {
-        String value = "Position n°" + id + " (";
-        // Rules.
-        if (!rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
-            value += "no rules";
+        try {
+            String value = "Position n°" + id + " (";
+            // Rules.
+            if (!rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
+                value += "no rules";
+            }
+            if (rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
+                value += rules.getStopGainPercentage() + " % gain rule";
+            }
+            if (rules.isStopLossPercentageSet() && !rules.isStopGainPercentageSet()) {
+                value += rules.getStopLossPercentage() + " % loss rule";
+            }
+            if (rules.isStopGainPercentageSet() && rules.isStopLossPercentageSet()) {
+                value += rules.getStopGainPercentage() + " % gain rule / ";
+                value += rules.getStopLossPercentage() + " % loss rule";
+            }
+            value += ")";
+            switch (status) {
+                case OPENING:
+                    value += " - Opening - Waiting for the trade of order " + getOpenOrderId();
+                    break;
+                case OPENED:
+                    value += " on " + getCurrencyPair() + " - Opened";
+                    final Optional<GainDTO> lastGain = getLastCalculatedGain();
+                    if (lastGain.isPresent()) {
+                        value += " - Last gain calculated " + getLastCalculatedGain().get().getPercentage() + " %";
+                    }
+                    break;
+                case CLOSING:
+                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trade of order " + getCloseOrderId();
+                    break;
+                case CLOSED:
+                    final GainDTO gain = getGain();
+                    value += " on " + getCurrencyPair() + " - Closed - Gain : " + gain.getPercentage() + " %";
+                    break;
+                default:
+                    value = "Incorrect state for position " + getId();
+                    break;
+            }
+            return value;
+        } catch (NullPointerException e) {
+            return "Position " + getId();
         }
-        if (rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
-            value += rules.getStopGainPercentage() + " % gain rule";
-        }
-        if (rules.isStopLossPercentageSet() && !rules.isStopGainPercentageSet()) {
-            value += rules.getStopLossPercentage() + " % loss rule";
-        }
-        if (rules.isStopGainPercentageSet() && rules.isStopLossPercentageSet()) {
-            value += rules.getStopGainPercentage() + " % gain rule / ";
-            value += rules.getStopLossPercentage() + " % loss rule";
-        }
-        value += ")";
-        switch (status) {
-            case OPENING:
-                value += " - Opening - Waiting for the trade of order " + getOpenOrderId();
-                break;
-            case OPENED:
-                value += " on " + getCurrencyPair() + " - Opened";
-                final Optional<GainDTO> lastGain = getLastCalculatedGain();
-                if (lastGain.isPresent()) {
-                    value += " - Last gain calculated " + getLastCalculatedGain().get().getPercentage() + " %";
-                }
-                break;
-            case CLOSING:
-                value += " on " + getCurrencyPair() + " - Closing - Waiting for the trade of order " + getCloseOrderId();
-                break;
-            case CLOSED:
-                final GainDTO gain = getGain();
-                value += " on " + getCurrencyPair() + " - Closed - Gain : " + gain.getPercentage() + " %";
-                break;
-            default:
-                value = "Incorrect state for position " + getId();
-                break;
-        }
-        return value;
     }
 
 }

@@ -9,8 +9,8 @@ import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.test.backup.PositionBackupTest;
 import tech.cassandre.trading.bot.test.service.PositionServiceTest;
 
@@ -22,14 +22,14 @@ import static org.mockito.Mockito.mock;
 @TestConfiguration
 public class PositionBackupMock {
 
-    @Autowired
-    private PositionRepository positionRepository;
-
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
     }
+
+    @Autowired
+    private PositionRepository positionRepository;
 
     @Bean
     @Primary

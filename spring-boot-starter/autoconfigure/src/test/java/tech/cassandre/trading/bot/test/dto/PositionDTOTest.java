@@ -336,16 +336,6 @@ public class PositionDTOTest {
         assertEquals(p2.toString(), "Position n°2 (11.0 % loss rule) on ETH/BTC - Opened - Last gain calculated 100.0 %");
 
         // Position closing.
-        TradeDTO openTrade2 = TradeDTO.builder().id("0000002")
-                .currencyPair(new CurrencyPairDTO(ETH, BTC))
-                .feeAmount(new BigDecimal(1))
-                .feeCurrency(BTC)
-                .orderId("OPEN_ORDER_03")
-                .originalAmount(new BigDecimal(1))
-                .price(new BigDecimal(1))
-                .timestamp(ZonedDateTime.now())
-                .type(OrderTypeDTO.BID)
-                .create();
         PositionDTO p3 = new PositionDTO(3L,
                 CLOSING,
                 PositionRulesDTO.builder().stopGainPercentage(12).create(),
