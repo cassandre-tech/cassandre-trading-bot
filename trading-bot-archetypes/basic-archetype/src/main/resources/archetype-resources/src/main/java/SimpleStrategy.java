@@ -37,7 +37,9 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-		return accounts.stream().filter(a -> a.getId().equals("trade")).findFirst();
+		return accounts.stream()
+				.filter(a -> "trade".equals(a.getName()))
+				.findFirst();
 	}
 
 	@Override

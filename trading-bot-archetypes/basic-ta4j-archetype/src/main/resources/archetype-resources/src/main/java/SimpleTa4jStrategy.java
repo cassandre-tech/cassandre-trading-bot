@@ -42,7 +42,9 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-        return accounts.stream().filter(a -> a.getId().equals("trade")).findFirst();
+        return accounts.stream()
+                .filter(a -> "trade".equals(a.getName()))
+                .findFirst();
     }
 
     @Override
@@ -64,35 +66,30 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public void onTickerUpdate(TickerDTO ticker) {
-        // Display all received tickers
+        // Display all received tickers.
         System.out.println("New ticker " + ticker);
     }
 
     @Override
     public void onPositionUpdate(PositionDTO position) {
-        // Display the position number when a ticker has been opened.
-        if (position.getStatus().equals(OPENED)) {
-            System.out.println(" > Position " + position.getId() + " opened");
-        }
-        // Display the position number and gain when it's closed.
-        if (position.getStatus().equals(CLOSED)) {
-            System.out.println(" >> Position " + position.getId() + " closed - gain : " + position.getGain().getAmount());
-        }
+        System.out.println(" > Position update : " + position);
     }
 
     @Override
     public void shouldEnter() {
-        // Create rules.
-        PositionRulesDTO rules = PositionRulesDTO
-                .builder()
-                .stopGainPercentage(10)
-                .stopLossPercentage(5)
-                .create();
-        // Create position.
-        getPositionService().createPosition(
-                new CurrencyPairDTO(BTC, USDT),
-                new BigDecimal("0.01"),
-                rules);
+        if (canBuy(new BigDecimal("0.01"))) {
+            // Create rules.
+            PositionRulesDTO rules = PositionRulesDTO
+                    .builder()
+                    .stopGainPercentage(10)
+                    .stopLossPercentage(5)
+                    .create();
+            // Create position.
+            getPositionService().createPosition(
+                    new CurrencyPairDTO(BTC, USDT),
+                    new BigDecimal("0.01"),
+                    rules);
+        }
     }
 
     @Override

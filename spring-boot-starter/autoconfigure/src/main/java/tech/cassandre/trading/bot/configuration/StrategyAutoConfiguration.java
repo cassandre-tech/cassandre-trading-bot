@@ -38,6 +38,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * StrategyAutoConfiguration configures the strategy.
@@ -236,6 +237,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Restoring all trades.
         final Map<String, TradeDTO> tradesByOrderId = new LinkedHashMap<>();
         getLogger().info("Restoring trades from database");
+        AtomicInteger tradeCount = new AtomicInteger(0);
         tradeRepository.findByOrderByTimestampAsc()
                 .forEach(trade -> {
                     TradeDTO t = TradeDTO.builder()
@@ -253,12 +255,14 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                     strategy.restoreTrade(t);
                     tradeService.restoreTrade(t);
                     tradeFlux.restoreTrade(t);
+                    tradeCount.incrementAndGet();
                     getLogger().info("Trade " + trade.getOrderId() + " restored");
                 });
-        getLogger().info(tradeRepository.count() + " trade(s) restored");
+        getLogger().info(tradeCount.get() + " trade(s) restored");
 
         // Restoring data from databases.
         getLogger().info("Restoring positions from database");
+        AtomicInteger positionCount = new AtomicInteger(0);
         positionRepository.findAll().forEach(position -> {
             PositionRulesDTO rules = PositionRulesDTO.builder().create();
             boolean stopGainRuleSet = position.getStopGainPercentageRule() != null;
@@ -294,9 +298,10 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             positionService.restorePosition(p);
             strategy.restorePosition(p);
             positionFlux.restorePosition(p);
+            positionCount.incrementAndGet();
             getLogger().info("Position " + position.getId() + " restored");
         });
-        getLogger().info(positionRepository.count() + " position(s) restored");
+        getLogger().info(positionCount.get() + " position(s) restored");
     }
 
 }
