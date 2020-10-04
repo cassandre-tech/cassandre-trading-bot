@@ -23,6 +23,9 @@ import static org.mockito.Mockito.mock;
 @TestConfiguration
 public class PositionFluxTestMock {
 
+    @Autowired
+    private PositionRepository positionRepository;
+
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
@@ -40,9 +43,6 @@ public class PositionFluxTestMock {
     public PositionFlux positionFlux() {
         return new PositionFlux(positionService());
     }
-
-    @Autowired
-    private PositionRepository positionRepository;
 
     @Bean
     @Primary

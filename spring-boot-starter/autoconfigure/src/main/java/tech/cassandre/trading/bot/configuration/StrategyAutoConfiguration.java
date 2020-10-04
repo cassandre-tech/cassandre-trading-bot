@@ -23,8 +23,8 @@ import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
@@ -235,6 +235,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     private void restoreData(final CassandreStrategyInterface strategy) {
         // Restoring all trades.
         final Map<String, TradeDTO> tradesByOrderId = new LinkedHashMap<>();
+        getLogger().info("Restoring trades from database");
         tradeRepository.findByOrderByTimestampAsc()
                 .forEach(trade -> {
                     TradeDTO t = TradeDTO.builder()
@@ -252,9 +253,12 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                     strategy.restoreTrade(t);
                     tradeService.restoreTrade(t);
                     tradeFlux.restoreTrade(t);
+                    getLogger().info("Trade " + trade.getOrderId() + " restored");
                 });
+        getLogger().info(tradeRepository.count() + " trade(s) restored");
 
         // Restoring data from databases.
+        getLogger().info("Restoring positions from database");
         positionRepository.findAll().forEach(position -> {
             PositionRulesDTO rules = PositionRulesDTO.builder().create();
             boolean stopGainRuleSet = position.getStopGainPercentageRule() != null;
@@ -290,7 +294,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             positionService.restorePosition(p);
             strategy.restorePosition(p);
             positionFlux.restorePosition(p);
+            getLogger().info("Position " + position.getId() + " restored");
         });
+        getLogger().info(positionRepository.count() + " position(s) restored");
     }
 
 }
