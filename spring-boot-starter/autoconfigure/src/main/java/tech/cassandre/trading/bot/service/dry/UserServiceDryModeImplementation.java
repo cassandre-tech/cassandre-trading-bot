@@ -5,10 +5,10 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.BaseService;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
     private static final String USER_FILE_PREFIX = "user-";
 
     /** User file suffix. */
-    private static final String USER_FILE_SUFFIX = ".tsv";
+    private static final String USER_FILE_SUFFIX = ".*sv";
 
     /** User ID. */
     public static final String USER_ID = "user";
@@ -50,12 +50,13 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
      */
     public UserServiceDryModeImplementation() {
         user = UserDTO.builder().setId(USER_ID).create();
+
         getFilesToLoad().forEach(file -> {
             if (file.getFilename() != null) {
 
                 // Account.
                 final int accountIndexStart = file.getFilename().indexOf(USER_FILE_PREFIX) + USER_FILE_PREFIX.length();
-                final int accountIndexStop = file.getFilename().indexOf(USER_FILE_SUFFIX);
+                final int accountIndexStop = file.getFilename().indexOf("sv") - 2;
                 final String accountName = file.getFilename().substring(accountIndexStart, accountIndexStop);
                 getLogger().info("Adding account '" + accountName + "'");
 
@@ -64,10 +65,14 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 try (Scanner scanner = new Scanner(file.getFile())) {
                     while (scanner.hasNextLine()) {
                         try (Scanner rowScanner = new Scanner(scanner.nextLine())) {
-                            rowScanner.useDelimiter("\t");
+                            if (file.getFilename().endsWith("tsv")) {
+                                rowScanner.useDelimiter("\t");
+                            } else {
+                                rowScanner.useDelimiter(",");
+                            }
                             // Data retrieved from file.
-                            final String currency = rowScanner.next();
-                            final String amount = rowScanner.next();
+                            final String currency = rowScanner.next().replaceAll("\"", "");
+                            final String amount = rowScanner.next().replaceAll("\"", "");
                             // Creating balance.
                             getLogger().info("- Adding balance " + amount + " " + currency);
                             BalanceDTO balance = BalanceDTO.builder()
