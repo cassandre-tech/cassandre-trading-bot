@@ -153,4 +153,11 @@ public interface CassandreStrategyInterface {
      */
     void onPositionUpdate(PositionDTO position);
 
+    /**
+     * Method triggered on every position status update.
+     *
+     * @param position position
+     */
+    void onPositionStatusUpdate(PositionDTO position);
+
 }

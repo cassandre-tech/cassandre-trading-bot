@@ -71,7 +71,7 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public void onPositionUpdate(PositionDTO position) {
+    public void onPositionStatusUpdate(PositionDTO position) {
         System.out.println(" > Position update : " + position);
     }
 

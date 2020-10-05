@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.strategy;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -40,6 +41,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     /** The positions owned by the user. */
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
+
+    /** Positions previous status. */
+    private final Map<Long, PositionStatusDTO> previousPositions = new LinkedHashMap<>();
 
     /** Last ticker received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTicker = new LinkedHashMap<>();
@@ -108,6 +112,15 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public final Map<Long, PositionDTO> getPositions() {
         return positions;
+    }
+
+    /**
+     * Getter previousPositions.
+     *
+     * @return previousPositions
+     */
+    public final Map<Long, PositionStatusDTO> getPreviousPositions() {
+        return previousPositions;
     }
 
     /**

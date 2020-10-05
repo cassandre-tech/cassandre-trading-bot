@@ -57,6 +57,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     /** Positions update received. */
     private final List<PositionDTO> positionsUpdateReceived = new LinkedList<>();
 
+    /** Positions status update received. */
+    private final List<PositionDTO> positionsStatusUpdateReceived = new LinkedList<>();
+
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
         Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
@@ -127,6 +130,17 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         positionsUpdateReceived.add(position);
     }
 
+    @Override
+    public void onPositionStatusUpdate(PositionDTO position) {
+        logger.info("TestableStrategy-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position);
+        try {
+            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        } catch (InterruptedException e) {
+            logger.debug("InterruptedException");
+        }
+        positionsStatusUpdateReceived.add(position);
+    }
+
     /**
      * Return formatted list count.
      *
@@ -189,6 +203,15 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
      */
     public final List<PositionDTO> getPositionsUpdateReceived() {
         return positionsUpdateReceived;
+    }
+
+    /**
+     * Getter positionsStatusUpdateReceived.
+     *
+     * @return positionsStatusUpdateReceived
+     */
+    public final List<PositionDTO> getPositionsStatusUpdateReceived() {
+        return positionsStatusUpdateReceived;
     }
 
 }

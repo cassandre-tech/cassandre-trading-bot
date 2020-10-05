@@ -35,7 +35,7 @@ public class NoTradingAccountStrategy extends BasicCassandreStrategy {
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-        return accounts.stream().filter(a -> a.getId().equals("non_existing")).findFirst();
+        return accounts.stream().filter(a -> "non_existing".equals(a.getId())).findFirst();
     }
 
 }

@@ -72,4 +72,10 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 		System.out.println("Received information about a position : " + position);
 	}
 
+	@Override
+	public void onPositionStatusUpdate(final PositionDTO position) {
+		// Here, we will receive an PositionDTO each a position has changed.
+		System.out.println("Received information about a position status : " + position);
+	}
+
 }
