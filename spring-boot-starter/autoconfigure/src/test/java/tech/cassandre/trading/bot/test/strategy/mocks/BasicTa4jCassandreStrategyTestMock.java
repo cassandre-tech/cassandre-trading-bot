@@ -21,8 +21,8 @@ import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -33,8 +33,8 @@ import java.util.Set;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
 @TestConfiguration
@@ -79,10 +79,16 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         UserService userService = mock(UserService.class);
         // Returns three updates.
 
+        // =============================================================================================================
+        // Account retrieved by configuration.
+        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").create();
+        accounts.put("trade", tempAccount);
+        accounts.clear();
+
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).create();
+        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
         balances.clear();
@@ -102,7 +108,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         balances.put(BTC, account03Balance1);
         BalanceDTO account03Balance2 = BalanceDTO.builder().available(new BigDecimal("150")).create();
         balances.put(USDT, account03Balance2);
-        AccountDTO account03 = AccountDTO.builder().id("03").balances(balances).create();
+        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
         balances.clear();

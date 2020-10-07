@@ -9,10 +9,10 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -23,7 +23,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 
 @TestConfiguration
 public class AccountFluxTestMock {
@@ -55,7 +55,14 @@ public class AccountFluxTestMock {
         final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
         UserService userService = mock(UserService.class);
 
-        // =========================================================================================================
+        // =============================================================================================================
+        // Account retrieved by configuration.
+        AccountDTO tempAccount = AccountDTO.builder().id("trade").name("trade").create();
+        accounts.put("trade", tempAccount);
+        UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
+        accounts.clear();
+
+        // =============================================================================================================
         // Account 1 with 2 balances.
         // Account 2 with 1 balance.
         BalanceDTO account01Balance1 = BalanceDTO.builder()
@@ -374,7 +381,8 @@ public class AccountFluxTestMock {
 
         // Mock.
         given(userService.getUser())
-                .willReturn(Optional.of(user01),
+                .willReturn(Optional.of(tempUser),
+                        Optional.of(user01),
                         Optional.empty(),
                         Optional.of(user02),
                         Optional.of(user03),

@@ -11,13 +11,13 @@ import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.modes.dry.mocks.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
@@ -28,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
 
 
@@ -62,7 +62,7 @@ public class PositionServiceDryModeTest extends BaseTest {
 
     @Test
     @DisplayName("Check position lifecycle")
-    public void checkPositionLifecycleTest() throws InterruptedException {
+    public void checkPositionLifecycle() throws InterruptedException {
         // First tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.2.
         // ETH, USDT - bid 0,3 / ask 0.3.
@@ -112,7 +112,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -124,7 +124,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -136,7 +136,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // No change.
         tickerFlux.update();
         tickerFlux.update();
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
         assertTrue(positionService.getPositionById(2).isPresent());

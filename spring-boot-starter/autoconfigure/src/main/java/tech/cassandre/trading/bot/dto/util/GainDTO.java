@@ -1,7 +1,5 @@
 package tech.cassandre.trading.bot.dto.util;
 
-import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
-
 /**
  * Gain.
  */

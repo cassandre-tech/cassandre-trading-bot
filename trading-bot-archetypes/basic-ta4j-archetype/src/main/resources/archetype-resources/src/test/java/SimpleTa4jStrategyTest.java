@@ -43,15 +43,15 @@ public class SimpleTa4jStrategyTest {
 				.map(p -> p.getGain().getAmount().getValue())
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		System.out.println("Cumulated gains > " + gains);
+		System.out.println("Your gains => " + gains);
 		assertTrue(gains.compareTo(BigDecimal.ZERO) > 0);
 
-		System.out.println("Position still opened :");
+		System.out.println("Opened positions :");
 		strategy.getPositions()
 				.values()
 				.stream()
 				.filter(p -> p.getStatus().equals(OPENED))
-				.forEach(p -> System.out.println(" - " + p.getId()));
+				.forEach(p -> System.out.println(" - " + p));
 	}
 
 }

@@ -1,7 +1,7 @@
 #set($symbol_pound='#')
-        #set($symbol_dollar='$')
-        #set($symbol_escape='\' )
-        package ${package};
+#set($symbol_dollar='$')
+#set($symbol_escape='\' )
+package ${package};
 
 import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Strategy;
@@ -12,17 +12,20 @@ import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.Optional;
+import java.util.Set;
 
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
  * Simple strategy.
@@ -35,6 +38,13 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
     @Override
     public CurrencyPairDTO getRequestedCurrencyPair() {
         return new CurrencyPairDTO(BTC, USDT);
+    }
+
+    @Override
+    public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
+        return accounts.stream()
+                .filter(a -> "trade".equals(a.getName()))
+                .findFirst();
     }
 
     @Override
@@ -56,35 +66,30 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public void onTickerUpdate(TickerDTO ticker) {
-        // Display all received tickers
+        // Display all received tickers.
         System.out.println("New ticker " + ticker);
     }
 
     @Override
-    public void onPositionUpdate(PositionDTO position) {
-        // Display the position number when a ticker has been opened.
-        if (position.getStatus().equals(OPENED)) {
-            System.out.println(" > Position " + position.getId() + " opened");
-        }
-        // Display the position number and gain when it's closed.
-        if (position.getStatus().equals(CLOSED)) {
-            System.out.println(" >> Position " + position.getId() + " closed - gain : " + position.getGain().getAmount());
-        }
+    public void onPositionStatusUpdate(PositionDTO position) {
+        System.out.println(" > Position update : " + position);
     }
 
     @Override
     public void shouldEnter() {
-        // Create rules.
-        PositionRulesDTO rules = PositionRulesDTO
-                .builder()
-                .stopGainPercentage(10)
-                .stopLossPercentage(5)
-                .create();
-        // Create position.
-        getPositionService().createPosition(
-                new CurrencyPairDTO(BTC, USDT),
-                new BigDecimal("0.01"),
-                rules);
+        if (canBuy(new BigDecimal("0.01"))) {
+            // Create rules.
+            PositionRulesDTO rules = PositionRulesDTO
+                    .builder()
+                    .stopGainPercentage(10)
+                    .stopLossPercentage(5)
+                    .create();
+            // Create position.
+            getPositionService().createPosition(
+                    new CurrencyPairDTO(BTC, USDT),
+                    new BigDecimal("0.01"),
+                    rules);
+        }
     }
 
     @Override

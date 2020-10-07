@@ -11,29 +11,34 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.TradeServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.UserServiceDryModeImplementation;
+import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
+import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * StrategyAutoConfiguration configures the strategy.
@@ -147,6 +152,20 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                     o.getClass() + " must extend BasicCassandreStrategy or BasicTa4jCassandreStrategy");
         }
 
+        // Check that the trading account the strategy asks for really exists.
+        final Optional<UserDTO> user = userService.getUser();
+        if (user.isPresent()) {
+            final Optional<AccountDTO> tradeAccount = ((CassandreStrategyInterface) o).getTradeAccount(new LinkedHashSet<>(user.get().getAccounts().values()));
+            if (tradeAccount.isEmpty()) {
+                throw new ConfigurationException("Your strategy specifies a trading account that doesn't exist",
+                        "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result");
+            }
+        } else {
+            throw new ConfigurationException("Impossible to retrieve your user information",
+                    "Impossible to retrieve your user information. Check logs.");
+        }
+
+
         // =============================================================================================================
         // Getting strategy information.
         CassandreStrategyInterface strategy = (CassandreStrategyInterface) o;
@@ -217,6 +236,8 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     private void restoreData(final CassandreStrategyInterface strategy) {
         // Restoring all trades.
         final Map<String, TradeDTO> tradesByOrderId = new LinkedHashMap<>();
+        getLogger().info("Restoring trades from database");
+        AtomicInteger tradeCount = new AtomicInteger(0);
         tradeRepository.findByOrderByTimestampAsc()
                 .forEach(trade -> {
                     TradeDTO t = TradeDTO.builder()
@@ -234,9 +255,14 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                     strategy.restoreTrade(t);
                     tradeService.restoreTrade(t);
                     tradeFlux.restoreTrade(t);
+                    tradeCount.incrementAndGet();
+                    getLogger().info("Trade " + trade.getOrderId() + " restored");
                 });
+        getLogger().info(tradeCount.get() + " trade(s) restored");
 
         // Restoring data from databases.
+        getLogger().info("Restoring positions from database");
+        AtomicInteger positionCount = new AtomicInteger(0);
         positionRepository.findAll().forEach(position -> {
             PositionRulesDTO rules = PositionRulesDTO.builder().create();
             boolean stopGainRuleSet = position.getStopGainPercentageRule() != null;
@@ -260,21 +286,22 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                         .stopLossPercentage(position.getStopLossPercentageRule())
                         .create();
             }
-            PositionDTO p = new PositionDTO(position.getId(), position.getOpenOrderId(), rules);
+            PositionDTO p = new PositionDTO(position.getId(),
+                    PositionStatusDTO.valueOf(position.getStatus()),
+                    rules,
+                    position.getOpenOrderId(),
+                    tradesByOrderId.get(position.getOpenOrderId()),
+                    position.getCloseOrderId(),
+                    tradesByOrderId.get(position.getCloseOrderId()),
+                    position.getLowestPrice(),
+                    position.getHighestPrice());
             positionService.restorePosition(p);
-            // If open order is present.
-            if (tradesByOrderId.containsKey(position.getOpenOrderId())) {
-                positionService.tradeUpdate(tradesByOrderId.get(position.getOpenOrderId()));
-            }
-            if (position.getCloseOrderId() != null) {
-                p.setCloseOrderId(position.getCloseOrderId());
-                if (tradesByOrderId.containsKey(position.getCloseOrderId())) {
-                    positionService.tradeUpdate(tradesByOrderId.get(p.getCloseOrderId()));
-                }
-            }
             strategy.restorePosition(p);
             positionFlux.restorePosition(p);
+            positionCount.incrementAndGet();
+            getLogger().info("Position " + position.getId() + " restored");
         });
+        getLogger().info(positionCount.get() + " position(s) restored");
     }
 
 }

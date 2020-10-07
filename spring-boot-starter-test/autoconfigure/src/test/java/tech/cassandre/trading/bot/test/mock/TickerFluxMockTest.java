@@ -7,21 +7,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.strategy.TestableStrategy;
 import tech.cassandre.trading.bot.test.util.BaseTest;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.KCS;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
 @Import(TickerFluxMock.class)
@@ -33,6 +36,9 @@ public class TickerFluxMockTest extends BaseTest {
 
     @Autowired
     private TickerFluxMock tickerFluxMock;
+
+    @Autowired
+    private MarketService marketService;
 
     @Test
     @DisplayName("Check tickers received")
@@ -59,6 +65,13 @@ public class TickerFluxMockTest extends BaseTest {
         assertTrue(file2.getFilename().contains("tickers-ETH-BTC.tsv"));
         assertEquals(cp2, tickerFluxMock.getCurrencyPairFromFileName(file2));
 
+        // Check file 2 (ETC-BTC).
+        Resource file3 = resources.get(2);
+        assertNotNull(file3);
+        assertNotNull(file3.getFilename());
+        assertTrue(file3.getFilename().contains("tickers-KCS-USDT.csv"));
+        assertEquals(cp3, tickerFluxMock.getCurrencyPairFromFileName(file3));
+
         // Checking results.
         await().untilAsserted(() -> assertTrue(tickerFluxMock.isFluxDone(cp1)));
         await().untilAsserted(() -> assertTrue(tickerFluxMock.isFluxDone(cp2)));
@@ -71,6 +84,12 @@ public class TickerFluxMockTest extends BaseTest {
         assertEquals(1508630400000L, tickersReceived.get(3).getTimestamp().toInstant().toEpochMilli());
         assertEquals(1508803200000L, tickersReceived.get(4).getTimestamp().toInstant().toEpochMilli());
         assertEquals(1508716800000L, tickersReceived.get(5).getTimestamp().toInstant().toEpochMilli());
+
+        // Checking some data.
+        final Optional<TickerDTO> ticker1 = marketService.getTicker(cp3);
+        assertTrue(ticker1.isPresent());
+        assertEquals(1601596800000L, ticker1.get().getTimestamp().toInstant().toEpochMilli());
+        assertEquals(0, new BigDecimal("0.85652").compareTo(ticker1.get().getLast()));
     }
 
 }

@@ -7,14 +7,17 @@ import org.ta4j.core.Strategy;
 import org.ta4j.core.num.DoubleNum;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -131,8 +134,40 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
     @Override
     public final void positionUpdate(final PositionDTO position) {
+        // For every position update.
         getPositions().put(position.getId(), position);
         onPositionUpdate(position);
+
+        // For every position status update.
+        PositionStatusDTO previousPosition = getPreviousPositions().get(position.getId());
+        if (previousPosition == null || !previousPosition.equals(position.getStatus())) {
+            getPreviousPositions().put(position.getId(), position.getStatus());
+            onPositionStatusUpdate(position);
+        }
+    }
+
+    /**
+     * Returns true if we have enough assets to buy.
+     *
+     * @param amount amount
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canBuy(final BigDecimal amount) {
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+        return tradeAccount.filter(accountDTO -> canBuy(accountDTO, getRequestedCurrencyPair(), amount)).isPresent();
+    }
+
+    /**
+     * Returns true if we have enough assets to buy.
+     *
+     * @param amount              amount
+     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canBuy(final BigDecimal amount,
+                                final BigDecimal minimumBalanceAfter) {
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+        return tradeAccount.filter(accountDTO -> canBuy(accountDTO, getRequestedCurrencyPair(), amount, minimumBalanceAfter)).isPresent();
     }
 
     /**
@@ -164,8 +199,32 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     /**
      * Returns true if we have enough assets to sell.
      *
-     * @param account  account
-     * @param amount   amount
+     * @param amount              amount
+     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canSell(final BigDecimal amount,
+                                 final BigDecimal minimumBalanceAfter) {
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+        return tradeAccount.filter(accountDTO -> canSell(accountDTO, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceAfter)).isPresent();
+    }
+
+    /**
+     * Returns true if we have enough assets to sell.
+     *
+     * @param amount amount
+     * @return true if we there is enough money to buy
+     */
+    public final boolean canSell(final BigDecimal amount) {
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+        return tradeAccount.filter(accountDTO -> canSell(accountDTO, getRequestedCurrencyPair().getBaseCurrency(), amount)).isPresent();
+    }
+
+    /**
+     * Returns true if we have enough assets to sell.
+     *
+     * @param account account
+     * @param amount  amount
      * @return true if we there is enough money to buy
      */
     public final boolean canSell(final AccountDTO account,
@@ -184,7 +243,6 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     public final boolean canSell(final AccountDTO account,
                                  final BigDecimal amount,
                                  final BigDecimal minimumBalanceAfter) {
-        System.out.println(getRequestedCurrencyPair().getBaseCurrency());
         return canSell(account, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceAfter);
     }
 
@@ -229,6 +287,11 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
     @Override
     public void onPositionUpdate(final PositionDTO position) {
+
+    }
+
+    @Override
+    public void onPositionStatusUpdate(final PositionDTO position) {
 
     }
 

@@ -1,8 +1,8 @@
 package tech.cassandre.trading.bot.dto.trade;
 
-import tech.cassandre.trading.bot.util.dto.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

@@ -5,7 +5,7 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.mapstruct.factory.Mappers;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
 
 import java.time.Duration;
@@ -64,8 +64,6 @@ public abstract class BaseService extends Base {
      * @return XChange currency pair
      */
     protected CurrencyPair getCurrencyPair(final CurrencyPairDTO currencyPairDTO) {
-        // TODO Use a mapper instead of this method when MapStruct will allow it.
-        // https://github.com/mapstruct/mapstruct/issues/73
         return new CurrencyPair(currencyPairDTO.getBaseCurrency().getCode(), currencyPairDTO.getQuoteCurrency().getCode());
     }
 

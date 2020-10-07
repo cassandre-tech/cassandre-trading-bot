@@ -14,8 +14,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class TickerFluxMock {
     private static final String TICKERS_FILE_PREFIX = "tickers-";
 
     /** Tickers file suffix. */
-    private static final String TICKERS_FILE_SUFFIX = ".tsv";
+    private static final String TICKERS_FILE_SUFFIX = ".*sv";
 
     /** Flux status - true if the flux is over. */
     private final HashMap<CurrencyPairDTO, Boolean> fluxTerminated = new LinkedHashMap<>();
@@ -137,7 +137,7 @@ public class TickerFluxMock {
         // Getting the string value of currency pair.
         if (file.getFilename() != null) {
             final int currencyPairIndexStart = file.getFilename().indexOf(TICKERS_FILE_PREFIX) + TICKERS_FILE_PREFIX.length();
-            final int currencyPairIndexStop = file.getFilename().indexOf(TICKERS_FILE_SUFFIX);
+            final int currencyPairIndexStop = file.getFilename().indexOf("sv") - 2;
             final String currencyPairAsString = file.getFilename().substring(currencyPairIndexStart, currencyPairIndexStop);
             final String[] currencyPairAsSplit = currencyPairAsString.split("-");
             return new CurrencyPairDTO(new CurrencyDTO(currencyPairAsSplit[0].toUpperCase()), new CurrencyDTO(currencyPairAsSplit[1].toUpperCase()));
@@ -155,20 +155,24 @@ public class TickerFluxMock {
     private List<TickerDTO> getTickersFromFile(final Resource file) {
         final CurrencyPairDTO currencyPair = getCurrencyPairFromFileName(file);
         final List<TickerDTO> tickers = new LinkedList<>();
-        // Replies from CSV files.
+        // Replies from TSV files.
         try (Scanner scanner = new Scanner(file.getFile())) {
             while (scanner.hasNextLine()) {
                 try (Scanner rowScanner = new Scanner(scanner.nextLine())) {
-                    rowScanner.useDelimiter("\t");
+                    if (file.getFilename().endsWith("tsv")) {
+                        rowScanner.useDelimiter("\t");
+                    } else {
+                        rowScanner.useDelimiter(",");
+                    }
                     while (rowScanner.hasNext()) {
                         // Data retrieved from file.
-                        final String time = rowScanner.next();
-                        final String open = rowScanner.next();
-                        final String close = rowScanner.next();
-                        final String high = rowScanner.next();
-                        final String low = rowScanner.next();
-                        final String volume = rowScanner.next();
-                        final String turnover = rowScanner.next();
+                        final String time = rowScanner.next().replaceAll("\"", "");
+                        final String open = rowScanner.next().replaceAll("\"", "");
+                        final String close = rowScanner.next().replaceAll("\"", "");
+                        final String high = rowScanner.next().replaceAll("\"", "");
+                        final String low = rowScanner.next().replaceAll("\"", "");
+                        final String volume = rowScanner.next().replaceAll("\"", "");
+                        final String turnover = rowScanner.next().replaceAll("\"", "");
 
                         // Creating the ticker.
                         TickerDTO t = TickerDTO.builder()

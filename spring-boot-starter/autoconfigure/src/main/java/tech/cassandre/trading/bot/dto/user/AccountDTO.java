@@ -1,6 +1,6 @@
 package tech.cassandre.trading.bot.dto.user;
 
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

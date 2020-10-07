@@ -11,14 +11,13 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.modes.dry.mocks.TradeServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -30,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_DRY;
 
 @SpringBootTest
@@ -50,9 +49,6 @@ public class TradeServiceDryModeTest extends BaseTest {
     private TradeService tradeService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private TickerFlux tickerFlux;
 
     @Autowired
@@ -60,7 +56,7 @@ public class TradeServiceDryModeTest extends BaseTest {
 
     @Test
     @DisplayName("Check buy and sell order creation")
-    public void checkCreateBuyAndSellOrderTest() throws InterruptedException {
+    public void checkCreateBuyAndSellOrder() throws InterruptedException {
         tickerFlux.update();
 
         // What we expect.
@@ -117,7 +113,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(ASK, trade02.get().getType());
 
         // Testing retrieve methods.
-        TimeUnit.SECONDS.sleep(TEN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(2, tradeService.getOpenOrders().size());
         assertFalse(tradeService.getOpenOrderByOrderId("NON_EXISTING").isPresent());
         assertTrue(tradeService.getOpenOrderByOrderId(orderId01).isPresent());

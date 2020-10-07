@@ -13,7 +13,7 @@ import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USD;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
 @DisplayName("Backup - Trades")
@@ -58,66 +58,66 @@ public class  TradeBackupTest extends BaseTest {
         assertTrue(strategy.getTrades().size() >= 5);
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
 
-        // Check trade 00.
-        TradeDTO t = strategy.getTrades().get("BACKUP_TRADE_00");
-        assertNotNull(t);
-        assertEquals("BACKUP_TRADE_00", t.getId());
-        assertEquals(new CurrencyPairDTO(ETH, USD), t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("51").compareTo(t.getFee().getValue()));
-        assertEquals(USD, t.getFee().getCurrency());
-        assertEquals("TEMP", t.getOrderId());
-        assertEquals(0, new BigDecimal("52").compareTo(t.getOriginalAmount()));
-        assertEquals(0, new BigDecimal("53").compareTo(t.getPrice()));
-        assertEquals(createZonedDateTime("05-08-2020"), t.getTimestamp());
-        assertEquals(ASK, t.getType());
         // Check trade 01.
-        t = strategy.getTrades().get("BACKUP_TRADE_01");
+        TradeDTO t = strategy.getTrades().get("BACKUP_TRADE_01");
         assertNotNull(t);
         assertEquals("BACKUP_TRADE_01", t.getId());
+        assertEquals("BACKUP_OPEN_ORDER_02", t.getOrderId());
+        assertEquals(BID, t.getType());
+        assertEquals(0, new BigDecimal("12").compareTo(t.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(BTC, USDT), t.getCurrencyPair());
+        assertEquals(0, new BigDecimal("14").compareTo(t.getPrice()));
+        assertEquals(createZonedDateTime("01-08-2020"), t.getTimestamp());
         assertEquals(0, new BigDecimal("11").compareTo(t.getFee().getValue()));
         assertEquals(USDT, t.getFee().getCurrency());
-        assertEquals("BACKUP_OPEN_ORDER_02", t.getOrderId());
-        assertEquals(0, new BigDecimal("12").compareTo(t.getOriginalAmount()));
-        assertEquals(0, new BigDecimal("13").compareTo(t.getPrice()));
-        assertEquals(createZonedDateTime("01-08-2020"), t.getTimestamp());
-        assertEquals(BID, t.getType());
         // Check trade 02.
         t = strategy.getTrades().get("BACKUP_TRADE_02");
         assertNotNull(t);
         assertEquals("BACKUP_TRADE_02", t.getId());
+        assertEquals("BACKUP_OPEN_ORDER_03", t.getOrderId());
+        assertEquals(BID, t.getType());
+        assertEquals(0, new BigDecimal("22").compareTo(t.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(BTC, USDT), t.getCurrencyPair());
+        assertEquals(0, new BigDecimal("24").compareTo(t.getPrice()));
+        assertEquals(createZonedDateTime("02-08-2020"), t.getTimestamp());
         assertEquals(0, new BigDecimal("21").compareTo(t.getFee().getValue()));
         assertEquals(USDT, t.getFee().getCurrency());
-        assertEquals("BACKUP_OPEN_ORDER_03", t.getOrderId());
-        assertEquals(0, new BigDecimal("22").compareTo(t.getOriginalAmount()));
-        assertEquals(0, new BigDecimal("23").compareTo(t.getPrice()));
-        assertEquals(createZonedDateTime("02-08-2020"), t.getTimestamp());
-        assertEquals(BID, t.getType());
         // Check trade 03.
         t = strategy.getTrades().get("BACKUP_TRADE_03");
         assertNotNull(t);
         assertEquals("BACKUP_TRADE_03", t.getId());
+        assertEquals("BACKUP_OPEN_ORDER_04", t.getOrderId());
+        assertEquals(BID, t.getType());
+        assertEquals(0, new BigDecimal("32").compareTo(t.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(BTC, USDT), t.getCurrencyPair());
+        assertEquals(0, new BigDecimal("34").compareTo(t.getPrice()));
+        assertEquals(createZonedDateTime("03-08-2020"), t.getTimestamp());
         assertEquals(0, new BigDecimal("31").compareTo(t.getFee().getValue()));
         assertEquals(USDT, t.getFee().getCurrency());
-        assertEquals("BACKUP_OPEN_ORDER_04", t.getOrderId());
-        assertEquals(0, new BigDecimal("32").compareTo(t.getOriginalAmount()));
-        assertEquals(0, new BigDecimal("33").compareTo(t.getPrice()));
-        assertEquals(createZonedDateTime("03-08-2020"), t.getTimestamp());
-        assertEquals(BID, t.getType());
         // Check trade 04.
         t = strategy.getTrades().get("BACKUP_TRADE_04");
         assertNotNull(t);
         assertEquals("BACKUP_TRADE_04", t.getId());
+        assertEquals("BACKUP_OPEN_ORDER_05", t.getOrderId());
+        assertEquals(ASK, t.getType());
+        assertEquals(0, new BigDecimal("42").compareTo(t.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(BTC, USDT), t.getCurrencyPair());
+        assertEquals(0, new BigDecimal("44").compareTo(t.getPrice()));
+        assertEquals(createZonedDateTime("04-08-2020"), t.getTimestamp());
         assertEquals(0, new BigDecimal("41").compareTo(t.getFee().getValue()));
         assertEquals(USDT, t.getFee().getCurrency());
-        assertEquals("BACKUP_OPEN_ORDER_05", t.getOrderId());
-        assertEquals(0, new BigDecimal("42").compareTo(t.getOriginalAmount()));
-        assertEquals(0, new BigDecimal("43").compareTo(t.getPrice()));
-        assertEquals(createZonedDateTime("04-08-2020"), t.getTimestamp());
+        // Check trade 05.
+        t = strategy.getTrades().get("BACKUP_TRADE_05");
+        assertNotNull(t);
+        assertEquals("BACKUP_TRADE_05", t.getId());
+        assertEquals("BACKUP_OPEN_ORDER_06", t.getOrderId());
         assertEquals(ASK, t.getType());
+        assertEquals(0, new BigDecimal("52").compareTo(t.getOriginalAmount()));
+        assertEquals(new CurrencyPairDTO(ETH, USD), t.getCurrencyPair());
+        assertEquals(0, new BigDecimal("54").compareTo(t.getPrice()));
+        assertEquals(createZonedDateTime("05-08-2020"), t.getTimestamp());
+        assertEquals(0, new BigDecimal("51").compareTo(t.getFee().getValue()));
+        assertEquals(USD, t.getFee().getCurrency());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class  TradeBackupTest extends BaseTest {
         // Add two trades and check that they are saved.
         long tradeCount = tradeRepository.count();
         TradeDTO t1 = TradeDTO.builder()
-                .id("BACKUP_TRADE_05")
+                .id("BACKUP_TRADE_06")
                 .orderId("EMPTY")
                 .type(BID)
                 .originalAmount(new BigDecimal("1.100001"))
@@ -141,17 +141,17 @@ public class  TradeBackupTest extends BaseTest {
 
         // Wait until it is saved & check results.
         await().untilAsserted(() -> assertEquals(tradeCount + 1, tradeRepository.count()));
-        Optional<Trade> t1FromDatabase = tradeRepository.findById("BACKUP_TRADE_05");
+        Optional<Trade> t1FromDatabase = tradeRepository.findById("BACKUP_TRADE_06");
         assertTrue(t1FromDatabase.isPresent());
-        assertEquals("BACKUP_TRADE_05", t1FromDatabase.get().getId());
-        assertEquals("USDT/BTC", t1FromDatabase.get().getCurrencyPair());
-        assertEquals(0, t1FromDatabase.get().getFeeAmount().compareTo(new BigDecimal("3.300003")));
-        assertEquals("BTC", t1FromDatabase.get().getFeeCurrency());
+        assertEquals("BACKUP_TRADE_06", t1FromDatabase.get().getId());
         assertEquals("EMPTY", t1FromDatabase.get().getOrderId());
+        assertEquals("BID", t1FromDatabase.get().getType());
         assertEquals(0, t1FromDatabase.get().getOriginalAmount().compareTo(new BigDecimal("1.100001")));
+        assertEquals("USDT/BTC", t1FromDatabase.get().getCurrencyPair());
         assertEquals(0, t1FromDatabase.get().getPrice().compareTo(new BigDecimal("2.200002")));
         assertEquals(createZonedDateTime("01-09-2020"), t1FromDatabase.get().getTimestamp());
-        assertEquals("BID", t1FromDatabase.get().getType());
+        assertEquals(0, t1FromDatabase.get().getFeeAmount().compareTo(new BigDecimal("3.300003")));
+        assertEquals("BTC", t1FromDatabase.get().getFeeCurrency());
     }
 
 }

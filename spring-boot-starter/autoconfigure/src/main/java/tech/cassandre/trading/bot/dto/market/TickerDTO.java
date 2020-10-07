@@ -1,6 +1,6 @@
 package tech.cassandre.trading.bot.dto.market;
 
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;

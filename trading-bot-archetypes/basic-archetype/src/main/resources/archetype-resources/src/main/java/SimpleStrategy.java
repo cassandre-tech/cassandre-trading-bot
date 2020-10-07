@@ -10,12 +10,16 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
  * Simple strategy.
@@ -28,7 +32,14 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	@Override
 	public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
 		// We only ask about ETC/BTC (Base currency : ETH / Quote currency : BTC).
-		return Set.of(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC));
+		return Set.of(new CurrencyPairDTO(BTC, USDT));
+	}
+
+	@Override
+	public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
+		return accounts.stream()
+				.filter(a -> "trade".equals(a.getName()))
+				.findFirst();
 	}
 
 	@Override
@@ -59,6 +70,12 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	public void onPositionUpdate(final PositionDTO position) {
 		// Here, we will receive an PositionDTO each a position has changed.
 		System.out.println("Received information about a position : " + position);
+	}
+
+	@Override
+	public void onPositionStatusUpdate(final PositionDTO position) {
+		// Here, we will receive an PositionDTO each a position has changed.
+		System.out.println("Received information about a position status : " + position);
 	}
 
 }

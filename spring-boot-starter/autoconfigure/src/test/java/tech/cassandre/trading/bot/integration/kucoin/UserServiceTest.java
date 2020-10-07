@@ -9,7 +9,7 @@ import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

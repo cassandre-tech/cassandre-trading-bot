@@ -11,7 +11,7 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TICKER;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TRADE;
@@ -49,7 +49,9 @@ public class RatesTest {
 
 	@Test
 	@DisplayName("Check account service rate")
-	public void checkAccountServiceRateTest() throws InterruptedException {
+	public void checkAccountServiceRate() throws InterruptedException {
+		TimeUnit.SECONDS.sleep(20);
+
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
@@ -76,7 +78,7 @@ public class RatesTest {
 
 	@Test
 	@DisplayName("Check market service rate")
-	public void checkMarketServiceRateTest() throws InterruptedException {
+	public void checkMarketServiceRate() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.
@@ -103,7 +105,7 @@ public class RatesTest {
 
 	@Test
 	@DisplayName("Check trade service rate")
-	public void checkTradeServiceRateTest() throws InterruptedException {
+	public void checkTradeServiceRate() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.

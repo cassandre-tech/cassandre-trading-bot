@@ -1,47 +1,35 @@
 package tech.cassandre.trading.bot.test.batch.mocks;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import tech.cassandre.trading.bot.batch.AccountFlux;
-import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
+import tech.cassandre.trading.bot.test.batch.PositionFluxTest;
 
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.math.BigDecimal;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
 public class PositionFluxTestMock {
 
+    @Autowired
+    private PositionRepository positionRepository;
+
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
         return new TickerFlux(marketService());
-    }
-
-    @Bean
-    @Primary
-    public AccountFlux accountFlux() {
-        return new AccountFlux(userService());
-    }
-
-    @Bean
-    @Primary
-    public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService());
     }
 
     @Bean
@@ -58,63 +46,37 @@ public class PositionFluxTestMock {
 
     @Bean
     @Primary
-    public UserService userService() {
-        UserService service = mock(UserService.class);
-        given(service.getUser()).willReturn(Optional.empty());
-        return service;
+    public PositionService positionService() {
+        return new PositionServiceImplementation(tradeService(), positionRepository);
     }
 
     @Bean
     @Primary
     public MarketService marketService() {
-        MarketService service = mock(MarketService.class);
-        given(service.getTicker(any())).willReturn(Optional.empty());
-        return service;
+        return mock(MarketService.class);
     }
 
     @Bean
     @Primary
     public TradeService tradeService() {
-        // Creates the mock.
-        return mock(TradeService.class);
-    }
+        TradeService service = mock(TradeService.class);
 
-    @SuppressWarnings("unchecked")
-    @Bean
-    @Primary
-    public PositionService positionService() {
-        // Creates the mock.
-        final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
-        PositionService positionService = mock(PositionService.class);
+        // Position 1 closed reply (ORDER00010) - used for max and min gain test.
+        given(service.createBuyMarketOrder(PositionFluxTest.cp1, new BigDecimal("10")))
+                .willReturn(new OrderCreationResultDTO("ORDER00010"));
+        // Position 1 closed reply (ORDER00011) - used for max and min gain test.
+        given(service.createSellMarketOrder(PositionFluxTest.cp1, new BigDecimal("10")))
+                .willReturn(new OrderCreationResultDTO("ORDER00011"));
 
-        // Reply 1 : 2 positions.
-        PositionDTO p1 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p2 = new PositionDTO(2, "O000002", noRules);
-        Set<PositionDTO> reply01 = new LinkedHashSet<>();
-        reply01.add(p1);
-        reply01.add(p2);
+        // Position 1 creation reply (order ORDER00010).
+        given(service.createBuyMarketOrder(PositionFluxTest.cp2, new BigDecimal("0.0001")))
+                .willReturn(new OrderCreationResultDTO("ORDER00010"));
+        // Position 2 creation reply (order ORDER00020).
+        given(service.createBuyMarketOrder(PositionFluxTest.cp2, new BigDecimal("0.0002")))
+                .willReturn(new OrderCreationResultDTO("ORDER00020"));
 
-        // Reply 2 : 3 positions.
-        Set<PositionDTO> reply02 = new LinkedHashSet<>();
-        PositionDTO p3 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p4 = new PositionDTO(2, "O000002", noRules);
-        PositionDTO p5 = new PositionDTO(3, "O000003", noRules);
-        reply02.add(p3);
-        reply02.add(p4);
-        reply02.add(p5);
 
-        // Reply 2 : 2 positions.
-        Set<PositionDTO> reply03 = new LinkedHashSet<>();
-        PositionDTO p6 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p7 = new PositionDTO(2, "O000001", noRules);
-        reply03.add(p6);
-        reply03.add(p7);
-
-        given(positionService.getPositions())
-                .willReturn(reply01,
-                        reply02,
-                        reply03);
-        return positionService;
+        return service;
     }
 
 }

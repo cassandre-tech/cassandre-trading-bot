@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.test.strategy.mocks.BasicTa4jCassandreStrategyTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 
@@ -20,18 +20,20 @@ import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Strategy - Basic ta4j cassandre strategy")
 @Configuration({
         @Property(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
-        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "true")
+        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "true"),
+        @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false")
 })
 @Import(BasicTa4jCassandreStrategyTestMock.class)
 public class BasicTa4jCassandreStrategyTest extends BaseTest {
@@ -45,7 +47,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
     @DisplayName("check strategy behavior")
     public void checkStrategyBehavior() {
         // Checking received data.
-        await().untilAsserted(() -> assertEquals(3, strategy.getAccounts().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getAccounts().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getOrders().size()));
         await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));
         await().untilAsserted(() -> assertEquals(3, strategy.getPositions().size()));
@@ -74,19 +76,25 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
 
         // canBuy().
         // Trying to buy 1 bitcoin for 390 USDT per bitcoin - should work.
+        assertTrue(strategy.canBuy(new BigDecimal("1")));
         assertTrue(strategy.canBuy(account, new BigDecimal("1")));
         // Trying to buy 2 bitcoin for 390 USDT per bitcoin - should not work.
+        assertFalse(strategy.canBuy(new BigDecimal("2")));
         assertFalse(strategy.canBuy(account, new BigDecimal("2")));
         // Trying to buy 1 bitcoin for 390 USDT per bitcoin but I want 400 USDT left - should not work.
+        assertFalse(strategy.canBuy(new BigDecimal("2"), new BigDecimal("400")));
         assertFalse(strategy.canBuy(account, new BigDecimal("2"), new BigDecimal("400")));
 
         // canSell().
         // 1 BTC / 500 in my account.
         // Wanting to sell 1 bitcoin - I have them.
+        assertTrue(strategy.canSell(new BigDecimal("1")));
         assertTrue(strategy.canSell(account, new BigDecimal("1")));
         // Wanting to sell 2 bitcoin - I don't have them.
+        assertFalse(strategy.canSell(new BigDecimal("2")));
         assertFalse(strategy.canSell(account, new BigDecimal("2")));
-        // Wanting to sell 1 bitcoin but have one left after -Not possible.
+        // Wanting to sell 1 bitcoin but have one left after - Not possible.
+        assertFalse(strategy.canSell(new BigDecimal("1"), new BigDecimal('1')));
         assertFalse(strategy.canSell(account, new BigDecimal("1"), new BigDecimal('1')));
     }
 

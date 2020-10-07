@@ -20,8 +20,8 @@ import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -32,9 +32,9 @@ import java.util.Set;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.util.dto.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
 @TestConfiguration
@@ -79,6 +79,13 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         UserService userService = mock(UserService.class);
         // Returns three updates.
 
+        // =============================================================================================================
+        // Account retrieved by configuration.
+        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").create();
+        accounts.put("trade", tempAccount);
+        UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
+        accounts.clear();
+
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
         balances.put(BTC, account01Balance1);
@@ -101,14 +108,14 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).create());
         balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).create());
         balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).create());
-        AccountDTO account03 = AccountDTO.builder().id("03").balances(balances).create();
+        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
         balances.clear();
         accounts.clear();
 
         // Mock replies.
-        given(userService.getUser()).willReturn(Optional.of(user01), Optional.of(user02), Optional.of(user03));
+        given(userService.getUser()).willReturn(Optional.of(tempUser), Optional.of(user01), Optional.of(user02), Optional.of(user03));
         return userService;
     }
 

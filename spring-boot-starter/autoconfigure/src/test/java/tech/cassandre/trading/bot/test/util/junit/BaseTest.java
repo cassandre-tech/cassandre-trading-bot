@@ -4,7 +4,7 @@ import org.awaitility.Awaitility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,16 +25,7 @@ import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 public class BaseTest {
 
     /** Ten seconds wait. */
-    protected static final long TEN_SECONDS = 10L;
-
-    /** Invalid strategy enabled parameter. */
-    public static final String PARAMETER_INVALID_STRATEGY_ENABLED = "invalidStrategy.enabled";
-
-    /** Testable strategy enabled parameter. */
-    public static final String PARAMETER_TESTABLE_STRATEGY_ENABLED = "testableStrategy.enabled";
-
-    /** Testable ta4j strategy enabled parameter. */
-    public static final String PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED = "testableTa4jStrategy.enabled";
+    protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
     /** How much we should wait for tests until it is declared as failed. */
     protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;

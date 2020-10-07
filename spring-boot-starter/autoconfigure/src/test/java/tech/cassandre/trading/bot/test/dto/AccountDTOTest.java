@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
-import tech.cassandre.trading.bot.util.dto.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;

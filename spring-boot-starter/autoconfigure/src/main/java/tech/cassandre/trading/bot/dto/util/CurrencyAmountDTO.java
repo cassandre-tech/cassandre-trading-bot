@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.util.dto;
+package tech.cassandre.trading.bot.dto.util;
 
 import java.math.BigDecimal;
 

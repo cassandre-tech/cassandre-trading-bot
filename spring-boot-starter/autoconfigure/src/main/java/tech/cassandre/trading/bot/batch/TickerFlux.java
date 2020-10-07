@@ -3,7 +3,7 @@ package tech.cassandre.trading.bot.batch;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.util.base.BaseFlux;
-import tech.cassandre.trading.bot.util.dto.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
