@@ -5,7 +5,7 @@
   <br>
   Cassandre trading bot
 </h3>
-<p align="center">Easily create your trading bot with our Spring boot starter</p>
+<p align="center">Cassandre makes it easy to create and run a Java crypto trading bot</p>
 
 <p align="center">
   <a href="https://github.com/cassandre-tech/cassandre-trading-bot/actions">

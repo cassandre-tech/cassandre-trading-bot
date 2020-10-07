@@ -104,7 +104,7 @@ public interface CassandreStrategyInterface {
     Set<CurrencyPairDTO> getRequestedCurrencyPairs();
 
     /**
-     * Implements this method to tell the bot which account from the accounts your own is the trading one.
+     * Implements this method to tell the bot which account from the accounts you own is the trading one.
      *
      * @param accounts all your accounts
      * @return trading account
