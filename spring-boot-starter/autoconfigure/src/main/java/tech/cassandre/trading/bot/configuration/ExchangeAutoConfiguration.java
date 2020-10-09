@@ -159,6 +159,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             TradeServiceDryModeImplementation tradeServiceDryMode = null;
             if (!exchangeParameters.getModes().isDry()) {
                 // Normal mode.
+                getLogger().info("Dry mode is off");
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
                 this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
@@ -166,6 +167,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
             } else {
                 // Dry mode.
+                getLogger().info("Dry mode is on");
                 this.exchangeService = new ExchangeServiceDryModeImplementation(applicationContext);
                 userServiceDryMode = new UserServiceDryModeImplementation();
                 this.userService = userServiceDryMode;
@@ -206,7 +208,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 // Authorization failure.
                 e.printStackTrace();
                 throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getName(),
-                        "Check your exchange credentials " + e.getMessage());
+                        "Check your exchange credentials " + e.getMessage() + " - login used : " + exchangeParameters.getUsername());
             } else {
                 // Another HTTP failure.
                 e.printStackTrace();

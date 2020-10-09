@@ -157,14 +157,15 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         if (user.isPresent()) {
             final Optional<AccountDTO> tradeAccount = ((CassandreStrategyInterface) o).getTradeAccount(new LinkedHashSet<>(user.get().getAccounts().values()));
             if (tradeAccount.isEmpty()) {
+                StringJoiner accountList = new StringJoiner(", ");
+                user.get().getAccounts().values().forEach(accountDTO -> accountList.add(accountDTO.getName()));
                 throw new ConfigurationException("Your strategy specifies a trading account that doesn't exist",
-                        "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result");
+                        "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result - Account list : " + accountList);
             }
         } else {
             throw new ConfigurationException("Impossible to retrieve your user information",
                     "Impossible to retrieve your user information. Check logs.");
         }
-
 
         // =============================================================================================================
         // Getting strategy information.

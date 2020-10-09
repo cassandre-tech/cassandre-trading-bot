@@ -121,7 +121,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
     public List<Resource> getFilesToLoad() {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
-            final Resource[] resources = resolver.getResources("classpath:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
+            final Resource[] resources = resolver.getResources("classpath*:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
             return Arrays.asList(resources);
         } catch (IOException e) {
             getLogger().error("TickerFluxMock encountered an error : " + e.getMessage());
