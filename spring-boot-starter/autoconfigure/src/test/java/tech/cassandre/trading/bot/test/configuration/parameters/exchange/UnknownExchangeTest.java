@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.configuration.parameters;
+package tech.cassandre.trading.bot.test.configuration.parameters.exchange;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,22 +8,25 @@ import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_NAME;
 
-@DisplayName("Configuration parameters - Valid configuration")
+@DisplayName("Exchange parameters - Unknown exchange name")
 @Configuration({
-        @Property(key = "TEST_NAME", value = "Configuration parameters - Valid configuration")
+        @Property(key = PARAMETER_EXCHANGE_NAME, value = "foo")
 })
-public class ValidConfigurationTest extends BaseTest {
+public class UnknownExchangeTest extends BaseTest {
 
     @Test
-    @DisplayName("Connection test")
-    public void checkConnection() {
+    @DisplayName("Check error messages")
+    public void checkErrorMessages() {
         try {
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
+            fail("Exception not raised");
         } catch (Exception e) {
-            fail("Exception raised during application startup : " + e);
+            assertTrue(e.getMessage().contains("Impossible to find the exchange you requested : foo"));
         }
     }
 

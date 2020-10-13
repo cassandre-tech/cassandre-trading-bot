@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.configuration.parameters;
+package tech.cassandre.trading.bot.test.configuration.parameters.exchange;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,13 +11,13 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TRADE;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_NAME;
 
-@DisplayName("Configuration parameters - Invalid trade rate")
+@DisplayName("Exchange parameters - Name parameter is missing")
 @Configuration({
-        @Property(key = PARAMETER_RATE_TRADE, value = "AT20S")
+        @Property(key = PARAMETER_EXCHANGE_NAME)
 })
-public class InvalidRateForTradeTest extends BaseTest {
+public class NameParameterMissingTest extends BaseTest {
 
     @Test
     @DisplayName("Check error messages")
@@ -28,16 +28,16 @@ public class InvalidRateForTradeTest extends BaseTest {
             fail("Exception not raised");
         } catch (Exception e) {
             final String message = getParametersExceptionMessage(e);
-            assertFalse(message.contains("'name'"));
+            assertTrue(message.contains("'name'"));
             assertFalse(message.contains("'sandbox'"));
             assertFalse(message.contains("'sandbox'"));
             assertFalse(message.contains("'username'"));
             assertFalse(message.contains("'passphrase'"));
             assertFalse(message.contains("'key'"));
             assertFalse(message.contains("'secret'"));
-            assertFalse(message.contains("Invalid account rate"));
-            assertFalse(message.contains("Invalid ticker rate"));
-            assertTrue(message.contains("Invalid trade rate"));
+            assertFalse(message.contains("'rates.account'"));
+            assertFalse(message.contains("'rates.ticker'"));
+            assertFalse(message.contains("'rates.trade'"));
         }
     }
 

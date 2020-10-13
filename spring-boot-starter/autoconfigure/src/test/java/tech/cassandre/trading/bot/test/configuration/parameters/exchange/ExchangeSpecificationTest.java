@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.configuration.parameters;
+package tech.cassandre.trading.bot.test.configuration.parameters.exchange;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,13 +13,13 @@ import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PROXY_HOST;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_PROXY_PORT;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_PROXY_HOST;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_PROXY_PORT;
 
-@DisplayName("Configuration parameters - Specific exchange parameters")
+@DisplayName("Exchange parameters - Specific exchange parameters")
 @Configuration({
-        @Property(key = PARAMETER_PROXY_HOST, value = "127.0.0.1"),
-        @Property(key = PARAMETER_PROXY_PORT, value = "4780")
+        @Property(key = PARAMETER_EXCHANGE_PROXY_HOST, value = "127.0.0.1"),
+        @Property(key = PARAMETER_EXCHANGE_PROXY_PORT, value = "4780")
 })
 public class ExchangeSpecificationTest extends BaseTest {
 

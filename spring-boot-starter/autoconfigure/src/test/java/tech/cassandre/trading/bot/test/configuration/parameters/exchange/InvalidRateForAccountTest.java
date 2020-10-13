@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.configuration.parameters;
+package tech.cassandre.trading.bot.test.configuration.parameters.exchange;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,11 +11,11 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_ACCOUNT;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_ACCOUNT;
 
-@DisplayName("Configuration parameters - Invalid account rate")
+@DisplayName("Exchange parameters - Invalid account rate")
 @Configuration({
-        @Property(key = PARAMETER_RATE_ACCOUNT, value = "A")
+        @Property(key = PARAMETER_EXCHANGE_RATE_ACCOUNT, value = "A")
 })
 public class InvalidRateForAccountTest extends BaseTest {
 
