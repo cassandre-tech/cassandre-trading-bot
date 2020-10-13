@@ -36,7 +36,7 @@ jobs:
     - name: Build, run tests, package and deploy to Maven central
       env: # Environment variables.
         # Maven options.
-        MAVEN_OPTS: -Xmx2049m -XX:MaxPermSize=256m
+        MAVEN_OPTS: -Xmx3084m -XX:MaxPermSize=512m
         # Kucoin credentials.
         KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}
         KUCOIN_USERNAME: ${{ secrets.KUCOIN_USERNAME }}

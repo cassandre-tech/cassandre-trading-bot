@@ -38,7 +38,7 @@ jobs:
         id: package
         env: # Environment variables.
           # Maven options.
-          MAVEN_OPTS: -Xmx2049m -XX:MaxPermSize=256m
+          MAVEN_OPTS: -Xmx3084m -XX:MaxPermSize=512m
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Ossrh credentials.
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
