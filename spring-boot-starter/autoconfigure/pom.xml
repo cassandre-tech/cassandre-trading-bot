@@ -46,22 +46,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>2.5.1</version>
-		</dependency>
 
 		<!-- XChange -->
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-core</artifactId>
-			<version>5.0.2</version>
+			<version>5.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-kucoin</artifactId>
-			<version>5.0.2</version>
+			<version>5.0.3</version>
 		</dependency>
 
 		<!-- Ta4j -->
@@ -109,6 +104,12 @@
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
 			<version>4.0.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.5.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
