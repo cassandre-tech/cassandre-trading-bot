@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -395,6 +396,24 @@ public class PositionDTO {
         return version.longValue();
     }
 
+    /**
+     * Returns formatted value.
+     * @param value value
+     * @return formatted value
+     */
+    private String getFormattedValue(final BigDecimal value) {
+        return new DecimalFormat("#0.##").format(value);
+    }
+
+    /**
+     * Returns formatted value.
+     * @param value value
+     * @return formatted value
+     */
+    private String getFormattedValue(final double value) {
+        return new DecimalFormat("#0.##").format(value);
+    }
+
     @Override
     public final boolean equals(final Object o) {
         if (this == o) {
@@ -439,7 +458,7 @@ public class PositionDTO {
                     value += " on " + getCurrencyPair() + " - Opened";
                     final Optional<GainDTO> lastGain = getLastCalculatedGain();
                     if (lastGain.isPresent()) {
-                        value += " - Last gain calculated " + getLastCalculatedGain().get().getPercentage() + " %";
+                        value += " - Last gain calculated " + getFormattedValue(getLastCalculatedGain().get().getPercentage()) + " %";
                     }
                     break;
                 case CLOSING:
@@ -447,7 +466,7 @@ public class PositionDTO {
                     break;
                 case CLOSED:
                     final GainDTO gain = getGain();
-                    value += " on " + getCurrencyPair() + " - Closed - Gain : " + gain.getPercentage() + " %";
+                    value += " on " + getCurrencyPair() + " - Closed - Gain : " + getFormattedValue(gain.getPercentage()) + " %";
                     break;
                 default:
                     value = "Incorrect state for position " + getId();

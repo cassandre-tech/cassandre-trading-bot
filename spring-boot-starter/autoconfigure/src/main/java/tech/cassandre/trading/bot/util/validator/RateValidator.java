@@ -11,6 +11,9 @@ public class RateValidator implements ConstraintValidator<Rate, String> {
 
     @Override
     public final boolean isValid(final String value, final ConstraintValidatorContext constraintValidatorContext) {
+        if (value == null || value.length() == 0) {
+            return false;
+        }
         if (isNumeric(value)) {
             return true;
         } else {

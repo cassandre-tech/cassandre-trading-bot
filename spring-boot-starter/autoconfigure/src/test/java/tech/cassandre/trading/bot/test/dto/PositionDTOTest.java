@@ -333,7 +333,7 @@ public class PositionDTOTest {
         // A new ticker arrived.
         TickerDTO t1 = TickerDTO.builder().currencyPair(new CurrencyPairDTO(ETH, BTC)).last(new BigDecimal("2")).create();
         p2.shouldBeClosed(t1);
-        assertEquals(p2.toString(), "Position n°2 (11.0 % loss rule) on ETH/BTC - Opened - Last gain calculated 100.0 %");
+        assertEquals(p2.toString(), "Position n°2 (11.0 % loss rule) on ETH/BTC - Opened - Last gain calculated 100 %");
 
         // Position closing.
         PositionDTO p3 = new PositionDTO(3L,
@@ -378,7 +378,7 @@ public class PositionDTOTest {
                 null,
                 null);
         p4.tradeUpdate(closeTrade4);
-        assertEquals(p4.toString(), "Position n°4 (12.0 % gain rule / 9.0 % loss rule) on ETH/BTC - Closed - Gain : 100.0 %");
+        assertEquals(p4.toString(), "Position n°4 (12.0 % gain rule / 9.0 % loss rule) on ETH/BTC - Closed - Gain : 100 %");
     }
 
 }

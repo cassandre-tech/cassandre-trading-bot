@@ -6,7 +6,7 @@
     <!-- =========================================================================================================== -->
     <!-- Project information -->
     <artifactId>cassandre-trading-bot-spring-boot-starter-test-autoconfigure</artifactId>
-    <name>Trading bot spring boot starter test autoconfigure</name>
+    <name>Trading bot spring boot autoconfigure test</name>
     <!-- =========================================================================================================== -->
 
     <!-- =========================================================================================================== -->

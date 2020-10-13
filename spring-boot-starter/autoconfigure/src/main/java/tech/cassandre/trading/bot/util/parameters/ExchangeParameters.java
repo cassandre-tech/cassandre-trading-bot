@@ -71,6 +71,7 @@ public class ExchangeParameters {
     private static Rates rates = new Rates();
 
     /** Exchange API rate calls. */
+    @Validated
     @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.modes")
     public static class Modes {
 
@@ -135,6 +136,7 @@ public class ExchangeParameters {
     }
 
     /** Exchange API rate calls. */
+    @Validated
     @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.rates")
     public static class Rates {
 

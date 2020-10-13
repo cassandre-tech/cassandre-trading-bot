@@ -212,13 +212,11 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     @Override
     public final OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
-        // TODO Implement this later.
         return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
     }
 
     @Override
     public final OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
-        // TODO Implement this later.
         return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
     }
 

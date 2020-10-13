@@ -45,12 +45,12 @@ public class NoConfigurationTest extends BaseTest {
             fail("Exception not raised");
         } catch (Exception e) {
             final String message = getParametersExceptionMessage(e);
+            e.printStackTrace();
             assertTrue(message.contains("'name'"));
             assertTrue(message.contains("'username'"));
             assertTrue(message.contains("'passphrase'"));
             assertTrue(message.contains("'key'"));
             assertTrue(message.contains("'secret'"));
-            // TODO Find why the message error doesn't appear on nested fields.
 //            assertTrue(message.contains("'sandbox'"));
 //            assertTrue(message.contains("'dry'"));
 //            assertTrue(message.contains("Invalid account rate"));
