@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.batch.mocks.TickerFluxTestMock;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.verify;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Batch - Ticker flux")
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Import(TickerFluxTestMock.class)
 public class TickerFluxTest extends BaseTest {
 
