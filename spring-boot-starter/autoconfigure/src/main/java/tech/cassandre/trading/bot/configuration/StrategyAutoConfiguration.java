@@ -257,7 +257,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                     tradeService.restoreTrade(t);
                     tradeFlux.restoreTrade(t);
                     tradeCount.incrementAndGet();
-                    getLogger().info("Trade " + trade.getOrderId() + " restored");
+                    getLogger().info("Trade " + trade.getOrderId() + " restored : " + t);
                 });
         getLogger().info(tradeCount.get() + " trade(s) restored");
 
@@ -300,7 +300,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             strategy.restorePosition(p);
             positionFlux.restorePosition(p);
             positionCount.incrementAndGet();
-            getLogger().info("Position " + position.getId() + " restored");
+            getLogger().info("Position " + position.getId() + " restored : " + p);
         });
         getLogger().info(positionCount.get() + " position(s) restored");
     }
