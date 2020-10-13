@@ -16,6 +16,7 @@ import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Data
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_PASSWORD;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_URL;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_USERNAME;
+import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.PARAMETER_DATABASE_TABLE_PREFIX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_KEY;
@@ -87,6 +88,7 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
     /** Database datasource password. */
     public static final String PARAMETER_DATABASE_DATASOURCE_PASSWORD_DEFAULT_VALUE = "";
 
+    public static final String PARAMETER_DATABASE_TABLE_PREFIX_DEFAULT_VALUE = "MY_STRATEGY_";
     @Override
     public void beforeAll(ExtensionContext context) {
         // Set default values.
@@ -112,6 +114,7 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE);         // false
         System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE);                             // true
         System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE, PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE);             // false
+        System.setProperty(PARAMETER_DATABASE_TABLE_PREFIX, PARAMETER_DATABASE_TABLE_PREFIX_DEFAULT_VALUE );                            // MY_STRATEGY_
 
         // Retrieve all the properties set by the annotation.
         final Optional<Class<?>> testClass = context.getTestClass();
@@ -153,6 +156,7 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.clearProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED);
         System.clearProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE);
         System.clearProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED);
+        System.clearProperty(PARAMETER_DATABASE_TABLE_PREFIX);
 
         // Remove all the properties set for this method.
         final Optional<Class<?>> testClass = context.getTestClass();

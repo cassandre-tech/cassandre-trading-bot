@@ -1,7 +1,7 @@
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO TRADES (ID, ORDER_ID, ORDER_TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, ORDER_TIMESTAMP, FEE_AMOUNT,
-                    FEE_CURRENCY)
+INSERT INTO MY_STRATEGY_TRADES (ID, ORDER_ID, ORDER_TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, ORDER_TIMESTAMP,
+                                FEE_AMOUNT, FEE_CURRENCY)
 values -- note : No trade for order BACKUP_OPEN_ORDER_01 - This is why position 1 is in opening.
        -- Order BACKUP_TRADE_01 - Trade from the order buying BACKUP_OPEN_ORDER_01.
        ('BACKUP_TRADE_01', 'BACKUP_OPEN_ORDER_02', 'BID', 12, 'BTC/USDT', 14, DATE '2020-08-01', 11, 'USDT'),
@@ -20,8 +20,8 @@ values -- note : No trade for order BACKUP_OPEN_ORDER_01 - This is why position 
 
 -- =====================================================================================================================
 -- Insert positions.
-INSERT INTO POSITIONS (ID, STATUS, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, OPEN_ORDER_ID,
-                       CLOSE_ORDER_ID, LOWEST_PRICE, HIGHEST_PRICE)
+INSERT INTO MY_STRATEGY_POSITIONS (ID, STATUS, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, OPEN_ORDER_ID,
+                                   CLOSE_ORDER_ID, LOWEST_PRICE, HIGHEST_PRICE)
 VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPEN_ORDER_01 to arrive (but will not arrive).
        (1, 'OPENING', null, null, 'BACKUP_OPEN_ORDER_01', null, null, null),
 

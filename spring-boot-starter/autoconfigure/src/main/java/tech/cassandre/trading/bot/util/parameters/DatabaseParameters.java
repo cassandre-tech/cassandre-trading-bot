@@ -13,6 +13,12 @@ import javax.validation.constraints.NotEmpty;
 @ConfigurationProperties(prefix = "cassandre.trading.bot.database")
 public class DatabaseParameters {
 
+    /** Table prefix parameter. */
+    public static final String PARAMETER_DATABASE_TABLE_PREFIX = "cassandre.trading.bot.database.table-prefix";
+
+    /** Table prefix. */
+    private String tablePrefix;
+
     /** Datasource configuration. */
     @Valid
     private static Datasource datasource = new Datasource();
@@ -131,6 +137,24 @@ public class DatabaseParameters {
                     + '}';
         }
 
+    }
+
+    /**
+     * Getter tablePrefix.
+     *
+     * @return tablePrefix
+     */
+    public String getTablePrefix() {
+        return tablePrefix;
+    }
+
+    /**
+     * Setter tablePrefix.
+     *
+     * @param newTablePrefix the tablePrefix to set
+     */
+    public void setTablePrefix(final String newTablePrefix) {
+        tablePrefix = newTablePrefix;
     }
 
     /**

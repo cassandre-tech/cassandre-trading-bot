@@ -1,10 +1,12 @@
 package tech.cassandre.trading.bot.configuration;
 
+import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
+import tech.cassandre.trading.bot.util.database.CassandreNamingStrategy;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.DatabaseParameters;
 
@@ -56,12 +58,10 @@ public class DatabaseAutoConfiguration extends BaseConfiguration {
         return dataSourceBuilder.build();
     }
 
-    /*    @Bean
+    @Bean
+    @SuppressWarnings("checkstyle:DesignForExtension")
     public PhysicalNamingStrategy physical() {
-        final Map<String, Object> strategyBeans = applicationContext.getBeansWithAnnotation(CassandreStrategy.class);
-        Object o = strategyBeans.values().iterator().next();
-        CassandreStrategy strategy = (CassandreStrategy) o;
-        return new CassandreNamingStrategy(strategy.BackupTablesPrefix());
-    }*/
+        return new CassandreNamingStrategy(databaseParameters.getTablePrefix());
+    }
 
 }
