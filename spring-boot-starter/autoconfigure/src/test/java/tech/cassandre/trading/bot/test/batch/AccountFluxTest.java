@@ -30,7 +30,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Batch - Account flux")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Import(AccountFluxTestMock.class)
 public class AccountFluxTest extends BaseTest {
 

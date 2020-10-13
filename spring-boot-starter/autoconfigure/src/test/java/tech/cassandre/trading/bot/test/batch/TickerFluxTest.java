@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Batch - Ticker flux")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Import(TickerFluxTestMock.class)
 public class TickerFluxTest extends BaseTest {
 

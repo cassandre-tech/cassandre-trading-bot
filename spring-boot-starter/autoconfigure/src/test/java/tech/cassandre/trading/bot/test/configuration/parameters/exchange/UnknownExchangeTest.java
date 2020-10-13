@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.test.configuration.parameters.exchange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -16,6 +17,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARA
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_NAME, value = "foo")
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UnknownExchangeTest extends BaseTest {
 
     @Test

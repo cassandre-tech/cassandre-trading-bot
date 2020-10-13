@@ -45,8 +45,8 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Configuration parameters - Valid configuration")
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Import(PositionServiceTestMock.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PositionServiceTest extends BaseTest {
 
     @Autowired

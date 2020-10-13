@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -21,6 +22,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARA
         @Property(key = PARAMETER_EXCHANGE_PROXY_HOST, value = "127.0.0.1"),
         @Property(key = PARAMETER_EXCHANGE_PROXY_PORT, value = "4780")
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ExchangeSpecificationTest extends BaseTest {
 
     @Test

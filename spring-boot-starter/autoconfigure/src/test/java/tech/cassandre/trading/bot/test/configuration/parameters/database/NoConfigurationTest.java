@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.test.configuration.parameters.database;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -22,6 +23,7 @@ import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Data
         @Property(key = PARAMETER_DATABASE_DATASOURCE_USERNAME),
         @Property(key = PARAMETER_DATABASE_DATASOURCE_PASSWORD)
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class NoConfigurationTest extends BaseTest {
 
     @Test

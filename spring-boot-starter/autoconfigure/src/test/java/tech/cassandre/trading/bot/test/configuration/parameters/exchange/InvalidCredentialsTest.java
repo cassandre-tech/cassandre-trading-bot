@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.test.configuration.parameters.exchange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -15,6 +16,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARA
 @Configuration({
 		@Property(key = PARAMETER_EXCHANGE_SECRET, value = "none")
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class InvalidCredentialsTest {
 
 	@Test

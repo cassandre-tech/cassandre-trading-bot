@@ -39,7 +39,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Batch - Position flux")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Import(PositionFluxTestMock.class)
 public class PositionFluxTest extends BaseTest {
 

@@ -40,7 +40,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Import(PositionServiceDryModeTestMock.class)
 public class PositionServiceDryModeTest extends BaseTest {
 

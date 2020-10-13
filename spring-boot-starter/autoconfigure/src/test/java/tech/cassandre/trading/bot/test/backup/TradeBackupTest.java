@@ -35,7 +35,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
         @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class  TradeBackupTest extends BaseTest {
 
     public static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Batch - Order flux")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Import(OrderFluxTestMock.class)
 public class OrderFluxTest extends BaseTest {
 
