@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.configuration.parameters.database;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
@@ -24,6 +25,7 @@ import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Data
         @Property(key = PARAMETER_DATABASE_DATASOURCE_PASSWORD)
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Disabled
 public class NoConfigurationTest extends BaseTest {
 
     @Test
