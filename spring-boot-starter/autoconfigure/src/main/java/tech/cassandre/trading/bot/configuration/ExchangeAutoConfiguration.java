@@ -172,7 +172,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 userServiceDryMode = new UserServiceDryModeImplementation();
                 this.userService = userServiceDryMode;
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode);
+                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode, tradeRepository);
                 this.tradeService = tradeServiceDryMode;
                 this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
             }

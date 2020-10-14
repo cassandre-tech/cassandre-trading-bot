@@ -2,18 +2,15 @@ package tech.cassandre.trading.bot.configuration;
 
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.database.CassandreNamingStrategy;
-import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.DatabaseParameters;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
 
 /**
  * Database autoconfiguration.
@@ -38,28 +35,19 @@ public class DatabaseAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Cassandre datasource.
+     * Gives to Hiraki the configuration of the default datasource.
      *
-     * @return datasource
+     * @return datasource configuration
      */
     @Bean
-    public DataSource getDataSource() {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName(databaseParameters.getDatasource().getDriverClassName());
-        dataSourceBuilder.url(databaseParameters.getDatasource().getUrl());
-        dataSourceBuilder.username(databaseParameters.getDatasource().getUsername());
-        dataSourceBuilder.password(databaseParameters.getDatasource().getPassword());
-        try {
-            // Trying to connect to see it if works.
-            final Connection connection = dataSourceBuilder.build().getConnection();
-            connection.close();
-        } catch (Exception exception) {
-            throw new ConfigurationException("Impossible to connect to database : " + exception.getMessage(),
-                    "Check your database configuration : " + databaseParameters.getDatasource().getDriverClassName()
-                            + " / " + databaseParameters.getDatasource().getUrl()
-                            + " / " + databaseParameters.getDatasource().getUsername());
-        }
-        return dataSourceBuilder.build();
+    @Primary
+    public DataSourceProperties dataSourceProperties() {
+        DataSourceProperties p = new DataSourceProperties();
+        p.setDriverClassName(databaseParameters.getDatasource().getDriverClassName());
+        p.setUrl(databaseParameters.getDatasource().getUrl());
+        p.setUsername(databaseParameters.getDatasource().getUsername());
+        p.setPassword(databaseParameters.getDatasource().getPassword());
+        return p;
     }
 
     @Bean
