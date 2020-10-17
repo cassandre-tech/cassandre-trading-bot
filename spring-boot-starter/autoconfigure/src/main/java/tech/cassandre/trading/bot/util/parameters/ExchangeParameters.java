@@ -64,16 +64,16 @@ public class ExchangeParameters {
 
     /** Modes. */
     @Valid
-    private static Modes modes = new Modes();
+    private Modes modes = new Modes();
 
     /** API Calls rates. */
     @Valid
-    private static Rates rates = new Rates();
+    private Rates rates = new Rates();
 
     /** Exchange API rate calls. */
     @Validated
     @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.modes")
-    public static class Modes {
+    public class Modes {
 
         /** Sandbox parameter. */
         public static final String PARAMETER_EXCHANGE_SANDBOX = "cassandre.trading.bot.exchange.modes.sandbox";

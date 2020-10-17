@@ -53,11 +53,11 @@ public class NoConfigurationTest extends BaseTest {
             assertTrue(message.contains("'passphrase'"));
             assertTrue(message.contains("'key'"));
             assertTrue(message.contains("'secret'"));
-//            assertTrue(message.contains("'sandbox'"));
-//            assertTrue(message.contains("'dry'"));
-//            assertTrue(message.contains("Invalid account rate"));
-//            assertTrue(message.contains("Invalid ticker rate"));
-//            assertTrue(message.contains("Invalid order rate"));
+            assertTrue(message.contains("'modes.sandbox'"));
+            assertTrue(message.contains("'modes.dry'"));
+            assertTrue(message.contains("rates.account"));
+            assertTrue(message.contains("rates.ticker"));
+            assertTrue(message.contains("rates.trade"));
         }
     }
 
