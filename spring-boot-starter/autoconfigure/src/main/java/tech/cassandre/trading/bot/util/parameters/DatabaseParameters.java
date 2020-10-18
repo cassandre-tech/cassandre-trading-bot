@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * Database parameters from application.properties.
@@ -21,12 +21,12 @@ public class DatabaseParameters {
 
     /** Datasource configuration. */
     @Valid
-    private static Datasource datasource = new Datasource();
+    private Datasource datasource = new Datasource();
 
     /** Datasource configuration. */
     @Validated
     @ConfigurationProperties(prefix = "cassandre.trading.bot.database.datasource")
-    public static class Datasource {
+    public class Datasource {
 
         /** Backup enabled parameter. */
         public static final String PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME = "cassandre.trading.bot.database.datasource.driver-class-name";
@@ -41,15 +41,15 @@ public class DatabaseParameters {
         public static final String PARAMETER_DATABASE_DATASOURCE_PASSWORD = "cassandre.trading.bot.database.datasource.password";
 
         /** Driver class name. */
-        @NotEmpty(message = "Database driver class name must be set")
+        @NotNull(message = "Database driver class name must be set")
         private String driverClassName;
 
         /** URL. */
-        @NotEmpty(message = "Database url must be set")
+        @NotNull(message = "Database url must be set")
         private String url;
 
         /** Username. */
-        @NotEmpty(message = "Database username must be set")
+        @NotNull(message = "Database username must be set")
         private String username;
 
         /** Password. */
@@ -173,6 +173,14 @@ public class DatabaseParameters {
      */
     public void setDatasource(final Datasource newDatasource) {
         datasource = newDatasource;
+    }
+
+    @Override
+    public final String toString() {
+        return "DatabaseParameters{"
+                + " tablePrefix='" + tablePrefix + '\''
+                + ", datasource=" + datasource
+                + '}';
     }
 
 }
