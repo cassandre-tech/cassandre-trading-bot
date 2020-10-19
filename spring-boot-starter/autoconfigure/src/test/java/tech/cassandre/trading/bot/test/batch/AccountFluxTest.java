@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.batch.mocks.AccountFluxTestMock;
@@ -29,6 +30,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Batch - Account flux")
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Import(AccountFluxTestMock.class)
 public class AccountFluxTest extends BaseTest {
 

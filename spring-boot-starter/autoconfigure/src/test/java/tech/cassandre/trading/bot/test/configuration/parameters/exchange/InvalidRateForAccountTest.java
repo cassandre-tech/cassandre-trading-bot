@@ -1,8 +1,9 @@
-package tech.cassandre.trading.bot.test.configuration.parameters;
+package tech.cassandre.trading.bot.test.configuration.parameters.exchange;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -11,13 +12,14 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_NAME;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_ACCOUNT;
 
-@DisplayName("Configuration parameters - Name parameter is missing")
+@DisplayName("Exchange parameters - Invalid account rate")
 @Configuration({
-        @Property(key = PARAMETER_NAME)
+        @Property(key = PARAMETER_EXCHANGE_RATE_ACCOUNT, value = "A")
 })
-public class NameParameterMissingTest extends BaseTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class InvalidRateForAccountTest extends BaseTest {
 
     @Test
     @DisplayName("Check error messages")
@@ -28,16 +30,16 @@ public class NameParameterMissingTest extends BaseTest {
             fail("Exception not raised");
         } catch (Exception e) {
             final String message = getParametersExceptionMessage(e);
-            assertTrue(message.contains("'name'"));
+            assertFalse(message.contains("'name'"));
             assertFalse(message.contains("'sandbox'"));
-            assertFalse(message.contains("'sandbox'"));
+            assertFalse(message.contains("'dry'"));
             assertFalse(message.contains("'username'"));
             assertFalse(message.contains("'passphrase'"));
             assertFalse(message.contains("'key'"));
             assertFalse(message.contains("'secret'"));
-            assertFalse(message.contains("'rates.account'"));
-            assertFalse(message.contains("'rates.ticker'"));
-            assertFalse(message.contains("'rates.trade'"));
+            assertTrue(message.contains("Invalid account rate"));
+            assertFalse(message.contains("Invalid ticker rate"));
+            assertFalse(message.contains("Invalid order rate"));
         }
     }
 

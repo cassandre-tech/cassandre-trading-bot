@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.service.dry;
 
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -10,6 +11,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -63,13 +65,19 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /** User service - dry mode. */
     private final UserServiceDryModeImplementation userService;
 
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
+
     /**
      * Constructor.
      *
      * @param newUserService user service
+     * @param newTradeRepository trade repository
      */
-    public TradeServiceDryModeImplementation(final UserServiceDryModeImplementation newUserService) {
+    public TradeServiceDryModeImplementation(final UserServiceDryModeImplementation newUserService,
+                                             final TradeRepository newTradeRepository) {
         this.userService = newUserService;
+        this.tradeRepository = newTradeRepository;
     }
 
     /**
@@ -212,13 +220,11 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     @Override
     public final OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
-        // TODO Implement this later.
         return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
     }
 
     @Override
     public final OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
-        // TODO Implement this later.
         return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
     }
 
@@ -275,8 +281,18 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public void backupTrade(final TradeDTO trade) {
-        // No backup in dry mode.
+    public final void backupTrade(final TradeDTO trade) {
+        Trade t = new Trade();
+        t.setId(trade.getId());
+        t.setOrderId(trade.getOrderId());
+        t.setType(trade.getType().toString());
+        t.setOriginalAmount(trade.getOriginalAmount());
+        t.setCurrencyPair(trade.getCurrencyPair().toString());
+        t.setPrice(trade.getPrice());
+        t.setTimestamp(trade.getTimestamp());
+        t.setFeeAmount(trade.getFee().getValue());
+        t.setFeeCurrency(trade.getFee().getCurrency().toString());
+        tradeRepository.save(t);
     }
 
 }

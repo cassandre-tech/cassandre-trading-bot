@@ -1,8 +1,9 @@
-package tech.cassandre.trading.bot.test.configuration.parameters;
+package tech.cassandre.trading.bot.test.configuration.parameters.exchange;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -11,13 +12,14 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_RATE_TRADE;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
 
-@DisplayName("Configuration parameters - Invalid trade rate")
+@DisplayName("Exchange parameters - Invalid ticker rate")
 @Configuration({
-        @Property(key = PARAMETER_RATE_TRADE, value = "AT20S")
+        @Property(key = PARAMETER_EXCHANGE_RATE_TICKER, value = "AT20S")
 })
-public class InvalidRateForTradeTest extends BaseTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class InvalidRateForTickerTest extends BaseTest {
 
     @Test
     @DisplayName("Check error messages")
@@ -36,8 +38,8 @@ public class InvalidRateForTradeTest extends BaseTest {
             assertFalse(message.contains("'key'"));
             assertFalse(message.contains("'secret'"));
             assertFalse(message.contains("Invalid account rate"));
-            assertFalse(message.contains("Invalid ticker rate"));
-            assertTrue(message.contains("Invalid trade rate"));
+            assertTrue(message.contains("Invalid ticker rate"));
+            assertFalse(message.contains("Invalid order rate"));
         }
     }
 

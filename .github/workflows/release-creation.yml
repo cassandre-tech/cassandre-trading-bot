@@ -37,8 +37,6 @@ jobs:
       - name: Build, run tests, package
         id: package
         env: # Environment variables.
-          # Maven options.
-          MAVEN_OPTS: -Xmx1024m -XX:MaxPermSize=128m
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Ossrh credentials.
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}

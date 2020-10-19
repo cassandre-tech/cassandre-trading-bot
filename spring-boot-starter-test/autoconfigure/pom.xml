@@ -6,7 +6,7 @@
     <!-- =========================================================================================================== -->
     <!-- Project information -->
     <artifactId>cassandre-trading-bot-spring-boot-starter-test-autoconfigure</artifactId>
-    <name>Trading bot spring boot starter test autoconfigure</name>
+    <name>Trading bot spring boot autoconfigure test</name>
     <!-- =========================================================================================================== -->
 
     <!-- =========================================================================================================== -->
@@ -46,6 +46,12 @@
             <groupId>org.junit-pioneer</groupId>
             <artifactId>junit-pioneer</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.5.1</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->
@@ -134,7 +140,7 @@
     <parent>
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
-        <version>2.2.0</version>
+        <version>2.3.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->

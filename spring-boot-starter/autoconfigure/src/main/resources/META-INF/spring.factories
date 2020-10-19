@@ -1,2 +1,2 @@
 org.springframework.boot.diagnostics.FailureAnalyzer=tech.cassandre.trading.bot.util.exception.ConfigurationFailureAnalyzer
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=tech.cassandre.trading.bot.configuration.ExchangeAutoConfiguration,tech.cassandre.trading.bot.configuration.StrategyAutoConfiguration,tech.cassandre.trading.bot.configuration.ScheduleAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration,tech.cassandre.trading.bot.configuration.ExchangeAutoConfiguration,tech.cassandre.trading.bot.configuration.ScheduleAutoConfiguration,tech.cassandre.trading.bot.configuration.StrategyAutoConfiguration

@@ -50,7 +50,6 @@ hs_err_pid*
 # Maven
 log/
 .notes
-.mvn
 *.iml
 
 # Node

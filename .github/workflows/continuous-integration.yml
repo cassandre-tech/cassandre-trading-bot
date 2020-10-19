@@ -36,8 +36,6 @@ jobs:
       # ================================================================================================================
       - name: Build, run tests, package and deploy to Maven central
         env: # Environment variables.
-          # Maven options.
-          MAVEN_OPTS: -Xmx1024m -XX:MaxPermSize=128m
           # Ossrh credentials.
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
@@ -56,11 +54,11 @@ jobs:
       # ================================================================================================================
       - name : Test Cassandre trading bot maven archetype - basic strategy
         run: |
-          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype -DarchetypeVersion=${{ steps.package.outputs.version }} -DgroupId=tech.cassandre -DartifactId=archetype-test-basic -Dversion=1.0-SNAPSHOT -Dpackage=tech.cassandre
+          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype -DarchetypeVersion=${{ steps.package.outputs.version }} -DgroupId=com.example -DartifactId=archetype-test-basic -Dversion=1.0-SNAPSHOT -Dpackage=com.example
           mvn -f archetype-test-basic/pom.xml test
 
       # ================================================================================================================
       - name : Test Cassandre trading bot maven archetype - basic ta4j strategy
         run: |
-          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype -DarchetypeVersion=${{ steps.package.outputs.version }} -DgroupId=tech.cassandre -DartifactId=archetype-test-ta4j-basic -Dversion=1.0-SNAPSHOT -Dpackage=tech.cassandre
+          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype -DarchetypeVersion=${{ steps.package.outputs.version }} -DgroupId=com.example -DartifactId=archetype-test-ta4j-basic -Dversion=1.0-SNAPSHOT -Dpackage=com.example
           mvn -f archetype-test-ta4j-basic/pom.xml test

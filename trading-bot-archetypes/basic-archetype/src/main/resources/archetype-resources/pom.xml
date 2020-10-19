@@ -30,6 +30,11 @@
 			<artifactId>spring-boot-starter</artifactId>
 			<version>2.3.3.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.5.1</version>
+		</dependency>
 
 		<!-- Cassandre trading bot -->
 		<dependency>
