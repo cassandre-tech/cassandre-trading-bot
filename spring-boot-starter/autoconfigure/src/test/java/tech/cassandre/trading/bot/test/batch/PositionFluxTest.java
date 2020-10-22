@@ -162,7 +162,7 @@ public class PositionFluxTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("ORDER00020")
                 .currencyPair(cp2)
-                .originalAmount(new BigDecimal("10"))
+                .originalAmount(new BigDecimal("0.0002"))
                 .price(new BigDecimal("0.03"))
                 .create());
 
@@ -196,11 +196,12 @@ public class PositionFluxTest extends BaseTest {
         // The close trade arrives, change the status and set the price.
         tradeFlux.emitValue(TradeDTO.builder().id("000003")
                 .orderId("ORDER00011")
-                .originalAmount(new BigDecimal("10"))
                 .currencyPair(cp1)
+                .originalAmount(new BigDecimal("10"))
                 .price(new BigDecimal("1"))
                 .create());
         positionUpdateIndex++;
+        strategy.getPositionsUpdateReceived().forEach(positionDTO -> System.out.println("- " + positionDTO));
         await().untilAsserted(() -> assertEquals(10, strategy.getPositionsUpdateReceived().size()));
         assertEquals(position1Result.getPositionId(), strategy.getPositionsUpdateReceived().get(positionUpdateIndex).getId());
         assertEquals(CLOSED, strategy.getPositionsUpdateReceived().get(positionUpdateIndex).getStatus());

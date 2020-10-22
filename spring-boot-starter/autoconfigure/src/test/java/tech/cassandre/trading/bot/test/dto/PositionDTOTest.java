@@ -10,12 +10,17 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 
+import javax.ws.rs.core.Link;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,6 +30,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @DisplayName("DTO - PositionDTO")
 public class PositionDTOTest {
@@ -39,63 +45,69 @@ public class PositionDTOTest {
     @DisplayName("Check testing status change")
     public void checkStatusChange() {
         // We create a position that was opened with the order O000001.
-        PositionDTO p = new PositionDTO(1, "O000001", noRules);
+        PositionDTO p = new PositionDTO(1, cp, amount, "O000001", noRules);
 
         // After creation, the position state should be OPENING
         assertEquals(OPENING, p.getStatus());
-        assertNull(p.getOpenTrade());
-        assertNull(p.getCloseTrade());
+        assertTrue(p.getOpenTrades().isEmpty());
+        assertTrue(p.getCloseTrades().isEmpty());
 
         // A first trade arrives for another order, nothing should change.
         p.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000000").create());
         assertEquals(OPENING, p.getStatus());
-        assertNull(p.getOpenTrade());
-        assertNull(p.getCloseTrade());
+        assertTrue(p.getOpenTrades().isEmpty());
+        assertTrue(p.getCloseTrades().isEmpty());
 
         // A second trade arrives for the order O000001 and should change the state to OPENED.
-        p.tradeUpdate(TradeDTO.builder().id("T000002").orderId("O000001").create());
+        p.tradeUpdate(TradeDTO.builder().id("T000002").orderId("O000001").originalAmount(amount).create());
         assertEquals(OPENED, p.getStatus());
-        assertEquals("T000002", p.getOpenTrade().getId());
-        assertNull(p.getCloseTrade());
+        assertEquals(1, p.getOpenTrades().size());
+        assertNotNull(p.getOpenTrades().get("T000002"));
+        assertTrue(p.getCloseTrades().isEmpty());
 
         // A close order is set, the status should now be closing.
         p.setCloseOrderId("O000002");
         assertEquals(CLOSING, p.getStatus());
-        assertEquals("T000002", p.getOpenTrade().getId());
-        assertNull(p.getCloseTrade());
+        assertEquals(1, p.getOpenTrades().size());
+        assertNotNull(p.getOpenTrades().get("T000002"));
+        assertTrue(p.getCloseTrades().isEmpty());
 
         // Previous trades arrives, nothing should change.
         p.tradeUpdate(TradeDTO.builder().id("T000003").orderId("O000000").create());
         p.tradeUpdate(TradeDTO.builder().id("T000004").orderId("O000001").create());
         assertEquals(CLOSING, p.getStatus());
-        assertEquals("T000002", p.getOpenTrade().getId());
-        assertNull(p.getCloseTrade());
+        assertEquals(1, p.getOpenTrades().size());
+        assertNotNull(p.getOpenTrades().get("T000002"));
+        assertTrue(p.getCloseTrades().isEmpty());
 
         // A trade arrives for another order, nothing should change.
-        p.tradeUpdate(TradeDTO.builder().id("T000005").orderId("O000003").create());
+        p.tradeUpdate(TradeDTO.builder().id("T000005").orderId("O000003").currencyPair(cp).originalAmount(amount).create());
         assertEquals(CLOSING, p.getStatus());
-        assertEquals("T000002", p.getOpenTrade().getId());
-        assertNull(p.getCloseTrade());
+        assertEquals(1, p.getOpenTrades().size());
+        assertNotNull(p.getOpenTrades().get("T000002"));
+        assertTrue(p.getCloseTrades().isEmpty());
 
         // A trade arrives for the closing order
-        p.tradeUpdate(TradeDTO.builder().id("T000006").orderId("O000002").create());
+        p.tradeUpdate(TradeDTO.builder().id("T000006").orderId("O000002").currencyPair(cp).originalAmount(amount).create());
         assertEquals(CLOSED, p.getStatus());
-        assertEquals("T000002", p.getOpenTrade().getId());
-        assertEquals("T000006", p.getCloseTrade().getId());
+        assertEquals(1, p.getOpenTrades().size());
+        assertNotNull(p.getOpenTrades().get("T000002"));
+        assertEquals(1, p.getCloseTrades().size());
+        assertNotNull(p.getCloseTrades().get("T000006"));
     }
 
     @Test
     @DisplayName("Check that close order update limited to OPENED position")
     public void checkCloseOrderIdUpdate() {
         // We create a position that was opened with the order O000001.
-        PositionDTO p = new PositionDTO(1, "O000001", noRules);
+        PositionDTO p = new PositionDTO(1, cp, amount, "O000001", noRules);
 
         // We are in OPENING status and we try to call setCloseOrderId.
         assertEquals(OPENING, p.getStatus());
         assertThrows(RuntimeException.class, () -> p.setCloseOrderId("O000002"));
 
         // We move to OPENED status and we try to call setCloseOrderId.
-        p.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000001").create());
+        p.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000001").originalAmount(amount).create());
         assertEquals(OPENED, p.getStatus());
 
         // We are in OPENED, we should now be able to setCloseOrderId.
@@ -106,7 +118,7 @@ public class PositionDTOTest {
         assertThrows(RuntimeException.class, () -> p.setCloseOrderId("O000002"));
 
         // We move to CLOSED.
-        p.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000002").create());
+        p.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000002").originalAmount(amount).create());
         assertEquals(CLOSED, p.getStatus());
         assertThrows(RuntimeException.class, () -> p.setCloseOrderId("O000002"));
     }
@@ -116,7 +128,7 @@ public class PositionDTOTest {
     public void checkShouldBeClosedWithGainRules() {
         // Position 1.
         // Rule : 70% gain.
-        PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopGainPercentage(70).create());
+        PositionDTO p = new PositionDTO(1, cp, amount, "O000011", PositionRulesDTO.builder().stopGainPercentage(70).create());
 
         // Position opened with this trade.
         // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
@@ -130,7 +142,7 @@ public class PositionDTOTest {
                 .create();
         p.tradeUpdate(trade01);
         assertEquals(OPENED, p.getStatus());
-        assertEquals("T000001", p.getOpenTrade().getId());
+        assertNotNull(p.getOpenTrades().get("T000001"));
 
         // New ticker for a currency pair that is not the one of T000001.
         TickerDTO t01 = TickerDTO.builder().currencyPair(new CurrencyPairDTO(BTC, ETH)).bid(new BigDecimal("0.05")).create();
@@ -150,7 +162,7 @@ public class PositionDTOTest {
     public void checkShouldBeClosedWithLostRules() {
         // Position 1.
         // Rule : 70% loss.
-        PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopLossPercentage(70).create());
+        PositionDTO p = new PositionDTO(1, cp, amount, "O000011", PositionRulesDTO.builder().stopLossPercentage(70).create());
 
         // Position opened with this trade.
         // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
@@ -164,7 +176,7 @@ public class PositionDTOTest {
                 .create();
         p.tradeUpdate(trade01);
         assertEquals(OPENED, p.getStatus());
-        assertEquals("T000001", p.getOpenTrade().getId());
+        assertNotNull(p.getOpenTrades().get("T000001"));
 
         // New ticker for a currency pair that is not the one of T000001.
         TickerDTO t01 = TickerDTO.builder().currencyPair(new CurrencyPairDTO(BTC, ETH)).last(new BigDecimal("0.001")).create();
@@ -182,9 +194,9 @@ public class PositionDTOTest {
     @Test
     @DisplayName("Check equalTo")
     public void checkEqualTo() {
-        PositionDTO p1 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p1Bis = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p2 = new PositionDTO(2, "O000002", noRules);
+        PositionDTO p1 = new PositionDTO(1, cp, amount, "O000001", noRules);
+        PositionDTO p1Bis = new PositionDTO(1, cp, amount, "O000001", noRules);
+        PositionDTO p2 = new PositionDTO(2, cp, amount, "O000002", noRules);
 
         // Same position.
         assertEquals(p1, p1);
@@ -194,7 +206,7 @@ public class PositionDTOTest {
         assertNotEquals(p1, p2);
 
         // Status changed - for P1.
-        p1.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000001").create());
+        p1.tradeUpdate(TradeDTO.builder().id("T000001").currencyPair(cp).originalAmount(amount).orderId("O000001").create());
         assertNotEquals(p1, p1Bis);
     }
 
@@ -203,7 +215,7 @@ public class PositionDTOTest {
     public void checkGetPositivePositionGain() {
         // Position 1.
         // Rule : 10% gain.
-        PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopGainPercentage(10).create());
+        PositionDTO p = new PositionDTO(1, cp, amount, "O000011", PositionRulesDTO.builder().stopGainPercentage(10).create());
 
         // Position opened with this trade.
         // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
@@ -212,13 +224,13 @@ public class PositionDTOTest {
                 .orderId("O000011")                         // Closing opening order O000011
                 .type(OrderTypeDTO.BID)                     // Buying.
                 .currencyPair(cp)                           // ETH / BTC.
-                .originalAmount(new BigDecimal(10))     // 10.
+                .originalAmount(amount)                     // 0.0001.
                 .price(new BigDecimal("5"))             // Price 5.
                 .feeAmount(new BigDecimal(1))           // Fee 1.
                 .create();
         p.tradeUpdate(trade01);
         assertEquals(OPENED, p.getStatus());
-        assertEquals("T000001", p.getOpenTrade().getId());
+        assertNotNull(p.getOpenTrades().get("T000001"));
         assertEquals(0, p.getGain().getPercentage());
         assertEquals(BigDecimal.ZERO, p.getGain().getAmount().getValue());
         assertEquals(BigDecimal.ZERO, p.getGain().getFees().getValue());
@@ -231,16 +243,16 @@ public class PositionDTOTest {
                 .orderId("O000012")                         // Closing opening order O000011
                 .type(OrderTypeDTO.BID)                     // Buying.
                 .currencyPair(cp)                           // ETH / BTC.
-                .originalAmount(new BigDecimal(10))     // 10.
+                .originalAmount(amount)                     // 0.0001.
                 .price(new BigDecimal("6"))             // Price 6.
                 .feeAmount(new BigDecimal(2))           // Fee 2.
                 .create();
         p.tradeUpdate(trade02);
         assertEquals(CLOSED, p.getStatus());
-        assertEquals("T000002", p.getCloseTrade().getId());
+        assertNotNull(p.getCloseTrades().get("T000002"));
         GainDTO gainDTO = p.getGain();
         assertEquals(20, gainDTO.getPercentage());
-        assertEquals(new BigDecimal("10"), gainDTO.getAmount().getValue());
+        assertEquals(new BigDecimal("0.0001"), gainDTO.getAmount().getValue());
         assertEquals(BTC, p.getGain().getAmount().getCurrency());
         assertEquals(new BigDecimal("3"), gainDTO.getFees().getValue());
         assertEquals(BTC, p.getGain().getFees().getCurrency());
@@ -251,7 +263,7 @@ public class PositionDTOTest {
     public void checkGetNegativePositionGain() {
         // Position 1.
         // Rule : 10% lost.
-        PositionDTO p = new PositionDTO(1, "O000011", PositionRulesDTO.builder().stopLossPercentage(10).create());
+        PositionDTO p = new PositionDTO(1, cp, amount, "O000011", PositionRulesDTO.builder().stopLossPercentage(10).create());
 
         // Position opened with this trade.
         // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
@@ -260,13 +272,13 @@ public class PositionDTOTest {
                 .orderId("O000011")                         // Closing opening order O000011
                 .type(OrderTypeDTO.BID)                     // Buying.
                 .currencyPair(cp)                           // ETH / BTC.
-                .originalAmount(new BigDecimal(10))     // 10.
+                .originalAmount(amount)                     // 10.
                 .price(new BigDecimal("5"))             // Price 5.
                 .feeAmount(new BigDecimal(1))           // Fee 1.
                 .create();
         p.tradeUpdate(trade01);
         assertEquals(OPENED, p.getStatus());
-        assertEquals("T000001", p.getOpenTrade().getId());
+        assertNotNull(p.getOpenTrades().get("T000001"));
         assertEquals(0, p.getGain().getPercentage());
         assertEquals(BigDecimal.ZERO, p.getGain().getAmount().getValue());
         assertEquals(BigDecimal.ZERO, p.getGain().getFees().getValue());
@@ -279,16 +291,16 @@ public class PositionDTOTest {
                 .orderId("O000012")                         // Closing opening order O000011
                 .type(OrderTypeDTO.BID)                     // Buying.
                 .currencyPair(cp)                           // ETH / BTC.
-                .originalAmount(new BigDecimal(10))     // 10.
-                .price(new BigDecimal("4"))             // Price 6.
+                .originalAmount(amount)                     // 10.
+                .price(new BigDecimal("4"))             // Price 4.
                 .feeAmount(new BigDecimal(2))           // Fee 2.
                 .create();
         p.tradeUpdate(trade02);
         assertEquals(CLOSED, p.getStatus());
-        assertEquals("T000002", p.getCloseTrade().getId());
+        assertNotNull(p.getCloseTrades().get("T000002"));
         GainDTO gainDTO = p.getGain();
         assertEquals(-20, gainDTO.getPercentage());
-        assertEquals(new BigDecimal("-10"), gainDTO.getAmount().getValue());
+        assertEquals(new BigDecimal("-0.0001"), gainDTO.getAmount().getValue());
         assertEquals(BTC, p.getGain().getAmount().getCurrency());
         assertEquals(new BigDecimal("3"), gainDTO.getFees().getValue());
         assertEquals(BTC, p.getGain().getFees().getCurrency());
@@ -300,9 +312,10 @@ public class PositionDTOTest {
         // Position opening.
         PositionDTO p1 = new PositionDTO(1L,
                 OPENING,
+                new CurrencyPairDTO(ETH, BTC),
+                new BigDecimal(1),
                 PositionRulesDTO.builder().create(),
                 "OPEN_ORDER_01",
-                null,
                 null,
                 null,
                 null,
@@ -322,11 +335,12 @@ public class PositionDTOTest {
                 .create();
         PositionDTO p2 = new PositionDTO(2L,
                 OPENED,
+                new CurrencyPairDTO(ETH, BTC),
+                new BigDecimal(1),
                 PositionRulesDTO.builder().stopLossPercentage(11).create(),
                 "OPEN_ORDER_02",
-                openTrade1,
                 null,
-                null,
+                Collections.singleton(openTrade1),
                 null,
                 null);
         assertEquals(p2.toString(), "Position n°2 (11.0 % loss rule) on ETH/BTC - Opened");
@@ -338,11 +352,12 @@ public class PositionDTOTest {
         // Position closing.
         PositionDTO p3 = new PositionDTO(3L,
                 CLOSING,
+                new CurrencyPairDTO(ETH, BTC),
+                new BigDecimal(1),
                 PositionRulesDTO.builder().stopGainPercentage(12).create(),
                 "OPEN_ORDER_03",
-                openTrade1,
                 "OPEN_ORDER_04",
-                null,
+                Collections.singleton(openTrade1),
                 null,
                 null);
         assertEquals(p3.toString(), "Position n°3 (12.0 % gain rule) on ETH/BTC - Closing - Waiting for the trade of order OPEN_ORDER_04");
@@ -366,15 +381,19 @@ public class PositionDTOTest {
                 .originalAmount(new BigDecimal(1))
                 .price(new BigDecimal(2))
                 .timestamp(ZonedDateTime.now())
-                .type(OrderTypeDTO.BID)
+                .type(OrderTypeDTO.ASK)
                 .create();
+        final Set<TradeDTO> tradesP4 = new LinkedHashSet<>();
+        tradesP4.add(openTrade4);
+        tradesP4.add(closeTrade4);
         PositionDTO p4 = new PositionDTO(4L,
                 CLOSED,
+                new CurrencyPairDTO(ETH, BTC),
+                new BigDecimal(1),
                 PositionRulesDTO.builder().stopGainPercentage(12).stopLossPercentage(9L).create(),
                 "OPEN_ORDER_04",
-                openTrade4,
                 "OPEN_ORDER_04",
-                closeTrade4,
+                tradesP4,
                 null,
                 null);
         p4.tradeUpdate(closeTrade4);

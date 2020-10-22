@@ -84,7 +84,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
             // =========================================================================================================
             // Creates the position dto.
-            PositionDTO p = new PositionDTO(position.getId(), orderCreationResult.getOrderId(), rules);
+            PositionDTO p = new PositionDTO(position.getId(), currencyPair, amount, orderCreationResult.getOrderId(), rules);
             positions.put(p.getId(), p);
             getLogger().debug("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrderId());
 
@@ -107,7 +107,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                 .filter(p -> p.getCurrencyPair().equals(ticker.getCurrencyPair()))
                 .filter(p -> p.shouldBeClosed(ticker))
                 .forEach(p -> {
-                    final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(ticker.getCurrencyPair(), p.getOpenTrade().getOriginalAmount());
+                    final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(ticker.getCurrencyPair(), p.getAmount());
                     if (orderCreationResult.isSuccessful()) {
                         p.setCloseOrderId(orderCreationResult.getOrderId());
                         getLogger().debug("PositionService - Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId());
@@ -137,6 +137,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
             if (position.getRules().isStopLossPercentageSet()) {
                 p.get().setStopLossPercentageRule(position.getRules().getStopLossPercentage());
             }
+            position.getOpenTrades().forEach((s, t) -> p.get().getTrades().add(s));
+            position.getCloseTrades().forEach((s, t) -> p.get().getTrades().add(s));
             p.get().setOpenOrderId(position.getOpenOrderId());
             p.get().setCloseOrderId(position.getCloseOrderId());
             p.get().setLowestPrice(position.getLowestPrice());

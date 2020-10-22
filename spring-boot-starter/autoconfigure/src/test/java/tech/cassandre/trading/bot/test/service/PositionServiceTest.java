@@ -151,12 +151,12 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
 
         // Trade 2 - should change status of position 1.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002").orderId("ORDER00010").create());
+        tradeFlux.emitValue(TradeDTO.builder().id("000002").currencyPair(cp1).originalAmount(new BigDecimal("0.0001")).orderId("ORDER00010").create());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 3 - should change status of position 2.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002").orderId("ORDER00020").create());
+        tradeFlux.emitValue(TradeDTO.builder().id("000002").currencyPair(cp1).originalAmount(new BigDecimal("0.0002")).orderId("ORDER00020").create());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
     }
@@ -214,6 +214,7 @@ public class PositionServiceTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("ORDER00011")
                 .currencyPair(cp1)
+                .originalAmount(new BigDecimal("0.0001"))
                 .create());
         await().untilAsserted(() -> assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus()));
     }

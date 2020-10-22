@@ -1,12 +1,17 @@
 package tech.cassandre.trading.bot.domain;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.Set;
 
 /**
  * Position (used to save data between restarts).
@@ -31,6 +36,14 @@ public class Position {
     @Column(name = "STATUS")
     private String status;
 
+    /** The currency-pair. */
+    @Column(name = "CURRENCY_PAIR")
+    private String currencyPair;
+
+    /** Amount to be ordered / amount that was ordered. */
+    @Column(name = "AMOUNT", precision = PRECISION, scale = SCALE)
+    private BigDecimal amount;
+
     /** Position rules - stop gain percentage. */
     @Column(name = "RULES_STOP_GAIN_PERCENTAGE")
     private Float stopGainPercentageRule;
@@ -46,6 +59,12 @@ public class Position {
     /** The order id that closed the position. */
     @Column(name = "CLOSE_ORDER_ID")
     private String closeOrderId;
+
+    /** All trades related to positions. */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "POSITIONS_TRADES", joinColumns = @JoinColumn(name = "POSITION_ID"))
+    @Column(name = "TRADE_ID")
+    private Set<String> trades;
 
     /** The fee that was charged by the exchange for this trade. */
     @Column(name = "LOWEST_PRICE", precision = PRECISION, scale = SCALE)
@@ -89,6 +108,42 @@ public class Position {
      */
     public void setStatus(final String newStatus) {
         status = newStatus;
+    }
+
+    /**
+     * Getter currencyPair.
+     *
+     * @return currencyPair
+     */
+    public String getCurrencyPair() {
+        return currencyPair;
+    }
+
+    /**
+     * Setter currencyPair.
+     *
+     * @param newCurrencyPair the currencyPair to set
+     */
+    public void setCurrencyPair(final String newCurrencyPair) {
+        currencyPair = newCurrencyPair;
+    }
+
+    /**
+     * Getter amount.
+     *
+     * @return amount
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /**
+     * Setter amount.
+     *
+     * @param newAmount the amount to set
+     */
+    public void setAmount(final BigDecimal newAmount) {
+        amount = newAmount;
     }
 
     /**
@@ -161,6 +216,24 @@ public class Position {
      */
     public void setCloseOrderId(final String newCloseOrderId) {
         closeOrderId = newCloseOrderId;
+    }
+
+    /**
+     * Getter trades.
+     *
+     * @return trades
+     */
+    public Set<String> getTrades() {
+        return trades;
+    }
+
+    /**
+     * Setter trades.
+     *
+     * @param newTrades the trades to set
+     */
+    public void setTrades(final Set<String> newTrades) {
+        trades = newTrades;
     }
 
     /**

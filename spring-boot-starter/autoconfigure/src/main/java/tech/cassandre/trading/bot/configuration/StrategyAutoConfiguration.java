@@ -37,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -237,6 +238,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     private void restoreData(final CassandreStrategyInterface strategy) {
         // Restoring all trades.
         final Map<String, TradeDTO> tradesByOrderId = new LinkedHashMap<>();
+        final Map<String, TradeDTO> tradesById = new LinkedHashMap<>();
         getLogger().info("Restoring trades from database");
         AtomicInteger tradeCount = new AtomicInteger(0);
         tradeRepository.findByOrderByTimestampAsc()
@@ -253,6 +255,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                             .feeCurrency(new CurrencyDTO(trade.getFeeCurrency()))
                             .create();
                     tradesByOrderId.put(t.getOrderId(), t);
+                    tradesById.put(t.getId(), t);
                     strategy.restoreTrade(t);
                     tradeService.restoreTrade(t);
                     tradeFlux.restoreTrade(t);
@@ -287,13 +290,17 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                         .stopLossPercentage(position.getStopLossPercentageRule())
                         .create();
             }
+            Set<TradeDTO> positionTrades = new LinkedHashSet<>();
+            position.getTrades()
+                    .forEach(s -> positionTrades.add(tradesById.get(s)));
             PositionDTO p = new PositionDTO(position.getId(),
                     PositionStatusDTO.valueOf(position.getStatus()),
+                    new CurrencyPairDTO(position.getCurrencyPair()),
+                    position.getAmount(),
                     rules,
                     position.getOpenOrderId(),
-                    tradesByOrderId.get(position.getOpenOrderId()),
                     position.getCloseOrderId(),
-                    tradesByOrderId.get(position.getCloseOrderId()),
+                    positionTrades,
                     position.getLowestPrice(),
                     position.getHighestPrice());
             positionService.restorePosition(p);

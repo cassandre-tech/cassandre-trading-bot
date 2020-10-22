@@ -34,6 +34,7 @@ import java.util.Set;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
@@ -265,27 +266,29 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         // Creates the mock.
         final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
         PositionService positionService = mock(PositionService.class);
+        final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+        final BigDecimal amount = new BigDecimal("1");
 
         // Reply 1 : 2 positions.
-        PositionDTO p1 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p2 = new PositionDTO(2, "O000002", noRules);
+        PositionDTO p1 = new PositionDTO(1, cp, amount, "O000001", noRules);
+        PositionDTO p2 = new PositionDTO(2, cp, amount,"O000002", noRules);
         Set<PositionDTO> reply01 = new LinkedHashSet<>();
         reply01.add(p1);
         reply01.add(p2);
 
         // Reply 2 : 3 positions.
         Set<PositionDTO> reply02 = new LinkedHashSet<>();
-        PositionDTO p3 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p4 = new PositionDTO(2, "O000002", noRules);
-        PositionDTO p5 = new PositionDTO(3, "O000003", noRules);
+        PositionDTO p3 = new PositionDTO(1, cp, amount,"O000001", noRules);
+        PositionDTO p4 = new PositionDTO(2, cp, amount,"O000002", noRules);
+        PositionDTO p5 = new PositionDTO(3, cp, amount,"O000003", noRules);
         reply02.add(p3);
         reply02.add(p4);
         reply02.add(p5);
 
         // Reply 2 : 2 positions.
         Set<PositionDTO> reply03 = new LinkedHashSet<>();
-        PositionDTO p6 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p7 = new PositionDTO(2, "O000001", noRules);
+        PositionDTO p6 = new PositionDTO(1, cp, amount,"O000001", noRules);
+        PositionDTO p7 = new PositionDTO(2, cp, amount,"O000001", noRules);
         reply03.add(p6);
         reply03.add(p7);
 

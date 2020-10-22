@@ -61,7 +61,7 @@ public class PositionFluxTestMock {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        // Position 1 closed reply (ORDER00010) - used for max and min gain test.
+        // Position 1 creation reply (ORDER00010) - used for max and min gain test.
         given(service.createBuyMarketOrder(PositionFluxTest.cp1, new BigDecimal("10")))
                 .willReturn(new OrderCreationResultDTO("ORDER00010"));
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.

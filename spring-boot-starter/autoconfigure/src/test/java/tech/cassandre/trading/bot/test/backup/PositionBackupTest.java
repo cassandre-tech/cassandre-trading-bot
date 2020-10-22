@@ -87,56 +87,64 @@ public class PositionBackupTest extends BaseTest {
         assertNotNull(p);
         assertEquals(OPENING, p.getStatus());
         assertEquals(1L, p.getId());
+        assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
+        assertEquals(0, new BigDecimal("10").compareTo(p.getAmount()));
         assertFalse(p.getRules().isStopGainPercentageSet());
         assertFalse(p.getRules().isStopLossPercentageSet());
         assertEquals("BACKUP_OPEN_ORDER_01", p.getOpenOrderId());
-        assertNull(p.getOpenTrade());
+        assertTrue(p.getOpenTrades().isEmpty());
         assertNull(p.getCloseOrderId());
-        assertNull(p.getCloseTrade());
+        assertTrue(p.getCloseTrades().isEmpty());
+
         // Check position 2 - OPENED.
         p = strategy.getPositions().get(2L);
         assertNotNull(p);
         assertEquals(OPENED, p.getStatus());
         assertEquals(2L, p.getId());
+        assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
+        assertEquals(0, new BigDecimal("20").compareTo(p.getAmount()));
         assertTrue(p.getRules().isStopGainPercentageSet());
         assertEquals(10, p.getRules().getStopGainPercentage());
         assertFalse(p.getRules().isStopLossPercentageSet());
         assertEquals("BACKUP_OPEN_ORDER_02", p.getOpenOrderId());
-        assertEquals("BACKUP_OPEN_ORDER_02", p.getOpenTrade().getOrderId());
+        assertEquals(1, p.getOpenTrades().size());
+        assertNotNull(p.getOpenTrades().get("BACKUP_TRADE_01"));
         assertNull(p.getCloseOrderId());
-        assertNull(p.getCloseTrade());
+        assertTrue(p.getCloseTrades().isEmpty());
+
         // Check position 3 - CLOSING.
         p = strategy.getPositions().get(3L);
         assertNotNull(p);
         assertEquals(CLOSING, p.getStatus());
+        assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
+        assertEquals(0, new BigDecimal("30").compareTo(p.getAmount()));
         assertEquals(3L, p.getId());
         assertFalse(p.getRules().isStopGainPercentageSet());
         assertTrue(p.getRules().isStopLossPercentageSet());
         assertEquals(20, p.getRules().getStopLossPercentage());
         assertEquals("BACKUP_OPEN_ORDER_03", p.getOpenOrderId());
-        assertEquals("BACKUP_OPEN_ORDER_03", p.getOpenTrade().getOrderId());
+        assertEquals(1, p.getOpenTrades().size());
+        assertNotNull(p.getOpenTrades().get("BACKUP_TRADE_02"));
         assertEquals("NON_EXISTING_TRADE", p.getCloseOrderId());
-        assertNull(p.getCloseTrade());
+        assertTrue(p.getCloseTrades().isEmpty());
+
         // Check position 4 - CLOSED.
         p = strategy.getPositions().get(4L);
         assertNotNull(p);
         assertEquals(CLOSED, p.getStatus());
+        assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
+        assertEquals(0, new BigDecimal("40").compareTo(p.getAmount()));
         assertEquals(4L, p.getId());
         assertTrue(p.getRules().isStopGainPercentageSet());
         assertEquals(30, p.getRules().getStopGainPercentage());
         assertTrue(p.getRules().isStopLossPercentageSet());
         assertEquals(40, p.getRules().getStopLossPercentage());
         assertEquals("BACKUP_OPEN_ORDER_04", p.getOpenOrderId());
-        assertEquals("BACKUP_OPEN_ORDER_04", p.getOpenTrade().getOrderId());
+        assertEquals(1, p.getOpenTrades().size());
+        assertNotNull(p.getOpenTrades().get("BACKUP_TRADE_03"));
         assertEquals("BACKUP_OPEN_ORDER_05", p.getCloseOrderId());
-        assertEquals("BACKUP_OPEN_ORDER_05", p.getCloseTrade().getOrderId());
-        assertEquals(0, new BigDecimal("34").compareTo(p.getOpenTrade().getPrice()));
-        gain = p.getLowestCalculatedGain();
-        assertTrue(gain.isPresent());
-        assertEquals(-50, gain.get().getPercentage());
-        gain = p.getHighestCalculatedGain();
-        assertTrue(gain.isPresent());
-        assertEquals(100, gain.get().getPercentage());
+        assertEquals(1, p.getCloseTrades().size());
+        assertNotNull(p.getCloseTrades().get("BACKUP_TRADE_04"));
     }
 
     @Test
@@ -296,6 +304,9 @@ public class PositionBackupTest extends BaseTest {
         assertEquals(100, p.get().getStopLossPercentageRule());
         assertEquals("ORDER00010", p.get().getOpenOrderId());
         assertEquals("ORDER00011", p.get().getCloseOrderId());
+        assertEquals(2, p.get().getTrades().size());
+        assertTrue(p.get().getTrades().contains("000001"));
+        assertTrue(p.get().getTrades().contains("000002"));
         assertEquals(0, new BigDecimal("0.015").compareTo(p.get().getLowestPrice()));
         assertEquals(0, new BigDecimal("0.21").compareTo(p.get().getHighestPrice()));
     }
