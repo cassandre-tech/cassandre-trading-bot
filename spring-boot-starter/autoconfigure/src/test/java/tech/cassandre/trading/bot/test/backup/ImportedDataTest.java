@@ -42,7 +42,7 @@ public class ImportedDataTest extends BaseTest {
     public void checkImportedTrades() {
         // Trades.
         final Iterator<Trade> trades = tradeRepository.findByOrderByTimestampAsc().iterator();
-        assertEquals(5, tradeRepository.count());
+        assertEquals(10, tradeRepository.count());
         // Trade 01.
         Trade t = trades.next();
         assertEquals("BACKUP_TRADE_01", t.getId());
@@ -105,7 +105,7 @@ public class ImportedDataTest extends BaseTest {
     public void checkImportedPositions() {
         // Positions.
         final Iterator<Position> positions = positionRepository.findAll().iterator();
-        assertEquals(4, positionRepository.count());
+        assertEquals(5, positionRepository.count());
         // Position 1.
         Position p = positions.next();
         assertEquals(1, p.getId());

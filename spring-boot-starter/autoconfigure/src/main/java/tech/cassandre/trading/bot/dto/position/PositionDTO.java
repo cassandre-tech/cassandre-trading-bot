@@ -10,12 +10,14 @@ import tech.cassandre.trading.bot.util.exception.PositionException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
@@ -51,14 +53,11 @@ public class PositionDTO {
     /** The order id that opened the position. */
     private final String openOrderId;
 
-    /** The trades that opened the position. */
-    private final Map<String, TradeDTO> openTrades = new LinkedHashMap<>();
-
     /** The order id that closed the position. */
     private String closeOrderId;
 
     /** The trades that closed the position. */
-    private final Map<String, TradeDTO> closeTrades = new LinkedHashMap<>();
+    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
 
     /** Last calculated gain from the last ticker received. */
     private GainDTO lastCalculatedGain;
@@ -130,13 +129,7 @@ public class PositionDTO {
         this.amount = newAmount;
         this.closeOrderId = newCloseOrderId;
         if (newTrades != null) {
-            newTrades.stream()
-                    .filter(t -> BID.equals(t.getType()))
-                    .forEach(t -> openTrades.put(t.getId(), t));
-            newTrades.stream()
-                    .filter(t -> ASK.equals(t.getType()))
-                    .forEach(t -> closeTrades.put(t.getId(), t));
-
+            newTrades.forEach(t -> trades.put(t.getId(), t));
         }
         this.lowestPrice = newLowestPrice;
         this.highestPrice = newHighestPrice;
@@ -165,22 +158,22 @@ public class PositionDTO {
     public void tradeUpdate(final TradeDTO trade) {
         // If status is OPENING and the trades for the open order arrives for the whole amount ==> status = OPENED.
         if (trade.getOrderId().equals(openOrderId) && status == OPENING) {
-            openTrades.put(trade.getId(), trade);
+            trades.put(trade.getId(), trade);
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
-            if (amount.compareTo(getTotalAmountFromOpenedTrades()) == 0) {
+            if (amount.compareTo(getTotalAmountFromOpenTrades()) == 0) {
                 status = OPENED;
             }
             version.incrementAndGet();
         }
         // If status is CLOSING and the trades for the close order arrives for the whole amount ==> status = CLOSED.
         if (trade.getOrderId().equals(closeOrderId) && status == CLOSING) {
-            closeTrades.put(trade.getId(), trade);
+            trades.put(trade.getId(), trade);
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
-            if (amount.compareTo(getTotalAmountFromClosedTrades()) == 0) {
+            if (amount.compareTo(getTotalAmountFromCloseTrades()) == 0) {
                 status = CLOSED;
             }
             version.incrementAndGet();
@@ -249,7 +242,7 @@ public class PositionDTO {
     private Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
         if ((status == OPENED || status == CLOSED) && price != null) {
             // We take the price from the first trade received.
-            final TradeDTO openTrade = openTrades.values().iterator().next();
+            final TradeDTO openTrade = getOpenTrades().iterator().next();
 
             // How gain calculation works ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50.
@@ -294,12 +287,12 @@ public class PositionDTO {
             // To start the position, I spent 100 BTC.
             // When I closed the position, I received 150 BTC
             // Gain  -> ((150 - 100) / 100) * 100 = 50 %
-            BigDecimal bought = openTrades.values()
+            BigDecimal bought = getOpenTrades()
                     .stream()
                     .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            BigDecimal sold = closeTrades.values()
+            BigDecimal sold = getCloseTrades()
                     .stream()
                     .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -324,17 +317,10 @@ public class PositionDTO {
      * @return fees
      */
     private BigDecimal getTotalFees() {
-        BigDecimal openFees = openTrades.values()
+        return trades.values()
                 .stream()
                 .map(t -> t.getFee().getValue())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal closeFees = closeTrades.values()
-                .stream()
-                .map(t -> t.getFee().getValue())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return openFees.add(closeFees);
     }
 
     /**
@@ -342,9 +328,10 @@ public class PositionDTO {
      *
      * @return total
      */
-    private BigDecimal getTotalAmountFromOpenedTrades() {
-        return openTrades.values()
+    private BigDecimal getTotalAmountFromOpenTrades() {
+        return trades.values()
                 .stream()
+                .filter(t -> BID.equals(t.getType()))
                 .map(TradeDTO::getOriginalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -354,9 +341,10 @@ public class PositionDTO {
      *
      * @return total
      */
-    private BigDecimal getTotalAmountFromClosedTrades() {
-        return closeTrades.values()
+    private BigDecimal getTotalAmountFromCloseTrades() {
+        return trades.values()
                 .stream()
+                .filter(t -> ASK.equals(t.getType()))
                 .map(TradeDTO::getOriginalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -407,12 +395,41 @@ public class PositionDTO {
     }
 
     /**
+     * Getter trades.
+     *
+     * @return trades
+     */
+    public final Set<TradeDTO> getTrades() {
+        return new HashSet<>(trades.values());
+    }
+
+    /**
+     * Returns trade from its id.
+     *
+     * @param tradeId trade id
+     * @return trade
+     */
+    public final Optional<TradeDTO> getTrade(final String tradeId) {
+        if (tradeId == null) {
+            return Optional.empty();
+        } else {
+            return trades.values()
+                    .stream()
+                    .filter(t -> tradeId.equals(t.getId()))
+                    .findFirst();
+        }
+    }
+
+    /**
      * Getter openTrades.
      *
      * @return openTrades
      */
-    public final Map<String, TradeDTO> getOpenTrades() {
-        return openTrades;
+    public final Set<TradeDTO> getOpenTrades() {
+        return trades.values()
+                .stream()
+                .filter(t -> BID.equals(t.getType()))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -420,8 +437,11 @@ public class PositionDTO {
      *
      * @return closeTrades
      */
-    public final Map<String, TradeDTO> getCloseTrades() {
-        return closeTrades;
+    public final Set<TradeDTO> getCloseTrades() {
+        return trades.values()
+                .stream()
+                .filter(t -> ASK.equals(t.getType()))
+                .collect(Collectors.toSet());
     }
 
     /**

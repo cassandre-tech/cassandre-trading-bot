@@ -3,6 +3,12 @@
 -- Position 2 (OPENED)  - 20 on BTC/USDT - Opened because trade BACKUP_TRADE_01 (for order BACKUP_OPEN_ORDER_02).
 -- Position 3 (CLOSING) - 30 on BTC/USDT - Opening because trade BACKUP_TRADE_02 (for order BACKUP_OPEN_ORDER_03).
 -- Position 4 (CLOSED)  - 40 on BTC/USDT - Opened because trade BACKUP_TRADE_03 (BACKUP_OPEN_ORDER_04) & BACKUP_TRADE_04 (BACKUP_OPEN_ORDER_05).
+-- Position 5 (CLOSED)  - 50 on ETH/USD  - Closed - Opened with OPEN_ORDER_01 and closed with CLOSE_ORDER_01.
+--                      -> Order OPEN_ORDER_01 - TRADE_01 with 10.
+--                      -> Order OPEN_ORDER_01 - TRADE_02 with 40.
+--                      -> Order CLOSE_ORDER_01 - TRADE_03 with 15.
+--                      -> Order CLOSE_ORDER_01 - TRADE_04 with 05.
+--                      -> Order CLOSE_ORDER_01 - TRADE_05 with 30.
 
 -- =====================================================================================================================
 -- Insert trades.
@@ -22,7 +28,14 @@ values -- note : No trade for order BACKUP_OPEN_ORDER_01 - This is why position 
        ('BACKUP_TRADE_04', 'BACKUP_OPEN_ORDER_05', 'ASK', 40, 'BTC/USDT', 40, DATE '2020-08-04', 4, 'USDT'),
 
        -- Order BACKUP_TRADE_05 - Trade from the order selling BACKUP_OPEN_ORDER_05.
-       ('BACKUP_TRADE_05', 'BACKUP_OPEN_ORDER_06', 'ASK', 50, 'ETH/USD', 50, DATE '2020-08-05', 5, 'USD');
+       ('BACKUP_TRADE_05', 'BACKUP_OPEN_ORDER_06', 'ASK', 50, 'ETH/USD', 50, DATE '2020-08-05', 5, 'USD'),
+
+       -- For position 5.
+       ('TRADE_01', 'OPEN_ORDER_01', 'BID', 10, 'ETH/USD', 11, DATE '2020-08-05', 5, 'USD'),
+       ('TRADE_02', 'OPEN_ORDER_01', 'BID', 40, 'ETH/USD', 12, DATE '2020-08-06', 5, 'USD'),
+       ('TRADE_03', 'CLOSE_ORDER_01', 'ASK', 15, 'ETH/USD', 13, DATE '2020-08-07', 5, 'USD'),
+       ('TRADE_04', 'CLOSE_ORDER_01', 'ASK', 5, 'ETH/USD', 14, DATE '2020-08-08', 5, 'USD'),
+       ('TRADE_05', 'CLOSE_ORDER_01', 'ASK', 30, 'ETH/USD', 15, DATE '2020-08-09', 5, 'USD');
 
 -- =====================================================================================================================
 -- Insert positions.
@@ -39,7 +52,10 @@ VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPEN_ORDER_01 to ar
        (3, 'CLOSING', 'BTC/USDT', 30, null, 20, 'BACKUP_OPEN_ORDER_03', 'NON_EXISTING_TRADE', 17, 68),
 
        -- Position 4 : Closed position, 30% gain & 40 % loss.
-       (4, 'CLOSED', 'BTC/USDT', 40, 30, 40, 'BACKUP_OPEN_ORDER_04', 'BACKUP_OPEN_ORDER_05', 17, 68);
+       (4, 'CLOSED', 'BTC/USDT', 40, 30, 40, 'BACKUP_OPEN_ORDER_04', 'BACKUP_OPEN_ORDER_05', 17, 68),
+
+       -- Position 5 : closed.
+       (5, 'CLOSED', 'ETH/USD', 50, 30, 40, 'OPEN_ORDER_01', 'CLOSE_ORDER_01', 17, 68);
 
 -- =====================================================================================================================
 -- Insert positions trades.
@@ -50,4 +66,10 @@ VALUES -- Trades for position 2.
        (3, 'BACKUP_TRADE_02'),
        -- Trades for position 4.
        (4, 'BACKUP_TRADE_03'),
-       (4, 'BACKUP_TRADE_04');
+       (4, 'BACKUP_TRADE_04'),
+       -- Trades for position 5.
+       (5, 'TRADE_01'),
+       (5, 'TRADE_02'),
+       (5, 'TRADE_03'),
+       (5, 'TRADE_04'),
+       (5, 'TRADE_05');

@@ -137,8 +137,9 @@ public class PositionServiceImplementation extends BaseService implements Positi
             if (position.getRules().isStopLossPercentageSet()) {
                 p.get().setStopLossPercentageRule(position.getRules().getStopLossPercentage());
             }
-            position.getOpenTrades().forEach((s, t) -> p.get().getTrades().add(s));
-            position.getCloseTrades().forEach((s, t) -> p.get().getTrades().add(s));
+            position.getTrades().forEach(t -> p.get().getTrades().add(t.getId()));
+//            position.getOpenTrades().forEach((s, t) -> p.get().getTrades().add(s));
+//            position.getCloseTrades().forEach((s, t) -> p.get().getTrades().add(s));
             p.get().setOpenOrderId(position.getOpenOrderId());
             p.get().setCloseOrderId(position.getCloseOrderId());
             p.get().setLowestPrice(position.getLowestPrice());

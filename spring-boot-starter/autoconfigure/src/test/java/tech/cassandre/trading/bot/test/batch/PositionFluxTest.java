@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.PositionService;
@@ -30,6 +31,8 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
@@ -108,9 +111,10 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(position2Result.getPositionId(), strategy.getPositionsUpdateReceived().get(positionUpdateIndex).getId());
         assertEquals(OPENING, strategy.getPositionsUpdateReceived().get(positionUpdateIndex).getStatus());
 
-        // Trade arrives, position 1 will be opened.
+        // Trade 1 arrives, position 1 will be opened.
         tradeFlux.emitValue(TradeDTO.builder().id("000001")
                 .orderId("ORDER00010")
+                .type(BID)
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("10"))
                 .price(new BigDecimal("0.03"))
@@ -161,6 +165,7 @@ public class PositionFluxTest extends BaseTest {
         // Trade arrives to open position 2
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("ORDER00020")
+                .type(BID)
                 .currencyPair(cp2)
                 .originalAmount(new BigDecimal("0.0002"))
                 .price(new BigDecimal("0.03"))
@@ -193,15 +198,23 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(1, p.getId());
         assertEquals(CLOSING, p.getStatus());
 
-        // The close trade arrives, change the status and set the price.
+        // The first close trade arrives but not enough.
         tradeFlux.emitValue(TradeDTO.builder().id("000003")
                 .orderId("ORDER00011")
+                .type(ASK)
                 .currencyPair(cp1)
-                .originalAmount(new BigDecimal("10"))
+                .originalAmount(new BigDecimal("5"))
+                .price(new BigDecimal("1"))
+                .create());
+        // The second close trade arrives now closed.
+        tradeFlux.emitValue(TradeDTO.builder().id("000004")
+                .orderId("ORDER00011")
+                .type(ASK)
+                .currencyPair(cp1)
+                .originalAmount(new BigDecimal("5"))
                 .price(new BigDecimal("1"))
                 .create());
         positionUpdateIndex++;
-        strategy.getPositionsUpdateReceived().forEach(positionDTO -> System.out.println("- " + positionDTO));
         await().untilAsserted(() -> assertEquals(10, strategy.getPositionsUpdateReceived().size()));
         assertEquals(position1Result.getPositionId(), strategy.getPositionsUpdateReceived().get(positionUpdateIndex).getId());
         assertEquals(CLOSED, strategy.getPositionsUpdateReceived().get(positionUpdateIndex).getStatus());

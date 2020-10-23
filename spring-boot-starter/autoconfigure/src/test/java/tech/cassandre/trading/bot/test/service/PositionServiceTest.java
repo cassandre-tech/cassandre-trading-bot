@@ -35,6 +35,8 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
@@ -147,16 +149,16 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 1 - should not change anything.
-        tradeFlux.emitValue(TradeDTO.builder().id("000001").orderId("ORDER00001").create());
+        tradeFlux.emitValue(TradeDTO.builder().id("000001").type(BID).orderId("ORDER00001").create());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
 
         // Trade 2 - should change status of position 1.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002").currencyPair(cp1).originalAmount(new BigDecimal("0.0001")).orderId("ORDER00010").create());
+        tradeFlux.emitValue(TradeDTO.builder().id("000002").type(BID).currencyPair(cp1).originalAmount(new BigDecimal("0.0001")).orderId("ORDER00010").create());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 3 - should change status of position 2.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002").currencyPair(cp1).originalAmount(new BigDecimal("0.0002")).orderId("ORDER00020").create());
+        tradeFlux.emitValue(TradeDTO.builder().id("000002").type(BID).currencyPair(cp1).originalAmount(new BigDecimal("0.0002")).orderId("ORDER00020").create());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
     }
@@ -173,6 +175,7 @@ public class PositionServiceTest extends BaseTest {
         // The open trade arrives, change the status and set the price.
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("ORDER00010")
+                .type(BID)
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("0.0001"))
                 .price(new BigDecimal("0.2"))
@@ -213,6 +216,7 @@ public class PositionServiceTest extends BaseTest {
         // The close trade arrives, change the status and set the price.
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("ORDER00011")
+                .type(ASK)
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("0.0001"))
                 .create());
@@ -239,6 +243,7 @@ public class PositionServiceTest extends BaseTest {
         // Trade arrives, position is now opened.
         tradeFlux.emitValue(TradeDTO.builder().id("000001")
                 .orderId("ORDER00010")
+                .type(BID)
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("10"))
                 .price(new BigDecimal("0.03"))
@@ -299,6 +304,7 @@ public class PositionServiceTest extends BaseTest {
         // The close trade arrives, change the status and set the price.
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("ORDER00011")
+                .type(ASK)
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("10"))
                 .price(new BigDecimal("20"))
