@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import static java.math.RoundingMode.HALF_UP;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -299,10 +300,10 @@ public class PositionDTO {
 
             // Calculate gain.
             BigDecimal gainAmount = sold.subtract(bought);
-            double gainPercentage = ((sold.subtract(bought)).divide(bought)).floatValue() * ONE_HUNDRED;
+            BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(new BigDecimal("100"));
 
             // Return position gain.
-            return new GainDTO(gainPercentage,
+            return new GainDTO(gainPercentage.setScale(2, HALF_UP).doubleValue(),
                     new CurrencyAmountDTO(gainAmount, currencyPair.getQuoteCurrency()),
                     new CurrencyAmountDTO(getTotalFees(), currencyPair.getQuoteCurrency()));
         } else {

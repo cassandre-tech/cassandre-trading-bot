@@ -5,9 +5,12 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.GainDTO;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,6 +57,13 @@ public interface PositionService {
      * @param trade trade
      */
     void tradeUpdate(TradeDTO trade);
+
+    /**
+     * Return the gains made by all positions.
+     *
+     * @return gains by currency.
+     */
+    HashMap<CurrencyDTO, GainDTO> getGains();
 
     /**
      * Restore position.
