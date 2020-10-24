@@ -60,9 +60,6 @@ public class PositionDTO {
     /** The trades that closed the position. */
     private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
 
-    /** Last calculated gain from the last ticker received. */
-    private GainDTO lastCalculatedGain;
-
     /** Lowest price for this position. */
     private BigDecimal lowestPrice;
 
@@ -199,7 +196,7 @@ public class PositionDTO {
             final Optional<GainDTO> gain = calculateGainFromPrice(ticker.getLast());
             if (gain.isPresent()) {
                 // We save the last calculated gain.
-                this.lastCalculatedGain = gain.get();
+                this.latestCalculatedGain = gain.get();
 
                 if (rules.isStopGainPercentageSet() && gain.get().getPercentage() >= rules.getStopGainPercentage()
                         || rules.isStopLossPercentageSet() && gain.get().getPercentage() <= -rules.getStopLossPercentage()) {
@@ -492,7 +489,7 @@ public class PositionDTO {
      */
     @Deprecated(since = "2.4", forRemoval = true)
     public final Optional<GainDTO> getLastCalculatedGain() {
-        return Optional.ofNullable(lastCalculatedGain);
+        return Optional.ofNullable(latestCalculatedGain);
     }
 
     /**
