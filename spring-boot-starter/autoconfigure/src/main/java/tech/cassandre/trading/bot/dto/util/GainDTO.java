@@ -72,4 +72,14 @@ public class GainDTO {
         return fees;
     }
 
+    @Override
+    public final String toString() {
+        if (percentage == 0) {
+            return "No gain";
+        } else {
+            return "Gain : " + amount + " (" + percentage + " %) - Fees: " + fees;
+        }
+
+    }
+
 }
