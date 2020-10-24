@@ -56,8 +56,11 @@ public class PositionGainsServiceTest {
         // Gain (percentage).
         assertEquals(42.48, gain1.getPercentage());
         // Gain (fees).
-        assertEquals(0, new BigDecimal(15).compareTo(gain1.getFees().getValue()));
+        assertEquals(0, new BigDecimal("15").compareTo(gain1.getFees().getValue()));
         assertEquals(USDT, gain1.getFees().getCurrency());
+        // Net gain.
+        assertEquals(0, new BigDecimal("33").compareTo(gain1.getNetAmount().getValue()));
+        assertEquals(USDT, gain1.getNetAmount().getCurrency());
 
         /*
             Position 2 - Bought 20 ETH with BTC.
@@ -77,8 +80,11 @@ public class PositionGainsServiceTest {
         // Gain (percentage).
         assertEquals(-50, gain2.getPercentage());
         // Gain (fees).
-        assertEquals(0, new BigDecimal(10).compareTo(gain2.getFees().getValue()));
+        assertEquals(0, new BigDecimal("10").compareTo(gain2.getFees().getValue()));
         assertEquals(BTC, gain2.getFees().getCurrency());
+        // Net gain.
+        assertEquals(0, new BigDecimal("-1010").compareTo(gain2.getNetAmount().getValue()));
+        assertEquals(BTC, gain2.getNetAmount().getCurrency());
 
         /*
             Position 3 - Bought 30 BTC with USDT.
@@ -98,19 +104,28 @@ public class PositionGainsServiceTest {
         // Gain (percentage).
         assertEquals(25, gain3.getPercentage());
         // Gain (fees).
-        assertEquals(0, new BigDecimal(11).compareTo(gain3.getFees().getValue()));
+        assertEquals(0, new BigDecimal("11").compareTo(gain3.getFees().getValue()));
         assertEquals(USDT, gain3.getFees().getCurrency());
+        // Net gain.
+        assertEquals(0, new BigDecimal("139").compareTo(gain3.getNetAmount().getValue()));
+        assertEquals(USDT, gain3.getNetAmount().getCurrency());
 
         // The should not not gain for positions 4, 5 & 6.
         final Optional<PositionDTO> p4 = positionService.getPositionById(4L);
         assertTrue(p4.isPresent());
         assertEquals(0, p4.get().getGain().getPercentage());
+        assertEquals(0, BigDecimal.ZERO.compareTo(p4.get().getGain().getAmount().getValue()));
+        assertEquals(0, BigDecimal.ZERO.compareTo(p4.get().getGain().getNetAmount().getValue()));
         final Optional<PositionDTO> p5 = positionService.getPositionById(5L);
         assertTrue(p5.isPresent());
         assertEquals(0, p5.get().getGain().getPercentage());
+        assertEquals(0, BigDecimal.ZERO.compareTo(p5.get().getGain().getAmount().getValue()));
+        assertEquals(0, BigDecimal.ZERO.compareTo(p5.get().getGain().getNetAmount().getValue()));
         final Optional<PositionDTO> p6 = positionService.getPositionById(6L);
         assertTrue(p6.isPresent());
         assertEquals(0, p6.get().getGain().getPercentage());
+        assertEquals(0, BigDecimal.ZERO.compareTo(p6.get().getGain().getAmount().getValue()));
+        assertEquals(0, BigDecimal.ZERO.compareTo(p6.get().getGain().getNetAmount().getValue()));
 
         // Check all gains.
         final HashMap<CurrencyDTO, GainDTO> gains = positionService.getGains();
@@ -123,6 +138,9 @@ public class PositionGainsServiceTest {
         assertEquals(USDT, usdtGain.getAmount().getCurrency());
         assertEquals(0, new BigDecimal("26").compareTo(usdtGain.getFees().getValue()));
         assertEquals(USDT, usdtGain.getFees().getCurrency());
+        // Net gain.
+        assertEquals(0, new BigDecimal("172").compareTo(usdtGain.getNetAmount().getValue()));
+        assertEquals(USDT, usdtGain.getNetAmount().getCurrency());
 
         // Gains BTC.
         final GainDTO btcGain = gains.get(BTC);
@@ -132,6 +150,9 @@ public class PositionGainsServiceTest {
         assertEquals(BTC, btcGain.getAmount().getCurrency());
         assertEquals(0, new BigDecimal("10").compareTo(btcGain.getFees().getValue()));
         assertEquals(BTC, btcGain.getFees().getCurrency());
+        // Net gain.
+        assertEquals(0, new BigDecimal("-1010").compareTo(btcGain.getNetAmount().getValue()));
+        assertEquals(BTC, btcGain.getNetAmount().getCurrency());
     }
 
 }

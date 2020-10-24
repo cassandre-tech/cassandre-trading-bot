@@ -55,6 +55,15 @@ public class GainDTO {
     }
 
     /**
+     * Getter netAmount.
+     *
+     * @return netAmount
+     */
+    public final CurrencyAmountDTO getNetAmount() {
+        return new CurrencyAmountDTO(amount.getValue().subtract(fees.getValue()), amount.getCurrency());
+    }
+
+    /**
      * Getter fees.
      *
      * @return fees
