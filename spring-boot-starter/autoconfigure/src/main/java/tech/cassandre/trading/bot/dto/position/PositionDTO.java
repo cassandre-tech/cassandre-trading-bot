@@ -69,6 +69,9 @@ public class PositionDTO {
     /** Highest price for this position. */
     private BigDecimal highestPrice;
 
+    /** Last calculated gain from the last ticker received. */
+    private GainDTO latestCalculatedGain;
+
     /** Percentage. */
     private static final int ONE_HUNDRED = 100;
 
@@ -455,15 +458,6 @@ public class PositionDTO {
     }
 
     /**
-     * Getter last calculated gain from the last ticker received.
-     *
-     * @return lastCalculatedGain
-     */
-    public final Optional<GainDTO> getLastCalculatedGain() {
-        return Optional.ofNullable(lastCalculatedGain);
-    }
-
-    /**
      * Getter closeOrderId.
      *
      * @return closeOrderId
@@ -488,6 +482,26 @@ public class PositionDTO {
      */
     public final BigDecimal getHighestPrice() {
         return highestPrice;
+    }
+
+
+    /**
+     * Getter last calculated gain from the last ticker received.
+     *
+     * @return lastCalculatedGain
+     */
+    @Deprecated(since = "2.4", forRemoval = true)
+    public final Optional<GainDTO> getLastCalculatedGain() {
+        return Optional.ofNullable(lastCalculatedGain);
+    }
+
+    /**
+     * Getter latestCalculatedGain.
+     *
+     * @return latestCalculatedGain
+     */
+    public final Optional<GainDTO> getLatestCalculatedGain() {
+        return Optional.ofNullable(latestCalculatedGain);
     }
 
     /**
@@ -579,9 +593,9 @@ public class PositionDTO {
                     break;
                 case OPENED:
                     value += " on " + getCurrencyPair() + " - Opened";
-                    final Optional<GainDTO> lastGain = getLastCalculatedGain();
+                    final Optional<GainDTO> lastGain = getLatestCalculatedGain();
                     if (lastGain.isPresent()) {
-                        value += " - Last gain calculated " + getFormattedValue(getLastCalculatedGain().get().getPercentage()) + " %";
+                        value += " - Last gain calculated " + getFormattedValue(getLatestCalculatedGain().get().getPercentage()) + " %";
                     }
                     break;
                 case CLOSING:

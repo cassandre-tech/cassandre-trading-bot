@@ -5,12 +5,10 @@ import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 
-import javax.ws.rs.core.Link;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -20,8 +18,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
@@ -32,7 +28,6 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @DisplayName("DTO - PositionDTO")
 public class PositionDTOTest {
@@ -367,7 +362,7 @@ public class PositionDTOTest {
         // Position closed with this trade.
         final TradeDTO trade02 = TradeDTO.builder().id("T000002")
                 .orderId("O000012")                         // Closing opening order O000011
-                .type(OrderTypeDTO.ASK)                     // Buying.
+                .type(ASK)                                  // Buying.
                 .currencyPair(cp)                           // ETH / BTC.
                 .originalAmount(amount)                     // 10.
                 .price(new BigDecimal("4"))             // Price 4.
@@ -459,7 +454,7 @@ public class PositionDTOTest {
                 .originalAmount(new BigDecimal(1))
                 .price(new BigDecimal(2))
                 .timestamp(ZonedDateTime.now())
-                .type(OrderTypeDTO.ASK)
+                .type(ASK)
                 .create();
         final Set<TradeDTO> tradesP4 = new LinkedHashSet<>();
         tradesP4.add(openTrade4);

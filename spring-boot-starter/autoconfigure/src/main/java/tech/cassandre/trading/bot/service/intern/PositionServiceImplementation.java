@@ -172,8 +172,6 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     BigDecimal gainAmount = sold.subtract(bought);
                     BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(new BigDecimal("100"));
 
-                    System.out.println("==> " + fees);
-
                     GainDTO g = new GainDTO(gainPercentage.setScale(2, HALF_UP).doubleValue(),
                             new CurrencyAmountDTO(gainAmount, currency),
                             new CurrencyAmountDTO(fees, currency));

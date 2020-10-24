@@ -189,7 +189,7 @@ public class PositionServiceTest extends BaseTest {
         PositionDTO p = positionService.getPositionById(1).get();
         assertEquals(OPENED, p.getStatus());
         // We check the last calculated gain - should be zero.
-        Optional<GainDTO> gain = p.getLastCalculatedGain();
+        Optional<GainDTO> gain = p.getLatestCalculatedGain();
         assertFalse(gain.isPresent());
 
         // A second ticker arrives with a gain of 50%.
@@ -199,7 +199,7 @@ public class PositionServiceTest extends BaseTest {
         p = positionService.getPositionById(1).get();
         assertEquals(OPENED, p.getStatus());
         // We check the last calculated gain - should be 50%.
-        gain = p.getLastCalculatedGain();
+        gain = p.getLatestCalculatedGain();
         assertTrue(gain.isPresent());
         assertEquals(50, gain.get().getPercentage());
         assertEquals(0, new BigDecimal("0.00001").compareTo(gain.get().getAmount().getValue()));
