@@ -22,7 +22,7 @@ public class GainDTOTest {
         final GainDTO gain2 = new GainDTO(1,
                 new CurrencyAmountDTO(new BigDecimal("2"), BTC),
                 new CurrencyAmountDTO(new BigDecimal("3"), BTC));
-        assertEquals("Gain : 2 BTC (1.0 %) - Fees: 3 BTC", gain2.toString());
+        assertEquals("Gains: 2 BTC (1.0 %) - Fees: 3 BTC", gain2.toString());
     }
 
 }
