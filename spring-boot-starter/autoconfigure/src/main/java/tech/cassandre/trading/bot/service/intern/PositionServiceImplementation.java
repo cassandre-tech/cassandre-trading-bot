@@ -78,6 +78,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // Creates the position in database.
             Position position = new Position();
             position.setStatus(OPENING.toString());
+            position.setAmount(amount);
+            position.setCurrencyPair(currencyPair.toString());
             if (rules.isStopGainPercentageSet()) {
                 position.setStopGainPercentageRule(rules.getStopGainPercentage());
             }

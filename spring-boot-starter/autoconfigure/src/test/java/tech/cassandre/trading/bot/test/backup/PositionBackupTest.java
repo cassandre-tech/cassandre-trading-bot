@@ -191,6 +191,8 @@ public class PositionBackupTest extends BaseTest {
         assertTrue(p.isPresent());
         assertEquals(6L, p.get().getId());
         assertEquals(p.get().getStatus(), OPENING.toString());
+        assertEquals(cp.toString(), p.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.0001").compareTo(p.get().getAmount()));
         assertEquals(1, p.get().getStopGainPercentageRule());
         assertEquals(2, p.get().getStopLossPercentageRule());
         assertEquals("ORDER00010", p.get().getOpenOrderId());
@@ -208,6 +210,8 @@ public class PositionBackupTest extends BaseTest {
         assertTrue(p.isPresent());
         assertEquals(7L, p.get().getId());
         assertEquals(p.get().getStatus(), OPENING.toString());
+        assertEquals(cp.toString(), p.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.0002").compareTo(p.get().getAmount()));
         assertNull(p.get().getStopGainPercentageRule());
         assertNull(p.get().getStopLossPercentageRule());
         assertEquals("ORDER00020", p.get().getOpenOrderId());
@@ -220,6 +224,8 @@ public class PositionBackupTest extends BaseTest {
         Optional<PositionDTO> positionDTO2 = positionService.getPositionById(2L);
         assertTrue(positionDTO2.isPresent());
         assertEquals(OPENED, positionDTO2.get().getStatus());
+        assertEquals(cp.toString(), p.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.0002").compareTo(p.get().getAmount()));
         positionDTO2.get().setCloseOrderId("CLOSE_ORDER_FOR_POSITION_2");
         assertEquals(CLOSING, positionDTO2.get().getStatus());
         positionFlux.emitValue(positionDTO2.get());
@@ -341,6 +347,8 @@ public class PositionBackupTest extends BaseTest {
         assertTrue(p.isPresent());
         assertEquals(6, p.get().getId());
         assertEquals(CLOSED.toString(), p.get().getStatus());
+        assertEquals(cp.toString(), p.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("10").compareTo(p.get().getAmount()));
         assertEquals(1000, p.get().getStopGainPercentageRule());
         assertEquals(100, p.get().getStopLossPercentageRule());
         assertEquals("ORDER00010", p.get().getOpenOrderId());
