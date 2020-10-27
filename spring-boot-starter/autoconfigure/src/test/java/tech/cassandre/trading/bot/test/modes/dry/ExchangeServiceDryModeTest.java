@@ -15,6 +15,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -26,7 +27,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@DirtiesContext(classMode = BEFORE_CLASS)
 public class ExchangeServiceDryModeTest {
 
     @Autowired
@@ -35,6 +36,7 @@ public class ExchangeServiceDryModeTest {
     @Test
     @DisplayName("Check the list of available")
     public void checkGetAvailableCurrencyPairs() {
+        // The available currencies should be the same than the strategy.
         final Set<CurrencyPairDTO> availableCurrencyPairs = exchangeService.getAvailableCurrencyPairs();
         assertEquals(2, availableCurrencyPairs.size());
         assertTrue(availableCurrencyPairs.contains(new CurrencyPairDTO(ETH, BTC)));

@@ -37,7 +37,7 @@ public class BaseTest {
      * Constructor.
      */
     public BaseTest() {
-        // Configure Awaitility.
+        // Default Configuration for Awaitility.
         Awaitility.setDefaultPollInterval(fibonacci(SECONDS));
         Awaitility.setDefaultTimeout(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS);
     }
@@ -118,7 +118,7 @@ public class BaseTest {
      * @param day day
      * @return date
      */
-    protected static Date createDay(final int day) {
+    protected static Date createDate(final int day) {
         return Date.from(ZonedDateTime.of(2020, 1, day, 9, 0, 0, 0, ZoneId.systemDefault()).toInstant());
     }
 

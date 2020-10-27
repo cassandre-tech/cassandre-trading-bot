@@ -5,12 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -23,6 +24,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -36,10 +38,14 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
         @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 public class  TradeBackupTest extends BaseTest {
 
-    public static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+    @Autowired
+    private PositionService positionService;
+
+    @Autowired
+    private TradeService tradeService;
 
     @Autowired
     private TestableCassandreStrategy strategy;
@@ -50,16 +56,16 @@ public class  TradeBackupTest extends BaseTest {
     @Autowired
     private TradeFlux tradeFlux;
 
-    @Autowired
-    private PositionFlux positionFlux;
-
     @Test
     @DisplayName("Check restored trades")
     public void checkRestoredTrades() {
         // =============================================================================================================
-        // Check that trades and restored in strategy, services & flux.
-        assertTrue(strategy.getTradeService().getTrades().size() >= 5);
-        assertTrue(strategy.getTrades().size() >= 5);
+        // Check that positions and trades are restored in strategy & services.
+        assertEquals(5, strategy.getPositions().size());
+        assertEquals(5, positionService.getPositions().size());
+        assertEquals(10, strategy.getTrades().size());
+        assertEquals(10, tradeService.getTrades().size());
+        assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
 
         // Check trade 01.
@@ -127,6 +133,15 @@ public class  TradeBackupTest extends BaseTest {
     @Test
     @DisplayName("Check saved trades")
     public void checkSavedTrades() {
+        // =============================================================================================================
+        // Check that positions and trades are restored in strategy & services.
+        assertEquals(5, strategy.getPositions().size());
+        assertEquals(5, positionService.getPositions().size());
+        assertEquals(10, strategy.getTrades().size());
+        assertEquals(10, tradeService.getTrades().size());
+        assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
+        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
+
         // =============================================================================================================
         // Add two trades and check that they are saved.
         long tradeCount = tradeRepository.count();

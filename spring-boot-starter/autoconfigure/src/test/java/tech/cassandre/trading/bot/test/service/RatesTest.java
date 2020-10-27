@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_ACCOUNT;
@@ -33,10 +34,10 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 		@Property(key = PARAMETER_EXCHANGE_RATE_TICKER, value = "PT15S"),	// 15 seconds.
 		@Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "PT20S")		// 20 seconds.
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class RatesTest {
 
-	private static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+	private static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
 	@Autowired
 	private UserService userService;
@@ -85,12 +86,12 @@ public class RatesTest {
 		ExecutorService executor = Executors.newFixedThreadPool(2);
 		// Call number 1.
 		executor.submit(() -> {
-			marketService.getTicker(cp);
+			marketService.getTicker(cp1);
 			numberOfCalls.incrementAndGet();
 		});
 		// Call number 2.
 		executor.submit(() -> {
-			marketService.getTicker(cp);
+			marketService.getTicker(cp1);
 			numberOfCalls.incrementAndGet();
 		});
 

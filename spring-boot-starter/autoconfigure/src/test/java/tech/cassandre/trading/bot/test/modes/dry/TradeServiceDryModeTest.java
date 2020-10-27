@@ -27,6 +27,7 @@ import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -39,11 +40,11 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 @Import(TradeServiceDryModeTestMock.class)
 public class TradeServiceDryModeTest extends BaseTest {
 
-    private static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+    private static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
     @Autowired
     private TradeService tradeService;
@@ -70,7 +71,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(0, tradeService.getTrades().size());
 
         // We create a buy order.
-        final OrderCreationResultDTO buyMarketOrder01 = tradeService.createBuyMarketOrder(cp, new BigDecimal("0.001"));
+        final OrderCreationResultDTO buyMarketOrder01 = tradeService.createBuyMarketOrder(cp1, new BigDecimal("0.001"));
         assertTrue(buyMarketOrder01.isSuccessful());
         assertEquals(orderId01, buyMarketOrder01.getOrderId());
 
@@ -79,7 +80,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         final Optional<OrderDTO> order01 = strategy.getOrdersUpdateReceived().stream().filter(o -> o.getId().equals(orderId01)).findFirst();
         assertTrue(order01.isPresent());
         assertEquals(orderId01, order01.get().getId());
-        assertEquals(cp, order01.get().getCurrencyPair());
+        assertEquals(cp1, order01.get().getCurrencyPair());
         assertEquals(new BigDecimal("0.001"), order01.get().getOriginalAmount());
         assertEquals(new BigDecimal("0.2"), order01.get().getAveragePrice());
         assertEquals(BID, order01.get().getType());
@@ -90,13 +91,13 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertTrue(trade01.isPresent());
         assertEquals(tradeId01, trade01.get().getId());
         assertEquals(orderId01, trade01.get().getOrderId());
-        assertEquals(cp, trade01.get().getCurrencyPair());
+        assertEquals(cp1, trade01.get().getCurrencyPair());
         assertEquals(new BigDecimal("0.001"), trade01.get().getOriginalAmount());
         assertEquals(new BigDecimal("0.2"), trade01.get().getPrice());
         assertEquals(BID, trade01.get().getType());
 
         // We create a sell order to check order numbers and type.
-        final OrderCreationResultDTO buyMarketOrder02 = tradeService.createSellMarketOrder(cp, new BigDecimal("0.002"));
+        final OrderCreationResultDTO buyMarketOrder02 = tradeService.createSellMarketOrder(cp1, new BigDecimal("0.002"));
         assertTrue(buyMarketOrder02.isSuccessful());
         assertEquals(orderId02, buyMarketOrder02.getOrderId());
 

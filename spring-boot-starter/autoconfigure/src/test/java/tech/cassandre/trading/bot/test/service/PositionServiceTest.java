@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -47,9 +48,13 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Configuration parameters - Valid configuration")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(PositionServiceTestMock.class)
 public class PositionServiceTest extends BaseTest {
+
+    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+
+    public static final CurrencyPairDTO cp2 = new CurrencyPairDTO(USD, BTC);
 
     @Autowired
     private PositionService positionService;
@@ -59,10 +64,6 @@ public class PositionServiceTest extends BaseTest {
 
     @Autowired
     private TickerFlux tickerFlux;
-
-    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
-
-    public static final CurrencyPairDTO cp2 = new CurrencyPairDTO(USD, BTC);
 
     @Test
     @DisplayName("Check position creation")
@@ -119,7 +120,7 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0003"),
                 PositionRulesDTO.builder().stopGainPercentage(30).stopLossPercentage(30).create());
 
-        // Tests
+        // Tests.
         assertEquals(2, positionService.getPositions().size());
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(1, positionService.getPositionById(1).get().getId());
@@ -248,11 +249,11 @@ public class PositionServiceTest extends BaseTest {
                 .originalAmount(new BigDecimal("10"))
                 .price(new BigDecimal("0.03"))
                 .create());
-        await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
 
         // The two tickers arrived during the OPENING status should not have change highest and lowest gain.
         Optional<PositionDTO> position = positionService.getPositionById(1);
         assertTrue(position.isPresent());
+        await().untilAsserted(() -> assertEquals(OPENED, position.get().getStatus()));
         assertTrue(position.get().getLowestCalculatedGain().isEmpty());
         assertTrue(position.get().getHighestCalculatedGain().isEmpty());
 

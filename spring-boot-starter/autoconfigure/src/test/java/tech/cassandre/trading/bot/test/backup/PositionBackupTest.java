@@ -17,7 +17,9 @@ import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -32,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
-import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
@@ -50,10 +52,10 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @ActiveProfiles("schedule-disabled")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionBackupTest extends BaseTest {
 
-    public static final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
     @Autowired
     private TestableCassandreStrategy strategy;
@@ -62,7 +64,13 @@ public class PositionBackupTest extends BaseTest {
     private PositionService positionService;
 
     @Autowired
+    private TradeService tradeService;
+
+    @Autowired
     private PositionRepository positionRepository;
+
+    @Autowired
+    private TradeRepository tradeRepository;
 
     @Autowired
     private PositionFlux positionFlux;
@@ -77,16 +85,20 @@ public class PositionBackupTest extends BaseTest {
     @DisplayName("Check restored positions")
     public void checkRestoredPositions() {
         // =============================================================================================================
-        // Check that positions and restored in strategy, services & flux.strategy.getPositionService().getPositions().size()
-        assertTrue(strategy.getPositionService().getPositions().size() >= 5);
-        assertTrue(strategy.getPositions().size() >= 5);
+        // Check that positions and trades are restored in strategy & services.
+        assertEquals(5, strategy.getPositions().size());
+        assertEquals(5, positionService.getPositions().size());
+        assertEquals(10, strategy.getTrades().size());
+        assertEquals(10, tradeService.getTrades().size());
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
+        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
 
+        // =============================================================================================================
         // Check position 1 - OPENING.
         PositionDTO p = strategy.getPositions().get(1L);
         assertNotNull(p);
-        assertEquals(OPENING, p.getStatus());
         assertEquals(1L, p.getId());
+        assertEquals(OPENING, p.getStatus());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(p.getAmount()));
         assertFalse(p.getRules().isStopGainPercentageSet());
@@ -96,11 +108,12 @@ public class PositionBackupTest extends BaseTest {
         assertNull(p.getCloseOrderId());
         assertTrue(p.getCloseTrades().isEmpty());
 
+        // =============================================================================================================
         // Check position 2 - OPENED.
         p = strategy.getPositions().get(2L);
         assertNotNull(p);
-        assertEquals(OPENED, p.getStatus());
         assertEquals(2L, p.getId());
+        assertEquals(OPENED, p.getStatus());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("20").compareTo(p.getAmount()));
         assertTrue(p.getRules().isStopGainPercentageSet());
@@ -112,13 +125,14 @@ public class PositionBackupTest extends BaseTest {
         assertNull(p.getCloseOrderId());
         assertTrue(p.getCloseTrades().isEmpty());
 
+        // =============================================================================================================
         // Check position 3 - CLOSING.
         p = strategy.getPositions().get(3L);
         assertNotNull(p);
+        assertEquals(3L, p.getId());
         assertEquals(CLOSING, p.getStatus());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("30").compareTo(p.getAmount()));
-        assertEquals(3L, p.getId());
         assertFalse(p.getRules().isStopGainPercentageSet());
         assertTrue(p.getRules().isStopLossPercentageSet());
         assertEquals(20, p.getRules().getStopLossPercentage());
@@ -128,13 +142,14 @@ public class PositionBackupTest extends BaseTest {
         assertEquals("NON_EXISTING_TRADE", p.getCloseOrderId());
         assertTrue(p.getCloseTrades().isEmpty());
 
+        // =============================================================================================================
         // Check position 4 - CLOSED.
         p = strategy.getPositions().get(4L);
         assertNotNull(p);
+        assertEquals(4L, p.getId());
         assertEquals(CLOSED, p.getStatus());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("40").compareTo(p.getAmount()));
-        assertEquals(4L, p.getId());
         assertTrue(p.getRules().isStopGainPercentageSet());
         assertEquals(30, p.getRules().getStopGainPercentage());
         assertTrue(p.getRules().isStopLossPercentageSet());
@@ -146,6 +161,7 @@ public class PositionBackupTest extends BaseTest {
         assertEquals(1, p.getCloseTrades().size());
         assertTrue(p.getTrade("BACKUP_TRADE_04").isPresent());
 
+        // =============================================================================================================
         // Check position 5 - CLOSED with several trades.
         p = strategy.getPositions().get(5L);
         assertEquals(5L, p.getId());
@@ -163,38 +179,54 @@ public class PositionBackupTest extends BaseTest {
         // Open trades.
         assertEquals(2, p.getOpenTrades().size());
         assertTrue(p.getTrade("TRADE_01").isPresent());
-        assertEquals( "TRADE_01", p.getTrade("TRADE_01").get().getId());
+        assertEquals("TRADE_01", p.getTrade("TRADE_01").get().getId());
+        assertTrue(p.getOpenTrades().stream().anyMatch(t -> "TRADE_01".equals(t.getId())));
         assertTrue(p.getTrade("TRADE_02").isPresent());
-        assertEquals( "TRADE_02", p.getTrade("TRADE_02").get().getId());
+        assertTrue(p.getOpenTrades().stream().anyMatch(t -> "TRADE_02".equals(t.getId())));
+        assertEquals("TRADE_02", p.getTrade("TRADE_02").get().getId());
         // Close trades.
+        assertEquals(3, p.getCloseTrades().size());
         assertTrue(p.getTrade("TRADE_03").isPresent());
-        assertEquals( "TRADE_03", p.getTrade("TRADE_03").get().getId());
+        assertTrue(p.getCloseTrades().stream().anyMatch(t -> "TRADE_03".equals(t.getId())));
+        assertEquals("TRADE_03", p.getTrade("TRADE_03").get().getId());
         assertTrue(p.getTrade("TRADE_04").isPresent());
-        assertEquals( "TRADE_04", p.getTrade("TRADE_04").get().getId());
+        assertTrue(p.getCloseTrades().stream().anyMatch(t -> "TRADE_04".equals(t.getId())));
+        assertEquals("TRADE_04", p.getTrade("TRADE_04").get().getId());
         assertTrue(p.getTrade("TRADE_05").isPresent());
-        assertEquals( "TRADE_05", p.getTrade("TRADE_05").get().getId());
+        assertTrue(p.getCloseTrades().stream().anyMatch(t -> "TRADE_05".equals(t.getId())));
+        assertEquals("TRADE_05", p.getTrade("TRADE_05").get().getId());
     }
 
     @Test
     @DisplayName("Check how a new positions is saved")
     public void checkSavedNewPosition() {
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).timestamp(createDay(1)).last(new BigDecimal("0.2")).create());
+        // =============================================================================================================
+        // Check that positions and trades are restored in strategy & services.
+        assertEquals(5, strategy.getPositions().size());
+        assertEquals(5, positionService.getPositions().size());
+        assertEquals(10, strategy.getTrades().size());
+        assertEquals(10, tradeService.getTrades().size());
+        assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
+        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
+
+        // First ticker emitted because of dry mode.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.2")).create());
 
         // =============================================================================================================
-        // Add a position.
+        // Creates a position.
         long positionCount = positionRepository.count();
         PositionRulesDTO rules = PositionRulesDTO.builder().stopGainPercentage(1).stopLossPercentage(2).create();
-        PositionCreationResultDTO creationResult1 = positionService.createPosition(cp, new BigDecimal("0.0001"), rules);
+        PositionCreationResultDTO creationResult1 = positionService.createPosition(cp1, new BigDecimal("0.0001"), rules);
         assertTrue(creationResult1.isSuccessful());
         assertEquals("DRY_ORDER_000000001", creationResult1.getOrderId());
 
-        // Check the position created.
+        // Check the created position.
         await().untilAsserted(() -> assertEquals(positionCount + 1, positionRepository.count()));
         Optional<Position> p = positionRepository.findById(6L);
         assertTrue(p.isPresent());
         assertEquals(6L, p.get().getId());
-        assertEquals(p.get().getStatus(), OPENING.toString());
-        assertEquals(cp.toString(), p.get().getCurrencyPair());
+        assertEquals(OPENING.toString(), p.get().getStatus());
+        assertEquals(cp1.toString(), p.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0001").compareTo(p.get().getAmount()));
         assertEquals(1, p.get().getStopGainPercentageRule());
         assertEquals(2, p.get().getStopLossPercentageRule());
@@ -203,63 +235,61 @@ public class PositionBackupTest extends BaseTest {
 
         // =============================================================================================================
         // Add another position.
-        PositionCreationResultDTO creationResult2 = positionService.createPosition(cp, new BigDecimal("0.0002"), PositionRulesDTO.builder().create());
+        PositionCreationResultDTO creationResult2 = positionService.createPosition(cp1, new BigDecimal("0.0002"), PositionRulesDTO.builder().create());
         assertTrue(creationResult2.isSuccessful());
         assertEquals("DRY_ORDER_000000002", creationResult2.getOrderId());
 
-        // Check the position created.
+        // Check the created position in database.
         await().untilAsserted(() -> assertEquals(positionCount + 2, positionRepository.count()));
         p = positionRepository.findById(7L);
         assertTrue(p.isPresent());
         assertEquals(7L, p.get().getId());
-        assertEquals(p.get().getStatus(), OPENING.toString());
-        assertEquals(cp.toString(), p.get().getCurrencyPair());
+        assertEquals(OPENING.toString(), p.get().getStatus());
+        assertEquals(cp1.toString(), p.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0002").compareTo(p.get().getAmount()));
         assertNull(p.get().getStopGainPercentageRule());
         assertNull(p.get().getStopLossPercentageRule());
         assertEquals("DRY_ORDER_000000002", p.get().getOpenOrderId());
         assertNull(p.get().getCloseOrderId());
-
-        // =============================================================================================================
-        // Position 2 is opened - try to close it with CLOSE_ORDER_FOR_POSITION_2.
-
-        // Closing the position - order created but trade not arrived.
-        Optional<PositionDTO> positionDTO2 = positionService.getPositionById(2L);
-        assertTrue(positionDTO2.isPresent());
-        assertEquals(OPENED, positionDTO2.get().getStatus());
-        assertEquals(cp.toString(), p.get().getCurrencyPair());
-        assertEquals(0, new BigDecimal("0.0002").compareTo(p.get().getAmount()));
-        positionDTO2.get().setCloseOrderId("CLOSE_ORDER_FOR_POSITION_2");
-        assertEquals(CLOSING, positionDTO2.get().getStatus());
-        positionFlux.emitValue(positionDTO2.get());
-        assertTrue(positionRepository.findById(2L).isPresent());
-        await().untilAsserted(() -> assertEquals("CLOSE_ORDER_FOR_POSITION_2", positionRepository.findById(2L).get().getCloseOrderId()));
     }
 
     @Test
     @DisplayName("Check saved data during position lifecycle")
     public void checkSavedDataDuringPositionLifecycle() {
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).timestamp(createDay(1)).last(new BigDecimal("0.01")).create());
+        // =============================================================================================================
+        // Check that positions and trades are restored in strategy & services.
+        assertEquals(5, strategy.getPositions().size());
+        assertEquals(5, positionService.getPositions().size());
+        assertEquals(10, strategy.getTrades().size());
+        assertEquals(10, tradeService.getTrades().size());
+        assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
+        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
+
+        // Ticker emitted because of dry mode.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.01")).create());
+
+        // =============================================================================================================
         // A position is opening on ETH/BTC.
-        // We buy 1 ETH for 100 BTC.
-        final PositionCreationResultDTO positionResult = positionService.createPosition(cp,
+        // We buy 1 ETH for 0.01 BTC.
+        final PositionCreationResultDTO positionResult = positionService.createPosition(cp1,
                 new BigDecimal("1"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000)   // 1 000% max gain.
                         .stopLossPercentage(100)    // 100% max lost.
                         .create());
 
-        // We retrieve the position id and the position.
+        // We retrieve the position.
         final long positionId = positionResult.getPositionId();
         final Optional<PositionDTO> positionDTO = positionService.getPositionById(positionId);
         assertTrue(positionDTO.isPresent());
         assertTrue(positionRepository.findById(positionId).isPresent());
 
+        // =============================================================================================================
         // Two tickers arrived - min and max gain should not be set.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("100")).create());
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.01")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.01")).create());
 
-        // Check saved position.
+        // Check saved position in database.
         positionFlux.emitValue(positionDTO.get());
         await().until(() -> positionRepository.findById(positionId).isPresent() &&
                 positionRepository.findById(positionId).get().getStatus().equals(OPENING.toString()));
@@ -274,19 +304,17 @@ public class PositionBackupTest extends BaseTest {
         assertNull(p.get().getLowestPrice());
         assertNull(p.get().getHighestPrice());
 
+        // We should have one more position and one more trade in database.
+        tradeFlux.update();
+        await().untilAsserted(() -> assertEquals(6, positionRepository.count()));
+        await().untilAsserted(() -> assertEquals(11, tradeRepository.count()));
+
+        // =============================================================================================================
         // Trade arrives, position will be opened.
-        tradeFlux.emitValue(TradeDTO.builder().id("000001")
-                .orderId("DRY_ORDER_000000001")
-                .type(BID)
-                .currencyPair(cp)
-                .originalAmount(new BigDecimal("1"))
-                .price(new BigDecimal("0.03"))
-                .create());
         await().untilAsserted(() -> assertEquals(OPENED, positionDTO.get().getStatus()));
         positionFlux.emitValue(positionDTO.get());
-        positionFlux.update();
 
-        // Check saved position.
+        // Check saved position in database.
         await().until(() -> positionRepository.findById(positionId).isPresent() &&
                 positionRepository.findById(positionId).get().getStatus().equals(OPENED.toString()));
         p = positionRepository.findById(positionId);
@@ -300,16 +328,18 @@ public class PositionBackupTest extends BaseTest {
         assertNull(p.get().getLowestPrice());
         assertNull(p.get().getHighestPrice());
 
+        // =============================================================================================================
+        // Testing tickers change.
         // First ticker arrives (500% gain) - min and max gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.06")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).create());
         // Second ticker arrives (100% gain) - min gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.02")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.02")).create());
         // Third ticker arrives (200% gain) - nothing should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.03")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.03")).create());
         // Fourth ticker arrives (50% loss) - min gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.005")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.005")).create());
         // Firth ticker arrives (600% gain) - max gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("0.07")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.07")).create());
         await().until(() -> strategy.getTickersUpdateReceived().size() == 8);
 
         assertTrue(positionDTO.get().getLowestCalculatedGain().isPresent());
@@ -317,21 +347,23 @@ public class PositionBackupTest extends BaseTest {
         assertEquals(-50, positionDTO.get().getLowestCalculatedGain().get().getPercentage());
         assertEquals(600, positionDTO.get().getHighestCalculatedGain().get().getPercentage());
 
+        await().untilAsserted(() -> assertEquals(6, positionRepository.count()));
+        await().untilAsserted(() -> assertEquals(11, tradeRepository.count()));
+
+        // =============================================================================================================
         // Closing the trade - min and max should not change.
         positionDTO.get().setCloseOrderId("DRY_ORDER_000000002");
-        // tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp).last(new BigDecimal("100")).create());
-        // await().untilAsserted(() -> assertEquals(CLOSING, positionDTO.get().getStatus()));
-        // assertEquals(CLOSING, positionDTO.get().getStatus());
 
         // The first close trade arrives, status should not change
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("DRY_ORDER_000000002")
                 .type(ASK)
                 .originalAmount(new BigDecimal("0.5"))
-                .currencyPair(cp)
+                .currencyPair(cp1)
                 .price(new BigDecimal("1"))
                 .create());
         await().untilAsserted(() -> assertEquals(1, positionDTO.get().getCloseTrades().size()));
+        await().untilAsserted(() -> assertEquals(12, tradeRepository.count()));
         assertEquals(CLOSING, positionDTO.get().getStatus());
 
         // The second close trade arrives, status should change
@@ -339,10 +371,11 @@ public class PositionBackupTest extends BaseTest {
                 .orderId("DRY_ORDER_000000002")
                 .type(ASK)
                 .originalAmount(new BigDecimal("0.5"))
-                .currencyPair(cp)
+                .currencyPair(cp1)
                 .price(new BigDecimal("1"))
                 .create());
         await().untilAsserted(() -> assertEquals(2, positionDTO.get().getCloseTrades().size()));
+        await().untilAsserted(() -> assertEquals(13, tradeRepository.count()));
         await().untilAsserted(() -> assertEquals(CLOSED, positionDTO.get().getStatus()));
 
         // Check saved position.
@@ -353,7 +386,7 @@ public class PositionBackupTest extends BaseTest {
         assertTrue(p.isPresent());
         assertEquals(6, p.get().getId());
         assertEquals(CLOSED.toString(), p.get().getStatus());
-        assertEquals(cp.toString(), p.get().getCurrencyPair());
+        assertEquals(cp1.toString(), p.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(p.get().getAmount()));
         assertEquals(1000, p.get().getStopGainPercentageRule());
         assertEquals(100, p.get().getStopLossPercentageRule());
@@ -365,6 +398,7 @@ public class PositionBackupTest extends BaseTest {
         assertTrue(p.get().getTrades().stream().anyMatch(t -> "000003".equals(t.getId())));
         assertEquals(0, new BigDecimal("0.005").compareTo(p.get().getLowestPrice()));
         assertEquals(0, new BigDecimal("0.07").compareTo(p.get().getHighestPrice()));
+        assertEquals(13, tradeRepository.count());
     }
 
 }

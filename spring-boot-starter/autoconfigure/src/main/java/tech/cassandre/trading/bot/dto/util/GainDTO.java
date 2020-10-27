@@ -77,7 +77,7 @@ public class GainDTO {
         if (percentage == 0) {
             return "No gain";
         } else {
-            return "Gains: " + amount + " (" + percentage + " %) - Fees: " + fees;
+            return "Gains: " + amount + " (" + percentage + " %) / Fees: " + fees;
         }
 
     }

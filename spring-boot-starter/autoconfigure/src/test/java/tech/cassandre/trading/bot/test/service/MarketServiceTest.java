@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -28,7 +29,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @Configuration({
         @Property(key = "TEST_NAME", value = "Configuration parameters - Valid configuration")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class MarketServiceTest {
 
     @Autowired
@@ -37,8 +38,8 @@ public class MarketServiceTest {
     @Test
     @DisplayName("Check get estimated buying cost")
     public void checkGetEstimatedBuyingCost() {
-        final CurrencyPairDTO anotherCurrencyPair = new CurrencyPairDTO(BTC, USDT);
         final CurrencyPairDTO currencyPair = new CurrencyPairDTO(ETH, BTC);
+        final CurrencyPairDTO anotherCurrencyPair = new CurrencyPairDTO(BTC, USDT);
         final BigDecimal amount = new BigDecimal("3");
 
         // When the ticker doesn't exists.

@@ -19,6 +19,7 @@ import java.util.Iterator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 
 
 @SpringBootTest
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
         @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@DirtiesContext(classMode = BEFORE_CLASS)
 public class ImportedDataTest extends BaseTest {
 
     @Autowired
@@ -37,7 +38,7 @@ public class ImportedDataTest extends BaseTest {
     private PositionRepository positionRepository;
 
     @Test
-    @DisplayName("Check trades from imported data")
+    @DisplayName("Check trades in database from imported data")
     public void checkImportedTrades() {
         // Trades.
         final Iterator<Trade> trades = tradeRepository.findByOrderByTimestampAsc().iterator();
@@ -100,7 +101,7 @@ public class ImportedDataTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Check positions from imported data")
+    @DisplayName("Check positions in database from imported data")
     public void checkImportedPositions() {
         // Positions.
         final Iterator<Position> positions = positionRepository.findAll().iterator();
