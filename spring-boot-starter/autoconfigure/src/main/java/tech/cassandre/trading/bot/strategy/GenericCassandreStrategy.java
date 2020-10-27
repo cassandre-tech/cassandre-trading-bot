@@ -7,11 +7,11 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
-import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.TradeService;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -51,11 +51,13 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setTradeService(final TradeService newTradeService) {
         this.tradeService = newTradeService;
+        tradeService.getTrades().forEach(t -> trades.put(t.getId(), t));
     }
 
     @Override
     public final void setPositionService(final PositionService newPositionService) {
         this.positionService = newPositionService;
+        positionService.getPositions().forEach(p -> positions.put(p.getId(), p));
     }
 
     @Override

@@ -10,15 +10,10 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
@@ -33,13 +28,10 @@ import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.StringJoiner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * StrategyAutoConfiguration configures the strategy.
@@ -188,7 +180,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Setting services.
         strategy.setTradeService(tradeService);
         strategy.setPositionService(positionService);
-        restoreData(strategy);
 
         // Account flux.
         final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();
@@ -198,7 +189,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Position flux.
         final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publish();
         connectablePositionFlux.subscribe(strategy::positionUpdate);        // For strategy.
-        connectablePositionFlux.subscribe(positionService::backupPosition); // For position backup.
         connectablePositionFlux.connect();
 
         // Order flux.
@@ -210,7 +200,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
         connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
         connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.
-        connectableTradeFlux.subscribe(tradeService::backupTrade);          // For trade backup.
         connectableTradeFlux.connect();
 
         // Ticker flux.
@@ -228,88 +217,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         if (userService instanceof UserServiceDryModeImplementation) {
             ((UserServiceDryModeImplementation) userService).setDependencies((GenericCassandreStrategy) strategy);
         }
-    }
-
-    /**
-     * Restore data from database.
-     *
-     * @param strategy strategy
-     */
-    private void restoreData(final CassandreStrategyInterface strategy) {
-        // Restoring all trades.
-        final Map<String, TradeDTO> tradesByOrderId = new LinkedHashMap<>();
-        final Map<String, TradeDTO> tradesById = new LinkedHashMap<>();
-        getLogger().info("Restoring trades from database");
-        AtomicInteger tradeCount = new AtomicInteger(0);
-        tradeRepository.findByOrderByTimestampAsc()
-                .forEach(trade -> {
-                    TradeDTO t = TradeDTO.builder()
-                            .id(trade.getId())
-                            .orderId(trade.getOrderId())
-                            .type(OrderTypeDTO.valueOf(trade.getType()))
-                            .originalAmount(trade.getOriginalAmount())
-                            .currencyPair(new CurrencyPairDTO(trade.getCurrencyPair()))
-                            .price(trade.getPrice())
-                            .timestamp(trade.getTimestamp())
-                            .feeAmount(trade.getFeeAmount())
-                            .feeCurrency(new CurrencyDTO(trade.getFeeCurrency()))
-                            .create();
-                    tradesByOrderId.put(t.getOrderId(), t);
-                    tradesById.put(t.getId(), t);
-                    strategy.restoreTrade(t);
-                    tradeService.restoreTrade(t);
-                    tradeFlux.restoreTrade(t);
-                    tradeCount.incrementAndGet();
-                    getLogger().info("Trade " + trade.getOrderId() + " restored : " + t);
-                });
-        getLogger().info(tradeCount.get() + " trade(s) restored");
-
-        // Restoring data from databases.
-        getLogger().info("Restoring positions from database");
-        AtomicInteger positionCount = new AtomicInteger(0);
-        positionRepository.findAll().forEach(position -> {
-            PositionRulesDTO rules = PositionRulesDTO.builder().create();
-            boolean stopGainRuleSet = position.getStopGainPercentageRule() != null;
-            boolean stopLossRuleSet = position.getStopLossPercentageRule() != null;
-            // Two rules set.
-            if (stopGainRuleSet && stopLossRuleSet) {
-                rules = PositionRulesDTO.builder()
-                        .stopGainPercentage(position.getStopGainPercentageRule())
-                        .stopLossPercentage(position.getStopLossPercentageRule())
-                        .create();
-            }
-            // Stop gain set.
-            if (stopGainRuleSet && !stopLossRuleSet) {
-                rules = PositionRulesDTO.builder()
-                        .stopGainPercentage(position.getStopGainPercentageRule())
-                        .create();
-            }
-            // Stop loss set.
-            if (!stopGainRuleSet && stopLossRuleSet) {
-                rules = PositionRulesDTO.builder()
-                        .stopLossPercentage(position.getStopLossPercentageRule())
-                        .create();
-            }
-            Set<TradeDTO> positionTrades = new LinkedHashSet<>();
-            position.getTrades()
-                    .forEach(s -> positionTrades.add(tradesById.get(s)));
-            PositionDTO p = new PositionDTO(position.getId(),
-                    PositionStatusDTO.valueOf(position.getStatus()),
-                    new CurrencyPairDTO(position.getCurrencyPair()),
-                    position.getAmount(),
-                    rules,
-                    position.getOpenOrderId(),
-                    position.getCloseOrderId(),
-                    positionTrades,
-                    position.getLowestPrice(),
-                    position.getHighestPrice());
-            positionService.restorePosition(p);
-            strategy.restorePosition(p);
-            positionFlux.restorePosition(p);
-            positionCount.incrementAndGet();
-            getLogger().info("Position " + position.getId() + " restored : " + p);
-        });
-        getLogger().info(positionCount.get() + " position(s) restored");
     }
 
 }

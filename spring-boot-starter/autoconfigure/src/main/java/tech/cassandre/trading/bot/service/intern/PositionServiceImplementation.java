@@ -187,30 +187,4 @@ public class PositionServiceImplementation extends BaseService implements Positi
         positions.put(position.getId(), position);
     }
 
-    @Override
-    public final void backupPosition(final PositionDTO position) {
-        Optional<Position> p = positionRepository.findById(position.getId());
-        if (p.isPresent()) {
-            p.get().setId(position.getId());
-            p.get().setStatus(position.getStatus().toString());
-            if (position.getRules().isStopGainPercentageSet()) {
-                p.get().setStopGainPercentageRule(position.getRules().getStopGainPercentage());
-            }
-            if (position.getRules().isStopLossPercentageSet()) {
-                p.get().setStopLossPercentageRule(position.getRules().getStopLossPercentage());
-            }
-            position.getTrades().forEach(t -> p.get().getTrades().add(t.getId()));
-//            position.getOpenTrades().forEach((s, t) -> p.get().getTrades().add(s));
-//            position.getCloseTrades().forEach((s, t) -> p.get().getTrades().add(s));
-            p.get().setOpenOrderId(position.getOpenOrderId());
-            p.get().setCloseOrderId(position.getCloseOrderId());
-            p.get().setLowestPrice(position.getLowestPrice());
-            p.get().setHighestPrice(position.getHighestPrice());
-            positionRepository.save(p.get());
-        } else {
-            // Position was not found.
-            getLogger().error("Position {} was not saved because it was not found in database", position.getId());
-        }
-    }
-
 }

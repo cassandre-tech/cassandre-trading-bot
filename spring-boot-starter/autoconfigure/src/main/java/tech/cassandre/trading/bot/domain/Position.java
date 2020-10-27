@@ -1,17 +1,17 @@
 package tech.cassandre.trading.bot.domain;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Set;
+
+import static javax.persistence.FetchType.EAGER;
 
 /**
  * Position (used to save data between restarts).
@@ -61,10 +61,9 @@ public class Position {
     private String closeOrderId;
 
     /** All trades related to positions. */
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "POSITIONS_TRADES", joinColumns = @JoinColumn(name = "POSITION_ID"))
-    @Column(name = "TRADE_ID")
-    private Set<String> trades;
+    @OneToMany(fetch = EAGER)
+    @JoinColumn(name = "POSITION_ID")
+    private Set<Trade> trades;
 
     /** The fee that was charged by the exchange for this trade. */
     @Column(name = "LOWEST_PRICE", precision = PRECISION, scale = SCALE)
@@ -223,7 +222,7 @@ public class Position {
      *
      * @return trades
      */
-    public Set<String> getTrades() {
+    public Set<Trade> getTrades() {
         return trades;
     }
 
@@ -232,7 +231,7 @@ public class Position {
      *
      * @param newTrades the trades to set
      */
-    public void setTrades(final Set<String> newTrades) {
+    public void setTrades(final Set<Trade> newTrades) {
         trades = newTrades;
     }
 

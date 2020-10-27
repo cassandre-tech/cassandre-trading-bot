@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
+import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.test.backup.PositionBackupTest;
 import tech.cassandre.trading.bot.test.service.PositionServiceTest;
 
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @TestConfiguration
 public class PositionBackupMock {

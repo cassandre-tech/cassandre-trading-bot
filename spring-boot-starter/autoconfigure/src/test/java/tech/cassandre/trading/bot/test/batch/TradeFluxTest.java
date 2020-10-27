@@ -41,7 +41,7 @@ public class TradeFluxTest extends BaseTest {
     @DisplayName("Check received data")
     public void checkReceivedData() {
         final int numberOfTradeExpected = 7;
-        final int numberOfTradeServiceCalls = 4;
+        final int numberOfTradeServiceCalls = 5;
 
         // Waiting for the trade service to have been called with all the test data.
         await().untilAsserted(() -> verify(tradeService, atLeast(numberOfTradeServiceCalls)).getTrades());

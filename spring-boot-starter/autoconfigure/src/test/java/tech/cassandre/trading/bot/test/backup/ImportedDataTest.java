@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
         @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class ImportedDataTest extends BaseTest {
 
     @Autowired
@@ -127,7 +127,7 @@ public class ImportedDataTest extends BaseTest {
         assertEquals(0, new BigDecimal("1").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("2").compareTo(p.getHighestPrice()));
         assertEquals(1, p.getTrades().size());
-        assertTrue(p.getTrades().stream().anyMatch("BACKUP_TRADE_01"::equals));
+        assertTrue(p.getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_01".equals(trade.getId())));
         // Position 3.
         p = positions.next();
         assertEquals(3, p.getId());
@@ -139,7 +139,7 @@ public class ImportedDataTest extends BaseTest {
         assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice()));
         assertEquals(1, p.getTrades().size());
-        assertTrue(p.getTrades().stream().anyMatch("BACKUP_TRADE_02"::equals));
+        assertTrue(p.getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_02".equals(trade.getId())));
         // Position 4.
         p = positions.next();
         assertEquals(4, p.getId());
@@ -151,8 +151,8 @@ public class ImportedDataTest extends BaseTest {
         assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice()));
         assertEquals(2, p.getTrades().size());
-        assertTrue(p.getTrades().stream().anyMatch("BACKUP_TRADE_03"::equals));
-        assertTrue(p.getTrades().stream().anyMatch("BACKUP_TRADE_04"::equals));
+        assertTrue(p.getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_03".equals(trade.getId())));
+        assertTrue(p.getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_04".equals(trade.getId())));
     }
 
 }

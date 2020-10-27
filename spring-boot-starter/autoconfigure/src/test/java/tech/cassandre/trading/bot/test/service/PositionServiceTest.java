@@ -149,16 +149,16 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 1 - should not change anything.
-        tradeFlux.emitValue(TradeDTO.builder().id("000001").type(BID).orderId("ORDER00001").create());
+        tradeFlux.emitValue(TradeDTO.builder().id("000001").currencyPair(cp1).type(BID).orderId("ORDER00001").create());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
 
         // Trade 2 - should change status of position 1.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002").type(BID).currencyPair(cp1).originalAmount(new BigDecimal("0.0001")).orderId("ORDER00010").create());
+        tradeFlux.emitValue(TradeDTO.builder().id("000002").currencyPair(cp1).type(BID).currencyPair(cp1).originalAmount(new BigDecimal("0.0001")).orderId("ORDER00010").create());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 3 - should change status of position 2.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002").type(BID).currencyPair(cp1).originalAmount(new BigDecimal("0.0002")).orderId("ORDER00020").create());
+        tradeFlux.emitValue(TradeDTO.builder().id("000002").currencyPair(cp1).type(BID).currencyPair(cp1).originalAmount(new BigDecimal("0.0002")).orderId("ORDER00020").create());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
     }

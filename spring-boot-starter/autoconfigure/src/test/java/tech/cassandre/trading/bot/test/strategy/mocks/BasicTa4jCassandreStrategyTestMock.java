@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.strategy.mocks;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -16,6 +17,8 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -33,6 +36,7 @@ import java.util.Set;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -40,6 +44,14 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SuppressWarnings("unchecked")
 @TestConfiguration
 public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
+
+    final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
+
+    @Autowired
+    private PositionRepository positionRepository;
+
+    @Autowired
+    private TradeRepository tradeRepository;
 
     @Bean
     @Primary
@@ -62,13 +74,13 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     @Bean
     @Primary
     public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService());
+        return new TradeFlux(tradeService(), tradeRepository);
     }
 
     @Bean
     @Primary
     public PositionFlux positionFlux() {
-        return new PositionFlux(positionService());
+        return new PositionFlux(positionService(), positionRepository);
     }
 
     @SuppressWarnings("unchecked")
@@ -125,7 +137,6 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     public MarketService marketService() {
         MarketService service = mock(MarketService.class);
         // Returns three values.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
         given(service.getTicker(cp1)).willReturn(
                 Optional.of(TickerDTO.builder().currencyPair(cp1)
                         .timestamp(BaseTest.createDay(1))
@@ -251,9 +262,9 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-        replyGetTrades.add(TradeDTO.builder().id("0000001").create());      // Trade 01.
-        replyGetTrades.add(TradeDTO.builder().id("0000002").create());      // Trade 02.
-        replyGetTrades.add(TradeDTO.builder().id("0000003").create());      // Trade 03.
+        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).create());      // Trade 01.
+        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp1).create());      // Trade 02.
+        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create());      // Trade 03.
         given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;

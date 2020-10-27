@@ -163,7 +163,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
                 this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService, tradeRepository);
+                this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService);
                 this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
             } else {
                 // Dry mode.
@@ -172,7 +172,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 userServiceDryMode = new UserServiceDryModeImplementation();
                 this.userService = userServiceDryMode;
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode, tradeRepository);
+                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode);
                 this.tradeService = tradeServiceDryMode;
                 this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
             }
@@ -181,8 +181,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             accountFlux = new AccountFlux(userService);
             tickerFlux = new TickerFlux(marketService);
             orderFlux = new OrderFlux(tradeService);
-            tradeFlux = new TradeFlux(tradeService);
-            positionFlux = new PositionFlux(positionService);
+            tradeFlux = new TradeFlux(tradeService, tradeRepository);
+            positionFlux = new PositionFlux(positionService, positionRepository);
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();

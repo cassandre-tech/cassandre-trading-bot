@@ -1,6 +1,11 @@
 package tech.cassandre.trading.bot.batch;
 
+import tech.cassandre.trading.bot.domain.Trade;
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseFlux;
 
@@ -20,12 +25,17 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
     /** Previous values. */
     private final Map<String, TradeDTO> previousValues = new LinkedHashMap<>();
 
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
+
     /**
      * Constructor.
      *
-     * @param newTradeService trade service
+     * @param newTradeService    trade service
+     * @param newTradeRepository trade repository
      */
-    public TradeFlux(final TradeService newTradeService) {
+    public TradeFlux(final TradeService newTradeService, final TradeRepository newTradeRepository) {
+        this.tradeRepository = newTradeRepository;
         this.tradeService = newTradeService;
     }
 
@@ -48,13 +58,41 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
         return newValues;
     }
 
-    /**
-     * Restore trade.
-     *
-     * @param trade trade
-     */
-    public final void restoreTrade(final TradeDTO trade) {
-        previousValues.put(trade.getId(), trade);
+    @Override
+    public final void backupValue(final TradeDTO newValue) {
+        Trade t = new Trade();
+        t.setId(newValue.getId());
+        t.setOrderId(newValue.getOrderId());
+        t.setType(newValue.getType().toString());
+        t.setOriginalAmount(newValue.getOriginalAmount());
+        t.setCurrencyPair(newValue.getCurrencyPair().toString());
+        t.setPrice(newValue.getPrice());
+        t.setTimestamp(newValue.getTimestamp());
+        t.setFeeAmount(newValue.getFee().getValue());
+        t.setFeeCurrency(newValue.getFee().getCurrency().toString());
+        tradeRepository.save(t);
+    }
+
+    @Override
+    public final void restoreValues() {
+        getLogger().info("Restoring trades from database");
+        tradeRepository.findByOrderByTimestampAsc()
+                .forEach(trade -> {
+                    TradeDTO t = TradeDTO.builder()
+                            .id(trade.getId())
+                            .orderId(trade.getOrderId())
+                            .type(OrderTypeDTO.valueOf(trade.getType()))
+                            .originalAmount(trade.getOriginalAmount())
+                            .currencyPair(new CurrencyPairDTO(trade.getCurrencyPair()))
+                            .price(trade.getPrice())
+                            .timestamp(trade.getTimestamp())
+                            .feeAmount(trade.getFeeAmount())
+                            .feeCurrency(new CurrencyDTO(trade.getFeeCurrency()))
+                            .create();
+                    previousValues.put(t.getId(), t);
+                    tradeService.restoreTrade(t);
+                    getLogger().info("Trade " + trade.getOrderId() + " restored : " + t);
+                });
     }
 
 }

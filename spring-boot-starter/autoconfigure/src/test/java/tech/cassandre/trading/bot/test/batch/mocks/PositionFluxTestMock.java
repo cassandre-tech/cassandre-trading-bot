@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -26,6 +27,9 @@ public class PositionFluxTestMock {
     @Autowired
     private PositionRepository positionRepository;
 
+    @Autowired
+    private TradeRepository tradeRepository;
+
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
@@ -35,13 +39,13 @@ public class PositionFluxTestMock {
     @Bean
     @Primary
     public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService());
+        return new TradeFlux(tradeService(), tradeRepository);
     }
 
     @Bean
     @Primary
     public PositionFlux positionFlux() {
-        return new PositionFlux(positionService());
+        return new PositionFlux(positionService(), positionRepository);
     }
 
     @Bean

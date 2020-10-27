@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -48,6 +49,9 @@ public class  TradeBackupTest extends BaseTest {
 
     @Autowired
     private TradeFlux tradeFlux;
+
+    @Autowired
+    private PositionFlux positionFlux;
 
     @Test
     @DisplayName("Check restored trades")

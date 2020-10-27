@@ -106,6 +106,7 @@ public class RatesTest {
 	@Test
 	@DisplayName("Check trade service rate")
 	public void checkTradeServiceRate() throws InterruptedException {
+		TimeUnit.SECONDS.sleep(25);
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.

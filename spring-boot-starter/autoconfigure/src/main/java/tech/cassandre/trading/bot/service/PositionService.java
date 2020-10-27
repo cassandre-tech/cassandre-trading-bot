@@ -72,11 +72,4 @@ public interface PositionService {
      */
     void restorePosition(PositionDTO position);
 
-    /**
-     * Backup position.
-     *
-     * @param position position
-     */
-    void backupPosition(PositionDTO position);
-
 }
