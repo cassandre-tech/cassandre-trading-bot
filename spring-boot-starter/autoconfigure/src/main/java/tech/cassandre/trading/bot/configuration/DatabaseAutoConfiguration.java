@@ -18,8 +18,7 @@ import tech.cassandre.trading.bot.util.parameters.DatabaseParameters;
 @Configuration
 @EntityScan(basePackages = "tech.cassandre.trading.bot.domain")
 @EnableJpaRepositories(basePackages = "tech.cassandre.trading.bot.repository")
-@EnableConfigurationProperties({DatabaseParameters.class,
-        DatabaseParameters.Datasource.class})
+@EnableConfigurationProperties(DatabaseParameters.class)
 public class DatabaseAutoConfiguration extends BaseConfiguration {
 
     /** Database parameters. */
@@ -50,6 +49,11 @@ public class DatabaseAutoConfiguration extends BaseConfiguration {
         return p;
     }
 
+    /**
+     * Set physical naming strategy.
+     * Adds a prefix to table name via cassandre.trading.bot.database.table-prefix parameter.
+     * @return physical naming strategy
+     */
     @Bean
     @SuppressWarnings("checkstyle:DesignForExtension")
     public PhysicalNamingStrategy physical() {

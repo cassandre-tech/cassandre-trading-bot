@@ -16,6 +16,7 @@ import java.util.Set;
  * Cassandre strategy interface.
  * This allows the framework to communicate with the strategy.
  */
+@SuppressWarnings("unused")
 public interface CassandreStrategyInterface {
 
     /**
@@ -46,20 +47,6 @@ public interface CassandreStrategyInterface {
      * @return positionService
      */
     PositionService getPositionService();
-
-    /**
-     * Restore trade from database.
-     *
-     * @param trade trade to restore
-     */
-    void restoreTrade(TradeDTO trade);
-
-    /**
-     * Restore position from database.
-     *
-     * @param position position to restore
-     */
-    void restorePosition(PositionDTO position);
 
     /**
      * Method called by streams at every account update.

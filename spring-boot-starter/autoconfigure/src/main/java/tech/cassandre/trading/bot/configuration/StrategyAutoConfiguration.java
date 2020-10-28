@@ -14,8 +14,6 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
@@ -66,12 +64,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     /** Position flux. */
     private final PositionFlux positionFlux;
 
-    /** Position repository. */
-    private final PositionRepository positionRepository;
-
-    /** Trade repository. */
-    private final TradeRepository tradeRepository;
-
     /**
      * Constructor.
      *
@@ -84,8 +76,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      * @param newOrderFlux          order flux
      * @param newTradeFlux          trade flux
      * @param newPositionFlux       position flux
-     * @param newPositionRepository position repository
-     * @param newTradeRepository    trade repository
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
@@ -96,9 +86,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
                                      final TickerFlux newTickerFlux,
                                      final OrderFlux newOrderFlux,
                                      final TradeFlux newTradeFlux,
-                                     final PositionFlux newPositionFlux,
-                                     final PositionRepository newPositionRepository,
-                                     final TradeRepository newTradeRepository) {
+                                     final PositionFlux newPositionFlux) {
         this.applicationContext = newApplicationContext;
         this.userService = newUserService;
         this.tradeService = newTradeService;
@@ -108,8 +96,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         this.orderFlux = newOrderFlux;
         this.tradeFlux = newTradeFlux;
         this.positionFlux = newPositionFlux;
-        this.positionRepository = newPositionRepository;
-        this.tradeRepository = newTradeRepository;
     }
 
     /**
@@ -193,7 +179,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Order flux.
         final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
-        connectableOrderFlux.subscribe(strategy::orderUpdate);
+        connectableOrderFlux.subscribe(strategy::orderUpdate);              // For strategy.
         connectableOrderFlux.connect();
 
         // Trade flux to strategy.
@@ -207,7 +193,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
         connectableTickerFlux.subscribe(strategy::tickerUpdate);            // For strategy.
         connectableTickerFlux.subscribe(positionService::tickerUpdate);     // For position service.
-        // if in dry mode, we also send the ticker to the dry mode.
+        // if in dry mode, we also send the ticker to the trade service in dry mode.
         if (tradeService instanceof TradeServiceDryModeImplementation) {
             connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickerUpdate);
         }

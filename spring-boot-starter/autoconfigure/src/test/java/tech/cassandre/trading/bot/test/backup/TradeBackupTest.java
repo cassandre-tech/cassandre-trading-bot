@@ -169,6 +169,7 @@ public class  TradeBackupTest extends BaseTest {
         assertEquals("USDT/BTC", t1FromDatabase.get().getCurrencyPair());
         assertEquals(0, t1FromDatabase.get().getPrice().compareTo(new BigDecimal("2.200002")));
         assertEquals(createZonedDateTime("01-09-2020"), t1FromDatabase.get().getTimestamp());
+        System.out.println("=> " + t1FromDatabase.get().getFeeAmount());
         assertEquals(0, t1FromDatabase.get().getFeeAmount().compareTo(new BigDecimal("3.300003")));
         assertEquals("BTC", t1FromDatabase.get().getFeeCurrency());
     }

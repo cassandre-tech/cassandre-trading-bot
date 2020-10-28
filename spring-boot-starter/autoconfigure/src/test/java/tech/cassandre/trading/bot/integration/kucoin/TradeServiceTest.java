@@ -41,6 +41,11 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
         "cassandre.trading.bot.exchange.rates.account=100",
         "cassandre.trading.bot.exchange.rates.ticker=101",
         "cassandre.trading.bot.exchange.rates.trade=102",
+        "spring.jpa.hibernate.ddl-auto=update",
+        "cassandre.trading.bot.database.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver",
+        "cassandre.trading.bot.database.datasource.url=jdbc:hsqldb:mem:cassandre-database;shutdown=true",
+        "cassandre.trading.bot.database.datasource.username=sa",
+        "cassandre.trading.bot.database.datasource.password=",
         "testableStrategy.enabled=true",
         "invalidStrategy.enabled=false"
 })

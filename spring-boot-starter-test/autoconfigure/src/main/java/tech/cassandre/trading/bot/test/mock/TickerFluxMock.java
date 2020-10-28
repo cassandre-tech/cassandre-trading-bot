@@ -155,7 +155,7 @@ public class TickerFluxMock {
         try (Scanner scanner = new Scanner(file.getFile())) {
             while (scanner.hasNextLine()) {
                 try (Scanner rowScanner = new Scanner(scanner.nextLine())) {
-                    if (file.getFilename().endsWith("tsv")) {
+                    if (file.getFilename() != null && file.getFilename().endsWith("tsv")) {
                         rowScanner.useDelimiter("\t");
                     } else {
                         rowScanner.useDelimiter(",");

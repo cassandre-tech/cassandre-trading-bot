@@ -383,22 +383,19 @@ public class PositionDTOTest {
     @DisplayName("Check toString method")
     public void checkToString() {
         // Position opening.
-        PositionDTO p1 = new PositionDTO(1L,
-                OPENING,
-                new CurrencyPairDTO(ETH, BTC),
-                new BigDecimal(1),
-                PositionRulesDTO.builder().create(),
-                "OPEN_ORDER_01",
-                null,
-                null,
-                null,
-                null);
+        PositionDTO p1 = PositionDTO.builder()
+                .id(1L)
+                .status(OPENING)
+                .currencyPair(new CurrencyPairDTO(ETH, BTC))
+                .amount(new BigDecimal("1"))
+                .openOrderId("OPEN_ORDER_01")
+                .create();
         assertEquals(p1.toString(), "Position n°1 (no rules) - Opening - Waiting for the trade of order OPEN_ORDER_01");
 
         // Position opened - No ticker received.
         TradeDTO openTrade1 = TradeDTO.builder().id("0000001")
                 .currencyPair(new CurrencyPairDTO(ETH, BTC))
-                .feeAmount(new BigDecimal(1))
+                .feeAmount(new BigDecimal("1"))
                 .feeCurrency(BTC)
                 .orderId("OPEN_ORDER_02")
                 .originalAmount(new BigDecimal(1))
@@ -406,16 +403,15 @@ public class PositionDTOTest {
                 .timestamp(ZonedDateTime.now())
                 .type(BID)
                 .create();
-        PositionDTO p2 = new PositionDTO(2L,
-                OPENED,
-                new CurrencyPairDTO(ETH, BTC),
-                new BigDecimal(1),
-                PositionRulesDTO.builder().stopLossPercentage(11).create(),
-                "OPEN_ORDER_02",
-                null,
-                Collections.singleton(openTrade1),
-                null,
-                null);
+        PositionDTO p2 = PositionDTO.builder()
+                .id(2L)
+                .status(OPENED)
+                .currencyPair(new CurrencyPairDTO(ETH, BTC))
+                .amount(new BigDecimal("1"))
+                .stopLossPercentageRule(11F)
+                .openOrderId("OPEN_ORDER_02")
+                .trades(Collections.singleton(openTrade1))
+                .create();
         assertEquals(p2.toString(), "Position n°2 (11.0 % loss rule) on ETH/BTC - Opened");
         // A new ticker arrived.
         TickerDTO t1 = TickerDTO.builder().currencyPair(new CurrencyPairDTO(ETH, BTC)).last(new BigDecimal("2")).create();
@@ -423,16 +419,16 @@ public class PositionDTOTest {
         assertEquals(p2.toString(), "Position n°2 (11.0 % loss rule) on ETH/BTC - Opened - Last gain calculated 100 %");
 
         // Position closing.
-        PositionDTO p3 = new PositionDTO(3L,
-                CLOSING,
-                new CurrencyPairDTO(ETH, BTC),
-                new BigDecimal(1),
-                PositionRulesDTO.builder().stopGainPercentage(12).create(),
-                "OPEN_ORDER_03",
-                "OPEN_ORDER_04",
-                Collections.singleton(openTrade1),
-                null,
-                null);
+        PositionDTO p3 = PositionDTO.builder()
+                .id(3L)
+                .status(CLOSING)
+                .currencyPair(new CurrencyPairDTO(ETH, BTC))
+                .amount(new BigDecimal("1"))
+                .stopGainPercentageRule(12f)
+                .openOrderId("OPEN_ORDER_03")
+                .closeOrderId("OPEN_ORDER_04")
+                .trades(Collections.singleton(openTrade1))
+                .create();
         assertEquals(p3.toString(), "Position n°3 (12.0 % gain rule) on ETH/BTC - Closing - Waiting for the trade of order OPEN_ORDER_04");
 
         // Position closed.
@@ -459,16 +455,19 @@ public class PositionDTOTest {
         final Set<TradeDTO> tradesP4 = new LinkedHashSet<>();
         tradesP4.add(openTrade4);
         tradesP4.add(closeTrade4);
-        PositionDTO p4 = new PositionDTO(4L,
-                CLOSED,
-                new CurrencyPairDTO(ETH, BTC),
-                new BigDecimal(1),
-                PositionRulesDTO.builder().stopGainPercentage(12).stopLossPercentage(9L).create(),
-                "OPEN_ORDER_04",
-                "OPEN_ORDER_04",
-                tradesP4,
-                null,
-                null);
+        PositionDTO p4 = PositionDTO.builder()
+                .id(4L)
+                .status(CLOSED)
+                .currencyPair(new CurrencyPairDTO(ETH, BTC))
+                .amount(new BigDecimal(1))
+                .stopGainPercentageRule(12F)
+                .stopLossPercentageRule(9F)
+                .openOrderId("OPEN_ORDER_04")
+                .closeOrderId("OPEN_ORDER_04")
+                .trades(tradesP4)
+                .lowestPrice(new BigDecimal(1))
+                .highestPrice(new BigDecimal(2))
+                .create();
         p4.tradeUpdate(closeTrade4);
         assertEquals(p4.toString(), "Position n°4 (12.0 % gain rule / 9.0 % loss rule) on ETH/BTC - Closed - Gain : 100 %");
     }

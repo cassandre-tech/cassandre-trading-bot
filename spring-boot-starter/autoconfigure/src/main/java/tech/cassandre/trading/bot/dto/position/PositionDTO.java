@@ -33,11 +33,11 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  */
 public class PositionDTO {
 
-    /** An identifier that uniquely identifies the position. */
-    private final long id;
-
     /** Position version (used for database backup). */
     private final AtomicLong version = new AtomicLong(0L);
+
+    /** An identifier that uniquely identifies the position. */
+    private final long id;
 
     /** Position status. */
     private PositionStatusDTO status = OPENING;
@@ -98,42 +98,52 @@ public class PositionDTO {
     }
 
     /**
-     * Constructor (only used when restoring from database).
+     * Builder used for database restore.
      *
-     * @param newId           position id
-     * @param newStatus       status
-     * @param newCurrencyPair currency pair
-     * @param newAmount       amount
-     * @param newRules        position rules
-     * @param newOpenOrderId  open order id
-     * @param newCloseOrderId close order id
-     * @param newTrades       close trades
-     * @param newLowestPrice  lowest price
-     * @param newHighestPrice highest price
+     * @param builder builder
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    public PositionDTO(final long newId,
-                       final PositionStatusDTO newStatus,
-                       final CurrencyPairDTO newCurrencyPair,
-                       final BigDecimal newAmount,
-                       final PositionRulesDTO newRules,
-                       final String newOpenOrderId,
-                       final String newCloseOrderId,
-                       final Set<TradeDTO> newTrades,
-                       final BigDecimal newLowestPrice,
-                       final BigDecimal newHighestPrice) {
-        this.id = newId;
-        this.status = newStatus;
-        this.rules = newRules;
-        this.openOrderId = newOpenOrderId;
-        this.currencyPair = newCurrencyPair;
-        this.amount = newAmount;
-        this.closeOrderId = newCloseOrderId;
-        if (newTrades != null) {
-            newTrades.forEach(t -> trades.put(t.getId(), t));
+    protected PositionDTO(final PositionDTO.Builder builder) {
+        this.id = builder.id;
+        this.status = builder.status;
+        this.currencyPair = builder.currencyPair;
+        this.amount = builder.amount;
+        PositionRulesDTO newRules = PositionRulesDTO.builder().create();
+        boolean stopGainRuleSet = builder.stopGainPercentageRule != null;
+        boolean stopLossRuleSet = builder.stopLossPercentageRule != null;
+        // Two rules set.
+        if (stopGainRuleSet && stopLossRuleSet) {
+            newRules = PositionRulesDTO.builder()
+                    .stopGainPercentage(builder.stopGainPercentageRule)
+                    .stopLossPercentage(builder.stopLossPercentageRule)
+                    .create();
         }
-        this.lowestPrice = newLowestPrice;
-        this.highestPrice = newHighestPrice;
+        // Stop gain set.
+        if (stopGainRuleSet && !stopLossRuleSet) {
+            newRules = PositionRulesDTO.builder()
+                    .stopGainPercentage(builder.stopGainPercentageRule)
+                    .create();
+        }
+        // Stop loss set.
+        if (!stopGainRuleSet && stopLossRuleSet) {
+            newRules = PositionRulesDTO.builder()
+                    .stopLossPercentage(builder.stopLossPercentageRule)
+                    .create();
+        }
+        this.rules = newRules;
+        this.openOrderId = builder.openOrderId;
+        this.closeOrderId = builder.closeOrderId;
+        this.trades.putAll(builder.trades);
+        this.lowestPrice = builder.lowestPrice;
+        this.highestPrice = builder.highestPrice;
+    }
+
+    /**
+     * Returns builder.
+     *
+     * @return builder
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -197,7 +207,6 @@ public class PositionDTO {
             if (gain.isPresent()) {
                 // We save the last calculated gain.
                 this.latestCalculatedGain = gain.get();
-
                 if (rules.isStopGainPercentageSet() && gain.get().getPercentage() >= rules.getStopGainPercentage()
                         || rules.isStopLossPercentageSet() && gain.get().getPercentage() <= -rules.getStopLossPercentage()) {
                     version.incrementAndGet();
@@ -534,16 +543,6 @@ public class PositionDTO {
      * @param value value
      * @return formatted value
      */
-    private String getFormattedValue(final BigDecimal value) {
-        return new DecimalFormat("#0.##").format(value);
-    }
-
-    /**
-     * Returns formatted value.
-     *
-     * @param value value
-     * @return formatted value
-     */
     private String getFormattedValue(final double value) {
         return new DecimalFormat("#0.##").format(value);
     }
@@ -608,9 +607,193 @@ public class PositionDTO {
             }
             return value;
         } catch (Exception e) {
-            // TODO Check why some errors appears if we only catch nullException.
             return "Position " + getId();
         }
+    }
+
+    /**
+     * Builder.
+     */
+    public static final class Builder {
+
+        /** An identifier that uniquely identifies the position. */
+        private long id;
+
+        /** Position status. */
+        private PositionStatusDTO status = OPENING;
+
+        /** Currency pair. */
+        private CurrencyPairDTO currencyPair;
+
+        /** Amount ordered. */
+        private BigDecimal amount;
+
+        /** Stop gain percentage rule. */
+        private Float stopGainPercentageRule;
+
+        /** Stop loss percentage rule. */
+        private Float stopLossPercentageRule;
+
+        /** The order id that opened the position. */
+        private String openOrderId;
+
+        /** The order id that closed the position. */
+        private String closeOrderId;
+
+        /** The trades that closed the position. */
+        private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
+
+        /** Lowest price for this position. */
+        private BigDecimal lowestPrice;
+
+        /** Highest price for this position. */
+        private BigDecimal highestPrice;
+
+        /**
+         * id.
+         *
+         * @param newId type
+         * @return builder
+         */
+        public Builder id(final long newId) {
+            this.id = newId;
+            return this;
+        }
+
+        /**
+         * status.
+         *
+         * @param newStatus status
+         * @return builder
+         */
+        public Builder status(final PositionStatusDTO newStatus) {
+            this.status = newStatus;
+            return this;
+        }
+
+        /**
+         * currency pair.
+         *
+         * @param newCurrencyPair currency pair
+         * @return builder
+         */
+        public Builder currencyPair(final CurrencyPairDTO newCurrencyPair) {
+            this.currencyPair = newCurrencyPair;
+            return this;
+        }
+
+        /**
+         * amount.
+         *
+         * @param newAmount amount
+         * @return builder
+         */
+        public Builder amount(final BigDecimal newAmount) {
+            this.amount = newAmount;
+            return this;
+        }
+
+        /**
+         * stopGainPercentageRule.
+         *
+         * @param newStopGainPercentageRule newStopGainPercentageRule
+         * @return builder
+         */
+        public Builder stopGainPercentageRule(final Float newStopGainPercentageRule) {
+            this.stopGainPercentageRule = newStopGainPercentageRule;
+            return this;
+        }
+
+        /**
+         * stopLossPercentageRule.
+         *
+         * @param newStopLossPercentageRule stopLossPercentageRule
+         * @return builder
+         */
+        public Builder stopLossPercentageRule(final Float newStopLossPercentageRule) {
+            this.stopLossPercentageRule = newStopLossPercentageRule;
+            return this;
+        }
+
+        /**
+         * openOrderId.
+         *
+         * @param newOpenOrderId rules
+         * @return builder
+         */
+        public Builder openOrderId(final String newOpenOrderId) {
+            this.openOrderId = newOpenOrderId;
+            return this;
+        }
+
+        /**
+         * closeOrderId.
+         *
+         * @param newCloseOrderId closeOrderId
+         * @return builder
+         */
+        public Builder closeOrderId(final String newCloseOrderId) {
+            this.closeOrderId = newCloseOrderId;
+            return this;
+        }
+
+        /**
+         * trades.
+         *
+         * @param newTrades trades
+         * @return builder
+         */
+        public Builder trades(final Set<TradeDTO> newTrades) {
+            if (newTrades != null) {
+                newTrades.forEach(tradeDTO -> trades.put(tradeDTO.getId(), tradeDTO));
+            }
+            return this;
+        }
+
+        /**
+         * trades.
+         *
+         * @param newTrades trades
+         * @return builder
+         */
+        public Builder trades(final Map<String, TradeDTO> newTrades) {
+            if (newTrades != null) {
+                newTrades.forEach(trades::put);
+            }
+            return this;
+        }
+
+        /**
+         * lowestPrice.
+         *
+         * @param newLowestPrice lowestPrice
+         * @return builder
+         */
+        public Builder lowestPrice(final BigDecimal newLowestPrice) {
+            this.lowestPrice = newLowestPrice;
+            return this;
+        }
+
+        /**
+         * highestPrice.
+         *
+         * @param newHighestPrice highestPrice
+         * @return builder
+         */
+        public Builder highestPrice(final BigDecimal newHighestPrice) {
+            this.highestPrice = newHighestPrice;
+            return this;
+        }
+
+        /**
+         * Creates order.
+         *
+         * @return order
+         */
+        public PositionDTO create() {
+            return new PositionDTO(this);
+        }
+
     }
 
 }

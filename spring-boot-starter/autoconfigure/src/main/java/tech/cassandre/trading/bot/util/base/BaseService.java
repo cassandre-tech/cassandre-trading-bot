@@ -4,9 +4,7 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import org.knowm.xchange.currency.CurrencyPair;
-import org.mapstruct.factory.Mappers;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
 
 import java.time.Duration;
 
@@ -14,9 +12,6 @@ import java.time.Duration;
  * Base service.
  */
 public abstract class BaseService extends Base {
-
-    /** Mapper. */
-    private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);
 
     /** Bucket. */
     private final Bucket bucket;
@@ -37,15 +32,6 @@ public abstract class BaseService extends Base {
     public BaseService(final long rate) {
         Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(rate));
         bucket = Bucket4j.builder().addLimit(limit).build();
-    }
-
-    /**
-     * Getter for mapper.
-     *
-     * @return mapper
-     */
-    protected final CassandreMapper getMapper() {
-        return mapper;
     }
 
     /**

@@ -70,16 +70,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return positionService;
     }
 
-    @Override
-    public final void restoreTrade(final TradeDTO trade) {
-        getTrades().put(trade.getId(), trade);
-    }
-
-    @Override
-    public final void restorePosition(final PositionDTO position) {
-        getPositions().put(position.getId(), position);
-    }
-
     /**
      * Getter accounts.
      *

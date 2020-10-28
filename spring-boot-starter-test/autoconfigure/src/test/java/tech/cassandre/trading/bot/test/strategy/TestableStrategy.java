@@ -19,6 +19,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 /**
  * Testable strategy.
  */
+@SuppressWarnings("unused")
 @CassandreStrategy(name = "Testable strategy")
 public final class TestableStrategy extends BasicCassandreStrategy {
 

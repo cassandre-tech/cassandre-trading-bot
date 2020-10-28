@@ -27,6 +27,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 /**
  * Testable ta4j strategy (used for tests).
  */
+@SuppressWarnings("unused")
 @CassandreStrategy(name = "Testable ta4j strategy")
 @ConditionalOnProperty(
         value = TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED,

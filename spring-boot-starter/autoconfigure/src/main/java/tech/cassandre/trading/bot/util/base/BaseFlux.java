@@ -19,9 +19,6 @@ public abstract class BaseFlux<T> extends Base {
     /** Flux sink. */
     private FluxSink<T> fluxSink;
 
-    /** Indicates if the previous values were restored. */
-    private boolean previousValuesRestored = false;
-
     /**
      * Constructor.
      */

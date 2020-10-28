@@ -42,9 +42,7 @@ import java.util.StringJoiner;
  * ExchangeConfiguration configures the exchange connection.
  */
 @Configuration
-@EnableConfigurationProperties({ExchangeParameters.class,
-        ExchangeParameters.Modes.class,
-        ExchangeParameters.Rates.class})
+@EnableConfigurationProperties(ExchangeParameters.class)
 public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** XChange user sandbox parameter. */
@@ -164,7 +162,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
                 this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService);
-                this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
             } else {
                 // Dry mode.
                 getLogger().info("Dry mode is on");
@@ -174,8 +171,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
                 tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode);
                 this.tradeService = tradeServiceDryMode;
-                this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
             }
+            this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
 
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(userService);

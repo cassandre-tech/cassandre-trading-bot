@@ -1,10 +1,6 @@
 package tech.cassandre.trading.bot.batch;
 
-import tech.cassandre.trading.bot.domain.Trade;
-import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseFlux;
@@ -60,38 +56,18 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
 
     @Override
     public final void backupValue(final TradeDTO newValue) {
-        Trade t = new Trade();
-        t.setId(newValue.getId());
-        t.setOrderId(newValue.getOrderId());
-        t.setType(newValue.getType().toString());
-        t.setOriginalAmount(newValue.getOriginalAmount());
-        t.setCurrencyPair(newValue.getCurrencyPair().toString());
-        t.setPrice(newValue.getPrice());
-        t.setTimestamp(newValue.getTimestamp());
-        t.setFeeAmount(newValue.getFee().getValue());
-        t.setFeeCurrency(newValue.getFee().getCurrency().toString());
-        tradeRepository.save(t);
+        tradeRepository.save(getMapper().mapToTrade(newValue));
     }
 
     @Override
     public final void restoreValues() {
-        getLogger().info("Restoring trades from database");
+        getLogger().info("TradeFlux - Restoring trades from database");
         tradeRepository.findByOrderByTimestampAsc()
                 .forEach(trade -> {
-                    TradeDTO t = TradeDTO.builder()
-                            .id(trade.getId())
-                            .orderId(trade.getOrderId())
-                            .type(OrderTypeDTO.valueOf(trade.getType()))
-                            .originalAmount(trade.getOriginalAmount())
-                            .currencyPair(new CurrencyPairDTO(trade.getCurrencyPair()))
-                            .price(trade.getPrice())
-                            .timestamp(trade.getTimestamp())
-                            .feeAmount(trade.getFeeAmount())
-                            .feeCurrency(new CurrencyDTO(trade.getFeeCurrency()))
-                            .create();
+                    TradeDTO t = getMapper().mapToTradeDTO(trade);
                     previousValues.put(t.getId(), t);
                     tradeService.restoreTrade(t);
-                    getLogger().info("Trade " + trade.getOrderId() + " restored : " + t);
+                    getLogger().info("TradeFlux - Trade " + trade.getOrderId() + " restored : " + t);
                 });
     }
 
