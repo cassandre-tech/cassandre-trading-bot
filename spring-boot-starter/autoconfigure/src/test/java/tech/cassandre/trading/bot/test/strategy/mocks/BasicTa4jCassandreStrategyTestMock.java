@@ -45,7 +45,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @TestConfiguration
 public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
-    final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
+    private final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
 
     @Autowired
     private PositionRepository positionRepository;

@@ -2,7 +2,6 @@ package tech.cassandre.trading.bot.test.batch;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
@@ -38,10 +37,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @TestConfiguration
 public class TradeFluxTestMock {
 
-    @Autowired
-    private ApplicationContext context;
-
-    final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
+    private final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
 
     @Autowired
     private TradeRepository tradeRepository;
