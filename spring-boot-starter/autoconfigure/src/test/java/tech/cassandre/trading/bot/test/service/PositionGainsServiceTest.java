@@ -14,7 +14,6 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,8 +34,7 @@ public class PositionGainsServiceTest {
 
     @Test
     @DisplayName("Check gains calculation")
-    public void checkGainsCalculation() throws InterruptedException {
-        TimeUnit.MINUTES.sleep(1);
+    public void checkGainsCalculation() {
         /*
             Position 1 - Bought 10 BTC with USDT.
             TRADE_11 - Bought 7 for 11 = 77.
@@ -53,6 +51,8 @@ public class PositionGainsServiceTest {
         assertTrue(p1.isPresent());
         final GainDTO gain1 = p1.get().getGain();
         // Gain (amount).
+        System.out.println(gain1);
+        System.out.println(gain1.getAmount().getValue());
         assertEquals(0, new BigDecimal("48").compareTo(gain1.getAmount().getValue()));
         assertEquals(USDT, gain1.getAmount().getCurrency());
         // Gain (percentage).
