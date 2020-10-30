@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,7 +35,8 @@ public class PositionGainsServiceTest {
 
     @Test
     @DisplayName("Check gains calculation")
-    public void checkGainsCalculation() {
+    public void checkGainsCalculation() throws InterruptedException {
+        TimeUnit.MINUTES.sleep(1);
         /*
             Position 1 - Bought 10 BTC with USDT.
             TRADE_11 - Bought 7 for 11 = 77.
