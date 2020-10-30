@@ -11,13 +11,14 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_NAME;
 
 @DisplayName("Exchange parameters - Unknown exchange name")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_NAME, value = "foo")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 public class UnknownExchangeTest extends BaseTest {
 
     @Test

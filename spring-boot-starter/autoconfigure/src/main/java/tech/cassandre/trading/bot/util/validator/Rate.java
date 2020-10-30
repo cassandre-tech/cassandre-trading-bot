@@ -19,10 +19,25 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @SuppressWarnings({"checkstyle:WhitespaceAround"})
 public @interface Rate {
 
+    /**
+     * Message.
+     *
+     * @return message
+     */
     String message();
 
+    /**
+     * Group of rates.
+     *
+     * @return rates
+     */
     Class<?>[] groups() default {};
 
+    /**
+     * Payload.
+     *
+     * @return payload
+     */
     Class<? extends Payload>[] payload() default {};
 
 }

@@ -12,13 +12,14 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_NAME;
 
 @DisplayName("Exchange parameters - Name parameter is missing")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_NAME)
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 public class NameParameterMissingTest extends BaseTest {
 
     @Test

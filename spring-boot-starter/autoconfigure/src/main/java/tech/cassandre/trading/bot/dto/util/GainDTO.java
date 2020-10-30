@@ -55,12 +55,31 @@ public class GainDTO {
     }
 
     /**
+     * Getter netAmount.
+     *
+     * @return netAmount
+     */
+    public final CurrencyAmountDTO getNetAmount() {
+        return new CurrencyAmountDTO(amount.getValue().subtract(fees.getValue()), amount.getCurrency());
+    }
+
+    /**
      * Getter fees.
      *
      * @return fees
      */
     public final CurrencyAmountDTO getFees() {
         return fees;
+    }
+
+    @Override
+    public final String toString() {
+        if (percentage == 0) {
+            return "No gain";
+        } else {
+            return "Gains: " + amount + " (" + percentage + " %) / Fees: " + fees;
+        }
+
     }
 
 }

@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
@@ -23,8 +24,8 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
         @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false"),
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class CassandreStrategyAutoConfigurationTest {
+@DirtiesContext(classMode = AFTER_CLASS)
+class CassandreStrategyAutoConfigurationTest {
 
     @Test
     @DisplayName("Check that a valid strategy was found")

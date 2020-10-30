@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_KEY;
@@ -35,7 +36,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
         @Property(key = PARAMETER_EXCHANGE_RATE_TICKER),
         @Property(key = PARAMETER_EXCHANGE_RATE_TRADE)
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 public class NoConfigurationTest extends BaseTest {
 
     @Test

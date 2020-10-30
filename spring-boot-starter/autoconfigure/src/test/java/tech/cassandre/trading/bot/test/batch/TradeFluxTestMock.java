@@ -1,37 +1,46 @@
-package tech.cassandre.trading.bot.test.batch.mocks;
+package tech.cassandre.trading.bot.test.batch;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
-public class TickerFluxTestMock extends BaseTest {
+public class TradeFluxTestMock {
+
+    private final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
+
+    @Autowired
+    private TradeRepository tradeRepository;
 
     @Bean
     @Primary
@@ -49,6 +58,12 @@ public class TickerFluxTestMock extends BaseTest {
     @Primary
     public OrderFlux orderFlux() {
         return new OrderFlux(tradeService());
+    }
+
+    @Bean
+    @Primary
+    public TradeFlux tradeFlux() {
+        return new TradeFlux(tradeService(), tradeRepository);
     }
 
     @SuppressWarnings("unchecked")
@@ -93,52 +108,60 @@ public class TickerFluxTestMock extends BaseTest {
         return userService;
     }
 
-    @SuppressWarnings("unchecked")
     @Bean
     @Primary
     public MarketService marketService() {
-        // Creates the mock.
-        MarketService marketService = mock(MarketService.class);
-
-        // Replies for ETH / BTC.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
-        final Date time = Calendar.getInstance().getTime();
-        given(marketService
-                .getTicker(cp1))
-                .willReturn(BaseTest.getFakeTicker(cp1, new BigDecimal("1")),
-                        BaseTest.getFakeTicker(cp1, new BigDecimal("2")),
-                        BaseTest.getFakeTicker(cp1, new BigDecimal("3")),
-                        Optional.empty(),
-                        BaseTest.getFakeTicker(time, cp1, new BigDecimal("4")),
-                        BaseTest.getFakeTicker(time, cp1, new BigDecimal("4")),
-                        BaseTest.getFakeTicker(cp1, new BigDecimal("5")),
-                        BaseTest.getFakeTicker(cp1, new BigDecimal("6")),
-                        Optional.empty()
-                );
-
-        // Replies for ETH / USDT.
-        final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
-        given(marketService
-                .getTicker(cp2))
-                .willReturn(BaseTest.getFakeTicker(cp2, new BigDecimal("10")),
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("20")),
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("30")),
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("40")),
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("50")),
-                        Optional.empty(),
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("60")),
-                        Optional.empty(),
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("70"))
-                );
-        return marketService;
-    }
-
-    @Bean
-    @Primary
-    public TradeService tradeService() {
-        TradeService service = mock(TradeService.class);
-        given(service.getOpenOrders()).willReturn(new LinkedHashSet<>());
+        MarketService service = mock(MarketService.class);
+        given(service.getTicker(any())).willReturn(Optional.empty());
         return service;
     }
 
+    @SuppressWarnings("unchecked")
+    @Bean
+    @Primary
+    public TradeService tradeService() {
+        // Creates the mock.
+        TradeService tradeService = mock(TradeService.class);
+
+        // =========================================================================================================
+        // First reply : 2 trades.
+        TradeDTO trade01 = TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).create();
+        TradeDTO trade02 = TradeDTO.builder().id("0000002").type(BID).currencyPair(cp1).create();
+
+        Set<TradeDTO> reply01 = new LinkedHashSet<>();
+        reply01.add(trade01);
+        reply01.add(trade02);
+
+        // =========================================================================================================
+        // First reply : 3 trades.
+        TradeDTO trade03 = TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create();
+        TradeDTO trade04 = TradeDTO.builder().id("0000004").type(BID).currencyPair(cp1).create();
+        TradeDTO trade05 = TradeDTO.builder().id("0000005").type(BID).currencyPair(cp1).create();
+
+        Set<TradeDTO> reply02 = new LinkedHashSet<>();
+        reply02.add(trade03);
+        reply02.add(trade04);
+        reply02.add(trade05);
+
+        // =========================================================================================================
+        // First reply : 3 trades - Trade07 is again trade 0000003.
+        TradeDTO trade06 = TradeDTO.builder().id("0000006").type(BID).currencyPair(cp1).create();
+        TradeDTO trade07 = TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create();
+        TradeDTO trade08 = TradeDTO.builder().id("0000008").type(BID).currencyPair(cp1).create();
+
+        Set<TradeDTO> reply03 = new LinkedHashSet<>();
+        reply02.add(trade06);
+        reply02.add(trade07);
+        reply02.add(trade08);
+
+        // =========================================================================================================
+        // Creating the mock.
+        given(tradeService.getTrades())
+                .willReturn(new LinkedHashSet<>(),  // Reply empty for data restore.
+                        reply01,
+                        new LinkedHashSet<>(),
+                        reply02,
+                        reply03);
+        return tradeService;
+    }
 }

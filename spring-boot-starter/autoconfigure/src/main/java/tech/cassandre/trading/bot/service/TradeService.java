@@ -89,11 +89,4 @@ public interface TradeService {
      */
     void restoreTrade(TradeDTO trade);
 
-    /**
-     * Backup trade.
-     *
-     * @param trade trade
-     */
-    void backupTrade(TradeDTO trade);
-
 }

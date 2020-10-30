@@ -219,4 +219,19 @@ public class Trade {
         feeCurrency = newFeeCurrency;
     }
 
+    @Override
+    public final String toString() {
+        return "Trade{"
+                + " id='" + id + '\''
+                + ", orderId='" + orderId + '\''
+                + ", type='" + type + '\''
+                + ", originalAmount=" + originalAmount
+                + ", currencyPair='" + currencyPair + '\''
+                + ", price=" + price
+                + ", timestamp=" + timestamp
+                + ", feeAmount=" + feeAmount
+                + ", feeCurrency='" + feeCurrency + '\''
+                + '}';
+    }
+
 }

@@ -10,14 +10,22 @@ import tech.cassandre.trading.bot.util.exception.PositionException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
+import static java.math.RoundingMode.HALF_UP;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
 /**
  * DTO representing a position.
@@ -25,14 +33,20 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
  */
 public class PositionDTO {
 
-    /** An identifier that uniquely identifies the position. */
-    private final long id;
-
     /** Position version (used for database backup). */
     private final AtomicLong version = new AtomicLong(0L);
 
+    /** An identifier that uniquely identifies the position. */
+    private final long id;
+
     /** Position status. */
     private PositionStatusDTO status = OPENING;
+
+    /** Currency pair. */
+    private final CurrencyPairDTO currencyPair;
+
+    /** Amount ordered. */
+    private final BigDecimal amount;
 
     /** Position rules. */
     private final PositionRulesDTO rules;
@@ -40,23 +54,20 @@ public class PositionDTO {
     /** The order id that opened the position. */
     private final String openOrderId;
 
-    /** The trade that opened the position. */
-    private TradeDTO openTrade;
-
     /** The order id that closed the position. */
     private String closeOrderId;
 
-    /** The trade that closed the position. */
-    private TradeDTO closeTrade;
-
-    /** Last calculated gain from the last ticker received. */
-    private GainDTO lastCalculatedGain;
+    /** The trades that closed the position. */
+    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
 
     /** Lowest price for this position. */
     private BigDecimal lowestPrice;
 
     /** Highest price for this position. */
     private BigDecimal highestPrice;
+
+    /** Last calculated gain from the last ticker received. */
+    private GainDTO latestCalculatedGain;
 
     /** Percentage. */
     private static final int ONE_HUNDRED = 100;
@@ -67,51 +78,72 @@ public class PositionDTO {
     /**
      * Constructor.
      *
-     * @param newId          position id
-     * @param newOpenOrderId open order id
-     * @param newRules       position rules
+     * @param newId           position id
+     * @param newCurrencyPair currency pair
+     * @param newAmount       amount
+     * @param newOpenOrderId  open order id
+     * @param newRules        position rules
      */
     public PositionDTO(final long newId,
+                       final CurrencyPairDTO newCurrencyPair,
+                       final BigDecimal newAmount,
                        final String newOpenOrderId,
                        final PositionRulesDTO newRules) {
         this.id = newId;
+        this.currencyPair = newCurrencyPair;
+        this.amount = newAmount;
         this.openOrderId = newOpenOrderId;
         this.rules = newRules;
         version.incrementAndGet();
     }
 
     /**
-     * Constructor (only used when restoring from database).
+     * Builder used for database restore.
      *
-     * @param newId           position id
-     * @param newStatus       status
-     * @param newRules        position rules
-     * @param newOpenOrderId  open order id
-     * @param newOpenTrade    open trade
-     * @param newCloseOrderId close order id
-     * @param newCloseTrade   close trade
-     * @param newLowestPrice  lowest price
-     * @param newHighestPrice highest price
+     * @param builder builder
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    public PositionDTO(final long newId,
-                       final PositionStatusDTO newStatus,
-                       final PositionRulesDTO newRules,
-                       final String newOpenOrderId,
-                       final TradeDTO newOpenTrade,
-                       final String newCloseOrderId,
-                       final TradeDTO newCloseTrade,
-                       final BigDecimal newLowestPrice,
-                       final BigDecimal newHighestPrice) {
-        this.id = newId;
-        this.status = newStatus;
+    protected PositionDTO(final PositionDTO.Builder builder) {
+        this.id = builder.id;
+        this.status = builder.status;
+        this.currencyPair = builder.currencyPair;
+        this.amount = builder.amount;
+        PositionRulesDTO newRules = PositionRulesDTO.builder().create();
+        boolean stopGainRuleSet = builder.stopGainPercentageRule != null;
+        boolean stopLossRuleSet = builder.stopLossPercentageRule != null;
+        // Two rules set.
+        if (stopGainRuleSet && stopLossRuleSet) {
+            newRules = PositionRulesDTO.builder()
+                    .stopGainPercentage(builder.stopGainPercentageRule)
+                    .stopLossPercentage(builder.stopLossPercentageRule)
+                    .create();
+        }
+        // Stop gain set.
+        if (stopGainRuleSet && !stopLossRuleSet) {
+            newRules = PositionRulesDTO.builder()
+                    .stopGainPercentage(builder.stopGainPercentageRule)
+                    .create();
+        }
+        // Stop loss set.
+        if (!stopGainRuleSet && stopLossRuleSet) {
+            newRules = PositionRulesDTO.builder()
+                    .stopLossPercentage(builder.stopLossPercentageRule)
+                    .create();
+        }
         this.rules = newRules;
-        this.openOrderId = newOpenOrderId;
-        this.openTrade = newOpenTrade;
-        this.closeOrderId = newCloseOrderId;
-        this.closeTrade = newCloseTrade;
-        this.lowestPrice = newLowestPrice;
-        this.highestPrice = newHighestPrice;
+        this.openOrderId = builder.openOrderId;
+        this.closeOrderId = builder.closeOrderId;
+        this.trades.putAll(builder.trades);
+        this.lowestPrice = builder.lowestPrice;
+        this.highestPrice = builder.highestPrice;
+    }
+
+    /**
+     * Returns builder.
+     *
+     * @return builder
+     */
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -135,16 +167,26 @@ public class PositionDTO {
      * @param trade trade
      */
     public void tradeUpdate(final TradeDTO trade) {
-        // If status is OPENING and the trade for the open order arrives ==> status = OPENED.
+        // If status is OPENING and the trades for the open order arrives for the whole amount ==> status = OPENED.
         if (trade.getOrderId().equals(openOrderId) && status == OPENING) {
-            openTrade = trade;
-            status = OPENED;
+            trades.put(trade.getId(), trade);
+
+            // We calculate the sum of amount in the all the trades.
+            // If it reaches the original amount we order, we consider the trade opened.
+            if (amount.compareTo(getTotalAmountFromOpenTrades()) == 0) {
+                status = OPENED;
+            }
             version.incrementAndGet();
         }
-        // If status is CLOSING and the trade for the close order arrives ==> status = CLOSED.
+        // If status is CLOSING and the trades for the close order arrives for the whole amount ==> status = CLOSED.
         if (trade.getOrderId().equals(closeOrderId) && status == CLOSING) {
-            closeTrade = trade;
-            status = CLOSED;
+            trades.put(trade.getId(), trade);
+
+            // We calculate the sum of amount in the all the trades.
+            // If it reaches the original amount we order, we consider the trade opened.
+            if (amount.compareTo(getTotalAmountFromCloseTrades()) == 0) {
+                status = CLOSED;
+            }
             version.incrementAndGet();
         }
     }
@@ -158,14 +200,13 @@ public class PositionDTO {
     public boolean shouldBeClosed(final TickerDTO ticker) {
         // The status must be OPENED to be closed.
         // The currency pair of the ticker must be the same than the currency pair of the open trade.
-        if (status != OPENED || !ticker.getCurrencyPair().equals(openTrade.getCurrencyPair())) {
+        if (closeOrderId != null || !ticker.getCurrencyPair().equals(currencyPair)) {
             return false;
         } else {
             final Optional<GainDTO> gain = calculateGainFromPrice(ticker.getLast());
             if (gain.isPresent()) {
                 // We save the last calculated gain.
-                this.lastCalculatedGain = gain.get();
-
+                this.latestCalculatedGain = gain.get();
                 if (rules.isStopGainPercentageSet() && gain.get().getPercentage() >= rules.getStopGainPercentage()
                         || rules.isStopLossPercentageSet() && gain.get().getPercentage() <= -rules.getStopLossPercentage()) {
                     version.incrementAndGet();
@@ -210,19 +251,22 @@ public class PositionDTO {
      */
     private Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
         if ((status == OPENED || status == CLOSED) && price != null) {
+            // We take the price from the first trade received.
+            final TradeDTO openTrade = getOpenTrades().iterator().next();
+
             // How gain calculation works ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50.
             //  - Sold 10 ETH with a price of 6 -> Amount of 60.
             //  Gain = (6-5)/5 = 20%.
-            float percentage = (price.subtract(openTrade.getPrice()))
+            float gainPercentage = (price.subtract(openTrade.getPrice()))
                     .divide(openTrade.getPrice(), BIGINTEGER_SCALE, RoundingMode.FLOOR)
                     .floatValue() * ONE_HUNDRED;
-            BigDecimal amount = ((openTrade.getOriginalAmount().multiply(price))
+            BigDecimal gainAmount = ((openTrade.getOriginalAmount().multiply(price))
                     .subtract((openTrade.getOriginalAmount()).multiply(openTrade.getPrice())));
 
-            GainDTO gain = new GainDTO(percentage,
-                    new CurrencyAmountDTO(amount, openTrade.getCurrencyPair().getQuoteCurrency()),
-                    new CurrencyAmountDTO(BigDecimal.ZERO, openTrade.getCurrencyPair().getQuoteCurrency()));
+            GainDTO gain = new GainDTO(gainPercentage,
+                    new CurrencyAmountDTO(gainAmount, currencyPair.getQuoteCurrency()),
+                    new CurrencyAmountDTO(BigDecimal.ZERO, currencyPair.getQuoteCurrency()));
             return Optional.of(gain);
         } else {
             return Optional.empty();
@@ -244,26 +288,75 @@ public class PositionDTO {
             // Price is 0.035547 means 1 Ether equals 0.035547 Bitcoin
             // If you buy a currency pair, you buy the base currency and implicitly sell the quoted currency.
 
-            // - Bought 10 ETH with a price of 5 BTC -> costs 50 BTC.
-            // - Sold 10 ETH with a price of 6 BTC -> earns 60 BTC.
-            // Gain in percentage = (6-5)/5 = 20 %.
-            double percentage = (closeTrade.getPrice().subtract(openTrade.getPrice()))
-                    .divide(openTrade.getPrice(), BIGINTEGER_SCALE, RoundingMode.FLOOR)
-                    .floatValue() * ONE_HUNDRED;
-            // Gain in amount = (10*6)-(10*5)= 10 BTC.
-            BigDecimal amount = ((closeTrade.getOriginalAmount().multiply(closeTrade.getPrice()))
-                    .subtract((openTrade.getOriginalAmount()).multiply(openTrade.getPrice())));
-            // Fees : open trade fees + close trade fees.
-            BigDecimal fees = openTrade.getFee().getValue().add(closeTrade.getFee().getValue());
+            // - Bought 10 ETH with a price of 4 BTC -> costs 40 BTC.
+            // - Bought 20 ETH with a price of 3 BTC -> costs 60 BTC.
+            // - Sold 10 ETH with a price of 3 BTC -> earns 30 BTC.
+            // - Sold 05 ETH with a price of 6 BTC -> earns 30 BTC
+            // - Sold 15 ETH with a price of 6 BTC -> earns 90 BTC
+            // ---
+            // To start the position, I spent 100 BTC.
+            // When I closed the position, I received 150 BTC
+            // Gain  -> ((150 - 100) / 100) * 100 = 50 %
+            BigDecimal bought = getOpenTrades()
+                    .stream()
+                    .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal sold = getCloseTrades()
+                    .stream()
+                    .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            // Calculate gain.
+            BigDecimal gainAmount = sold.subtract(bought);
+            BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(new BigDecimal("100"));
 
             // Return position gain.
-            return new GainDTO(percentage,
-                    new CurrencyAmountDTO(amount, openTrade.getCurrencyPair().getQuoteCurrency()),
-                    new CurrencyAmountDTO(fees, openTrade.getCurrencyPair().getQuoteCurrency()));
+            return new GainDTO(gainPercentage.setScale(2, HALF_UP).doubleValue(),
+                    new CurrencyAmountDTO(gainAmount, currencyPair.getQuoteCurrency()),
+                    new CurrencyAmountDTO(getTotalFees(), currencyPair.getQuoteCurrency()));
         } else {
             // No gain for the moment !
             return new GainDTO();
         }
+    }
+
+    /**
+     * Get total fees from all trades.
+     *
+     * @return fees
+     */
+    private BigDecimal getTotalFees() {
+        return trades.values()
+                .stream()
+                .map(t -> t.getFee().getValue())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Returns the total amount from open trades.
+     *
+     * @return total
+     */
+    private BigDecimal getTotalAmountFromOpenTrades() {
+        return trades.values()
+                .stream()
+                .filter(t -> BID.equals(t.getType()))
+                .map(TradeDTO::getOriginalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Returns the total amount from close trades.
+     *
+     * @return total
+     */
+    private BigDecimal getTotalAmountFromCloseTrades() {
+        return trades.values()
+                .stream()
+                .filter(t -> ASK.equals(t.getType()))
+                .map(TradeDTO::getOriginalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     /**
@@ -290,11 +383,16 @@ public class PositionDTO {
      * @return currency pair
      */
     public final CurrencyPairDTO getCurrencyPair() {
-        if (openTrade != null) {
-            return openTrade.getCurrencyPair();
-        } else {
-            return null;
-        }
+        return currencyPair;
+    }
+
+    /**
+     * Getter amount.
+     *
+     * @return amount
+     */
+    public final BigDecimal getAmount() {
+        return amount;
     }
 
     /**
@@ -307,21 +405,53 @@ public class PositionDTO {
     }
 
     /**
-     * Getter for openTrade.
+     * Getter trades.
      *
-     * @return openTrade
+     * @return trades
      */
-    public final TradeDTO getOpenTrade() {
-        return openTrade;
+    public final Set<TradeDTO> getTrades() {
+        return new HashSet<>(trades.values());
     }
 
     /**
-     * Getter for closeTrade.
+     * Returns trade from its id.
      *
-     * @return closeTrade
+     * @param tradeId trade id
+     * @return trade
      */
-    public final TradeDTO getCloseTrade() {
-        return closeTrade;
+    public final Optional<TradeDTO> getTrade(final String tradeId) {
+        if (tradeId == null) {
+            return Optional.empty();
+        } else {
+            return trades.values()
+                    .stream()
+                    .filter(t -> tradeId.equals(t.getId()))
+                    .findFirst();
+        }
+    }
+
+    /**
+     * Getter openTrades.
+     *
+     * @return openTrades
+     */
+    public final Set<TradeDTO> getOpenTrades() {
+        return trades.values()
+                .stream()
+                .filter(t -> BID.equals(t.getType()))
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Getter closeTrades.
+     *
+     * @return closeTrades
+     */
+    public final Set<TradeDTO> getCloseTrades() {
+        return trades.values()
+                .stream()
+                .filter(t -> ASK.equals(t.getType()))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -331,15 +461,6 @@ public class PositionDTO {
      */
     public final String getOpenOrderId() {
         return openOrderId;
-    }
-
-    /**
-     * Getter last calculated gain from the last ticker received.
-     *
-     * @return lastCalculatedGain
-     */
-    public final Optional<GainDTO> getLastCalculatedGain() {
-        return Optional.ofNullable(lastCalculatedGain);
     }
 
     /**
@@ -367,6 +488,26 @@ public class PositionDTO {
      */
     public final BigDecimal getHighestPrice() {
         return highestPrice;
+    }
+
+
+    /**
+     * Getter last calculated gain from the last ticker received.
+     *
+     * @return lastCalculatedGain
+     */
+    @Deprecated(since = "2.4", forRemoval = true)
+    public final Optional<GainDTO> getLastCalculatedGain() {
+        return Optional.ofNullable(latestCalculatedGain);
+    }
+
+    /**
+     * Getter latestCalculatedGain.
+     *
+     * @return latestCalculatedGain
+     */
+    public final Optional<GainDTO> getLatestCalculatedGain() {
+        return Optional.ofNullable(latestCalculatedGain);
     }
 
     /**
@@ -398,15 +539,7 @@ public class PositionDTO {
 
     /**
      * Returns formatted value.
-     * @param value value
-     * @return formatted value
-     */
-    private String getFormattedValue(final BigDecimal value) {
-        return new DecimalFormat("#0.##").format(value);
-    }
-
-    /**
-     * Returns formatted value.
+     *
      * @param value value
      * @return formatted value
      */
@@ -456,9 +589,9 @@ public class PositionDTO {
                     break;
                 case OPENED:
                     value += " on " + getCurrencyPair() + " - Opened";
-                    final Optional<GainDTO> lastGain = getLastCalculatedGain();
+                    final Optional<GainDTO> lastGain = getLatestCalculatedGain();
                     if (lastGain.isPresent()) {
-                        value += " - Last gain calculated " + getFormattedValue(getLastCalculatedGain().get().getPercentage()) + " %";
+                        value += " - Last gain calculated " + getFormattedValue(getLatestCalculatedGain().get().getPercentage()) + " %";
                     }
                     break;
                 case CLOSING:
@@ -473,9 +606,194 @@ public class PositionDTO {
                     break;
             }
             return value;
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             return "Position " + getId();
         }
+    }
+
+    /**
+     * Builder.
+     */
+    public static final class Builder {
+
+        /** An identifier that uniquely identifies the position. */
+        private long id;
+
+        /** Position status. */
+        private PositionStatusDTO status = OPENING;
+
+        /** Currency pair. */
+        private CurrencyPairDTO currencyPair;
+
+        /** Amount ordered. */
+        private BigDecimal amount;
+
+        /** Stop gain percentage rule. */
+        private Float stopGainPercentageRule;
+
+        /** Stop loss percentage rule. */
+        private Float stopLossPercentageRule;
+
+        /** The order id that opened the position. */
+        private String openOrderId;
+
+        /** The order id that closed the position. */
+        private String closeOrderId;
+
+        /** The trades that closed the position. */
+        private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
+
+        /** Lowest price for this position. */
+        private BigDecimal lowestPrice;
+
+        /** Highest price for this position. */
+        private BigDecimal highestPrice;
+
+        /**
+         * id.
+         *
+         * @param newId type
+         * @return builder
+         */
+        public Builder id(final long newId) {
+            this.id = newId;
+            return this;
+        }
+
+        /**
+         * status.
+         *
+         * @param newStatus status
+         * @return builder
+         */
+        public Builder status(final PositionStatusDTO newStatus) {
+            this.status = newStatus;
+            return this;
+        }
+
+        /**
+         * currency pair.
+         *
+         * @param newCurrencyPair currency pair
+         * @return builder
+         */
+        public Builder currencyPair(final CurrencyPairDTO newCurrencyPair) {
+            this.currencyPair = newCurrencyPair;
+            return this;
+        }
+
+        /**
+         * amount.
+         *
+         * @param newAmount amount
+         * @return builder
+         */
+        public Builder amount(final BigDecimal newAmount) {
+            this.amount = newAmount;
+            return this;
+        }
+
+        /**
+         * stopGainPercentageRule.
+         *
+         * @param newStopGainPercentageRule newStopGainPercentageRule
+         * @return builder
+         */
+        public Builder stopGainPercentageRule(final Float newStopGainPercentageRule) {
+            this.stopGainPercentageRule = newStopGainPercentageRule;
+            return this;
+        }
+
+        /**
+         * stopLossPercentageRule.
+         *
+         * @param newStopLossPercentageRule stopLossPercentageRule
+         * @return builder
+         */
+        public Builder stopLossPercentageRule(final Float newStopLossPercentageRule) {
+            this.stopLossPercentageRule = newStopLossPercentageRule;
+            return this;
+        }
+
+        /**
+         * openOrderId.
+         *
+         * @param newOpenOrderId rules
+         * @return builder
+         */
+        public Builder openOrderId(final String newOpenOrderId) {
+            this.openOrderId = newOpenOrderId;
+            return this;
+        }
+
+        /**
+         * closeOrderId.
+         *
+         * @param newCloseOrderId closeOrderId
+         * @return builder
+         */
+        public Builder closeOrderId(final String newCloseOrderId) {
+            this.closeOrderId = newCloseOrderId;
+            return this;
+        }
+
+        /**
+         * trades.
+         *
+         * @param newTrades trades
+         * @return builder
+         */
+        public Builder trades(final Set<TradeDTO> newTrades) {
+            if (newTrades != null) {
+                newTrades.forEach(tradeDTO -> trades.put(tradeDTO.getId(), tradeDTO));
+            }
+            return this;
+        }
+
+        /**
+         * trades.
+         *
+         * @param newTrades trades
+         * @return builder
+         */
+        public Builder trades(final Map<String, TradeDTO> newTrades) {
+            if (newTrades != null) {
+                newTrades.forEach(trades::put);
+            }
+            return this;
+        }
+
+        /**
+         * lowestPrice.
+         *
+         * @param newLowestPrice lowestPrice
+         * @return builder
+         */
+        public Builder lowestPrice(final BigDecimal newLowestPrice) {
+            this.lowestPrice = newLowestPrice;
+            return this;
+        }
+
+        /**
+         * highestPrice.
+         *
+         * @param newHighestPrice highestPrice
+         * @return builder
+         */
+        public Builder highestPrice(final BigDecimal newHighestPrice) {
+            this.highestPrice = newHighestPrice;
+            return this;
+        }
+
+        /**
+         * Creates order.
+         *
+         * @return order
+         */
+        public PositionDTO create() {
+            return new PositionDTO(this);
+        }
+
     }
 
 }

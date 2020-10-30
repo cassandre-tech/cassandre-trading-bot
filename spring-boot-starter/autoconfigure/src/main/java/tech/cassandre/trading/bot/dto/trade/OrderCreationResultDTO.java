@@ -80,12 +80,17 @@ public final class OrderCreationResultDTO {
 
     @Override
     public String toString() {
-        return "OrderCreationResultDTO{"
-                + " orderId='" + orderId + '\''
-                + ", errorMessage='" + errorMessage + '\''
-                + ", exception=" + exception
-                + ", successful=" + successful
-                + '}';
+        if (successful) {
+            return "OrderCreationResultDTO{"
+                    + " orderId='" + orderId + '\''
+                    + '}';
+        } else {
+            return "OrderCreationResultDTO{"
+                    + " errorMessage='" + errorMessage + '\''
+                    + ", exception=" + exception
+                    + '}';
+        }
+
     }
 
 }

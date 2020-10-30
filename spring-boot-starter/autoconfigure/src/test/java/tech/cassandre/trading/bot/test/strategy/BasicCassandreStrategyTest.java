@@ -22,6 +22,7 @@ import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
@@ -39,7 +40,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
         @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 @Import(BasicCassandreStrategyTestMock.class)
 public class BasicCassandreStrategyTest extends BaseTest {
 
@@ -95,6 +96,8 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertTrue(strategy.canBuy(cp2, new BigDecimal("0.1")));
         assertTrue(strategy.canBuy(account, cp2, new BigDecimal("0.1")));
         // Trying to buy a 0.1 bitcoin that costs 1 001 USDT (we have 2 000 USDT). But we want to have 1 000 USDT left.
+        assertFalse(strategy.canBuy(cp2, new BigDecimal("0.1"), new BigDecimal("1001")));
+        assertFalse(strategy.canBuy(cp2, new BigDecimal("0.1"), new BigDecimal("1001")));
         assertFalse(strategy.canBuy(account, cp2, new BigDecimal("0.1"), new BigDecimal("1001")));
         assertFalse(strategy.canBuy(account, cp2, new BigDecimal("0.1"), new BigDecimal("1001")));
 

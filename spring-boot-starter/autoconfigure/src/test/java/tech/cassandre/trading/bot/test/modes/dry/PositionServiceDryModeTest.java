@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.PositionService;
@@ -20,12 +21,14 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -40,7 +43,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 @Import(PositionServiceDryModeTestMock.class)
 public class PositionServiceDryModeTest extends BaseTest {
 
@@ -77,8 +80,9 @@ public class PositionServiceDryModeTest extends BaseTest {
         assertTrue(position01.isSuccessful());
         assertEquals(1, position01.getPositionId());
         assertEquals("DRY_ORDER_000000001", position01.getOrderId());
-        await().untilAsserted(() -> assertTrue(positionService.getPositionById(1).isPresent()));
-        await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
+        final Optional<PositionDTO> position1 = positionService.getPositionById(1);
+        assertTrue(position1.isPresent());
+        await().untilAsserted(() -> assertEquals(OPENED, position1.get().getStatus()));
 
         // Check position flux.
         positionFlux.update();
@@ -97,7 +101,9 @@ public class PositionServiceDryModeTest extends BaseTest {
         assertEquals("DRY_ORDER_000000002", p2.getOrderId());
         await().untilAsserted(() -> assertTrue(positionService.getPositionById(2).isPresent()));
         await().untilAsserted(() -> assertTrue(positionService.getPositionById(2).isPresent()));
-        await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
+        final Optional<PositionDTO> position2 = positionService.getPositionById(2);
+        assertTrue(position2.isPresent());
+        await().untilAsserted(() -> assertEquals(OPENED, position2.get().getStatus()));
 
         // Check position flux.
         positionFlux.update();

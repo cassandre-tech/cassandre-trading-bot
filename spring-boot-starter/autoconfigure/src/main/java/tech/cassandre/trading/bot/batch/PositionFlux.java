@@ -1,12 +1,15 @@
 package tech.cassandre.trading.bot.batch;
 
+import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.util.base.BaseFlux;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -20,13 +23,18 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
     /** Previous values. */
     private final Map<Long, Long> previousValues = new LinkedHashMap<>();
 
+    /** Position repository. */
+    private final PositionRepository positionRepository;
+
     /**
      * Constructor.
      *
-     * @param newPositionService position service
+     * @param newPositionService    position service
+     * @param newPositionRepository position repository
      */
-    public PositionFlux(final PositionService newPositionService) {
+    public PositionFlux(final PositionService newPositionService, final PositionRepository newPositionRepository) {
         this.positionService = newPositionService;
+        this.positionRepository = newPositionRepository;
     }
 
     @Override
@@ -49,13 +57,26 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
         return newValues;
     }
 
-    /**
-     * Restore position.
-     *
-     * @param position position
-     */
-    public final void restorePosition(final PositionDTO position) {
-        previousValues.put(position.getId(), position.getVersion());
+    @Override
+    public final void backupValue(final PositionDTO newValue) {
+        Optional<Position> p = positionRepository.findById(newValue.getId());
+        if (p.isPresent()) {
+            positionRepository.save(getMapper().mapToPosition(newValue));
+        } else {
+            // Position was not found.
+            getLogger().error("Position {} was not saved because it was not found in database", newValue.getId());
+        }
+    }
+
+    @Override
+    public final void restoreValues() {
+        getLogger().info("PositionFlux - Restoring positions from database");
+        positionRepository.findAll().forEach(position -> {
+            PositionDTO p = getMapper().mapToPositionDTO(position);
+            previousValues.put(p.getId(), 0L);
+            positionService.restorePosition(p);
+            getLogger().info("PositionFlux - Position " + position.getId() + " restored : " + p);
+        });
     }
 
 }

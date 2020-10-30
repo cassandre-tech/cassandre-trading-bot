@@ -10,12 +10,13 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 
 @DisplayName("Database parameters - Valid configuration")
 @Configuration({
         @Property(key = "TEST_NAME", value = "Database parameters - Valid configuration")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 public class ValidConfigurationTest extends BaseTest {
 
     @Test

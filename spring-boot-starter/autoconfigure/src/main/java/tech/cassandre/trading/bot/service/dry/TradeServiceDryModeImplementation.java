@@ -2,7 +2,6 @@ package tech.cassandre.trading.bot.service.dry;
 
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -11,10 +10,9 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -65,19 +63,13 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /** User service - dry mode. */
     private final UserServiceDryModeImplementation userService;
 
-    /** Trade repository. */
-    private final TradeRepository tradeRepository;
-
     /**
      * Constructor.
      *
      * @param newUserService user service
-     * @param newTradeRepository trade repository
      */
-    public TradeServiceDryModeImplementation(final UserServiceDryModeImplementation newUserService,
-                                             final TradeRepository newTradeRepository) {
+    public TradeServiceDryModeImplementation(final UserServiceDryModeImplementation newUserService) {
         this.userService = newUserService;
-        this.tradeRepository = newTradeRepository;
     }
 
     /**
@@ -278,21 +270,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     @Override
     public final void restoreTrade(final TradeDTO trade) {
         trades.put(trade.getId(), trade);
-    }
-
-    @Override
-    public final void backupTrade(final TradeDTO trade) {
-        Trade t = new Trade();
-        t.setId(trade.getId());
-        t.setOrderId(trade.getOrderId());
-        t.setType(trade.getType().toString());
-        t.setOriginalAmount(trade.getOriginalAmount());
-        t.setCurrencyPair(trade.getCurrencyPair().toString());
-        t.setPrice(trade.getPrice());
-        t.setTimestamp(trade.getTimestamp());
-        t.setFeeAmount(trade.getFee().getValue());
-        t.setFeeCurrency(trade.getFee().getCurrency().toString());
-        tradeRepository.save(t);
     }
 
 }

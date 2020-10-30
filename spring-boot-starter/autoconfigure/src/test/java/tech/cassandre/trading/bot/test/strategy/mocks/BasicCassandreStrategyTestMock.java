@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.strategy.mocks;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -15,13 +16,15 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -32,6 +35,7 @@ import java.util.Set;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -39,6 +43,14 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SuppressWarnings("unchecked")
 @TestConfiguration
 public class BasicCassandreStrategyTestMock extends BaseTest {
+
+    private final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+
+    @Autowired
+    private PositionRepository positionRepository;
+
+    @Autowired
+    private TradeRepository tradeRepository;
 
     @Bean
     @Primary
@@ -61,13 +73,13 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
     @Bean
     @Primary
     public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService());
+        return new TradeFlux(tradeService(), tradeRepository);
     }
 
     @Bean
     @Primary
     public PositionFlux positionFlux() {
-        return new PositionFlux(positionService());
+        return new PositionFlux(positionService(), positionRepository);
     }
 
     @SuppressWarnings("unchecked")
@@ -124,7 +136,6 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
     public MarketService marketService() {
         MarketService service = mock(MarketService.class);
         // Returns three values.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
         given(service.getTicker(cp1)).willReturn(
                 BaseTest.getFakeTicker(cp1, new BigDecimal("1")),   // Ticker 01.
                 BaseTest.getFakeTicker(cp1, new BigDecimal("2")),   // Ticker 02.
@@ -151,9 +162,9 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-        replyGetTrades.add(TradeDTO.builder().id("0000001").create());      // Trade 01.
-        replyGetTrades.add(TradeDTO.builder().id("0000002").create());      // Trade 02.
-        replyGetTrades.add(TradeDTO.builder().id("0000003").create());      // Trade 03.
+        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).create());      // Trade 01.
+        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp1).create());      // Trade 02.
+        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create());      // Trade 03.
         given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;
@@ -166,27 +177,29 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         // Creates the mock.
         final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
         PositionService positionService = mock(PositionService.class);
+        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+        final BigDecimal amount = new BigDecimal("1");
 
         // Reply 1 : 2 positions.
-        PositionDTO p1 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p2 = new PositionDTO(2, "O000002", noRules);
+        PositionDTO p1 = new PositionDTO(1, cp1, amount, "O000001", noRules);
+        PositionDTO p2 = new PositionDTO(2, cp1, amount,"O000002", noRules);
         Set<PositionDTO> reply01 = new LinkedHashSet<>();
         reply01.add(p1);
         reply01.add(p2);
 
         // Reply 2 : 3 positions.
         Set<PositionDTO> reply02 = new LinkedHashSet<>();
-        PositionDTO p3 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p4 = new PositionDTO(2, "O000002", noRules);
-        PositionDTO p5 = new PositionDTO(3, "O000003", noRules);
+        PositionDTO p3 = new PositionDTO(1, cp1, amount,"O000001", noRules);
+        PositionDTO p4 = new PositionDTO(2, cp1, amount,"O000002", noRules);
+        PositionDTO p5 = new PositionDTO(3, cp1, amount,"O000003", noRules);
         reply02.add(p3);
         reply02.add(p4);
         reply02.add(p5);
 
         // Reply 2 : 2 positions.
         Set<PositionDTO> reply03 = new LinkedHashSet<>();
-        PositionDTO p6 = new PositionDTO(1, "O000001", noRules);
-        PositionDTO p7 = new PositionDTO(2, "O000001", noRules);
+        PositionDTO p6 = new PositionDTO(1, cp1, amount,"O000001", noRules);
+        PositionDTO p7 = new PositionDTO(2, cp1, amount,"O000001", noRules);
         reply03.add(p6);
         reply03.add(p7);
 

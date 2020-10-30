@@ -95,12 +95,17 @@ public final class PositionCreationResultDTO {
 
     @Override
     public String toString() {
-        return "PositionCreationResultDTO{"
-                + " positionId='" + positionId + '\''
-                + ", orderId='" + orderId + '\''
-                + ", errorMessage='" + errorMessage + '\''
-                + ", exception=" + exception
-                + '}';
+        if (successful) {
+            return "PositionCreationResultDTO{"
+                    + " positionId=" + positionId
+                    + ", orderId='" + orderId + '\''
+                    + '}';
+        } else {
+            return "PositionCreationResultDTO{"
+                    + " errorMessage='" + errorMessage + '\''
+                    + ", exception=" + exception
+                    + '}';
+        }
     }
 
 }

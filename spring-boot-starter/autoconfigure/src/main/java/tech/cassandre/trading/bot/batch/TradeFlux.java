@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.batch;
 
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseFlux;
 
@@ -20,12 +21,17 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
     /** Previous values. */
     private final Map<String, TradeDTO> previousValues = new LinkedHashMap<>();
 
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
+
     /**
      * Constructor.
      *
-     * @param newTradeService trade service
+     * @param newTradeService    trade service
+     * @param newTradeRepository trade repository
      */
-    public TradeFlux(final TradeService newTradeService) {
+    public TradeFlux(final TradeService newTradeService, final TradeRepository newTradeRepository) {
+        this.tradeRepository = newTradeRepository;
         this.tradeService = newTradeService;
     }
 
@@ -48,13 +54,21 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
         return newValues;
     }
 
-    /**
-     * Restore trade.
-     *
-     * @param trade trade
-     */
-    public final void restoreTrade(final TradeDTO trade) {
-        previousValues.put(trade.getId(), trade);
+    @Override
+    public final void backupValue(final TradeDTO newValue) {
+        tradeRepository.save(getMapper().mapToTrade(newValue));
+    }
+
+    @Override
+    public final void restoreValues() {
+        getLogger().info("TradeFlux - Restoring trades from database");
+        tradeRepository.findByOrderByTimestampAsc()
+                .forEach(trade -> {
+                    TradeDTO t = getMapper().mapToTradeDTO(trade);
+                    previousValues.put(t.getId(), t);
+                    tradeService.restoreTrade(t);
+                    getLogger().info("TradeFlux - Trade " + trade.getOrderId() + " restored : " + t);
+                });
     }
 
 }

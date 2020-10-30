@@ -27,6 +27,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreS
 /**
  * Testable strategy (used for tests).
  */
+@SuppressWarnings("unused")
 @CassandreStrategy(name = "Testable strategy")
 @ConditionalOnProperty(
         value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
@@ -77,68 +78,68 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
 
     @Override
     public final void onAccountUpdate(final AccountDTO account) {
-        logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account);
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
             logger.debug("InterruptedException");
         }
         accountsUpdateReceived.add(account);
+        logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account);
     }
 
     @Override
     public final void onTickerUpdate(final TickerDTO ticker) {
-        logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker);
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
             logger.debug("InterruptedException");
         }
         tickersUpdateReceived.add(ticker);
+        logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker);
     }
 
     @Override
     public final void onOrderUpdate(final OrderDTO order) {
-        logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order);
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
             logger.debug("InterruptedException");
         }
         ordersUpdateReceived.add(order);
+        logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order);
     }
 
     @Override
     public void onTradeUpdate(TradeDTO trade) {
-        logger.info("TestableStrategy-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade);
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
             logger.debug("InterruptedException");
         }
         tradesUpdateReceived.add(trade);
+        logger.info("TestableStrategy-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade);
     }
 
     @Override
     public void onPositionUpdate(PositionDTO position) {
-        logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position);
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
             logger.debug("InterruptedException");
         }
         positionsUpdateReceived.add(position);
+        logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position);
     }
 
     @Override
     public void onPositionStatusUpdate(PositionDTO position) {
-        logger.info("TestableStrategy-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position);
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
             logger.debug("InterruptedException");
         }
         positionsStatusUpdateReceived.add(position);
+        logger.info("TestableStrategy-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position);
     }
 
     /**

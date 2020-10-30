@@ -12,13 +12,14 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_ACCOUNT;
 
 @DisplayName("Exchange parameters - Invalid account rate")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_RATE_ACCOUNT, value = "A")
 })
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = AFTER_CLASS)
 public class InvalidRateForAccountTest extends BaseTest {
 
     @Test
