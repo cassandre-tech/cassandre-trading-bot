@@ -7,7 +7,6 @@ import org.ta4j.core.Strategy;
 import org.ta4j.core.num.DoubleNum;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -46,7 +45,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
                 .build();
         series.setMaximumBarCount(getMaximumBarCount());
 
-        // Build the strategy.public abstract
+        // Build the strategy.
         strategy = getStrategy();
     }
 
@@ -140,9 +139,8 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
         onPositionUpdate(position);
 
         // For every position status update.
-        PositionStatusDTO previousPosition = getPreviousPositions().get(position.getId());
-        if (previousPosition == null || !previousPosition.equals(position.getStatus())) {
-            getPreviousPositions().put(position.getId(), position.getStatus());
+        if (getPreviousPositionsStatus().get(position.getId()) != position.getStatus()) {
+            getPreviousPositionsStatus().put(position.getId(), position.getStatus());
             onPositionStatusUpdate(position);
         }
     }

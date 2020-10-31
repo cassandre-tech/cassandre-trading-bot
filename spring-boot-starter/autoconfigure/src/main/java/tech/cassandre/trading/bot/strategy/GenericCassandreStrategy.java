@@ -43,7 +43,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
     /** Positions previous status. */
-    private final Map<Long, PositionStatusDTO> previousPositions = new LinkedHashMap<>();
+    private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
     /** Last ticker received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTicker = new LinkedHashMap<>();
@@ -111,8 +111,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @return previousPositions
      */
-    public final Map<Long, PositionStatusDTO> getPreviousPositions() {
-        return previousPositions;
+    public final Map<Long, PositionStatusDTO> getPreviousPositionsStatus() {
+        return previousPositionsStatus;
     }
 
     /**

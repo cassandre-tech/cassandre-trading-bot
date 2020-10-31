@@ -2,7 +2,6 @@ package tech.cassandre.trading.bot.strategy;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -44,9 +43,8 @@ public abstract class BasicCassandreStrategy extends GenericCassandreStrategy {
         onPositionUpdate(position);
 
         // For every position status update.
-        PositionStatusDTO previousPosition = getPreviousPositions().get(position.getId());
-        if (previousPosition == null || !previousPosition.equals(position.getStatus())) {
-            getPreviousPositions().put(position.getId(), position.getStatus());
+        if (getPreviousPositionsStatus().get(position.getId()) != position.getStatus()) {
+            getPreviousPositionsStatus().put(position.getId(), position.getStatus());
             onPositionStatusUpdate(position);
         }
     }
