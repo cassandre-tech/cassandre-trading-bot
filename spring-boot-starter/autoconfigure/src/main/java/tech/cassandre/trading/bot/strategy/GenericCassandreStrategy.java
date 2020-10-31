@@ -129,6 +129,48 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
     }
 
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    @Override
+    public void accountUpdate(final AccountDTO account) {
+        getAccounts().put(account.getId(), account);
+        onAccountUpdate(account);
+    }
+
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    @Override
+    public void tickerUpdate(final TickerDTO ticker) {
+        getLastTicker().put(ticker.getCurrencyPair(), ticker);
+        onTickerUpdate(ticker);
+    }
+
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    @Override
+    public void orderUpdate(final OrderDTO order) {
+        getOrders().put(order.getId(), order);
+        onOrderUpdate(order);
+    }
+
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    @Override
+    public void tradeUpdate(final TradeDTO trade) {
+        getTrades().put(trade.getId(), trade);
+        onTradeUpdate(trade);
+    }
+
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    @Override
+    public void positionUpdate(final PositionDTO position) {
+        // For every position update.
+        getPositions().put(position.getId(), position);
+        onPositionUpdate(position);
+
+        // For every position status update.
+        if (getPreviousPositionsStatus().get(position.getId()) != position.getStatus()) {
+            getPreviousPositionsStatus().put(position.getId(), position.getStatus());
+            onPositionStatusUpdate(position);
+        }
+    }
+
     /**
      * Returns the cost of buying an amount of a currency pair.
      *
@@ -304,6 +346,36 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         // If the is no balance in this currency, we can't buy.
         return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) > 0
                 || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) == 0).isPresent();
+    }
+
+    @Override
+    public void onAccountUpdate(final AccountDTO account) {
+
+    }
+
+    @Override
+    public void onTickerUpdate(final TickerDTO ticker) {
+
+    }
+
+    @Override
+    public void onOrderUpdate(final OrderDTO order) {
+
+    }
+
+    @Override
+    public void onTradeUpdate(final TradeDTO trade) {
+
+    }
+
+    @Override
+    public void onPositionUpdate(final PositionDTO position) {
+
+    }
+
+    @Override
+    public void onPositionStatusUpdate(final PositionDTO position) {
+
     }
 
 }

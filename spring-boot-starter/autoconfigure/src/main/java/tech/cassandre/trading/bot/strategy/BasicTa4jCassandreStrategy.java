@@ -6,9 +6,6 @@ import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.num.DoubleNum;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
@@ -85,12 +82,6 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     @Override
-    public final void accountUpdate(final AccountDTO account) {
-        getAccounts().put(account.getId(), account);
-        onAccountUpdate(account);
-    }
-
-    @Override
     public final void tickerUpdate(final TickerDTO ticker) {
         getLastTicker().put(ticker.getCurrencyPair(), ticker);
         // If there is no bar or if the duration between the last bar and the ticker is enough.
@@ -118,31 +109,6 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
             }
         }
         onTickerUpdate(ticker);
-    }
-
-    @Override
-    public final void orderUpdate(final OrderDTO order) {
-        getOrders().put(order.getId(), order);
-        onOrderUpdate(order);
-    }
-
-    @Override
-    public final void tradeUpdate(final TradeDTO trade) {
-        getTrades().put(trade.getId(), trade);
-        onTradeUpdate(trade);
-    }
-
-    @Override
-    public final void positionUpdate(final PositionDTO position) {
-        // For every position update.
-        getPositions().put(position.getId(), position);
-        onPositionUpdate(position);
-
-        // For every position status update.
-        if (getPreviousPositionsStatus().get(position.getId()) != position.getStatus()) {
-            getPreviousPositionsStatus().put(position.getId(), position.getStatus());
-            onPositionStatusUpdate(position);
-        }
     }
 
     /**
@@ -262,36 +228,6 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      */
     public final BarSeries getSeries() {
         return series;
-    }
-
-    @Override
-    public void onAccountUpdate(final AccountDTO account) {
-
-    }
-
-    @Override
-    public void onTickerUpdate(final TickerDTO ticker) {
-
-    }
-
-    @Override
-    public void onOrderUpdate(final OrderDTO order) {
-
-    }
-
-    @Override
-    public void onTradeUpdate(final TradeDTO trade) {
-
-    }
-
-    @Override
-    public void onPositionUpdate(final PositionDTO position) {
-
-    }
-
-    @Override
-    public void onPositionStatusUpdate(final PositionDTO position) {
-
     }
 
 }
