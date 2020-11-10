@@ -1,5 +1,5 @@
 <h3 align="center">
-  <a href="https://hexagonkt.com">
+  <a href="https://trading-bot.cassandre.tech">
     <img alt="Cassandre trading bot" src="https://github.com/cassandre-tech/cassandre-trading-bot-web-site/blob/master/.gitbook/assets/logo_with_text.png?raw=true" />
   </a>
   <br>
