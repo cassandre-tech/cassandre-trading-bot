@@ -122,7 +122,7 @@
 			<dependency>
 				<groupId>io.projectreactor</groupId>
 				<artifactId>reactor-bom</artifactId>
-				<version>Dysprosium-SR13</version>
+				<version>Dysprosium-SR14</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
