@@ -10,8 +10,10 @@ import tech.cassandre.trading.bot.util.exception.PositionException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,6 +22,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsLast;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -439,7 +443,8 @@ public class PositionDTO {
         return trades.values()
                 .stream()
                 .filter(t -> BID.equals(t.getType()))
-                .collect(Collectors.toSet());
+                .sorted(Comparator.comparing(TradeDTO::getTimestamp, nullsLast(naturalOrder())))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -451,7 +456,8 @@ public class PositionDTO {
         return trades.values()
                 .stream()
                 .filter(t -> ASK.equals(t.getType()))
-                .collect(Collectors.toSet());
+                .sorted(Comparator.comparing(TradeDTO::getTimestamp, nullsLast(naturalOrder())))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**

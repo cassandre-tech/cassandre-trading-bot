@@ -26,6 +26,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
@@ -195,6 +196,14 @@ public class PositionBackupTest extends BaseTest {
         assertTrue(p.getTrade("TRADE_05").isPresent());
         assertTrue(p.getCloseTrades().stream().anyMatch(t -> "TRADE_05".equals(t.getId())));
         assertEquals("TRADE_05", p.getTrade("TRADE_05").get().getId());
+        // Check trade orders.
+        final Iterator<TradeDTO> openTradesIterator = p.getOpenTrades().iterator();
+        assertEquals("TRADE_01", openTradesIterator.next().getId());
+        assertEquals("TRADE_02", openTradesIterator.next().getId());
+        final Iterator<TradeDTO> closeTradesIterator = p.getCloseTrades().iterator();
+        assertEquals("TRADE_03", closeTradesIterator.next().getId());
+        assertEquals("TRADE_04", closeTradesIterator.next().getId());
+        assertEquals("TRADE_05", closeTradesIterator.next().getId());
     }
 
     @Test
