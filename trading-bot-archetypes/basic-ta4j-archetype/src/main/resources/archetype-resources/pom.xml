@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
-			<version>2.3.3.RELEASE</version>
+			<version>2.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
@@ -41,6 +41,13 @@
 			<groupId>tech.cassandre.trading.bot</groupId>
 			<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
 			<version>@project.version@</version>
+		</dependency>
+		<!-- Our archetype is using Kucoin exchange sanbox - Add here the dependency of the exchange you want to use -->
+		<!-- https://search.maven.org/search?q=g:org.knowm.xchange%20AND%20a:xchange-*%20AND%20NOT%20stream -->
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-kucoin</artifactId>
+			<version>5.0.3</version>
 		</dependency>
 
 		<!-- Tests -->
