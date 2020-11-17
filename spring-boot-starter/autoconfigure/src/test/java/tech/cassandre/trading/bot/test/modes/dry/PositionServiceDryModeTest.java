@@ -13,6 +13,7 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.modes.dry.mocks.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
@@ -26,11 +27,11 @@ import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -63,54 +64,56 @@ public class PositionServiceDryModeTest extends BaseTest {
     @Autowired
     private PositionFlux positionFlux;
 
+    @Autowired
+    private PositionRepository positionRepository;
+
     @Test
     @DisplayName("Check position lifecycle")
     public void checkPositionLifecycle() throws InterruptedException {
-        // First tickers - cp1 & cp2.
+        // First tickers - cp1 & cp2 (dry mode).
         // ETH, BTC - bid 0.2 / ask 0.2.
         // ETH, USDT - bid 0,3 / ask 0.3.
         tickerFlux.update();
         tickerFlux.update();
 
+        // =============================================================================================================
         // Step 1 - Creates position 1 (ETH/BTC, 0.0001, 100% stop gain, price of 0.2).
         // As the order is validated and the trade arrives, the position should be opened.
-        final PositionCreationResultDTO position01 = positionService.createPosition(cp1,
+        final PositionCreationResultDTO position1Result = positionService.createPosition(cp1,
                 new BigDecimal("0.0001"),
-                PositionRulesDTO.builder().stopGainPercentage(100).create());
-        assertTrue(position01.isSuccessful());
-        assertEquals(1, position01.getPositionId());
-        assertEquals("DRY_ORDER_000000001", position01.getOrderId());
-        final Optional<PositionDTO> position1 = positionService.getPositionById(1);
-        assertTrue(position1.isPresent());
-        await().untilAsserted(() -> assertEquals(OPENED, position1.get().getStatus()));
+                PositionRulesDTO.builder().stopGainPercentage(100f).create());
+        assertTrue(position1Result.isSuccessful());
+        assertEquals("DRY_ORDER_000000001", position1Result.getOrderId());
+        final long position1Id = position1Result.getPositionId();
 
-        // Check position flux.
-        positionFlux.update();
-        await().untilAsserted(() -> assertEquals(1, strategy.getPositionsUpdateReceived().size()));
-        assertNotNull(strategy.getPositionsUpdateReceived().get(0));
-        assertEquals(1, strategy.getPositionsUpdateReceived().get(0).getId());
-        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(0).getStatus());
+        // After position creation, its status is OPENING
+        // Few seconds after, order and trade will arrive and status will be OPENED.
+        // Two updates will have been received.
+        assertEquals(OPENING, getPositionDTO(position1Id).getStatus());
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
+        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(1).getStatus());
 
+        // =============================================================================================================
         // Step 2 - Creates position 2 (ETH/BTC, 0.0002, 20% stop loss, price of 0.2).
         // As the order is validated and the trade arrives, the position should be opened.
-        final PositionCreationResultDTO p2 = positionService.createPosition(cp2,
+        final PositionCreationResultDTO position2Result = positionService.createPosition(cp2,
                 new BigDecimal("0.0002"),
-                PositionRulesDTO.builder().stopLossPercentage(20).create());
-        assertTrue(p2.isSuccessful());
-        assertEquals(2, p2.getPositionId());
-        assertEquals("DRY_ORDER_000000002", p2.getOrderId());
-        await().untilAsserted(() -> assertTrue(positionService.getPositionById(2).isPresent()));
-        await().untilAsserted(() -> assertTrue(positionService.getPositionById(2).isPresent()));
-        final Optional<PositionDTO> position2 = positionService.getPositionById(2);
-        assertTrue(position2.isPresent());
-        await().untilAsserted(() -> assertEquals(OPENED, position2.get().getStatus()));
+                PositionRulesDTO.builder().stopLossPercentage(20f).create());
+        assertTrue(position2Result.isSuccessful());
+        assertEquals("DRY_ORDER_000000002", position2Result.getOrderId());
+        final long position2Id = position2Result.getPositionId();
 
-        // Check position flux.
-        positionFlux.update();
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
-        assertNotNull(strategy.getPositionsUpdateReceived().get(1));
-        assertEquals(2, strategy.getPositionsUpdateReceived().get(1).getId());
-        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(1).getStatus());
+        // After position creation, its status is OPENING
+        // Few seconds after, order and trade will arrive and status will be OPENED.
+        // Two updates will have been received.
+        assertEquals(OPENING, getPositionDTO(position2Id).getStatus());
+        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
+        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(3).getStatus());
+
+        // =============================================================================================================
+        // Tickers are coming.
 
         // Second tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.3 - 50% gain.
@@ -119,10 +122,8 @@ public class PositionServiceDryModeTest extends BaseTest {
         tickerFlux.update();
         tickerFlux.update();
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertTrue(positionService.getPositionById(1).isPresent());
-        assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
-        assertTrue(positionService.getPositionById(2).isPresent());
-        assertEquals(OPENED, positionService.getPositionById(2).get().getStatus());
+        assertEquals(OPENED, getPositionDTO(position1Id).getStatus());
+        assertEquals(OPENED, getPositionDTO(position2Id).getStatus());
 
         // Third tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.4 - 100% gain.
@@ -131,10 +132,8 @@ public class PositionServiceDryModeTest extends BaseTest {
         tickerFlux.update();
         tickerFlux.update();
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertTrue(positionService.getPositionById(1).isPresent());
-        assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
-        assertTrue(positionService.getPositionById(2).isPresent());
-        assertEquals(OPENED, positionService.getPositionById(2).get().getStatus());
+        assertEquals(CLOSED, getPositionDTO(position1Id).getStatus());
+        assertEquals(OPENED, getPositionDTO(position2Id).getStatus());
 
         // Third tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.4 - 100% gain.
@@ -143,20 +142,25 @@ public class PositionServiceDryModeTest extends BaseTest {
         tickerFlux.update();
         tickerFlux.update();
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertTrue(positionService.getPositionById(1).isPresent());
-        assertEquals(CLOSED, positionService.getPositionById(1).get().getStatus());
-        assertTrue(positionService.getPositionById(2).isPresent());
-        assertEquals(CLOSED, positionService.getPositionById(2).get().getStatus());
+        assertEquals(CLOSED, getPositionDTO(position1Id).getStatus());
+        assertEquals(CLOSED, getPositionDTO(position2Id).getStatus());
 
-        // Check position flux.
-        positionFlux.update();
-        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdateReceived().size()));
-        assertNotNull(strategy.getPositionsUpdateReceived().get(2));
-        assertEquals(1, strategy.getPositionsUpdateReceived().get(2).getId());
-        assertEquals(CLOSED, strategy.getPositionsUpdateReceived().get(2).getStatus());
-        assertNotNull(strategy.getPositionsUpdateReceived().get(3));
-        assertEquals(2, strategy.getPositionsUpdateReceived().get(3).getId());
-        assertEquals(CLOSED, strategy.getPositionsUpdateReceived().get(3).getStatus());
+        // Check everything arrived.
+        assertEquals(8, strategy.getPositionsStatusUpdateReceived().size());
+    }
+
+    /**
+     * Retrieve position from database.
+     * @param id position id
+     * @return position
+     */
+    private PositionDTO getPositionDTO(final long id) {
+        final Optional<PositionDTO> p = positionService.getPositionById(id);
+        if (p.isPresent()) {
+            return p.get();
+        } else {
+            throw new RuntimeException("Position not found : " + id);
+        }
     }
 
 }

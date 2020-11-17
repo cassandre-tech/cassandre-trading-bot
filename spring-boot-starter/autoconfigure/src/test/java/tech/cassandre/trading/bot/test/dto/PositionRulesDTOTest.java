@@ -54,7 +54,7 @@ public class PositionRulesDTOTest {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopGainPercentage(10f)
-                .stopLossPercentage(11)
+                .stopLossPercentage(11f)
                 .create();
         // Tests.
         assertTrue(p.isStopGainPercentageSet());

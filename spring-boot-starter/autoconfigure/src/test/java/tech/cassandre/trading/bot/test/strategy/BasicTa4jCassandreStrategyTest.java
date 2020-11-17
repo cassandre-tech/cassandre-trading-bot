@@ -53,7 +53,6 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(2, strategy.getAccounts().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getOrders().size()));
         await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));
-        await().untilAsserted(() -> assertEquals(3, strategy.getPositions().size()));
         await().untilAsserted(() -> assertEquals(15, strategy.getTickersUpdateReceived().size()));
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTicker().size()));
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTicker().get(cp1).getLast())));

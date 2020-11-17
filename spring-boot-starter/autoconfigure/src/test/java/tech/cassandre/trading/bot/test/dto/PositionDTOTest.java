@@ -201,7 +201,7 @@ public class PositionDTOTest {
     public void checkShouldBeClosedWithGainRules() {
         // Position 1.
         // Rule : 70% gain.
-        PositionDTO p = new PositionDTO(1, cp1, amount, "O000011", PositionRulesDTO.builder().stopGainPercentage(70).create());
+        PositionDTO p = new PositionDTO(1, cp1, amount, "O000011", PositionRulesDTO.builder().stopGainPercentage(70f).create());
 
         // Position opened with this trade.
         // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
@@ -235,7 +235,7 @@ public class PositionDTOTest {
     public void checkShouldBeClosedWithLostRules() {
         // Position 1.
         // Rule : 70% loss.
-        PositionDTO p = new PositionDTO(1, cp1, amount, "O000011", PositionRulesDTO.builder().stopLossPercentage(70).create());
+        PositionDTO p = new PositionDTO(1, cp1, amount, "O000011", PositionRulesDTO.builder().stopLossPercentage(70f).create());
 
         // Position opened with this trade.
         // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
@@ -288,15 +288,15 @@ public class PositionDTOTest {
     public void checkGetPositivePositionGain() {
         // Position 1.
         // Rule : 10% gain.
-        PositionDTO p = new PositionDTO(1, cp1, amount, "O000011", PositionRulesDTO.builder().stopGainPercentage(10).create());
+        PositionDTO p = new PositionDTO(1, cp1, amount, "O000011", PositionRulesDTO.builder().stopGainPercentage(10f).create());
 
         // Position opened with this trade.
         // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
         // We bought 10 Ether with the price : 1 Ether = 5 Bitcoin.
         final TradeDTO trade01 = TradeDTO.builder().id("T000001")
                 .orderId("O000011")                         // Closing opening order O000011
-                .type(BID)                     // Buying.
-                .currencyPair(cp1)                           // ETH / BTC.
+                .type(BID)                                  // Buying.
+                .currencyPair(cp1)                          // ETH / BTC.
                 .originalAmount(amount)                     // 0.0001.
                 .price(new BigDecimal("5"))             // Price 5.
                 .feeAmount(new BigDecimal(1))           // Fee 1.
@@ -315,7 +315,7 @@ public class PositionDTOTest {
         final TradeDTO trade02 = TradeDTO.builder().id("T000002")
                 .orderId("O000012")                         // Closing opening order O000011
                 .type(ASK)                                  // Buying.
-                .currencyPair(cp1)                           // ETH / BTC.
+                .currencyPair(cp1)                          // ETH / BTC.
                 .originalAmount(amount)                     // 0.0001.
                 .price(new BigDecimal("6"))             // Price 6.
                 .feeAmount(new BigDecimal(2))           // Fee 2.
@@ -336,15 +336,15 @@ public class PositionDTOTest {
     public void checkGetNegativePositionGain() {
         // Position 1.
         // Rule : 10% lost.
-        PositionDTO p = new PositionDTO(1, cp1, amount, "O000011", PositionRulesDTO.builder().stopLossPercentage(10).create());
+        PositionDTO p = new PositionDTO(1, cp1, amount, "O000011", PositionRulesDTO.builder().stopLossPercentage(10f).create());
 
         // Position opened with this trade.
         // BID ETH / BTC means I'm buying ETH by giving Bitcoins.
         // We bought 10 Ether with the price : 1 Ether = 5 Bitcoin.
         final TradeDTO trade01 = TradeDTO.builder().id("T000001")
                 .orderId("O000011")                         // Closing opening order O000011
-                .type(BID)                     // Buying.
-                .currencyPair(cp1)                           // ETH / BTC.
+                .type(BID)                                  // Buying.
+                .currencyPair(cp1)                          // ETH / BTC.
                 .originalAmount(amount)                     // 10.
                 .price(new BigDecimal("5"))             // Price 5.
                 .feeAmount(new BigDecimal(1))           // Fee 1.
@@ -363,7 +363,7 @@ public class PositionDTOTest {
         final TradeDTO trade02 = TradeDTO.builder().id("T000002")
                 .orderId("O000012")                         // Closing opening order O000011
                 .type(ASK)                                  // Buying.
-                .currencyPair(cp1)                           // ETH / BTC.
+                .currencyPair(cp1)                          // ETH / BTC.
                 .originalAmount(amount)                     // 10.
                 .price(new BigDecimal("4"))             // Price 4.
                 .feeAmount(new BigDecimal(2))           // Fee 2.

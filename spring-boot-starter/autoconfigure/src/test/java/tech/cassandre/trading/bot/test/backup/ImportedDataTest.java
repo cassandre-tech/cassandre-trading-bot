@@ -20,13 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 
 @SpringBootTest
 @DisplayName("Backup - Imported data")
 @Configuration({
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
-        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
+        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop"),
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @DirtiesContext(classMode = BEFORE_CLASS)
 public class ImportedDataTest extends BaseTest {
@@ -54,6 +56,7 @@ public class ImportedDataTest extends BaseTest {
         assertEquals(createZonedDateTime("01-08-2020"), t.getTimestamp());
         assertEquals(0, t.getFeeAmount().compareTo(new BigDecimal("1")));
         assertEquals("USDT", t.getFeeCurrency());
+        assertEquals(2, t.getPosition().getId());
         // Trade 02.
         t = trades.next();
         assertEquals("BACKUP_TRADE_02", t.getId());
@@ -76,6 +79,7 @@ public class ImportedDataTest extends BaseTest {
         assertEquals(createZonedDateTime("03-08-2020"), t.getTimestamp());
         assertEquals(0, t.getFeeAmount().compareTo(new BigDecimal("3")));
         assertEquals("USDT", t.getFeeCurrency());
+        assertEquals(4, t.getPosition().getId());
         // Trade 04.
         t = trades.next();
         assertEquals("BACKUP_TRADE_04", t.getId());
@@ -87,6 +91,7 @@ public class ImportedDataTest extends BaseTest {
         assertEquals(createZonedDateTime("04-08-2020"), t.getTimestamp());
         assertEquals(0, t.getFeeAmount().compareTo(new BigDecimal("4")));
         assertEquals("USDT", t.getFeeCurrency());
+        assertEquals(4, t.getPosition().getId());
         // Trade 05.
         t = trades.next();
         assertEquals("BACKUP_TRADE_05", t.getId());
@@ -98,6 +103,7 @@ public class ImportedDataTest extends BaseTest {
         assertEquals(createZonedDateTime("05-08-2020"), t.getTimestamp());
         assertEquals(0, t.getFeeAmount().compareTo(new BigDecimal("5")));
         assertEquals("USD", t.getFeeCurrency());
+        assertNull(t.getPosition());
     }
 
     @Test
@@ -116,6 +122,7 @@ public class ImportedDataTest extends BaseTest {
         assertNull(p.getCloseOrderId());
         assertNull(p.getLowestPrice());
         assertNull(p.getHighestPrice());
+        assertNull(p.getLatestPrice());
         assertTrue(p.getTrades().isEmpty());
         // Position 2.
         p = positions.next();
@@ -127,6 +134,7 @@ public class ImportedDataTest extends BaseTest {
         assertNull(p.getCloseOrderId());
         assertEquals(0, new BigDecimal("1").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("2").compareTo(p.getHighestPrice()));
+        assertEquals(0, new BigDecimal("3").compareTo(p.getLatestPrice()));
         assertEquals(1, p.getTrades().size());
         assertTrue(p.getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_01".equals(trade.getId())));
         // Position 3.
@@ -139,6 +147,7 @@ public class ImportedDataTest extends BaseTest {
         assertEquals("NON_EXISTING_TRADE", p.getCloseOrderId());
         assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice()));
+        assertEquals(0, new BigDecimal("92").compareTo(p.getLatestPrice()));
         assertEquals(1, p.getTrades().size());
         assertTrue(p.getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_02".equals(trade.getId())));
         // Position 4.
@@ -151,6 +160,7 @@ public class ImportedDataTest extends BaseTest {
         assertEquals("BACKUP_OPEN_ORDER_05", p.getCloseOrderId());
         assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice()));
+        assertEquals(0, new BigDecimal("93").compareTo(p.getLatestPrice()));
         assertEquals(2, p.getTrades().size());
         assertTrue(p.getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_03".equals(trade.getId())));
         assertTrue(p.getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_04".equals(trade.getId())));

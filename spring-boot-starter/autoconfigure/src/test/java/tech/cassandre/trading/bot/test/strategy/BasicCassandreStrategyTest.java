@@ -60,7 +60,6 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertFalse(strategy.getAccountsUpdatesReceived().isEmpty());
         assertFalse(strategy.getTickersUpdateReceived().isEmpty());
         assertFalse(strategy.getTradesUpdateReceived().isEmpty());
-        assertFalse(strategy.getPositionsUpdateReceived().isEmpty());
         assertEquals(2, strategy.getLastTicker().size());
         assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTicker().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
 

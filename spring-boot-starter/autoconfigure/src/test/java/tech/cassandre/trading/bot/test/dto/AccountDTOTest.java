@@ -83,7 +83,7 @@ public class AccountDTOTest {
 	public void checkEqualToForBalancesValues() {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
-		// Account 1 .
+		// Account 1.
 		BalanceDTO account1Balance1 = BalanceDTO.builder()
 				.available(new BigDecimal("1"))
 				.borrowed(new BigDecimal("1"))

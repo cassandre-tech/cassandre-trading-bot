@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -57,8 +58,14 @@ public class PositionServiceTestMock {
 
     @Bean
     @Primary
+    public PositionFlux positionFlux() {
+        return new PositionFlux(positionRepository);
+    }
+
+    @Bean
+    @Primary
     public PositionService positionService() {
-        return new PositionServiceImplementation(tradeService(), positionRepository);
+        return new PositionServiceImplementation(tradeService(), positionRepository, positionFlux());
     }
 
     @SuppressWarnings("unchecked")
@@ -127,14 +134,14 @@ public class PositionServiceTestMock {
                 .willReturn(new OrderCreationResultDTO("Error message", new RuntimeException("Error exception")));
 
         // Position 1 closed reply (ORDER00011).
-        given(service.createSellMarketOrder(PositionServiceTest.cp1, new BigDecimal("0.0001")))
+        given(service.createSellMarketOrder(PositionServiceTest.cp1, new BigDecimal("0.00010000")))
                 .willReturn(new OrderCreationResultDTO("ORDER00011"));
 
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
         given(service.createBuyMarketOrder(PositionServiceTest.cp1, new BigDecimal("10")))
                 .willReturn(new OrderCreationResultDTO("ORDER00010"));
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
-        given(service.createSellMarketOrder(PositionServiceTest.cp1, new BigDecimal("10")))
+        given(service.createSellMarketOrder(PositionServiceTest.cp1, new BigDecimal("10.00000000")))
                 .willReturn(new OrderCreationResultDTO("ORDER00011"));
 
         return service;

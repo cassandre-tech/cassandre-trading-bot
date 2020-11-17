@@ -19,7 +19,7 @@ public class TradeDTOTest {
     @Test
     @DisplayName("Check equalTo")
     public void checkEqualToForTrades() {
-        // Test that only id is important when testing.
+        // Test that only id is important when testing equality.
         TradeDTO t1 = TradeDTO.builder().id("0000001").create();
         TradeDTO t1Bis = TradeDTO.builder().id("0000001")
                 .currencyPair(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC))

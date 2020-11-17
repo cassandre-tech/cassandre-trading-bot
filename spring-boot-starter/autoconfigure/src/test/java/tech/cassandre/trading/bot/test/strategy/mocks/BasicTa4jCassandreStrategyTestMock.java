@@ -80,7 +80,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     @Bean
     @Primary
     public PositionFlux positionFlux() {
-        return new PositionFlux(positionService(), positionRepository);
+        return new PositionFlux(positionRepository);
     }
 
     @SuppressWarnings("unchecked")

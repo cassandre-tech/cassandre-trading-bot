@@ -15,13 +15,13 @@ public class PositionRulesDTO {
     private final boolean stopGainPercentageSet;
 
     /** Stop gain percentage. */
-    private final float stopGainPercentage;
+    private final Float stopGainPercentage;
 
     /** Stop loss percentage has been set. */
     private final boolean stopLossPercentageSet;
 
     /** Stop loss percentage. */
-    private final float stopLossPercentage;
+    private final Float stopLossPercentage;
 
     /**
      * Builder constructor.
@@ -58,7 +58,7 @@ public class PositionRulesDTO {
      *
      * @return stopGainPercentage
      */
-    public final float getStopGainPercentage() {
+    public final Float getStopGainPercentage() {
         return stopGainPercentage;
     }
 
@@ -76,7 +76,7 @@ public class PositionRulesDTO {
      *
      * @return stopLossPercentage
      */
-    public final float getStopLossPercentage() {
+    public final Float getStopLossPercentage() {
         return stopLossPercentage;
     }
 
@@ -107,13 +107,13 @@ public class PositionRulesDTO {
         private boolean stopGainPercentageSet = false;
 
         /** Stop gain percentage. */
-        private float stopGainPercentage;
+        private Float stopGainPercentage;
 
         /** Stop loss percentage has been set. */
         private boolean stopLossPercentageSet = false;
 
         /** Stop loss percentage. */
-        private float stopLossPercentage;
+        private Float stopLossPercentage;
 
         /**
          * Stop gain percentage.
@@ -121,7 +121,7 @@ public class PositionRulesDTO {
          * @param newStopGainPercentage stop gain percentage
          * @return builder
          */
-        public Builder stopGainPercentage(final float newStopGainPercentage) {
+        public Builder stopGainPercentage(final Float newStopGainPercentage) {
             this.stopGainPercentageSet = true;
             this.stopGainPercentage = newStopGainPercentage;
             return this;
@@ -133,7 +133,7 @@ public class PositionRulesDTO {
          * @param newStopLossPercentage stop loss percentage
          * @return builder
          */
-        public Builder stopLossPercentage(final float newStopLossPercentage) {
+        public Builder stopLossPercentage(final Float newStopLossPercentage) {
             this.stopLossPercentageSet = true;
             this.stopLossPercentage = newStopLossPercentage;
             return this;

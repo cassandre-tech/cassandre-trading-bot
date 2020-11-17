@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.configuration;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.ConnectableFlux;
 import tech.cassandre.trading.bot.batch.AccountFlux;
@@ -14,11 +15,13 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
+import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
@@ -43,8 +46,11 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     /** Trade service. */
     private final TradeService tradeService;
 
+    /** Position repository. */
+    private final PositionRepository positionRepository;
+
     /** Position service. */
-    private final PositionService positionService;
+    private PositionService positionService;
 
     /** User service. */
     private final UserService userService;
@@ -70,31 +76,31 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      * @param newApplicationContext application context
      * @param newUserService        user service
      * @param newTradeService       trade service
-     * @param newPositionService    position service
      * @param newAccountFlux        account flux
      * @param newTickerFlux         ticker flux
      * @param newOrderFlux          order flux
      * @param newTradeFlux          trade flux
+     * @param newPositionRepository position repository
      * @param newPositionFlux       position flux
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
                                      final UserService newUserService,
                                      final TradeService newTradeService,
-                                     final PositionService newPositionService,
                                      final AccountFlux newAccountFlux,
                                      final TickerFlux newTickerFlux,
                                      final OrderFlux newOrderFlux,
                                      final TradeFlux newTradeFlux,
+                                     final PositionRepository newPositionRepository,
                                      final PositionFlux newPositionFlux) {
         this.applicationContext = newApplicationContext;
         this.userService = newUserService;
         this.tradeService = newTradeService;
-        this.positionService = newPositionService;
         this.accountFlux = newAccountFlux;
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
         this.tradeFlux = newTradeFlux;
+        this.positionRepository = newPositionRepository;
         this.positionFlux = newPositionFlux;
     }
 
@@ -161,6 +167,10 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         getLogger().info("StrategyConfiguration - The strategy requires the following currency pair(s) : " + currencyPairList);
 
         // =============================================================================================================
+        // Setting up position service.
+        this.positionService = new PositionServiceImplementation(tradeService, positionRepository, positionFlux);
+
+        // =============================================================================================================
         // Setting up strategy.
 
         // Setting services.
@@ -203,6 +213,16 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         if (userService instanceof UserServiceDryModeImplementation) {
             ((UserServiceDryModeImplementation) userService).setDependencies((GenericCassandreStrategy) strategy);
         }
+    }
+
+    /**
+     * Getter for positionService.
+     *
+     * @return positionService
+     */
+    @Bean
+    public PositionService getPositionService() {
+        return positionService;
     }
 
 }

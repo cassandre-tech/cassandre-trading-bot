@@ -19,13 +19,11 @@ import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.dry.ExchangeServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.service.xchange.ExchangeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.xchange.MarketServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
@@ -71,9 +69,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** Trade service. */
     private TradeService tradeService;
-
-    /** Position service. */
-    private PositionService positionService;
 
     /** Account flux. */
     private AccountFlux accountFlux;
@@ -172,14 +167,13 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode);
                 this.tradeService = tradeServiceDryMode;
             }
-            this.positionService = new PositionServiceImplementation(tradeService, positionRepository);
 
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(userService);
             tickerFlux = new TickerFlux(marketService);
             orderFlux = new OrderFlux(tradeService);
             tradeFlux = new TradeFlux(tradeService, tradeRepository);
-            positionFlux = new PositionFlux(positionService, positionRepository);
+            positionFlux = new PositionFlux(positionRepository);
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();
@@ -347,16 +341,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     @Bean
     public TradeFlux getTradeFlux() {
         return tradeFlux;
-    }
-
-    /**
-     * Getter for positionService.
-     *
-     * @return positionService
-     */
-    @Bean
-    public PositionService getPositionService() {
-        return positionService;
     }
 
     /**

@@ -14,21 +14,21 @@
 -- Insert positions.
 INSERT INTO MY_STRATEGY_POSITIONS (ID, STATUS, CURRENCY_PAIR, AMOUNT, RULES_STOP_GAIN_PERCENTAGE,
                                    RULES_STOP_LOSS_PERCENTAGE, OPEN_ORDER_ID, CLOSE_ORDER_ID, LOWEST_PRICE,
-                                   HIGHEST_PRICE)
+                                   HIGHEST_PRICE, LATEST_PRICE)
 VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPEN_ORDER_01 to arrive (but will not arrive).
-       (1, 'OPENING', 'BTC/USDT', 10, null, null, 'BACKUP_OPEN_ORDER_01', null, null, null),
+       (1, 'OPENING', 'BTC/USDT', 10, null, null, 'BACKUP_OPEN_ORDER_01', null, null, null, null),
 
        -- Position 2 : Opened position, 10% gain rule.
-       (2, 'OPENED', 'BTC/USDT', 20, 10, null, 'BACKUP_OPEN_ORDER_02', null, 1, 2),
+       (2, 'OPENED', 'BTC/USDT', 20, 10, null, 'BACKUP_OPEN_ORDER_02', null, 1, 2, 3),
 
        -- Position 3 : Closing position, 20% loss rule, waiting for a not coming trade 'NON_EXISTING_TRADE'.
-       (3, 'CLOSING', 'BTC/USDT', 30, null, 20, 'BACKUP_OPEN_ORDER_03', 'NON_EXISTING_TRADE', 17, 68),
+       (3, 'CLOSING', 'BTC/USDT', 30, null, 20, 'BACKUP_OPEN_ORDER_03', 'NON_EXISTING_TRADE', 17, 68, 92),
 
        -- Position 4 : Closed position, 30% gain & 40 % loss.
-       (4, 'CLOSED', 'BTC/USDT', 40, 30, 40, 'BACKUP_OPEN_ORDER_04', 'BACKUP_OPEN_ORDER_05', 17, 68),
+       (4, 'CLOSED', 'BTC/USDT', 40, 30, 40, 'BACKUP_OPEN_ORDER_04', 'BACKUP_OPEN_ORDER_05', 17, 68, 93),
 
        -- Position 5 : closed.
-       (5, 'CLOSED', 'ETH/USD', 50, 30, 40, 'OPEN_ORDER_01', 'CLOSE_ORDER_01', 17, 68);
+       (5, 'CLOSED', 'ETH/USD', 50, 30, 40, 'OPEN_ORDER_01', 'CLOSE_ORDER_01', 17, 68, 94);
 
 -- =====================================================================================================================
 -- Insert trades.

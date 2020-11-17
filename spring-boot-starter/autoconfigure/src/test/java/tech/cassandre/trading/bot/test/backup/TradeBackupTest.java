@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -24,21 +25,24 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Backup - Trades")
 @Configuration({
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
-        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
+        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop"),
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = AFTER_CLASS)
+@ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class  TradeBackupTest extends BaseTest {
 
     @Autowired
@@ -143,7 +147,7 @@ public class  TradeBackupTest extends BaseTest {
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
 
         // =============================================================================================================
-        // Add two trades and check that they are saved.
+        // Add a trade and check that it's correctly saved in database.
         long tradeCount = tradeRepository.count();
         TradeDTO t1 = TradeDTO.builder()
                 .id("BACKUP_TRADE_06")
@@ -169,7 +173,6 @@ public class  TradeBackupTest extends BaseTest {
         assertEquals("USDT/BTC", t1FromDatabase.get().getCurrencyPair());
         assertEquals(0, t1FromDatabase.get().getPrice().compareTo(new BigDecimal("2.200002")));
         assertEquals(createZonedDateTime("01-09-2020"), t1FromDatabase.get().getTimestamp());
-        System.out.println("=> " + t1FromDatabase.get().getFeeAmount());
         assertEquals(0, t1FromDatabase.get().getFeeAmount().compareTo(new BigDecimal("3.300003")));
         assertEquals("BTC", t1FromDatabase.get().getFeeCurrency());
     }

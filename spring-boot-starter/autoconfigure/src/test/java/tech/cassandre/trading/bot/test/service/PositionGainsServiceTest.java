@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
@@ -27,6 +29,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
         @Property(key = "spring.datasource.data", value = "classpath:/gains-test.sql"),
         @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
 })
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionGainsServiceTest {
 
     @Autowired
@@ -51,8 +54,6 @@ public class PositionGainsServiceTest {
         assertTrue(p1.isPresent());
         final GainDTO gain1 = p1.get().getGain();
         // Gain (amount).
-        System.out.println(gain1);
-        System.out.println(gain1.getAmount().getValue());
         assertEquals(0, new BigDecimal("48").compareTo(gain1.getAmount().getValue()));
         assertEquals(USDT, gain1.getAmount().getCurrency());
         // Gain (percentage).

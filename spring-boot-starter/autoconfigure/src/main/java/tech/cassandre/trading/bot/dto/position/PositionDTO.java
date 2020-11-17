@@ -38,6 +38,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 public class PositionDTO {
 
     /** Position version (used for database backup). */
+    // TODO DELETE THIS
     private final AtomicLong version = new AtomicLong(0L);
 
     /** An identifier that uniquely identifies the position. */
@@ -70,8 +71,8 @@ public class PositionDTO {
     /** Highest price for this position. */
     private BigDecimal highestPrice;
 
-    /** Last calculated gain from the last ticker received. */
-    private GainDTO latestCalculatedGain;
+    /** Latest price for this position. */
+    private BigDecimal latestPrice;
 
     /** Percentage. */
     private static final int ONE_HUNDRED = 100;
@@ -98,7 +99,7 @@ public class PositionDTO {
         this.amount = newAmount;
         this.openOrderId = newOpenOrderId;
         this.rules = newRules;
-        version.incrementAndGet();
+        this.version.incrementAndGet();
     }
 
     /**
@@ -139,6 +140,7 @@ public class PositionDTO {
         this.trades.putAll(builder.trades);
         this.lowestPrice = builder.lowestPrice;
         this.highestPrice = builder.highestPrice;
+        this.latestPrice = builder.latestPrice;
     }
 
     /**
@@ -169,8 +171,10 @@ public class PositionDTO {
      * Method called by on every trade update.
      *
      * @param trade trade
+     * @return true if the position is updated.
      */
-    public void tradeUpdate(final TradeDTO trade) {
+    public boolean tradeUpdate(final TradeDTO trade) {
+        // TODO test if the same trade is sent two times
         // If status is OPENING and the trades for the open order arrives for the whole amount ==> status = OPENED.
         if (trade.getOrderId().equals(openOrderId) && status == OPENING) {
             trades.put(trade.getId(), trade);
@@ -180,7 +184,7 @@ public class PositionDTO {
             if (amount.compareTo(getTotalAmountFromOpenTrades()) == 0) {
                 status = OPENED;
             }
-            version.incrementAndGet();
+            return true;
         }
         // If status is CLOSING and the trades for the close order arrives for the whole amount ==> status = CLOSED.
         if (trade.getOrderId().equals(closeOrderId) && status == CLOSING) {
@@ -191,8 +195,9 @@ public class PositionDTO {
             if (amount.compareTo(getTotalAmountFromCloseTrades()) == 0) {
                 status = CLOSED;
             }
-            version.incrementAndGet();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -210,7 +215,7 @@ public class PositionDTO {
             final Optional<GainDTO> gain = calculateGainFromPrice(ticker.getLast());
             if (gain.isPresent()) {
                 // We save the last calculated gain.
-                this.latestCalculatedGain = gain.get();
+                this.latestPrice = ticker.getLast();
                 if (rules.isStopGainPercentageSet() && gain.get().getPercentage() >= rules.getStopGainPercentage()
                         || rules.isStopLossPercentageSet() && gain.get().getPercentage() <= -rules.getStopLossPercentage()) {
                     version.incrementAndGet();
@@ -488,6 +493,15 @@ public class PositionDTO {
     }
 
     /**
+     * Getter latestPrice.
+     *
+     * @return latestPrice
+     */
+    public final BigDecimal getLatestPrice() {
+        return latestPrice;
+    }
+
+    /**
      * Getter highestPrice.
      *
      * @return highestPrice
@@ -504,7 +518,7 @@ public class PositionDTO {
      */
     @Deprecated(since = "2.4", forRemoval = true)
     public final Optional<GainDTO> getLastCalculatedGain() {
-        return Optional.ofNullable(latestCalculatedGain);
+        return calculateGainFromPrice(latestPrice);
     }
 
     /**
@@ -513,7 +527,7 @@ public class PositionDTO {
      * @return latestCalculatedGain
      */
     public final Optional<GainDTO> getLatestCalculatedGain() {
-        return Optional.ofNullable(latestCalculatedGain);
+        return calculateGainFromPrice(latestPrice);
     }
 
     /**
@@ -655,6 +669,9 @@ public class PositionDTO {
         /** Highest price for this position. */
         private BigDecimal highestPrice;
 
+        /** Latest price for this position. */
+        private BigDecimal latestPrice;
+
         /**
          * id.
          *
@@ -788,6 +805,17 @@ public class PositionDTO {
          */
         public Builder highestPrice(final BigDecimal newHighestPrice) {
             this.highestPrice = newHighestPrice;
+            return this;
+        }
+
+        /**
+         * latestPrice.
+         *
+         * @param newLatestPrice latestPrice
+         * @return builder
+         */
+        public Builder latestPrice(final BigDecimal newLatestPrice) {
+            this.latestPrice = newLatestPrice;
             return this;
         }
 

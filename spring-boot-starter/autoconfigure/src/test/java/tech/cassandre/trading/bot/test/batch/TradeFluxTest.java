@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.test.batch.mocks.TradeFluxTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -55,7 +56,6 @@ public class TradeFluxTest extends BaseTest {
 
         // Test all values received.
         final Iterator<TradeDTO> iterator = strategy.getTradesUpdateReceived().iterator();
-
         assertEquals("0000001", iterator.next().getId());
         assertEquals("0000002", iterator.next().getId());
         assertEquals("0000003", iterator.next().getId());

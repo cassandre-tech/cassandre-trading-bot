@@ -65,13 +65,17 @@ public class Position {
     @JoinColumn(name = "POSITION_ID")
     private Set<Trade> trades;
 
-    /** The fee that was charged by the exchange for this trade. */
+    /** Lowest price. */
     @Column(name = "LOWEST_PRICE", precision = PRECISION, scale = SCALE)
     private BigDecimal lowestPrice;
 
-    /** The fee that was charged by the exchange for this trade. */
+    /** Highest price. */
     @Column(name = "HIGHEST_PRICE", precision = PRECISION, scale = SCALE)
     private BigDecimal highestPrice;
+
+    /** Latest price. */
+    @Column(name = "LATEST_PRICE", precision = PRECISION, scale = SCALE)
+    private BigDecimal latestPrice;
 
     /**
      * Getter id.
@@ -269,6 +273,24 @@ public class Position {
      */
     public void setHighestPrice(final BigDecimal newHighestPrice) {
         highestPrice = newHighestPrice;
+    }
+
+    /**
+     * Getter latestPrice.
+     *
+     * @return latestPrice
+     */
+    public BigDecimal getLatestPrice() {
+        return latestPrice;
+    }
+
+    /**
+     * Setter latestPrice.
+     *
+     * @param newLatestPrice the latestPrice to set
+     */
+    public void setLatestPrice(final BigDecimal newLatestPrice) {
+        latestPrice = newLatestPrice;
     }
 
 }

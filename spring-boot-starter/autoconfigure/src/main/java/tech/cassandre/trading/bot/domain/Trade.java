@@ -3,6 +3,8 @@ package tech.cassandre.trading.bot.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -56,6 +58,11 @@ public class Trade {
     /** The fee that was charged by the exchange for this trade. */
     @Column(name = "FEE_CURRENCY")
     private String feeCurrency;
+
+    /** Position using this trade. */
+    @ManyToOne
+    @JoinColumn(name = "POSITION_ID")
+    private Position position;
 
     /**
      * Getter id.
@@ -217,6 +224,24 @@ public class Trade {
      */
     public void setFeeCurrency(final String newFeeCurrency) {
         feeCurrency = newFeeCurrency;
+    }
+
+    /**
+     * Getter position.
+     *
+     * @return position
+     */
+    public Position getPosition() {
+        return position;
+    }
+
+    /**
+     * Setter position.
+     *
+     * @param newPosition the position to set
+     */
+    public void setPosition(final Position newPosition) {
+        position = newPosition;
     }
 
     @Override

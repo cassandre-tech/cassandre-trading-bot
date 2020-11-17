@@ -65,11 +65,4 @@ public interface PositionService {
      */
     HashMap<CurrencyDTO, GainDTO> getGains();
 
-    /**
-     * Restore position.
-     *
-     * @param position position
-     */
-    void restorePosition(PositionDTO position);
-
 }

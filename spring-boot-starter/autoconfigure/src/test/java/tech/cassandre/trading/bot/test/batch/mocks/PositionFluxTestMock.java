@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.test.batch.mocks;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -18,6 +18,7 @@ import tech.cassandre.trading.bot.test.batch.PositionFluxTest;
 
 import java.math.BigDecimal;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -45,13 +46,13 @@ public class PositionFluxTestMock {
     @Bean
     @Primary
     public PositionFlux positionFlux() {
-        return new PositionFlux(positionService(), positionRepository);
+        return new PositionFlux(positionRepository);
     }
 
     @Bean
     @Primary
     public PositionService positionService() {
-        return new PositionServiceImplementation(tradeService(), positionRepository);
+        return new PositionServiceImplementation(tradeService(), positionRepository, positionFlux());
     }
 
     @Bean
@@ -69,7 +70,7 @@ public class PositionFluxTestMock {
         given(service.createBuyMarketOrder(PositionFluxTest.cp1, new BigDecimal("10")))
                 .willReturn(new OrderCreationResultDTO("ORDER00010"));
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
-        given(service.createSellMarketOrder(PositionFluxTest.cp1, new BigDecimal("10")))
+        given(service.createSellMarketOrder(PositionFluxTest.cp1, new BigDecimal("10.00000000")))   // Was forced to do that as after going to database, we have a 10.00000000 value
                 .willReturn(new OrderCreationResultDTO("ORDER00011"));
 
         // Position 1 creation reply (order ORDER00010).
@@ -78,7 +79,6 @@ public class PositionFluxTestMock {
         // Position 2 creation reply (order ORDER00020).
         given(service.createBuyMarketOrder(PositionFluxTest.cp2, new BigDecimal("0.0002")))
                 .willReturn(new OrderCreationResultDTO("ORDER00020"));
-
 
         return service;
     }
