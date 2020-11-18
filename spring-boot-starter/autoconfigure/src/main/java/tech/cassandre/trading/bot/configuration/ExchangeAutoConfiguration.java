@@ -156,7 +156,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
                 this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService);
+                this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService, tradeRepository);
             } else {
                 // Dry mode.
                 getLogger().info("Dry mode is on");
@@ -164,7 +164,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 userServiceDryMode = new UserServiceDryModeImplementation();
                 this.userService = userServiceDryMode;
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode);
+                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode, tradeRepository);
                 this.tradeService = tradeServiceDryMode;
             }
 

@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
 
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Trade service - XChange implementation.
@@ -28,19 +30,22 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     /** XChange service. */
     private final org.knowm.xchange.service.trade.TradeService tradeService;
 
-    /** The trades restored from backup. */
-    private final Set<TradeDTO> tradesFromBackup = new LinkedHashSet<>();
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
 
     /**
      * Constructor.
      *
      * @param rate               rate in ms
      * @param newTradeService    market data service
+     * @param newTradeRepository trade repository
      */
     public TradeServiceXChangeImplementation(final long rate,
-                                             final org.knowm.xchange.service.trade.TradeService newTradeService) {
+                                             final org.knowm.xchange.service.trade.TradeService newTradeService,
+                                             final TradeRepository newTradeRepository) {
         super(rate);
         this.tradeService = newTradeService;
+        this.tradeRepository = newTradeRepository;
     }
 
     /**
@@ -172,8 +177,13 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // If a token is not available this method will block until the refill adds one to the bucket.
             getBucket().asScheduler().consume(1);
 
+            // We retrieve all trades from databases.
+            Set<TradeDTO> results = tradeRepository.findByOrderByTimestampAsc()
+                    .stream()
+                    .map(trade -> getMapper().mapToTradeDTO(trade))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+
             // Query 1 week of trades.
-            Set<TradeDTO> results = new LinkedHashSet<>(tradesFromBackup);
             TradeHistoryParamsAll params = new TradeHistoryParamsAll();
             Date startDate = DateUtils.addWeeks(new Date(), -1);
             Date endDate = new Date();
@@ -191,11 +201,6 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
-    }
-
-    @Override
-    public final void restoreTrade(final TradeDTO trade) {
-        tradesFromBackup.add(trade);
     }
 
 }

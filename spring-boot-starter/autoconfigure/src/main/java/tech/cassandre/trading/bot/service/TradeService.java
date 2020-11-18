@@ -82,11 +82,4 @@ public interface TradeService {
      */
     Set<TradeDTO> getTrades();
 
-    /**
-     * Restore trade.
-     *
-     * @param trade trade
-     */
-    void restoreTrade(TradeDTO trade);
-
 }

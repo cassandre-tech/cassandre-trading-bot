@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Generic Cassandre strategy.
@@ -36,9 +37,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** The orders owned by the user. */
     private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
 
-    /** The trades owned by the user. */
-    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
-
     /** The positions owned by the user. */
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
@@ -51,7 +49,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setTradeService(final TradeService newTradeService) {
         this.tradeService = newTradeService;
-        tradeService.getTrades().forEach(t -> trades.put(t.getId(), t));
     }
 
     @Override
@@ -94,7 +91,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return trades
      */
     public final Map<String, TradeDTO> getTrades() {
-        return trades;
+        return tradeService.getTrades().stream()
+                .collect(Collectors.toMap(TradeDTO::getId, t -> t));
     }
 
     /**
@@ -153,7 +151,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @SuppressWarnings("checkstyle:DesignForExtension")
     @Override
     public void tradeUpdate(final TradeDTO trade) {
-        getTrades().put(trade.getId(), trade);
         onTradeUpdate(trade);
     }
 
