@@ -13,24 +13,24 @@ import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
 
 @SpringBootTest
 @DisplayName("Batch - Ticker flux")
 @Configuration({
-        @Property(key = "TEST_NAME", value = "Batch - Ticker flux")
+        @Property(key = PARAMETER_EXCHANGE_RATE_TICKER, value = "100")
 })
 @DirtiesContext(classMode = AFTER_CLASS)
 @Import(TickerFluxTestMock.class)
@@ -45,24 +45,24 @@ public class TickerFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        final int numberOfTickersExpected = 13;
-        final int numberOfMarketServiceCalls = 16;
+        // 14 tickers are sent via the mocked service.
+        // - 7 for cp1 ETH/BTC.
+        // - 7 for cp2 ETH/USDT.
+        // Two tickers for cp1 are identical so we expect to receive 13 tickers in the strategy.
+        // we will call the service 17 times as some replies ill be empty.
+        final int numberOfUpdatesExpected = 13;
+        final int numberOfServiceCallsExpected = 17;
 
-        // Currency pairs supported.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
-        final CurrencyPairDTO cp2 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT);
+        // Waiting for the market service to have been called with all the test data (16).
+        await().untilAsserted(() -> verify(marketService, atLeast(numberOfServiceCallsExpected)).getTicker(any()));
 
-        // Waiting for the market service to have been called with all the test data.
-        await().untilAsserted(() -> verify(marketService, atLeast(numberOfMarketServiceCalls)).getTicker(any()));
-
-        // Checking that somme tickers have already been treated (to verify we work on a single thread).
-        assertTrue(strategy.getTickersUpdateReceived().size() <= numberOfTickersExpected);
+        // Checking that somme data have already been treated.
+        // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
         assertTrue(strategy.getTickersUpdateReceived().size() > 0);
+        assertTrue(strategy.getTickersUpdateReceived().size() < numberOfUpdatesExpected);
 
-        // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfTickersExpected));
-
-        // Test all values received.
+        // Wait for the strategy to have received all the tickers.
+        await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfUpdatesExpected));
         final Iterator<TickerDTO> iterator = strategy.getTickersUpdateReceived().iterator();
 
         // First value cp1 - 1.
@@ -115,7 +115,7 @@ public class TickerFluxTest extends BaseTest {
         assertEquals(cp1, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("5").compareTo(t.getBid()));
 
-        // Eleventh value cp2 - 50.
+        // Eleventh value cp2 - 60.
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("60").compareTo(t.getBid()));
@@ -129,6 +129,16 @@ public class TickerFluxTest extends BaseTest {
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("70").compareTo(t.getBid()));
+
+        // Check data we have in strategy.
+        final TickerDTO lastTickerForCp1 = strategy.getLastTicker().get(cp1);
+        assertNotNull(lastTickerForCp1);
+        assertEquals(cp1, lastTickerForCp1.getCurrencyPair());
+        assertEquals(0, new BigDecimal("6").compareTo(lastTickerForCp1.getLast()));
+        final TickerDTO lastTickerForCp2 = strategy.getLastTicker().get(cp2);
+        assertNotNull(lastTickerForCp2);
+        assertEquals(cp2, lastTickerForCp2.getCurrencyPair());
+        assertEquals(0, new BigDecimal("70").compareTo(lastTickerForCp2.getLast()));
     }
 
 }

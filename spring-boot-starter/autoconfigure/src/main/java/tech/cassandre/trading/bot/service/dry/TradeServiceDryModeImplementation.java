@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
@@ -68,16 +69,22 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /** Trade repository. */
     private final TradeRepository tradeRepository;
 
+    /** Order repository. */
+    private final OrderRepository orderRepository;
+
     /**
      * Constructor.
      *
      * @param newUserService     user service
      * @param newTradeRepository trade repository
+     * @param newOrderRepository order repository
      */
     public TradeServiceDryModeImplementation(final UserServiceDryModeImplementation newUserService,
-                                             final TradeRepository newTradeRepository) {
+                                             final TradeRepository newTradeRepository,
+                                             final OrderRepository newOrderRepository) {
         this.userService = newUserService;
         this.tradeRepository = newTradeRepository;
+        this.orderRepository = newOrderRepository;
     }
 
     /**
@@ -239,12 +246,28 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     }
 
     @Override
+    public final Set<OrderDTO> getOrdersFromDatabase() {
+        return orderRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(order -> getMapper().mapToOrderDTO(order))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
     public final boolean cancelOrder(final String orderId) {
         return orders.remove(orderId) != null;
     }
 
     @Override
     public final Set<TradeDTO> getTrades() {
+        return tradeRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(trade -> getMapper().mapToTradeDTO(trade))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public final Set<TradeDTO> getTradesFromDatabase() {
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(trade -> getMapper().mapToTradeDTO(trade))

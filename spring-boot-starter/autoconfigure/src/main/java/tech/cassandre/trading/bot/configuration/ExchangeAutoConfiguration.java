@@ -15,6 +15,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
@@ -85,6 +86,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Position flux. */
     private PositionFlux positionFlux;
 
+    /** Order repository. */
+    private final OrderRepository orderRepository;
+
     /** Trade repository. */
     private final TradeRepository tradeRepository;
 
@@ -96,15 +100,18 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      *
      * @param newApplicationContext application context
      * @param newExchangeParameters exchange parameters
+     * @param newOrderRepository    order repository
      * @param newTradeRepository    trade repository
      * @param newPositionRepository position repository
      */
     public ExchangeAutoConfiguration(final ApplicationContext newApplicationContext,
                                      final ExchangeParameters newExchangeParameters,
+                                     final OrderRepository newOrderRepository,
                                      final TradeRepository newTradeRepository,
                                      final PositionRepository newPositionRepository) {
         this.applicationContext = newApplicationContext;
         this.exchangeParameters = newExchangeParameters;
+        this.orderRepository = newOrderRepository;
         this.tradeRepository = newTradeRepository;
         this.positionRepository = newPositionRepository;
     }
@@ -156,7 +163,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
                 this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService, tradeRepository);
+                this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService, tradeRepository, orderRepository);
             } else {
                 // Dry mode.
                 getLogger().info("Dry mode is on");
@@ -164,14 +171,14 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 userServiceDryMode = new UserServiceDryModeImplementation();
                 this.userService = userServiceDryMode;
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode, tradeRepository);
+                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode, tradeRepository, orderRepository);
                 this.tradeService = tradeServiceDryMode;
             }
 
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(userService);
             tickerFlux = new TickerFlux(marketService);
-            orderFlux = new OrderFlux(tradeService);
+            orderFlux = new OrderFlux(tradeService, orderRepository);
             tradeFlux = new TradeFlux(tradeService, tradeRepository);
             positionFlux = new PositionFlux(positionRepository);
 

@@ -171,31 +171,28 @@ public interface CassandreMapper {
     }
 
     /**
+     * Map to OrderDTO.
+     *
+     * @param source order
+     * @return OrderDTO
+     */
+    OrderDTO mapToOrderDTO(tech.cassandre.trading.bot.domain.Order source);
+
+    /**
+     * Map to order.
+     *
+     * @param source source
+     * @return Order
+     */
+    tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
+
+    /**
      * Map to tradeDTO.
      *
      * @param source trade
      * @return tradeDRO
      */
     TradeDTO mapToTradeDTO(Trade source);
-
-    /***
-     * Map to CurrencyPairDTO.
-     * @param value string
-     * @return CurrencyPairDTO
-     */
-    default CurrencyPairDTO mapToCurrencyPairDTO(String value) {
-        return new CurrencyPairDTO(value);
-    }
-
-    /**
-     * Map to CurrencyDTO.
-     *
-     * @param value string
-     * @return CurrencyDTO
-     */
-    default CurrencyDTO mapToCurrencyDTO(String value) {
-        return new CurrencyDTO(value);
-    }
 
     /**
      * Map to positionDTO.
@@ -226,5 +223,24 @@ public interface CassandreMapper {
     @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
     @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
     Position mapToPosition(PositionDTO source);
+
+    /***
+     * Map to CurrencyPairDTO.
+     * @param value string
+     * @return CurrencyPairDTO
+     */
+    default CurrencyPairDTO mapToCurrencyPairDTO(String value) {
+        return new CurrencyPairDTO(value);
+    }
+
+    /**
+     * Map to CurrencyDTO.
+     *
+     * @param value string
+     * @return CurrencyDTO
+     */
+    default CurrencyDTO mapToCurrencyDTO(String value) {
+        return new CurrencyDTO(value);
+    }
 
 }

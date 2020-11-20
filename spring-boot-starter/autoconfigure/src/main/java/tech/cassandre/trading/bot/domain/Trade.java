@@ -9,18 +9,15 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
+import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
+import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
+
 /**
  * Trade (used to save data between restarts).
  */
 @Entity
 @Table(name = "TRADES")
 public class Trade {
-
-    /** Precision. */
-    private static final int PRECISION = 16;
-
-    /** Scale. */
-    private static final int SCALE = 8;
 
     /** An identifier set by the exchange that uniquely identifies the trade. */
     @Id
@@ -48,6 +45,7 @@ public class Trade {
     private BigDecimal price;
 
     /** The timestamp on the order according to the exchange's server, null if not provided. */
+    // TODO Change field name and java code ?
     @Column(name = "ORDER_TIMESTAMP")
     private ZonedDateTime timestamp;
 

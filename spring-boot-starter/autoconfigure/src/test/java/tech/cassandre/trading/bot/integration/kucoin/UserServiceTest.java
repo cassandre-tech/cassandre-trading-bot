@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
+    @Tag("integration")
     @DisplayName("CHeck get user, accounts and balances")
     public void checkGetUser() {
         // Expected values.

@@ -53,6 +53,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the account flux.
      */
+    // TODO Remove initialDelay
     @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
     public void setupAccountFlux() {
         accountFlux.update();

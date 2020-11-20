@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,6 +49,7 @@ public class MarketServiceTest {
     private MarketService marketService;
 
     @Test
+    @Tag("integration")
     @DisplayName("Check get ticker")
     public void checkGetTicker() {
         CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);

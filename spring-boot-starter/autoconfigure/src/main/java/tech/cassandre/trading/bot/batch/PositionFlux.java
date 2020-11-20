@@ -43,6 +43,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
 
     @Override
     public final void restoreValues() {
+        // TODO to be removed ?
         getLogger().info("PositionFlux - Restoring positions from database");
         positionRepository.findAll().forEach(position -> {
             PositionDTO p = getMapper().mapToPositionDTO(position);

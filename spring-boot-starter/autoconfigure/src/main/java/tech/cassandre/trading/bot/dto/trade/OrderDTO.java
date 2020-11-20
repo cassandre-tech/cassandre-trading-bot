@@ -6,11 +6,16 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
+
 /**
  * DTO representing order information.
  * A market order is a request by an investor to buy or sell in the current market.
  */
 public final class OrderDTO {
+
+    /** An identifier set by the exchange that uniquely identifies the order. */
+    private final String id;
 
     /** Order type i.e. bid or ask. */
     private final OrderTypeDTO type;
@@ -20,9 +25,6 @@ public final class OrderDTO {
 
     /** The currency-pair. */
     private final CurrencyPairDTO currencyPair;
-
-    /** An identifier set by the exchange that uniquely identifies the order. */
-    private final String id;
 
     /** An identifier provided by the user on placement that uniquely identifies the order. */
     private final String userReference;
@@ -54,12 +56,12 @@ public final class OrderDTO {
      * @param builder builder
      */
     protected OrderDTO(final OrderDTO.Builder builder) {
+        this.id = builder.id;
         this.type = builder.type;
         this.originalAmount = builder.originalAmount;
         this.currencyPair = builder.currencyPair;
-        this.id = builder.id;
         this.userReference = builder.userReference;
-        this.timestamp = builder.timestamp;
+        this.timestamp = Objects.requireNonNullElseGet(builder.timestamp, ZonedDateTime::now);
         this.status = builder.status;
         this.cumulativeAmount = builder.cumulativeAmount;
         this.averagePrice = builder.averagePrice;
@@ -75,6 +77,15 @@ public final class OrderDTO {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * Getter for id.
+     *
+     * @return id
+     */
+    public String getId() {
+        return id;
     }
 
     /**
@@ -102,15 +113,6 @@ public final class OrderDTO {
      */
     public CurrencyPairDTO getCurrencyPair() {
         return currencyPair;
-    }
-
-    /**
-     * Getter for id.
-     *
-     * @return id
-     */
-    public String getId() {
-        return id;
     }
 
     /**
@@ -195,17 +197,18 @@ public final class OrderDTO {
         }
         final OrderDTO orderDTO = (OrderDTO) o;
         return getType() == orderDTO.getType()
-                && Objects.equals(getOriginalAmount(), orderDTO.getOriginalAmount())
+                && (Objects.nonNull(getOriginalAmount()) && 0 == getOriginalAmount().compareTo(orderDTO.getOriginalAmount()))
                 && Objects.equals(getCurrencyPair(), orderDTO.getCurrencyPair())
                 && Objects.equals(getId(), orderDTO.getId())
                 && Objects.equals(getUserReference(), orderDTO.getUserReference())
-                && Objects.equals(getTimestamp(), orderDTO.getTimestamp())
+                // TODO Check if the truncate is necessary ?
+                && getTimestamp().truncatedTo(SECONDS).isEqual(orderDTO.getTimestamp().truncatedTo(SECONDS))
                 && getStatus() == orderDTO.getStatus()
-                && Objects.equals(getCumulativeAmount(), orderDTO.getCumulativeAmount())
-                && Objects.equals(getAveragePrice(), orderDTO.getAveragePrice())
-                && Objects.equals(getFee(), orderDTO.getFee())
-                && Objects.equals(getLeverage(), orderDTO.getLeverage())
-                && Objects.equals(getLimitPrice(), orderDTO.getLimitPrice());
+                && (Objects.nonNull(getCumulativeAmount()) && 0 == getCumulativeAmount().compareTo(orderDTO.getCumulativeAmount()))
+                && (Objects.nonNull(getAveragePrice()) && 0 == getAveragePrice().compareTo(orderDTO.getAveragePrice()))
+                && (Objects.nonNull(getFee()) && 0 == getFee().compareTo(orderDTO.getFee()))
+                && (Objects.nonNull(getLeverage()) && 0 == getLeverage().compareTo(orderDTO.getLeverage()))
+                && (Objects.nonNull(getLimitPrice()) && 0 == getLimitPrice().compareTo(orderDTO.getLimitPrice()));
     }
 
     @Override

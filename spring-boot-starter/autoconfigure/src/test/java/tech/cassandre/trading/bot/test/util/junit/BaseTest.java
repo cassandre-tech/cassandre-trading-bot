@@ -18,11 +18,20 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
  * Base for tests.
  */
 public class BaseTest {
+
+    /** cp1 for tests. */
+    protected final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+
+    /** cp2 for tests. */
+    protected final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
 
     /** Ten seconds wait. */
     protected static final long WAITING_TIME_IN_SECONDS = 5L;

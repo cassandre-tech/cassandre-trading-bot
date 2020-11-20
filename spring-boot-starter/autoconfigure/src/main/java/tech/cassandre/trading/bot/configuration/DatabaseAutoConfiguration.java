@@ -21,6 +21,12 @@ import tech.cassandre.trading.bot.util.parameters.DatabaseParameters;
 @EnableConfigurationProperties(DatabaseParameters.class)
 public class DatabaseAutoConfiguration extends BaseConfiguration {
 
+    /** Precision. */
+    public static final int PRECISION = 16;
+
+    /** Scale. */
+    public static final int SCALE = 8;
+
     /** Database parameters. */
     private final DatabaseParameters databaseParameters;
 

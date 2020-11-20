@@ -56,3 +56,15 @@ values -- note : No trade for order BACKUP_OPEN_ORDER_01 - This is why position 
        ('TRADE_03', 'CLOSE_ORDER_01', 'ASK', 15, 'ETH/USD', 13, DATE '2020-08-07', 5, 'USD', 5),
        ('TRADE_04', 'CLOSE_ORDER_01', 'ASK', 5, 'ETH/USD', 14, DATE '2020-08-08', 5, 'USD', 5),
        ('TRADE_05', 'CLOSE_ORDER_01', 'ASK', 30, 'ETH/USD', 15, DATE '2020-08-09', 5, 'USD', 5);
+
+-- =====================================================================================================================
+-- Insert trades.
+INSERT INTO MY_STRATEGY_ORDERS (ID, TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS,
+                                CUMULATIVE_AMOUNT, AVERAGE_PRICE, FEE, LEVERAGE, LIMIT_PRICE)
+values -- Order BACKUP_ORDER_01.
+       ('BACKUP_ORDER_01', 'ASK', 0.000005, 'ETH/BTC', 'My reference 1', '2020-11-18', 'NEW', 0.000004, 0.000003,
+        0.000002, 'LEVERAGE_1', 0.000001),
+
+       -- Order BACKUP_ORDER_02.
+       ('BACKUP_ORDER_02', 'BID', 0.000015, 'USDT/BTC', 'My reference 2', '2020-11-19', 'PENDING_NEW', 0.000014,
+        0.000013, 0.000012, 'LEVERAGE_2', 0.000011);

@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +44,7 @@ public class ExchangeServiceTest {
 	private ExchangeService exchangeService;
 
 	@Test
+	@Tag("integration")
 	@DisplayName("Check get available currency pairs")
 	public void checkGetAvailableCurrencyPairs() {
 		// Expected values.

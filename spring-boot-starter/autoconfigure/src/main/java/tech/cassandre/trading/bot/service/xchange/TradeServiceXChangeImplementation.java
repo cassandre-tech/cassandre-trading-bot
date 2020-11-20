@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
@@ -33,19 +34,25 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     /** Trade repository. */
     private final TradeRepository tradeRepository;
 
+    /** Order repository. */
+    private final OrderRepository orderRepository;
+
     /**
      * Constructor.
      *
      * @param rate               rate in ms
      * @param newTradeService    market data service
      * @param newTradeRepository trade repository
+     * @param newOrderRepository order repository
      */
     public TradeServiceXChangeImplementation(final long rate,
                                              final org.knowm.xchange.service.trade.TradeService newTradeService,
-                                             final TradeRepository newTradeRepository) {
+                                             final TradeRepository newTradeRepository,
+                                             final OrderRepository newOrderRepository) {
         super(rate);
         this.tradeService = newTradeService;
         this.tradeRepository = newTradeRepository;
+        this.orderRepository = newOrderRepository;
     }
 
     /**
@@ -153,6 +160,14 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
+    public final Set<OrderDTO> getOrdersFromDatabase() {
+        return orderRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(order -> getMapper().mapToOrderDTO(order))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
     public final boolean cancelOrder(final String orderId) {
         getLogger().debug("TradeService - Canceling order {}", orderId);
         if (orderId != null) {
@@ -177,21 +192,17 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // If a token is not available this method will block until the refill adds one to the bucket.
             getBucket().asScheduler().consume(1);
 
-            // We retrieve all trades from databases.
-            Set<TradeDTO> results = tradeRepository.findByOrderByTimestampAsc()
-                    .stream()
-                    .map(trade -> getMapper().mapToTradeDTO(trade))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-
             // Query 1 week of trades.
             TradeHistoryParamsAll params = new TradeHistoryParamsAll();
             Date startDate = DateUtils.addWeeks(new Date(), -1);
             Date endDate = new Date();
             params.setStartTime(startDate);
             params.setEndTime(endDate);
-            tradeService.getTradeHistory(params)
+            final Set<TradeDTO> results = tradeService.getTradeHistory(params)
                     .getUserTrades()
-                    .forEach(userTrade -> results.add(getMapper().mapToTradeDTO(userTrade)));
+                    .stream()
+                    .map(userTrade -> getMapper().mapToTradeDTO(userTrade))
+                    .collect(Collectors.toSet());
             getLogger().debug("TradeService - {} trade(s) found", results.size());
             return results;
         } catch (IOException e) {
@@ -201,6 +212,14 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
+    }
+
+    @Override
+    public final Set<TradeDTO> getTradesFromDatabase() {
+        return tradeRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(trade -> getMapper().mapToTradeDTO(trade))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

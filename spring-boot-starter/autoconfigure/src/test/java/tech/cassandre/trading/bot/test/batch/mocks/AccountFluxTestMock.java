@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.batch.mocks;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -10,6 +11,7 @@ import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
@@ -23,10 +25,15 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
 public class AccountFluxTestMock {
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Bean
     @Primary
@@ -43,7 +50,7 @@ public class AccountFluxTestMock {
     @Bean
     @Primary
     public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService());
+        return new OrderFlux(tradeService(), orderRepository);
     }
 
     @SuppressWarnings("unchecked")
@@ -56,19 +63,19 @@ public class AccountFluxTestMock {
         UserService userService = mock(UserService.class);
 
         // =============================================================================================================
-        // Account retrieved by configuration.
+        // Account retrieved by configuration at Cassandre startup.
         AccountDTO tempAccount = AccountDTO.builder().id("trade").name("trade").create();
         accounts.put("trade", tempAccount);
         UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
         accounts.clear();
 
         // =============================================================================================================
-        // Account 1 with 2 balances.
-        // Account 2 with 1 balance.
+        // Account 1 with 2 balances (1 BTC - 2 ETH).
+        // Account 2 with 1 balance (1 BTC).
         BalanceDTO account01Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -85,13 +92,13 @@ public class AccountFluxTestMock {
                 .total(new BigDecimal("2"))
                 .withdrawing(new BigDecimal("2"))
                 .create();
-        balances.put(CurrencyDTO.BTC, account01Balance1);
+        balances.put(BTC, account01Balance1);
         balances.put(ETH, account01Balance2);
         AccountDTO account01 = AccountDTO.builder().id("01").name("01").balances(balances).create();
         BalanceDTO account02Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -99,20 +106,20 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("1"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account02Balance1);
+        balances.put(BTC, account02Balance1);
         AccountDTO account02 = AccountDTO.builder().id("02").name("02").balances(balances).create();
         accounts.put("01", account01);
         accounts.put("02", account02);
         UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
 
         // =========================================================================================================
-        // Account 1 with 3 balances.
+        // Account 1 with 3 balances (1 BTC - 2 ETH - 2 USDT).
         // Account 2 with 1 balance.
         // Change : Account 1 has now 3 balances.
         BalanceDTO account03Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -132,7 +139,7 @@ public class AccountFluxTestMock {
         BalanceDTO account03Balance3 = BalanceDTO.builder()
                 .available(new BigDecimal("2"))
                 .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
+                .currency(USDT)
                 .depositing(new BigDecimal("2"))
                 .frozen(new BigDecimal("2"))
                 .loaned(new BigDecimal("2"))
@@ -140,14 +147,14 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("2"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account03Balance1);
+        balances.put(BTC, account03Balance1);
         balances.put(ETH, account03Balance2);
-        balances.put(CurrencyDTO.USDT, account03Balance3);
+        balances.put(USDT, account03Balance3);
         AccountDTO account03 = AccountDTO.builder().id("01").name("01").balances(balances).create();
         BalanceDTO account04Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -155,7 +162,7 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("1"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account04Balance1);
+        balances.put(BTC, account04Balance1);
         AccountDTO account04 = AccountDTO.builder().id("02").name("02").balances(balances).create();
         accounts.clear();
         accounts.put("01", account03);
@@ -169,7 +176,7 @@ public class AccountFluxTestMock {
         BalanceDTO account05Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -189,7 +196,7 @@ public class AccountFluxTestMock {
         BalanceDTO account05Balance3 = BalanceDTO.builder()
                 .available(new BigDecimal("2"))
                 .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
+                .currency(USDT)
                 .depositing(new BigDecimal("2"))
                 .frozen(new BigDecimal("2"))
                 .loaned(new BigDecimal("2"))
@@ -197,14 +204,14 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("2"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account05Balance1);
+        balances.put(BTC, account05Balance1);
         balances.put(ETH, account05Balance2);
-        balances.put(CurrencyDTO.USDT, account05Balance3);
+        balances.put(USDT, account05Balance3);
         AccountDTO account05 = AccountDTO.builder().id("01").name("01").balances(balances).create();
         BalanceDTO account06Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -212,7 +219,7 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("1"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account06Balance1);
+        balances.put(BTC, account06Balance1);
         AccountDTO account06 = AccountDTO.builder().id("02").name("02").balances(balances).create();
         accounts.clear();
         accounts.put("01", account05);
@@ -226,7 +233,7 @@ public class AccountFluxTestMock {
         BalanceDTO account07Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -246,7 +253,7 @@ public class AccountFluxTestMock {
         BalanceDTO account07Balance3 = BalanceDTO.builder()
                 .available(new BigDecimal("2"))
                 .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
+                .currency(USDT)
                 .depositing(new BigDecimal("2"))
                 .frozen(new BigDecimal("2"))
                 .loaned(new BigDecimal("2"))
@@ -254,14 +261,14 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("2"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account07Balance1);
+        balances.put(BTC, account07Balance1);
         balances.put(ETH, account07Balance2);
-        balances.put(CurrencyDTO.USDT, account07Balance3);
+        balances.put(USDT, account07Balance3);
         AccountDTO account07 = AccountDTO.builder().id("01").name("01").balances(balances).create();
         BalanceDTO account08Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("2"))
                 .loaned(new BigDecimal("1"))
@@ -269,7 +276,7 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("1"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account08Balance1);
+        balances.put(BTC, account08Balance1);
         AccountDTO account08 = AccountDTO.builder().id("02").name("02").balances(balances).create();
         accounts.clear();
         accounts.put("01", account07);
@@ -283,7 +290,7 @@ public class AccountFluxTestMock {
         BalanceDTO account09Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -303,7 +310,7 @@ public class AccountFluxTestMock {
         BalanceDTO account09Balance3 = BalanceDTO.builder()
                 .available(new BigDecimal("2"))
                 .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
+                .currency(USDT)
                 .depositing(new BigDecimal("2"))
                 .frozen(new BigDecimal("2"))
                 .loaned(new BigDecimal("2"))
@@ -311,14 +318,14 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("2"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account09Balance1);
+        balances.put(BTC, account09Balance1);
         balances.put(ETH, account09Balance2);
-        balances.put(CurrencyDTO.USDT, account09Balance3);
+        balances.put(USDT, account09Balance3);
         AccountDTO account09 = AccountDTO.builder().id("01").name("01").balances(balances).create();
         BalanceDTO account10Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("2"))
                 .loaned(new BigDecimal("1"))
@@ -326,7 +333,7 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("1"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account10Balance1);
+        balances.put(BTC, account10Balance1);
         AccountDTO account10 = AccountDTO.builder().id("02").name("02").balances(balances).create();
         accounts.clear();
         accounts.put("01", account09);
@@ -340,7 +347,7 @@ public class AccountFluxTestMock {
         BalanceDTO account11Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("1"))
                 .loaned(new BigDecimal("1"))
@@ -350,7 +357,7 @@ public class AccountFluxTestMock {
         BalanceDTO account11Balance2 = BalanceDTO.builder()
                 .available(new BigDecimal("2"))
                 .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
+                .currency(USDT)
                 .depositing(new BigDecimal("2"))
                 .frozen(new BigDecimal("2"))
                 .loaned(new BigDecimal("2"))
@@ -358,13 +365,13 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("2"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account11Balance1);
-        balances.put(CurrencyDTO.USDT, account11Balance2);
+        balances.put(BTC, account11Balance1);
+        balances.put(USDT, account11Balance2);
         AccountDTO account11 = AccountDTO.builder().id("01").name("01").balances(balances).create();
         BalanceDTO account12Balance1 = BalanceDTO.builder()
                 .available(new BigDecimal("1"))
                 .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
+                .currency(BTC)
                 .depositing(new BigDecimal("1"))
                 .frozen(new BigDecimal("2"))
                 .loaned(new BigDecimal("1"))
@@ -372,7 +379,7 @@ public class AccountFluxTestMock {
                 .withdrawing(new BigDecimal("1"))
                 .create();
         balances.clear();
-        balances.put(CurrencyDTO.BTC, account12Balance1);
+        balances.put(BTC, account12Balance1);
         AccountDTO account12 = AccountDTO.builder().id("02").name("02").balances(balances).create();
         accounts.clear();
         accounts.put("01", account11);
@@ -381,7 +388,7 @@ public class AccountFluxTestMock {
 
         // Mock.
         given(userService.getUser())
-                .willReturn(Optional.of(tempUser),
+                .willReturn(Optional.of(tempUser),  // Retrieved by cassandre at startup for configuration.
                         Optional.of(user01),
                         Optional.empty(),
                         Optional.of(user02),

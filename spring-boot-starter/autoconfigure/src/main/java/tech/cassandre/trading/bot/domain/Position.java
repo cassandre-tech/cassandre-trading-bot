@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 import static javax.persistence.FetchType.EAGER;
+import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
+import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
 /**
  * Position (used to save data between restarts).
@@ -19,12 +21,6 @@ import static javax.persistence.FetchType.EAGER;
 @Entity
 @Table(name = "POSITIONS")
 public class Position {
-
-    /** Precision. */
-    private static final int PRECISION = 16;
-
-    /** Scale. */
-    private static final int SCALE = 8;
 
     /** An identifier that uniquely identifies the position. */
     @Id

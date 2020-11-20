@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.strategy;
 
+import org.mapstruct.factory.Mappers;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
@@ -10,20 +11,33 @@ import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Generic Cassandre strategy.
  */
 public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
+
+    /** Mapper. */
+    private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);
+
+    /** Order repository. */
+    private OrderRepository orderRepository;
+
+    /** Trade repository. */
+    private TradeRepository tradeRepository;
 
     /** Trade service. */
     private TradeService tradeService;
@@ -34,9 +48,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** The accounts owned by the user. */
     private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
-    /** The orders owned by the user. */
-    private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
-
     /** The positions owned by the user. */
     private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
 
@@ -46,6 +57,27 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Last ticker received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTicker = new LinkedHashMap<>();
 
+
+    @Override
+    public final OrderRepository getOrderRepository() {
+        return orderRepository;
+    }
+
+    @Override
+    public final TradeRepository getTradeRepository() {
+        return tradeRepository;
+    }
+
+    @Override
+    public final void setOrderRepository(final OrderRepository newOrderRepository) {
+        this.orderRepository = newOrderRepository;
+    }
+
+    @Override
+    public final void setTradeRepository(final TradeRepository newTradeRepository) {
+        this.tradeRepository = newTradeRepository;
+    }
+
     @Override
     public final void setTradeService(final TradeService newTradeService) {
         this.tradeService = newTradeService;
@@ -54,7 +86,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setPositionService(final PositionService newPositionService) {
         this.positionService = newPositionService;
-        positionService.getPositions().forEach(p -> positions.put(p.getId(), p));
     }
 
     @Override
@@ -82,7 +113,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return orders
      */
     public final Map<String, OrderDTO> getOrders() {
-        return orders;
+        return orderRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(mapper::mapToOrderDTO)
+                .collect(Collectors.toMap(OrderDTO::getId, o -> o));
     }
 
     /**
@@ -91,8 +125,19 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return trades
      */
     public final Map<String, TradeDTO> getTrades() {
-        return tradeService.getTrades().stream()
+        return tradeRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(mapper::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getId, t -> t));
+    }
+
+    /**
+     * Get trades from database.
+
+     * @return trades.
+     */
+    public final Set<TradeDTO> getTradesFromDatabase() {
+        return tradeService.getTradesFromDatabase();
     }
 
     /**
@@ -144,7 +189,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @SuppressWarnings("checkstyle:DesignForExtension")
     @Override
     public void orderUpdate(final OrderDTO order) {
-        getOrders().put(order.getId(), order);
         onOrderUpdate(order);
     }
 

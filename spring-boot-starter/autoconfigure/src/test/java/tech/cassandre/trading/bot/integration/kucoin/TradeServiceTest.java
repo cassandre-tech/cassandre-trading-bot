@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.integration.kucoin;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,6 +62,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
+    @Tag("integration")
     @DisplayName("Check creates a buy / sell market order")
     public void checkCreateBuySellMarketOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
@@ -88,6 +90,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
+    @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     public void checkCreateBuyLimitOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
@@ -128,6 +131,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
+    @Tag("integration")
     @DisplayName("Check cancel an order")
     public void checkCancelOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
@@ -150,6 +154,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
+    @Tag("integration")
     @DisplayName("Check get trades")
     public void checkGetTrades() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);

@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.batch.mocks;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -7,16 +8,17 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
@@ -30,12 +32,20 @@ import java.util.Set;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
 public class OrderFluxTestMock {
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private TradeRepository tradeRepository;
 
     @Bean
     @Primary
@@ -52,7 +62,7 @@ public class OrderFluxTestMock {
     @Bean
     @Primary
     public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService());
+        return new OrderFlux(tradeService(), orderRepository);
     }
 
     @SuppressWarnings("unchecked")
@@ -110,6 +120,7 @@ public class OrderFluxTestMock {
     @Primary
     public TradeService tradeService() {
         // Creates the mock.
+        new TradeServiceXChangeImplementation(100l, null, tradeRepository, orderRepository);
         TradeService tradeService = mock(TradeService.class);
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
@@ -118,50 +129,50 @@ public class OrderFluxTestMock {
 
         // Order 000001.
         OrderDTO order01 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         // Order 000002.
         OrderDTO order02 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         // Order 000003.
         OrderDTO order03 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         Set<OrderDTO> reply01 = new LinkedHashSet<>();
@@ -176,66 +187,66 @@ public class OrderFluxTestMock {
 
         // Order 000001.
         OrderDTO order04 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         // Order 000002.
         OrderDTO order05 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         // Order 000003 : the original amount changed.
         OrderDTO order06 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(2))
+                .type(ASK)
+                .originalAmount(new BigDecimal("2"))
                 .currencyPair(cp1)
                 .id("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         // Order 000004 : new order.
         OrderDTO order07 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000004")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         Set<OrderDTO> reply02 = new LinkedHashSet<>();
@@ -251,66 +262,66 @@ public class OrderFluxTestMock {
 
         // Order 000001.
         OrderDTO order08 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         // Order 000002 : average price changed.
         OrderDTO order09 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(1))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("1"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         // Order 000003.
         OrderDTO order10 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(2))
+                .type(ASK)
+                .originalAmount(new BigDecimal("2"))
                 .currencyPair(cp1)
                 .id("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("4"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         // Order 000004 : fee changed.
         OrderDTO order11 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
+                .type(ASK)
+                .originalAmount(new BigDecimal("1"))
                 .currencyPair(cp1)
                 .id("000004")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(1))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3"))
+                .fee(new BigDecimal("1"))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
+                .limitPrice(new BigDecimal("5"))
                 .create();
 
         Set<OrderDTO> reply03 = new LinkedHashSet<>();

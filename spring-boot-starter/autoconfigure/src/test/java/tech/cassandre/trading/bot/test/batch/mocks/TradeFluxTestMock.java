@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -42,6 +43,9 @@ public class TradeFluxTestMock {
     @Autowired
     private TradeRepository tradeRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
@@ -57,7 +61,7 @@ public class TradeFluxTestMock {
     @Bean
     @Primary
     public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService());
+        return new OrderFlux(tradeService(), orderRepository);
     }
 
     @Bean
@@ -144,7 +148,7 @@ public class TradeFluxTestMock {
         reply02.add(trade05);
 
         // =========================================================================================================
-        // First reply : 3 trades - Trade07 is again trade 0000003.
+        // First reply : 3 trades - Trade07 is trade 0000003 again.
         TradeDTO trade06 = TradeDTO.builder().id("0000006").type(BID).currencyPair(cp1).create();
         TradeDTO trade07 = TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create();
         TradeDTO trade08 = TradeDTO.builder().id("0000008").type(BID).currencyPair(cp1).create();
@@ -157,8 +161,8 @@ public class TradeFluxTestMock {
         // =========================================================================================================
         // Creating the mock.
         given(tradeService.getTrades())
-                .willReturn(new LinkedHashSet<>(),  // Reply empty for data restore.
-                        reply01,
+                .willReturn(reply01,
+                        new LinkedHashSet<>(),
                         new LinkedHashSet<>(),
                         reply02,
                         reply03);
