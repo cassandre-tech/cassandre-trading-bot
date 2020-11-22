@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.tmp.strategy;
+package tech.cassandre.trading.bot.test.strategy;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;

@@ -48,9 +48,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     /** Trade service. */
     private final TradeService tradeService;
 
-    /** Position repository. */
-    private final PositionRepository positionRepository;
-
     /** Position service. */
     private PositionService positionService;
 
@@ -67,10 +64,13 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     private final OrderFlux orderFlux;
 
     /** Order repository. */
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
     /** Trade repository. */
-    private TradeRepository tradeRepository;
+    private final TradeRepository tradeRepository;
+
+    /** Position repository. */
+    private final PositionRepository positionRepository;
 
     /** Trade flux. */
     private final TradeFlux tradeFlux;
@@ -192,6 +192,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         strategy.setTradeRepository(tradeRepository);
         strategy.setTradeService(tradeService);
         strategy.setPositionService(positionService);
+        strategy.setPositionRepository(positionRepository);
 
         // Account flux.
         final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();

@@ -60,9 +60,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /** Orders. */
     private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
 
-    /** The trades owned by the user. */
-    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
-
     /** User service - dry mode. */
     private final UserServiceDryModeImplementation userService;
 
@@ -196,7 +193,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                 orderFlux.emitValue(order);
                 orders.put(orderId, order);
                 tradeFlux.emitValue(trade);
-                trades.put(tradeId, trade);
             });
 
             // We update the balances of the account because of the trade.

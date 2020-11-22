@@ -80,6 +80,7 @@ public class OrderFluxTest extends BaseTest {
         await().untilAsserted(() -> assertTrue(strategy.getOrdersUpdateReceived().size() >= numberOfUpdatesExpected));
         final Iterator<OrderDTO> orders = strategy.getOrdersUpdateReceived().iterator();
 
+        // Test all values received by the strategy with update methods.
         // Value 1.
         OrderDTO o = orders.next();
         assertEquals("000001", o.getId());

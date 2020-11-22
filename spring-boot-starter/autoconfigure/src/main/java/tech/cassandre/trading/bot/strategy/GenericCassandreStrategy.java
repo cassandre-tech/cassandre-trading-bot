@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -39,6 +40,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Trade repository. */
     private TradeRepository tradeRepository;
 
+    /** Position repository. */
+    private PositionRepository positionRepository;
+
     /** Trade service. */
     private TradeService tradeService;
 
@@ -48,15 +52,21 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** The accounts owned by the user. */
     private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
-    /** The positions owned by the user. */
-    private final Map<Long, PositionDTO> positions = new LinkedHashMap<>();
-
     /** Positions previous status. */
     private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
     /** Last ticker received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTicker = new LinkedHashMap<>();
 
+    @Override
+    public final PositionRepository getPositionRepository() {
+        return positionRepository;
+    }
+
+    @Override
+    public final void setPositionRepository(final PositionRepository newPositionRepository) {
+        positionRepository = newPositionRepository;
+    }
 
     @Override
     public final OrderRepository getOrderRepository() {
@@ -67,6 +77,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public final TradeRepository getTradeRepository() {
         return tradeRepository;
     }
+
 
     @Override
     public final void setOrderRepository(final OrderRepository newOrderRepository) {
@@ -146,7 +157,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return positions
      */
     public final Map<Long, PositionDTO> getPositions() {
-        return positions;
+        return positionRepository.findByOrderById()
+                .stream()
+                .map(mapper::mapToPositionDTO)
+                .collect(Collectors.toMap(PositionDTO::getId, t -> t));
     }
 
     /**

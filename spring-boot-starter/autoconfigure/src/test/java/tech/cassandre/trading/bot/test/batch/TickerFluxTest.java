@@ -65,6 +65,7 @@ public class TickerFluxTest extends BaseTest {
         await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfUpdatesExpected));
         final Iterator<TickerDTO> iterator = strategy.getTickersUpdateReceived().iterator();
 
+        // Test all values received by the strategy with update methods.
         // First value cp1 - 1.
         TickerDTO t = iterator.next();
         assertEquals(cp1, t.getCurrencyPair());

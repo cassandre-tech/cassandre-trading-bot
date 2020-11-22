@@ -11,19 +11,19 @@ import java.util.Objects;
 /**
  * DTO representing a trade.
  * A trade is the action of buying and selling goods and services.
- *
+ * <p>
  * This is how it works :
  * - Received ticker - It means 1 Ether can be bought with 0.034797 Bitcoin
  * currencyPair=ETH/BTC
  * last=0.034797 (Last trade field is the price set during the last trade).
- *
+ * <p>
  * - Account before buying
  * BTC : 0.99963006
  * ETH : 10
- *
+ * <p>
  * - Buying 0.004 Bitcoin (should costs 0.05748 ether).
  * TradeDTO{currencyPair=ETH/BTC, originalAmount=0.004, price=0.034797}
- *
+ * <p>
  * - Account after buying
  * BTC : 0.99949078
  * ETH : 10.004
@@ -68,7 +68,7 @@ public class TradeDTO {
         this.originalAmount = builder.originalAmount;
         this.currencyPair = builder.currencyPair;
         this.price = builder.price;
-        this.timestamp = builder.timestamp;
+        this.timestamp = Objects.requireNonNullElseGet(builder.timestamp, ZonedDateTime::now);
         if (builder.feeAmount != null || builder.feeCurrency != null) {
             this.fee = new CurrencyAmountDTO(builder.feeAmount, builder.feeCurrency);
         } else {
@@ -166,7 +166,15 @@ public class TradeDTO {
             return false;
         }
         TradeDTO tradeDTO = (TradeDTO) o;
-        return id.equals(tradeDTO.id);
+        return id.equals(tradeDTO.id)
+                && Objects.equals(orderId, tradeDTO.orderId)
+                && type == tradeDTO.type
+                && (Objects.nonNull(originalAmount) && Objects.equals(0, originalAmount.compareTo(tradeDTO.originalAmount))
+                && currencyPair.equals(tradeDTO.currencyPair)
+                && (Objects.nonNull(price) && Objects.equals(0, price.compareTo(tradeDTO.price)))
+                && timestamp.equals(tradeDTO.timestamp)
+                && (Objects.nonNull(fee.getValue()) && Objects.equals(0, fee.getValue().compareTo(tradeDTO.fee.getValue()))))
+                && Objects.equals(fee.getCurrency(), tradeDTO.getFee().getCurrency());
     }
 
     @Override

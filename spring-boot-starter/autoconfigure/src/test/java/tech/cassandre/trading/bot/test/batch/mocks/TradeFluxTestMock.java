@@ -13,12 +13,12 @@ import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -36,9 +36,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
-public class TradeFluxTestMock {
-
-    private final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
+public class TradeFluxTestMock extends BaseTest {
 
     @Autowired
     private TradeRepository tradeRepository;
@@ -130,7 +128,16 @@ public class TradeFluxTestMock {
         // =========================================================================================================
         // First reply : 2 trades.
         TradeDTO trade01 = TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).create();
-        TradeDTO trade02 = TradeDTO.builder().id("0000002").type(BID).currencyPair(cp1).create();
+        TradeDTO trade02 = TradeDTO.builder().id("0000002")
+                .type(BID)
+                .currencyPair(cp1)
+                .orderId("EMPTY")
+                .originalAmount(new BigDecimal("1.100001"))
+                .price(new BigDecimal("2.200002"))
+                .timestamp(createZonedDateTime("01-09-2020"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .create();
 
         Set<TradeDTO> reply01 = new LinkedHashSet<>();
         reply01.add(trade01);
@@ -138,7 +145,17 @@ public class TradeFluxTestMock {
 
         // =========================================================================================================
         // First reply : 3 trades.
-        TradeDTO trade03 = TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create();
+        TradeDTO trade03 = TradeDTO.builder().id("0000003")
+                .type(BID)
+                .currencyPair(cp2)
+                .orderId("EMPTY")
+                .originalAmount(new BigDecimal("1.100001"))
+                .currencyPair(cp2)
+                .price(new BigDecimal("2.200002"))
+                .timestamp(createZonedDateTime("01-09-2020"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .create();
         TradeDTO trade04 = TradeDTO.builder().id("0000004").type(BID).currencyPair(cp1).create();
         TradeDTO trade05 = TradeDTO.builder().id("0000005").type(BID).currencyPair(cp1).create();
 
@@ -149,14 +166,35 @@ public class TradeFluxTestMock {
 
         // =========================================================================================================
         // First reply : 3 trades - Trade07 is trade 0000003 again.
-        TradeDTO trade06 = TradeDTO.builder().id("0000006").type(BID).currencyPair(cp1).create();
-        TradeDTO trade07 = TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create();
-        TradeDTO trade08 = TradeDTO.builder().id("0000008").type(BID).currencyPair(cp1).create();
+        TradeDTO trade06 = TradeDTO.builder().id("0000006").type(BID).currencyPair(cp2).create();
+        TradeDTO trade07 = TradeDTO.builder().id("0000002") // did nto change from the previous trade.
+                .type(BID)
+                .currencyPair(cp1)
+                .orderId("EMPTY")
+                .originalAmount(new BigDecimal("1.100001"))
+                .price(new BigDecimal("2.200002"))
+                .timestamp(createZonedDateTime("01-09-2020"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .create();
+        TradeDTO trade08 = TradeDTO.builder().id("0000003")
+                .type(BID)
+                .currencyPair(cp2)
+                .orderId("EMPTY!")
+                .originalAmount(new BigDecimal("1.110001"))
+                .currencyPair(cp2)
+                .price(new BigDecimal("2.220002"))
+                .timestamp(createZonedDateTime("02-09-2020"))
+                .feeAmount(new BigDecimal("3.330003"))
+                .feeCurrency(BTC)
+                .create();
+        TradeDTO trade09 = TradeDTO.builder().id("0000008").type(BID).currencyPair(cp1).create();
 
         Set<TradeDTO> reply03 = new LinkedHashSet<>();
-        reply02.add(trade06);
-        reply02.add(trade07);
-        reply02.add(trade08);
+        reply03.add(trade06);
+        reply03.add(trade07);
+        reply03.add(trade08);
+        reply03.add(trade09);
 
         // =========================================================================================================
         // Creating the mock.

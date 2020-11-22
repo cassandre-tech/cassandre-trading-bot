@@ -40,4 +40,6 @@ public class CassandreStrategyServicesTest {
         assertNotNull(strategy.getPositionService());
     }
 
+    // TODO Test repositories presence.
+
 }

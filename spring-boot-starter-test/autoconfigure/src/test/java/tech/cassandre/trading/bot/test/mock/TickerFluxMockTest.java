@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.Resource;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.tmp.strategy.TestableStrategy;
+import tech.cassandre.trading.bot.test.strategy.TestableStrategy;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 

@@ -61,6 +61,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Wait for the strategy to have received all the test values.
         await().untilAsserted(() -> assertEquals(numberOfUpdatesExpected, strategy.getAccountsUpdatesReceived().size()));
+        // Test all values received by the strategy with update methods.
         final Iterator<AccountDTO> iterator = strategy.getAccountsUpdatesReceived().iterator();
 
         // Check update 1.
