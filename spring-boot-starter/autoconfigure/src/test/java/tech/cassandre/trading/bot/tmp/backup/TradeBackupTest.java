@@ -46,7 +46,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Disabled
-public class  TradeBackupTest extends BaseTest {
+public class TradeBackupTest extends BaseTest {
 
     @Autowired
     private PositionService positionService;

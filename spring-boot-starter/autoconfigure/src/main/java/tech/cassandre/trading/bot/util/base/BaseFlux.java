@@ -4,7 +4,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
 
-import javax.annotation.PostConstruct;
 import java.util.Set;
 
 /**
@@ -24,14 +23,8 @@ public abstract class BaseFlux<T> extends Base {
      * Constructor.
      */
     public BaseFlux() {
-        Flux<T> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink,
-                getOverflowStrategy());
+        Flux<T> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
         flux = fluxTemp.publishOn(Schedulers.elastic());
-    }
-
-    @PostConstruct
-    private void postConstruct() {
-        restoreValues();
     }
 
     /**
@@ -64,9 +57,11 @@ public abstract class BaseFlux<T> extends Base {
      * @param newValue new value
      */
     public void emitValue(final T newValue) {
-        getLogger().debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
-        backupValue(newValue);
-        fluxSink.next(newValue);
+        if (newValue != null) {
+            getLogger().debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
+            backupValue(newValue);
+            fluxSink.next(newValue);
+        }
     }
 
     /**
@@ -75,13 +70,6 @@ public abstract class BaseFlux<T> extends Base {
      * @param newValue new value
      */
     public void backupValue(final T newValue) {
-
-    }
-
-    /**
-     * Implements this method to restore previous values.
-     */
-    public void restoreValues() {
 
     }
 

@@ -1,12 +1,10 @@
 package tech.cassandre.trading.bot.test.batch;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -14,7 +12,6 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.batch.mocks.PositionFluxTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
@@ -30,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -46,7 +42,6 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
         @Property(key = PARAMETER_EXCHANGE_RATE_TICKER, value = "100"),
         @Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "100")
 })
-@DirtiesContext(classMode = AFTER_CLASS)
 @Import(PositionFluxTestMock.class)
 public class PositionFluxTest extends BaseTest {
 
@@ -57,16 +52,12 @@ public class PositionFluxTest extends BaseTest {
     private PositionService positionService;
 
     @Autowired
-    private PositionRepository positionRepository;
-
-    @Autowired
     private TickerFlux tickerFlux;
 
     @Autowired
     private TradeFlux tradeFlux;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check received data")
     public void checkReceivedData() {
         assertEquals(0, strategy.getPositionsUpdateReceived().size());

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.configuration;
 
-import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -9,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
-import tech.cassandre.trading.bot.util.database.CassandreNamingStrategy;
 import tech.cassandre.trading.bot.util.parameters.DatabaseParameters;
 
 /**
@@ -53,17 +51,6 @@ public class DatabaseAutoConfiguration extends BaseConfiguration {
         p.setUsername(databaseParameters.getDatasource().getUsername());
         p.setPassword(databaseParameters.getDatasource().getPassword());
         return p;
-    }
-
-    /**
-     * Set physical naming strategy.
-     * Adds a prefix to table name via cassandre.trading.bot.database.table-prefix parameter.
-     * @return physical naming strategy
-     */
-    @Bean
-    @SuppressWarnings("checkstyle:DesignForExtension")
-    public PhysicalNamingStrategy physical() {
-        return new CassandreNamingStrategy(databaseParameters.getTablePrefix());
     }
 
 }

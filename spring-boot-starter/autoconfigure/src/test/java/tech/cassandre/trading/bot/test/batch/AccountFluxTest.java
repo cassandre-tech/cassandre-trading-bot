@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.batch.mocks.AccountFluxTestMock;
@@ -23,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -34,7 +32,6 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_RATE_ACCOUNT, value = "100")
 })
-@DirtiesContext(classMode = AFTER_CLASS)
 @Import(AccountFluxTestMock.class)
 public class AccountFluxTest extends BaseTest {
 
@@ -57,7 +54,7 @@ public class AccountFluxTest extends BaseTest {
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
         assertTrue(strategy.getAccountsUpdateReceived().size() > 0);
-        assertTrue(strategy.getAccountsUpdateReceived().size() < numberOfUpdatesExpected);
+        assertTrue(strategy.getAccountsUpdateReceived().size() <= numberOfUpdatesExpected);
 
         // Wait for the strategy to have received all the test values.
         await().untilAsserted(() -> assertEquals(numberOfUpdatesExpected, strategy.getAccountsUpdatesReceived().size()));

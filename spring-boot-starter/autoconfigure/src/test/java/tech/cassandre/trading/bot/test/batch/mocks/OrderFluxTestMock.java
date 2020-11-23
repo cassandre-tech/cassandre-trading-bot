@@ -120,7 +120,7 @@ public class OrderFluxTestMock {
     @Primary
     public TradeService tradeService() {
         // Creates the mock.
-        new TradeServiceXChangeImplementation(100l, null, tradeRepository, orderRepository);
+        new TradeServiceXChangeImplementation(100L, null, tradeRepository, orderRepository);
         TradeService tradeService = mock(TradeService.class);
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 

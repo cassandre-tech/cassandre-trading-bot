@@ -1,12 +1,10 @@
 package tech.cassandre.trading.bot.test.batch;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.batch.mocks.TradeFluxTestMock;
@@ -25,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
@@ -35,7 +32,6 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "100")
 })
-@DirtiesContext(classMode = AFTER_CLASS)
 @Import(TradeFluxTestMock.class)
 public class TradeFluxTest extends BaseTest {
 
@@ -65,7 +61,7 @@ public class TradeFluxTest extends BaseTest {
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
         assertTrue(strategy.getTradesUpdateReceived().size() > 0);
-        assertTrue(strategy.getTradesUpdateReceived().size() < numberOfUpdatesExpected);
+        assertTrue(strategy.getTradesUpdateReceived().size() <= numberOfUpdatesExpected);
 
         // Wait for the strategy to have received all the test values.
         await().untilAsserted(() -> assertTrue(strategy.getTradesUpdateReceived().size() >= numberOfUpdatesExpected));

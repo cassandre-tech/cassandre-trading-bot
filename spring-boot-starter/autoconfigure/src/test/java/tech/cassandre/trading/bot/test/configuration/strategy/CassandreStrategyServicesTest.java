@@ -1,45 +1,38 @@
-package tech.cassandre.trading.bot.tmp.configuration.strategy;
+package tech.cassandre.trading.bot.test.configuration.strategy;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 @SpringBootTest
-@DisplayName("Strategy configuration - Trade & position services")
+@DisplayName("Strategy configuration - Repositories & services")
 @Configuration({
         @Property(key = "TEST_NAME", value = "Strategy configuration - Trade & position services")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-@Disabled
 public class CassandreStrategyServicesTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
 
     @Test
-    @Tag("notReviewed")
-    @DisplayName("Check that trade service is present")
-    public void checkTradeService() {
+    @DisplayName("Check that services are present in strategy")
+    public void checkServices() {
         assertNotNull(strategy.getTradeService());
-    }
-
-    @Test
-    @Tag("notReviewed")
-    @DisplayName("Check that position service is present")
-    public void checkPositionService() {
         assertNotNull(strategy.getPositionService());
     }
 
-    // TODO Test repositories presence.
+    @Test
+    @DisplayName("Check that repositories are present in strategy")
+    public void checkRepositories() {
+        assertNotNull(strategy.getOrderRepository());
+        assertNotNull(strategy.getTradeRepository());
+        assertNotNull(strategy.getPositionRepository());
+    }
 
 }

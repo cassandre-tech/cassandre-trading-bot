@@ -44,9 +44,8 @@ public class Trade {
     @Column(name = "PRICE", precision = PRECISION, scale = SCALE)
     private BigDecimal price;
 
-    /** The timestamp on the order according to the exchange's server, null if not provided. */
-    // TODO Change field name and java code ?
-    @Column(name = "ORDER_TIMESTAMP")
+    /** The timestamp of the trade according to the exchange's server, null if not provided. */
+    @Column(name = "TIMESTAMP")
     private ZonedDateTime timestamp;
 
     /** The fee that was charged by the exchange for this trade. */

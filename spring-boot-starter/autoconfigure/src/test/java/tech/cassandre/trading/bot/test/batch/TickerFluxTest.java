@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.batch.mocks.TickerFluxTestMock;
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
 
 @SpringBootTest
@@ -32,7 +30,6 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_RATE_TICKER, value = "100")
 })
-@DirtiesContext(classMode = AFTER_CLASS)
 @Import(TickerFluxTestMock.class)
 public class TickerFluxTest extends BaseTest {
 
@@ -59,7 +56,7 @@ public class TickerFluxTest extends BaseTest {
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
         assertTrue(strategy.getTickersUpdateReceived().size() > 0);
-        assertTrue(strategy.getTickersUpdateReceived().size() < numberOfUpdatesExpected);
+        assertTrue(strategy.getTickersUpdateReceived().size() <= numberOfUpdatesExpected);
 
         // Wait for the strategy to have received all the tickers.
         await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfUpdatesExpected));
