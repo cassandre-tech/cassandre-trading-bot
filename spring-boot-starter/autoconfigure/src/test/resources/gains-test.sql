@@ -1,19 +1,18 @@
 -- =====================================================================================================================
 -- Insert positions.
-INSERT INTO MY_STRATEGY_POSITIONS (ID, STATUS, CURRENCY_PAIR, AMOUNT, RULES_STOP_GAIN_PERCENTAGE,
-                                   RULES_STOP_LOSS_PERCENTAGE, OPEN_ORDER_ID, CLOSE_ORDER_ID, LOWEST_PRICE,
-                                   HIGHEST_PRICE)
-VALUES  (1, 'CLOSED', 'BTC/USDT', 10, null, null, 'OPEN_ORDER_01', 'CLOSE_ORDER_01', null, null),
-        (2, 'CLOSED', 'ETH/BTC', 20, null, null, 'OPEN_ORDER_02', 'CLOSE_ORDER_02', null, null),
-        (3, 'CLOSED', 'BTC/USDT', 30, null, null, 'OPEN_ORDER_03', 'CLOSE_ORDER_03', null, null),
-        (4, 'OPENING', 'BTC/USDT', 50, null, null, 'OPEN_ORDER_04', 'CLOSE_ORDER_04', null, null),
-        (5, 'OPENED', 'BTC/USDT', 50, null, null, 'OPEN_ORDER_05', 'CLOSE_ORDER_05', null, null),
-        (6, 'CLOSING', 'BTC/USDT', 50, null, null, 'OPEN_ORDER_06', 'CLOSE_ORDER_06', null, null);
+INSERT INTO POSITIONS (ID, STATUS, CURRENCY_PAIR, AMOUNT, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE,
+                       OPEN_ORDER_ID, CLOSE_ORDER_ID, LOWEST_PRICE, HIGHEST_PRICE, LATEST_PRICE)
+VALUES  (1, 'CLOSED', 'BTC/USDT', 10, null, null, 'OPEN_ORDER_01', 'CLOSE_ORDER_01', null, null, null),
+        (2, 'CLOSED', 'ETH/BTC', 20, null, null, 'OPEN_ORDER_02', 'CLOSE_ORDER_02', null, null, null),
+        (3, 'CLOSED', 'BTC/USDT', 30, null, null, 'OPEN_ORDER_03', 'CLOSE_ORDER_03', null, null, null),
+        (4, 'OPENING', 'BTC/USDT', 50, null, null, 'OPEN_ORDER_04', 'CLOSE_ORDER_04', null, null, null),
+        (5, 'OPENED', 'BTC/USDT', 50, null, null, 'OPEN_ORDER_05', 'CLOSE_ORDER_05', null, null, null),
+        (6, 'CLOSING', 'BTC/USDT', 50, null, null, 'OPEN_ORDER_06', 'CLOSE_ORDER_06', null, null, null);
 
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO MY_STRATEGY_TRADES (ID, ORDER_ID, ORDER_TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, ORDER_TIMESTAMP,
-                                FEE_AMOUNT, FEE_CURRENCY, POSITION_ID)
+INSERT INTO TRADES (ID, ORDER_ID, ORDER_TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, TIMESTAMP, FEE_AMOUNT,
+                    FEE_CURRENCY, POSITION_ID)
 values  -- For position 1.
         ('TRADE_11', 'OPEN_ORDER_01', 'BID', 7, 'BTC/USDT', 11, DATE '2020-08-05', 1, 'USD', 1),
         ('TRADE_12', 'OPEN_ORDER_01', 'BID', 3, 'BTC/USDT', 12, DATE '2020-08-06', 2, 'USD', 1),

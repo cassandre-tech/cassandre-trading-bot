@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.service;
+package tech.cassandre.trading.bot.test.service.xchange;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +14,9 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.tmp.service.mocks.PositionServiceTestMock;
+import tech.cassandre.trading.bot.test.service.xchange.mocks.PositionServiceTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -41,23 +38,16 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 
 @SpringBootTest
-@DisplayName("Services - Position service")
+@DisplayName("Service - XChange - Position service")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = "TEST_NAME", value = "Configuration parameters - Valid configuration")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(PositionServiceTestMock.class)
-@Disabled
 public class PositionServiceTest extends BaseTest {
-
-    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
-
-    public static final CurrencyPairDTO cp2 = new CurrencyPairDTO(USD, BTC);
 
     @Autowired
     private PositionService positionService;
@@ -69,7 +59,6 @@ public class PositionServiceTest extends BaseTest {
     private TickerFlux tickerFlux;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check position creation")
     public void checkCreatePosition() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
@@ -109,7 +98,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check get positions and get positions by id")
     public void checkGetPosition() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
@@ -136,7 +124,6 @@ public class PositionServiceTest extends BaseTest {
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check trade update")
     public void checkTradeUpdate() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
@@ -170,9 +157,7 @@ public class PositionServiceTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check close position")
     public void checkClosePosition() throws InterruptedException {
         // =============================================================================================================
@@ -234,7 +219,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check min and max gain")
     public void checkMinAndMaxGain() throws InterruptedException {
         // A position is opening on ETH/BTC.

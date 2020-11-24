@@ -1,6 +1,5 @@
-package tech.cassandre.trading.bot.tmp.modes.dry;
+package tech.cassandre.trading.bot.test.service.dry;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.tmp.modes.dry.mocks.PositionServiceDryModeTestMock;
+import tech.cassandre.trading.bot.test.service.dry.mocks.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -30,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
@@ -41,19 +40,14 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
 
 
 @SpringBootTest
-@DisplayName("Dry mode - Position service")
+@DisplayName("Service - Dry - Position service")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = AFTER_CLASS)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(PositionServiceDryModeTestMock.class)
-@Disabled
 public class PositionServiceDryModeTest extends BaseTest {
-
-    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
-
-    public static final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
 
     @Autowired
     private PositionService positionService;
@@ -150,6 +144,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         assertEquals(CLOSED, getPositionDTO(position2Id).getStatus());
 
         // Check everything arrived.
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(8, strategy.getPositionsStatusUpdateReceived().size());
     }
 

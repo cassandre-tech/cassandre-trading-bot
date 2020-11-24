@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.tmp.service.mocks;
+package tech.cassandre.trading.bot.test.service.xchange.mocks;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -17,10 +17,10 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.tmp.service.PositionServiceTest;
+import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -34,7 +34,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
-public class PositionServiceTestMock {
+public class PositionServiceTestMock extends BaseTest {
 
     @Autowired
     private PositionRepository positionRepository;
@@ -126,26 +126,26 @@ public class PositionServiceTestMock {
         TradeService service = mock(TradeService.class);
 
         // Position 1 creation reply (order ORDER00010).
-        given(service.createBuyMarketOrder(PositionServiceTest.cp1, new BigDecimal("0.0001")))
+        given(service.createBuyMarketOrder(cp1, new BigDecimal("0.0001")))
                 .willReturn(new OrderCreationResultDTO("ORDER00010"));
 
         // Position 2 creation reply (order ORDER00020).
-        given(service.createBuyMarketOrder(PositionServiceTest.cp2, new BigDecimal("0.0002")))
+        given(service.createBuyMarketOrder(cp2, new BigDecimal("0.0002")))
                 .willReturn(new OrderCreationResultDTO("ORDER00020"));
 
         // Position 3 creation reply (order ORDER00030).
-        given(service.createBuyMarketOrder(PositionServiceTest.cp1, new BigDecimal("0.0003")))
+        given(service.createBuyMarketOrder(cp1, new BigDecimal("0.0003")))
                 .willReturn(new OrderCreationResultDTO("Error message", new RuntimeException("Error exception")));
 
         // Position 1 closed reply (ORDER00011).
-        given(service.createSellMarketOrder(PositionServiceTest.cp1, new BigDecimal("0.00010000")))
+        given(service.createSellMarketOrder(cp1, new BigDecimal("0.00010000")))
                 .willReturn(new OrderCreationResultDTO("ORDER00011"));
 
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
-        given(service.createBuyMarketOrder(PositionServiceTest.cp1, new BigDecimal("10")))
+        given(service.createBuyMarketOrder(cp1, new BigDecimal("10")))
                 .willReturn(new OrderCreationResultDTO("ORDER00010"));
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
-        given(service.createSellMarketOrder(PositionServiceTest.cp1, new BigDecimal("10.00000000")))
+        given(service.createSellMarketOrder(cp1, new BigDecimal("10.00000000")))
                 .willReturn(new OrderCreationResultDTO("ORDER00011"));
 
         return service;

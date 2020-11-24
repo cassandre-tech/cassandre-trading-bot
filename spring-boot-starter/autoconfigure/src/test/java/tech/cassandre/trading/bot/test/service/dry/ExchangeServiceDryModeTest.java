@@ -1,6 +1,5 @@
-package tech.cassandre.trading.bot.tmp.modes.dry;
+package tech.cassandre.trading.bot.test.service.dry;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,27 +16,25 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@DisplayName("Dry mode - Exchange service")
+@DisplayName("Service - Dry - Exchange service")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = BEFORE_CLASS)
-@Disabled
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class ExchangeServiceDryModeTest {
 
     @Autowired
     private ExchangeService exchangeService;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check the list of available")
     public void checkGetAvailableCurrencyPairs() {
         // The available currencies should be the same than the strategy.

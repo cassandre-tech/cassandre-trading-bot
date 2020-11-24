@@ -1,6 +1,5 @@
-package tech.cassandre.trading.bot.tmp.modes.dry;
+package tech.cassandre.trading.bot.test.service.dry;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,14 +16,14 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.tmp.modes.dry.mocks.TradeServiceDryModeTestMock;
+import tech.cassandre.trading.bot.test.service.dry.mocks.TradeServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -45,17 +44,14 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@DisplayName("Dry mode - User service")
+@DisplayName("Service - Dry - User service")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = AFTER_CLASS)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(TradeServiceDryModeTestMock.class)
-@Disabled
 public class UserServiceDryModeTest extends BaseTest {
-
-    private static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
     @Autowired
     private UserService userService;
@@ -73,7 +69,6 @@ public class UserServiceDryModeTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check imported user data")
     public void checkImportUserData() {
         // Retrieve user.
@@ -128,7 +123,7 @@ public class UserServiceDryModeTest extends BaseTest {
         // We retrieve the account information in the strategy.
         assertTrue(strategy.getAccountsUpdatesReceived().isEmpty());
         accountFlux.update();
-        assertEquals(3, strategy.getAccountsUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(3, strategy.getAccountsUpdatesReceived().size()));
 
         // =============================================================================================================
         // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032661 BTC.
@@ -145,6 +140,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
                 .create();
         tickerFlux.emitValue(ticker);
+        await().untilAsserted(() -> assertEquals(1, strategy.getLastTicker().size()));
 
         // =============================================================================================================
         // Account before buying.
@@ -223,6 +219,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
                 .create();
         tickerFlux.emitValue(ticker);
+        await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdateReceived().size()));
 
         // =============================================================================================================
         // Selling 0.02 ETH.
@@ -261,7 +258,6 @@ public class UserServiceDryModeTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check buying error")
     public void checkBuyingError() {
         // =============================================================================================================
@@ -293,6 +289,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
                 .create();
         tickerFlux.emitValue(ticker);
+        await().untilAsserted(() -> assertEquals(2, strategy.getLastTicker().size()));
 
         // =============================================================================================================
         // Buying with a currency we don't have.
@@ -308,7 +305,6 @@ public class UserServiceDryModeTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check selling error")
     public void checkSellingError() {
         // =============================================================================================================
@@ -340,11 +336,13 @@ public class UserServiceDryModeTest extends BaseTest {
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
                 .create();
         tickerFlux.emitValue(ticker);
+        await().untilAsserted(() -> assertEquals(2, strategy.getLastTicker().size()));
 
         // =============================================================================================================
         // Buying with a currency we don't have.
         final OrderCreationResultDTO sellMarketOrder1 = tradeService.createSellMarketOrder(new CurrencyPairDTO(ETH, EUR), new BigDecimal("1000"));
         assertFalse(sellMarketOrder1.isSuccessful());
+        System.out.println(sellMarketOrder1.getErrorMessage());
         assertTrue(sellMarketOrder1.getErrorMessage().contains("Not enough assets"));
 
         // =============================================================================================================

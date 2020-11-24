@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.service;
+package tech.cassandre.trading.bot.test.service.xchange;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,20 +24,17 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
-@DisplayName("Services - Positions gains service")
+@DisplayName("Service - XChange - Positions gains service")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/gains-test.sql"),
-        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
+        @Property(key = "spring.datasource.data", value = "classpath:/gains-test.sql")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Disabled
 public class PositionGainsServiceTest {
 
     @Autowired
     private PositionService positionService;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check gains calculation")
     public void checkGainsCalculation() {
         /*

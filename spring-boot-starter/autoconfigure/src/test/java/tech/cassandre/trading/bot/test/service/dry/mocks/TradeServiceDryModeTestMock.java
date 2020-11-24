@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.tmp.modes.dry.mocks;
+package tech.cassandre.trading.bot.test.service.dry.mocks;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

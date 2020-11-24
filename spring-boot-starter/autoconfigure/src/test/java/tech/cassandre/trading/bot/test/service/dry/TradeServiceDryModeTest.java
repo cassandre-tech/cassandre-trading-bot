@@ -1,6 +1,5 @@
-package tech.cassandre.trading.bot.tmp.modes.dry;
+package tech.cassandre.trading.bot.test.service.dry;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,9 +12,8 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.tmp.modes.dry.mocks.TradeServiceDryModeTestMock;
+import tech.cassandre.trading.bot.test.service.dry.mocks.TradeServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -29,25 +27,20 @@ import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@DisplayName("Dry mode - Trade service")
+@DisplayName("Service - Dry - Trade service")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = AFTER_CLASS)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(TradeServiceDryModeTestMock.class)
-@Disabled
 public class TradeServiceDryModeTest extends BaseTest {
-
-    private static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
     @Autowired
     private TradeService tradeService;
@@ -59,7 +52,6 @@ public class TradeServiceDryModeTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check buy and sell order creation")
     public void checkCreateBuyAndSellOrder() throws InterruptedException {
         tickerFlux.update();
