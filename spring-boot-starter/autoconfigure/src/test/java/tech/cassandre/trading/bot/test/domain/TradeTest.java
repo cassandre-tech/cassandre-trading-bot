@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.backup;
+package tech.cassandre.trading.bot.test.domain;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +11,6 @@ import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -34,25 +30,15 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@DisplayName("Backup - Trades")
+@DisplayName("Domain - Trade")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
-        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop"),
-        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
+        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
 })
-@ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Disabled
-public class TradeBackupTest extends BaseTest {
-
-    @Autowired
-    private PositionService positionService;
-
-    @Autowired
-    private TradeService tradeService;
+@ActiveProfiles("schedule-disabled")
+public class TradeTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
@@ -64,15 +50,10 @@ public class TradeBackupTest extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Test
-    @Tag("notReviewed")
-    @DisplayName("Check restored trades")
-    public void checkRestoredTrades() {
+    @DisplayName("Check load trade from database")
+    public void checkLoadTradeFromDatabase() {
         // =============================================================================================================
-        // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(5, strategy.getPositions().size());
-        assertEquals(5, positionService.getPositions().size());
-        assertEquals(10, strategy.getTradesFromDatabase().size());
-        assertEquals(10, tradeService.getTradesFromDatabase().size());
+        // Check that positions, orders and trades in database doesn't trigger strategy events.
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
@@ -140,15 +121,10 @@ public class TradeBackupTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
-    @DisplayName("Check saved trades")
-    public void checkSavedTrades() {
+    @DisplayName("Check save trade in database")
+    public void checkSaveTradeInDatabase() {
         // =============================================================================================================
-        // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(5, strategy.getPositions().size());
-        assertEquals(5, positionService.getPositions().size());
-        assertEquals(10, strategy.getTradesFromDatabase().size());
-        assertEquals(10, tradeService.getTradesFromDatabase().size());
+        // Check that positions, orders and trades in database doesn't trigger strategy events.
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());

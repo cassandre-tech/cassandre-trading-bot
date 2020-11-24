@@ -21,7 +21,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
 
-@DisplayName("Exchange parameters - No configuration")
+@DisplayName("Configuration - Exchange - No configuration")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_NAME),
         @Property(key = PARAMETER_EXCHANGE_SANDBOX),

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_SECRET;
 
-@DisplayName("Exchange parameters - Invalid credentials")
+@DisplayName("Configuration - Exchange - Invalid credentials")
 @Configuration({
 		@Property(key = PARAMETER_EXCHANGE_SECRET, value = "none")
 })

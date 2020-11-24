@@ -12,9 +12,8 @@
 
 -- =====================================================================================================================
 -- Insert positions.
-INSERT INTO MY_STRATEGY_POSITIONS (ID, STATUS, CURRENCY_PAIR, AMOUNT, RULES_STOP_GAIN_PERCENTAGE,
-                                   RULES_STOP_LOSS_PERCENTAGE, OPEN_ORDER_ID, CLOSE_ORDER_ID, LOWEST_PRICE,
-                                   HIGHEST_PRICE, LATEST_PRICE)
+INSERT INTO POSITIONS (ID, STATUS, CURRENCY_PAIR, AMOUNT, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE,
+                       OPEN_ORDER_ID, CLOSE_ORDER_ID, LOWEST_PRICE, HIGHEST_PRICE, LATEST_PRICE)
 VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPEN_ORDER_01 to arrive (but will not arrive).
        (1, 'OPENING', 'BTC/USDT', 10, null, null, 'BACKUP_OPEN_ORDER_01', null, null, null, null),
 
@@ -32,8 +31,8 @@ VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPEN_ORDER_01 to ar
 
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO MY_STRATEGY_TRADES (ID, ORDER_ID, ORDER_TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, ORDER_TIMESTAMP,
-                                FEE_AMOUNT, FEE_CURRENCY, POSITION_ID)
+INSERT INTO TRADES (ID, ORDER_ID, ORDER_TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, TIMESTAMP, FEE_AMOUNT,
+                    FEE_CURRENCY, POSITION_ID)
 values -- note : No trade for order BACKUP_OPEN_ORDER_01 - This is why position 1 has the opening status.
        -- Order BACKUP_TRADE_01 - Trade from the order buying BACKUP_OPEN_ORDER_02.
        ('BACKUP_TRADE_01', 'BACKUP_OPEN_ORDER_02', 'BID', 20, 'BTC/USDT', 10, DATE '2020-08-01', 1, 'USDT', 2),
@@ -59,8 +58,8 @@ values -- note : No trade for order BACKUP_OPEN_ORDER_01 - This is why position 
 
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO MY_STRATEGY_ORDERS (ID, TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS,
-                                CUMULATIVE_AMOUNT, AVERAGE_PRICE, FEE, LEVERAGE, LIMIT_PRICE)
+INSERT INTO ORDERS (ID, TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS, CUMULATIVE_AMOUNT,
+                    AVERAGE_PRICE, FEE, LEVERAGE, LIMIT_PRICE)
 values -- Order BACKUP_ORDER_01.
        ('BACKUP_ORDER_01', 'ASK', 0.000005, 'ETH/BTC', 'My reference 1', '2020-11-18', 'NEW', 0.000004, 0.000003,
         0.000002, 'LEVERAGE_1', 0.000001),

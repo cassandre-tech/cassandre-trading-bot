@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
 
-@DisplayName("Exchange parameters - Invalid trade rate")
+@DisplayName("Configuration - Exchange - Invalid trade rate")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "AT20S")
 })

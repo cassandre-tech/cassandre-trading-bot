@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_NAME;
 
-@DisplayName("Exchange parameters - Unknown exchange name")
+@DisplayName("Configuration - Exchange - Unknown exchange name")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_NAME, value = "foo")
 })

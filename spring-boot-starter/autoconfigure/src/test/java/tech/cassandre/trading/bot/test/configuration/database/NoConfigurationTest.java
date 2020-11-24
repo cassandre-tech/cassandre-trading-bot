@@ -15,7 +15,7 @@ import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Data
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_URL;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_USERNAME;
 
-@DisplayName("Database parameters - No configuration")
+@DisplayName("Configuration - Database - No configuration")
 @Configuration({
         @Property(key = PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME),
         @Property(key = PARAMETER_DATABASE_DATASOURCE_URL),

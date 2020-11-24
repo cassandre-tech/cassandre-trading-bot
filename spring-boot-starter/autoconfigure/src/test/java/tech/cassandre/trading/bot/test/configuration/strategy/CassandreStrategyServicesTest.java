@@ -11,7 +11,7 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@DisplayName("Strategy configuration - Repositories & services")
+@DisplayName("Configuration - Strategy - Repositories & services")
 @Configuration({
         @Property(key = "TEST_NAME", value = "Strategy configuration - Trade & position services")
 })

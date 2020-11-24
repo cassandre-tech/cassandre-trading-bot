@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_PROXY_HOST;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_PROXY_PORT;
 
-@DisplayName("Exchange parameters - Specific exchange parameters")
+@DisplayName("Configuration - Exchange - Specific exchange parameters")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_PROXY_HOST, value = "127.0.0.1"),
         @Property(key = PARAMETER_EXCHANGE_PROXY_PORT, value = "4780")

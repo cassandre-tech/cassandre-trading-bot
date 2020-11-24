@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.backup;
+package tech.cassandre.trading.bot.test.domain;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,8 +10,6 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -30,33 +26,18 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
-@DisplayName("Backup - Orders")
+@DisplayName("Domain - Order")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
-        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop")
+        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
 })
-@ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Disabled
-public class OrderBackupTest extends BaseTest {
-
-    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
-
-    public static final CurrencyPairDTO cp2 = new CurrencyPairDTO(USDT, BTC);
+@ActiveProfiles("schedule-disabled")
+public class OrderTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private PositionService positionService;
-
-    @Autowired
-    private TradeService tradeService;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -65,15 +46,10 @@ public class OrderBackupTest extends BaseTest {
     private OrderFlux orderFlux;
 
     @Test
-    @Tag("notReviewed")
-    @DisplayName("Check restored orders")
-    public void checkRestoredOrders() {
+    @DisplayName("Check load order from database")
+    public void checkLoadOrderFromDatabase() {
         // =============================================================================================================
-        // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(5, strategy.getPositions().size());
-        assertEquals(5, positionService.getPositions().size());
-        assertEquals(10, strategy.getTradesFromDatabase().size());
-        assertEquals(10, tradeService.getTradesFromDatabase().size());
+        // Check that positions, orders and trades in database doesn't trigger strategy events.
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
@@ -114,15 +90,10 @@ public class OrderBackupTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
-    @DisplayName("Check saved orders")
-    public void checkSavedOrders() {
+    @DisplayName("Check save order in database")
+    public void checkSaveOrderInDatabase() {
         // =============================================================================================================
-        // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(5, strategy.getPositions().size());
-        assertEquals(5, positionService.getPositions().size());
-        assertEquals(10, strategy.getTradesFromDatabase().size());
-        assertEquals(10, tradeService.getTradesFromDatabase().size());
+        // Check that positions, orders and trades in database doesn't trigger strategy events.
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());

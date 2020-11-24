@@ -10,7 +10,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-@DisplayName("Database parameters - Valid configuration")
+@DisplayName("Configuration - Database - Valid configuration")
 @Configuration({
         @Property(key = "TEST_NAME", value = "Database parameters - Valid configuration")
 })

@@ -15,7 +15,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountSt
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
-@DisplayName("Strategy configuration - Autoconfiguration")
+@DisplayName("Configuration - Strategy - Autoconfiguration")
 @Configuration({
         @Property(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),

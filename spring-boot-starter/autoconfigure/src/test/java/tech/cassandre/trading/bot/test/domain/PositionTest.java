@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.backup;
+package tech.cassandre.trading.bot.test.domain;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,23 +41,17 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@DisplayName("Backup - Positions")
+@DisplayName("Domain - Position")
 @Configuration({
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql"),
-        @Property(key = "spring.jpa.hibernate.ddl-auto", value = "create-drop"),
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Disabled
-public class PositionBackupTest extends BaseTest {
-
-    public static final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+public class PositionTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
@@ -86,15 +78,10 @@ public class PositionBackupTest extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Test
-    @Tag("notReviewed")
-    @DisplayName("Check restored positions")
-    public void checkRestoredPositions() {
+    @DisplayName("Check load position from database")
+    public void checkLoadPositionFromDatabase() {
         // =============================================================================================================
-        // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(5, strategy.getPositions().size());
-        assertEquals(5, positionService.getPositions().size());
-        assertEquals(10, strategy.getTradesFromDatabase().size());
-        assertEquals(10, tradeService.getTradesFromDatabase().size());
+        // Check that positions, orders and trades in database doesn't trigger strategy events.
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
@@ -225,21 +212,17 @@ public class PositionBackupTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check how a new positions is saved")
     public void checkSavedNewPosition() {
         // =============================================================================================================
-        // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(5, strategy.getPositions().size());
-        assertEquals(5, positionService.getPositions().size());
-        assertEquals(10, strategy.getTradesFromDatabase().size());
-        assertEquals(10, tradeService.getTradesFromDatabase().size());
+        // Check that positions, orders and trades in database doesn't trigger strategy events.
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.2")).create());
+        await().untilAsserted(() -> assertEquals(1, strategy.getLastTicker().size()));
 
         // =============================================================================================================
         // Creates a position with ID 6 - waiting for order DRY_ORDER_000000001.
@@ -299,21 +282,17 @@ public class PositionBackupTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check saved data during position lifecycle")
     public void checkSavedDataDuringPositionLifecycle() {
         // =============================================================================================================
         // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(5, strategy.getPositions().size());
-        assertEquals(5, positionService.getPositions().size());
-        assertEquals(10, strategy.getTradesFromDatabase().size());
-        assertEquals(10, tradeService.getTradesFromDatabase().size());
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.01")).create());
+        await().untilAsserted(() -> assertEquals(1, strategy.getTickersUpdateReceived().size()));
 
         // =============================================================================================================
         // A position is opening on ETH/BTC - ID 6.

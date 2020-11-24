@@ -65,10 +65,10 @@
             <column name="FEE_CURRENCY" type="VARCHAR(255)"/>
             <column name="POSITION_ID" type="BIGINT"/>
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="position_id" baseTableName="trades"
-                                 constraintName="trades_position_id" deferrable="false"
+        <addForeignKeyConstraint baseColumnNames="POSITION_ID" baseTableName="TRADES"
+                                 constraintName="TRADES_POSITION_ID" deferrable="false"
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="positions"
+                                 referencedColumnNames="id" referencedTableName="POSITIONS"
                                  validate="true"/>
         <!-- ======================================================================================================= -->
 
