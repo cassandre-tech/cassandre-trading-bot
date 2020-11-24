@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.dto;
+package tech.cassandre.trading.bot.test.dto;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 
@@ -11,11 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("DTO - PositionCreationResultDTO")
-@Disabled
 public class PositionCreationResultDTOTest {
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check successful position creation")
     public void checkSuccessfulPositionCreation() {
         final PositionCreationResultDTO p = new PositionCreationResultDTO(1, "2");
@@ -25,7 +21,6 @@ public class PositionCreationResultDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check unsuccessful position creation")
     public void checkUnsuccessfulPositionCreation() {
         final PositionCreationResultDTO p = new PositionCreationResultDTO("Error message", new RuntimeException("Exception"));

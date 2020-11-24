@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.dto;
+package tech.cassandre.trading.bot.test.dto;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -32,7 +30,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 
 @DisplayName("DTO - PositionDTO")
-@Disabled
 public class PositionDTOTest {
 
     private final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
@@ -42,7 +39,6 @@ public class PositionDTOTest {
     private final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check status change")
     public void checkStatusChange() {
         // We create a position that was opened with the order O000001.
@@ -98,7 +94,6 @@ public class PositionDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check status change with multiple trades")
     public void checkStatusWithMultipleTrade() {
         // We create a position that was opened with the order O000001.
@@ -175,8 +170,7 @@ public class PositionDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
-    @DisplayName("Check that close order update limited to OPENED position")
+    @DisplayName("Check that close order update is limited to OPENED position")
     public void checkCloseOrderIdUpdate() {
         // We create a position that was opened with the order O000001.
         PositionDTO p = new PositionDTO(1, cp1, amount, "O000001", noRules);
@@ -203,7 +197,6 @@ public class PositionDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check that position should be closed (max gain rules)")
     public void checkShouldBeClosedWithGainRules() {
         // Position 1.
@@ -238,7 +231,6 @@ public class PositionDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check that position should be closed (max lost rules)")
     public void checkShouldBeClosedWithLostRules() {
         // Position 1.
@@ -273,7 +265,6 @@ public class PositionDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check equalTo")
     public void checkEqualTo() {
         PositionDTO p1 = new PositionDTO(1, cp1, amount, "O000001", noRules);
@@ -293,7 +284,6 @@ public class PositionDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check get positive position gain")
     public void checkGetPositivePositionGain() {
         // Position 1.
@@ -342,7 +332,6 @@ public class PositionDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check get negative position gain")
     public void checkGetNegativePositionGain() {
         // Position 1.
@@ -391,7 +380,6 @@ public class PositionDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check toString method")
     public void checkToString() {
         // Position opening.

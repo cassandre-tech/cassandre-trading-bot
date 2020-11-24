@@ -1,13 +1,10 @@
-package tech.cassandre.trading.bot.tmp.dto;
+package tech.cassandre.trading.bot.test.dto;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -16,19 +13,20 @@ import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @DisplayName("DTO - OrderDTO")
-@Disabled
 public class OrderDTOTest {
 
 	@Test
-	@Tag("notReviewed")
 	@SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength" })
 	@DisplayName("Check equalTo")
 	public void checkEqualToForOrder() {
 		// Currency pairs.
-		final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
-		final CurrencyPairDTO cp2 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT);
+		final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+		final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
 
 		// Order 1.
 		OrderDTO order01 = OrderDTO.builder()
@@ -283,8 +281,8 @@ public class OrderDTOTest {
 		// Tests for null objects.
 		OrderDTO order15 = OrderDTO.builder().create();
 		OrderDTO order16 = OrderDTO.builder().create();
-		assertEquals(order15, order16);
-		assertEquals(order16, order15);
+		assertNotEquals(order15, order16);
+		assertNotEquals(order16, order15);
 	}
 
 }

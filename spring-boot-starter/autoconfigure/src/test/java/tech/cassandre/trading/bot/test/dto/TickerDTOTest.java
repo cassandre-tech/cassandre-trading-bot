@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.dto;
+package tech.cassandre.trading.bot.test.dto;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
@@ -18,11 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @DisplayName("DTO - TickerDTO")
-@Disabled
 public class TickerDTOTest {
 
 	@Test
-	@Tag("notReviewed")
 	@DisplayName("Check equalTo")
 	public void checkEqualToForTickers() throws ParseException {
 		// Currency pairs.
@@ -54,7 +50,6 @@ public class TickerDTOTest {
 	}
 
 	@Test
-	@Tag("notReviewed")
 	@DisplayName("Check builder with String and epoch")
 	public void checkBuilderWithStringAndEpoch() {
 		TickerDTO t01 = TickerDTO.builder()

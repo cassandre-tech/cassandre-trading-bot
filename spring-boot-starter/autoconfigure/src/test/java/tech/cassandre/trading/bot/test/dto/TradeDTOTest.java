@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.dto;
+package tech.cassandre.trading.bot.test.dto;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -16,11 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @DisplayName("DTO - TradeDTO")
-@Disabled
 public class TradeDTOTest {
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check equalTo")
     public void checkEqualToForTrades() {
         // Test that only id is important when testing equality.
@@ -35,11 +31,20 @@ public class TradeDTOTest {
                 .timestamp(ZonedDateTime.now())
                 .type(OrderTypeDTO.BID)
                 .create();
-        assertEquals(t1, t1Bis);
+        assertNotEquals(t1, t1Bis);
 
         // Test that the id makes the trade different.
         TradeDTO t2 = TradeDTO.builder().id("0000002").create();
         assertNotEquals(t1, t2);
+    }
+
+    @Test
+    @DisplayName("Check null trades")
+    public void checkNullTrades() {
+        TradeDTO t1 = TradeDTO.builder().id("0000001").create();
+        TradeDTO t2 = TradeDTO.builder().id("0000002").create();
+        assertNotEquals(t1, t2);
+        assertNotEquals(t2, t1);
     }
 
 }

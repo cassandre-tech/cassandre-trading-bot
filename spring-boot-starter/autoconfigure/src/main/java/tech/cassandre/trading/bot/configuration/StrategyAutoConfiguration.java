@@ -4,7 +4,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.ConnectableFlux;
-import reactor.core.scheduler.Schedulers;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
@@ -196,29 +195,29 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         strategy.setPositionRepository(positionRepository);
 
         // Account flux.
-        final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publishOn(Schedulers.elastic()).publish();
+        final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();
         connectableAccountFlux.subscribe(strategy::accountUpdate);
         connectableAccountFlux.connect();
 
         // Position flux.
-        final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publishOn(Schedulers.elastic()).publish();
+        final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publish();
         connectablePositionFlux.subscribe(strategy::positionUpdate);        // For strategy.
         connectablePositionFlux.connect();
 
         // Order flux.
-        final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publishOn(Schedulers.elastic()).publish();
+        final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
         connectableOrderFlux.subscribe(strategy::orderUpdate);              // For strategy.
         connectableOrderFlux.connect();
 
         // Trade flux to strategy.
-        final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publishOn(Schedulers.elastic()).publish();
+        final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
         connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
         connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.
         connectableTradeFlux.connect();
 
         // Ticker flux.
         tickerFlux.updateRequestedCurrencyPairs(strategy.getRequestedCurrencyPairs());
-        final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publishOn(Schedulers.elastic()).publish();
+        final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
         // if in dry mode, we also send the ticker to the trade service in dry mode.
         if (tradeService instanceof TradeServiceDryModeImplementation) {
             connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickerUpdate);

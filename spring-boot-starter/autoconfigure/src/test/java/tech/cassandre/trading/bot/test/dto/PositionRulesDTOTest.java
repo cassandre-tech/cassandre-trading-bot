@@ -1,6 +1,5 @@
-package tech.cassandre.trading.bot.tmp.dto;
+package tech.cassandre.trading.bot.test.dto;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,11 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("DTO - PositionRulesDTO")
-@Disabled
 public class PositionRulesDTOTest {
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check no rules & toString()")
     public void checkNoRules() {
         // Position creation.
@@ -27,7 +24,6 @@ public class PositionRulesDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check stop gain rule & toString()")
     public void checkStopGainRule() {
         // Position creation.
@@ -41,7 +37,6 @@ public class PositionRulesDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check stop loss rule & toString()")
     public void checkStopLossRule() {
         // Position creation.
@@ -55,8 +50,7 @@ public class PositionRulesDTOTest {
     }
 
     @Test
-    @Tag("notReviewed")
-    @DisplayName("Check tll rules & toString()")
+    @DisplayName("Check All rules & toString()")
     public void checkAllRules() {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()

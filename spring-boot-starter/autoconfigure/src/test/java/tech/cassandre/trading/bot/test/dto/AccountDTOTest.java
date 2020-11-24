@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.dto;
+package tech.cassandre.trading.bot.test.dto;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
@@ -16,11 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @DisplayName("DTO - AccountDTO")
-@Disabled
 public class AccountDTOTest {
 
 	@Test
-	@Tag("notReviewed")
 	@DisplayName("Check equalTo on account id & name")
 	public void checkEqualToForAccountIdAndName() {
 		// Account 1 (null).
@@ -44,7 +40,6 @@ public class AccountDTOTest {
 	}
 
 	@Test
-	@Tag("notReviewed")
 	@DisplayName("Check equalTo on balances list")
 	public void checkEqualToForBalancesList() {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
@@ -83,7 +78,6 @@ public class AccountDTOTest {
 	}
 
 	@Test
-	@Tag("notReviewed")
 	@SuppressWarnings("checkstyle:MethodLength")
 	@DisplayName("Check equalTo on balances values")
 	public void checkEqualToForBalancesValues() {
