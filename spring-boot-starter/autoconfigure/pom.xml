@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
-            <version>5.0.3</version>
+            <version>5.0.4</version>
         </dependency>
 
         <!-- Ta4j -->
@@ -121,7 +121,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>5.0.3</version>
+            <version>5.0.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
