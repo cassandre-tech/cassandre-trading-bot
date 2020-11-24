@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.tmp.strategy.mocks;
+package tech.cassandre.trading.bot.test.strategy.mocks;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -45,8 +45,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SuppressWarnings("unchecked")
 @TestConfiguration
 public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
-
-    private final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
 
     @Autowired
     private PositionRepository positionRepository;
@@ -141,106 +139,106 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     public MarketService marketService() {
         MarketService service = mock(MarketService.class);
         // Returns three values.
-        given(service.getTicker(cp1)).willReturn(
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+        given(service.getTicker(cp3)).willReturn(
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(1))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(2))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(3))
                         .open(new BigDecimal(110))
                         .high(new BigDecimal(110))
                         .low(new BigDecimal(110))
                         .last(new BigDecimal(110))
                         .volume(new BigDecimal(1070)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(4))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(5))
                         .open(new BigDecimal(140))
                         .high(new BigDecimal(140))
                         .low(new BigDecimal(140))
                         .last(new BigDecimal(140))
                         .volume(new BigDecimal(1080)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(6))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(7))
                         .open(new BigDecimal(119))
                         .high(new BigDecimal(119))
                         .low(new BigDecimal(119))
                         .last(new BigDecimal(119))
                         .volume(new BigDecimal(1090)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(8))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(9))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1100)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(10))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(11))
                         .open(new BigDecimal(110))
                         .high(new BigDecimal(110))
                         .low(new BigDecimal(110))
                         .last(new BigDecimal(110))
                         .volume(new BigDecimal(1100)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(12))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(13))
                         .open(new BigDecimal(120))
                         .high(new BigDecimal(120))
                         .low(new BigDecimal(120))
                         .last(new BigDecimal(120))
                         .volume(new BigDecimal(1120)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(14))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).create()),
-                Optional.of(TickerDTO.builder().currencyPair(cp1)
+                Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(15))
                         .open(new BigDecimal(130))
                         .high(new BigDecimal(130))
@@ -258,17 +256,17 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Returns three values.
         Set<OrderDTO> reply = new LinkedHashSet<>();
-        reply.add(OrderDTO.builder().id("000001").type(BID).currencyPair(cp1).create());                // Order 01.
-        reply.add(OrderDTO.builder().id("000002").type(BID).currencyPair(cp1).create());                // Order 02.
-        reply.add(OrderDTO.builder().id("000003").type(BID).currencyPair(cp1).create());                // Order 03.
-        reply.add(OrderDTO.builder().id("000004").type(BID).currencyPair(cp1).create());                // Order 04.
+        reply.add(OrderDTO.builder().id("000001").type(BID).currencyPair(cp3).create());                // Order 01.
+        reply.add(OrderDTO.builder().id("000002").type(BID).currencyPair(cp3).create());                // Order 02.
+        reply.add(OrderDTO.builder().id("000003").type(BID).currencyPair(cp3).create());                // Order 03.
+        reply.add(OrderDTO.builder().id("000004").type(BID).currencyPair(cp3).create());                // Order 04.
         given(service.getOpenOrders()).willReturn(reply);
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).create());      // Trade 01.
-        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp1).create());      // Trade 02.
-        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create());      // Trade 03.
+        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp3).create());      // Trade 01.
+        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp3).create());      // Trade 02.
+        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp3).create());      // Trade 03.
         given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;
@@ -281,29 +279,29 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         // Creates the mock.
         final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
         PositionService positionService = mock(PositionService.class);
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+        final CurrencyPairDTO cp3 = new CurrencyPairDTO(ETH, BTC);
         final BigDecimal amount = new BigDecimal("1");
 
         // Reply 1 : 2 positions.
-        PositionDTO p1 = new PositionDTO(1, cp1, amount, "O000001", noRules);
-        PositionDTO p2 = new PositionDTO(2, cp1, amount,"O000002", noRules);
+        PositionDTO p1 = new PositionDTO(1, cp3, amount, "O000001", noRules);
+        PositionDTO p2 = new PositionDTO(2, cp3, amount,"O000002", noRules);
         Set<PositionDTO> reply01 = new LinkedHashSet<>();
         reply01.add(p1);
         reply01.add(p2);
 
         // Reply 2 : 3 positions.
         Set<PositionDTO> reply02 = new LinkedHashSet<>();
-        PositionDTO p3 = new PositionDTO(1, cp1, amount,"O000001", noRules);
-        PositionDTO p4 = new PositionDTO(2, cp1, amount,"O000002", noRules);
-        PositionDTO p5 = new PositionDTO(3, cp1, amount,"O000003", noRules);
+        PositionDTO p3 = new PositionDTO(1, cp3, amount,"O000001", noRules);
+        PositionDTO p4 = new PositionDTO(2, cp3, amount,"O000002", noRules);
+        PositionDTO p5 = new PositionDTO(3, cp3, amount,"O000003", noRules);
         reply02.add(p3);
         reply02.add(p4);
         reply02.add(p5);
 
         // Reply 2 : 2 positions.
         Set<PositionDTO> reply03 = new LinkedHashSet<>();
-        PositionDTO p6 = new PositionDTO(1, cp1, amount,"O000001", noRules);
-        PositionDTO p7 = new PositionDTO(2, cp1, amount,"O000001", noRules);
+        PositionDTO p6 = new PositionDTO(1, cp3, amount,"O000001", noRules);
+        PositionDTO p7 = new PositionDTO(2, cp3, amount,"O000001", noRules);
         reply03.add(p6);
         reply03.add(p7);
 

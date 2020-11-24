@@ -1,8 +1,6 @@
-package tech.cassandre.trading.bot.tmp.strategy;
+package tech.cassandre.trading.bot.test.strategy;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,11 +8,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.tmp.strategy.mocks.BasicCassandreStrategyTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.mocks.BasicCassandreStrategyTestMock;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -44,14 +42,12 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
 })
 @DirtiesContext(classMode = AFTER_CLASS)
 @Import(BasicCassandreStrategyTestMock.class)
-@Disabled
 public class BasicCassandreStrategyTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("check strategy behavior")
     public void checkStrategyBehavior() {
         final int numberOfValuesExpected = 7;
@@ -67,9 +63,12 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertEquals(2, strategy.getLastTicker().size());
         assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTicker().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
 
-        // Checking that services are available.
+        // Checking that services and repositories are available.
         assertNotNull(strategy.getTradeService());
         assertNotNull(strategy.getPositionService());
+        assertNotNull(strategy.getOrderRepository());
+        assertNotNull(strategy.getTradeRepository());
+        assertNotNull(strategy.getPositionRepository());
 
         // Check getEstimatedBuyingCost()
         assertTrue(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).isPresent());

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.tmp.strategy.mocks;
+package tech.cassandre.trading.bot.test.strategy.mocks;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;

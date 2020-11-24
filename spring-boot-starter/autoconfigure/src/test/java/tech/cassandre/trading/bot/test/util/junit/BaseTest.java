@@ -33,6 +33,9 @@ public class BaseTest {
     /** cp2 for tests. */
     protected final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
 
+    /** cp3 for tests. */
+    protected final CurrencyPairDTO cp3 = new CurrencyPairDTO(BTC, USDT);
+
     /** Ten seconds wait. */
     protected static final long WAITING_TIME_IN_SECONDS = 5L;
 

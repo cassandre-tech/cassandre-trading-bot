@@ -1,6 +1,5 @@
-package tech.cassandre.trading.bot.tmp.strategy;
+package tech.cassandre.trading.bot.test.strategy;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,8 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.tmp.strategy.mocks.BasicTa4jCassandreStrategyTestMock;
+import tech.cassandre.trading.bot.test.strategy.mocks.BasicTa4jCassandreStrategyTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -24,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
@@ -41,10 +37,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
 })
 @DirtiesContext(classMode = AFTER_CLASS)
 @Import(BasicTa4jCassandreStrategyTestMock.class)
-@Disabled
 public class BasicTa4jCassandreStrategyTest extends BaseTest {
-
-    private final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
 
     @Autowired
     private TestableTa4jCassandreStrategy strategy;
@@ -59,7 +52,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));
         await().untilAsserted(() -> assertEquals(15, strategy.getTickersUpdateReceived().size()));
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTicker().size()));
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTicker().get(cp1).getLast())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTicker().get(cp3).getLast())));
 
         // Checking ta4j results.
         await().untilAsserted(() -> assertEquals(5, strategy.getEnterCount()));
@@ -71,8 +64,8 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         assertNotNull(strategy.getPositionService());
 
         // Check getEstimatedBuyingCost()
-        assertTrue(strategy.getEstimatedBuyingCost(cp1, new BigDecimal(3)).isPresent());
-        assertEquals(0, new BigDecimal("390").compareTo(strategy.getEstimatedBuyingCost(cp1, new BigDecimal(3)).get().getValue()));
+        assertTrue(strategy.getEstimatedBuyingCost(cp3, new BigDecimal(3)).isPresent());
+        assertEquals(0, new BigDecimal("390").compareTo(strategy.getEstimatedBuyingCost(cp3, new BigDecimal(3)).get().getValue()));
 
         // Test for simplified canBuy() & canSell().
         // 1 BTC / 150 in my account.
