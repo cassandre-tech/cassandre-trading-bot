@@ -85,7 +85,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // =========================================================================================================
             // Creates the position in database.
             Position position = new Position();
-            position.setStatus(OPENING.toString());
+            position.setStatus(OPENING);
             position.setAmount(amount);
             position.setCurrencyPair(currencyPair.toString());
             if (rules.isStopGainPercentageSet()) {
@@ -116,11 +116,10 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final void tickerUpdate(final TickerDTO ticker) {
-        // TODO Optimize with SQL
         // With the ticker received, we check for every position, if it should be closed.
-        getPositions()
+        positionRepository.findByStatus(OPENED)
                 .stream()
-                .filter(p -> p.getStatus().equals(OPENED))
+                .map(p -> getMapper().mapToPositionDTO(p))
                 .filter(p -> p.getCurrencyPair() != null)
                 .filter(p -> p.getCurrencyPair().equals(ticker.getCurrencyPair()))
                 .forEach(p -> {
@@ -137,10 +136,9 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final void tradeUpdate(final TradeDTO trade) {
-        // TODO Optimize with SQL
-        getPositions()
+        positionRepository.findByStatusNot(CLOSED)
                 .stream()
-                .filter(p -> !p.getStatus().equals(CLOSED))
+                .map(p -> getMapper().mapToPositionDTO(p))
                 .forEach(p -> {
                     if (p.tradeUpdate(trade)) {
                         positionFlux.emitValue(p);

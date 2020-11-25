@@ -1,7 +1,10 @@
 package tech.cassandre.trading.bot.domain;
 
+import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,6 +14,7 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
@@ -29,8 +33,9 @@ public class Position {
     private long id;
 
     /** Position . */
+    @Enumerated(STRING)
     @Column(name = "STATUS")
-    private String status;
+    private PositionStatusDTO status;
 
     /** The currency-pair. */
     @Column(name = "CURRENCY_PAIR")
@@ -96,7 +101,7 @@ public class Position {
      *
      * @return status
      */
-    public String getStatus() {
+    public PositionStatusDTO getStatus() {
         return status;
     }
 
@@ -105,7 +110,7 @@ public class Position {
      *
      * @param newStatus the status to set
      */
-    public void setStatus(final String newStatus) {
+    public void setStatus(final PositionStatusDTO newStatus) {
         status = newStatus;
     }
 

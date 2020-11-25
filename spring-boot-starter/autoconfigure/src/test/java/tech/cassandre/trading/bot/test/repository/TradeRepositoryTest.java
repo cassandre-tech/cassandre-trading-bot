@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import tech.cassandre.trading.bot.domain.Trade;
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -16,6 +17,8 @@ import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
 @SpringBootTest
 @DisplayName("Repository - Trade")
@@ -37,7 +40,7 @@ public class TradeRepositoryTest extends BaseTest {
         Trade t = trades.next();
         assertEquals("BACKUP_TRADE_01", t.getId());
         assertEquals("BACKUP_OPEN_ORDER_02", t.getOrderId());
-        assertEquals("BID", t.getType());
+        assertEquals(BID, t.getType());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("20")));
         assertEquals("BTC/USDT", t.getCurrencyPair());
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("10")));
@@ -49,7 +52,7 @@ public class TradeRepositoryTest extends BaseTest {
         t = trades.next();
         assertEquals("BACKUP_TRADE_02", t.getId());
         assertEquals("BACKUP_OPEN_ORDER_03", t.getOrderId());
-        assertEquals("BID", t.getType());
+        assertEquals(BID, t.getType());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("30")));
         assertEquals("BTC/USDT", t.getCurrencyPair());
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("20")));
@@ -60,7 +63,7 @@ public class TradeRepositoryTest extends BaseTest {
         t = trades.next();
         assertEquals("BACKUP_TRADE_03", t.getId());
         assertEquals("BACKUP_OPEN_ORDER_04", t.getOrderId());
-        assertEquals("BID", t.getType());
+        assertEquals(BID, t.getType());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("40")));
         assertEquals("BTC/USDT", t.getCurrencyPair());
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("30")));
@@ -72,7 +75,7 @@ public class TradeRepositoryTest extends BaseTest {
         t = trades.next();
         assertEquals("BACKUP_TRADE_04", t.getId());
         assertEquals("BACKUP_OPEN_ORDER_05", t.getOrderId());
-        assertEquals("ASK", t.getType());
+        assertEquals(ASK, t.getType());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("40")));
         assertEquals("BTC/USDT", t.getCurrencyPair());
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("40")));
@@ -84,7 +87,7 @@ public class TradeRepositoryTest extends BaseTest {
         t = trades.next();
         assertEquals("BACKUP_TRADE_05", t.getId());
         assertEquals("BACKUP_OPEN_ORDER_06", t.getOrderId());
-        assertEquals("ASK", t.getType());
+        assertEquals(ASK, t.getType());
         assertEquals(0, t.getOriginalAmount().compareTo(new BigDecimal("50")));
         assertEquals("ETH/USD", t.getCurrencyPair());
         assertEquals(0, t.getPrice().compareTo(new BigDecimal("50")));

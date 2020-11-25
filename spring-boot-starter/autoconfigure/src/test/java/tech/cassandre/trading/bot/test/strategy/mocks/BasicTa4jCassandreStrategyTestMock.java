@@ -260,7 +260,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         reply.add(OrderDTO.builder().id("000002").type(BID).currencyPair(cp3).create());                // Order 02.
         reply.add(OrderDTO.builder().id("000003").type(BID).currencyPair(cp3).create());                // Order 03.
         reply.add(OrderDTO.builder().id("000004").type(BID).currencyPair(cp3).create());                // Order 04.
-        given(service.getOpenOrders()).willReturn(reply);
+        given(service.getOrders()).willReturn(reply);
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();

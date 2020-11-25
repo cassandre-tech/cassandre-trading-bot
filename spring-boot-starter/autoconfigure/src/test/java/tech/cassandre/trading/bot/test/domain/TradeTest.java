@@ -151,7 +151,7 @@ public class TradeTest extends BaseTest {
         assertTrue(t1FromDatabase.isPresent());
         assertEquals("BACKUP_TRADE_06", t1FromDatabase.get().getId());
         assertEquals("EMPTY", t1FromDatabase.get().getOrderId());
-        assertEquals("BID", t1FromDatabase.get().getType());
+        assertEquals(BID, t1FromDatabase.get().getType());
         assertEquals(0, t1FromDatabase.get().getOriginalAmount().compareTo(new BigDecimal("1.100001")));
         assertEquals("USDT/BTC", t1FromDatabase.get().getCurrencyPair());
         assertEquals(0, t1FromDatabase.get().getPrice().compareTo(new BigDecimal("2.200002")));

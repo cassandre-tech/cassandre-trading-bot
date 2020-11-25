@@ -38,7 +38,7 @@ public class OrderFlux extends BaseFlux<OrderDTO> {
         Set<OrderDTO> newValues = new LinkedHashSet<>();
 
         // Finding which order has been updated.
-        tradeService.getOpenOrders().forEach(order -> {
+        tradeService.getOrders().forEach(order -> {
             getLogger().debug("OrderFlux - Treating order : {}", order.getId());
             final Optional<Order> orderInDatabase = orderRepository.findById(order.getId());
             // If it does not exist or something changed, we do it.

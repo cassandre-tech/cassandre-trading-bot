@@ -43,7 +43,6 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
     private TestableTa4jCassandreStrategy strategy;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("check strategy behavior")
     public void checkStrategyBehavior() {
         // Checking received data.

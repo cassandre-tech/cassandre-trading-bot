@@ -120,7 +120,6 @@ public class OrderFluxTestMock {
     @Primary
     public TradeService tradeService() {
         // Creates the mock.
-        new TradeServiceXChangeImplementation(100L, null, tradeRepository, orderRepository);
         TradeService tradeService = mock(TradeService.class);
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
@@ -331,7 +330,7 @@ public class OrderFluxTestMock {
         reply03.add(order11);
 
         // Creating the mock.
-        given(tradeService.getOpenOrders())
+        given(tradeService.getOrders())
                 .willReturn(reply01,
                         new LinkedHashSet<>(),
                         reply02,

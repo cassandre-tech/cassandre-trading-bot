@@ -6,7 +6,6 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -53,27 +52,6 @@ public interface TradeService {
     OrderCreationResultDTO createSellLimitOrder(CurrencyPairDTO currencyPair, BigDecimal amount, BigDecimal limitPrice);
 
     /**
-     * Get an open order by its id.
-     *
-     * @param orderId order id
-     * @return order
-     */
-    Optional<OrderDTO> getOpenOrderByOrderId(String orderId);
-
-    /**
-     * Get open orders.
-     *
-     * @return list of open orders
-     */
-    Set<OrderDTO> getOpenOrders();
-
-    /**
-     * Get orders from database.
-     * @return orders from database
-     */
-    Set<OrderDTO> getOrdersFromDatabase();
-
-    /**
      * Cancel order.
      *
      * @param orderId order id
@@ -82,17 +60,25 @@ public interface TradeService {
     boolean cancelOrder(String orderId);
 
     /**
-     * Get last week trades.
-     *
-     * @return trades
+     * Get open orders.
+     * @deprecated use getOrders instead.
+     * @return list of open orders
      */
-    Set<TradeDTO> getTrades();
+    @Deprecated(since = "4.0")
+    Set<OrderDTO> getOpenOrders();
 
     /**
-     * Get trades from database.
+     * Get orders from exchange.
      *
-     * @return trades
+     * @return list of orders
      */
-    Set<TradeDTO> getTradesFromDatabase();
+    Set<OrderDTO> getOrders();
+
+    /**
+     * Get trades from exchange.
+     *
+     * @return list of orders
+     */
+    Set<TradeDTO> getTrades();
 
 }

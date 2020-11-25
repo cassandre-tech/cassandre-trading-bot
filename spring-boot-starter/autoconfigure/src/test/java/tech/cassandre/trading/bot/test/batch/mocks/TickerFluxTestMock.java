@@ -139,7 +139,7 @@ public class TickerFluxTestMock extends BaseTest {
     @Primary
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
-        given(service.getOpenOrders()).willReturn(new LinkedHashSet<>());
+        given(service.getOrders()).willReturn(new LinkedHashSet<>());
         return service;
     }
 

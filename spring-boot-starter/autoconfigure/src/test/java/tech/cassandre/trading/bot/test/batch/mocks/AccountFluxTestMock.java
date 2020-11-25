@@ -413,7 +413,7 @@ public class AccountFluxTestMock {
     @Primary
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
-        given(service.getOpenOrders()).willReturn(new LinkedHashSet<>());
+        given(service.getOrders()).willReturn(new LinkedHashSet<>());
         return service;
     }
 

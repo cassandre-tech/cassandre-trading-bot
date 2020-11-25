@@ -239,7 +239,7 @@ public class PositionTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(positionCount + 1, positionRepository.count()));
         Position p6 = getPosition(6L);
         assertEquals(6L, p6.getId());
-        assertEquals(OPENING.toString(), p6.getStatus());
+        assertEquals(OPENING, p6.getStatus());
         assertEquals(cp1.toString(), p6.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0001").compareTo(p6.getAmount()));
         assertEquals(1, p6.getStopGainPercentageRule());
@@ -249,10 +249,10 @@ public class PositionTest extends BaseTest {
         assertTrue(p6.getTrades().isEmpty());
 
         // If we wait a bit, the order and trade will arrive and the position status will be OPENED.
-        await().untilAsserted(() -> assertEquals(OPENED.toString(), getPosition(6L).getStatus()));
+        await().untilAsserted(() -> assertEquals(OPENED, getPosition(6L).getStatus()));
         p6 = getPosition(6L);
         assertEquals(6L, p6.getId());
-        assertEquals(OPENED.toString(), p6.getStatus());
+        assertEquals(OPENED, p6.getStatus());
         assertEquals(cp1.toString(), p6.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0001").compareTo(p6.getAmount()));
         assertEquals(1, p6.getStopGainPercentageRule());
@@ -272,7 +272,7 @@ public class PositionTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(positionCount + 2, positionRepository.count()));
         Position p7 = getPosition(7L);
         assertEquals(7L, p7.getId());
-        assertEquals(OPENING.toString(), p7.getStatus());
+        assertEquals(OPENING, p7.getStatus());
         assertEquals(cp1.toString(), p7.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0002").compareTo(p7.getAmount()));
         assertNull(p7.getStopGainPercentageRule());
@@ -316,10 +316,10 @@ public class PositionTest extends BaseTest {
         // Check that the position was correctly created.
         // The corresponding order and trade will arrive in few seconds.
         // In the mean time, the position should be in OPENING status.
-        await().untilAsserted(() -> assertEquals(OPENING.toString(), getPosition(positionId).getStatus()));
+        await().untilAsserted(() -> assertEquals(OPENING, getPosition(positionId).getStatus()));
         Position p = getPosition(positionId);
         assertEquals(positionId, p.getId());
-        assertEquals(OPENING.toString(), p.getStatus());
+        assertEquals(OPENING, p.getStatus());
         assertEquals(1000, p.getStopGainPercentageRule());
         assertEquals(100, p.getStopLossPercentageRule());
         assertEquals("DRY_ORDER_000000001", p.getOpenOrderId());
@@ -334,12 +334,12 @@ public class PositionTest extends BaseTest {
         // =============================================================================================================
         // We should now be OPENED.
         // We are in dry mode, we wait for order and trade to arrive, position will now be opened.
-        await().untilAsserted(() -> assertEquals(OPENED.toString(), getPosition(positionId).getStatus()));
+        await().untilAsserted(() -> assertEquals(OPENED, getPosition(positionId).getStatus()));
 
         // Check saved position in database.
         p = getPosition(positionId);
         assertEquals(positionId, p.getId());
-        assertEquals(OPENED.toString(), p.getStatus());
+        assertEquals(OPENED, p.getStatus());
         assertEquals(1000, p.getStopGainPercentageRule());
         assertEquals(100, p.getStopLossPercentageRule());
         assertEquals("DRY_ORDER_000000001", p.getOpenOrderId());
@@ -421,10 +421,10 @@ public class PositionTest extends BaseTest {
         // =============================================================================================================
         // We should now be CLOSED as we received the two trades.
         // Check saved position.
-        await().until(() -> getPosition(positionId).getStatus().equals(CLOSED.toString()));
+        await().until(() -> getPosition(positionId).getStatus().equals(CLOSED));
         p = getPosition(positionId);
         assertEquals(positionId, p.getId());
-        assertEquals(CLOSED.toString(), p.getStatus());
+        assertEquals(CLOSED, p.getStatus());
         assertEquals(cp1.toString(), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(p.getAmount()));
         assertEquals(1000, p.getStopGainPercentageRule());

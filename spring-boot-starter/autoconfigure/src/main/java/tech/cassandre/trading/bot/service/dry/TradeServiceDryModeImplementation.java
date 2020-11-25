@@ -232,21 +232,13 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Optional<OrderDTO> getOpenOrderByOrderId(final String orderId) {
-        return Optional.ofNullable(orders.get(orderId));
-    }
-
-    @Override
     public final Set<OrderDTO> getOpenOrders() {
         return new LinkedHashSet<>(orders.values());
     }
 
     @Override
-    public final Set<OrderDTO> getOrdersFromDatabase() {
-        return orderRepository.findByOrderByTimestampAsc()
-                .stream()
-                .map(order -> getMapper().mapToOrderDTO(order))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+    public final Set<OrderDTO> getOrders() {
+        return new LinkedHashSet<>(orders.values());
     }
 
     @Override
@@ -256,14 +248,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     @Override
     public final Set<TradeDTO> getTrades() {
-        return tradeRepository.findByOrderByTimestampAsc()
-                .stream()
-                .map(trade -> getMapper().mapToTradeDTO(trade))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    @Override
-    public final Set<TradeDTO> getTradesFromDatabase() {
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(trade -> getMapper().mapToTradeDTO(trade))

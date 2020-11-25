@@ -22,11 +22,19 @@
             <column name="LOWEST_PRICE" type="numeric(16, 8)"/>
             <column name="LATEST_PRICE" type="numeric(16, 8)"/>
         </createTable>
+        <!-- Auto increment on ID -->
         <addAutoIncrement columnDataType="BIGINT"
                           columnName="ID"
                           incrementBy="1"
                           startWith="1"
                           tableName="POSITIONS"/>
+        <!-- Index on Status -->
+        <createIndex clustered="false"
+                     indexName="idx_positions_status"
+                     tableName="POSITIONS"
+                     unique="false">
+            <column descending="true" name="STATUS"/>
+        </createIndex>
         <!-- ======================================================================================================= -->
 
         <!-- ======================================================================================================= -->
@@ -65,11 +73,24 @@
             <column name="FEE_CURRENCY" type="VARCHAR(255)"/>
             <column name="POSITION_ID" type="BIGINT"/>
         </createTable>
-        <addForeignKeyConstraint baseColumnNames="POSITION_ID" baseTableName="TRADES"
-                                 constraintName="TRADES_POSITION_ID" deferrable="false"
-                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
-                                 referencedColumnNames="id" referencedTableName="POSITIONS"
+        <!-- Foreign key of POSITION_ID to IO in POSITIONS -->
+        <addForeignKeyConstraint baseColumnNames="POSITION_ID"
+                                 baseTableName="TRADES"
+                                 constraintName="FK_TRADES_POSITION_ID"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedTableName="POSITIONS"
+                                 referencedColumnNames="ID"
                                  validate="true"/>
+        <!-- Index on position id -->
+        <createIndex clustered="false"
+                     indexName="idx_trades_position_id"
+                     tableName="TRADES"
+                     unique="false">
+            <column descending="true" name="POSITION_ID"/>
+        </createIndex>
         <!-- ======================================================================================================= -->
 
     </changeSet>

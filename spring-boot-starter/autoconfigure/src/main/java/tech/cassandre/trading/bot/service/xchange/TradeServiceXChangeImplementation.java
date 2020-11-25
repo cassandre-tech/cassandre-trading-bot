@@ -9,8 +9,6 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
 
@@ -19,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,28 +28,16 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     /** XChange service. */
     private final org.knowm.xchange.service.trade.TradeService tradeService;
 
-    /** Trade repository. */
-    private final TradeRepository tradeRepository;
-
-    /** Order repository. */
-    private final OrderRepository orderRepository;
-
     /**
      * Constructor.
      *
      * @param rate               rate in ms
      * @param newTradeService    market data service
-     * @param newTradeRepository trade repository
-     * @param newOrderRepository order repository
      */
     public TradeServiceXChangeImplementation(final long rate,
-                                             final org.knowm.xchange.service.trade.TradeService newTradeService,
-                                             final TradeRepository newTradeRepository,
-                                             final OrderRepository newOrderRepository) {
+                                             final org.knowm.xchange.service.trade.TradeService newTradeService) {
         super(rate);
         this.tradeService = newTradeService;
-        this.tradeRepository = newTradeRepository;
-        this.orderRepository = newOrderRepository;
     }
 
     /**
@@ -125,19 +110,12 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Optional<OrderDTO> getOpenOrderByOrderId(final String orderId) {
-        if (orderId != null) {
-            return getOpenOrders()
-                    .stream()
-                    .filter(o -> orderId.equalsIgnoreCase(o.getId()))
-                    .findFirst();
-        } else {
-            return Optional.empty();
-        }
+    public final Set<OrderDTO> getOpenOrders() {
+        return getOrders();
     }
 
     @Override
-    public final Set<OrderDTO> getOpenOrders() {
+    public final Set<OrderDTO> getOrders() {
         getLogger().debug("TradeService - Getting open orders from exchange");
         try {
             // Consume a token from the token bucket.
@@ -157,14 +135,6 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
-    }
-
-    @Override
-    public final Set<OrderDTO> getOrdersFromDatabase() {
-        return orderRepository.findByOrderByTimestampAsc()
-                .stream()
-                .map(order -> getMapper().mapToOrderDTO(order))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -212,14 +182,6 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
-    }
-
-    @Override
-    public final Set<TradeDTO> getTradesFromDatabase() {
-        return tradeRepository.findByOrderByTimestampAsc()
-                .stream()
-                .map(trade -> getMapper().mapToTradeDTO(trade))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

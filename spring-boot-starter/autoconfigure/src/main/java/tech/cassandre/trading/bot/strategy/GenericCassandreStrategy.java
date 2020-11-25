@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -140,15 +139,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
                 .stream()
                 .map(mapper::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getId, t -> t));
-    }
-
-    /**
-     * Get trades from database.
-
-     * @return trades.
-     */
-    public final Set<TradeDTO> getTradesFromDatabase() {
-        return tradeService.getTradesFromDatabase();
     }
 
     /**

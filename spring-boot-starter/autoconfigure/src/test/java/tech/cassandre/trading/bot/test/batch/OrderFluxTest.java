@@ -65,7 +65,7 @@ public class OrderFluxTest extends BaseTest {
         final int numberOfServiceCallsExpected = 4;
 
         // Waiting for the trade service to have been called with all the test data.
-        await().untilAsserted(() -> verify(tradeService, atLeast(numberOfServiceCallsExpected)).getOpenOrders());
+        await().untilAsserted(() -> verify(tradeService, atLeast(numberOfServiceCallsExpected)).getOrders());
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.

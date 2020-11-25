@@ -58,7 +58,7 @@ public class TradeServiceTest extends BaseTest {
 
     @BeforeEach
     public void setUp() {
-        tradeService.getOpenOrders().forEach(order -> tradeService.cancelOrder(order.getId()));
+        tradeService.getOrders().forEach(order -> tradeService.cancelOrder(order.getId()));
     }
 
     @Test
@@ -106,11 +106,11 @@ public class TradeServiceTest extends BaseTest {
 
         // =============================================================================================================
         // Getting a non existing order.
-        assertFalse(tradeService.getOpenOrderByOrderId("").isPresent());
+        assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals("")));
 
         // =============================================================================================================
         // Getting the order and testing the data.
-        final Optional<OrderDTO> order1 = tradeService.getOpenOrderByOrderId(result1.getOrderId());
+        final Optional<OrderDTO> order1 = tradeService.getOrders().stream().filter(o -> o.getId().equals(result1.getOrderId())).findFirst();
         assertTrue(order1.isPresent());
         assertEquals(BID, order1.get().getType());
         assertEquals(0, order1.get().getOriginalAmount().compareTo(new BigDecimal("0.0001")));
@@ -141,13 +141,13 @@ public class TradeServiceTest extends BaseTest {
         assertNotNull(result1.getOrderId());
 
         // The order must exist.
-        await().untilAsserted(() -> assertTrue(tradeService.getOpenOrderByOrderId(result1.getOrderId()).isPresent()));
+        await().untilAsserted(() -> assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals(result1.getOrderId()))));
 
         // Cancel the order.
         assertTrue(tradeService.cancelOrder(result1.getOrderId()));
 
         // The order must have disappeared.
-        await().untilAsserted(() -> assertFalse(tradeService.getOpenOrderByOrderId(result1.getOrderId()).isPresent()));
+        await().untilAsserted(() -> assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals(result1.getOrderId()))));
 
         // Cancel the order again and check it gives false.
         assertFalse(tradeService.cancelOrder(result1.getOrderId()));

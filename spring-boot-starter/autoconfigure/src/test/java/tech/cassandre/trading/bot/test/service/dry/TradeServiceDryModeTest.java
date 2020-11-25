@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.test.service.dry;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,7 +62,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         final String tradeId02 = "DRY_TRADE_000000002";
 
         // Check that everything is empty.
-        assertEquals(0, tradeService.getOpenOrders().size());
+        assertEquals(0, tradeService.getOrders().size());
         assertEquals(0, tradeService.getTrades().size());
 
         // We create a buy order.
@@ -111,10 +110,10 @@ public class TradeServiceDryModeTest extends BaseTest {
 
         // Testing retrieve methods.
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertEquals(2, tradeService.getOpenOrders().size());
-        assertFalse(tradeService.getOpenOrderByOrderId("NON_EXISTING").isPresent());
-        assertTrue(tradeService.getOpenOrderByOrderId(orderId01).isPresent());
-        assertTrue(tradeService.getOpenOrderByOrderId(orderId02).isPresent());
+        assertEquals(2, tradeService.getOrders().size());
+        assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals("NON_EXISTING")));
+        assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals(orderId01)));
+        assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals(orderId02)));
         assertEquals(2, tradeService.getTrades().size());
     }
 

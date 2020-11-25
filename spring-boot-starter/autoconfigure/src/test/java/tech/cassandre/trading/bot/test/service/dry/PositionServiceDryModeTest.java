@@ -65,7 +65,6 @@ public class PositionServiceDryModeTest extends BaseTest {
     private PositionRepository positionRepository;
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check position lifecycle")
     public void checkPositionLifecycle() throws InterruptedException {
         // First tickers - cp1 & cp2 (dry mode).

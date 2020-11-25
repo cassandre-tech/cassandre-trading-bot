@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.test.service.dry;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -117,7 +116,6 @@ public class UserServiceDryModeTest extends BaseTest {
     }
 
     @Test
-    @Tag("notReviewed")
     @DisplayName("Check balances updates")
     public void checkBalancesUpdate() {
         // We retrieve the account information in the strategy.

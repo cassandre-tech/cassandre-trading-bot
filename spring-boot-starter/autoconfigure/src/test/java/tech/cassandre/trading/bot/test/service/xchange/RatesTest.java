@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.test.service.xchange;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,12 +107,12 @@ public class RatesTest extends BaseTest {
 		ExecutorService executor = Executors.newFixedThreadPool(2);
 		// Call number 1.
 		executor.submit(() -> {
-			tradeService.getOpenOrders();
+			tradeService.getOrders();
 			numberOfCalls.incrementAndGet();
 		});
 		// Call number 2.
 		executor.submit(() -> {
-			tradeService.getOpenOrderByOrderId("DUMMY");
+			tradeService.getOrders();
 			numberOfCalls.incrementAndGet();
 		});
 

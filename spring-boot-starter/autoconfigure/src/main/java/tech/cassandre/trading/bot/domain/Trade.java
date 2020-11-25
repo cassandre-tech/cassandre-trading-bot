@@ -1,7 +1,10 @@
 package tech.cassandre.trading.bot.domain;
 
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -9,6 +12,7 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
+import static javax.persistence.EnumType.STRING;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
@@ -29,8 +33,9 @@ public class Trade {
     private String orderId;
 
     /** A bid or a ask. */
+    @Enumerated(STRING)
     @Column(name = "ORDER_TYPE")
-    private String type;
+    private OrderTypeDTO type;
 
     /** Amount to be ordered / amount that was ordered. */
     @Column(name = "ORIGINAL_AMOUNT", precision = PRECISION, scale = SCALE)
@@ -102,7 +107,7 @@ public class Trade {
      *
      * @return type
      */
-    public String getType() {
+    public OrderTypeDTO getType() {
         return type;
     }
 
@@ -111,7 +116,7 @@ public class Trade {
      *
      * @param newType the type to set
      */
-    public void setType(final String newType) {
+    public void setType(final OrderTypeDTO newType) {
         type = newType;
     }
 

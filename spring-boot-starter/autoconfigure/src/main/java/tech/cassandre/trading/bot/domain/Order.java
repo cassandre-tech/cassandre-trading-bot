@@ -1,12 +1,17 @@
 package tech.cassandre.trading.bot.domain;
 
+import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
+import static javax.persistence.EnumType.STRING;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
@@ -23,8 +28,9 @@ public class Order {
     private String id;
 
     /** Order type i.e. bid or ask. */
+    @Enumerated(STRING)
     @Column(name = "TYPE")
-    private String type;
+    private OrderTypeDTO type;
 
     /** Amount to be ordered / amount that was ordered. */
     @Column(name = "ORIGINAL_AMOUNT", precision = PRECISION, scale = SCALE)
@@ -43,8 +49,9 @@ public class Order {
     private ZonedDateTime timestamp;
 
     /** Order status. */
+    @Enumerated(STRING)
     @Column(name = "STATUS")
-    private String status;
+    private OrderStatusDTO status;
 
     /** Amount to be ordered / amount that has been matched against order on the order book/filled. */
     @Column(name = "CUMULATIVE_AMOUNT", precision = PRECISION, scale = SCALE)
@@ -89,7 +96,7 @@ public class Order {
      *
      * @return type
      */
-    public String getType() {
+    public OrderTypeDTO getType() {
         return type;
     }
 
@@ -98,7 +105,7 @@ public class Order {
      *
      * @param newType the type to set
      */
-    public void setType(final String newType) {
+    public void setType(final OrderTypeDTO newType) {
         type = newType;
     }
 
@@ -179,7 +186,7 @@ public class Order {
      *
      * @return status
      */
-    public String getStatus() {
+    public OrderStatusDTO getStatus() {
         return status;
     }
 
@@ -188,7 +195,7 @@ public class Order {
      *
      * @param newStatus the status to set
      */
-    public void setStatus(final String newStatus) {
+    public void setStatus(final OrderStatusDTO newStatus) {
         status = newStatus;
     }
 
