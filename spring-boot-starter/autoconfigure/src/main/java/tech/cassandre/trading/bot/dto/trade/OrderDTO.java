@@ -6,8 +6,6 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-
 /**
  * DTO representing order information.
  * A market order is a request by an investor to buy or sell in the current market.
@@ -23,13 +21,13 @@ public final class OrderDTO {
     /** Amount to be ordered / amount that was ordered. */
     private final BigDecimal originalAmount;
 
-    /** The currency-pair. */
+    /** Currency-pair. */
     private final CurrencyPairDTO currencyPair;
 
     /** An identifier provided by the user on placement that uniquely identifies the order. */
     private final String userReference;
 
-    /** The timestamp on the order according to the exchange's server, null if not provided. */
+    /** The timestamp of the order. */
     private final ZonedDateTime timestamp;
 
     /** Order status. */
@@ -201,8 +199,7 @@ public final class OrderDTO {
                 && Objects.equals(getCurrencyPair(), orderDTO.getCurrencyPair())
                 && Objects.equals(getId(), orderDTO.getId())
                 && Objects.equals(getUserReference(), orderDTO.getUserReference())
-                // TODO Check if the truncate is necessary ?
-                && getTimestamp().truncatedTo(SECONDS).isEqual(orderDTO.getTimestamp().truncatedTo(SECONDS))
+                && getTimestamp().isEqual(orderDTO.getTimestamp())
                 && getStatus() == orderDTO.getStatus()
                 && (Objects.nonNull(getCumulativeAmount()) && 0 == getCumulativeAmount().compareTo(orderDTO.getCumulativeAmount()))
                 && (Objects.nonNull(getAveragePrice()) && 0 == getAveragePrice().compareTo(orderDTO.getAveragePrice()))

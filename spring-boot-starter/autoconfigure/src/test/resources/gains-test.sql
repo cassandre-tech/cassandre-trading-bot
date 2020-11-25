@@ -1,7 +1,30 @@
 -- =====================================================================================================================
+-- Insert orders.
+INSERT INTO ORDERS (ID, TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS, CUMULATIVE_AMOUNT,
+                    AVERAGE_PRICE, FEE, LEVERAGE, LIMIT_PRICE)
+values  -- For position 1.
+        ('OPEN_ORDER_01', 'BID', 10, 'BTC/USDT', '', '2020-11-20', 'FILLED', 10, 1, 1, '', 1),
+        ('CLOSE_ORDER_01', 'ASK', 10, 'BTC/USDT', '', '2020-11-20', 'FILLED', 10, 1, 1, '', 1),
+        -- For position 2.
+        ('OPEN_ORDER_02', 'BID', 20, 'ETH/BTC', '', '2020-11-20', 'FILLED', 10, 1, 1, '', 1),
+        ('CLOSE_ORDER_02', 'ASK', 20, 'ETH/BTC', '', '2020-11-20', 'FILLED', 10, 1, 1, '', 1),
+        -- For position 3.
+        ('OPEN_ORDER_03', 'BID', 30, 'BTC/USDT', '', '2020-11-20', 'FILLED', 10, 1, 1, '', 1),
+        ('CLOSE_ORDER_03', 'ASK', 30, 'BTC/USDT', '', '2020-11-20', 'FILLED', 10, 1, 1, '', 1),
+        -- For position 4.
+        ('OPEN_ORDER_04', 'BID', 50, 'BTC/USDT', '', '2020-11-20', 'NEW', 10, 1, 1, '', 1),
+        ('CLOSE_ORDER_04', 'ASK', 50, 'BTC/USDT', '', '2020-11-20', 'NEW', 10, 1, 1, '', 1),
+        -- For position 5.
+        ('OPEN_ORDER_05', 'BID', 50, 'BTC/USDT', '', '2020-11-20', 'FILLED', 10, 1, 1, '', 1),
+        ('CLOSE_ORDER_05', 'ASK', 50, 'BTC/USDT', '', '2020-11-20', 'NEW', 10, 1, 1, '', 1),
+        -- For position 6.
+        ('OPEN_ORDER_06', 'BID', 50, 'BTC/USDT', '', '2020-11-20', 'FILLED', 10, 1, 1, '', 1),
+        ('CLOSE_ORDER_06', 'ASK', 50, 'BTC/USDT', '', '2020-11-20', 'NEW', 10, 1, 1, '', 1);
+
+       -- =====================================================================================================================
 -- Insert positions.
 INSERT INTO POSITIONS (ID, STATUS, CURRENCY_PAIR, AMOUNT, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE,
-                       OPEN_ORDER_ID, CLOSE_ORDER_ID, LOWEST_PRICE, HIGHEST_PRICE, LATEST_PRICE)
+                       OPENING_ORDER_ID, CLOSING_ORDER_ID, LOWEST_PRICE, HIGHEST_PRICE, LATEST_PRICE)
 VALUES  (1, 'CLOSED', 'BTC/USDT', 10, null, null, 'OPEN_ORDER_01', 'CLOSE_ORDER_01', null, null, null),
         (2, 'CLOSED', 'ETH/BTC', 20, null, null, 'OPEN_ORDER_02', 'CLOSE_ORDER_02', null, null, null),
         (3, 'CLOSED', 'BTC/USDT', 30, null, null, 'OPEN_ORDER_03', 'CLOSE_ORDER_03', null, null, null),
@@ -11,8 +34,8 @@ VALUES  (1, 'CLOSED', 'BTC/USDT', 10, null, null, 'OPEN_ORDER_01', 'CLOSE_ORDER_
 
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO TRADES (ID, ORDER_ID, ORDER_TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, TIMESTAMP, FEE_AMOUNT,
-                    FEE_CURRENCY, POSITION_ID)
+INSERT INTO TRADES (ID, ORDER_ID, TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, TIMESTAMP, FEE_AMOUNT, FEE_CURRENCY,
+                    POSITION_ID)
 values  -- For position 1.
         ('TRADE_11', 'OPEN_ORDER_01', 'BID', 7, 'BTC/USDT', 11, DATE '2020-08-05', 1, 'USD', 1),
         ('TRADE_12', 'OPEN_ORDER_01', 'BID', 3, 'BTC/USDT', 12, DATE '2020-08-06', 2, 'USD', 1),

@@ -191,7 +191,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     getLogger().debug("InterruptedException");
                 }
                 orderFlux.emitValue(order);
-                orders.put(orderId, order);
+                //orders.put(orderId, order);
                 tradeFlux.emitValue(trade);
             });
 

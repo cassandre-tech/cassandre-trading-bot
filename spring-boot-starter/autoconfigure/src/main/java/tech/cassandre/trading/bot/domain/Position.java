@@ -10,10 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
@@ -53,13 +55,15 @@ public class Position {
     @Column(name = "RULES_STOP_LOSS_PERCENTAGE")
     private Float stopLossPercentageRule;
 
-    /** The order id that opened the position. */
-    @Column(name = "OPEN_ORDER_ID")
-    private String openOrderId;
+    /** The order that opened the position. */
+    @OneToOne(fetch = EAGER, cascade = ALL)
+    @JoinColumn(name = "OPENING_ORDER_ID")
+    private Order openingOrder;
 
-    /** The order id that closed the position. */
-    @Column(name = "CLOSE_ORDER_ID")
-    private String closeOrderId;
+    /** The order that closed the position. */
+    @OneToOne(fetch = EAGER, cascade = ALL)
+    @JoinColumn(name = "CLOSING_ORDER_ID")
+    private Order closingOrder;
 
     /** All trades related to positions. */
     @OneToMany(fetch = EAGER)
@@ -187,39 +191,39 @@ public class Position {
     }
 
     /**
-     * Getter openOrderId.
+     * Getter openingOrder.
      *
-     * @return openOrderId
+     * @return openOrder
      */
-    public String getOpenOrderId() {
-        return openOrderId;
+    public Order getOpeningOrder() {
+        return openingOrder;
     }
 
     /**
-     * Setter openOrderId.
+     * Setter openingOrder.
      *
-     * @param newOpenOrderId the openOrderId to set
+     * @param newOpenOrder the openOrder to set
      */
-    public void setOpenOrderId(final String newOpenOrderId) {
-        openOrderId = newOpenOrderId;
+    public void setOpeningOrder(final Order newOpenOrder) {
+        openingOrder = newOpenOrder;
     }
 
     /**
-     * Getter closeOrderId.
+     * Getter closingOrder.
      *
-     * @return closeOrderId
+     * @return closeOrder
      */
-    public String getCloseOrderId() {
-        return closeOrderId;
+    public Order getClosingOrder() {
+        return closingOrder;
     }
 
     /**
-     * Setter closeOrderId.
+     * Setter closingOrder.
      *
-     * @param newCloseOrderId the closeOrderId to set
+     * @param newCloseOrder the closeOrder to set
      */
-    public void setCloseOrderId(final String newCloseOrderId) {
-        closeOrderId = newCloseOrderId;
+    public void setClosingOrder(final Order newCloseOrder) {
+        closingOrder = newCloseOrder;
     }
 
     /**

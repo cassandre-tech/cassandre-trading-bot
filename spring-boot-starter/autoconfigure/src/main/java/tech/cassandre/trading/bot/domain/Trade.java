@@ -34,7 +34,7 @@ public class Trade {
 
     /** A bid or a ask. */
     @Enumerated(STRING)
-    @Column(name = "ORDER_TYPE")
+    @Column(name = "TYPE")
     private OrderTypeDTO type;
 
     /** Amount to be ordered / amount that was ordered. */
@@ -49,7 +49,7 @@ public class Trade {
     @Column(name = "PRICE", precision = PRECISION, scale = SCALE)
     private BigDecimal price;
 
-    /** The timestamp of the trade according to the exchange's server, null if not provided. */
+    /** The timestamp of the trade. */
     @Column(name = "TIMESTAMP")
     private ZonedDateTime timestamp;
 

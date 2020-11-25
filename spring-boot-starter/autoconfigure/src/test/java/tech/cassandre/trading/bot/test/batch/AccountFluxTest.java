@@ -93,8 +93,6 @@ public class AccountFluxTest extends BaseTest {
         assertEquals("01", a.getId());
         assertEquals(2, a.getBalances().size());
 
-        // TODO Improve the test with a last update adding a new account (03) with a new balance (3 ETH).
-
         // Check data we have in strategy.
         AccountDTO account1 = strategy.getAccounts().get("01");
         assertNotNull(account1);

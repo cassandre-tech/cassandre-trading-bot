@@ -54,7 +54,7 @@ public class ScheduleAutoConfiguration {
      * Recurrent calls the account flux.
      */
     // TODO Remove initialDelay
-    @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
+    @Scheduled(fixedDelay = 1)
     public void setupAccountFlux() {
         accountFlux.update();
     }
@@ -62,7 +62,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the ticker flux.
      */
-    @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
+    @Scheduled(fixedDelay = 1)
     public void setupTickerFlux() {
         tickerFlux.update();
     }
@@ -70,7 +70,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the order flux.
      */
-    @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
+    @Scheduled(fixedDelay = 1)
     public void setupOrderFlux() {
         orderFlux.update();
     }
@@ -78,7 +78,7 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the trade flux.
      */
-    @Scheduled(fixedDelay = 1, initialDelay = ONE_SECOND)
+    @Scheduled(fixedDelay = 1)
     public void setupTradeFlux() {
         tradeFlux.update();
     }

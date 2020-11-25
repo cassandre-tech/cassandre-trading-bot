@@ -46,8 +46,8 @@ public class PositionRepositoryTest {
         assertEquals(OPENING, p.getStatus());
         assertNull(p.getStopGainPercentageRule());
         assertNull(p.getStopLossPercentageRule());
-        assertEquals("BACKUP_OPEN_ORDER_01", p.getOpenOrderId());
-        assertNull(p.getCloseOrderId());
+        assertEquals("BACKUP_OPENING_ORDER_01", p.getOpeningOrder().getId());
+        assertNull(p.getClosingOrder());
         assertNull(p.getLowestPrice());
         assertNull(p.getHighestPrice());
         assertNull(p.getLatestPrice());
@@ -58,8 +58,8 @@ public class PositionRepositoryTest {
         assertEquals(OPENED, p.getStatus());
         assertEquals(10, p.getStopGainPercentageRule());
         assertNull(p.getStopLossPercentageRule());
-        assertEquals("BACKUP_OPEN_ORDER_02", p.getOpenOrderId());
-        assertNull(p.getCloseOrderId());
+        assertEquals("BACKUP_OPENING_ORDER_02", p.getOpeningOrder().getId());
+        assertNull(p.getClosingOrder());
         assertEquals(0, new BigDecimal("1").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("2").compareTo(p.getHighestPrice()));
         assertEquals(0, new BigDecimal("3").compareTo(p.getLatestPrice()));
@@ -71,8 +71,8 @@ public class PositionRepositoryTest {
         assertEquals(CLOSING, p.getStatus());
         assertNull(p.getStopGainPercentageRule());
         assertEquals(20, p.getStopLossPercentageRule());
-        assertEquals("BACKUP_OPEN_ORDER_03", p.getOpenOrderId());
-        assertEquals("NON_EXISTING_TRADE", p.getCloseOrderId());
+        assertEquals("BACKUP_OPENING_ORDER_03", p.getOpeningOrder().getId());
+        assertEquals("BACKUP_CLOSING_ORDER_01", p.getClosingOrder().getId());
         assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice()));
         assertEquals(0, new BigDecimal("92").compareTo(p.getLatestPrice()));
@@ -84,8 +84,8 @@ public class PositionRepositoryTest {
         assertEquals(CLOSED, p.getStatus());
         assertEquals(30, p.getStopGainPercentageRule());
         assertEquals(40, p.getStopLossPercentageRule());
-        assertEquals("BACKUP_OPEN_ORDER_04", p.getOpenOrderId());
-        assertEquals("BACKUP_OPEN_ORDER_05", p.getCloseOrderId());
+        assertEquals("BACKUP_OPENING_ORDER_04", p.getOpeningOrder().getId());
+        assertEquals("BACKUP_CLOSING_ORDER_02", p.getClosingOrder().getId());
         assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice()));
         assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice()));
         assertEquals(0, new BigDecimal("93").compareTo(p.getLatestPrice()));

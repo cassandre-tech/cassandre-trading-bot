@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.dto.position;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -10,6 +11,7 @@ import tech.cassandre.trading.bot.util.exception.PositionException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -18,7 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_UP;
@@ -28,6 +29,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
@@ -36,10 +38,6 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  * A position is the amount of a security, commodity or currency which is owned by an individual, dealer, institution, or other fiscal entity.
  */
 public class PositionDTO {
-
-    /** Position version (used for database backup). */
-    // TODO DELETE THIS
-    private final AtomicLong version = new AtomicLong(0L);
 
     /** An identifier that uniquely identifies the position. */
     private final long id;
@@ -57,10 +55,10 @@ public class PositionDTO {
     private final PositionRulesDTO rules;
 
     /** The order id that opened the position. */
-    private final String openOrderId;
+    private OrderDTO openingOrder;
 
     /** The order id that closed the position. */
-    private String closeOrderId;
+    private OrderDTO closingOrder;
 
     /** The trades that closed the position. */
     private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
@@ -97,9 +95,15 @@ public class PositionDTO {
         this.id = newId;
         this.currencyPair = newCurrencyPair;
         this.amount = newAmount;
-        this.openOrderId = newOpenOrderId;
+        // We create a temporary opening order.
+        openingOrder = OrderDTO.builder()
+                .id(newOpenOrderId)
+                .timestamp(ZonedDateTime.now())
+                .type(BID)
+                .currencyPair(currencyPair)
+                .status(PENDING_NEW)
+                .create();
         this.rules = newRules;
-        this.version.incrementAndGet();
     }
 
     /**
@@ -135,8 +139,8 @@ public class PositionDTO {
                     .create();
         }
         this.rules = newRules;
-        this.openOrderId = builder.openOrderId;
-        this.closeOrderId = builder.closeOrderId;
+        this.openingOrder = builder.openingOrder;
+        this.closingOrder = builder.closingOrder;
         this.trades.putAll(builder.trades);
         this.lowestPrice = builder.lowestPrice;
         this.highestPrice = builder.highestPrice;
@@ -153,18 +157,43 @@ public class PositionDTO {
     }
 
     /**
+     * Update order.
+     *
+     * @param updatedOrder updated value
+     * @return true if updated
+     */
+    public final boolean updateOrder(final OrderDTO updatedOrder) {
+        if (openingOrder != null
+                && openingOrder.getId().equals(updatedOrder.getId())) {
+            this.openingOrder = updatedOrder;
+            return true;
+        }
+        if (closingOrder != null && closingOrder.getId().equals(updatedOrder.getId())) {
+            this.closingOrder = updatedOrder;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Setter for closeOrderId.
      *
      * @param newCloseOrderId the closeOrderId to set
      */
-    public final void setCloseOrderId(final String newCloseOrderId) {
+    public final void setClosingOrderId(final String newCloseOrderId) {
         // This method should only be called when in status OPENED.
         if (status != OPENED) {
             throw new PositionException("Impossible to set close order id for position " + id);
         }
         status = CLOSING;
-        closeOrderId = newCloseOrderId;
-        version.incrementAndGet();
+        // We create a temporary closing order.
+        closingOrder = OrderDTO.builder()
+                .id(newCloseOrderId)
+                .timestamp(ZonedDateTime.now())
+                .type(ASK)
+                .currencyPair(currencyPair)
+                .status(PENDING_NEW)
+                .create();
     }
 
     /**
@@ -174,9 +203,8 @@ public class PositionDTO {
      * @return true if the position is updated.
      */
     public boolean tradeUpdate(final TradeDTO trade) {
-        // TODO test if the same trade is sent two times
         // If status is OPENING and the trades for the open order arrives for the whole amount ==> status = OPENED.
-        if (trade.getOrderId().equals(openOrderId) && status == OPENING) {
+        if (trade.getOrderId().equals(getOpeningOrderId()) && status == OPENING) {
             trades.put(trade.getId(), trade);
 
             // We calculate the sum of amount in the all the trades.
@@ -187,7 +215,7 @@ public class PositionDTO {
             return true;
         }
         // If status is CLOSING and the trades for the close order arrives for the whole amount ==> status = CLOSED.
-        if (trade.getOrderId().equals(closeOrderId) && status == CLOSING) {
+        if (trade.getOrderId().equals(getClosingOrderId()) && status == CLOSING) {
             trades.put(trade.getId(), trade);
 
             // We calculate the sum of amount in the all the trades.
@@ -209,7 +237,7 @@ public class PositionDTO {
     public boolean shouldBeClosed(final TickerDTO ticker) {
         // The status must be OPENED to be closed.
         // The currency pair of the ticker must be the same than the currency pair of the open trade.
-        if (closeOrderId != null || !ticker.getCurrencyPair().equals(currencyPair)) {
+        if (getClosingOrderId() != null || !ticker.getCurrencyPair().equals(currencyPair)) {
             return false;
         } else {
             final Optional<GainDTO> gain = calculateGainFromPrice(ticker.getLast());
@@ -218,30 +246,25 @@ public class PositionDTO {
                 this.latestPrice = ticker.getLast();
                 if (rules.isStopGainPercentageSet() && gain.get().getPercentage() >= rules.getStopGainPercentage()
                         || rules.isStopLossPercentageSet() && gain.get().getPercentage() <= -rules.getStopLossPercentage()) {
-                    version.incrementAndGet();
                     // If the rules tells we should sell.
                     return true;
                 } else {
                     // We check if this gain is at a new highest.
                     if (highestPrice == null) {
                         highestPrice = ticker.getLast();
-                        version.incrementAndGet();
                     } else {
                         final Optional<GainDTO> highestGain = calculateGainFromPrice(highestPrice);
                         if (highestGain.isPresent() && highestGain.get().getPercentage() <= gain.get().getPercentage()) {
                             highestPrice = ticker.getLast();
-                            version.incrementAndGet();
                         }
                     }
                     // We check if this gain is at a new lowest.
                     if (lowestPrice == null) {
                         lowestPrice = ticker.getLast();
-                        version.incrementAndGet();
                     } else {
                         final Optional<GainDTO> lowestGain = calculateGainFromPrice(lowestPrice);
                         if (lowestGain.isPresent() && lowestGain.get().getPercentage() >= gain.get().getPercentage()) {
                             lowestPrice = ticker.getLast();
-                            version.incrementAndGet();
                         }
                     }
                     return false;
@@ -261,7 +284,7 @@ public class PositionDTO {
     private Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
         if ((status == OPENED || status == CLOSED) && price != null) {
             // We take the price from the first trade received.
-            final TradeDTO openTrade = getOpenTrades().iterator().next();
+            final TradeDTO openTrade = getOpeningTrades().iterator().next();
 
             // How gain calculation works ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50.
@@ -306,12 +329,12 @@ public class PositionDTO {
             // To start the position, I spent 100 BTC.
             // When I closed the position, I received 150 BTC
             // Gain  -> ((150 - 100) / 100) * 100 = 50 %
-            BigDecimal bought = getOpenTrades()
+            BigDecimal bought = getOpeningTrades()
                     .stream()
                     .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            BigDecimal sold = getCloseTrades()
+            BigDecimal sold = getClosingTrades()
                     .stream()
                     .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -414,6 +437,50 @@ public class PositionDTO {
     }
 
     /**
+     * Getter openingOrder.
+     *
+     * @return openingOrder
+     */
+    public final OrderDTO getOpeningOrder() {
+        return openingOrder;
+    }
+
+    /**
+     * Getter closingOrder.
+     *
+     * @return closingOrder
+     */
+    public final OrderDTO getClosingOrder() {
+        return closingOrder;
+    }
+
+    /**
+     * Returns opening order id.
+     *
+     * @return opening order id
+     */
+    private String getOpeningOrderId() {
+        if (openingOrder != null) {
+            return openingOrder.getId();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns closing order id.
+     *
+     * @return closing order id
+     */
+    private String getClosingOrderId() {
+        if (closingOrder != null) {
+            return closingOrder.getId();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Getter trades.
      *
      * @return trades
@@ -444,7 +511,7 @@ public class PositionDTO {
      *
      * @return openTrades
      */
-    public final Set<TradeDTO> getOpenTrades() {
+    public final Set<TradeDTO> getOpeningTrades() {
         return trades.values()
                 .stream()
                 .filter(t -> BID.equals(t.getType()))
@@ -457,30 +524,12 @@ public class PositionDTO {
      *
      * @return closeTrades
      */
-    public final Set<TradeDTO> getCloseTrades() {
+    public final Set<TradeDTO> getClosingTrades() {
         return trades.values()
                 .stream()
                 .filter(t -> ASK.equals(t.getType()))
                 .sorted(Comparator.comparing(TradeDTO::getTimestamp, nullsLast(naturalOrder())))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    /**
-     * Getter openOrderId.
-     *
-     * @return openOrderId
-     */
-    public final String getOpenOrderId() {
-        return openOrderId;
-    }
-
-    /**
-     * Getter closeOrderId.
-     *
-     * @return closeOrderId
-     */
-    public final String getCloseOrderId() {
-        return closeOrderId;
     }
 
     /**
@@ -549,15 +598,6 @@ public class PositionDTO {
     }
 
     /**
-     * Getter version.
-     *
-     * @return version
-     */
-    public final Long getVersion() {
-        return version.longValue();
-    }
-
-    /**
      * Returns formatted value.
      *
      * @param value value
@@ -605,17 +645,17 @@ public class PositionDTO {
             value += ")";
             switch (status) {
                 case OPENING:
-                    value += " - Opening - Waiting for the trade of order " + getOpenOrderId();
+                    value += " - Opening - Waiting for the trade of order " + openingOrder.getId();
                     break;
                 case OPENED:
                     value += " on " + getCurrencyPair() + " - Opened";
                     final Optional<GainDTO> lastGain = getLatestCalculatedGain();
-                    if (lastGain.isPresent()) {
+                    if (lastGain.isPresent() && getLatestCalculatedGain().isPresent()) {
                         value += " - Last gain calculated " + getFormattedValue(getLatestCalculatedGain().get().getPercentage()) + " %";
                     }
                     break;
                 case CLOSING:
-                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trade of order " + getCloseOrderId();
+                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trade of order " + closingOrder.getId();
                     break;
                 case CLOSED:
                     final GainDTO gain = getGain();
@@ -654,11 +694,11 @@ public class PositionDTO {
         /** Stop loss percentage rule. */
         private Float stopLossPercentageRule;
 
-        /** The order id that opened the position. */
-        private String openOrderId;
+        /** The order that opened the position. */
+        private OrderDTO openingOrder;
 
-        /** The order id that closed the position. */
-        private String closeOrderId;
+        /** The order that closed the position. */
+        private OrderDTO closingOrder;
 
         /** The trades that closed the position. */
         private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
@@ -739,24 +779,24 @@ public class PositionDTO {
         }
 
         /**
-         * openOrderId.
+         * openingOrder.
          *
-         * @param newOpenOrderId rules
+         * @param newOpeningOrder openingOrder
          * @return builder
          */
-        public Builder openOrderId(final String newOpenOrderId) {
-            this.openOrderId = newOpenOrderId;
+        public Builder openingOrder(final OrderDTO newOpeningOrder) {
+            this.openingOrder = newOpeningOrder;
             return this;
         }
 
         /**
-         * closeOrderId.
+         * closingOrder.
          *
-         * @param newCloseOrderId closeOrderId
+         * @param newClosingOrder closingOrder
          * @return builder
          */
-        public Builder closeOrderId(final String newCloseOrderId) {
-            this.closeOrderId = newCloseOrderId;
+        public Builder closingOrder(final OrderDTO newClosingOrder) {
+            this.closingOrder = newClosingOrder;
             return this;
         }
 

@@ -207,6 +207,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Order flux.
         final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
         connectableOrderFlux.subscribe(strategy::orderUpdate);              // For strategy.
+        connectableOrderFlux.subscribe(positionService::orderUpdate);       // For strategy.
         connectableOrderFlux.connect();
 
         // Trade flux to strategy.

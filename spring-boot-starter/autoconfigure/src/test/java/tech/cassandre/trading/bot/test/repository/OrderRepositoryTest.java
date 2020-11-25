@@ -37,7 +37,7 @@ public class OrderRepositoryTest extends BaseTest {
     public void checkImportedOrders() {
         // Orders.
         final Iterator<Order> orders = orderRepository.findByOrderByTimestampAsc().iterator();
-        assertEquals(2, orderRepository.count());
+        assertEquals(10, orderRepository.count());
         // Order 1.
         Order o = orders.next();
         assertEquals("BACKUP_ORDER_01", o.getId());

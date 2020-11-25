@@ -4,6 +4,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -50,6 +51,13 @@ public interface PositionService {
      * @param ticker ticker
      */
     void tickerUpdate(TickerDTO ticker);
+
+    /**
+     * Method called by streams at every order update.
+     *
+     * @param order order
+     */
+    void orderUpdate(OrderDTO order);
 
     /**
      * Method called by streams on every trade update.

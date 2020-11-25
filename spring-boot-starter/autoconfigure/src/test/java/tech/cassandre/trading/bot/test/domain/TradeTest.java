@@ -62,7 +62,7 @@ public class TradeTest extends BaseTest {
         TradeDTO trade = strategy.getTrades().get("BACKUP_TRADE_01");
         assertNotNull(trade);
         assertEquals("BACKUP_TRADE_01", trade.getId());
-        assertEquals("BACKUP_OPEN_ORDER_02", trade.getOrderId());
+        assertEquals("BACKUP_OPENING_ORDER_02", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, new BigDecimal("20").compareTo(trade.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(BTC, USDT), trade.getCurrencyPair());
@@ -74,7 +74,7 @@ public class TradeTest extends BaseTest {
         trade = strategy.getTrades().get("BACKUP_TRADE_02");
         assertNotNull(trade);
         assertEquals("BACKUP_TRADE_02", trade.getId());
-        assertEquals("BACKUP_OPEN_ORDER_03", trade.getOrderId());
+        assertEquals("BACKUP_OPENING_ORDER_03", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, new BigDecimal("30").compareTo(trade.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(BTC, USDT), trade.getCurrencyPair());
@@ -86,7 +86,7 @@ public class TradeTest extends BaseTest {
         trade = strategy.getTrades().get("BACKUP_TRADE_03");
         assertNotNull(trade);
         assertEquals("BACKUP_TRADE_03", trade.getId());
-        assertEquals("BACKUP_OPEN_ORDER_04", trade.getOrderId());
+        assertEquals("BACKUP_OPENING_ORDER_04", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, new BigDecimal("40").compareTo(trade.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(BTC, USDT), trade.getCurrencyPair());
@@ -98,7 +98,7 @@ public class TradeTest extends BaseTest {
         trade = strategy.getTrades().get("BACKUP_TRADE_04");
         assertNotNull(trade);
         assertEquals("BACKUP_TRADE_04", trade.getId());
-        assertEquals("BACKUP_OPEN_ORDER_05", trade.getOrderId());
+        assertEquals("BACKUP_CLOSING_ORDER_01", trade.getOrderId());
         assertEquals(ASK, trade.getType());
         assertEquals(0, new BigDecimal("40").compareTo(trade.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(BTC, USDT), trade.getCurrencyPair());
@@ -110,7 +110,7 @@ public class TradeTest extends BaseTest {
         trade = strategy.getTrades().get("BACKUP_TRADE_05");
         assertNotNull(trade);
         assertEquals("BACKUP_TRADE_05", trade.getId());
-        assertEquals("BACKUP_OPEN_ORDER_06", trade.getOrderId());
+        assertEquals("BACKUP_CLOSING_ORDER_02", trade.getOrderId());
         assertEquals(ASK, trade.getType());
         assertEquals(0, new BigDecimal("50").compareTo(trade.getOriginalAmount()));
         assertEquals(new CurrencyPairDTO(ETH, USD), trade.getCurrencyPair());
@@ -133,7 +133,7 @@ public class TradeTest extends BaseTest {
         // Add a trade and check that it's correctly saved in database.
         long tradeCount = tradeRepository.count();
         TradeDTO t1 = TradeDTO.builder()
-                .id("BACKUP_TRADE_06")
+                .id("BACKUP_TRADE_11")
                 .orderId("EMPTY")
                 .type(BID)
                 .originalAmount(new BigDecimal("1.100001"))
@@ -147,9 +147,9 @@ public class TradeTest extends BaseTest {
 
         // Wait until it is saved & check results.
         await().untilAsserted(() -> assertEquals(tradeCount + 1, tradeRepository.count()));
-        Optional<Trade> t1FromDatabase = tradeRepository.findById("BACKUP_TRADE_06");
+        Optional<Trade> t1FromDatabase = tradeRepository.findById("BACKUP_TRADE_11");
         assertTrue(t1FromDatabase.isPresent());
-        assertEquals("BACKUP_TRADE_06", t1FromDatabase.get().getId());
+        assertEquals("BACKUP_TRADE_11", t1FromDatabase.get().getId());
         assertEquals("EMPTY", t1FromDatabase.get().getOrderId());
         assertEquals(BID, t1FromDatabase.get().getType());
         assertEquals(0, t1FromDatabase.get().getOriginalAmount().compareTo(new BigDecimal("1.100001")));

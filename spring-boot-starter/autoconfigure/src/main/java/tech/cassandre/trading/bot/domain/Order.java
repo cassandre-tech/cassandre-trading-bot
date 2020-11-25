@@ -44,7 +44,7 @@ public class Order {
     @Column(name = "USER_REFERENCE")
     private String userReference;
 
-    /** The timestamp on the order according to the exchange's server, null if not provided. */
+    /** The timestamp of the order. */
     @Column(name = "TIMESTAMP")
     private ZonedDateTime timestamp;
 

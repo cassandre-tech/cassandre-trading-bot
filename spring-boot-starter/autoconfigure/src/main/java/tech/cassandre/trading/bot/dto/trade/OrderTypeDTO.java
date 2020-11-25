@@ -5,10 +5,10 @@ package tech.cassandre.trading.bot.dto.trade;
  */
 public enum OrderTypeDTO {
 
-    /** Buying order. */
+    /** Buying. */
     BID,
 
-    /** Selling order. */
+    /** Selling. */
     ASK
 
 }

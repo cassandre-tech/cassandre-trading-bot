@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
@@ -46,50 +47,50 @@ public class PositionDTOTest {
 
         // After creation, the position state should be OPENING
         assertEquals(OPENING, p.getStatus());
-        assertTrue(p.getOpenTrades().isEmpty());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getOpeningTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A first trade arrives for another order, nothing should change.
         p.tradeUpdate(TradeDTO.builder().id("T000001").orderId("O000000").create());
         assertEquals(OPENING, p.getStatus());
-        assertTrue(p.getOpenTrades().isEmpty());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getOpeningTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A second trade arrives for the order O000001 and should change the state to OPENED.
         p.tradeUpdate(TradeDTO.builder().id("T000002").type(BID).orderId("O000001").originalAmount(amount).create());
         assertEquals(OPENED, p.getStatus());
-        assertEquals(1, p.getOpenTrades().size());
+        assertEquals(1, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000002").isPresent());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A close order is set, the status should now be closing.
-        p.setCloseOrderId("O000002");
+        p.setClosingOrderId("O000002");
         assertEquals(CLOSING, p.getStatus());
-        assertEquals(1, p.getOpenTrades().size());
+        assertEquals(1, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000002").isPresent());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // Previous trades arrives, nothing should change.
         p.tradeUpdate(TradeDTO.builder().id("T000003").orderId("O000000").create());
         p.tradeUpdate(TradeDTO.builder().id("T000004").orderId("O000001").create());
         assertEquals(CLOSING, p.getStatus());
-        assertEquals(1, p.getOpenTrades().size());
+        assertEquals(1, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000002").isPresent());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A trade arrives for another order, nothing should change.
         p.tradeUpdate(TradeDTO.builder().id("T000005").orderId("O000003").currencyPair(cp1).originalAmount(amount).create());
         assertEquals(CLOSING, p.getStatus());
-        assertEquals(1, p.getOpenTrades().size());
+        assertEquals(1, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000002").isPresent());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A trade arrives for the closing order
         p.tradeUpdate(TradeDTO.builder().id("T000006").type(ASK).orderId("O000002").currencyPair(cp1).originalAmount(amount).create());
         assertEquals(CLOSED, p.getStatus());
-        assertEquals(1, p.getOpenTrades().size());
+        assertEquals(1, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000002").isPresent());
-        assertEquals(1, p.getCloseTrades().size());
+        assertEquals(1, p.getClosingTrades().size());
         assertTrue(p.getTrade("T000006").isPresent());
     }
 
@@ -101,52 +102,52 @@ public class PositionDTOTest {
 
         // After creation, the position state should be OPENING.
         assertEquals(OPENING, p.getStatus());
-        assertTrue(p.getOpenTrades().isEmpty());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getOpeningTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A first trade arrives for the order O000001 but only half of the amount.
         p.tradeUpdate(TradeDTO.builder().id("T000001").type(BID).orderId("O000001").originalAmount(new BigDecimal("5")).create());
         assertEquals(OPENING, p.getStatus());
-        assertEquals(1, p.getOpenTrades().size());
+        assertEquals(1, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000001").isPresent());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A second trade arrives for the order O000001 - amount is complete. Should now be opened.
         p.tradeUpdate(TradeDTO.builder().id("T000002").type(BID).orderId("O000001").originalAmount(new BigDecimal("5")).create());
         assertEquals(OPENED, p.getStatus());
-        assertEquals(2, p.getOpenTrades().size());
+        assertEquals(2, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000001").isPresent());
         assertTrue(p.getTrade("T000002").isPresent());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A close order is set, the status should now be closing.
-        p.setCloseOrderId("O000002");
+        p.setClosingOrderId("O000002");
         assertEquals(CLOSING, p.getStatus());
-        assertEquals(2, p.getOpenTrades().size());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertEquals(2, p.getOpeningTrades().size());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A trade arrives for another order, nothing should change.
         p.tradeUpdate(TradeDTO.builder().id("T000005").orderId("O000003").type(ASK).currencyPair(cp1).originalAmount(amount).create());
         assertEquals(CLOSING, p.getStatus());
-        assertEquals(2, p.getOpenTrades().size());
-        assertTrue(p.getCloseTrades().isEmpty());
+        assertEquals(2, p.getOpeningTrades().size());
+        assertTrue(p.getClosingTrades().isEmpty());
 
         // A first trade arrives for the closing order.
         p.tradeUpdate(TradeDTO.builder().id("T000006").orderId("O000002").type(ASK).currencyPair(cp1).originalAmount(new BigDecimal(2)).create());
         assertEquals(CLOSING, p.getStatus());
-        assertEquals(2, p.getOpenTrades().size());
+        assertEquals(2, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000001").isPresent());
         assertTrue(p.getTrade("T000002").isPresent());
-        assertEquals(1, p.getCloseTrades().size());
+        assertEquals(1, p.getClosingTrades().size());
         assertTrue(p.getTrade("T000006").isPresent());
 
         // A second trade arrives for the closing order.
         p.tradeUpdate(TradeDTO.builder().id("T000007").orderId("O000002").type(ASK).currencyPair(cp1).originalAmount(new BigDecimal(3)).create());
         assertEquals(CLOSING, p.getStatus());
-        assertEquals(2, p.getOpenTrades().size());
+        assertEquals(2, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000001").isPresent());
         assertTrue(p.getTrade("T000002").isPresent());
-        assertEquals(2, p.getCloseTrades().size());
+        assertEquals(2, p.getClosingTrades().size());
         assertTrue(p.getTrade("T000006").isPresent());
         assertTrue(p.getTrade("T000007").isPresent());
 
@@ -154,13 +155,13 @@ public class PositionDTOTest {
         p.tradeUpdate(TradeDTO.builder().id("T000008").orderId("O000002").type(ASK).currencyPair(cp1).originalAmount(new BigDecimal(5)).create());
         assertEquals(CLOSED, p.getStatus());
         // Open trades.
-        assertEquals(2, p.getOpenTrades().size());
+        assertEquals(2, p.getOpeningTrades().size());
         assertTrue(p.getTrade("T000001").isPresent());
         assertEquals("T000001", p.getTrade("T000001").get().getId());
         assertTrue(p.getTrade("T000002").isPresent());
         assertEquals("T000002", p.getTrade("T000002").get().getId());
         // Close trades.
-        assertEquals(3, p.getCloseTrades().size());
+        assertEquals(3, p.getClosingTrades().size());
         assertTrue(p.getTrade("T000006").isPresent());
         assertEquals("T000006", p.getTrade("T000006").get().getId());
         assertTrue(p.getTrade("T000007").isPresent());
@@ -177,23 +178,23 @@ public class PositionDTOTest {
 
         // We are in OPENING status and we try to call setCloseOrderId.
         assertEquals(OPENING, p.getStatus());
-        assertThrows(RuntimeException.class, () -> p.setCloseOrderId("O000002"));
+        assertThrows(RuntimeException.class, () -> p.setClosingOrderId("O000002"));
 
         // We move to OPENED status and we try to call setCloseOrderId.
         p.tradeUpdate(TradeDTO.builder().id("T000001").type(BID).orderId("O000001").originalAmount(amount).create());
         assertEquals(OPENED, p.getStatus());
 
         // We are in OPENED, we should now be able to setCloseOrderId.
-        p.setCloseOrderId("O000002");
+        p.setClosingOrderId("O000002");
         assertEquals(CLOSING, p.getStatus());
 
         // We are in CLOSING, we should not be able to setCloseOrderId.
-        assertThrows(RuntimeException.class, () -> p.setCloseOrderId("O000002"));
+        assertThrows(RuntimeException.class, () -> p.setClosingOrderId("O000002"));
 
         // We move to CLOSED.
         p.tradeUpdate(TradeDTO.builder().id("T000001").type(ASK).orderId("O000002").originalAmount(amount).create());
         assertEquals(CLOSED, p.getStatus());
-        assertThrows(RuntimeException.class, () -> p.setCloseOrderId("O000002"));
+        assertThrows(RuntimeException.class, () -> p.setClosingOrderId("O000002"));
     }
 
     @Test
@@ -309,7 +310,7 @@ public class PositionDTOTest {
         assertEquals(BigDecimal.ZERO, p.getGain().getFees().getValue());
 
         // We tell the position that it will be closed with order O000012.
-        p.setCloseOrderId("O000012");
+        p.setClosingOrderId("O000012");
 
         // Position closed with this trade.
         final TradeDTO trade02 = TradeDTO.builder().id("T000002")
@@ -357,7 +358,7 @@ public class PositionDTOTest {
         assertEquals(BigDecimal.ZERO, p.getGain().getFees().getValue());
 
         // We tell the position that it will be closed with order O000012.
-        p.setCloseOrderId("O000012");
+        p.setClosingOrderId("O000012");
 
         // Position closed with this trade.
         final TradeDTO trade02 = TradeDTO.builder().id("T000002")
@@ -388,7 +389,7 @@ public class PositionDTOTest {
                 .status(OPENING)
                 .currencyPair(new CurrencyPairDTO(ETH, BTC))
                 .amount(new BigDecimal("1"))
-                .openOrderId("OPEN_ORDER_01")
+                .openingOrder(OrderDTO.builder().id("OPEN_ORDER_01").create())
                 .create();
         assertEquals(p1.toString(), "Position n°1 (no rules) - Opening - Waiting for the trade of order OPEN_ORDER_01");
 
@@ -409,7 +410,7 @@ public class PositionDTOTest {
                 .currencyPair(new CurrencyPairDTO(ETH, BTC))
                 .amount(new BigDecimal("1"))
                 .stopLossPercentageRule(11F)
-                .openOrderId("OPEN_ORDER_02")
+                .openingOrder(OrderDTO.builder().id("OPEN_ORDER_02").create())
                 .trades(Collections.singleton(openTrade1))
                 .create();
         assertEquals(p2.toString(), "Position n°2 (11.0 % loss rule) on ETH/BTC - Opened");
@@ -425,8 +426,8 @@ public class PositionDTOTest {
                 .currencyPair(new CurrencyPairDTO(ETH, BTC))
                 .amount(new BigDecimal("1"))
                 .stopGainPercentageRule(12f)
-                .openOrderId("OPEN_ORDER_03")
-                .closeOrderId("OPEN_ORDER_04")
+                .openingOrder(OrderDTO.builder().id("OPEN_ORDER_03").create())
+                .closingOrder(OrderDTO.builder().id("OPEN_ORDER_04").create())
                 .trades(Collections.singleton(openTrade1))
                 .create();
         assertEquals(p3.toString(), "Position n°3 (12.0 % gain rule) on ETH/BTC - Closing - Waiting for the trade of order OPEN_ORDER_04");
@@ -462,8 +463,8 @@ public class PositionDTOTest {
                 .amount(new BigDecimal(1))
                 .stopGainPercentageRule(12F)
                 .stopLossPercentageRule(9F)
-                .openOrderId("OPEN_ORDER_04")
-                .closeOrderId("OPEN_ORDER_04")
+                .openingOrder(OrderDTO.builder().id("OPEN_ORDER_04").create())
+                .closingOrder(OrderDTO.builder().id("OPEN_ORDER_04").create())
                 .trades(tradesP4)
                 .lowestPrice(new BigDecimal(1))
                 .highestPrice(new BigDecimal(2))

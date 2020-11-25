@@ -44,13 +44,13 @@ public class TradeDTO {
     /** Amount to be ordered / amount that was ordered. */
     private final BigDecimal originalAmount;
 
-    /** The currency-pair. */
+    /** Currency-pair. */
     private final CurrencyPairDTO currencyPair;
 
     /** The price. */
     private final BigDecimal price;
 
-    /** The timestamp on the order according to the exchange's server, null if not provided. */
+    /** The timestamp of the order. */
     private final ZonedDateTime timestamp;
 
     /** The fee that was charged by the exchange for this trade. */

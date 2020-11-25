@@ -6,6 +6,8 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.Set;
 
+import static reactor.core.publisher.FluxSink.OverflowStrategy.LATEST;
+
 /**
  * Base flux.
  *
@@ -34,7 +36,7 @@ public abstract class BaseFlux<T> extends Base {
      */
     @SuppressWarnings("SameReturnValue")
     protected FluxSink.OverflowStrategy getOverflowStrategy() {
-        return FluxSink.OverflowStrategy.LATEST;
+        return LATEST;
     }
 
     /**
