@@ -121,7 +121,6 @@ public class PositionRepositoryTest {
         assertEquals(2, notClosingPositions.get(1).getId());
         assertEquals(4, notClosingPositions.get(2).getId());
         assertEquals(5, notClosingPositions.get(3).getId());
-
     }
 
 }

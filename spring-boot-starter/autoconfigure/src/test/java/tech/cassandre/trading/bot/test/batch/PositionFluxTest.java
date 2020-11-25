@@ -94,6 +94,7 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(1, strategy.getPositions().size());
         PositionDTO p1 = strategy.getPositions().get(position1Id);
         assertNotNull(p1);
+        assertNotNull(strategy.getPositionById(position1Id));
         assertEquals(1L, p1.getId());
         assertEquals(OPENING, p1.getStatus());
         assertEquals(cp1, p1.getCurrencyPair());
@@ -140,6 +141,7 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(2, strategy.getPositions().size());
         PositionDTO p2 = strategy.getPositions().get(position2Id);
         assertNotNull(p2);
+        assertNotNull(strategy.getPositionById(position2Id));
         assertEquals(2L, p2.getId());
         assertEquals(OPENING, p2.getStatus());
         assertEquals(cp2, p2.getCurrencyPair());
@@ -452,6 +454,8 @@ public class PositionFluxTest extends BaseTest {
         assertEquals("000004", closeTradesIterator.next().getId());
 
         // Just checking trades creation.
+        assertNotNull(strategy.getPositionById(position1Id));
+        assertNotNull(strategy.getPositionById(position2Id));
         assertEquals(5, strategy.getTrades().size());
     }
 

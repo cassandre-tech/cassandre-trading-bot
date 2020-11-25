@@ -130,6 +130,16 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     /**
+     * Get an order by its id.
+     *
+     * @param id order id
+     * @return order
+     */
+    public final Optional<OrderDTO> getOrderById(final String id) {
+        return orderRepository.findById(id).map(mapper::mapToOrderDTO);
+    }
+
+    /**
      * Getter trades.
      *
      * @return trades
@@ -142,6 +152,16 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     /**
+     * Get a trade by its id.
+     *
+     * @param id trade id
+     * @return trade
+     */
+    public final Optional<TradeDTO> getTradeById(final String id) {
+        return tradeRepository.findById(id).map(mapper::mapToTradeDTO);
+    }
+
+    /**
      * Getter positions.
      *
      * @return positions
@@ -151,6 +171,16 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
                 .stream()
                 .map(mapper::mapToPositionDTO)
                 .collect(Collectors.toMap(PositionDTO::getId, t -> t));
+    }
+
+    /**
+     * Get a position by its id.
+     *
+     * @param id position id
+     * @return position
+     */
+    public final Optional<PositionDTO> getPositionById(final long id) {
+        return positionRepository.findById(id).map(mapper::mapToPositionDTO);
     }
 
     /**

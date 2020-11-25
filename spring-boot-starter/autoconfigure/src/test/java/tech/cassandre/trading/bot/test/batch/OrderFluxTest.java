@@ -114,6 +114,7 @@ public class OrderFluxTest extends BaseTest {
         // Order 000001.
         final OrderDTO order1 = strategyOrders.get("000001");
         assertNotNull(order1);
+        assertNotNull(strategy.getOrderById("000001"));
         assertEquals("000001", order1.getId());
         assertEquals(ASK, order1.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order1.getOriginalAmount()));
@@ -129,6 +130,7 @@ public class OrderFluxTest extends BaseTest {
         // Order 000002.
         final OrderDTO order2 = strategyOrders.get("000002");
         assertNotNull(order2);
+        assertNotNull(strategy.getOrderById("000002"));
         assertEquals("000002", order2.getId());
         assertEquals(ASK, order2.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order2.getOriginalAmount()));
@@ -144,6 +146,7 @@ public class OrderFluxTest extends BaseTest {
         // Order 000003.
         final OrderDTO order3 = strategyOrders.get("000003");
         assertNotNull(order3);
+        assertNotNull(strategy.getOrderById("000003"));
         assertEquals("000003", order3.getId());
         assertEquals(ASK, order3.getType());
         assertEquals(0, new BigDecimal("2").compareTo(order3.getOriginalAmount()));
@@ -159,6 +162,7 @@ public class OrderFluxTest extends BaseTest {
         // Order 000004.
         final OrderDTO order4 = strategyOrders.get("000004");
         assertNotNull(order4);
+        assertNotNull(strategy.getOrderById("000004"));
         assertEquals("000004", order4.getId());
         assertEquals(ASK, order4.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order4.getOriginalAmount()));
