@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.test.service.dry;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +12,6 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.service.dry.mocks.PositionServiceDryModeTestMock;
@@ -33,9 +31,6 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 
@@ -87,9 +82,9 @@ public class PositionServiceDryModeTest extends BaseTest {
         // Few seconds after, order and trade will arrive and status will be OPENED.
         // Two updates will have been received.
         assertEquals(OPENING, getPositionDTO(position1Id).getStatus());
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy.getPositionsUpdateReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
-        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(1).getStatus());
+        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(2).getStatus());
 
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH/BTC, 0.0002, 20% stop loss, price of 0.2).
@@ -105,9 +100,9 @@ public class PositionServiceDryModeTest extends BaseTest {
         // Few seconds after, order and trade will arrive and status will be OPENED.
         // Two updates will have been received.
         assertEquals(OPENING, getPositionDTO(position2Id).getStatus());
-        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdateReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
-        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(3).getStatus());
+        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(5).getStatus());
 
         // =============================================================================================================
         // Tickers are coming.
@@ -143,8 +138,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         assertEquals(CLOSED, getPositionDTO(position2Id).getStatus());
 
         // Check everything arrived.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertEquals(8, strategy.getPositionsStatusUpdateReceived().size());
+        await().untilAsserted(() -> assertEquals(15, strategy.getPositionsUpdateReceived().size()));
     }
 
     /**
