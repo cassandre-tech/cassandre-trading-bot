@@ -84,7 +84,8 @@ public class PositionServiceDryModeTest extends BaseTest {
         assertEquals(OPENING, getPositionDTO(position1Id).getStatus());
         await().untilAsserted(() -> assertEquals(3, strategy.getPositionsUpdateReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
-        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(2).getStatus());
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsStatusUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdateReceived().get(1).getStatus()));
 
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH/BTC, 0.0002, 20% stop loss, price of 0.2).
@@ -102,7 +103,8 @@ public class PositionServiceDryModeTest extends BaseTest {
         assertEquals(OPENING, getPositionDTO(position2Id).getStatus());
         await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdateReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
-        assertEquals(OPENED, strategy.getPositionsUpdateReceived().get(5).getStatus());
+        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdateReceived().get(3).getStatus()));
 
         // =============================================================================================================
         // Tickers are coming.

@@ -65,6 +65,24 @@ public enum OrderStatusDTO {
     }
 
     /**
+     * Returns true if the status indicates an error.
+     *
+     * @return Returns true for final
+     */
+    public final boolean isInError() {
+        switch (this) {
+            case CANCELED:
+            case REPLACED:
+            case STOPPED:
+            case REJECTED:
+            case EXPIRED:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Returns true when open.
      *
      * @return Returns true when open

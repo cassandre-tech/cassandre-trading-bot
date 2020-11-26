@@ -27,8 +27,10 @@ import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING_FAILURE;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING_FAILURE;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
@@ -163,13 +165,19 @@ public class PositionDTO {
      * @return true if updated
      */
     public final boolean updateOrder(final OrderDTO updatedOrder) {
-        if (openingOrder != null
-                && openingOrder.getId().equals(updatedOrder.getId())) {
+        if (openingOrder != null && openingOrder.getId().equals(updatedOrder.getId())) {
             this.openingOrder = updatedOrder;
+            if (updatedOrder.getStatus().isInError()) {
+                this.status = OPENING_FAILURE;
+
+            }
             return true;
         }
         if (closingOrder != null && closingOrder.getId().equals(updatedOrder.getId())) {
             this.closingOrder = updatedOrder;
+            if (updatedOrder.getStatus().isInError()) {
+                this.status = CLOSING_FAILURE;
+            }
             return true;
         }
         return false;

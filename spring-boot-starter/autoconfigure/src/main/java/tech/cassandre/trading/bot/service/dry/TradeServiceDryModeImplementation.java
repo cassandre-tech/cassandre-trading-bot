@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.service.dry;
 
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static java.math.BigDecimal.ZERO;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
@@ -56,9 +58,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     /** Last received tickers. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
-
-    /** Orders. */
-    private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
 
     /** User service - dry mode. */
     private final UserServiceDryModeImplementation userService;
@@ -165,7 +164,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .status(FILLED)
                     .averagePrice(t.getLast())
                     .originalAmount(amount)
-                    .fee(BigDecimal.ZERO)
+                    .fee(ZERO)
                     .timestamp(ZonedDateTime.now())
                     .create();
 
@@ -179,7 +178,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .originalAmount(amount)
                     .price(t.getLast())
                     .timestamp(ZonedDateTime.now())
-                    .feeAmount(BigDecimal.ZERO)
+                    .feeAmount(ZERO)
                     .feeCurrency(currencyPair.getBaseCurrency())
                     .create();
 
@@ -191,7 +190,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     getLogger().debug("InterruptedException");
                 }
                 orderFlux.emitValue(order);
-                orders.put(orderId, order);
                 tradeFlux.emitValue(trade);
             });
 
@@ -233,17 +231,29 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     @Override
     public final Set<OrderDTO> getOpenOrders() {
-        return new LinkedHashSet<>(orders.values());
+        return orderRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(o -> getMapper().mapToOrderDTO(o))
+                .collect(Collectors.toSet());
     }
 
     @Override
     public final Set<OrderDTO> getOrders() {
-        return new LinkedHashSet<>(orders.values());
+        return orderRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(o -> getMapper().mapToOrderDTO(o))
+                .collect(Collectors.toSet());
     }
 
     @Override
     public final boolean cancelOrder(final String orderId) {
-        return orders.remove(orderId) != null;
+        final Optional<Order> order = orderRepository.findById(orderId);
+        if (order.isPresent()) {
+            orderRepository.delete(order.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

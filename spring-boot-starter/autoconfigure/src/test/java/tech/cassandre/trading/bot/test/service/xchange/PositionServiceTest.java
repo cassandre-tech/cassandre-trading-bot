@@ -40,10 +40,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING_FAILURE;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING_FAILURE;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.CANCELED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.STOPPED;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -169,10 +173,10 @@ public class PositionServiceTest extends BaseTest {
         Optional<PositionDTO> position2 = strategy.getPositionById(position2Id);
         assertTrue(position2.isPresent());
         // Opening order.
-        OrderDTO p2peningOrder = position2.get().getOpeningOrder();
-        assertNotNull(p2peningOrder);
-        assertEquals("ORDER00020", p2peningOrder.getId());
-        assertEquals(cp2, p2peningOrder.getCurrencyPair());
+        OrderDTO p2OpeningOrder = position2.get().getOpeningOrder();
+        assertNotNull(p2OpeningOrder);
+        assertEquals("ORDER00020", p2OpeningOrder.getId());
+        assertEquals(cp2, p2OpeningOrder.getCurrencyPair());
         assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
         // Closing order.
         OrderDTO p2ClosingOrder = position2.get().getClosingOrder();
@@ -211,11 +215,11 @@ public class PositionServiceTest extends BaseTest {
         position2 = strategy.getPositionById(position2Id);
         assertTrue(position2.isPresent());
         // Opening order.
-        p2peningOrder = position2.get().getOpeningOrder();
-        assertNotNull(p2peningOrder);
-        assertEquals("ORDER00020", p2peningOrder.getId());
-        assertEquals(cp2, p2peningOrder.getCurrencyPair());
-        assertEquals(FILLED, p2peningOrder.getStatus());
+        p2OpeningOrder = position2.get().getOpeningOrder();
+        assertNotNull(p2OpeningOrder);
+        assertEquals("ORDER00020", p2OpeningOrder.getId());
+        assertEquals(cp2, p2OpeningOrder.getCurrencyPair());
+        assertEquals(FILLED, p2OpeningOrder.getStatus());
         // Closing order.
         p2ClosingOrder = position2.get().getClosingOrder();
         assertNull(p2ClosingOrder);
@@ -276,14 +280,130 @@ public class PositionServiceTest extends BaseTest {
         position2 = strategy.getPositionById(position2Id);
         assertTrue(position2.isPresent());
         // Opening order.
-        p2peningOrder = position2.get().getOpeningOrder();
-        assertNotNull(p2peningOrder);
-        assertEquals("ORDER00020", p2peningOrder.getId());
-        assertEquals(cp2, p2peningOrder.getCurrencyPair());
-        assertEquals(FILLED, p2peningOrder.getStatus());
+        p2OpeningOrder = position2.get().getOpeningOrder();
+        assertNotNull(p2OpeningOrder);
+        assertEquals("ORDER00020", p2OpeningOrder.getId());
+        assertEquals(cp2, p2OpeningOrder.getCurrencyPair());
+        assertEquals(FILLED, p2OpeningOrder.getStatus());
         // Closing order.
         p2ClosingOrder = position2.get().getClosingOrder();
         assertNull(p2ClosingOrder);
+    }
+
+    @Test
+    @DisplayName("Check opening order failure")
+    public void checkOpeningOrderFailure() {
+        // =============================================================================================================
+        // Creates a position. Then send an order update with an error.
+        // The position must end up being in OPENING_FAILURE
+
+        // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
+        final PositionCreationResultDTO p1 = positionService.createPosition(cp1,
+                new BigDecimal("0.0001"),
+                PositionRulesDTO.builder().stopGainPercentage(10f).create());
+        assertTrue(p1.isSuccessful());
+        assertEquals(1, p1.getPositionId());
+        assertEquals("ORDER00010", p1.getOrderId());
+        assertNull(p1.getErrorMessage());
+        assertNull(p1.getException());
+        assertTrue(positionService.getPositionById(1).isPresent());
+        assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
+        long position1Id = p1.getPositionId();
+
+        // Position 1.
+        Optional<PositionDTO> position1 = strategy.getPositionById(position1Id);
+        assertTrue(position1.isPresent());
+        // Opening order.
+        OrderDTO p1OpeningOrder = position1.get().getOpeningOrder();
+        assertNotNull(p1OpeningOrder);
+        assertEquals("ORDER00010", p1OpeningOrder.getId());
+        assertEquals(BID, p1OpeningOrder.getType());
+        assertEquals(cp1, p1OpeningOrder.getCurrencyPair());
+        assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
+        // Closing order.
+        OrderDTO p1ClosingOrder = position1.get().getClosingOrder();
+        assertNull(p1ClosingOrder);
+
+        // =============================================================================================================
+        // An update for opening order ORDER00020 (position 2) arrives and change status with an error !
+        OrderDTO order00010 = OrderDTO.builder()
+                .id("ORDER00010")
+                .type(BID)
+                .originalAmount(new BigDecimal("0.00012"))
+                .currencyPair(cp1)
+                .timestamp(ZonedDateTime.now())
+                .status(STOPPED)
+                .create();
+        orderFlux.emitValue(order00010);
+        // The position should move to failure.
+        await().untilAsserted(() -> assertEquals(OPENING_FAILURE, getPositionDTO(position1Id).getStatus()));
+    }
+
+    @Test
+    @DisplayName("Check closing order failure")
+    public void checkClosingOrderFailure() {
+        // =============================================================================================================
+        // Creates a position. Then, when closing an order update with an error.
+        // The position must end up being in CLOSING_FAILURE
+
+        // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
+        final PositionCreationResultDTO p1 = positionService.createPosition(cp1,
+                new BigDecimal("0.0001"),
+                PositionRulesDTO.builder().stopGainPercentage(10f).create());
+        assertTrue(p1.isSuccessful());
+        assertEquals(1, p1.getPositionId());
+        assertEquals("ORDER00010", p1.getOrderId());
+        assertNull(p1.getErrorMessage());
+        assertNull(p1.getException());
+        assertTrue(positionService.getPositionById(1).isPresent());
+        assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
+        long position1Id = p1.getPositionId();
+
+        // Position 1.
+        Optional<PositionDTO> position1 = strategy.getPositionById(position1Id);
+        assertTrue(position1.isPresent());
+        // Opening order.
+        OrderDTO p1OpeningOrder = position1.get().getOpeningOrder();
+        assertNotNull(p1OpeningOrder);
+        assertEquals("ORDER00010", p1OpeningOrder.getId());
+        assertEquals(BID, p1OpeningOrder.getType());
+        assertEquals(cp1, p1OpeningOrder.getCurrencyPair());
+        assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
+        // Closing order.
+        OrderDTO p1ClosingOrder = position1.get().getClosingOrder();
+        assertNull(p1ClosingOrder);
+
+        // =============================================================================================================
+        // We are now closing position 1 with a trade and setCloseOrderId.
+        // We move the position 1 to OPENED.
+        tradeFlux.emitValue(TradeDTO.builder().id("000002")
+                .orderId("ORDER00010")
+                .type(BID)
+                .currencyPair(cp1)
+                .originalAmount(new BigDecimal("0.0001"))
+                .price(new BigDecimal("0.2"))
+                .create());
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
+        // We close position 1 with setClosingOrderId().
+        position1 = strategy.getPositionById(position1Id);
+        assertTrue(position1.isPresent());
+        position1.get().setClosingOrderId("CLOSING_ORDER_01");
+        positionFlux.emitValue(position1.get());
+        await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));
+
+        // =============================================================================================================
+        // An update arrives to change status order of position 1 in error.
+        OrderDTO closingOrder01 = OrderDTO.builder()
+                .id("CLOSING_ORDER_01")
+                .type(ASK)
+                .originalAmount(new BigDecimal("1.00001"))
+                .currencyPair(cp1)
+                .timestamp(ZonedDateTime.now())
+                .status(CANCELED)
+                .cumulativeAmount(new BigDecimal("0.0002"))
+                .create();
+        orderFlux.emitValue(closingOrder01);
+        await().untilAsserted(() -> assertEquals(CLOSING_FAILURE, getPositionDTO(position1Id).getStatus()));
     }
 
     @Test
