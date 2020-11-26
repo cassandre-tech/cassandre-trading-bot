@@ -9,15 +9,15 @@
 <p align="center">Cassandre makes it easy to create and run a Java crypto trading bot</p>
 
 <p align="center">
+    <a href="https://cassandretech.slack.com/" target="slack"><img src="https://img.shields.io/badge/chat-on%20slack-7A5979.svg" /></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/cassandre-tech/cassandre-trading-bot/actions">
     <img
       src="https://github.com/cassandre-tech/cassandre-trading-bot/workflows/Continuous%20integration/badge.svg"
       alt="GitHub Actions" />
   </a>
-</p>
-
-<p align="center">
-    <a href="https://cassandretech.slack.com/" target="slack"><img src="https://img.shields.io/badge/chat-on%20slack-7A5979.svg" /></a>
 </p>
 
 <p align="center">
