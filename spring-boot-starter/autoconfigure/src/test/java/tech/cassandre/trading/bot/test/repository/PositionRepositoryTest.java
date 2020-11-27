@@ -1,18 +1,15 @@
 package tech.cassandre.trading.bot.test.repository;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import tech.cassandre.trading.bot.domain.Position;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 

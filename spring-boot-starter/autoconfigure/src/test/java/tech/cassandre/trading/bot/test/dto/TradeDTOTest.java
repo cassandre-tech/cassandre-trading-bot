@@ -10,7 +10,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @DisplayName("DTO - TradeDTO")

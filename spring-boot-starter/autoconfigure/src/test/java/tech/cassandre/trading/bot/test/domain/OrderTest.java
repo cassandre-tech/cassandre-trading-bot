@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -16,10 +17,13 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
@@ -116,9 +120,31 @@ public class OrderTest extends BaseTest {
                 .limitPrice(new BigDecimal("1.00005"))
                 .create();
         orderFlux.emitValue(order01);
-
-        // Check created order.
         await().untilAsserted(() -> assertEquals(orderCount + 1, orderRepository.count()));
+
+        // =============================================================================================================
+        // Order - Check created order (domain).
+        final Optional<Order> orderInDatabase = orderRepository.findById("BACKUP_ORDER_03");
+        assertTrue(orderInDatabase.isPresent());
+        assertEquals("BACKUP_ORDER_03", orderInDatabase.get().getId());
+        assertEquals(ASK, orderInDatabase.get().getType());
+        assertEquals(0, new BigDecimal("1.00001").compareTo(orderInDatabase.get().getOriginalAmount()));
+        assertEquals(cp1.toString(), orderInDatabase.get().getCurrencyPair());
+        assertEquals("MY_REF_3", orderInDatabase.get().getUserReference());
+        assertEquals(createZonedDateTime("01-01-2020"), orderInDatabase.get().getTimestamp());
+        assertEquals(NEW, orderInDatabase.get().getStatus());
+        assertEquals(0, new BigDecimal("1.00002").compareTo(orderInDatabase.get().getCumulativeAmount()));
+        assertEquals(0, new BigDecimal("1.00003").compareTo(orderInDatabase.get().getAveragePrice()));
+        assertEquals(0, new BigDecimal("1.00004").compareTo(orderInDatabase.get().getFee()));
+        assertEquals("leverage3", orderInDatabase.get().getLeverage());
+        assertEquals(0, new BigDecimal("1.00005").compareTo(orderInDatabase.get().getLimitPrice()));
+        // Tests for created on and updated on fields.
+        ZonedDateTime createdOn = orderInDatabase.get().getCreatedOn();
+        assertNotNull(createdOn);
+        assertNull(orderInDatabase.get().getUpdatedOn());
+
+        // =============================================================================================================
+        // OrderDTO - Check created order (dto).
         OrderDTO order = strategy.getOrders().get("BACKUP_ORDER_03");
         assertNotNull(order);
         assertEquals("BACKUP_ORDER_03", order.getId());
@@ -133,6 +159,45 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("1.00004").compareTo(order.getFee()));
         assertEquals("leverage3", order.getLeverage());
         assertEquals(0, new BigDecimal("1.00005").compareTo(order.getLimitPrice()));
+
+        // =============================================================================================================
+        // Updating the order - first time.
+        orderFlux.emitValue(OrderDTO.builder()
+                .id("BACKUP_ORDER_03")
+                .type(ASK)
+                .originalAmount(new BigDecimal("1.00002"))
+                .currencyPair(cp1)
+                .userReference("MY_REF_3")
+                .timestamp(createZonedDateTime("01-01-2020"))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("1.00002"))
+                .averagePrice(new BigDecimal("1.00003"))
+                .fee(new BigDecimal("1.00004"))
+                .leverage("leverage3")
+                .limitPrice(new BigDecimal("1.00005"))
+                .create());
+        await().untilAsserted(() -> assertNotNull(orderRepository.findById("BACKUP_ORDER_03").get().getUpdatedOn()));
+        assertEquals(createdOn, orderRepository.findById("BACKUP_ORDER_03").get().getCreatedOn());
+        ZonedDateTime updatedOn = orderInDatabase.get().getCreatedOn();
+
+        // =============================================================================================================
+        // Updating the order - second time.
+        orderFlux.emitValue(OrderDTO.builder()
+                .id("BACKUP_ORDER_03")
+                .type(ASK)
+                .originalAmount(new BigDecimal("1.00003"))
+                .currencyPair(cp1)
+                .userReference("MY_REF_3")
+                .timestamp(createZonedDateTime("01-01-2020"))
+                .status(NEW)
+                .cumulativeAmount(new BigDecimal("1.00002"))
+                .averagePrice(new BigDecimal("1.00003"))
+                .fee(new BigDecimal("1.00004"))
+                .leverage("leverage3")
+                .limitPrice(new BigDecimal("1.00005"))
+                .create());
+        await().untilAsserted(() -> assertTrue(updatedOn.isBefore(orderRepository.findById("BACKUP_ORDER_03").get().getUpdatedOn())));
+        assertEquals(createdOn, orderRepository.findById("BACKUP_ORDER_03").get().getCreatedOn());
     }
 
 }

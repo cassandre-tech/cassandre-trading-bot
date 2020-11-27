@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.domain;
 
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
+import tech.cassandre.trading.bot.util.base.BaseDomain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +22,7 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
  */
 @Entity
 @Table(name = "TRADES")
-public class Trade {
+public class Trade extends BaseDomain {
 
     /** An identifier set by the exchange that uniquely identifies the trade. */
     @Id

@@ -26,6 +26,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -326,6 +327,10 @@ public class PositionTest extends BaseTest {
         assertNull(p.getClosingOrder());
         assertNull(p.getLowestPrice());
         assertNull(p.getHighestPrice());
+        ZonedDateTime createdOn = p.getCreatedOn();
+        ZonedDateTime updatedON = p.getUpdatedOn();
+        assertNotNull(createdOn);
+        assertNotNull(updatedON);
 
         // We should have one more position and one more trade in database.
         await().untilAsserted(() -> assertEquals(6, positionRepository.count()));
@@ -386,6 +391,8 @@ public class PositionTest extends BaseTest {
         // Check that the new data was inserted in database.
         await().untilAsserted(() -> assertEquals(6, positionRepository.count()));
         await().untilAsserted(() -> assertEquals(11, tradeRepository.count()));
+        assertEquals(createdOn, getPosition(positionId).getCreatedOn());
+        assertTrue(updatedON.isBefore(getPosition(positionId).getUpdatedOn()));
 
         // =============================================================================================================
         // We should now be CLOSING. We are going to receive two trades to close.

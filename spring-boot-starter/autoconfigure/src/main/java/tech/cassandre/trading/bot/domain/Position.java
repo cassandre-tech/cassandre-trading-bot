@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.domain;
 
 import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
+import tech.cassandre.trading.bot.util.base.BaseDomain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,7 +27,7 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
  */
 @Entity
 @Table(name = "POSITIONS")
-public class Position {
+public class Position extends BaseDomain {
 
     /** An identifier that uniquely identifies the position. */
     @Id

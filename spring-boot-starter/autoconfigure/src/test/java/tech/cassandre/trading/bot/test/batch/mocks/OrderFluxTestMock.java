@@ -18,7 +18,6 @@ import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;

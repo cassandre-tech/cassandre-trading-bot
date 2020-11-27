@@ -19,7 +19,7 @@
                     remarks="The currency-pair"/>
             <column name="USER_REFERENCE" type="VARCHAR(255)"
                     remarks="An identifier provided by the user on placement that uniquely identifies the order"/>
-            <column name="TIMESTAMP" type="TIMESTAMP WITHOUT TIME ZONE"
+            <column name="TIMESTAMP" type="TIMESTAMP WITH TIME ZONE"
                     remarks="The timestamp of the order"/>
             <column name="STATUS" type="VARCHAR(255)"
                     remarks="Order status"/>
@@ -33,6 +33,10 @@
                     remarks="The leverage to use for margin related to this order"/>
             <column name="LIMIT_PRICE" type="numeric(16, 8)"
                     remarks="Limit price"/>
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
         </createTable>
         <!-- ======================================================================================================= -->
 
@@ -63,6 +67,10 @@
                     remarks="Highest price for this position"/>
             <column name="LATEST_PRICE" type="numeric(16, 8)"
                     remarks="Latest price for this position"/>
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
         </createTable>
         <!-- Auto increment on ID -->
         <addAutoIncrement columnDataType="BIGINT"
@@ -92,9 +100,9 @@
                                  referencedTableName="ORDERS"
                                  referencedColumnNames="ID"
                                  validate="true"/>
-        <!-- Index on Status -->
+        <!-- Index on STATUS -->
         <createIndex clustered="false"
-                     indexName="idx_positions_status"
+                     indexName="IDX_POSITIONS_STATUS"
                      tableName="POSITIONS"
                      unique="false">
             <column descending="true" name="STATUS"/>
@@ -118,7 +126,7 @@
                     remarks="Currency-pair"/>
             <column name="PRICE" type="numeric(16, 8)"
                     remarks="The price"/>
-            <column name="TIMESTAMP" type="TIMESTAMP WITHOUT TIME ZONE"
+            <column name="TIMESTAMP" type="TIMESTAMP WITH TIME ZONE"
                     remarks="The timestamp of the order"/>
             <column name="FEE_AMOUNT" type="numeric(16, 8)"
                     remarks="The fee amount that was charged by the exchange for this trade"/>
@@ -126,6 +134,10 @@
                     remarks="The fee currency that was charged by the exchange for this trade"/>
             <column name="POSITION_ID" type="BIGINT"
                     remarks="Position id that was linked to this trade"/>
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
         </createTable>
         <!-- Foreign key of POSITION_ID to IO in POSITIONS -->
         <addForeignKeyConstraint baseColumnNames="POSITION_ID"
@@ -138,9 +150,9 @@
                                  referencedTableName="POSITIONS"
                                  referencedColumnNames="ID"
                                  validate="true"/>
-        <!-- Index on position id -->
+        <!-- Index on POSITION_ID -->
         <createIndex clustered="false"
-                     indexName="idx_trades_position_id"
+                     indexName="IDX_TRADES_POSITION_ID"
                      tableName="TRADES"
                      unique="false">
             <column descending="true" name="POSITION_ID"/>

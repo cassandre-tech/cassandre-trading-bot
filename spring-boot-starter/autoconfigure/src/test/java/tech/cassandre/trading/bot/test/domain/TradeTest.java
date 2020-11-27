@@ -8,6 +8,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Trade;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -17,13 +18,16 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -137,27 +141,80 @@ public class TradeTest extends BaseTest {
                 .orderId("EMPTY")
                 .type(BID)
                 .originalAmount(new BigDecimal("1.100001"))
-                .currencyPair(new CurrencyPairDTO(USDT, BTC))
+                .currencyPair(cp1)
                 .price(new BigDecimal("2.200002"))
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .feeAmount(new BigDecimal("3.300003"))
                 .feeCurrency(BTC)
                 .create();
         tradeFlux.emitValue(t1);
+        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdateReceived().size()));
 
-        // Wait until it is saved & check results.
-        await().untilAsserted(() -> assertEquals(tradeCount + 1, tradeRepository.count()));
-        Optional<Trade> t1FromDatabase = tradeRepository.findById("BACKUP_TRADE_11");
-        assertTrue(t1FromDatabase.isPresent());
-        assertEquals("BACKUP_TRADE_11", t1FromDatabase.get().getId());
-        assertEquals("EMPTY", t1FromDatabase.get().getOrderId());
-        assertEquals(BID, t1FromDatabase.get().getType());
-        assertEquals(0, t1FromDatabase.get().getOriginalAmount().compareTo(new BigDecimal("1.100001")));
-        assertEquals("USDT/BTC", t1FromDatabase.get().getCurrencyPair());
-        assertEquals(0, t1FromDatabase.get().getPrice().compareTo(new BigDecimal("2.200002")));
-        assertEquals(createZonedDateTime("01-09-2020"), t1FromDatabase.get().getTimestamp());
-        assertEquals(0, t1FromDatabase.get().getFeeAmount().compareTo(new BigDecimal("3.300003")));
-        assertEquals("BTC", t1FromDatabase.get().getFeeCurrency());
+        // =============================================================================================================
+        // Trade - Check created order (domain).
+        Optional<Trade> tradeInDatabase = tradeRepository.findById("BACKUP_TRADE_11");
+        assertTrue(tradeInDatabase.isPresent());
+        assertEquals("BACKUP_TRADE_11", tradeInDatabase.get().getId());
+        assertEquals("EMPTY", tradeInDatabase.get().getOrderId());
+        assertEquals(BID, tradeInDatabase.get().getType());
+        assertEquals(0, tradeInDatabase.get().getOriginalAmount().compareTo(new BigDecimal("1.100001")));
+        assertEquals("ETH/BTC", tradeInDatabase.get().getCurrencyPair());
+        assertEquals(0, tradeInDatabase.get().getPrice().compareTo(new BigDecimal("2.200002")));
+        assertEquals(createZonedDateTime("01-09-2020"), tradeInDatabase.get().getTimestamp());
+        assertEquals(0, tradeInDatabase.get().getFeeAmount().compareTo(new BigDecimal("3.300003")));
+        assertEquals("BTC", tradeInDatabase.get().getFeeCurrency());
+        // Tests for created on and updated on fields.
+        ZonedDateTime createdOn = tradeInDatabase.get().getCreatedOn();
+        assertNotNull(createdOn);
+        assertNull(tradeInDatabase.get().getUpdatedOn());
+
+        // =============================================================================================================
+        // TradeDTO - Check created trade (dto).
+        final TradeDTO tradeDTO = strategy.getTrades().get("BACKUP_TRADE_11");
+        assertNotNull(tradeDTO);
+        assertEquals("BACKUP_TRADE_11", tradeDTO.getId());
+        assertEquals("EMPTY", tradeDTO.getOrderId());
+        assertEquals(BID, tradeDTO.getType());
+        assertEquals(0, tradeDTO.getOriginalAmount().compareTo(new BigDecimal("1.100001")));
+        assertEquals(cp1, tradeDTO.getCurrencyPair());
+        assertEquals(0, tradeDTO.getPrice().compareTo(new BigDecimal("2.200002")));
+        assertEquals(createZonedDateTime("01-09-2020"), tradeDTO.getTimestamp());
+        assertEquals(0, tradeDTO.getFee().getValue().compareTo(new BigDecimal("3.300003")));
+        assertEquals(BTC, tradeDTO.getFee().getCurrency());
+
+        // =============================================================================================================
+        // Updating the trade - first time.
+        tradeFlux.emitValue(TradeDTO.builder()
+                .id("BACKUP_TRADE_11")
+                .orderId("EMPTY")
+                .type(BID)
+                .originalAmount(new BigDecimal("1.100002"))
+                .currencyPair(cp1)
+                .price(new BigDecimal("2.200002"))
+                .timestamp(createZonedDateTime("01-09-2020"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .create());
+        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdateReceived().size()));
+        await().untilAsserted(() -> assertNotNull(tradeRepository.findById("BACKUP_TRADE_11").get().getUpdatedOn()));
+        assertEquals(createdOn, tradeRepository.findById("BACKUP_TRADE_11").get().getCreatedOn());
+        ZonedDateTime updatedOn = tradeInDatabase.get().getCreatedOn();
+
+        // =============================================================================================================
+        // Updating the order - second time.
+        tradeFlux.emitValue(TradeDTO.builder()
+                .id("BACKUP_TRADE_11")
+                .orderId("EMPTY")
+                .type(BID)
+                .originalAmount(new BigDecimal("1.100003"))
+                .currencyPair(cp1)
+                .price(new BigDecimal("2.200002"))
+                .timestamp(createZonedDateTime("01-09-2020"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .create());
+        await().untilAsserted(() -> assertTrue(updatedOn.isBefore(tradeRepository.findById("BACKUP_TRADE_11").get().getUpdatedOn())));
+        assertEquals(createdOn, tradeRepository.findById("BACKUP_TRADE_11").get().getCreatedOn());
     }
 
 }
