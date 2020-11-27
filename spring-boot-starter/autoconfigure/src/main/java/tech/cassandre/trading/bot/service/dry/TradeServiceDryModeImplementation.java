@@ -39,7 +39,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 public class TradeServiceDryModeImplementation extends BaseService implements TradeService {
 
     /** Waiting time before sending orders and trades to flux. */
-    private static final long WAITING_TIME = 1_000L;
+    private static final long WAITING_TIME = 500L;
 
     /** Trade account ID. */
     public static final String TRADE_ACCOUNT_ID = "trade";
@@ -190,6 +190,11 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     getLogger().debug("InterruptedException");
                 }
                 orderFlux.emitValue(order);
+                try {
+                    TimeUnit.MILLISECONDS.sleep(WAITING_TIME);
+                } catch (InterruptedException e) {
+                    getLogger().debug("InterruptedException");
+                }
                 tradeFlux.emitValue(trade);
             });
 
