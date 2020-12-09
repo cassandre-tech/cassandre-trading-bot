@@ -22,8 +22,6 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.Set;
 
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
@@ -81,11 +79,11 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
             // Create rules.
             PositionRulesDTO rules = PositionRulesDTO
                     .builder()
-                    .stopGainPercentage(10)
-                    .stopLossPercentage(5)
+                    .stopGainPercentage(10f)
+                    .stopLossPercentage(5f)
                     .create();
             // Create position.
-            getPositionService().createPosition(
+            createPosition(
                     new CurrencyPairDTO(BTC, USDT),
                     new BigDecimal("0.01"),
                     rules);
