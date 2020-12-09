@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot;
+package tech.cassandre.trading.bot.test;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

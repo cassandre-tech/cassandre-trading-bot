@@ -12,7 +12,7 @@ import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.test.strategy.mocks.BasicCassandreStrategyTestMock;
+import tech.cassandre.trading.bot.mock.strategy.BasicCassandreStrategyTestMock;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -60,15 +60,8 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertFalse(strategy.getAccountsUpdatesReceived().isEmpty());
         assertFalse(strategy.getTickersUpdateReceived().isEmpty());
         assertFalse(strategy.getTradesUpdateReceived().isEmpty());
-        assertEquals(2, strategy.getLastTicker().size());
-        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTicker().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
-
-        // Checking that services and repositories are available.
-        assertNotNull(strategy.getTradeService());
-        assertNotNull(strategy.getPositionService());
-        assertNotNull(strategy.getOrderRepository());
-        assertNotNull(strategy.getTradeRepository());
-        assertNotNull(strategy.getPositionRepository());
+        assertEquals(2, strategy.getLastTickers().size());
+        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTickers().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
 
         // Check getEstimatedBuyingCost()
         assertTrue(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).isPresent());

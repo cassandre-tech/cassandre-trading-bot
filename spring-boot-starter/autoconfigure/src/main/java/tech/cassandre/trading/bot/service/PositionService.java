@@ -4,6 +4,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
@@ -38,12 +39,16 @@ public interface PositionService {
     /**
      * Creates a position with its associated rules.
      *
+     * @param strategy     strategy
      * @param currencyPair currency pair
      * @param amount       amount
      * @param rules        rules
      * @return position creation result
      */
-    PositionCreationResultDTO createPosition(CurrencyPairDTO currencyPair, BigDecimal amount, PositionRulesDTO rules);
+    PositionCreationResultDTO createPosition(StrategyDTO strategy,
+                                             CurrencyPairDTO currencyPair,
+                                             BigDecimal amount,
+                                             PositionRulesDTO rules);
 
     /**
      * Method called by streams at every ticker update.

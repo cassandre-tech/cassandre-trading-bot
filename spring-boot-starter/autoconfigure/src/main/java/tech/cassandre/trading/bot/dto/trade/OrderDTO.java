@@ -1,10 +1,13 @@
 package tech.cassandre.trading.bot.dto.trade;
 
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * DTO representing order information.
@@ -48,6 +51,12 @@ public final class OrderDTO {
     /** Limit price. */
     private final BigDecimal limitPrice;
 
+    /** All trades related to order. */
+    private final Set<TradeDTO> trades = new LinkedHashSet<>();
+
+    /** Strategy. */
+    private final StrategyDTO strategy;
+
     /**
      * Builder constructor.
      *
@@ -66,6 +75,8 @@ public final class OrderDTO {
         this.fee = builder.fee;
         this.leverage = builder.leverage;
         this.limitPrice = builder.limitPrice;
+        this.trades.addAll(builder.trades);
+        this.strategy = builder.strategy;
     }
 
     /**
@@ -185,6 +196,24 @@ public final class OrderDTO {
         return limitPrice;
     }
 
+    /**
+     * Getter trades.
+     *
+     * @return trades
+     */
+    public Set<TradeDTO> getTrades() {
+        return trades;
+    }
+
+    /**
+     * Getter strategy.
+     *
+     * @return strategy
+     */
+    public StrategyDTO getStrategy() {
+        return strategy;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -271,6 +300,12 @@ public final class OrderDTO {
 
         /** Limit price. */
         private BigDecimal limitPrice;
+
+        /** All trades related to order. */
+        private Set<TradeDTO> trades = new LinkedHashSet<>();
+
+        /** Strategy. */
+        private StrategyDTO strategy;
 
         /**
          * Type.
@@ -401,6 +436,28 @@ public final class OrderDTO {
          */
         public Builder limitPrice(final BigDecimal newLimitPrice) {
             this.limitPrice = newLimitPrice;
+            return this;
+        }
+
+        /**
+         * Trades.
+         *
+         * @param newTrades trades
+         * @return builder
+         */
+        public Builder trades(final Set<TradeDTO> newTrades) {
+            this.trades = newTrades;
+            return this;
+        }
+
+        /**
+         * Strategy.
+         *
+         * @param newStrategy strategy
+         * @return builder
+         */
+        public Builder strategy(final StrategyDTO newStrategy) {
+            this.strategy = newStrategy;
             return this;
         }
 

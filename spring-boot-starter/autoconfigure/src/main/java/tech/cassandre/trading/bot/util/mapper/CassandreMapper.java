@@ -14,9 +14,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;
 import org.mapstruct.ValueMappings;
 import tech.cassandre.trading.bot.domain.Position;
+import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -54,6 +56,22 @@ public interface CassandreMapper {
      */
     @Mapping(source = "currencyCode", target = "code")
     CurrencyDTO mapToCurrencyDTO(Currency source);
+
+    /**
+     * Map Strategy to StrategyDTO.
+     *
+     * @param source Strategy
+     * @return StrategyDTO
+     */
+    StrategyDTO mapToStrategyDTO(Strategy source);
+
+    /**
+     * Map StrategyDTO to Strategy.
+     *
+     * @param source StrategyDTO
+     * @return Strategy
+     */
+    Strategy mapToStrategy(StrategyDTO source);
 
     /**
      * Map AccountInfo to AccountDTO.

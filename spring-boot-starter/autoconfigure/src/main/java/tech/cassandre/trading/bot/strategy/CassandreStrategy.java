@@ -16,6 +16,13 @@ import java.lang.annotation.Target;
 public @interface CassandreStrategy {
 
     /**
+     * Strategy id.
+     *
+     * @return strategy id
+     */
+    String id() default "001";
+
+    /**
      * Strategy name.
      *
      * @return strategy name

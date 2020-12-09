@@ -3,16 +3,14 @@ package tech.cassandre.trading.bot.batch;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.util.base.BaseFlux;
+import tech.cassandre.trading.bot.util.base.BaseInternalFlux;
 
-import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Position flux - push {@link PositionDTO}.
  */
-public class PositionFlux extends BaseFlux<PositionDTO> {
+public class PositionFlux extends BaseInternalFlux<PositionDTO> {
 
     /** Position repository. */
     private final PositionRepository positionRepository;
@@ -27,15 +25,10 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
     }
 
     @Override
-    protected final Set<PositionDTO> getNewValues() {
-        return Collections.emptySet();
-    }
-
-    @Override
     public final void backupValue(final PositionDTO newValue) {
         Optional<Position> p = positionRepository.findById(newValue.getId());
         if (p.isPresent()) {
-            positionRepository.save(getMapper().mapToPosition(newValue));
+            positionRepository.save(mapper.mapToPosition(newValue));
         } else {
             getLogger().error("Position {} was not saved because it was not found in database", newValue.getId());
         }

@@ -7,8 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -30,7 +28,7 @@ public class Trade extends BaseDomain {
     private String id;
 
     /** The id of the order responsible for execution of this trade. */
-    @Column(name = "ORDER_ID")
+    @Column(name = "ORDER_ID", updatable = false)
     private String orderId;
 
     /** A bid or a ask. */
@@ -61,11 +59,6 @@ public class Trade extends BaseDomain {
     /** The fee that was charged by the exchange for this trade. */
     @Column(name = "FEE_CURRENCY")
     private String feeCurrency;
-
-    /** Position using this trade. */
-    @ManyToOne
-    @JoinColumn(name = "POSITION_ID")
-    private Position position;
 
     /**
      * Getter id.
@@ -229,37 +222,19 @@ public class Trade extends BaseDomain {
         feeCurrency = newFeeCurrency;
     }
 
-    /**
-     * Getter position.
-     *
-     * @return position
-     */
-    public Position getPosition() {
-        return position;
-    }
-
-    /**
-     * Setter position.
-     *
-     * @param newPosition the position to set
-     */
-    public void setPosition(final Position newPosition) {
-        position = newPosition;
-    }
-
     @Override
     public final String toString() {
         return "Trade{"
                 + " id='" + id + '\''
                 + ", orderId='" + orderId + '\''
-                + ", type='" + type + '\''
+                + ", type=" + type
                 + ", originalAmount=" + originalAmount
                 + ", currencyPair='" + currencyPair + '\''
                 + ", price=" + price
                 + ", timestamp=" + timestamp
                 + ", feeAmount=" + feeAmount
                 + ", feeCurrency='" + feeCurrency + '\''
-                + '}';
+                + "} " + super.toString();
     }
 
 }

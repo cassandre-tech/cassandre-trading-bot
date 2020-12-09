@@ -167,13 +167,12 @@ public class TradeDTO {
         }
         TradeDTO tradeDTO = (TradeDTO) o;
         return id.equals(tradeDTO.id)
-                && Objects.equals(orderId, tradeDTO.orderId)
                 && type == tradeDTO.type
-                && (Objects.nonNull(originalAmount) && Objects.equals(0, originalAmount.compareTo(tradeDTO.originalAmount))
+                && Objects.equals(0, originalAmount.compareTo(tradeDTO.originalAmount))
                 && currencyPair.equals(tradeDTO.currencyPair)
-                && (Objects.nonNull(price) && Objects.equals(0, price.compareTo(tradeDTO.price)))
+                && Objects.equals(0, price.compareTo(tradeDTO.price))
                 && timestamp.equals(tradeDTO.timestamp)
-                && (Objects.nonNull(fee.getValue()) && Objects.equals(0, fee.getValue().compareTo(tradeDTO.fee.getValue()))))
+                && Objects.equals(0, fee.getValue().compareTo(tradeDTO.fee.getValue()))
                 && Objects.equals(fee.getCurrency(), tradeDTO.getFee().getCurrency());
     }
 

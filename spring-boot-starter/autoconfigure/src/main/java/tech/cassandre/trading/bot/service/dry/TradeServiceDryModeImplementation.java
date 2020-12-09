@@ -4,6 +4,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
@@ -19,8 +20,9 @@ import tech.cassandre.trading.bot.util.base.BaseService;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -58,6 +60,12 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     /** Last received tickers. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
+
+    /** Hashmap used to store orders created locally. */
+    private final HashMap<String, OrderDTO> localOrders = new HashMap<>();
+
+    /** Hashmap used to store trades created locally. */
+    private final HashMap<String, TradeDTO> localTrades = new HashMap<>();
 
     /** User service - dry mode. */
     private final UserServiceDryModeImplementation userService;
@@ -168,7 +176,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .timestamp(ZonedDateTime.now())
                     .create();
 
-            // We crate and send the trade.
+            // We create and send the trade.
             final String tradeId = getNextTradeNumber();
             final TradeDTO trade = TradeDTO.builder()
                     .id(tradeId)
@@ -182,19 +190,21 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .feeCurrency(currencyPair.getBaseCurrency())
                     .create();
 
-            // Sending the results after the return.
+            // Sending the results after the method returns the result.
             Executors.newFixedThreadPool(1).submit(() -> {
                 try {
                     TimeUnit.MILLISECONDS.sleep(WAITING_TIME);
                 } catch (InterruptedException e) {
                     getLogger().debug("InterruptedException");
                 }
+                localOrders.put(orderId, order);
                 orderFlux.emitValue(order);
                 try {
                     TimeUnit.MILLISECONDS.sleep(WAITING_TIME);
                 } catch (InterruptedException e) {
                     getLogger().debug("InterruptedException");
                 }
+                localTrades.put(tradeId, trade);
                 tradeFlux.emitValue(trade);
             });
 
@@ -208,45 +218,50 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
             }
 
             // We create the result.
-            return new OrderCreationResultDTO(orderId);
+            return new OrderCreationResultDTO(order);
         } else {
             return new OrderCreationResultDTO("Ticker not found", new Exception("Ticker not found"));
         }
     }
 
     @Override
-    public final OrderCreationResultDTO createBuyMarketOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    public final OrderCreationResultDTO createBuyMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
         return createMarketOrder(BID, currencyPair, amount);
     }
 
     @Override
-    public final OrderCreationResultDTO createSellMarketOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    public final OrderCreationResultDTO createSellMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
         return createMarketOrder(OrderTypeDTO.ASK, currencyPair, amount);
     }
 
     @Override
-    public final OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    public final OrderCreationResultDTO createBuyLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
         return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
     }
 
     @Override
-    public final OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    public final OrderCreationResultDTO createSellLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
         return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
     }
 
     @Override
     public final Set<OrderDTO> getOpenOrders() {
-        return orderRepository.findByOrderByTimestampAsc()
+        final Map<String, OrderDTO> results = orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(o -> getMapper().mapToOrderDTO(o))
-                .collect(Collectors.toSet());
+                .map(mapper::mapToOrderDTO)
+                .collect(Collectors.toMap(OrderDTO::getId, order -> order));
+        localOrders.values()
+                .stream()
+                .filter(order -> !results.containsKey(order.getId()))
+                .forEach(order -> results.put(order.getId(), order));
+        return new HashSet<>(results.values());
     }
 
     @Override
     public final Set<OrderDTO> getOrders() {
         return orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(o -> getMapper().mapToOrderDTO(o))
+                .map(mapper::mapToOrderDTO)
                 .collect(Collectors.toSet());
     }
 
@@ -263,10 +278,15 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     @Override
     public final Set<TradeDTO> getTrades() {
-        return tradeRepository.findByOrderByTimestampAsc()
+        final Map<String, TradeDTO> results = tradeRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(trade -> getMapper().mapToTradeDTO(trade))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .map(mapper::mapToTradeDTO)
+                .collect(Collectors.toMap(TradeDTO::getId, trade -> trade));
+        localTrades.values()
+                .stream()
+                .filter(trade -> !results.containsKey(trade.getId()))
+                .forEach(trade -> results.put(trade.getId(), trade));
+        return new HashSet<>(results.values());
     }
 
     /**

@@ -2,8 +2,12 @@ package tech.cassandre.trading.bot.strategy;
 
 import org.mapstruct.factory.Mappers;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -11,27 +15,39 @@ import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.math.BigDecimal.ZERO;
+
 /**
  * Generic Cassandre strategy.
  */
+@SuppressWarnings("checkstyle:DesignForExtension")
 public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
 
     /** Mapper. */
     private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);
+
+    /** Strategy. */
+    private StrategyDTO strategyDTO;
+
+    /** Strategy repository. */
+    private StrategyRepository strategyRepository;
 
     /** Order repository. */
     private OrderRepository orderRepository;
@@ -55,28 +71,30 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
     /** Last ticker received. */
-    private final Map<CurrencyPairDTO, TickerDTO> lastTicker = new LinkedHashMap<>();
+    private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
+
+    // =================================================================================================================
+    // Internal methods to setup dependencies.
+
+
+    /**
+     * Getter strategyDTO.
+     *
+     * @return strategyDTO
+     */
+    public final StrategyDTO getStrategyDTO() {
+        return strategyDTO;
+    }
 
     @Override
-    public final PositionRepository getPositionRepository() {
-        return positionRepository;
+    public final void setStrategyDTO(final StrategyDTO newStrategyDTO) {
+        this.strategyDTO = newStrategyDTO;
     }
 
     @Override
     public final void setPositionRepository(final PositionRepository newPositionRepository) {
-        positionRepository = newPositionRepository;
+        this.positionRepository = newPositionRepository;
     }
-
-    @Override
-    public final OrderRepository getOrderRepository() {
-        return orderRepository;
-    }
-
-    @Override
-    public final TradeRepository getTradeRepository() {
-        return tradeRepository;
-    }
-
 
     @Override
     public final void setOrderRepository(final OrderRepository newOrderRepository) {
@@ -98,18 +116,48 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         this.positionService = newPositionService;
     }
 
+    // =================================================================================================================
+    // Internal methods for event management.
+
     @Override
-    public final TradeService getTradeService() {
-        return tradeService;
+    public void accountUpdate(final AccountDTO account) {
+        accounts.put(account.getId(), account);
+        onAccountUpdate(account);
     }
 
     @Override
-    public final PositionService getPositionService() {
-        return positionService;
+    public void tickerUpdate(final TickerDTO ticker) {
+        lastTickers.put(ticker.getCurrencyPair(), ticker);
+        onTickerUpdate(ticker);
     }
+
+    @Override
+    public void orderUpdate(final OrderDTO order) {
+        onOrderUpdate(order);
+    }
+
+    @Override
+    public void tradeUpdate(final TradeDTO trade) {
+        onTradeUpdate(trade);
+    }
+
+    @Override
+    public void positionUpdate(final PositionDTO position) {
+        // For every position update.
+        onPositionUpdate(position);
+
+        // For every position status update.
+        if (previousPositionsStatus.get(position.getId()) != position.getStatus()) {
+            previousPositionsStatus.put(position.getId(), position.getStatus());
+            onPositionStatusUpdate(position);
+        }
+    }
+
+    // =================================================================================================================
+    // Related to accounts.
 
     /**
-     * Getter accounts.
+     * Returns list of accounts.
      *
      * @return accounts
      */
@@ -117,8 +165,40 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return accounts;
     }
 
+
+    @Override
+    public final Optional<AccountDTO> getTradeAccount() {
+        return getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+    }
+
+    // =================================================================================================================
+    // Related to tickers.
+
     /**
-     * Getter orders.
+     * Return last received tickers.
+     *
+     * @return ticker
+     */
+    public final Map<CurrencyPairDTO, TickerDTO> getLastTickers() {
+        return lastTickers;
+    }
+
+    /**
+     * Return last received ticker for a currency pair.
+     *
+     * @param currencyPair currency pair
+     * @return ticker
+     */
+    public final Optional<TickerDTO> getLastTicker(final CurrencyPairDTO currencyPair) {
+        // TODO Add a test for this method.
+        return Optional.ofNullable(getLastTickers().get(currencyPair));
+    }
+
+    // =================================================================================================================
+    // Related to orders.
+
+    /**
+     * Returns list of orders.
      *
      * @return orders
      */
@@ -126,7 +206,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return orderRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(mapper::mapToOrderDTO)
-                .collect(Collectors.toMap(OrderDTO::getId, o -> o));
+                .collect(Collectors.toMap(OrderDTO::getId, orderDTO -> orderDTO));
     }
 
     /**
@@ -139,8 +219,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return orderRepository.findById(id).map(mapper::mapToOrderDTO);
     }
 
+    // =================================================================================================================
+    // Related to trades.
+
     /**
-     * Getter trades.
+     * Returns list of trades.
      *
      * @return trades
      */
@@ -148,7 +231,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(mapper::mapToTradeDTO)
-                .collect(Collectors.toMap(TradeDTO::getId, t -> t));
+                .collect(Collectors.toMap(TradeDTO::getId, tradeDTO -> tradeDTO));
     }
 
     /**
@@ -161,8 +244,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return tradeRepository.findById(id).map(mapper::mapToTradeDTO);
     }
 
+    // =================================================================================================================
+    // Related to positions.
+
     /**
-     * Getter positions.
+     * Returns list of positions.
      *
      * @return positions
      */
@@ -170,7 +256,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return positionRepository.findByOrderById()
                 .stream()
                 .map(mapper::mapToPositionDTO)
-                .collect(Collectors.toMap(PositionDTO::getId, t -> t));
+                .collect(Collectors.toMap(PositionDTO::getId, positionDTO -> positionDTO));
     }
 
     /**
@@ -184,67 +270,118 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     /**
-     * Getter previousPositions.
+     * Returns gains of all positions.
      *
-     * @return previousPositions
+     * @return total gains
      */
-    public final Map<Long, PositionStatusDTO> getPreviousPositionsStatus() {
-        return previousPositionsStatus;
+    public final HashMap<CurrencyDTO, GainDTO> getGains() {
+        return positionService.getGains();
+    }
+
+    // =================================================================================================================
+    // Methods related to creating of orders & positions.
+
+    /**
+     * Creates a buy market order.
+     *
+     * @param currencyPair currency pair
+     * @param amount       amount
+     * @return order result (order id or error)
+     */
+    public OrderCreationResultDTO createBuyMarketOrder(final CurrencyPairDTO currencyPair,
+                                                       final BigDecimal amount) {
+        return tradeService.createBuyMarketOrder(strategyDTO, currencyPair, amount);
     }
 
     /**
-     * Getter lastTicker.
+     * Creates a sell market order.
      *
-     * @return lastTicker
+     * @param currencyPair currency pair
+     * @param amount       amount
+     * @return order result (order id or error)
      */
-    public final Map<CurrencyPairDTO, TickerDTO> getLastTicker() {
-        return lastTicker;
+    public OrderCreationResultDTO createSellMarketOrder(final CurrencyPairDTO currencyPair,
+                                                        final BigDecimal amount) {
+        return tradeService.createSellMarketOrder(strategyDTO, currencyPair, amount);
+    }
+
+    /**
+     * Creates a buy limit order.
+     *
+     * @param currencyPair currency pair
+     * @param amount       amount
+     * @param limitPrice   the highest acceptable price
+     * @return order result (order id or error)
+     */
+    public OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair,
+                                                      final BigDecimal amount,
+                                                      final BigDecimal limitPrice) {
+        return tradeService.createBuyLimitOrder(strategyDTO, currencyPair, amount, limitPrice);
+    }
+
+    /**
+     * Creates a sell limit order.
+     *
+     * @param currencyPair currency pair
+     * @param amount       amount
+     * @param limitPrice   the lowest acceptable price
+     * @return order result (order id or error)
+     */
+    public OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair,
+                                                       final BigDecimal amount,
+                                                       final BigDecimal limitPrice) {
+        return tradeService.createSellLimitOrder(strategyDTO, currencyPair, amount, limitPrice);
+    }
+
+    /**
+     * Creates a position with its associated rules.
+     *
+     * @param currencyPair currency pair
+     * @param amount       amount
+     * @param rules        rules
+     * @return position creation result
+     */
+    public PositionCreationResultDTO createPosition(final CurrencyPairDTO currencyPair,
+                                                    final BigDecimal amount,
+                                                    final PositionRulesDTO rules) {
+        return positionService.createPosition(strategyDTO, currencyPair, amount, rules);
+    }
+
+    // =================================================================================================================
+    // Methods that can be implemented by strategies.
+
+    @Override
+    public void onAccountUpdate(final AccountDTO account) {
+
     }
 
     @Override
-    public final Optional<AccountDTO> getTradeAccount() {
-        return getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+    public void onTickerUpdate(final TickerDTO ticker) {
+
     }
 
-    @SuppressWarnings("checkstyle:DesignForExtension")
     @Override
-    public void accountUpdate(final AccountDTO account) {
-        getAccounts().put(account.getId(), account);
-        onAccountUpdate(account);
+    public void onOrderUpdate(final OrderDTO order) {
+
     }
 
-    @SuppressWarnings("checkstyle:DesignForExtension")
     @Override
-    public void tickerUpdate(final TickerDTO ticker) {
-        getLastTicker().put(ticker.getCurrencyPair(), ticker);
-        onTickerUpdate(ticker);
+    public void onTradeUpdate(final TradeDTO trade) {
+
     }
 
-    @SuppressWarnings("checkstyle:DesignForExtension")
     @Override
-    public void orderUpdate(final OrderDTO order) {
-        onOrderUpdate(order);
+    public void onPositionUpdate(final PositionDTO position) {
+
     }
 
-    @SuppressWarnings("checkstyle:DesignForExtension")
     @Override
-    public void tradeUpdate(final TradeDTO trade) {
-        onTradeUpdate(trade);
+    public void onPositionStatusUpdate(final PositionDTO position) {
+
     }
 
-    @SuppressWarnings("checkstyle:DesignForExtension")
-    @Override
-    public void positionUpdate(final PositionDTO position) {
-        // For every position update.
-        getPositions().put(position.getId(), position);
-        onPositionUpdate(position);
-
-        // For every position status update.
-        if (getPreviousPositionsStatus().get(position.getId()) != position.getStatus()) {
-            getPreviousPositionsStatus().put(position.getId(), position.getStatus());
-            onPositionStatusUpdate(position);
-        }
-    }
+    // =================================================================================================================
+    // Related to canBuy & canSell methods.
 
     /**
      * Returns the cost of buying an amount of a currency pair.
@@ -270,7 +407,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
          */
 
         // We get the last ticker from the last values received.
-        final TickerDTO ticker = getLastTicker().get(currencyPair);
+        final TickerDTO ticker = lastTickers.get(currencyPair);
         if (ticker == null) {
             // No ticker for this currency pair.
             return Optional.empty();
@@ -320,7 +457,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public final boolean canBuy(final AccountDTO account,
                                 final CurrencyPairDTO currencyPair,
                                 final BigDecimal amount) {
-        return canBuy(account, currencyPair, amount, BigDecimal.ZERO);
+        return canBuy(account, currencyPair, amount, ZERO);
     }
 
     /**
@@ -350,9 +487,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
             // If there is no way to calculate the price for the moment (no ticker).
             return estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
                     .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter))
-                    .compareTo(BigDecimal.ZERO) > 0).isPresent() || estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
+                    .compareTo(ZERO) > 0).isPresent() || estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
                     .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter))
-                    .compareTo(BigDecimal.ZERO) == 0).isPresent();
+                    .compareTo(ZERO) == 0).isPresent();
         } else {
             // If the is no balance in this currency, we can't buy.
             return false;
@@ -398,7 +535,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public final boolean canSell(final AccountDTO account,
                                  final CurrencyDTO currency,
                                  final BigDecimal amount) {
-        return canSell(account, currency, amount, BigDecimal.ZERO);
+        return canSell(account, currency, amount, ZERO);
     }
 
     /**
@@ -419,38 +556,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         // public int compareTo(BigDecimal bg) returns
         // 1 : if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
         // If the is no balance in this currency, we can't buy.
-        return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) > 0
-                || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(BigDecimal.ZERO) == 0).isPresent();
-    }
-
-    @Override
-    public void onAccountUpdate(final AccountDTO account) {
-
-    }
-
-    @Override
-    public void onTickerUpdate(final TickerDTO ticker) {
-
-    }
-
-    @Override
-    public void onOrderUpdate(final OrderDTO order) {
-
-    }
-
-    @Override
-    public void onTradeUpdate(final TradeDTO trade) {
-
-    }
-
-    @Override
-    public void onPositionUpdate(final PositionDTO position) {
-
-    }
-
-    @Override
-    public void onPositionStatusUpdate(final PositionDTO position) {
-
+        return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(ZERO) > 0
+                || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(ZERO) == 0).isPresent();
     }
 
 }

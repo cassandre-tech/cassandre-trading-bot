@@ -14,7 +14,7 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.test.service.dry.mocks.PositionServiceDryModeTestMock;
+import tech.cassandre.trading.bot.mock.service.dry.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -71,7 +71,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // =============================================================================================================
         // Step 1 - Creates position 1 (ETH/BTC, 0.0001, 100% stop gain, price of 0.2).
         // As the order is validated and the trade arrives, the position should be opened.
-        final PositionCreationResultDTO position1Result = positionService.createPosition(cp1,
+        final PositionCreationResultDTO position1Result = strategy.createPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).create());
         assertTrue(position1Result.isSuccessful());
@@ -90,7 +90,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH/BTC, 0.0002, 20% stop loss, price of 0.2).
         // As the order is validated and the trade arrives, the position should be opened.
-        final PositionCreationResultDTO position2Result = positionService.createPosition(cp2,
+        final PositionCreationResultDTO position2Result = strategy.createPosition(cp2,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).create());
         assertTrue(position2Result.isSuccessful());
@@ -145,6 +145,7 @@ public class PositionServiceDryModeTest extends BaseTest {
 
     /**
      * Retrieve position from database.
+     *
      * @param id position id
      * @return position
      */

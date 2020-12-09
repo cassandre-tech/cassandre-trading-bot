@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch.mocks;
+package tech.cassandre.trading.bot.mock.batch;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
@@ -22,6 +23,7 @@ import tech.cassandre.trading.bot.service.UserService;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -124,6 +126,8 @@ public class OrderFluxTestMock {
 
         // =========================================================================================================
         // First reply : 3 orders.
+        StrategyDTO strategyDTO = new StrategyDTO();
+        strategyDTO.setId("1");
 
         // Order 000001.
         OrderDTO order01 = OrderDTO.builder()
@@ -139,6 +143,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         // Order 000002.
@@ -155,6 +160,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         // Order 000003.
@@ -171,6 +177,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         Set<OrderDTO> reply01 = new LinkedHashSet<>();
@@ -197,6 +204,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         // Order 000002.
@@ -213,6 +221,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         // Order 000003 : the original amount changed.
@@ -229,6 +238,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         // Order 000004 : new order.
@@ -245,6 +255,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         Set<OrderDTO> reply02 = new LinkedHashSet<>();
@@ -272,6 +283,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         // Order 000002 : average price changed.
@@ -288,6 +300,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         // Order 000003.
@@ -304,6 +317,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("4"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         // Order 000004 : fee changed.
@@ -320,6 +334,7 @@ public class OrderFluxTestMock {
                 .fee(new BigDecimal("1"))
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
+                .strategy(strategyDTO)
                 .create();
 
         Set<OrderDTO> reply03 = new LinkedHashSet<>();
@@ -334,6 +349,7 @@ public class OrderFluxTestMock {
                         new LinkedHashSet<>(),
                         reply02,
                         reply03);
+        given(tradeService.getTrades()).willReturn(Collections.emptySet());
         return tradeService;
     }
 

@@ -7,10 +7,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Order;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -30,6 +34,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 
 @SpringBootTest
 @DisplayName("Domain - Order")
@@ -44,10 +49,16 @@ public class OrderTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Autowired
+    private StrategyRepository strategyRepository;
+
+    @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
     private OrderFlux orderFlux;
+
+    @Autowired
+    private TradeFlux tradeFlux;
 
     @Test
     @DisplayName("Check load order from database")
@@ -74,6 +85,9 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.000002").compareTo(order.getFee()));
         assertEquals("LEVERAGE_1", order.getLeverage());
         assertEquals(0, new BigDecimal("0.000001").compareTo(order.getLimitPrice()));
+        assertNotNull(order.getStrategy());
+        assertEquals("001", order.getStrategy().getId());
+        assertEquals(0, order.getTrades().size());
 
         // =============================================================================================================
         // Check order 2.
@@ -91,6 +105,17 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.000012").compareTo(order.getFee()));
         assertEquals("LEVERAGE_2", order.getLeverage());
         assertEquals(0, new BigDecimal("0.000011").compareTo(order.getLimitPrice()));
+        assertNotNull(order.getStrategy());
+        assertEquals("001", order.getStrategy().getId());
+        assertEquals(0, order.getTrades().size());
+
+        // Check trades of orders.
+        order = strategy.getOrders().get("BACKUP_OPENING_ORDER_05");
+        assertNotNull(order);
+        assertEquals(2, order.getTrades().size());
+        order = strategy.getOrders().get("BACKUP_CLOSING_ORDER_03");
+        assertNotNull(order);
+        assertEquals(3, order.getTrades().size());
     }
 
     @Test
@@ -101,6 +126,13 @@ public class OrderTest extends BaseTest {
         assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
+
+        // =============================================================================================================
+        // Loading strategy.
+        StrategyDTO strategyDTO = new StrategyDTO();
+        strategyDTO.setId("1");
+        StrategyDTO wrongStrategyDTO = new StrategyDTO();
+        wrongStrategyDTO.setId("2");
 
         // =============================================================================================================
         // Add an order and check that it's correctly saved in database.
@@ -118,6 +150,7 @@ public class OrderTest extends BaseTest {
                 .fee(new BigDecimal("1.00004"))
                 .leverage("leverage3")
                 .limitPrice(new BigDecimal("1.00005"))
+                .strategy(strategyDTO)
                 .create();
         orderFlux.emitValue(order01);
         await().untilAsserted(() -> assertEquals(orderCount + 1, orderRepository.count()));
@@ -138,6 +171,8 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("1.00004").compareTo(orderInDatabase.get().getFee()));
         assertEquals("leverage3", orderInDatabase.get().getLeverage());
         assertEquals(0, new BigDecimal("1.00005").compareTo(orderInDatabase.get().getLimitPrice()));
+        assertNotNull(orderInDatabase.get().getStrategy());
+        assertEquals("1", orderInDatabase.get().getStrategy().getId());
         // Tests for created on and updated on fields.
         ZonedDateTime createdOn = orderInDatabase.get().getCreatedOn();
         assertNotNull(createdOn);
@@ -145,7 +180,7 @@ public class OrderTest extends BaseTest {
 
         // =============================================================================================================
         // OrderDTO - Check created order (dto).
-        OrderDTO order = strategy.getOrders().get("BACKUP_ORDER_03");
+        OrderDTO order = this.strategy.getOrders().get("BACKUP_ORDER_03");
         assertNotNull(order);
         assertEquals("BACKUP_ORDER_03", order.getId());
         assertEquals(ASK, order.getType());
@@ -159,9 +194,11 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("1.00004").compareTo(order.getFee()));
         assertEquals("leverage3", order.getLeverage());
         assertEquals(0, new BigDecimal("1.00005").compareTo(order.getLimitPrice()));
+        assertNotNull(order.getStrategy());
+        assertEquals("1", order.getStrategy().getId());
 
         // =============================================================================================================
-        // Updating the order - first time.
+        // Updating the order and adding a trade - first time.
         orderFlux.emitValue(OrderDTO.builder()
                 .id("BACKUP_ORDER_03")
                 .type(ASK)
@@ -175,10 +212,26 @@ public class OrderTest extends BaseTest {
                 .fee(new BigDecimal("1.00004"))
                 .leverage("leverage3")
                 .limitPrice(new BigDecimal("1.00005"))
+                .strategy(wrongStrategyDTO)
                 .create());
-        await().untilAsserted(() -> assertNotNull(orderRepository.findById("BACKUP_ORDER_03").get().getUpdatedOn()));
-        assertEquals(createdOn, orderRepository.findById("BACKUP_ORDER_03").get().getCreatedOn());
+        await().untilAsserted(() -> assertNotNull(getOrder("BACKUP_ORDER_03").getUpdatedOn()));
+        assertEquals(createdOn, getOrder("BACKUP_ORDER_03").getCreatedOn());
         ZonedDateTime updatedOn = orderInDatabase.get().getCreatedOn();
+        tradeFlux.emitValue(TradeDTO.builder()
+                .id("BACKUP_TRADE_11")
+                .orderId("BACKUP_ORDER_03")
+                .type(BID)
+                .originalAmount(new BigDecimal("1.100001"))
+                .currencyPair(cp1)
+                .price(new BigDecimal("2.200002"))
+                .timestamp(createZonedDateTime("01-09-2020"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .create());
+        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdateReceived().size()));
+        Optional<Order> backupOrder03 = orderRepository.findById("BACKUP_ORDER_03");
+        assertTrue(backupOrder03.isPresent());
+        assertEquals(1, backupOrder03.get().getTrades().size());
 
         // =============================================================================================================
         // Updating the order - second time.
@@ -195,9 +248,35 @@ public class OrderTest extends BaseTest {
                 .fee(new BigDecimal("1.00004"))
                 .leverage("leverage3")
                 .limitPrice(new BigDecimal("1.00005"))
+                .strategy(wrongStrategyDTO)
                 .create());
-        await().untilAsserted(() -> assertTrue(updatedOn.isBefore(orderRepository.findById("BACKUP_ORDER_03").get().getUpdatedOn())));
-        assertEquals(createdOn, orderRepository.findById("BACKUP_ORDER_03").get().getCreatedOn());
+        await().untilAsserted(() -> assertTrue(updatedOn.isBefore(getOrder("BACKUP_ORDER_03").getUpdatedOn())));
+        assertEquals(createdOn, getOrder("BACKUP_ORDER_03").getCreatedOn());
+
+        // We check if we still have the strategy set.
+        final Optional<OrderDTO> optionalOrder = strategy.getOrderById("BACKUP_ORDER_03");
+        assertTrue(optionalOrder.isPresent());
+        assertNotNull(optionalOrder.get().getStrategy());
+        assertEquals("1", optionalOrder.get().getStrategy().getId());
+
+        // We check if we still have the trade.
+        backupOrder03 = orderRepository.findById("BACKUP_ORDER_03");
+        assertTrue(backupOrder03.isPresent());
+        assertEquals(1, backupOrder03.get().getTrades().size());
+    }
+
+    /**
+     * Retrieve order from database.
+     * @param id order id
+     * @return order
+     */
+    public Order getOrder(final String id) {
+        final Optional<Order> order = orderRepository.findById(id);
+        if (order.isPresent()) {
+            return order.get();
+        } else {
+            throw new RuntimeException("Order not found : " + id);
+        }
     }
 
 }

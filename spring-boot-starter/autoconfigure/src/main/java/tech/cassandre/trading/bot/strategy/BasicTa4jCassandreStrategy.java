@@ -83,7 +83,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
     @Override
     public final void tickerUpdate(final TickerDTO ticker) {
-        getLastTicker().put(ticker.getCurrencyPair(), ticker);
+        getLastTickers().put(ticker.getCurrencyPair(), ticker);
         // If there is no bar or if the duration between the last bar and the ticker is enough.
         if (lastAddedBarTimestamp == null
                 || ticker.getTimestamp().isEqual(lastAddedBarTimestamp.plus(getDelayBetweenTwoBars()))

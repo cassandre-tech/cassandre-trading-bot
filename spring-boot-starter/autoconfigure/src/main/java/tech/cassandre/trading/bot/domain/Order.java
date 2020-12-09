@@ -8,11 +8,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.EAGER;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
@@ -73,6 +80,16 @@ public class Order extends BaseDomain {
     /** Limit price. */
     @Column(name = "LIMIT_PRICE", precision = PRECISION, scale = SCALE)
     private BigDecimal limitPrice;
+
+    /** All trades related to order. */
+    @OneToMany(fetch = EAGER)
+    @JoinColumn(name = "ORDER_ID", updatable = false)
+    private Set<Trade> trades = new HashSet<>();
+
+    /** Strategy. */
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "STRATEGY_ID", updatable = false)
+    private Strategy strategy;
 
     /**
      * Getter id.
@@ -290,4 +307,75 @@ public class Order extends BaseDomain {
         limitPrice = newLimitPrice;
     }
 
+    /**
+     * Getter trades.
+     *
+     * @return trades
+     */
+    public Set<Trade> getTrades() {
+        return trades;
+    }
+
+    /**
+     * Setter trades.
+     *
+     * @param newTrades the trades to set
+     */
+    public void setTrades(final Set<Trade> newTrades) {
+        trades = newTrades;
+    }
+
+    /**
+     * Getter strategy.
+     *
+     * @return strategy
+     */
+    public Strategy getStrategy() {
+        return strategy;
+    }
+
+    /**
+     * Setter strategy.
+     *
+     * @param newStrategy the strategy to set
+     */
+    public void setStrategy(final Strategy newStrategy) {
+        strategy = newStrategy;
+    }
+
+    @Override
+    public final String toString() {
+        return "Order{"
+                + " id='" + id + '\''
+                + ", type=" + type
+                + ", originalAmount=" + originalAmount
+                + ", currencyPair='" + currencyPair + '\''
+                + ", userReference='" + userReference + '\''
+                + ", timestamp=" + timestamp
+                + ", status=" + status
+                + ", cumulativeAmount=" + cumulativeAmount
+                + ", averagePrice=" + averagePrice
+                + ", fee=" + fee
+                + ", leverage='" + leverage + '\''
+                + ", limitPrice=" + limitPrice
+                + ", strategy=" + strategy
+                + "}";
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Order order = (Order) o;
+        return id.equals(order.id);
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(id);
+    }
 }

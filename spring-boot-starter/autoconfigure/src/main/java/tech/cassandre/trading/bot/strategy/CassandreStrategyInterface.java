@@ -2,15 +2,16 @@ package tech.cassandre.trading.bot.strategy;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.Optional;
 import java.util.Set;
@@ -23,11 +24,11 @@ import java.util.Set;
 public interface CassandreStrategyInterface {
 
     /**
-     * Getter orderRepository.
+     * Set strategyDTO.
      *
-     * @return orderRepository
+     * @param newStrategyDTO strategy DTO.
      */
-    OrderRepository getOrderRepository();
+    void setStrategyDTO(StrategyDTO newStrategyDTO);
 
     /**
      * Setter order repository.
@@ -37,25 +38,11 @@ public interface CassandreStrategyInterface {
     void setOrderRepository(OrderRepository newOrderRepository);
 
     /**
-     * Getter tradeRepository.
-     *
-     * @return tradeRepository
-     */
-    TradeRepository getTradeRepository();
-
-    /**
      * Setter trade repository.
      *
      * @param newTradeRepository trade repository.
      */
     void setTradeRepository(TradeRepository newTradeRepository);
-
-    /**
-     * Getter positionRepository.
-     *
-     * @return positionRepository
-     */
-     PositionRepository getPositionRepository();
 
     /**
      * Setter positionRepository.
@@ -71,27 +58,12 @@ public interface CassandreStrategyInterface {
      */
     void setTradeService(TradeService newTradeService);
 
-
     /**
      * Setter for positionService.
      *
      * @param newPositionService position service
      */
     void setPositionService(PositionService newPositionService);
-
-    /**
-     * Getter for tradeService.
-     *
-     * @return tradeService
-     */
-    TradeService getTradeService();
-
-    /**
-     * Getter for positionService.
-     *
-     * @return positionService
-     */
-    PositionService getPositionService();
 
     /**
      * Method called by streams at every account update.

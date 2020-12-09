@@ -34,7 +34,7 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             getBucket().asScheduler().consume(1);
 
             getLogger().debug("UserService - Retrieving account information");
-            final UserDTO user = getMapper().mapToUserDTO(xChangeAccountService.getAccountInfo());
+            final UserDTO user = mapper.mapToUserDTO(xChangeAccountService.getAccountInfo());
             getLogger().debug("UserService - Account information retrieved " + user);
             return Optional.ofNullable(user);
         } catch (IOException e) {

@@ -5,9 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.batch.mocks.TradeFluxTestMock;
+import tech.cassandre.trading.bot.mock.batch.TradeFluxTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -16,6 +20,7 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
@@ -30,8 +36,10 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SpringBootTest
 @DisplayName("Batch - Trade flux")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "100")
+        @Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "100"),
+        @Property(key = "spring.datasource.data", value = "classpath:/trade-test.sql")
 })
+@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(TradeFluxTestMock.class)
 public class TradeFluxTest extends BaseTest {
 
@@ -39,11 +47,20 @@ public class TradeFluxTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderFlux orderFlux;
+
+    @Autowired
     private TradeService tradeService;
 
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
+        // =============================================================================================================
+        // Test asynchronous flux.
+
         // We will call the service 5 times with the first and third reply empty.
         // We receive:
         // First reply: 0000001, 0000002.
@@ -55,7 +72,7 @@ public class TradeFluxTest extends BaseTest {
         final int numberOfUpdatesExpected = 8;
         final int numberOfServiceCallsExpected = 5;
 
-        // Waiting for the trade service to have been called with all the test data.
+        // Waiting for the service to have been called with all the test data.
         await().untilAsserted(() -> verify(tradeService, atLeast(numberOfServiceCallsExpected)).getTrades());
 
         // Checking that somme data have already been treated.
@@ -66,6 +83,7 @@ public class TradeFluxTest extends BaseTest {
         // Wait for the strategy to have received all the test values.
         await().untilAsserted(() -> assertTrue(strategy.getTradesUpdateReceived().size() >= numberOfUpdatesExpected));
 
+        // =============================================================================================================
         // Test all values received by the strategy with update methods.
         final Iterator<TradeDTO> iterator = strategy.getTradesUpdateReceived().iterator();
         assertEquals("0000001", iterator.next().getId());
@@ -77,6 +95,7 @@ public class TradeFluxTest extends BaseTest {
         assertEquals("0000003", iterator.next().getId());
         assertEquals("0000008", iterator.next().getId());
 
+        // =============================================================================================================
         // Check data we have in strategy.
         final Map<String, TradeDTO> strategyTrades = strategy.getTrades();
         assertEquals(7, strategyTrades.size());
@@ -101,10 +120,12 @@ public class TradeFluxTest extends BaseTest {
         assertEquals("0000003", trade3.getId());
         assertEquals(BID, trade3.getType());
         assertEquals(cp2, trade3.getCurrencyPair());
-        assertEquals("EMPTY!", trade3.getOrderId());
+        assertEquals("ORDER00002", trade3.getOrderId());
         assertEquals(0, new BigDecimal("1.110001").compareTo(trade3.getOriginalAmount()));
         assertEquals(0, new BigDecimal("2.220002").compareTo(trade3.getPrice()));
-        assertTrue(createZonedDateTime("02-09-2020").isEqual(trade3.getTimestamp()));
+        System.out.println("=> " + createZonedDateTime("02-09-2021"));
+        System.out.println("=> " + trade3.getTimestamp());
+        assertTrue(createZonedDateTime("02-09-2021").isEqual(trade3.getTimestamp()));
         assertEquals(0, new BigDecimal("3.330003").compareTo(trade3.getFee().getValue()));
         assertEquals(BTC, trade3.getFee().getCurrency());
         // Trade 4.
@@ -135,6 +156,15 @@ public class TradeFluxTest extends BaseTest {
         assertEquals("0000008", trade8.getId());
         assertEquals(BID, trade8.getType());
         assertEquals(cp1, trade8.getCurrencyPair());
+
+        // =============================================================================================================
+        // Check if all is ok in database.
+        final Optional<Order> order00001 = orderRepository.findById("ORDER00001");
+        assertTrue(order00001.isPresent());
+        assertEquals(6 , order00001.get().getTrades().size());
+        final Optional<Order> order00002 = orderRepository.findById("ORDER00002");
+        assertTrue(order00002.isPresent());
+        assertEquals(1 , order00002.get().getTrades().size());
     }
 
 }

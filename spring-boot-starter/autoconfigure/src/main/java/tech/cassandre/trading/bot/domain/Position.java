@@ -10,11 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.Objects;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
@@ -66,11 +66,6 @@ public class Position extends BaseDomain {
     @JoinColumn(name = "CLOSING_ORDER_ID")
     private Order closingOrder;
 
-    /** All trades related to positions. */
-    @OneToMany(fetch = EAGER)
-    @JoinColumn(name = "POSITION_ID")
-    private Set<Trade> trades;
-
     /** Lowest price. */
     @Column(name = "LOWEST_PRICE", precision = PRECISION, scale = SCALE)
     private BigDecimal lowestPrice;
@@ -82,6 +77,11 @@ public class Position extends BaseDomain {
     /** Latest price. */
     @Column(name = "LATEST_PRICE", precision = PRECISION, scale = SCALE)
     private BigDecimal latestPrice;
+
+    /** Strategy. */
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "STRATEGY_ID", updatable = false)
+    private Strategy strategy;
 
     /**
      * Getter id.
@@ -228,24 +228,6 @@ public class Position extends BaseDomain {
     }
 
     /**
-     * Getter trades.
-     *
-     * @return trades
-     */
-    public Set<Trade> getTrades() {
-        return trades;
-    }
-
-    /**
-     * Setter trades.
-     *
-     * @param newTrades the trades to set
-     */
-    public void setTrades(final Set<Trade> newTrades) {
-        trades = newTrades;
-    }
-
-    /**
      * Getter lowestPrice.
      *
      * @return lowestPrice
@@ -297,6 +279,59 @@ public class Position extends BaseDomain {
      */
     public void setLatestPrice(final BigDecimal newLatestPrice) {
         latestPrice = newLatestPrice;
+    }
+
+    /**
+     * Getter strategy.
+     *
+     * @return strategy
+     */
+    public Strategy getStrategy() {
+        return strategy;
+    }
+
+    /**
+     * Setter strategy.
+     *
+     * @param newStrategy the strategy to set
+     */
+    public void setStrategy(final Strategy newStrategy) {
+        strategy = newStrategy;
+    }
+
+    @Override
+    public final String toString() {
+        return "Position{"
+                + " id=" + id
+                + ", status=" + status
+                + ", currencyPair='" + currencyPair + '\''
+                + ", amount=" + amount
+                + ", stopGainPercentageRule=" + stopGainPercentageRule
+                + ", stopLossPercentageRule=" + stopLossPercentageRule
+                + ", openingOrder=" + openingOrder
+                + ", closingOrder=" + closingOrder
+                + ", lowestPrice=" + lowestPrice
+                + ", highestPrice=" + highestPrice
+                + ", latestPrice=" + latestPrice
+                + ", strategy=" + strategy
+                + "}";
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Position position = (Position) o;
+        return id == position.id;
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(id);
     }
 
 }

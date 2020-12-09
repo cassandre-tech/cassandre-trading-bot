@@ -18,7 +18,7 @@ import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.test.service.dry.mocks.TradeServiceDryModeTestMock;
+import tech.cassandre.trading.bot.mock.service.dry.TradeServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -138,7 +138,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
                 .create();
         tickerFlux.emitValue(ticker);
-        await().untilAsserted(() -> assertEquals(1, strategy.getLastTicker().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
         // =============================================================================================================
         // Account before buying.
@@ -159,7 +159,7 @@ public class UserServiceDryModeTest extends BaseTest {
         // Last price from ticker * amount ordered
         // 0.032666 * 0.02 = 0.00065332 BTC
         // TradeDTO{ id='5f68a2dc12e82b0006be5f36', orderId='5f68a2dbc9b81a0007f51274', type=BID, originalAmount=0.02, currencyPair=ETH/BTC, price=0.032666, timestamp=2020-09-21T14:55:56.148+02:00[Europe/Paris], fee=4.57324E-7 BTC}
-        final OrderCreationResultDTO buyMarketOrder = tradeService.createBuyMarketOrder(cp1, new BigDecimal("0.02"));
+        final OrderCreationResultDTO buyMarketOrder = strategy.createBuyMarketOrder(cp1, new BigDecimal("0.02"));
         accountFlux.update();
         await().untilAsserted(() -> assertEquals(4, strategy.getAccountsUpdatesReceived().size()));
 
@@ -224,7 +224,7 @@ public class UserServiceDryModeTest extends BaseTest {
         // Amount * Last price from ticker
         // 0.02 * 0.032466 = 0.00064932 ETH
         // TradeDTO{ id='5f68a2e812e82b0006be5fec', orderId='5f68a2e85c77b40006880392', type=ASK, originalAmount=0.02, currencyPair=ETH/BTC, price=0.032466, timestamp=2020-09-21T14:56:08.403+02:00[Europe/Paris], fee=4.54524E-7 BTC}
-        final OrderCreationResultDTO sellMarketOrder = tradeService.createSellMarketOrder(cp1, new BigDecimal("0.02"));
+        final OrderCreationResultDTO sellMarketOrder = strategy.createSellMarketOrder(cp1, new BigDecimal("0.02"));
         accountFlux.update();
         await().untilAsserted(() -> assertEquals(5, strategy.getAccountsUpdatesReceived().size()));
 
@@ -287,17 +287,17 @@ public class UserServiceDryModeTest extends BaseTest {
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
                 .create();
         tickerFlux.emitValue(ticker);
-        await().untilAsserted(() -> assertEquals(2, strategy.getLastTicker().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getLastTickers().size()));
 
         // =============================================================================================================
         // Buying with a currency we don't have.
-        final OrderCreationResultDTO buyMarketOrder1 = tradeService.createBuyMarketOrder(new CurrencyPairDTO(ETH, EUR), new BigDecimal("1000"));
+        final OrderCreationResultDTO buyMarketOrder1 = strategy.createBuyMarketOrder(new CurrencyPairDTO(ETH, EUR), new BigDecimal("1000"));
         assertFalse(buyMarketOrder1.isSuccessful());
         assertTrue(buyMarketOrder1.getErrorMessage().contains("No assets for EUR"));
 
         // =============================================================================================================
         // Buying 1000 ether - should not work.
-        final OrderCreationResultDTO buyMarketOrder2 = tradeService.createBuyMarketOrder(cp1, new BigDecimal("1000"));
+        final OrderCreationResultDTO buyMarketOrder2 = strategy.createBuyMarketOrder(cp1, new BigDecimal("1000"));
         assertFalse(buyMarketOrder2.isSuccessful());
         assertTrue(buyMarketOrder2.getErrorMessage().contains("Not enough assets"));
     }
@@ -334,18 +334,17 @@ public class UserServiceDryModeTest extends BaseTest {
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
                 .create();
         tickerFlux.emitValue(ticker);
-        await().untilAsserted(() -> assertEquals(2, strategy.getLastTicker().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getLastTickers().size()));
 
         // =============================================================================================================
         // Buying with a currency we don't have.
-        final OrderCreationResultDTO sellMarketOrder1 = tradeService.createSellMarketOrder(new CurrencyPairDTO(ETH, EUR), new BigDecimal("1000"));
+        final OrderCreationResultDTO sellMarketOrder1 = strategy.createSellMarketOrder(new CurrencyPairDTO(ETH, EUR), new BigDecimal("1000"));
         assertFalse(sellMarketOrder1.isSuccessful());
-        System.out.println(sellMarketOrder1.getErrorMessage());
         assertTrue(sellMarketOrder1.getErrorMessage().contains("Not enough assets"));
 
         // =============================================================================================================
         // Buying 1000 ether - should not work.
-        final OrderCreationResultDTO sellMarketOrder2 = tradeService.createSellMarketOrder(cp1, new BigDecimal("1000"));
+        final OrderCreationResultDTO sellMarketOrder2 = strategy.createSellMarketOrder(cp1, new BigDecimal("1000"));
         assertFalse(sellMarketOrder2.isSuccessful());
         assertTrue(sellMarketOrder2.getErrorMessage().contains("Not enough assets"));
     }

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch.mocks;
+package tech.cassandre.trading.bot.mock.batch;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -65,7 +65,7 @@ public class TradeFluxTestMock extends BaseTest {
     @Bean
     @Primary
     public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService(), tradeRepository);
+        return new TradeFlux(tradeService(), orderRepository, tradeRepository);
     }
 
     @SuppressWarnings("unchecked")
@@ -127,11 +127,19 @@ public class TradeFluxTestMock extends BaseTest {
 
         // =========================================================================================================
         // First reply : 2 trades.
-        TradeDTO trade01 = TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).create();
+        TradeDTO trade01 = TradeDTO.builder().id("0000001")
+                .type(BID)
+                .currencyPair(cp1)
+                .orderId("ORDER00001")
+                .originalAmount(new BigDecimal("1.100001"))
+                .price(new BigDecimal("2.200002"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .create();
         TradeDTO trade02 = TradeDTO.builder().id("0000002")
                 .type(BID)
                 .currencyPair(cp1)
-                .orderId("EMPTY")
+                .orderId("ORDER00001")
                 .originalAmount(new BigDecimal("1.100001"))
                 .price(new BigDecimal("2.200002"))
                 .timestamp(createZonedDateTime("01-09-2020"))
@@ -148,16 +156,33 @@ public class TradeFluxTestMock extends BaseTest {
         TradeDTO trade03 = TradeDTO.builder().id("0000003")
                 .type(BID)
                 .currencyPair(cp2)
-                .orderId("EMPTY")
+                .orderId("ORDER00002")
                 .originalAmount(new BigDecimal("1.100001"))
                 .currencyPair(cp2)
                 .price(new BigDecimal("2.200002"))
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .feeAmount(new BigDecimal("3.300003"))
                 .feeCurrency(BTC)
+                .feeCurrency(BTC)
                 .create();
-        TradeDTO trade04 = TradeDTO.builder().id("0000004").type(BID).currencyPair(cp1).create();
-        TradeDTO trade05 = TradeDTO.builder().id("0000005").type(BID).currencyPair(cp1).create();
+        TradeDTO trade04 = TradeDTO.builder().id("0000004")
+                .type(BID)
+                .currencyPair(cp1)
+                .originalAmount(new BigDecimal("1"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .price(new BigDecimal("2.200002"))
+                .orderId("ORDER00001")
+                .create();
+        TradeDTO trade05 = TradeDTO.builder().id("0000005")
+                .type(BID)
+                .currencyPair(cp1)
+                .orderId("ORDER00001")
+                .originalAmount(new BigDecimal("1"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .price(new BigDecimal("2.200002"))
+                .create();
 
         Set<TradeDTO> reply02 = new LinkedHashSet<>();
         reply02.add(trade03);
@@ -166,29 +191,45 @@ public class TradeFluxTestMock extends BaseTest {
 
         // =========================================================================================================
         // First reply : 3 trades - Trade07 is trade 0000003 again.
-        TradeDTO trade06 = TradeDTO.builder().id("0000006").type(BID).currencyPair(cp2).create();
+        TradeDTO trade06 = TradeDTO.builder().id("0000006")
+                .type(BID)
+                .currencyPair(cp2)
+                .orderId("ORDER00001")
+                .timestamp(createZonedDateTime("02-09-2020"))
+                .originalAmount(new BigDecimal("1.100001"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .price(new BigDecimal("2.200002"))
+                .create();
         TradeDTO trade07 = TradeDTO.builder().id("0000002") // did nto change from the previous trade.
                 .type(BID)
                 .currencyPair(cp1)
-                .orderId("EMPTY")
+                .orderId("ORDER00001")
                 .originalAmount(new BigDecimal("1.100001"))
                 .price(new BigDecimal("2.200002"))
-                .timestamp(createZonedDateTime("01-09-2020"))
                 .feeAmount(new BigDecimal("3.300003"))
+                .timestamp(createZonedDateTime("01-09-2020"))
                 .feeCurrency(BTC)
                 .create();
         TradeDTO trade08 = TradeDTO.builder().id("0000003")
                 .type(BID)
                 .currencyPair(cp2)
-                .orderId("EMPTY!")
+                .orderId("ORDER00002")
                 .originalAmount(new BigDecimal("1.110001"))
-                .currencyPair(cp2)
                 .price(new BigDecimal("2.220002"))
-                .timestamp(createZonedDateTime("02-09-2020"))
+                .timestamp(createZonedDateTime("02-09-2021"))
                 .feeAmount(new BigDecimal("3.330003"))
                 .feeCurrency(BTC)
                 .create();
-        TradeDTO trade09 = TradeDTO.builder().id("0000008").type(BID).currencyPair(cp1).create();
+        TradeDTO trade09 = TradeDTO.builder().id("0000008")
+                .type(BID)
+                .currencyPair(cp1)
+                .orderId("ORDER00001")
+                .originalAmount(new BigDecimal("1"))
+                .feeAmount(new BigDecimal("3.300003"))
+                .feeCurrency(BTC)
+                .price(new BigDecimal("2.200002"))
+                .timestamp(createZonedDateTime("02-09-2020")).create();
 
         Set<TradeDTO> reply03 = new LinkedHashSet<>();
         reply03.add(trade06);
@@ -203,7 +244,9 @@ public class TradeFluxTestMock extends BaseTest {
                         new LinkedHashSet<>(),
                         new LinkedHashSet<>(),
                         reply02,
-                        reply03);
+                        reply03,
+                        new LinkedHashSet<>());
+
         return tradeService;
     }
 }

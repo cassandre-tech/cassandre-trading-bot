@@ -2,7 +2,7 @@ package tech.cassandre.trading.bot.batch;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.util.base.BaseFlux;
+import tech.cassandre.trading.bot.util.base.BaseExternalFlux;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.LinkedHashMap;
@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * Ticker flux - push {@link TickerDTO}.
  */
-public class TickerFlux extends BaseFlux<TickerDTO> {
+public class TickerFlux extends BaseExternalFlux<TickerDTO> {
 
     /** Market service. */
     private final MarketService marketService;

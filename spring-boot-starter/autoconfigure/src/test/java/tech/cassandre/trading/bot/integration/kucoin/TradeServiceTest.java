@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -54,6 +55,9 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 public class TradeServiceTest extends BaseTest {
 
     @Autowired
+    private TestableCassandreStrategy strategy;
+
+    @Autowired
     private TradeService tradeService;
 
     @BeforeEach
@@ -69,7 +73,7 @@ public class TradeServiceTest extends BaseTest {
 
         // =============================================================================================================
         // Making a buy market order with a size below the minimum requirement. Testing error management.
-        final OrderCreationResultDTO result1 = tradeService.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
+        final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
         assertFalse(result1.isSuccessful());
         assertNull(result1.getOrderId());
         assertEquals("TradeService - Error calling createBuyMarketOrder : Order size below the minimum requirement.", result1.getErrorMessage());
@@ -77,7 +81,7 @@ public class TradeServiceTest extends BaseTest {
 
         // =============================================================================================================
         // Making a buy market order (Buy 0.0001 ETH).
-        final OrderCreationResultDTO result2 = tradeService.createBuyMarketOrder(cp, new BigDecimal("0.0001"));
+        final OrderCreationResultDTO result2 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.0001"));
         assertTrue(result2.isSuccessful());
         assertNotNull(result2.getOrderId());
         assertNull(result2.getErrorMessage());
@@ -85,7 +89,7 @@ public class TradeServiceTest extends BaseTest {
 
         // =============================================================================================================
         // Refunding the account.
-        final OrderCreationResultDTO result3 = tradeService.createSellMarketOrder(cp, new BigDecimal("0.0001"));
+        final OrderCreationResultDTO result3 = strategy.createSellMarketOrder(cp, new BigDecimal("0.0001"));
         assertTrue(result3.isSuccessful());
     }
 
@@ -97,7 +101,7 @@ public class TradeServiceTest extends BaseTest {
 
         // =============================================================================================================
         // Making a buy limit order (Buy 0.0001 ETH).
-        final OrderCreationResultDTO result1 = tradeService.createBuyLimitOrder(cp, new BigDecimal("0.0001"), new BigDecimal("0.000001"));
+        final OrderCreationResultDTO result1 = strategy.createBuyLimitOrder(cp, new BigDecimal("0.0001"), new BigDecimal("0.000001"));
         getLogger().info("Error message : " + result1.getErrorMessage());
         assertTrue(result1.isSuccessful());
         assertNull(result1.getErrorMessage());
@@ -137,7 +141,7 @@ public class TradeServiceTest extends BaseTest {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
         // Making a buy limit order (Buy 0.0001 ETH).
-        final OrderCreationResultDTO result1 = tradeService.createSellLimitOrder(cp, new BigDecimal("0.0001"), new BigDecimal("10000000"));
+        final OrderCreationResultDTO result1 = strategy.createSellLimitOrder(cp, new BigDecimal("0.0001"), new BigDecimal("10000000"));
         assertNotNull(result1.getOrderId());
 
         // The order must exist.
@@ -160,8 +164,8 @@ public class TradeServiceTest extends BaseTest {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
         // Creates two orders of the same amount (one buy, one sell).
-        final OrderCreationResultDTO result1 = tradeService.createBuyMarketOrder(cp, new BigDecimal("0.0001"));
-        final OrderCreationResultDTO result2 = tradeService.createSellMarketOrder(cp, new BigDecimal("0.0001"));
+        final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.0001"));
+        final OrderCreationResultDTO result2 = strategy.createSellMarketOrder(cp, new BigDecimal("0.0001"));
 
         // Check that the two orders appears in the trade history.
         assertTrue(result1.isSuccessful());

@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.dto.position;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
@@ -12,16 +13,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
@@ -62,9 +63,6 @@ public class PositionDTO {
     /** The order id that closed the position. */
     private OrderDTO closingOrder;
 
-    /** The trades that closed the position. */
-    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
-
     /** Lowest price for this position. */
     private BigDecimal lowestPrice;
 
@@ -73,6 +71,9 @@ public class PositionDTO {
 
     /** Latest price for this position. */
     private BigDecimal latestPrice;
+
+    /** Strategy. */
+    private final StrategyDTO strategy;
 
     /** Percentage. */
     private static final int ONE_HUNDRED = 100;
@@ -84,17 +85,44 @@ public class PositionDTO {
      * Constructor.
      *
      * @param newId           position id
+     * @param newStrategy     strategy
+     * @param newCurrencyPair currency pair
+     * @param newAmount       amount
+     * @param newOpenOrder    open order
+     * @param newRules        position rules
+     */
+    public PositionDTO(final long newId,
+                       final StrategyDTO newStrategy,
+                       final CurrencyPairDTO newCurrencyPair,
+                       final BigDecimal newAmount,
+                       final OrderDTO newOpenOrder,
+                       final PositionRulesDTO newRules) {
+        this.id = newId;
+        this.strategy = newStrategy;
+        this.currencyPair = newCurrencyPair;
+        this.amount = newAmount;
+        this.openingOrder = newOpenOrder;
+        this.rules = newRules;
+    }
+
+    /**
+     * Constructor (prefers passing the order).
+     *
+     * @param newId           position id
+     * @param newStrategy     strategy
      * @param newCurrencyPair currency pair
      * @param newAmount       amount
      * @param newOpenOrderId  open order id
      * @param newRules        position rules
      */
     public PositionDTO(final long newId,
+                       final StrategyDTO newStrategy,
                        final CurrencyPairDTO newCurrencyPair,
                        final BigDecimal newAmount,
                        final String newOpenOrderId,
                        final PositionRulesDTO newRules) {
         this.id = newId;
+        this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
         this.amount = newAmount;
         // We create a temporary opening order.
@@ -143,10 +171,10 @@ public class PositionDTO {
         this.rules = newRules;
         this.openingOrder = builder.openingOrder;
         this.closingOrder = builder.closingOrder;
-        this.trades.putAll(builder.trades);
         this.lowestPrice = builder.lowestPrice;
         this.highestPrice = builder.highestPrice;
         this.latestPrice = builder.latestPrice;
+        this.strategy = builder.strategy;
     }
 
     /**
@@ -208,32 +236,31 @@ public class PositionDTO {
      * Method called by on every trade update.
      *
      * @param trade trade
-     * @return true if the position is updated.
+     * @return true if the the trade updated the position.
      */
     public boolean tradeUpdate(final TradeDTO trade) {
         // If status is OPENING and the trades for the open order arrives for the whole amount ==> status = OPENED.
         if (trade.getOrderId().equals(getOpeningOrderId()) && status == OPENING) {
-            trades.put(trade.getId(), trade);
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
-            if (amount.compareTo(getTotalAmountFromOpenTrades()) == 0) {
+            if (amount.compareTo(getTotalAmountFromOpeningTrades(trade)) == 0) {
                 status = OPENED;
             }
-            return true;
         }
+
         // If status is CLOSING and the trades for the close order arrives for the whole amount ==> status = CLOSED.
         if (trade.getOrderId().equals(getClosingOrderId()) && status == CLOSING) {
-            trades.put(trade.getId(), trade);
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
-            if (amount.compareTo(getTotalAmountFromCloseTrades()) == 0) {
+            if (amount.compareTo(getTotalAmountFromClosingTrades(trade)) == 0) {
                 status = CLOSED;
             }
-            return true;
         }
-        return false;
+
+        // Return true signaling there is an update if this trade was for this position.
+        return trade.getOrderId().equals(getOpeningOrderId()) || trade.getOrderId().equals(getClosingOrderId());
     }
 
     /**
@@ -292,7 +319,8 @@ public class PositionDTO {
     private Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
         if ((status == OPENED || status == CLOSED) && price != null) {
             // We take the price from the first trade received.
-            final TradeDTO openTrade = getOpeningTrades().iterator().next();
+            // TODO Use order price and then, then mean of all trades.
+            final TradeDTO openTrade = openingOrder.getTrades().iterator().next();
 
             // How gain calculation works ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50.
@@ -306,7 +334,7 @@ public class PositionDTO {
 
             GainDTO gain = new GainDTO(gainPercentage,
                     new CurrencyAmountDTO(gainAmount, currencyPair.getQuoteCurrency()),
-                    new CurrencyAmountDTO(BigDecimal.ZERO, currencyPair.getQuoteCurrency()));
+                    new CurrencyAmountDTO(ZERO, currencyPair.getQuoteCurrency()));
             return Optional.of(gain);
         } else {
             return Optional.empty();
@@ -340,12 +368,12 @@ public class PositionDTO {
             BigDecimal bought = getOpeningTrades()
                     .stream()
                     .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .reduce(ZERO, BigDecimal::add);
 
             BigDecimal sold = getClosingTrades()
                     .stream()
                     .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    .reduce(ZERO, BigDecimal::add);
 
             // Calculate gain.
             BigDecimal gainAmount = sold.subtract(bought);
@@ -367,36 +395,37 @@ public class PositionDTO {
      * @return fees
      */
     private BigDecimal getTotalFees() {
-        return trades.values()
-                .stream()
+        return Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
                 .map(t -> t.getFee().getValue())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(ZERO, BigDecimal::add);
     }
 
     /**
      * Returns the total amount from open trades.
      *
+     * @param trade trade that just arrived
      * @return total
      */
-    private BigDecimal getTotalAmountFromOpenTrades() {
-        return trades.values()
+    private BigDecimal getTotalAmountFromOpeningTrades(final TradeDTO trade) {
+        return openingOrder.getTrades()
                 .stream()
-                .filter(t -> BID.equals(t.getType()))
+                .filter(t -> !t.getId().equals(trade.getId()))
                 .map(TradeDTO::getOriginalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(trade.getOriginalAmount(), BigDecimal::add);
     }
 
     /**
      * Returns the total amount from close trades.
      *
+     * @param trade trade trade that just arrived
      * @return total
      */
-    private BigDecimal getTotalAmountFromCloseTrades() {
-        return trades.values()
+    private BigDecimal getTotalAmountFromClosingTrades(final TradeDTO trade) {
+        return closingOrder.getTrades()
                 .stream()
-                .filter(t -> ASK.equals(t.getType()))
+                .filter(t -> !t.getId().equals(trade.getId()))
                 .map(TradeDTO::getOriginalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(trade.getOriginalAmount(), BigDecimal::add);
     }
 
     /**
@@ -494,7 +523,8 @@ public class PositionDTO {
      * @return trades
      */
     public final Set<TradeDTO> getTrades() {
-        return new HashSet<>(trades.values());
+        return Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -507,8 +537,11 @@ public class PositionDTO {
         if (tradeId == null) {
             return Optional.empty();
         } else {
-            return trades.values()
-                    .stream()
+            Stream<TradeDTO> trades = openingOrder.getTrades().stream();
+            if (closingOrder != null) {
+                trades = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream());
+            }
+            return trades
                     .filter(t -> tradeId.equals(t.getId()))
                     .findFirst();
         }
@@ -520,9 +553,9 @@ public class PositionDTO {
      * @return openTrades
      */
     public final Set<TradeDTO> getOpeningTrades() {
-        return trades.values()
+        // TODO Maybe we could only retrieve trades and not sorting them ?
+        return openingOrder.getTrades()
                 .stream()
-                .filter(t -> BID.equals(t.getType()))
                 .sorted(Comparator.comparing(TradeDTO::getTimestamp, nullsLast(naturalOrder())))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
@@ -533,11 +566,15 @@ public class PositionDTO {
      * @return closeTrades
      */
     public final Set<TradeDTO> getClosingTrades() {
-        return trades.values()
-                .stream()
-                .filter(t -> ASK.equals(t.getType()))
-                .sorted(Comparator.comparing(TradeDTO::getTimestamp, nullsLast(naturalOrder())))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        if (closingOrder != null) {
+            // TODO Maybe we could only retrieve trades and not sorting them ?
+            return closingOrder.getTrades()
+                    .stream()
+                    .sorted(Comparator.comparing(TradeDTO::getTimestamp, nullsLast(naturalOrder())))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            return Collections.emptySet();
+        }
     }
 
     /**
@@ -550,6 +587,15 @@ public class PositionDTO {
     }
 
     /**
+     * Getter highestPrice.
+     *
+     * @return highestPrice
+     */
+    public final BigDecimal getHighestPrice() {
+        return highestPrice;
+    }
+
+    /**
      * Getter latestPrice.
      *
      * @return latestPrice
@@ -559,14 +605,13 @@ public class PositionDTO {
     }
 
     /**
-     * Getter highestPrice.
+     * Getter strategy.
      *
-     * @return highestPrice
+     * @return strategy
      */
-    public final BigDecimal getHighestPrice() {
-        return highestPrice;
+    public final StrategyDTO getStrategy() {
+        return strategy;
     }
-
 
     /**
      * Getter last calculated gain from the last ticker received.
@@ -653,7 +698,7 @@ public class PositionDTO {
             value += ")";
             switch (status) {
                 case OPENING:
-                    value += " - Opening - Waiting for the trade of order " + openingOrder.getId();
+                    value += " - Opening - Waiting for the trades of order " + openingOrder.getId();
                     break;
                 case OPENED:
                     value += " on " + getCurrencyPair() + " - Opened";
@@ -662,9 +707,13 @@ public class PositionDTO {
                         value += " - Last gain calculated " + getFormattedValue(getLatestCalculatedGain().get().getPercentage()) + " %";
                     }
                     break;
+                case OPENING_FAILURE:
+                    value = "Position " + getId() + " - Opening failure";
                 case CLOSING:
-                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trade of order " + closingOrder.getId();
+                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trades of order " + closingOrder.getId();
                     break;
+                case CLOSING_FAILURE:
+                    value = "Position " + getId() + " - Closing failure";
                 case CLOSED:
                     final GainDTO gain = getGain();
                     value += " on " + getCurrencyPair() + " - Closed - Gain : " + getFormattedValue(gain.getPercentage()) + " %";
@@ -708,9 +757,6 @@ public class PositionDTO {
         /** The order that closed the position. */
         private OrderDTO closingOrder;
 
-        /** The trades that closed the position. */
-        private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
-
         /** Lowest price for this position. */
         private BigDecimal lowestPrice;
 
@@ -719,6 +765,9 @@ public class PositionDTO {
 
         /** Latest price for this position. */
         private BigDecimal latestPrice;
+
+        /** Strategy. */
+        private StrategyDTO strategy;
 
         /**
          * id.
@@ -809,32 +858,6 @@ public class PositionDTO {
         }
 
         /**
-         * trades.
-         *
-         * @param newTrades trades
-         * @return builder
-         */
-        public Builder trades(final Set<TradeDTO> newTrades) {
-            if (newTrades != null) {
-                newTrades.forEach(tradeDTO -> trades.put(tradeDTO.getId(), tradeDTO));
-            }
-            return this;
-        }
-
-        /**
-         * trades.
-         *
-         * @param newTrades trades
-         * @return builder
-         */
-        public Builder trades(final Map<String, TradeDTO> newTrades) {
-            if (newTrades != null) {
-                newTrades.forEach(trades::put);
-            }
-            return this;
-        }
-
-        /**
          * lowestPrice.
          *
          * @param newLowestPrice lowestPrice
@@ -863,7 +886,19 @@ public class PositionDTO {
          * @return builder
          */
         public Builder latestPrice(final BigDecimal newLatestPrice) {
+            // TODO Why do i have a warning in here ???
             this.latestPrice = newLatestPrice;
+            return this;
+        }
+
+        /**
+         * Strategy.
+         *
+         * @param newStrategy strategy
+         * @return builder
+         */
+        public Builder strategy(final StrategyDTO newStrategy) {
+            this.strategy = newStrategy;
             return this;
         }
 

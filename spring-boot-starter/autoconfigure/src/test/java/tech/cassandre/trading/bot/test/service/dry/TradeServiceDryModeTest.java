@@ -12,7 +12,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.service.dry.mocks.TradeServiceDryModeTestMock;
+import tech.cassandre.trading.bot.mock.service.dry.TradeServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -42,13 +42,13 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
 public class TradeServiceDryModeTest extends BaseTest {
 
     @Autowired
+    private TestableCassandreStrategy strategy;
+
+    @Autowired
     private TradeService tradeService;
 
     @Autowired
     private TickerFlux tickerFlux;
-
-    @Autowired
-    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check buy and sell order creation")
@@ -66,7 +66,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(0, tradeService.getTrades().size());
 
         // We create a buy order.
-        final OrderCreationResultDTO buyMarketOrder01 = tradeService.createBuyMarketOrder(cp1, new BigDecimal("0.001"));
+        final OrderCreationResultDTO buyMarketOrder01 = strategy.createBuyMarketOrder(cp1, new BigDecimal("0.001"));
         assertTrue(buyMarketOrder01.isSuccessful());
         assertEquals(orderId01, buyMarketOrder01.getOrderId());
 
@@ -92,7 +92,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(BID, trade01.get().getType());
 
         // We create a sell order to check order numbers and type.
-        final OrderCreationResultDTO buyMarketOrder02 = tradeService.createSellMarketOrder(cp1, new BigDecimal("0.002"));
+        final OrderCreationResultDTO buyMarketOrder02 = strategy.createSellMarketOrder(cp1, new BigDecimal("0.002"));
         assertTrue(buyMarketOrder02.isSuccessful());
         assertEquals(orderId02, buyMarketOrder02.getOrderId());
 

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.strategy.mocks;
+package tech.cassandre.trading.bot.mock.strategy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -76,7 +77,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     @Bean
     @Primary
     public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService(), tradeRepository);
+        return new TradeFlux(tradeService(), orderRepository, tradeRepository);
     }
 
     @Bean
@@ -282,26 +283,29 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         final CurrencyPairDTO cp3 = new CurrencyPairDTO(ETH, BTC);
         final BigDecimal amount = new BigDecimal("1");
 
+        StrategyDTO strategy = new StrategyDTO();
+        strategy.setId("1");
+
         // Reply 1 : 2 positions.
-        PositionDTO p1 = new PositionDTO(1, cp3, amount, "O000001", noRules);
-        PositionDTO p2 = new PositionDTO(2, cp3, amount,"O000002", noRules);
+        PositionDTO p1 = new PositionDTO(1, strategy, cp3, amount, "O000001", noRules);
+        PositionDTO p2 = new PositionDTO(2, strategy, cp3, amount,"O000002", noRules);
         Set<PositionDTO> reply01 = new LinkedHashSet<>();
         reply01.add(p1);
         reply01.add(p2);
 
         // Reply 2 : 3 positions.
         Set<PositionDTO> reply02 = new LinkedHashSet<>();
-        PositionDTO p3 = new PositionDTO(1, cp3, amount,"O000001", noRules);
-        PositionDTO p4 = new PositionDTO(2, cp3, amount,"O000002", noRules);
-        PositionDTO p5 = new PositionDTO(3, cp3, amount,"O000003", noRules);
+        PositionDTO p3 = new PositionDTO(1, strategy, cp3, amount,"O000001", noRules);
+        PositionDTO p4 = new PositionDTO(2, strategy, cp3, amount,"O000002", noRules);
+        PositionDTO p5 = new PositionDTO(3, strategy, cp3, amount,"O000003", noRules);
         reply02.add(p3);
         reply02.add(p4);
         reply02.add(p5);
 
         // Reply 2 : 2 positions.
         Set<PositionDTO> reply03 = new LinkedHashSet<>();
-        PositionDTO p6 = new PositionDTO(1, cp3, amount,"O000001", noRules);
-        PositionDTO p7 = new PositionDTO(2, cp3, amount,"O000001", noRules);
+        PositionDTO p6 = new PositionDTO(1, strategy, cp3, amount,"O000001", noRules);
+        PositionDTO p7 = new PositionDTO(2, strategy, cp3, amount,"O000001", noRules);
         reply03.add(p6);
         reply03.add(p7);
 

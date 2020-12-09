@@ -4,16 +4,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.Set;
-
 import static reactor.core.publisher.FluxSink.OverflowStrategy.LATEST;
 
 /**
- * Base flux.
+ * Base external flux.
  *
  * @param <T> flux type
  */
-public abstract class BaseFlux<T> extends Base {
+public abstract class BaseInternalFlux<T> extends Base {
 
     /** Flux. */
     private final Flux<T> flux;
@@ -24,7 +22,7 @@ public abstract class BaseFlux<T> extends Base {
     /**
      * Constructor.
      */
-    public BaseFlux() {
+    public BaseInternalFlux() {
         Flux<T> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
         flux = fluxTemp.publishOn(Schedulers.elastic());
     }
@@ -40,27 +38,13 @@ public abstract class BaseFlux<T> extends Base {
     }
 
     /**
-     * Implements this method to return all the new values. Those values will be sent to the strategy.
-     *
-     * @return list of new values
-     */
-    protected abstract Set<T> getNewValues();
-
-    /**
-     * Method executed when values must be updated (usually called by the Scheduler).
-     */
-    public final void update() {
-        getNewValues().forEach(this::emitValue);
-    }
-
-    /**
      * Emit a new value.
      *
      * @param newValue new value
      */
     public void emitValue(final T newValue) {
+        getLogger().debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
         if (newValue != null) {
-            getLogger().debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
             backupValue(newValue);
             fluxSink.next(newValue);
         }

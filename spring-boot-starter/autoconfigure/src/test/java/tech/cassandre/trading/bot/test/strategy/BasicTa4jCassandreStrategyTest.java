@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.test.strategy.mocks.BasicTa4jCassandreStrategyTestMock;
+import tech.cassandre.trading.bot.mock.strategy.BasicTa4jCassandreStrategyTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -49,17 +49,13 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(4, strategy.getOrders().size()));
         await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));
         await().untilAsserted(() -> assertEquals(15, strategy.getTickersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(1, strategy.getLastTicker().size()));
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTicker().get(cp3).getLast())));
+        await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTickers().get(cp3).getLast())));
 
         // Checking ta4j results.
         await().untilAsserted(() -> assertEquals(5, strategy.getEnterCount()));
         await().untilAsserted(() -> assertEquals(2, strategy.getExitCount()));
         await().untilAsserted(() -> assertEquals(8, strategy.getSeries().getBarCount()));
-
-        // Checking that services are available.
-        assertNotNull(strategy.getTradeService());
-        assertNotNull(strategy.getPositionService());
 
         // Check getEstimatedBuyingCost()
         assertTrue(strategy.getEstimatedBuyingCost(cp3, new BigDecimal(3)).isPresent());

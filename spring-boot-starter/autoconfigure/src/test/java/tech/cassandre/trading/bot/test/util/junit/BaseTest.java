@@ -1,10 +1,23 @@
 package tech.cassandre.trading.bot.test.util.junit;
 
 import org.awaitility.Awaitility;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -40,7 +54,7 @@ public class BaseTest {
     protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
     /** How much we should wait for tests until it is declared as failed. */
-    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
+    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 30;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -61,6 +75,28 @@ public class BaseTest {
      */
     protected final Logger getLogger() {
         return logger;
+    }
+
+    /**
+     * Get pending order.
+     *
+     * @param orderId      orderId
+     * @param orderTypeDTO order type
+     * @param currencyPair currency pair
+     * @return order
+     */
+    protected OrderDTO getPendingOrder(final String orderId,
+                                       final OrderTypeDTO orderTypeDTO,
+                                       final BigDecimal amount,
+                                       final CurrencyPairDTO currencyPair) {
+        return OrderDTO.builder()
+                .id(orderId)
+                .timestamp(ZonedDateTime.now())
+                .type(orderTypeDTO)
+                .originalAmount(amount)
+                .currencyPair(currencyPair)
+                .status(PENDING_NEW)
+                .create();
     }
 
     /**
@@ -127,6 +163,7 @@ public class BaseTest {
 
     /**
      * Generate a date in 2020 with a day.
+     *
      * @param day day
      * @return date
      */
@@ -137,6 +174,7 @@ public class BaseTest {
 
     /**
      * Generates a ZonedDateTime.
+     *
      * @param date date with format dd-MM-yyyy
      * @return ZonedDateTime
      */
