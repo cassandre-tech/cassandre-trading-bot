@@ -41,7 +41,6 @@ public final class OrderCreationResultDTO {
      * Constructor for successful order creation.
      *
      * @param newOrderId order id
-     * @Deprecated Use OrderCreationResultDTO()
      */
     @Deprecated(since = "4.0.0")
     public OrderCreationResultDTO(final String newOrderId) {
@@ -73,7 +72,6 @@ public final class OrderCreationResultDTO {
      * Getter for orderId.
      *
      * @return orderId
-     * @Deprecated Use getOrder().getId() instead
      */
     @Deprecated(since = "4.0.0")
     public String getOrderId() {
