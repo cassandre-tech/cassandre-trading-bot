@@ -26,7 +26,6 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -88,7 +87,7 @@ public class PositionFluxTest extends BaseTest {
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000f)   // 1 000% max gain.
                         .stopLossPercentage(100f)    // 100% max lost.
-                        .create());
+                        .build());
         assertEquals("ORDER00010", position1Result.getOrderId());
         long position1Id = position1Result.getPositionId();
         int positionStatusUpdateIndex = 0;
@@ -139,7 +138,7 @@ public class PositionFluxTest extends BaseTest {
                 PositionRulesDTO.builder()
                         .stopGainPercentage(10000000f)
                         .stopLossPercentage(10000000f)
-                        .create());
+                        .build());
         assertEquals("ORDER00020", position2Result.getOrderId());
         long position2Id = position2Result.getPositionId();
         positionStatusUpdateIndex++;
@@ -193,7 +192,8 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("4"))
                 .price(new BigDecimal("0.03"))
-                .create());
+                .timestamp(createZonedDateTime("02-02-2020"))
+                .build());
         positionUpdateIndex++;
         // The same trade is emitted two times with an update (on time).
         tradeFlux.emitValue(TradeDTO.builder().id("000011")
@@ -202,7 +202,8 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("4"))
                 .price(new BigDecimal("0.03"))
-                .create());
+                .timestamp(createZonedDateTime("02-02-2020"))
+                .build());
         positionUpdateIndex++;
 
         // Second trade.
@@ -212,7 +213,8 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("6"))
                 .price(new BigDecimal("0.03"))
-                .create());
+                .timestamp(createZonedDateTime("01-01-2020"))
+                .build());
         positionUpdateIndex++;
         // The same trade is emitted two times with an update (on time).
         tradeFlux.emitValue(TradeDTO.builder().id("000001")
@@ -221,7 +223,8 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("6"))
                 .price(new BigDecimal("0.03"))
-                .create());
+                .timestamp(createZonedDateTime("01-01-2020"))
+                .build());
         positionUpdateIndex++;
 
         // With the two trades emitted, status should change.
@@ -262,8 +265,8 @@ public class PositionFluxTest extends BaseTest {
         assertNull(p1.getLatestPrice());
         // Check trade orders.
         Iterator<TradeDTO> openTradesIterator = p1.getOpeningTrades().iterator();
-        assertEquals("000011", openTradesIterator.next().getId());
         assertEquals("000001", openTradesIterator.next().getId());
+        assertEquals("000011", openTradesIterator.next().getId());
 
         // Check if we don't have duplicated trades in database !
         assertEquals(2, tradeRepository.count());
@@ -275,7 +278,7 @@ public class PositionFluxTest extends BaseTest {
         // Test of tickers updating the position 1.
 
         // First ticker arrives (500% gain) - min, max and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.18")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.18")).build());
         positionUpdateIndex++;
         await().untilAsserted(() -> assertEquals(7, strategy.getPositionsUpdateReceived().size()));
         p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
@@ -285,7 +288,7 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getLatestPrice()));
 
         // Second ticker arrives (100% gain) - min and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).build());
         positionUpdateIndex++;
         await().untilAsserted(() -> assertEquals(8, strategy.getPositionsUpdateReceived().size()));
         p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
@@ -295,7 +298,7 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.06").compareTo(p.getLatestPrice()));
 
         // Third ticker arrives (200% gain) - only last should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.09")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.09")).build());
         positionUpdateIndex++;
         await().untilAsserted(() -> assertEquals(9, strategy.getPositionsUpdateReceived().size()));
         p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
@@ -305,7 +308,7 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.09").compareTo(p.getLatestPrice()));
 
         // Fourth ticker arrives (50% loss) - min and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.015")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.015")).build());
         positionUpdateIndex++;
         await().untilAsserted(() -> assertEquals(10, strategy.getPositionsUpdateReceived().size()));
         p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
@@ -315,10 +318,10 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.015").compareTo(p.getLatestPrice()));
 
         // A ticker arrive for another cp. Nothing should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("100")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("100")).build());
 
         // Firth ticker arrives (600% gain) - max and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.21")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.21")).build());
         positionUpdateIndex++;
         await().untilAsserted(() -> assertEquals(11, strategy.getPositionsUpdateReceived().size()));
         p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
@@ -348,8 +351,8 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.21").compareTo(p1.getLatestPrice()));
         // Check trade orders.
         openTradesIterator = p1.getOpeningTrades().iterator();
-        assertEquals("000011", openTradesIterator.next().getId());
         assertEquals("000001", openTradesIterator.next().getId());
+        assertEquals("000011", openTradesIterator.next().getId());
 
         // =============================================================================================================
         // Trade arrives to open position 2 - should now be OPENED
@@ -359,7 +362,7 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp2)
                 .originalAmount(new BigDecimal("0.0002"))
                 .price(new BigDecimal("0.03"))
-                .create());
+                .build());
         positionStatusUpdateIndex++;
         positionUpdateIndex++;
 
@@ -410,7 +413,7 @@ public class PositionFluxTest extends BaseTest {
 
         // =============================================================================================================
         // A ticker arrives that triggers max gain rules of position 1 - should now be CLOSING.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).build());
         positionStatusUpdateIndex++;
         positionUpdateIndex++;
         // onPositionUpdate - Position should be closing.
@@ -447,8 +450,8 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("100").compareTo(p1.getLatestPrice()));
         // Check trade orders.
         openTradesIterator = p1.getOpeningTrades().iterator();
-        assertEquals("000011", openTradesIterator.next().getId());
         assertEquals("000001", openTradesIterator.next().getId());
+        assertEquals("000011", openTradesIterator.next().getId());
 
         // =============================================================================================================
         // Position 1 will have CLOSED status as the trade arrives.
@@ -459,7 +462,8 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("5"))
                 .price(new BigDecimal("1"))
-                .create());
+                .timestamp(createZonedDateTime("01-01-2020"))
+                .build());
         positionStatusUpdateIndex++;
         positionUpdateIndex++;
         // We send a duplicated value.
@@ -469,7 +473,8 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("5"))
                 .price(new BigDecimal("1"))
-                .create());
+                .timestamp(createZonedDateTime("01-01-2020"))
+                .build());
         positionUpdateIndex++;
 
         // onPosition for first trade arrival.
@@ -486,8 +491,8 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("5"))
                 .price(new BigDecimal("1"))
-                .timestamp(ZonedDateTime.now())
-                .create());
+                .timestamp(createZonedDateTime("02-01-2020"))
+                .build());
         positionUpdateIndex++;
         // We send a duplicated value.
         tradeFlux.emitValue(TradeDTO.builder().id("000004")
@@ -496,8 +501,8 @@ public class PositionFluxTest extends BaseTest {
                 .currencyPair(cp1)
                 .originalAmount(new BigDecimal("5"))
                 .price(new BigDecimal("2"))
-                .timestamp(ZonedDateTime.now().plusDays(1))
-                .create());
+                .timestamp(createZonedDateTime("02-01-2020").plusDays(1))
+                .build());
 
         // onPositionUpdate - Position should be closed.
         await().untilAsserted(() -> assertEquals(6, strategy.getPositionsStatusUpdateReceived().size()));
@@ -535,8 +540,8 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("100").compareTo(p1.getLatestPrice()));
         // Check trade orders.
         openTradesIterator = p1.getOpeningTrades().iterator();
-        assertEquals("000011", openTradesIterator.next().getId());
         assertEquals("000001", openTradesIterator.next().getId());
+        assertEquals("000011", openTradesIterator.next().getId());
         final Iterator<TradeDTO> closeTradesIterator = p1.getClosingTrades().iterator();
         assertEquals("000003", closeTradesIterator.next().getId());
         assertEquals("000004", closeTradesIterator.next().getId());

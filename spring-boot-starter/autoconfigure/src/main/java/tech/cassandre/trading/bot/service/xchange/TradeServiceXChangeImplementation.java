@@ -71,7 +71,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .originalAmount(amount)
                     .currencyPair(currencyPair)
                     .status(PENDING_NEW)
-                    .create();
+                    .build();
             localOrders.put(orderId, openingOrder);
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);
             getLogger().debug("TradeService - Order created : {}", result);
@@ -107,7 +107,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .currencyPair(currencyPair)
                     .status(PENDING_NEW)
                     .limitPrice(limitPrice)
-                    .create();
+                    .build();
             localOrders.put(orderId, openingOrder);
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);
             getLogger().debug("TradeService - Order creation result : {}", result);

@@ -1,53 +1,27 @@
 package tech.cassandre.trading.bot.dto.strategy;
 
-import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * DTO representing a strategy.
  */
+@Value
+@Builder
+@AllArgsConstructor(access = PRIVATE)
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class StrategyDTO {
 
     /** An identifier that uniquely identifies the strategy. */
-    private String id;
+    String id;
 
     /** Strategy name. */
-    private String name;
-
-    /**
-     * Getter id.
-     *
-     * @return id
-     */
-    public final String getId() {
-        return id;
-    }
-
-    /**
-     * Setter id.
-     *
-     * @param newId the id to set
-     */
-    public final void setId(final String newId) {
-        id = newId;
-    }
-
-    /**
-     * Getter name.
-     *
-     * @return name
-     */
-    public final String getName() {
-        return name;
-    }
-
-    /**
-     * Setter name.
-     *
-     * @param newName the name to set
-     */
-    public final void setName(final String newName) {
-        name = newName;
-    }
+    String name;
 
     @Override
     public final boolean equals(final Object o) {
@@ -57,13 +31,17 @@ public class StrategyDTO {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        StrategyDTO that = (StrategyDTO) o;
-        return id.equals(that.id);
+        final StrategyDTO that = (StrategyDTO) o;
+        return new EqualsBuilder()
+                .append(this.id, that.id)
+                .isEquals();
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(id);
+        return new HashCodeBuilder()
+                .append(id)
+                .toHashCode();
     }
 
 }

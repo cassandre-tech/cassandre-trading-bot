@@ -1,34 +1,30 @@
 package tech.cassandre.trading.bot.util.base;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import java.time.ZonedDateTime;
 
 /**
  * Base domain.
  */
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseDomain {
 
     /** Data created on. */
+    @CreatedDate
     @Column(name = "CREATED_ON", nullable = false, updatable = false)
     private ZonedDateTime createdOn;
 
     /** Data updated on. */
-    @Column(name = "UPDATED_ON", nullable = false)
+    @LastModifiedDate
+    @Column(name = "UPDATED_ON", insertable = false)
     private ZonedDateTime updatedOn;
-
-    @PrePersist
-    protected final void onCreate() {
-        createdOn = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected final void onUpdate() {
-        updatedOn = ZonedDateTime.now();
-    }
 
     /**
      * Getter createdOn.

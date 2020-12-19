@@ -8,7 +8,6 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -24,7 +23,6 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -91,30 +89,30 @@ public class PositionServiceTestMock extends BaseTest {
         // Returns three updates.
 
         // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
+        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).build();
         accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).create();
+        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).build();
         accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 03.
-        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).create());
-        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).create());
-        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).create());
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
+        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).build());
+        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).build());
+        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).build());
+        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
@@ -134,8 +132,7 @@ public class PositionServiceTestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        StrategyDTO strategyDTO = new StrategyDTO();
-        strategyDTO.setId("1");
+        StrategyDTO strategyDTO = StrategyDTO.builder().id("1").build();
 
         // Position 1 creation reply (order ORDER00010).
         given(service.createBuyMarketOrder(strategyDTO, cp1, new BigDecimal("0.0001")))

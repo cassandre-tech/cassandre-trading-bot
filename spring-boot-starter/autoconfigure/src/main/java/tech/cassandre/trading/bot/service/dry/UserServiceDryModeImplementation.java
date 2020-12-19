@@ -49,7 +49,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
      * Constructor.
      */
     public UserServiceDryModeImplementation() {
-        user = UserDTO.builder().setId(USER_ID).create();
+        Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
         getFilesToLoad().forEach(file -> {
             if (file.getFilename() != null) {
@@ -78,7 +78,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                             BalanceDTO balance = BalanceDTO.builder()
                                     .currency(new CurrencyDTO(currency))
                                     .available(new BigDecimal(amount))
-                                    .create();
+                                    .build();
                             balances.put(new CurrencyDTO(currency), balance);
                         }
                     }
@@ -89,14 +89,15 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 }
 
                 // Creating account.
-                AccountDTO account = AccountDTO.builder()
+                accounts.put(accountName,
+                        AccountDTO.builder()
                         .id(accountName)
                         .name(accountName)
                         .balances(balances)
-                        .create();
-                user.getAccounts().put(account.getId(), account);
+                        .build());
             }
         });
+        user = UserDTO.builder().id(USER_ID).accounts(accounts).build();
     }
 
     /**
@@ -145,20 +146,20 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 HashMap<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
                 // For each balance.
-                a.getBalances().forEach(b -> {
+                a.getBalances().forEach((c, b) -> {
                     BalanceDTO newBalance;
                     if (a.getId().equals(TRADE_ACCOUNT_ID) && b.getCurrency().equals(currency)) {
                         // If we are on the account to update, we calculate the new value.
                         newBalance = BalanceDTO.builder()
                                 .currency(b.getCurrency())
                                 .available(b.getAvailable().add(amount))
-                                .create();
+                                .build();
                     } else {
                         // Else we keep the same value.
                         newBalance = BalanceDTO.builder()
                                 .currency(b.getCurrency())
                                 .available(b.getAvailable())
-                                .create();
+                                .build();
                     }
                     balances.put(newBalance.getCurrency(), newBalance);
                 });
@@ -168,13 +169,13 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                         .id(a.getId())
                         .name(a.getName())
                         .balances(balances)
-                        .create();
+                        .build();
                 accounts.put(account.getId(), account);
             });
             // Change the user value and the account in the strategy.
             strategy.getAccounts().clear();
             strategy.getAccounts().putAll(accounts);
-            this.user = UserDTO.builder().setId(USER_ID).setAccounts(accounts).create();
+            this.user = UserDTO.builder().id(USER_ID).accounts(accounts).build();
         }
     }
 

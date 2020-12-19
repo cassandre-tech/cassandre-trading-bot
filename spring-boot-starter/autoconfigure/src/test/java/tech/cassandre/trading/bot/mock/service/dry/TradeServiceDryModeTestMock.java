@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ public class TradeServiceDryModeTestMock {
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
         given(marketService
                 .getTicker(cp1))
-                .willReturn(Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(Calendar.getInstance().getTime()).last(new BigDecimal("0.2")).create())
+                .willReturn(Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(ZonedDateTime.now()).last(new BigDecimal("0.2")).build())
                 );
         return marketService;
     }

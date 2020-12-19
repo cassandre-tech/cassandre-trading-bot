@@ -123,7 +123,7 @@ public final class CurrencyPairDTO {
          *
          * @return Account
          */
-        public CurrencyPairDTO create() {
+        public CurrencyPairDTO build() {
             return new CurrencyPairDTO(this);
         }
 

@@ -1,7 +1,10 @@
 package tech.cassandre.trading.bot.domain;
 
+import lombok.Data;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.util.base.BaseDomain;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +21,7 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 /**
  * Trade (used to save data between restarts).
  */
+@Data
 @Entity
 @Table(name = "TRADES")
 public class Trade extends BaseDomain {
@@ -60,181 +64,33 @@ public class Trade extends BaseDomain {
     @Column(name = "FEE_CURRENCY")
     private String feeCurrency;
 
-    /**
-     * Getter id.
-     *
-     * @return id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Setter id.
-     *
-     * @param newId the id to set
-     */
-    public void setId(final String newId) {
-        id = newId;
-    }
-
-    /**
-     * Getter orderId.
-     *
-     * @return orderId
-     */
-    public String getOrderId() {
-        return orderId;
-    }
-
-    /**
-     * Setter orderId.
-     *
-     * @param newOrderId the orderId to set
-     */
-    public void setOrderId(final String newOrderId) {
-        orderId = newOrderId;
-    }
-
-    /**
-     * Getter type.
-     *
-     * @return type
-     */
-    public OrderTypeDTO getType() {
-        return type;
-    }
-
-    /**
-     * Setter type.
-     *
-     * @param newType the type to set
-     */
-    public void setType(final OrderTypeDTO newType) {
-        type = newType;
-    }
-
-    /**
-     * Getter originalAmount.
-     *
-     * @return originalAmount
-     */
-    public BigDecimal getOriginalAmount() {
-        return originalAmount;
-    }
-
-    /**
-     * Setter originalAmount.
-     *
-     * @param newOriginalAmount the originalAmount to set
-     */
-    public void setOriginalAmount(final BigDecimal newOriginalAmount) {
-        originalAmount = newOriginalAmount;
-    }
-
-    /**
-     * Getter currencyPair.
-     *
-     * @return currencyPair
-     */
-    public String getCurrencyPair() {
-        return currencyPair;
-    }
-
-    /**
-     * Setter currencyPair.
-     *
-     * @param newCurrencyPair the currencyPair to set
-     */
-    public void setCurrencyPair(final String newCurrencyPair) {
-        currencyPair = newCurrencyPair;
-    }
-
-    /**
-     * Getter price.
-     *
-     * @return price
-     */
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    /**
-     * Setter price.
-     *
-     * @param newPrice the price to set
-     */
-    public void setPrice(final BigDecimal newPrice) {
-        price = newPrice;
-    }
-
-    /**
-     * Getter timestamp.
-     *
-     * @return timestamp
-     */
-    public ZonedDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    /**
-     * Setter timestamp.
-     *
-     * @param newTimestamp the timestamp to set
-     */
-    public void setTimestamp(final ZonedDateTime newTimestamp) {
-        timestamp = newTimestamp;
-    }
-
-    /**
-     * Getter feeAmount.
-     *
-     * @return feeAmount
-     */
-    public BigDecimal getFeeAmount() {
-        return feeAmount;
-    }
-
-    /**
-     * Setter feeAmount.
-     *
-     * @param newFeeAmount the feeAmount to set
-     */
-    public void setFeeAmount(final BigDecimal newFeeAmount) {
-        feeAmount = newFeeAmount;
-    }
-
-    /**
-     * Getter feeCurrency.
-     *
-     * @return feeCurrency
-     */
-    public String getFeeCurrency() {
-        return feeCurrency;
-    }
-
-    /**
-     * Setter feeCurrency.
-     *
-     * @param newFeeCurrency the feeCurrency to set
-     */
-    public void setFeeCurrency(final String newFeeCurrency) {
-        feeCurrency = newFeeCurrency;
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Trade that = (Trade) o;
+        return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.orderId, that.orderId)
+                .append(this.type, that.type)
+                .append(this.originalAmount, that.originalAmount)
+                .append(this.currencyPair, that.currencyPair)
+                .append(this.price, that.price)
+                .append(this.timestamp, that.timestamp)
+                .append(this.feeAmount, that.feeAmount)
+                .append(this.feeCurrency, that.feeCurrency)
+                .isEquals();
     }
 
     @Override
-    public final String toString() {
-        return "Trade{"
-                + " id='" + id + '\''
-                + ", orderId='" + orderId + '\''
-                + ", type=" + type
-                + ", originalAmount=" + originalAmount
-                + ", currencyPair='" + currencyPair + '\''
-                + ", price=" + price
-                + ", timestamp=" + timestamp
-                + ", feeAmount=" + feeAmount
-                + ", feeCurrency='" + feeCurrency + '\''
-                + "} " + super.toString();
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .toHashCode();
     }
 
 }

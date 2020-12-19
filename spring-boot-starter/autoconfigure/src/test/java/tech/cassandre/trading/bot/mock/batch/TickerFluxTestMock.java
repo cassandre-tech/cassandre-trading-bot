@@ -18,8 +18,7 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -65,30 +64,30 @@ public class TickerFluxTestMock extends BaseTest {
         // Returns three updates.
 
         // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
+        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).build();
         accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).create();
+        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).build();
         accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 03.
-        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).create());
-        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).create());
-        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).create());
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
+        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).build());
+        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).build());
+        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).build());
+        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
@@ -105,7 +104,7 @@ public class TickerFluxTestMock extends BaseTest {
         MarketService marketService = mock(MarketService.class);
 
         // Replies for ETH / BTC.
-        final Date time = Calendar.getInstance().getTime();
+        final ZonedDateTime time = ZonedDateTime.now();
         given(marketService
                 .getTicker(cp1))
                 .willReturn(BaseTest.getFakeTicker(cp1, new BigDecimal("1")),   // Value 01.

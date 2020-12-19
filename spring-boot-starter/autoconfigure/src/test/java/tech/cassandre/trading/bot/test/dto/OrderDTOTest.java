@@ -42,7 +42,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 
 		// Order 2 - same as order 1.
 		OrderDTO order02 = OrderDTO.builder()
@@ -58,7 +58,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertEquals(order01, order02);
 		assertEquals(order02, order01);
 
@@ -76,7 +76,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order03);
 		assertNotEquals(order03, order01);
 
@@ -94,7 +94,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order04);
 		assertNotEquals(order04, order01);
 
@@ -112,7 +112,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order05);
 		assertNotEquals(order05, order01);
 
@@ -130,7 +130,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order06);
 		assertNotEquals(order06, order01);
 
@@ -148,7 +148,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order07);
 		assertNotEquals(order07, order01);
 
@@ -166,7 +166,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order08);
 		assertNotEquals(order08, order01);
 
@@ -184,7 +184,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order09);
 		assertNotEquals(order09, order01);
 
@@ -202,7 +202,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order10);
 		assertNotEquals(order10, order01);
 
@@ -220,7 +220,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order11);
 		assertNotEquals(order11, order01);
 
@@ -238,7 +238,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(9))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order12);
 		assertNotEquals(order12, order01);
 
@@ -256,7 +256,7 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage2")
 				.limitPrice(new BigDecimal(5))
-				.create();
+				.build();
 		assertNotEquals(order01, order13);
 		assertNotEquals(order13, order01);
 
@@ -274,15 +274,15 @@ public class OrderDTOTest {
 				.fee(new BigDecimal(4))
 				.leverage("leverage1")
 				.limitPrice(new BigDecimal(9))
-				.create();
+				.build();
 		assertNotEquals(order01, order14);
 		assertNotEquals(order14, order01);
 
 		// Tests for null objects.
-		OrderDTO order15 = OrderDTO.builder().create();
-		OrderDTO order16 = OrderDTO.builder().create();
-		assertNotEquals(order15, order16);
-		assertNotEquals(order16, order15);
+		OrderDTO order15 = OrderDTO.builder().build();
+		OrderDTO order16 = OrderDTO.builder().build();
+		assertEquals(order15, order16);
+		assertEquals(order16, order15);
 	}
 
 }

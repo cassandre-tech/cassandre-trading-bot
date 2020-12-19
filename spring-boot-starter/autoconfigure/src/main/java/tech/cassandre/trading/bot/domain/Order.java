@@ -1,8 +1,11 @@
 package tech.cassandre.trading.bot.domain;
 
+import lombok.Data;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.util.base.BaseDomain;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,11 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static javax.persistence.EnumType.STRING;
@@ -26,6 +29,7 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 /**
  * Order (used to save data between restarts).
  */
+@Data
 @Entity
 @Table(name = "ORDERS")
 public class Order extends BaseDomain {
@@ -83,284 +87,14 @@ public class Order extends BaseDomain {
 
     /** All trades related to order. */
     @OneToMany(fetch = EAGER)
+    @OrderBy("timestamp")
     @JoinColumn(name = "ORDER_ID", updatable = false)
-    private Set<Trade> trades = new HashSet<>();
+    private Set<Trade> trades = new LinkedHashSet<>();
 
     /** Strategy. */
     @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "STRATEGY_ID", updatable = false)
     private Strategy strategy;
-
-    /**
-     * Getter id.
-     *
-     * @return id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Setter id.
-     *
-     * @param newId the id to set
-     */
-    public void setId(final String newId) {
-        id = newId;
-    }
-
-    /**
-     * Getter type.
-     *
-     * @return type
-     */
-    public OrderTypeDTO getType() {
-        return type;
-    }
-
-    /**
-     * Setter type.
-     *
-     * @param newType the type to set
-     */
-    public void setType(final OrderTypeDTO newType) {
-        type = newType;
-    }
-
-    /**
-     * Getter originalAmount.
-     *
-     * @return originalAmount
-     */
-    public BigDecimal getOriginalAmount() {
-        return originalAmount;
-    }
-
-    /**
-     * Setter originalAmount.
-     *
-     * @param newOriginalAmount the originalAmount to set
-     */
-    public void setOriginalAmount(final BigDecimal newOriginalAmount) {
-        originalAmount = newOriginalAmount;
-    }
-
-    /**
-     * Getter currencyPair.
-     *
-     * @return currencyPair
-     */
-    public String getCurrencyPair() {
-        return currencyPair;
-    }
-
-    /**
-     * Setter currencyPair.
-     *
-     * @param newCurrencyPair the currencyPair to set
-     */
-    public void setCurrencyPair(final String newCurrencyPair) {
-        currencyPair = newCurrencyPair;
-    }
-
-    /**
-     * Getter userReference.
-     *
-     * @return userReference
-     */
-    public String getUserReference() {
-        return userReference;
-    }
-
-    /**
-     * Setter userReference.
-     *
-     * @param newUserReference the userReference to set
-     */
-    public void setUserReference(final String newUserReference) {
-        userReference = newUserReference;
-    }
-
-    /**
-     * Getter timestamp.
-     *
-     * @return timestamp
-     */
-    public ZonedDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    /**
-     * Setter timestamp.
-     *
-     * @param newTimestamp the timestamp to set
-     */
-    public void setTimestamp(final ZonedDateTime newTimestamp) {
-        timestamp = newTimestamp;
-    }
-
-    /**
-     * Getter status.
-     *
-     * @return status
-     */
-    public OrderStatusDTO getStatus() {
-        return status;
-    }
-
-    /**
-     * Setter status.
-     *
-     * @param newStatus the status to set
-     */
-    public void setStatus(final OrderStatusDTO newStatus) {
-        status = newStatus;
-    }
-
-    /**
-     * Getter cumulativeAmount.
-     *
-     * @return cumulativeAmount
-     */
-    public BigDecimal getCumulativeAmount() {
-        return cumulativeAmount;
-    }
-
-    /**
-     * Setter cumulativeAmount.
-     *
-     * @param newCumulativeAmount the cumulativeAmount to set
-     */
-    public void setCumulativeAmount(final BigDecimal newCumulativeAmount) {
-        cumulativeAmount = newCumulativeAmount;
-    }
-
-    /**
-     * Getter averagePrice.
-     *
-     * @return averagePrice
-     */
-    public BigDecimal getAveragePrice() {
-        return averagePrice;
-    }
-
-    /**
-     * Setter averagePrice.
-     *
-     * @param newAveragePrice the averagePrice to set
-     */
-    public void setAveragePrice(final BigDecimal newAveragePrice) {
-        averagePrice = newAveragePrice;
-    }
-
-    /**
-     * Getter fee.
-     *
-     * @return fee
-     */
-    public BigDecimal getFee() {
-        return fee;
-    }
-
-    /**
-     * Setter fee.
-     *
-     * @param newFee the fee to set
-     */
-    public void setFee(final BigDecimal newFee) {
-        fee = newFee;
-    }
-
-    /**
-     * Getter leverage.
-     *
-     * @return leverage
-     */
-    public String getLeverage() {
-        return leverage;
-    }
-
-    /**
-     * Setter leverage.
-     *
-     * @param newLeverage the leverage to set
-     */
-    public void setLeverage(final String newLeverage) {
-        leverage = newLeverage;
-    }
-
-    /**
-     * Getter limitPrice.
-     *
-     * @return limitPrice
-     */
-    public BigDecimal getLimitPrice() {
-        return limitPrice;
-    }
-
-    /**
-     * Setter limitPrice.
-     *
-     * @param newLimitPrice the limitPrice to set
-     */
-    public void setLimitPrice(final BigDecimal newLimitPrice) {
-        limitPrice = newLimitPrice;
-    }
-
-    /**
-     * Getter trades.
-     *
-     * @return trades
-     */
-    public Set<Trade> getTrades() {
-        return trades;
-    }
-
-    /**
-     * Setter trades.
-     *
-     * @param newTrades the trades to set
-     */
-    public void setTrades(final Set<Trade> newTrades) {
-        trades = newTrades;
-    }
-
-    /**
-     * Getter strategy.
-     *
-     * @return strategy
-     */
-    public Strategy getStrategy() {
-        return strategy;
-    }
-
-    /**
-     * Setter strategy.
-     *
-     * @param newStrategy the strategy to set
-     */
-    public void setStrategy(final Strategy newStrategy) {
-        strategy = newStrategy;
-    }
-
-    @Override
-    public final String toString() {
-        return "Order{"
-                + " id='" + id + '\''
-                + ", type=" + type
-                + ", originalAmount=" + originalAmount
-                + ", currencyPair='" + currencyPair + '\''
-                + ", userReference='" + userReference + '\''
-                + ", timestamp=" + timestamp
-                + ", status=" + status
-                + ", cumulativeAmount=" + cumulativeAmount
-                + ", averagePrice=" + averagePrice
-                + ", fee=" + fee
-                + ", leverage='" + leverage + '\''
-                + ", limitPrice=" + limitPrice
-                + ", strategy=" + strategy
-                + "}";
-    }
 
     @Override
     public final boolean equals(final Object o) {
@@ -370,12 +104,28 @@ public class Order extends BaseDomain {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Order order = (Order) o;
-        return id.equals(order.id);
+        final Order that = (Order) o;
+        return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.type, that.type)
+                .append(this.originalAmount, that.originalAmount)
+                .append(this.currencyPair, that.currencyPair)
+                .append(this.userReference, that.userReference)
+                .append(this.timestamp, that.timestamp)
+                .append(this.status, that.status)
+                .append(this.cumulativeAmount, that.cumulativeAmount)
+                .append(this.averagePrice, that.averagePrice)
+                .append(this.fee, that.fee)
+                .append(this.leverage, that.leverage)
+                .append(this.limitPrice, that.limitPrice)
+                .isEquals();
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(id);
+        return new HashCodeBuilder()
+                .append(id)
+                .toHashCode();
     }
+
 }

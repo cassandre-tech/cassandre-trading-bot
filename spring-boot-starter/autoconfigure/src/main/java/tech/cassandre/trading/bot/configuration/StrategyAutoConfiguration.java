@@ -165,6 +165,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             final Optional<AccountDTO> tradeAccount = ((CassandreStrategyInterface) o).getTradeAccount(new LinkedHashSet<>(user.get().getAccounts().values()));
             if (tradeAccount.isEmpty()) {
                 StringJoiner accountList = new StringJoiner(", ");
+                user.get().getAccounts().values().forEach(accountDTO -> System.out.println("=> " + accountDTO));
                 user.get().getAccounts().values().forEach(accountDTO -> accountList.add(accountDTO.getName()));
                 throw new ConfigurationException("Your strategy specifies a trading account that doesn't exist",
                         "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result - Account list : " + accountList);

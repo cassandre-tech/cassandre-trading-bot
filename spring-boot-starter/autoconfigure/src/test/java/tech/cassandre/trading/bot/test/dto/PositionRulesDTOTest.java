@@ -15,7 +15,7 @@ public class PositionRulesDTOTest {
     @DisplayName("Check no rules & toString()")
     public void checkNoRules() {
         // Position creation.
-        PositionRulesDTO p = PositionRulesDTO.builder().create();
+        PositionRulesDTO p = PositionRulesDTO.builder().build();
         // Tests.
         assertFalse(p.isStopGainPercentageSet());
         assertFalse(p.isStopLossPercentageSet());
@@ -28,7 +28,7 @@ public class PositionRulesDTOTest {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopGainPercentage(1f)
-                .create();
+                .build();
         // Tests.
         assertTrue(p.isStopGainPercentageSet());
         assertFalse(p.isStopLossPercentageSet());
@@ -41,7 +41,7 @@ public class PositionRulesDTOTest {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopLossPercentage(2f)
-                .create();
+                .build();
         // Tests.
         assertFalse(p.isStopGainPercentageSet());
         assertTrue(p.isStopLossPercentageSet());
@@ -55,7 +55,7 @@ public class PositionRulesDTOTest {
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopGainPercentage(10f)
                 .stopLossPercentage(11f)
-                .create();
+                .build();
         // Tests.
         assertTrue(p.isStopGainPercentageSet());
         assertTrue(p.isStopLossPercentageSet());

@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -174,7 +175,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .originalAmount(amount)
                     .fee(ZERO)
                     .timestamp(ZonedDateTime.now())
-                    .create();
+                    .build();
 
             // We create and send the trade.
             final String tradeId = getNextTradeNumber();
@@ -186,9 +187,8 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .originalAmount(amount)
                     .price(t.getLast())
                     .timestamp(ZonedDateTime.now())
-                    .feeAmount(ZERO)
-                    .feeCurrency(currencyPair.getBaseCurrency())
-                    .create();
+                    .fee(new CurrencyAmountDTO())
+                    .build();
 
             // Sending the results after the method returns the result.
             Executors.newFixedThreadPool(1).submit(() -> {

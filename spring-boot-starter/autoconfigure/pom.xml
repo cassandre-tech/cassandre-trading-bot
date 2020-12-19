@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>6.1.6.Final</version>
+            <version>6.1.7.Final</version>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
@@ -76,6 +76,12 @@
             <groupId>com.github.vladimir-bukhtoyarov</groupId>
             <artifactId>bucket4j-core</artifactId>
             <version>4.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -180,9 +186,19 @@
                             <version>1.4.1.Final</version>
                         </path>
                         <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.16</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
                             <groupId>org.springframework.boot</groupId>
                             <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>2.2.2.RELEASE</version>
+                            <version>2.4.1</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -231,6 +247,9 @@
                 <version>3.2.0</version>
                 <configuration>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <sourceFileIncludes>
+                        <include>${project.build.directory}/generated-sources/delombok</include>
+                    </sourceFileIncludes>
                 </configuration>
                 <executions>
                     <execution>

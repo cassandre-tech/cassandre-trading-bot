@@ -97,36 +97,36 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // =============================================================================================================
         // Account retrieved by configuration.
-        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").create();
+        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").build();
         accounts.put("trade", tempAccount);
         accounts.clear();
 
         // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
+        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).build();
         accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).create();
+        AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).build();
         accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 03.
-        BalanceDTO account03Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account03Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account03Balance1);
-        BalanceDTO account03Balance2 = BalanceDTO.builder().available(new BigDecimal("150")).create();
+        BalanceDTO account03Balance2 = BalanceDTO.builder().available(new BigDecimal("150")).build();
         balances.put(USDT, account03Balance2);
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
+        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
@@ -147,105 +147,116 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1060)).create()),
+                        .volume(new BigDecimal(1060))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(2))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1060)).create()),
+                        .volume(new BigDecimal(1060))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(3))
                         .open(new BigDecimal(110))
                         .high(new BigDecimal(110))
                         .low(new BigDecimal(110))
                         .last(new BigDecimal(110))
-                        .volume(new BigDecimal(1070)).create()),
+                        .volume(new BigDecimal(1070))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(4))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1060)).create()),
+                        .volume(new BigDecimal(1060))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(5))
                         .open(new BigDecimal(140))
                         .high(new BigDecimal(140))
                         .low(new BigDecimal(140))
                         .last(new BigDecimal(140))
-                        .volume(new BigDecimal(1080)).create()),
+                        .volume(new BigDecimal(1080)).build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(6))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1060)).create()),
+                        .volume(new BigDecimal(1060)).build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(7))
                         .open(new BigDecimal(119))
                         .high(new BigDecimal(119))
                         .low(new BigDecimal(119))
                         .last(new BigDecimal(119))
-                        .volume(new BigDecimal(1090)).create()),
+                        .volume(new BigDecimal(1090)).build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(8))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1060)).create()),
+                        .volume(new BigDecimal(1060))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(9))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1100)).create()),
+                        .volume(new BigDecimal(1100))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(10))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1060)).create()),
+                        .volume(new BigDecimal(1060))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(11))
                         .open(new BigDecimal(110))
                         .high(new BigDecimal(110))
                         .low(new BigDecimal(110))
                         .last(new BigDecimal(110))
-                        .volume(new BigDecimal(1100)).create()),
+                        .volume(new BigDecimal(1100))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(12))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1060)).create()),
+                        .volume(new BigDecimal(1060))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(13))
                         .open(new BigDecimal(120))
                         .high(new BigDecimal(120))
                         .low(new BigDecimal(120))
                         .last(new BigDecimal(120))
-                        .volume(new BigDecimal(1120)).create()),
+                        .volume(new BigDecimal(1120)).build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(14))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
-                        .volume(new BigDecimal(1060)).create()),
+                        .volume(new BigDecimal(1060))
+                        .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
                         .timestamp(BaseTest.createDate(15))
                         .open(new BigDecimal(130))
                         .high(new BigDecimal(130))
                         .low(new BigDecimal(130))
                         .last(new BigDecimal(130))
-                        .volume(new BigDecimal(1130)).create())
+                        .volume(new BigDecimal(1130))
+                        .build())
                 );
         return service;
     }
@@ -257,17 +268,17 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Returns three values.
         Set<OrderDTO> reply = new LinkedHashSet<>();
-        reply.add(OrderDTO.builder().id("000001").type(BID).currencyPair(cp3).create());                // Order 01.
-        reply.add(OrderDTO.builder().id("000002").type(BID).currencyPair(cp3).create());                // Order 02.
-        reply.add(OrderDTO.builder().id("000003").type(BID).currencyPair(cp3).create());                // Order 03.
-        reply.add(OrderDTO.builder().id("000004").type(BID).currencyPair(cp3).create());                // Order 04.
+        reply.add(OrderDTO.builder().id("000001").type(BID).currencyPair(cp3).build());                // Order 01.
+        reply.add(OrderDTO.builder().id("000002").type(BID).currencyPair(cp3).build());                // Order 02.
+        reply.add(OrderDTO.builder().id("000003").type(BID).currencyPair(cp3).build());                // Order 03.
+        reply.add(OrderDTO.builder().id("000004").type(BID).currencyPair(cp3).build());                // Order 04.
         given(service.getOrders()).willReturn(reply);
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp3).create());      // Trade 01.
-        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp3).create());      // Trade 02.
-        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp3).create());      // Trade 03.
+        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp3).build());      // Trade 01.
+        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp3).build());      // Trade 02.
+        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp3).build());      // Trade 03.
         given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;
@@ -278,13 +289,12 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     @Primary
     public PositionService positionService() {
         // Creates the mock.
-        final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
+        final PositionRulesDTO noRules = PositionRulesDTO.builder().build();
         PositionService positionService = mock(PositionService.class);
         final CurrencyPairDTO cp3 = new CurrencyPairDTO(ETH, BTC);
         final BigDecimal amount = new BigDecimal("1");
 
-        StrategyDTO strategy = new StrategyDTO();
-        strategy.setId("1");
+        StrategyDTO strategy = StrategyDTO.builder().id("1").build();
 
         // Reply 1 : 2 positions.
         PositionDTO p1 = new PositionDTO(1, strategy, cp3, amount, "O000001", noRules);

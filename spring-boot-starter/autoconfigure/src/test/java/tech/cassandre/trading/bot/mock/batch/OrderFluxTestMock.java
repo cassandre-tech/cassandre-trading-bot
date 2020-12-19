@@ -76,30 +76,30 @@ public class OrderFluxTestMock {
         // Returns three updates.
 
         // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
+        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).build();
         accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).create();
+        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).build();
         accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 03.
-        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).create());
-        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).create());
-        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).create());
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
+        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).build());
+        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).build());
+        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).build());
+        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
@@ -124,10 +124,9 @@ public class OrderFluxTestMock {
         TradeService tradeService = mock(TradeService.class);
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
-        // =========================================================================================================
-        // First reply : 3 orders.
-        StrategyDTO strategyDTO = new StrategyDTO();
-        strategyDTO.setId("1");
+        // =============================================================================================================
+        // Loading strategy.
+        StrategyDTO strategyDTO = StrategyDTO.builder().id("1").name("Test").build();
 
         // Order 000001.
         OrderDTO order01 = OrderDTO.builder()
@@ -144,7 +143,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         // Order 000002.
         OrderDTO order02 = OrderDTO.builder()
@@ -161,7 +160,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         // Order 000003.
         OrderDTO order03 = OrderDTO.builder()
@@ -178,7 +177,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         Set<OrderDTO> reply01 = new LinkedHashSet<>();
         reply01.add(order01);
@@ -205,7 +204,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         // Order 000002.
         OrderDTO order05 = OrderDTO.builder()
@@ -222,7 +221,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         // Order 000003 : the original amount changed.
         OrderDTO order06 = OrderDTO.builder()
@@ -239,7 +238,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         // Order 000004 : new order.
         OrderDTO order07 = OrderDTO.builder()
@@ -256,7 +255,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         Set<OrderDTO> reply02 = new LinkedHashSet<>();
         reply02.add(order04);
@@ -284,7 +283,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         // Order 000002 : average price changed.
         OrderDTO order09 = OrderDTO.builder()
@@ -301,7 +300,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         // Order 000003.
         OrderDTO order10 = OrderDTO.builder()
@@ -318,7 +317,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         // Order 000004 : fee changed.
         OrderDTO order11 = OrderDTO.builder()
@@ -335,7 +334,7 @@ public class OrderFluxTestMock {
                 .leverage("leverage1")
                 .limitPrice(new BigDecimal("5"))
                 .strategy(strategyDTO)
-                .create();
+                .build();
 
         Set<OrderDTO> reply03 = new LinkedHashSet<>();
         reply03.add(order08);

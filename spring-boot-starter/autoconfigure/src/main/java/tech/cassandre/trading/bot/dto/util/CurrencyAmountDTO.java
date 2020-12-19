@@ -1,5 +1,8 @@
 package tech.cassandre.trading.bot.dto.util;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+
 import java.math.BigDecimal;
 
 /**
@@ -62,6 +65,29 @@ public class CurrencyAmountDTO {
      */
     public final boolean isValueProvided() {
         return valueProvided;
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CurrencyAmountDTO that = (CurrencyAmountDTO) o;
+        return new EqualsBuilder()
+                .append(this.value, that.value)
+                .append(this.currency, that.currency)
+                .isEquals();
+    }
+
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(value)
+                .append(currency)
+                .toHashCode();
     }
 
     @Override

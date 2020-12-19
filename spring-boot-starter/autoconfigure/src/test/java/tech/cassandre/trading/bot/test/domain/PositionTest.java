@@ -234,13 +234,13 @@ public class PositionTest extends BaseTest {
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.2")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.2")).build());
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
         // =============================================================================================================
         // Creates a position with ID 6 - waiting for order DRY_ORDER_000000001.
         long positionCount = positionRepository.count();
-        PositionRulesDTO rules = PositionRulesDTO.builder().stopGainPercentage(1f).stopLossPercentage(2f).create();
+        PositionRulesDTO rules = PositionRulesDTO.builder().stopGainPercentage(1f).stopLossPercentage(2f).build();
         PositionCreationResultDTO creationResult1 = strategy.createPosition(cp1, new BigDecimal("0.0001"), rules);
         assertTrue(creationResult1.isSuccessful());
         assertEquals(6, creationResult1.getPositionId());
@@ -278,7 +278,7 @@ public class PositionTest extends BaseTest {
 
         // =============================================================================================================
         // Creates a position with ID to 7.
-        PositionCreationResultDTO creationResult2 = strategy.createPosition(cp1, new BigDecimal("0.0002"), PositionRulesDTO.builder().create());
+        PositionCreationResultDTO creationResult2 = strategy.createPosition(cp1, new BigDecimal("0.0002"), PositionRulesDTO.builder().build());
         assertTrue(creationResult2.isSuccessful());
         assertEquals("DRY_ORDER_000000002", creationResult2.getOrderId());
 
@@ -305,7 +305,7 @@ public class PositionTest extends BaseTest {
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.01")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.01")).build());
         await().untilAsserted(() -> assertEquals(1, strategy.getTickersUpdateReceived().size()));
 
         // =============================================================================================================
@@ -317,15 +317,15 @@ public class PositionTest extends BaseTest {
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000f)   // 1 000% max gain.
                         .stopLossPercentage(100f)    // 100% max lost.
-                        .create());
+                        .build());
         assertTrue(positionResult.isSuccessful());
         final long positionId = positionResult.getPositionId();
 
         // =============================================================================================================
         // Still "OPENING".
         // Two tickers arrived - min and max gain should not be set as the position is still in OPENING status.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("10")).create());
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.01")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("10")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.01")).build());
 
         // Check that the position was correctly created.
         // The corresponding order and trade will arrive in few seconds.
@@ -375,24 +375,24 @@ public class PositionTest extends BaseTest {
         await().untilAsserted(() -> assertNull(getPosition(positionId).getLatestPrice()));
 
         // First ticker arrives (500% gain) - min and max gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).build());
         await().untilAsserted(() -> assertNotNull(getPosition(positionId).getLatestPrice()));
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.06").compareTo(getPosition(positionId).getLatestPrice())));
 
         // Second ticker arrives (100% gain) - min gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.02")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.02")).build());
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.02").compareTo(getPosition(positionId).getLatestPrice())));
 
         // Third ticker arrives (200% gain) - nothing should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.03")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.03")).build());
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.03").compareTo(getPosition(positionId).getLatestPrice())));
 
         // Fourth ticker arrives (50% loss) - min gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.005")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.005")).build());
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.005").compareTo(getPosition(positionId).getLatestPrice())));
 
         // Firth ticker arrives (600% gain) - max gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.07")).create());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.07")).build());
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.07").compareTo(getPosition(positionId).getLatestPrice())));
 
         // Check lowest & highest in database.
@@ -424,7 +424,7 @@ public class PositionTest extends BaseTest {
                 .originalAmount(new BigDecimal("0.5"))
                 .currencyPair(cp1)
                 .price(new BigDecimal("1"))
-                .create());
+                .build());
         await().untilAsserted(() -> assertEquals(1, getPositionDTO(positionId).getClosingTrades().size()));
         await().untilAsserted(() -> assertEquals(12, tradeRepository.count()));
         assertEquals(CLOSING, getPositionDTO(positionId).getStatus());
@@ -436,7 +436,7 @@ public class PositionTest extends BaseTest {
                 .originalAmount(new BigDecimal("0.5"))
                 .currencyPair(cp1)
                 .price(new BigDecimal("1"))
-                .create());
+                .build());
         await().untilAsserted(() -> assertEquals(2, getPositionDTO(positionId).getClosingTrades().size()));
         await().untilAsserted(() -> assertEquals(13, tradeRepository.count()));
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(positionId).getStatus()));

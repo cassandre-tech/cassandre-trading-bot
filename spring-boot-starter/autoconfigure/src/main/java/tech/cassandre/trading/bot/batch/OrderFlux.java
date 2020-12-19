@@ -39,7 +39,6 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
 
         // Finding which order has been updated.
         tradeService.getOrders().forEach(order -> {
-            System.out.println("=> " + order);
             getLogger().debug("OrderFlux - Treating order : {}", order.getId());
             final Optional<Order> orderInDatabase = orderRepository.findById(order.getId());
             // If it does not exist or something changed, we do it.
@@ -61,7 +60,7 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
             // We set the strategy.
             valueToSave.setStrategy(order.getStrategy());
             // We add the trades we already have.
-            orderInDatabase.get().getTrades().forEach(trade -> valueToSave.getTrades().add(trade));
+            // orderInDatabase.get().getTrades().forEach(trade -> valueToSave.getTrades().add(trade));
         });
         // We save.
         orderRepository.save(valueToSave);

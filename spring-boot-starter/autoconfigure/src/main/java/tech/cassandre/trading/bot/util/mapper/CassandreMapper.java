@@ -18,6 +18,7 @@ import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
@@ -25,6 +26,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
@@ -113,7 +115,6 @@ public interface CassandreMapper {
      * @param source Ticker
      * @return TickerDTO
      */
-    @Mapping(target = "timestampAsEpochInSeconds", ignore = true)
     TickerDTO mapToTickerDTO(Ticker source);
 
     /**
@@ -185,7 +186,11 @@ public interface CassandreMapper {
      * @return String
      */
     default String mapToCurrency(CurrencyDTO source) {
-        return source.toString();
+        if (source != null) {
+            return source.toString();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -194,6 +199,7 @@ public interface CassandreMapper {
      * @param source order
      * @return OrderDTO
      */
+    @Mapping(source = "trades", target = "trades")
     OrderDTO mapToOrderDTO(tech.cassandre.trading.bot.domain.Order source);
 
     /**
@@ -210,7 +216,16 @@ public interface CassandreMapper {
      * @param source trade
      * @return tradeDRO
      */
+    @Mapping(target = "fee", source = "source")
     TradeDTO mapToTradeDTO(Trade source);
+
+    default CurrencyAmountDTO mapToCurrencyAmountDTO(Trade source) {
+        if (source.getFeeAmount() != null || source.getFeeCurrency() != null) {
+            return new CurrencyAmountDTO(source.getFeeAmount(), new CurrencyDTO(source.getFeeCurrency()));
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
 
     /**
      * Map to positionDTO.
@@ -218,7 +233,34 @@ public interface CassandreMapper {
      * @param source position
      * @return positionDTO
      */
+    @Mapping(target = "rules", source = "source")
     PositionDTO mapToPositionDTO(Position source);
+
+    default PositionRulesDTO mapToPositionRulesDTO(Position source) {
+        PositionRulesDTO rules = PositionRulesDTO.builder().build();
+        boolean stopGainRuleSet = source.getStopGainPercentageRule() != null;
+        boolean stopLossRuleSet = source.getStopLossPercentageRule() != null;
+        // Two rules set.
+        if (stopGainRuleSet && stopLossRuleSet) {
+            rules = PositionRulesDTO.builder()
+                    .stopGainPercentage(source.getStopGainPercentageRule())
+                    .stopLossPercentage(source.getStopLossPercentageRule())
+                    .build();
+        }
+        // Stop gain set.
+        if (stopGainRuleSet && !stopLossRuleSet) {
+            rules = PositionRulesDTO.builder()
+                    .stopGainPercentage(source.getStopGainPercentageRule())
+                    .build();
+        }
+        // Stop loss set.
+        if (!stopGainRuleSet && stopLossRuleSet) {
+            rules = PositionRulesDTO.builder()
+                    .stopLossPercentage(source.getStopLossPercentageRule())
+                    .build();
+        }
+        return rules;
+    }
 
     /**
      * Map a trade set to a tradeDTO hashmap.

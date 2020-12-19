@@ -136,7 +136,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .create();
+                .build();
         tickerFlux.emitValue(ticker);
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
@@ -215,7 +215,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .create();
+                .build();
         tickerFlux.emitValue(ticker);
         await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdateReceived().size()));
 
@@ -271,7 +271,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .create();
+                .build();
         tickerFlux.emitValue(ticker);
 
         // =============================================================================================================
@@ -285,7 +285,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .create();
+                .build();
         tickerFlux.emitValue(ticker);
         await().untilAsserted(() -> assertEquals(2, strategy.getLastTickers().size()));
 
@@ -318,7 +318,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .create();
+                .build();
         tickerFlux.emitValue(ticker);
 
         // =============================================================================================================
@@ -332,7 +332,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .create();
+                .build();
         tickerFlux.emitValue(ticker);
         await().untilAsserted(() -> assertEquals(2, strategy.getLastTickers().size()));
 

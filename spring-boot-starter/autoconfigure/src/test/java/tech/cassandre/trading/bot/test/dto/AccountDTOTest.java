@@ -20,21 +20,21 @@ public class AccountDTOTest {
 	@DisplayName("Check equalTo on account id & name")
 	public void checkEqualToForAccountIdAndName() {
 		// Account 1 (null).
-		AccountDTO account1 = AccountDTO.builder().id(null).name(null).balances(null).create();
+		AccountDTO account1 = AccountDTO.builder().id(null).name(null).build();
 		// Account 2.
-		AccountDTO account2 = AccountDTO.builder().id("01").name("01").balances(null).create();
+		AccountDTO account2 = AccountDTO.builder().id("01").name("01").build();
 		assertNotEquals(account2, account1);
 		assertNotEquals(account1, account2);
 		// Account 3 - Same.
-		AccountDTO account3 = AccountDTO.builder().id("01").name("01").balances(null).create();
+		AccountDTO account3 = AccountDTO.builder().id("01").name("01").build();
 		assertEquals(account2, account3);
 		assertEquals(account3, account2);
 		// Account 4 - id changed.
-		AccountDTO account4 = AccountDTO.builder().id("CHANGED").name("01").balances(null).create();
+		AccountDTO account4 = AccountDTO.builder().id("CHANGED").name("01").build();
 		assertNotEquals(account2, account4);
 		assertNotEquals(account4, account2);
 		// Account 5 - Name changed.
-		AccountDTO account5 = AccountDTO.builder().id("01").name("CHANGED").balances(null).create();
+		AccountDTO account5 = AccountDTO.builder().id("01").name("CHANGED").build();
 		assertNotEquals(account2, account5);
 		assertNotEquals(account5, account2);
 	}
@@ -45,33 +45,33 @@ public class AccountDTOTest {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
 		// Account 1 - No balances.
-		AccountDTO account1 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account1 = AccountDTO.builder().balances(balances).build();
 
 		// Account 2 - One more balance in account 1.
-		balances.put(CurrencyDTO.BTC, BalanceDTO.builder().create());
-		AccountDTO account2 = AccountDTO.builder().balances(balances).create();
+		balances.put(CurrencyDTO.BTC, BalanceDTO.builder().build());
+		AccountDTO account2 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account2);
 		assertNotEquals(account2, account1);
 
 		// Account 3 - One ETH & one BTC.
-		balances.put(CurrencyDTO.ETH, BalanceDTO.builder().create());
-		balances.put(CurrencyDTO.BTC, BalanceDTO.builder().create());
-		AccountDTO account3 = AccountDTO.builder().balances(balances).create();
+		balances.put(CurrencyDTO.ETH, BalanceDTO.builder().build());
+		balances.put(CurrencyDTO.BTC, BalanceDTO.builder().build());
+		AccountDTO account3 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 
 		// Account 4 - One BTC & one ETH (inverted).
-		balances.put(CurrencyDTO.BTC, BalanceDTO.builder().create());
-		balances.put(CurrencyDTO.ETH, BalanceDTO.builder().create());
-		AccountDTO account4 = AccountDTO.builder().balances(balances).create();
+		balances.put(CurrencyDTO.BTC, BalanceDTO.builder().build());
+		balances.put(CurrencyDTO.ETH, BalanceDTO.builder().build());
+		AccountDTO account4 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertEquals(account3, account4);
 		assertEquals(account4, account3);
 
 		// Account 5 - One BTC & one USDT (inverted).
-		balances.put(CurrencyDTO.BTC, BalanceDTO.builder().create());
-		balances.put(CurrencyDTO.USDT, BalanceDTO.builder().create());
-		AccountDTO account5 = AccountDTO.builder().balances(balances).create();
+		balances.put(CurrencyDTO.BTC, BalanceDTO.builder().build());
+		balances.put(CurrencyDTO.USDT, BalanceDTO.builder().build());
+		AccountDTO account5 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account4, account5);
 		assertNotEquals(account5, account4);
@@ -93,7 +93,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account1Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -103,10 +103,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account1Balance1);
 		balances.put(CurrencyDTO.ETH, account1Balance2);
-		AccountDTO account1 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account1 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 
 		// Account 2 - same values.
@@ -119,7 +119,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account2Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -129,10 +129,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.ETH, account2Balance1);
 		balances.put(CurrencyDTO.BTC, account2Balance2);
-		AccountDTO account2 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account2 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertEquals(account1, account1);
 		assertEquals(account2, account2);
@@ -147,7 +147,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account3Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -157,10 +157,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account3Balance2);
 		balances.put(CurrencyDTO.ETH, account3Balance1);
-		AccountDTO account3 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account3 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account3);
 		assertNotEquals(account3, account1);
@@ -175,7 +175,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account4Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -185,10 +185,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account4Balance2);
 		balances.put(CurrencyDTO.ETH, account4Balance1);
-		AccountDTO account4 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account4 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account4);
 		assertNotEquals(account4, account1);
@@ -203,7 +203,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account5Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -213,10 +213,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account5Balance2);
 		balances.put(CurrencyDTO.ETH, account5Balance1);
-		AccountDTO account5 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account5 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account5);
 		assertNotEquals(account5, account1);
@@ -231,7 +231,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account6Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -241,10 +241,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account6Balance2);
 		balances.put(CurrencyDTO.ETH, account6Balance1);
-		AccountDTO account6 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account6 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account6);
 		assertNotEquals(account6, account1);
@@ -259,7 +259,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account7Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -269,10 +269,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account7Balance2);
 		balances.put(CurrencyDTO.ETH, account7Balance1);
-		AccountDTO account7 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account7 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account7);
 		assertNotEquals(account7, account1);
@@ -287,7 +287,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("11"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account8Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -297,10 +297,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account8Balance2);
 		balances.put(CurrencyDTO.ETH, account8Balance1);
-		AccountDTO account8 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account8 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account8);
 		assertNotEquals(account8, account1);
@@ -315,7 +315,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("11"))
 				.withdrawing(new BigDecimal("1"))
-				.create();
+				.build();
 		BalanceDTO account9Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -325,10 +325,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account9Balance1);
 		balances.put(CurrencyDTO.ETH, account9Balance2);
-		AccountDTO account9 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account9 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account9);
 		assertNotEquals(account9, account1);
@@ -343,7 +343,7 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("1"))
 				.total(new BigDecimal("1"))
 				.withdrawing(new BigDecimal("11"))
-				.create();
+				.build();
 		BalanceDTO account10Balance2 = BalanceDTO.builder()
 				.available(new BigDecimal("2"))
 				.borrowed(new BigDecimal("2"))
@@ -353,10 +353,10 @@ public class AccountDTOTest {
 				.loaned(new BigDecimal("2"))
 				.total(new BigDecimal("2"))
 				.withdrawing(new BigDecimal("2"))
-				.create();
+				.build();
 		balances.put(CurrencyDTO.BTC, account10Balance1);
 		balances.put(CurrencyDTO.ETH, account10Balance2);
-		AccountDTO account10 = AccountDTO.builder().balances(balances).create();
+		AccountDTO account10 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertNotEquals(account1, account10);
 		assertNotEquals(account10, account1);

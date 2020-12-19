@@ -20,6 +20,8 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -96,7 +98,7 @@ public class BaseTest {
                 .originalAmount(amount)
                 .currencyPair(currencyPair)
                 .status(PENDING_NEW)
-                .create();
+                .build();
     }
 
     /**
@@ -112,24 +114,41 @@ public class BaseTest {
                 .timestamp(getRandomDate())
                 .bid(bid)
                 .last(bid)
-                .create());
+                .build());
     }
 
     /**
      * Util method to return a fake ticker with date.
      *
-     * @param timestamp timestamp
-     * @param cp        currency pair
-     * @param bid       bid price
+     * @param date date
+     * @param cp   currency pair
+     * @param bid  bid price
      * @return ticket
      */
-    protected static Optional<TickerDTO> getFakeTicker(final Date timestamp, final CurrencyPairDTO cp, final BigDecimal bid) {
+    protected static Optional<TickerDTO> getFakeTicker(final ZonedDateTime date, final CurrencyPairDTO cp, final BigDecimal bid) {
         return Optional.of(TickerDTO.builder()
                 .currencyPair(cp)
-                .timestamp(timestamp)
+                .timestamp(date)
                 .bid(bid)
                 .last(bid)
-                .create());
+                .build());
+    }
+
+    /**
+     * Util method to return a fake ticker with date.
+     *
+     * @param date date with format dd-MM-yyyy
+     * @param cp   currency pair
+     * @param bid  bid price
+     * @return ticket
+     */
+    protected static Optional<TickerDTO> getFakeTicker(final String date, final CurrencyPairDTO cp, final BigDecimal bid) {
+        return Optional.of(TickerDTO.builder()
+                .currencyPair(cp)
+                .timestamp(createZonedDateTime(date))
+                .bid(bid)
+                .last(bid)
+                .build());
     }
 
     /**
@@ -137,7 +156,7 @@ public class BaseTest {
      *
      * @return random date
      */
-    public static Date getRandomDate() {
+    public static ZonedDateTime getRandomDate() {
         long aDay = TimeUnit.DAYS.toMillis(1);
         long now = new Date().getTime();
         Date hundredYearsAgo = new Date(now - aDay * 365 * 100);
@@ -147,7 +166,7 @@ public class BaseTest {
         long randomMillisSinceEpoch = ThreadLocalRandom
                 .current()
                 .nextLong(startMillis, endMillis);
-        return new Date(randomMillisSinceEpoch);
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(randomMillisSinceEpoch), ZoneId.systemDefault());
     }
 
     /**
@@ -167,8 +186,8 @@ public class BaseTest {
      * @param day day
      * @return date
      */
-    protected static Date createDate(final int day) {
-        return Date.from(ZonedDateTime.of(2020, 1, day, 9, 0, 0, 0, ZoneId.systemDefault()).toInstant());
+    protected static ZonedDateTime createDate(final int day) {
+        return ZonedDateTime.of(2020, 1, day, 9, 0, 0, 0, ZoneId.systemDefault());
     }
 
 
@@ -178,7 +197,7 @@ public class BaseTest {
      * @param date date with format dd-MM-yyyy
      * @return ZonedDateTime
      */
-    protected ZonedDateTime createZonedDateTime(final String date) {
+    protected static ZonedDateTime createZonedDateTime(final String date) {
         LocalDateTime ldt = LocalDateTime.parse(date + " 00:00", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
         return ldt.atZone(ZoneId.systemDefault());
     }

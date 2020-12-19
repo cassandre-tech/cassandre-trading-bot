@@ -1,134 +1,55 @@
 package tech.cassandre.trading.bot.dto.user;
 
-import java.time.ZoneId;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Singular;
+import lombok.Value;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static lombok.AccessLevel.PRIVATE;
 
 /**
  * DTO representing user information.
  */
-public final class UserDTO {
+@Value
+@Builder
+@AllArgsConstructor(access = PRIVATE)
+@SuppressWarnings("checkstyle:VisibilityModifier")
+public class UserDTO {
 
     /** User ID (usually username). */
-    private final String id;
+    String id;
 
     /** The accounts owned by the user. */
-    private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
+    @Singular
+    Map<String, AccountDTO> accounts;
 
     /** Information timestamp. */
-    private final ZonedDateTime timestamp;
+    ZonedDateTime timestamp;
 
-    /**
-     * Constructor.
-     *
-     * @param builder Builder.
-     */
-    protected UserDTO(final UserDTO.Builder builder) {
-        this.id = builder.id;
-        if (builder.accounts != null) {
-            this.accounts.putAll(builder.accounts);
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
         }
-        if (builder.timestamp != null) {
-            timestamp = ZonedDateTime.ofInstant(builder.timestamp.toInstant(), ZoneId.systemDefault());
-        } else {
-            timestamp = ZonedDateTime.now();
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
+        final UserDTO that = (UserDTO) o;
+        return new EqualsBuilder()
+                .append(this.id, that.id)
+                .isEquals();
     }
 
-    /**
-     * Returns builder.
-     *
-     * @return builder
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Getter for id.
-     *
-     * @return id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Getter for accounts.
-     *
-     * @return accounts
-     */
-    public Map<String, AccountDTO> getAccounts() {
-        return accounts;
-    }
-
-    /**
-     * Getter for timestamp.
-     *
-     * @return timestamp
-     */
-    public ZonedDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    /**
-     * Builder.
-     */
-    public static final class Builder {
-
-        /** User ID (usually username). */
-        private String id;
-
-        /** The accounts owned by this user. */
-        private Map<String, AccountDTO> accounts = new LinkedHashMap<>();
-
-        /** Information timestamp. */
-        private Date timestamp;
-
-        /**
-         * Id.
-         *
-         * @param newId id.
-         * @return builder
-         */
-        public Builder setId(final String newId) {
-            this.id = newId;
-            return this;
-        }
-
-        /**
-         * Accounts.
-         *
-         * @param newAccounts accounts
-         * @return builder
-         */
-        public Builder setAccounts(final Map<String, AccountDTO> newAccounts) {
-            this.accounts = newAccounts;
-            return this;
-        }
-
-        /**
-         * Timestamp.
-         *
-         * @param newTimestamp timestamp
-         * @return builder
-         */
-        public Builder timestamp(final Date newTimestamp) {
-            this.timestamp = newTimestamp;
-            return this;
-        }
-
-        /**
-         * Creates user.
-         *
-         * @return user
-         */
-        public UserDTO create() {
-            return new UserDTO(this);
-        }
-
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .toHashCode();
     }
 
 }

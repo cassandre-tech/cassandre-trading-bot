@@ -1,5 +1,9 @@
 package tech.cassandre.trading.bot.dto.position;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -8,6 +12,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.util.exception.PositionException;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,7 +21,6 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,6 +30,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
+import static lombok.AccessLevel.PRIVATE;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING_FAILURE;
@@ -40,13 +45,16 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  * DTO representing a position.
  * A position is the amount of a security, commodity or currency which is owned by an individual, dealer, institution, or other fiscal entity.
  */
+@Getter
+@Builder
+@AllArgsConstructor(access = PRIVATE)
 public class PositionDTO {
 
     /** An identifier that uniquely identifies the position. */
     private final long id;
 
     /** Position status. */
-    private PositionStatusDTO status = OPENING;
+    private PositionStatusDTO status;
 
     /** Currency pair. */
     private final CurrencyPairDTO currencyPair;
@@ -97,6 +105,7 @@ public class PositionDTO {
                        final BigDecimal newAmount,
                        final OrderDTO newOpenOrder,
                        final PositionRulesDTO newRules) {
+        this.status = OPENING;
         this.id = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
@@ -121,6 +130,7 @@ public class PositionDTO {
                        final BigDecimal newAmount,
                        final String newOpenOrderId,
                        final PositionRulesDTO newRules) {
+        this.status = OPENING;
         this.id = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
@@ -128,62 +138,12 @@ public class PositionDTO {
         // We create a temporary opening order.
         openingOrder = OrderDTO.builder()
                 .id(newOpenOrderId)
-                .timestamp(ZonedDateTime.now())
                 .type(BID)
                 .currencyPair(currencyPair)
                 .status(PENDING_NEW)
-                .create();
+                .timestamp(ZonedDateTime.now())
+                .build();
         this.rules = newRules;
-    }
-
-    /**
-     * Builder used for database restore.
-     *
-     * @param builder builder
-     */
-    protected PositionDTO(final PositionDTO.Builder builder) {
-        this.id = builder.id;
-        this.status = builder.status;
-        this.currencyPair = builder.currencyPair;
-        this.amount = builder.amount;
-        PositionRulesDTO newRules = PositionRulesDTO.builder().create();
-        boolean stopGainRuleSet = builder.stopGainPercentageRule != null;
-        boolean stopLossRuleSet = builder.stopLossPercentageRule != null;
-        // Two rules set.
-        if (stopGainRuleSet && stopLossRuleSet) {
-            newRules = PositionRulesDTO.builder()
-                    .stopGainPercentage(builder.stopGainPercentageRule)
-                    .stopLossPercentage(builder.stopLossPercentageRule)
-                    .create();
-        }
-        // Stop gain set.
-        if (stopGainRuleSet && !stopLossRuleSet) {
-            newRules = PositionRulesDTO.builder()
-                    .stopGainPercentage(builder.stopGainPercentageRule)
-                    .create();
-        }
-        // Stop loss set.
-        if (!stopGainRuleSet && stopLossRuleSet) {
-            newRules = PositionRulesDTO.builder()
-                    .stopLossPercentage(builder.stopLossPercentageRule)
-                    .create();
-        }
-        this.rules = newRules;
-        this.openingOrder = builder.openingOrder;
-        this.closingOrder = builder.closingOrder;
-        this.lowestPrice = builder.lowestPrice;
-        this.highestPrice = builder.highestPrice;
-        this.latestPrice = builder.latestPrice;
-        this.strategy = builder.strategy;
-    }
-
-    /**
-     * Returns builder.
-     *
-     * @return builder
-     */
-    public static Builder builder() {
-        return new Builder();
     }
 
     /**
@@ -229,7 +189,7 @@ public class PositionDTO {
                 .type(ASK)
                 .currencyPair(currencyPair)
                 .status(PENDING_NEW)
-                .create();
+                .build();
     }
 
     /**
@@ -429,69 +389,6 @@ public class PositionDTO {
     }
 
     /**
-     * Getter for id.
-     *
-     * @return id
-     */
-    public final long getId() {
-        return id;
-    }
-
-    /**
-     * Getter for status.
-     *
-     * @return status
-     */
-    public final PositionStatusDTO getStatus() {
-        return status;
-    }
-
-    /**
-     * Get currency pair.
-     *
-     * @return currency pair
-     */
-    public final CurrencyPairDTO getCurrencyPair() {
-        return currencyPair;
-    }
-
-    /**
-     * Getter amount.
-     *
-     * @return amount
-     */
-    public final BigDecimal getAmount() {
-        return amount;
-    }
-
-    /**
-     * Getter rules.
-     *
-     * @return rules
-     */
-    public final PositionRulesDTO getRules() {
-        return rules;
-    }
-
-    /**
-     * Getter openingOrder.
-     *
-     * @return openingOrder
-     */
-    public final OrderDTO getOpeningOrder() {
-        return openingOrder;
-    }
-
-    /**
-     * Getter closingOrder.
-     *
-     * @return closingOrder
-     */
-    public final OrderDTO getClosingOrder() {
-        return closingOrder;
-    }
-
-    /**
      * Returns opening order id.
      *
      * @return opening order id
@@ -587,43 +484,6 @@ public class PositionDTO {
     }
 
     /**
-     * Getter highestPrice.
-     *
-     * @return highestPrice
-     */
-    public final BigDecimal getHighestPrice() {
-        return highestPrice;
-    }
-
-    /**
-     * Getter latestPrice.
-     *
-     * @return latestPrice
-     */
-    public final BigDecimal getLatestPrice() {
-        return latestPrice;
-    }
-
-    /**
-     * Getter strategy.
-     *
-     * @return strategy
-     */
-    public final StrategyDTO getStrategy() {
-        return strategy;
-    }
-
-    /**
-     * Getter last calculated gain from the last ticker received.
-     *
-     * @return lastCalculatedGain
-     */
-    @Deprecated(since = "2.4", forRemoval = true)
-    public final Optional<GainDTO> getLastCalculatedGain() {
-        return calculateGainFromPrice(latestPrice);
-    }
-
-    /**
      * Getter latestCalculatedGain.
      *
      * @return latestCalculatedGain
@@ -668,17 +528,35 @@ public class PositionDTO {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PositionDTO that = (PositionDTO) o;
-        return id == that.id && status == that.status;
+        final PositionDTO that = (PositionDTO) o;
+        return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.status, that.status)
+                .append(this.currencyPair, that.currencyPair)
+                .append(this.amount, that.amount)
+                .append(this.rules, that.rules)
+                .append(this.openingOrder, that.closingOrder)
+                .append(this.lowestPrice, that.lowestPrice)
+                .append(this.highestPrice, that.highestPrice)
+                .append(this.latestPrice, that.latestPrice)
+                .append(this.strategy.getId(), that.strategy.getId())
+                .isEquals();
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(id);
+        return new HashCodeBuilder()
+                .append(id)
+                .append(strategy.getId())
+                .toHashCode();
     }
 
-    @Override
-    public final String toString() {
+    /**
+     * Get position description.
+     *
+     * @return description
+     */
+    public final String description() {
         try {
             String value = "Position n°" + id + " (";
             // Rules.
@@ -726,191 +604,6 @@ public class PositionDTO {
         } catch (Exception e) {
             return "Position " + getId();
         }
-    }
-
-    /**
-     * Builder.
-     */
-    public static final class Builder {
-
-        /** An identifier that uniquely identifies the position. */
-        private long id;
-
-        /** Position status. */
-        private PositionStatusDTO status = OPENING;
-
-        /** Currency pair. */
-        private CurrencyPairDTO currencyPair;
-
-        /** Amount ordered. */
-        private BigDecimal amount;
-
-        /** Stop gain percentage rule. */
-        private Float stopGainPercentageRule;
-
-        /** Stop loss percentage rule. */
-        private Float stopLossPercentageRule;
-
-        /** The order that opened the position. */
-        private OrderDTO openingOrder;
-
-        /** The order that closed the position. */
-        private OrderDTO closingOrder;
-
-        /** Lowest price for this position. */
-        private BigDecimal lowestPrice;
-
-        /** Highest price for this position. */
-        private BigDecimal highestPrice;
-
-        /** Latest price for this position. */
-        private BigDecimal latestPrice;
-
-        /** Strategy. */
-        private StrategyDTO strategy;
-
-        /**
-         * id.
-         *
-         * @param newId type
-         * @return builder
-         */
-        public Builder id(final long newId) {
-            this.id = newId;
-            return this;
-        }
-
-        /**
-         * status.
-         *
-         * @param newStatus status
-         * @return builder
-         */
-        public Builder status(final PositionStatusDTO newStatus) {
-            this.status = newStatus;
-            return this;
-        }
-
-        /**
-         * currency pair.
-         *
-         * @param newCurrencyPair currency pair
-         * @return builder
-         */
-        public Builder currencyPair(final CurrencyPairDTO newCurrencyPair) {
-            this.currencyPair = newCurrencyPair;
-            return this;
-        }
-
-        /**
-         * amount.
-         *
-         * @param newAmount amount
-         * @return builder
-         */
-        public Builder amount(final BigDecimal newAmount) {
-            this.amount = newAmount;
-            return this;
-        }
-
-        /**
-         * stopGainPercentageRule.
-         *
-         * @param newStopGainPercentageRule newStopGainPercentageRule
-         * @return builder
-         */
-        public Builder stopGainPercentageRule(final Float newStopGainPercentageRule) {
-            this.stopGainPercentageRule = newStopGainPercentageRule;
-            return this;
-        }
-
-        /**
-         * stopLossPercentageRule.
-         *
-         * @param newStopLossPercentageRule stopLossPercentageRule
-         * @return builder
-         */
-        public Builder stopLossPercentageRule(final Float newStopLossPercentageRule) {
-            this.stopLossPercentageRule = newStopLossPercentageRule;
-            return this;
-        }
-
-        /**
-         * openingOrder.
-         *
-         * @param newOpeningOrder openingOrder
-         * @return builder
-         */
-        public Builder openingOrder(final OrderDTO newOpeningOrder) {
-            this.openingOrder = newOpeningOrder;
-            return this;
-        }
-
-        /**
-         * closingOrder.
-         *
-         * @param newClosingOrder closingOrder
-         * @return builder
-         */
-        public Builder closingOrder(final OrderDTO newClosingOrder) {
-            this.closingOrder = newClosingOrder;
-            return this;
-        }
-
-        /**
-         * lowestPrice.
-         *
-         * @param newLowestPrice lowestPrice
-         * @return builder
-         */
-        public Builder lowestPrice(final BigDecimal newLowestPrice) {
-            this.lowestPrice = newLowestPrice;
-            return this;
-        }
-
-        /**
-         * highestPrice.
-         *
-         * @param newHighestPrice highestPrice
-         * @return builder
-         */
-        public Builder highestPrice(final BigDecimal newHighestPrice) {
-            this.highestPrice = newHighestPrice;
-            return this;
-        }
-
-        /**
-         * latestPrice.
-         *
-         * @param newLatestPrice latestPrice
-         * @return builder
-         */
-        public Builder latestPrice(final BigDecimal newLatestPrice) {
-            // TODO Why do i have a warning in here ???
-            this.latestPrice = newLatestPrice;
-            return this;
-        }
-
-        /**
-         * Strategy.
-         *
-         * @param newStrategy strategy
-         * @return builder
-         */
-        public Builder strategy(final StrategyDTO newStrategy) {
-            this.strategy = newStrategy;
-            return this;
-        }
-
-        /**
-         * Creates order.
-         *
-         * @return order
-         */
-        public PositionDTO create() {
-            return new PositionDTO(this);
-        }
-
     }
 
 }

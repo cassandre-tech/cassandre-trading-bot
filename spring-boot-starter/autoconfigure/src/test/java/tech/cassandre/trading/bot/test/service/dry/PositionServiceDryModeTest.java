@@ -73,7 +73,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // As the order is validated and the trade arrives, the position should be opened.
         final PositionCreationResultDTO position1Result = strategy.createPosition(cp1,
                 new BigDecimal("0.0001"),
-                PositionRulesDTO.builder().stopGainPercentage(100f).create());
+                PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());
         assertEquals("DRY_ORDER_000000001", position1Result.getOrderId());
         final long position1Id = position1Result.getPositionId();
@@ -92,7 +92,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // As the order is validated and the trade arrives, the position should be opened.
         final PositionCreationResultDTO position2Result = strategy.createPosition(cp2,
                 new BigDecimal("0.0002"),
-                PositionRulesDTO.builder().stopLossPercentage(20f).create());
+                PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(position2Result.isSuccessful());
         assertEquals("DRY_ORDER_000000002", position2Result.getOrderId());
         final long position2Id = position2Result.getPositionId();

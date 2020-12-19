@@ -6,14 +6,20 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.auditing.DateTimeProvider;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.parameters.DatabaseParameters;
+
+import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * Database autoconfiguration.
  */
 @Configuration
+@EnableJpaAuditing(dateTimeProviderRef = "auditingDateTimeProvider")
 @EntityScan(basePackages = "tech.cassandre.trading.bot.domain")
 @EnableJpaRepositories(basePackages = "tech.cassandre.trading.bot.repository")
 @EnableConfigurationProperties(DatabaseParameters.class)
@@ -51,6 +57,16 @@ public class DatabaseAutoConfiguration extends BaseConfiguration {
         p.setUsername(databaseParameters.getDatasource().getUsername());
         p.setPassword(databaseParameters.getDatasource().getPassword());
         return p;
+    }
+
+    /**
+     * Makes ZonedDateTime compatible with auditing fields.
+     *
+     * @return DateTimeProvider
+     */
+    @Bean
+    public DateTimeProvider auditingDateTimeProvider() {
+        return () -> Optional.of(ZonedDateTime.now());
     }
 
 }

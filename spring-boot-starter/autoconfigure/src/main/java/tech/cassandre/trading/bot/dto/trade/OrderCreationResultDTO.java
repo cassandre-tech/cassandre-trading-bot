@@ -50,7 +50,7 @@ public final class OrderCreationResultDTO {
                 .id(newOrderId)
                 .timestamp(ZonedDateTime.now())
                 .status(PENDING_NEW)
-                .create();
+                .build();
         this.errorMessage = null;
         this.exception = null;
     }

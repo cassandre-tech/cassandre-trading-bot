@@ -79,8 +79,7 @@ public class PositionFluxTestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        StrategyDTO strategy = new StrategyDTO();
-        strategy.setId("1");
+        StrategyDTO strategy = StrategyDTO.builder().id("1").build();
 
         // Position 1 creation reply (ORDER00010) - used for max and min gain test.
         given(service.createBuyMarketOrder(strategy, cp1, new BigDecimal("10")))

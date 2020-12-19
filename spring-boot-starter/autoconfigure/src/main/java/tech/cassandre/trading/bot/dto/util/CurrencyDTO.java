@@ -1203,7 +1203,7 @@ public final class CurrencyDTO {
          *
          * @return wallet
          */
-        public CurrencyDTO create() {
+        public CurrencyDTO build() {
             return new CurrencyDTO(this);
         }
 

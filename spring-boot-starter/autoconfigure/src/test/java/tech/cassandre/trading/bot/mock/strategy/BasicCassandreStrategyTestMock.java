@@ -98,36 +98,36 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
 
         // =============================================================================================================
         // Account retrieved by configuration.
-        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").create();
+        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").build();
         accounts.put("trade", tempAccount);
-        UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO tempUser = UserDTO.builder().accounts(accounts).build();
         accounts.clear();
 
         // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).create();
+        AccountDTO account01 = AccountDTO.builder().id("01").balances(balances).build();
         accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
+        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).create();
+        AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).build();
         accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
         // Account 03.
-        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).create());
-        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).create());
-        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).create());
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
+        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).build());
+        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).build());
+        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).build());
+        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
+        UserDTO user03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
@@ -160,16 +160,16 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
 
         // Returns three values for getOpenOrders.
         Set<OrderDTO> replyGetOpenOrders = new LinkedHashSet<>();
-        replyGetOpenOrders.add(OrderDTO.builder().id("000001").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-01-2020")).create());   // Order 01.
-        replyGetOpenOrders.add(OrderDTO.builder().id("000002").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-02-2020")).create());   // Order 02.
-        replyGetOpenOrders.add(OrderDTO.builder().id("000003").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-03-2020")).create());   // Order 03.
+        replyGetOpenOrders.add(OrderDTO.builder().id("000001").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-01-2020")).build());   // Order 01.
+        replyGetOpenOrders.add(OrderDTO.builder().id("000002").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-02-2020")).build());   // Order 02.
+        replyGetOpenOrders.add(OrderDTO.builder().id("000003").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-03-2020")).build());   // Order 03.
         given(service.getOrders()).willReturn(replyGetOpenOrders);
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-01-2020")).create());      // Trade 01.
-        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-02-2020")).create());      // Trade 02.
-        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-03-2020")).create());      // Trade 03.
+        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-01-2020")).build());      // Trade 01.
+        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-02-2020")).build());      // Trade 02.
+        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-03-2020")).build());      // Trade 03.
         given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;
@@ -179,11 +179,12 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
     @Bean
     @Primary
     public PositionService positionService() {
-        StrategyDTO strategy = new StrategyDTO();
-        strategy.setId("1");
+        // =============================================================================================================
+        // Loading strategy.
+        StrategyDTO strategy = StrategyDTO.builder().id("1").build();
 
         // Creates the mock.
-        final PositionRulesDTO noRules = PositionRulesDTO.builder().create();
+        final PositionRulesDTO noRules = PositionRulesDTO.builder().build();
         PositionService positionService = mock(PositionService.class);
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
         final BigDecimal amount = new BigDecimal("1");

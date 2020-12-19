@@ -1,5 +1,8 @@
 package tech.cassandre.trading.bot.dto.position;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+
 import java.text.DecimalFormat;
 
 /**
@@ -81,6 +84,33 @@ public class PositionRulesDTO {
     }
 
     @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PositionRulesDTO that = (PositionRulesDTO) o;
+        return new EqualsBuilder()
+                .append(this.stopGainPercentageSet, that.stopGainPercentageSet)
+                .append(this.stopLossPercentageSet, that.stopGainPercentageSet)
+                .append(this.stopGainPercentage, that.stopGainPercentage)
+                .append(this.stopLossPercentage, that.stopLossPercentage)
+                .isEquals();
+    }
+
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(stopGainPercentageSet)
+                .append(stopLossPercentageSet)
+                .append(stopGainPercentage)
+                .append(stopLossPercentage)
+                .toHashCode();
+    }
+
+    @Override
     public final String toString() {
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
@@ -144,7 +174,7 @@ public class PositionRulesDTO {
          *
          * @return position rules
          */
-        public PositionRulesDTO create() {
+        public PositionRulesDTO build() {
             return new PositionRulesDTO(this);
         }
 

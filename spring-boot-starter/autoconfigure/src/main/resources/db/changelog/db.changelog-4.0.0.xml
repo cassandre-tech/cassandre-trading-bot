@@ -7,6 +7,24 @@
         <!-- ======================================================================================================= -->
         <!-- Tables -->
 
+        <!-- Exchange accounts -->
+        <createTable tableName="EXCHANGE_ACCOUNTS">
+            <column name="ID" type="BIGINT"
+                    remarks="An identifier set by the exchange that uniquely identifies the exchange account">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="EXCHANGE_ACCOUNTS_PRIMARY_KEY"/>
+            </column>
+            <column name="EXCHANGE_NAME" type="VARCHAR(255)"
+                    remarks="Exchange name"/>
+            <column name="EXCHANGE_ACCOUNT" type="VARCHAR(255)"
+                    remarks="Exchange account"/>
+        </createTable>
+        <!-- Auto increment on ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="EXCHANGE_ACCOUNTS"/>
+
         <!-- Strategies -->
         <createTable tableName="STRATEGIES">
             <column name="ID" type="VARCHAR(255)"
