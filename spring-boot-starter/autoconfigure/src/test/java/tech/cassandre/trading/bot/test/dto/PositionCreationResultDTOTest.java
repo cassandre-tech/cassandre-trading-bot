@@ -3,6 +3,8 @@ package tech.cassandre.trading.bot.test.dto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,10 +16,12 @@ public class PositionCreationResultDTOTest {
     @Test
     @DisplayName("Check successful position creation")
     public void checkSuccessfulPositionCreation() {
-        final PositionCreationResultDTO p = new PositionCreationResultDTO(1, "2");
-        assertEquals(1, p.getPositionId());
-        assertEquals("2", p.getOrderId());
-        assertTrue(p.isSuccessful());
+        OrderDTO o = OrderDTO.builder().id("2").build();
+        PositionDTO p = PositionDTO.builder().id(1).openingOrder(o).build();
+        final PositionCreationResultDTO result = new PositionCreationResultDTO(p);
+        assertEquals(1, result.getPosition().getId());
+        assertEquals("2", result.getPosition().getOpeningOrder().getId());
+        assertTrue(result.isSuccessful());
     }
 
     @Test

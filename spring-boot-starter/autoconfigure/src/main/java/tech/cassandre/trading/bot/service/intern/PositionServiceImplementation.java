@@ -111,7 +111,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // =========================================================================================================
             // Creates the result.
             positionFlux.emitValue(p);
-            return new PositionCreationResultDTO(p.getId(), orderCreationResult.getOrder().getId());
+            return new PositionCreationResultDTO(p);
         } else {
             getLogger().error("PositionService - Position creation failure : {}", orderCreationResult.getErrorMessage());
             // If it doesn't work, returns the error.

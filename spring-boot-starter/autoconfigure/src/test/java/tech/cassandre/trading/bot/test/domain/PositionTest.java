@@ -243,8 +243,8 @@ public class PositionTest extends BaseTest {
         PositionRulesDTO rules = PositionRulesDTO.builder().stopGainPercentage(1f).stopLossPercentage(2f).build();
         PositionCreationResultDTO creationResult1 = strategy.createPosition(cp1, new BigDecimal("0.0001"), rules);
         assertTrue(creationResult1.isSuccessful());
-        assertEquals(6, creationResult1.getPositionId());
-        assertEquals("DRY_ORDER_000000001", creationResult1.getOrderId());
+        assertEquals(6, creationResult1.getPosition().getId());
+        assertEquals("DRY_ORDER_000000001", creationResult1.getPosition().getOpeningOrder().getId());
 
         // Check that the position was correctly created.
         // The corresponding order and trade will arrive in few seconds.
@@ -280,7 +280,7 @@ public class PositionTest extends BaseTest {
         // Creates a position with ID to 7.
         PositionCreationResultDTO creationResult2 = strategy.createPosition(cp1, new BigDecimal("0.0002"), PositionRulesDTO.builder().build());
         assertTrue(creationResult2.isSuccessful());
-        assertEquals("DRY_ORDER_000000002", creationResult2.getOrderId());
+        assertEquals("DRY_ORDER_000000002", creationResult2.getPosition().getOpeningOrder().getId());
 
         // Check the created position in database.
         await().untilAsserted(() -> assertEquals(positionCount + 2, positionRepository.count()));
@@ -319,7 +319,7 @@ public class PositionTest extends BaseTest {
                         .stopLossPercentage(100f)    // 100% max lost.
                         .build());
         assertTrue(positionResult.isSuccessful());
-        final long positionId = positionResult.getPositionId();
+        final long positionId = positionResult.getPosition().getId();
 
         // =============================================================================================================
         // Still "OPENING".

@@ -88,8 +88,8 @@ public class PositionFluxTest extends BaseTest {
                         .stopGainPercentage(1000f)   // 1 000% max gain.
                         .stopLossPercentage(100f)    // 100% max lost.
                         .build());
-        assertEquals("ORDER00010", position1Result.getOrderId());
-        long position1Id = position1Result.getPositionId();
+        assertEquals("ORDER00010", position1Result.getPosition().getOpeningOrder().getId());
+        long position1Id = position1Result.getPosition().getId();
         int positionStatusUpdateIndex = 0;
         int positionUpdateIndex = 0;
 
@@ -139,8 +139,8 @@ public class PositionFluxTest extends BaseTest {
                         .stopGainPercentage(10000000f)
                         .stopLossPercentage(10000000f)
                         .build());
-        assertEquals("ORDER00020", position2Result.getOrderId());
-        long position2Id = position2Result.getPositionId();
+        assertEquals("ORDER00020", position2Result.getPosition().getOpeningOrder().getId());
+        long position2Id = position2Result.getPosition().getId();
         positionStatusUpdateIndex++;
         positionUpdateIndex++;
 

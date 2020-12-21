@@ -91,8 +91,8 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
-        assertEquals(1, p1.getPositionId());
-        assertEquals("ORDER00010", p1.getOrderId());
+        assertEquals(1, p1.getPosition().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -103,8 +103,8 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(p2.isSuccessful());
-        assertEquals(2, p2.getPositionId());
-        assertEquals("ORDER00020", p2.getOrderId());
+        assertEquals(2, p2.getPosition().getId());
+        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getId());
         assertNull(p2.getErrorMessage());
         assertNull(p2.getException());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -115,8 +115,7 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0003"),
                 PositionRulesDTO.builder().stopGainPercentage(30f).stopLossPercentage(30f).build());
         assertFalse(p3.isSuccessful());
-        assertNull(p3.getPositionId());
-        assertNull(p3.getOrderId());
+        assertNull(p3.getPosition());
         assertEquals("Error message", p3.getErrorMessage());
         assertEquals("Error exception", p3.getException().getMessage());
         assertEquals(2, positionService.getPositions().size());
@@ -134,13 +133,13 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
-        assertEquals(1, p1.getPositionId());
-        assertEquals("ORDER00010", p1.getOrderId());
+        assertEquals(1, p1.getPosition().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
-        long position1Id = p1.getPositionId();
+        long position1Id = p1.getPosition().getId();
 
         // We should receive an order update (created by cassandre).
         orderFlux.emitValue(strategy.getOrderById("ORDER00010").get());
@@ -154,13 +153,13 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(p2.isSuccessful());
-        assertEquals(2, p2.getPositionId());
-        assertEquals("ORDER00020", p2.getOrderId());
+        assertEquals(2, p2.getPosition().getId());
+        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getId());
         assertNull(p2.getErrorMessage());
         assertNull(p2.getException());
         assertTrue(positionService.getPositionById(2).isPresent());
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
-        long position2Id = p2.getPositionId();
+        long position2Id = p2.getPosition().getId();
 
         // Position 1.
         Optional<PositionDTO> position1 = strategy.getPositionById(position1Id);
@@ -309,13 +308,13 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
-        assertEquals(1, p1.getPositionId());
-        assertEquals("ORDER00010", p1.getOrderId());
+        assertEquals(1, p1.getPosition().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
-        long position1Id = p1.getPositionId();
+        long position1Id = p1.getPosition().getId();
 
         // Position 1.
         Optional<PositionDTO> position1 = strategy.getPositionById(position1Id);
@@ -358,13 +357,13 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
-        assertEquals(1, p1.getPositionId());
-        assertEquals("ORDER00010", p1.getOrderId());
+        assertEquals(1, p1.getPosition().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
-        long position1Id = p1.getPositionId();
+        long position1Id = p1.getPosition().getId();
 
         // Position 1.
         Optional<PositionDTO> position1 = strategy.getPositionById(position1Id);
@@ -446,7 +445,7 @@ public class PositionServiceTest extends BaseTest {
         final PositionCreationResultDTO p1 = strategy.createPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
-        assertEquals("ORDER00010", p1.getOrderId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
 
@@ -454,7 +453,7 @@ public class PositionServiceTest extends BaseTest {
         final PositionCreationResultDTO p2 = strategy.createPosition(cp2,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
-        assertEquals("ORDER00020", p2.getOrderId());
+        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getId());
         assertTrue(positionService.getPositionById(2).isPresent());
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
@@ -477,8 +476,8 @@ public class PositionServiceTest extends BaseTest {
         final PositionCreationResultDTO creationResult1 = strategy.createPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
-        final Long position1Id = creationResult1.getPositionId();
-        assertEquals("ORDER00010", creationResult1.getOrderId());
+        final Long position1Id = creationResult1.getPosition().getId();
+        assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getId());
 
         // The open trade arrives, change the status to OPENED and set the price.
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
@@ -541,7 +540,7 @@ public class PositionServiceTest extends BaseTest {
                         .stopGainPercentage(1000f)   // 1 000% max gain.
                         .stopLossPercentage(100f)    // 100% max lost.
                         .build());
-        final Long position1Id = creationResult1.getPositionId();
+        final Long position1Id = creationResult1.getPosition().getId();
 
         // Two tickers arrived - min and max gain should not be set.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).build());

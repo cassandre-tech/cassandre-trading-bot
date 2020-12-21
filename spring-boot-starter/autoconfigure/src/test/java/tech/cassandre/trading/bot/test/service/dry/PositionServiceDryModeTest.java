@@ -75,8 +75,8 @@ public class PositionServiceDryModeTest extends BaseTest {
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());
-        assertEquals("DRY_ORDER_000000001", position1Result.getOrderId());
-        final long position1Id = position1Result.getPositionId();
+        assertEquals("DRY_ORDER_000000001", position1Result.getPosition().getOpeningOrder().getId());
+        final long position1Id = position1Result.getPosition().getId();
 
         // After position creation, its status is OPENING
         // Few seconds after, order and trade will arrive and status will be OPENED.
@@ -94,8 +94,8 @@ public class PositionServiceDryModeTest extends BaseTest {
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(position2Result.isSuccessful());
-        assertEquals("DRY_ORDER_000000002", position2Result.getOrderId());
-        final long position2Id = position2Result.getPositionId();
+        assertEquals("DRY_ORDER_000000002", position2Result.getPosition().getOpeningOrder().getId());
+        final long position2Id = position2Result.getPosition().getId();
 
         // After position creation, its status is OPENING
         // Few seconds after, order and trade will arrive and status will be OPENED.
