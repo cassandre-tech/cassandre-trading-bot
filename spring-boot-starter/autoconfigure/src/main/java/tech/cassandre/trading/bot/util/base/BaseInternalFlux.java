@@ -43,7 +43,7 @@ public abstract class BaseInternalFlux<T> extends Base {
      * @param newValue new value
      */
     public void emitValue(final T newValue) {
-        getLogger().debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
+        logger.debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
         if (newValue != null) {
             backupValue(newValue);
             fluxSink.next(newValue);

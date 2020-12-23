@@ -139,15 +139,15 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Check if there is no strategy.
         if (strategyBeans.isEmpty()) {
-            getLogger().error("No strategy found");
+            logger.error("No strategy found");
             throw new ConfigurationException("No strategy found",
                     "You must have one class with @Strategy");
         }
 
         // Check if there are several strategies.
         if (strategyBeans.size() > 1) {
-            getLogger().error("Several strategies found");
-            strategyBeans.forEach((s, o) -> getLogger().error(" - " + s));
+            logger.error("Several strategies found");
+            strategyBeans.forEach((s, o) -> logger.error(" - " + s));
             throw new ConfigurationException("Several strategies found",
                     "Cassandre trading bot only supports one strategy at a time (@Strategy)");
         }
@@ -180,13 +180,13 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Displaying strategy name.
         CassandreStrategy cassandreStrategyAnnotation = o.getClass().getAnnotation(CassandreStrategy.class);
-        getLogger().info("StrategyConfiguration - Running strategy '{}'", cassandreStrategyAnnotation.name());
+        logger.info("StrategyConfiguration - Running strategy '{}'", cassandreStrategyAnnotation.name());
 
         // Displaying requested currency pairs.
         StringJoiner currencyPairList = new StringJoiner(", ");
         strategy.getRequestedCurrencyPairs()
                 .forEach(currencyPair -> currencyPairList.add(currencyPair.toString()));
-        getLogger().info("StrategyConfiguration - The strategy requires the following currency pair(s) : " + currencyPairList);
+        logger.info("StrategyConfiguration - The strategy requires the following currency pair(s) : " + currencyPairList);
 
         // =============================================================================================================
         // Setting up position service.

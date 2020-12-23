@@ -159,14 +159,14 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             TradeServiceDryModeImplementation tradeServiceDryMode = null;
             if (!exchangeParameters.getModes().isDry()) {
                 // Normal mode.
-                getLogger().info("Dry mode is off");
+                logger.info("Dry mode is off");
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
                 this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
                 this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService);
             } else {
                 // Dry mode.
-                getLogger().info("Dry mode is on");
+                logger.info("Dry mode is on");
                 this.exchangeService = new ExchangeServiceDryModeImplementation(applicationContext);
                 userServiceDryMode = new UserServiceDryModeImplementation();
                 this.userService = userServiceDryMode;
@@ -184,13 +184,13 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();
-            getLogger().info("ExchangeConfiguration - Connection to {} successful", exchangeParameters.getName());
+            logger.info("ExchangeConfiguration - Connection to {} successful", exchangeParameters.getName());
 
             // Prints all the supported currency pairs.
             StringJoiner currencyPairList = new StringJoiner(", ");
             exchangeService.getAvailableCurrencyPairs()
                     .forEach(currencyPairDTO -> currencyPairList.add(currencyPairDTO.toString()));
-            getLogger().info("ExchangeConfiguration - Supported currency pairs : " + currencyPairList);
+            logger.info("ExchangeConfiguration - Supported currency pairs : " + currencyPairList);
 
             // if in dry mode, we set dependencies.
             if (tradeService instanceof TradeServiceDryModeImplementation) {

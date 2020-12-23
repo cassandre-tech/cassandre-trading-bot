@@ -42,19 +42,19 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
 
     @Override
     protected final Set<TradeDTO> getNewValues() {
-        getLogger().debug("TradeFlux - Retrieving new values");
+        logger.debug("TradeFlux - Retrieving new values");
         Set<TradeDTO> newValues = new LinkedHashSet<>();
 
         // Finding which trades has been updated.
         tradeService.getTrades().forEach(trade -> {
-            getLogger().debug("TradeFlux - Treating trade : {}", trade.getId());
+            logger.debug("TradeFlux - Treating trade : {}", trade.getId());
             final Optional<Trade> tradeInDatabase = tradeRepository.findById(trade.getId());
             if (tradeInDatabase.isEmpty() || !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
-                getLogger().info("TradeFlux - Trade {} has changed : {}", trade.getId(), trade);
+                logger.info("TradeFlux - Trade {} has changed : {}", trade.getId(), trade);
                 newValues.add(trade);
             }
         });
-        getLogger().debug("TradeFlux - {} trade(s) updated", newValues.size());
+        logger.debug("TradeFlux - {} trade(s) updated", newValues.size());
         return newValues;
     }
 

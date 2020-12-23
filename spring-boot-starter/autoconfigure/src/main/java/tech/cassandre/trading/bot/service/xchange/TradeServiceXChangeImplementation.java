@@ -61,7 +61,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             MarketOrder m = new MarketOrder(typeMapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair));
-            getLogger().debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            logger.debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
             final String orderId = tradeService.placeMarketOrder(m);
@@ -75,10 +75,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .build();
             localOrders.put(orderId, openingOrder);
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);
-            getLogger().debug("TradeService - Order created : {}", result);
+            logger.debug("TradeService - Order created : {}", result);
             return result;
         } catch (Exception e) {
-            getLogger().error("TradeService - Error calling createBuyMarketOrder : {}", e.getMessage());
+            logger.error("TradeService - Error calling createBuyMarketOrder : {}", e.getMessage());
             return new OrderCreationResultDTO("TradeService - Error calling createBuyMarketOrder : " + e.getMessage(), e);
         }
     }
@@ -96,7 +96,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             LimitOrder l = new LimitOrder(typeMapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair), null, null, limitPrice);
-            getLogger().debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            logger.debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending & creating the order.
             final String orderId = tradeService.placeLimitOrder(l);
@@ -111,10 +111,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .build();
             localOrders.put(orderId, openingOrder);
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);
-            getLogger().debug("TradeService - Order creation result : {}", result);
+            logger.debug("TradeService - Order creation result : {}", result);
             return result;
         } catch (Exception e) {
-            getLogger().error("TradeService - Error calling createLimitOrder : {}", e.getMessage());
+            logger.error("TradeService - Error calling createLimitOrder : {}", e.getMessage());
             return new OrderCreationResultDTO("TradeService - Error calling createLimitOrder : " + e.getMessage(), e);
         }
     }
@@ -141,17 +141,17 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     public final boolean cancelOrder(final String orderId) {
-        getLogger().debug("TradeService - Canceling order {}", orderId);
+        logger.debug("TradeService - Canceling order {}", orderId);
         if (orderId != null) {
             try {
-                getLogger().debug("TradeService - Successfully canceled order {}", orderId);
+                logger.debug("TradeService - Successfully canceled order {}", orderId);
                 return tradeService.cancelOrder(orderId);
             } catch (Exception e) {
-                getLogger().error("Error canceling order {} : {}", orderId, e.getMessage());
+                logger.error("Error canceling order {} : {}", orderId, e.getMessage());
                 return false;
             }
         } else {
-            getLogger().error("Error canceling order, order id provided is null");
+            logger.error("Error canceling order, order id provided is null");
             return false;
         }
     }
@@ -163,7 +163,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     public final Set<OrderDTO> getOrders() {
-        getLogger().debug("TradeService - Getting open orders from exchange");
+        logger.debug("TradeService - Getting open orders from exchange");
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
@@ -178,20 +178,20 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                         // If we received the order from server, we remove local order.
                         localOrders.remove(order.getId());
                     });
-            getLogger().debug("TradeService - {} order(s) found", results.size());
+            logger.debug("TradeService - {} order(s) found", results.size());
             return results;
         } catch (IOException e) {
-            getLogger().error("TradeService - Error retrieving open orders : {}", e.getMessage());
+            logger.error("TradeService - Error retrieving open orders : {}", e.getMessage());
             return Collections.emptySet();
         } catch (InterruptedException e) {
-            getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
+            logger.error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
     }
 
     @Override
     public final Set<TradeDTO> getTrades() {
-        getLogger().debug("TradeService - Getting trades from exchange");
+        logger.debug("TradeService - Getting trades from exchange");
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
@@ -208,13 +208,13 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .stream()
                     .map(tradeMapper::mapToTradeDTO)
                     .collect(Collectors.toSet());
-            getLogger().debug("TradeService - {} trade(s) found", results.size());
+            logger.debug("TradeService - {} trade(s) found", results.size());
             return results;
         } catch (IOException e) {
-            getLogger().error("TradeService - Error retrieving trades : {}", e.getMessage());
+            logger.error("TradeService - Error retrieving trades : {}", e.getMessage());
             return Collections.emptySet();
         } catch (InterruptedException e) {
-            getLogger().error("TradeService - InterruptedException : {}", e.getMessage());
+            logger.error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
         }
     }

@@ -194,14 +194,14 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                 try {
                     TimeUnit.MILLISECONDS.sleep(WAITING_TIME);
                 } catch (InterruptedException e) {
-                    getLogger().debug("InterruptedException");
+                    logger.debug("InterruptedException");
                 }
                 localOrders.put(orderId, order);
                 orderFlux.emitValue(order);
                 try {
                     TimeUnit.MILLISECONDS.sleep(WAITING_TIME);
                 } catch (InterruptedException e) {
-                    getLogger().debug("InterruptedException");
+                    logger.debug("InterruptedException");
                 }
                 localTrades.put(tradeId, trade);
                 tradeFlux.emitValue(trade);

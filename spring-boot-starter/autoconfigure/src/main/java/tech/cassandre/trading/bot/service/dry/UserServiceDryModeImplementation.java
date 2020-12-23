@@ -58,7 +58,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 final int accountIndexStart = file.getFilename().indexOf(USER_FILE_PREFIX) + USER_FILE_PREFIX.length();
                 final int accountIndexStop = file.getFilename().indexOf("sv") - 2;
                 final String accountName = file.getFilename().substring(accountIndexStart, accountIndexStop);
-                getLogger().info("Adding account '" + accountName + "'");
+                logger.info("Adding account '" + accountName + "'");
 
                 // Balances.
                 HashMap<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
@@ -74,7 +74,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                             final String currency = rowScanner.next().replaceAll("\"", "");
                             final String amount = rowScanner.next().replaceAll("\"", "");
                             // Creating balance.
-                            getLogger().info("- Adding balance " + amount + " " + currency);
+                            logger.info("- Adding balance " + amount + " " + currency);
                             BalanceDTO balance = BalanceDTO.builder()
                                     .currency(new CurrencyDTO(currency))
                                     .available(new BigDecimal(amount))
@@ -83,9 +83,9 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                         }
                     }
                 } catch (FileNotFoundException e) {
-                    getLogger().error("{} not found !", file.getFilename());
+                    logger.error("{} not found !", file.getFilename());
                 } catch (IOException e) {
-                    getLogger().error("IOException : " + e);
+                    logger.error("IOException : " + e);
                 }
 
                 // Creating account.
@@ -125,7 +125,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
             final Resource[] resources = resolver.getResources("classpath*:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
             return Arrays.asList(resources);
         } catch (IOException e) {
-            getLogger().error("TickerFluxMock encountered an error : " + e.getMessage());
+            logger.error("TickerFluxMock encountered an error : " + e.getMessage());
         }
         return Collections.emptyList();
     }

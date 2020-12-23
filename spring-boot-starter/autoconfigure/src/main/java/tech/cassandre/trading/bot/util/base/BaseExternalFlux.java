@@ -60,7 +60,7 @@ public abstract class BaseExternalFlux<T> extends Base {
      * @param newValue new value
      */
     public void emitValue(final T newValue) {
-        getLogger().debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
+        logger.debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
         backupValue(newValue);
         fluxSink.next(newValue);
     }

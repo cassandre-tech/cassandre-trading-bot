@@ -28,7 +28,7 @@ public class ExchangeServiceXChangeImplementation extends BaseService implements
 
     @Override
     public final Set<CurrencyPairDTO> getAvailableCurrencyPairs() {
-        getLogger().debug("ExchangeService - Retrieving available currency pairs");
+        logger.debug("ExchangeService - Retrieving available currency pairs");
         Set<CurrencyPairDTO> availableCurrencyPairs = new LinkedHashSet<>();
         exchange.getExchangeMetaData()
                 .getCurrencyPairs()
@@ -37,7 +37,7 @@ public class ExchangeServiceXChangeImplementation extends BaseService implements
                     CurrencyDTO counter = currencyMapper.mapToCurrencyDTO(currencyPair.counter);
                     CurrencyPairDTO cp = new CurrencyPairDTO(base, counter);
                     availableCurrencyPairs.add(cp);
-                    getLogger().debug("ExchangeService - Adding currency pair {} ", cp);
+                    logger.debug("ExchangeService - Adding currency pair {} ", cp);
                 });
         return availableCurrencyPairs;
     }

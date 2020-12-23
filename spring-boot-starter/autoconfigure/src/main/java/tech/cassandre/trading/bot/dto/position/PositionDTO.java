@@ -509,8 +509,8 @@ public class PositionDTO {
      * @return highestCalculatedGain
      */
     public final Optional<GainDTO> getHighestCalculatedGain() {
-        if (highestPrice != null    ) {
-        return calculateGainFromPrice(highestPrice.getValue());
+        if (highestPrice != null) {
+            return calculateGainFromPrice(highestPrice.getValue());
         } else {
             return Optional.empty();
         }

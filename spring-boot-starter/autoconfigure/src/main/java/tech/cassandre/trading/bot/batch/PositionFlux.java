@@ -30,7 +30,7 @@ public class PositionFlux extends BaseInternalFlux<PositionDTO> {
         if (p.isPresent()) {
             positionRepository.save(positionMapper.mapToPosition(newValue));
         } else {
-            getLogger().error("Position {} was not saved because it was not found in database", newValue.getId());
+            logger.error("Position {} was not saved because it was not found in database", newValue.getId());
         }
     }
 

@@ -18,8 +18,7 @@ import tech.cassandre.trading.bot.util.mapper.TypeMapper;
 public abstract class Base {
 
     /** Logger. */
-    // TODO Move to protected !
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /** Type mapper. */
     protected final TypeMapper typeMapper = Mappers.getMapper(TypeMapper.class);
@@ -44,14 +43,5 @@ public abstract class Base {
 
     /** Position mapper. */
     protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
-
-    /**
-     * Getter for logger.
-     *
-     * @return logger
-     */
-    protected final Logger getLogger() {
-        return logger;
-    }
 
 }

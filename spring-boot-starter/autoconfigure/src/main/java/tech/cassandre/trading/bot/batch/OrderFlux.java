@@ -34,20 +34,20 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
 
     @Override
     protected final Set<OrderDTO> getNewValues() {
-        getLogger().debug("OrderFlux - Retrieving new values");
+        logger.debug("OrderFlux - Retrieving new values");
         Set<OrderDTO> newValues = new LinkedHashSet<>();
 
         // Finding which order has been updated.
         tradeService.getOrders().forEach(order -> {
-            getLogger().debug("OrderFlux - Treating order : {}", order.getId());
+            logger.debug("OrderFlux - Treating order : {}", order.getId());
             final Optional<Order> orderInDatabase = orderRepository.findById(order.getId());
             // If it does not exist or something changed, we do it.
             if (orderInDatabase.isEmpty() || !orderMapper.mapToOrderDTO(orderInDatabase.get()).equals(order)) {
-                getLogger().debug("OrderFlux - Order {} has changed : {}", order.getId(), order);
+                logger.debug("OrderFlux - Order {} has changed : {}", order.getId(), order);
                 newValues.add(order);
             }
         });
-        getLogger().debug("OrderFlux - {} order(s) updated", newValues.size());
+        logger.debug("OrderFlux - {} order(s) updated", newValues.size());
         return newValues;
     }
 

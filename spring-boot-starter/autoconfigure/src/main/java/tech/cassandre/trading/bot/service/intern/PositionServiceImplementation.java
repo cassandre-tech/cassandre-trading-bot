@@ -64,7 +64,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final Set<PositionDTO> getPositions() {
-        getLogger().debug("PositionService - Retrieving all positions");
+        logger.debug("PositionService - Retrieving all positions");
         return positionRepository.findByOrderById()
                 .stream()
                 .map(positionMapper::mapToPositionDTO)
@@ -73,7 +73,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final Optional<PositionDTO> getPositionById(final long id) {
-        getLogger().debug("PositionService - Retrieving position {}", id);
+        logger.debug("PositionService - Retrieving position {}", id);
         final Optional<Position> position = positionRepository.findById(id);
         return position.map(positionMapper::mapToPositionDTO);
     }
@@ -81,7 +81,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     @Override
     public final PositionCreationResultDTO createPosition(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
         // Trying to create an order.
-        getLogger().debug("PositionService - Creating a position for {} on {} with the rules : {}", amount, currencyPair, rules);
+        logger.debug("PositionService - Creating a position for {} on {} with the rules : {}", amount, currencyPair, rules);
         final OrderCreationResultDTO orderCreationResult = tradeService.createBuyMarketOrder(strategy, currencyPair, amount);
         // If it works, create the position.
         if (orderCreationResult.isSuccessful()) {
@@ -106,14 +106,14 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // Creates the position dto.
             PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, orderCreationResult.getOrder(), rules);
             positionRepository.save(positionMapper.mapToPosition(p));
-            getLogger().debug("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrder().getId());
+            logger.debug("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrder().getId());
 
             // =========================================================================================================
             // Creates the result.
             positionFlux.emitValue(p);
             return new PositionCreationResultDTO(p);
         } else {
-            getLogger().error("PositionService - Position creation failure : {}", orderCreationResult.getErrorMessage());
+            logger.error("PositionService - Position creation failure : {}", orderCreationResult.getErrorMessage());
             // If it doesn't work, returns the error.
             return new PositionCreationResultDTO(orderCreationResult.getErrorMessage(), orderCreationResult.getException());
         }
@@ -132,7 +132,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                         final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
                         if (orderCreationResult.isSuccessful()) {
                             p.setClosingOrderId(orderCreationResult.getOrderId());
-                            getLogger().debug("PositionService - Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId());
+                            logger.debug("PositionService - Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId());
                         }
                     }
                     positionFlux.emitValue(p);

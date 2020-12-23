@@ -51,13 +51,13 @@ public class TickerFlux extends BaseExternalFlux<TickerDTO> {
 
     @Override
     protected final Set<TickerDTO> getNewValues() {
-        getLogger().debug("TickerFlux - Retrieving new values");
+        logger.debug("TickerFlux - Retrieving new values");
         Set<TickerDTO> newValues = new LinkedHashSet<>();
         getCurrencyPairToTreat()
                 .flatMap(marketService::getTicker)
                 .ifPresent(t -> {
                     if (!t.equals(previousValues.get(t.getCurrencyPair()))) {
-                        getLogger().debug("TickerFlux - New ticker received : {}", t);
+                        logger.debug("TickerFlux - New ticker received : {}", t);
                         previousValues.replace(t.getCurrencyPair(), t);
                         newValues.add(t);
                     }
