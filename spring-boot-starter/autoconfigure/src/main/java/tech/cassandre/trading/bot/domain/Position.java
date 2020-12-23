@@ -10,7 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,6 +20,7 @@ import java.math.BigDecimal;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
@@ -35,7 +35,7 @@ public class Position extends BaseDomain {
     /** An identifier that uniquely identifies the position. */
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private long id;
 
     /** Position . */

@@ -49,7 +49,7 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
         tradeService.getTrades().forEach(trade -> {
             getLogger().debug("TradeFlux - Treating trade : {}", trade.getId());
             final Optional<Trade> tradeInDatabase = tradeRepository.findById(trade.getId());
-            if (tradeInDatabase.isEmpty() || !mapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
+            if (tradeInDatabase.isEmpty() || !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
                 getLogger().info("TradeFlux - Trade {} has changed : {}", trade.getId(), trade);
                 newValues.add(trade);
             }
@@ -60,7 +60,7 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
 
     @Override
     public final void backupValue(final TradeDTO newValue) {
-        tradeRepository.save(mapper.mapToTrade(newValue));
+        tradeRepository.save(tradeMapper.mapToTrade(newValue));
     }
 
 }

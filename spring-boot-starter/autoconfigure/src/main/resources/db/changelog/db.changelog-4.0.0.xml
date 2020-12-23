@@ -17,6 +17,10 @@
                     remarks="Exchange name"/>
             <column name="EXCHANGE_ACCOUNT" type="VARCHAR(255)"
                     remarks="Exchange account"/>
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
         </createTable>
         <!-- Auto increment on ID -->
         <addAutoIncrement columnDataType="BIGINT"

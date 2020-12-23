@@ -22,7 +22,13 @@ import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.mapper.CassandreMapper;
+import tech.cassandre.trading.bot.util.mapper.AccountMapper;
+import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
+import tech.cassandre.trading.bot.util.mapper.OrderMapper;
+import tech.cassandre.trading.bot.util.mapper.PositionMapper;
+import tech.cassandre.trading.bot.util.mapper.StrategyMapper;
+import tech.cassandre.trading.bot.util.mapper.TickerMapper;
+import tech.cassandre.trading.bot.util.mapper.TradeMapper;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -40,8 +46,26 @@ import static java.math.BigDecimal.ZERO;
 @SuppressWarnings("checkstyle:DesignForExtension")
 public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
 
-    /** Mapper. */
-    private final CassandreMapper mapper = Mappers.getMapper(CassandreMapper.class);
+    /** Currency mapper. */
+    protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);
+
+    /** Strategy mapper. */
+    protected final StrategyMapper strategyMapper = Mappers.getMapper(StrategyMapper.class);
+
+    /** Account mapper. */
+    protected final AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
+
+    /** Ticker mapper. */
+    protected final TickerMapper tickerMapper = Mappers.getMapper(TickerMapper.class);
+
+    /** Order mapper. */
+    protected final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
+
+    /** Trade mapper. */
+    protected final TradeMapper tradeMapper = Mappers.getMapper(TradeMapper.class);
+
+    /** Position mapper. */
+    protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
 
     /** Strategy. */
     private StrategyDTO strategyDTO;
@@ -205,7 +229,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public final Map<String, OrderDTO> getOrders() {
         return orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(mapper::mapToOrderDTO)
+                .map(orderMapper::mapToOrderDTO)
                 .collect(Collectors.toMap(OrderDTO::getId, orderDTO -> orderDTO));
     }
 
@@ -216,7 +240,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return order
      */
     public final Optional<OrderDTO> getOrderById(final String id) {
-        return orderRepository.findById(id).map(mapper::mapToOrderDTO);
+        return orderRepository.findById(id).map(orderMapper::mapToOrderDTO);
     }
 
     // =================================================================================================================
@@ -230,7 +254,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public final Map<String, TradeDTO> getTrades() {
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(mapper::mapToTradeDTO)
+                .map(tradeMapper::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getId, tradeDTO -> tradeDTO));
     }
 
@@ -241,7 +265,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return trade
      */
     public final Optional<TradeDTO> getTradeById(final String id) {
-        return tradeRepository.findById(id).map(mapper::mapToTradeDTO);
+        return tradeRepository.findById(id).map(tradeMapper::mapToTradeDTO);
     }
 
     // =================================================================================================================
@@ -255,7 +279,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public final Map<Long, PositionDTO> getPositions() {
         return positionRepository.findByOrderById()
                 .stream()
-                .map(mapper::mapToPositionDTO)
+                .map(positionMapper::mapToPositionDTO)
                 .collect(Collectors.toMap(PositionDTO::getId, positionDTO -> positionDTO));
     }
 
@@ -266,7 +290,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return position
      */
     public final Optional<PositionDTO> getPositionById(final long id) {
-        return positionRepository.findById(id).map(mapper::mapToPositionDTO);
+        return positionRepository.findById(id).map(positionMapper::mapToPositionDTO);
     }
 
     /**

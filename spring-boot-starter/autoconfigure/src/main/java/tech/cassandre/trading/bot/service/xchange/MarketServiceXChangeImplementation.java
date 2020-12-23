@@ -38,7 +38,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
 
             getLogger().debug("MarketService - Getting ticker for {}", currencyPair);
             CurrencyPair cp = new CurrencyPair(currencyPair.getBaseCurrency().getCode(), currencyPair.getQuoteCurrency().getCode());
-            TickerDTO t = mapper.mapToTickerDTO(marketDataService.getTicker(cp));
+            TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(cp));
             getLogger().debug("MarketService - Retrieved value is : {}", t);
             return Optional.ofNullable(t);
         } catch (IOException e) {

@@ -35,9 +35,15 @@ public class CurrencyAmountDTO {
      * @param newCurrency amount currency
      */
     public CurrencyAmountDTO(final String newValue, final CurrencyDTO newCurrency) {
-        this.valueProvided = true;
-        this.value = new BigDecimal(newValue);
-        this.currency = newCurrency;
+        if (newValue != null && newCurrency != null) {
+            this.valueProvided = true;
+            this.value = new BigDecimal(newValue);
+            this.currency = newCurrency;
+        } else {
+            this.valueProvided = false;
+            this.value = new BigDecimal(0);
+            this.currency = CurrencyDTO.USD;
+        }
     }
 
     /**
@@ -47,9 +53,15 @@ public class CurrencyAmountDTO {
      * @param newCurrency amount currency
      */
     public CurrencyAmountDTO(final BigDecimal newValue, final CurrencyDTO newCurrency) {
-        this.valueProvided = true;
-        this.value = newValue;
-        this.currency = newCurrency;
+        if (newValue != null && newCurrency != null) {
+            this.valueProvided = true;
+            this.value = newValue;
+            this.currency = newCurrency;
+        } else {
+            this.valueProvided = false;
+            this.value = new BigDecimal(0);
+            this.currency = CurrencyDTO.USD;
+        }
     }
 
     /**

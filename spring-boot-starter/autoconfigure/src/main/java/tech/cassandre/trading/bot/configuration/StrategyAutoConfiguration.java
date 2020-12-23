@@ -202,7 +202,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         strategyRepository.save(s);
 
         // Setting services & repositories.
-        strategy.setStrategyDTO(mapper.mapToStrategyDTO(s));
+        strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(s));
         strategy.setOrderRepository(orderRepository);
         strategy.setTradeRepository(tradeRepository);
         strategy.setTradeService(tradeService);

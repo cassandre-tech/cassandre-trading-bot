@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.domain;
+package tech.cassandre.trading.bot.util.jpa;
 
 import lombok.Value;
 

@@ -33,8 +33,8 @@ public class ExchangeServiceXChangeImplementation extends BaseService implements
         exchange.getExchangeMetaData()
                 .getCurrencyPairs()
                 .forEach((currencyPair, currencyPairMetaData) -> {
-                    CurrencyDTO base = mapper.mapToCurrencyDTO(currencyPair.base);
-                    CurrencyDTO counter = mapper.mapToCurrencyDTO(currencyPair.counter);
+                    CurrencyDTO base = currencyMapper.mapToCurrencyDTO(currencyPair.base);
+                    CurrencyDTO counter = currencyMapper.mapToCurrencyDTO(currencyPair.counter);
                     CurrencyPairDTO cp = new CurrencyPairDTO(base, counter);
                     availableCurrencyPairs.add(cp);
                     getLogger().debug("ExchangeService - Adding currency pair {} ", cp);

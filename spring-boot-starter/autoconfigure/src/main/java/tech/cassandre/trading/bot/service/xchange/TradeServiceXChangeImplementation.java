@@ -60,7 +60,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     private OrderCreationResultDTO createMarketOrder(final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
         try {
             // Making the order.
-            MarketOrder m = new MarketOrder(mapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair));
+            MarketOrder m = new MarketOrder(typeMapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair));
             getLogger().debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
@@ -95,7 +95,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     private OrderCreationResultDTO createLimitOrder(final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
         try {
             // Making the order.
-            LimitOrder l = new LimitOrder(mapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair), null, null, limitPrice);
+            LimitOrder l = new LimitOrder(typeMapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair), null, null, limitPrice);
             getLogger().debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending & creating the order.
@@ -174,7 +174,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             tradeService.getOpenOrders()
                     .getOpenOrders()
                     .forEach(order -> {
-                        results.add(mapper.mapToOrderDTO(order));
+                        results.add(orderMapper.mapToOrderDTO(order));
                         // If we received the order from server, we remove local order.
                         localOrders.remove(order.getId());
                     });
@@ -206,7 +206,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             final Set<TradeDTO> results = tradeService.getTradeHistory(params)
                     .getUserTrades()
                     .stream()
-                    .map(mapper::mapToTradeDTO)
+                    .map(tradeMapper::mapToTradeDTO)
                     .collect(Collectors.toSet());
             getLogger().debug("TradeService - {} trade(s) found", results.size());
             return results;

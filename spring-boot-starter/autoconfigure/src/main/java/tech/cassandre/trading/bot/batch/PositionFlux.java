@@ -28,7 +28,7 @@ public class PositionFlux extends BaseInternalFlux<PositionDTO> {
     public final void backupValue(final PositionDTO newValue) {
         Optional<Position> p = positionRepository.findById(newValue.getId());
         if (p.isPresent()) {
-            positionRepository.save(mapper.mapToPosition(newValue));
+            positionRepository.save(positionMapper.mapToPosition(newValue));
         } else {
             getLogger().error("Position {} was not saved because it was not found in database", newValue.getId());
         }

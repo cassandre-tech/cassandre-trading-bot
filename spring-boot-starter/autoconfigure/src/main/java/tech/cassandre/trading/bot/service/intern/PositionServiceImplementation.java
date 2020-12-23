@@ -67,7 +67,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
         getLogger().debug("PositionService - Retrieving all positions");
         return positionRepository.findByOrderById()
                 .stream()
-                .map(mapper::mapToPositionDTO)
+                .map(positionMapper::mapToPositionDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
@@ -75,7 +75,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     public final Optional<PositionDTO> getPositionById(final long id) {
         getLogger().debug("PositionService - Retrieving position {}", id);
         final Optional<Position> position = positionRepository.findById(id);
-        return position.map(mapper::mapToPositionDTO);
+        return position.map(positionMapper::mapToPositionDTO);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // Creates the position in database.
             // TODO Don't build all in here as we will save the positionDTO just after.
             Position position = new Position();
-            position.setStrategy(mapper.mapToStrategy(strategy));
+            position.setStrategy(strategyMapper.mapToStrategy(strategy));
             position.setStatus(OPENING);
             position.setAmount(amount);
             position.setCurrencyPair(currencyPair.toString());
@@ -105,7 +105,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // =========================================================================================================
             // Creates the position dto.
             PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, orderCreationResult.getOrder(), rules);
-            positionRepository.save(mapper.mapToPosition(p));
+            positionRepository.save(positionMapper.mapToPosition(p));
             getLogger().debug("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrder().getId());
 
             // =========================================================================================================
@@ -124,7 +124,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
         // With the ticker received, we check for every position, if it should be closed.
         positionRepository.findByStatus(OPENED)
                 .stream()
-                .map(mapper::mapToPositionDTO)
+                .map(positionMapper::mapToPositionDTO)
                 .filter(p -> p.getCurrencyPair() != null)
                 .filter(p -> p.getCurrencyPair().equals(ticker.getCurrencyPair()))
                 .forEach(p -> {
@@ -143,7 +143,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     public final void orderUpdate(final OrderDTO order) {
         positionRepository.findByStatusNot(CLOSED)
                 .stream()
-                .map(mapper::mapToPositionDTO)
+                .map(positionMapper::mapToPositionDTO)
                 .forEach(p -> {
                     if (p.updateOrder(order)) {
                         positionFlux.emitValue(p);
@@ -155,7 +155,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     public final void tradeUpdate(final TradeDTO trade) {
         positionRepository.findByStatusNot(CLOSED)
                 .stream()
-                .map(mapper::mapToPositionDTO)
+                .map(positionMapper::mapToPositionDTO)
                 .forEach(p -> {
                     if (p.tradeUpdate(trade)) {
                         positionFlux.emitValue(p);

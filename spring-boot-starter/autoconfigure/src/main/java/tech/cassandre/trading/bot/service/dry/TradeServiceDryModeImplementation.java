@@ -247,7 +247,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     public final Set<OrderDTO> getOpenOrders() {
         final Map<String, OrderDTO> results = orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(mapper::mapToOrderDTO)
+                .map(orderMapper::mapToOrderDTO)
                 .collect(Collectors.toMap(OrderDTO::getId, order -> order));
         localOrders.values()
                 .stream()
@@ -260,7 +260,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     public final Set<OrderDTO> getOrders() {
         return orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(mapper::mapToOrderDTO)
+                .map(orderMapper::mapToOrderDTO)
                 .collect(Collectors.toSet());
     }
 
@@ -279,7 +279,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     public final Set<TradeDTO> getTrades() {
         final Map<String, TradeDTO> results = tradeRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(mapper::mapToTradeDTO)
+                .map(tradeMapper::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getId, trade -> trade));
         localTrades.values()
                 .stream()

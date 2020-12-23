@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.dto.util;
 
+import org.knowm.xchange.currency.CurrencyPair;
+
 import java.util.Objects;
 
 /**
@@ -25,6 +27,15 @@ public final class CurrencyPairDTO {
      */
     public CurrencyPairDTO(final String currencyPair) {
         this(currencyPair.split(CURRENCY_PAIR_SEPARATOR)[0], currencyPair.split(CURRENCY_PAIR_SEPARATOR)[1]);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param currencyPair currency pair
+     */
+    public CurrencyPairDTO(final CurrencyPair currencyPair) {
+        this(currencyPair.base.toString(), currencyPair.counter.toString());
     }
 
     /**
