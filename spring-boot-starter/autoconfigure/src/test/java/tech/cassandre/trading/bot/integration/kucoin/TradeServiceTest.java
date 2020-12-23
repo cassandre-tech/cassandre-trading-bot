@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -117,18 +118,20 @@ public class TradeServiceTest extends BaseTest {
         final Optional<OrderDTO> order1 = tradeService.getOrders().stream().filter(o -> o.getId().equals(result1.getOrderId())).findFirst();
         assertTrue(order1.isPresent());
         assertEquals(BID, order1.get().getType());
-        assertEquals(0, order1.get().getOriginalAmount().compareTo(new BigDecimal("0.0001")));
+        assertEquals(0, order1.get().getAmount().getValue().compareTo(new BigDecimal("0.0001")));
+        assertEquals(cp.getBaseCurrency(), order1.get().getAmount().getCurrency());
         assertEquals(cp, order1.get().getCurrencyPair());
         assertEquals(result1.getOrderId(), order1.get().getId());
         assertNull(order1.get().getUserReference());
         assertNotNull(order1.get().getTimestamp());
         assertTrue(order1.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
         assertTrue(order1.get().getTimestamp().isBefore(ZonedDateTime.now().plusMinutes(1)));
-        assertEquals(OrderStatusDTO.NEW, order1.get().getStatus());
+        assertEquals(NEW, order1.get().getStatus());
         assertNotNull(order1.get().getCumulativeAmount());
-        assertTrue(order1.get().getAveragePrice().compareTo(BigDecimal.ZERO) > 0);
+        assertTrue(order1.get().getAveragePrice().getValue().compareTo(BigDecimal.ZERO) > 0);
         assertNotNull(order1.get().getFee());
-        assertEquals(0, order1.get().getLimitPrice().compareTo(new BigDecimal("0.000001")));
+        assertEquals(0, order1.get().getLimitPrice().getValue().compareTo(new BigDecimal("0.000001")));
+        assertEquals(cp.getQuoteCurrency(), order1.get().getLimitPrice().getCurrency());
 
         // Cancel the order.
         tradeService.cancelOrder(result1.getOrderId());

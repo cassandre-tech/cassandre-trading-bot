@@ -15,6 +15,7 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -42,6 +43,10 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
@@ -94,7 +99,8 @@ public class PositionTest extends BaseTest {
         assertEquals(1L, position.getId());
         assertEquals(OPENING, position.getStatus());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), position.getCurrencyPair());
-        assertEquals(0, new BigDecimal("10").compareTo(position.getAmount()));
+        assertEquals(0, new BigDecimal("10").compareTo(position.getAmount().getValue()));
+        assertEquals(BTC, position.getAmount().getCurrency());
         assertFalse(position.getRules().isStopGainPercentageSet());
         assertFalse(position.getRules().isStopLossPercentageSet());
         assertEquals("BACKUP_OPENING_ORDER_01", position.getOpeningOrder().getId());
@@ -114,19 +120,22 @@ public class PositionTest extends BaseTest {
         assertEquals(2L, position.getId());
         assertEquals(OPENED, position.getStatus());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), position.getCurrencyPair());
-        assertEquals(0, new BigDecimal("20").compareTo(position.getAmount()));
+        assertEquals(0, new BigDecimal("20").compareTo(position.getAmount().getValue()));
+        assertEquals(BTC, position.getAmount().getCurrency());
         assertTrue(position.getRules().isStopGainPercentageSet());
         assertEquals(10, position.getRules().getStopGainPercentage());
         assertFalse(position.getRules().isStopLossPercentageSet());
         assertEquals("BACKUP_OPENING_ORDER_02", position.getOpeningOrder().getId());
         assertEquals(1, position.getOpeningTrades().size());
-        position.getOpeningTrades().forEach(tradeDTO -> System.out.println(">==> " + tradeDTO));
         assertTrue(position.getTrade("BACKUP_TRADE_01").isPresent());
         assertNull(position.getClosingOrder());
         assertTrue(position.getClosingTrades().isEmpty());
-        assertEquals(0, new BigDecimal("1").compareTo(position.getLowestPrice()));
-        assertEquals(0, new BigDecimal("2").compareTo(position.getHighestPrice()));
-        assertEquals(0, new BigDecimal("3").compareTo(position.getLatestPrice()));
+        assertEquals(0, new BigDecimal("1").compareTo(position.getLowestPrice().getValue()));
+        assertEquals(USDT, position.getLowestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("2").compareTo(position.getHighestPrice().getValue()));
+        assertEquals(USDT, position.getHighestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("3").compareTo(position.getLatestPrice().getValue()));
+        assertEquals(USDT, position.getLatestPrice().getCurrency());
         assertNotNull(position.getStrategy());
         assertEquals("001", position.getStrategy().getId());
 
@@ -137,7 +146,8 @@ public class PositionTest extends BaseTest {
         assertEquals(3L, position.getId());
         assertEquals(CLOSING, position.getStatus());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), position.getCurrencyPair());
-        assertEquals(0, new BigDecimal("30").compareTo(position.getAmount()));
+        assertEquals(0, new BigDecimal("30").compareTo(position.getAmount().getValue()));
+        assertEquals(BTC, position.getAmount().getCurrency());
         assertFalse(position.getRules().isStopGainPercentageSet());
         assertTrue(position.getRules().isStopLossPercentageSet());
         assertEquals(20, position.getRules().getStopLossPercentage());
@@ -147,9 +157,12 @@ public class PositionTest extends BaseTest {
         assertEquals("BACKUP_CLOSING_ORDER_01", position.getClosingOrder().getId());
         assertEquals(1, position.getClosingTrades().size());
         assertTrue(position.getTrade("BACKUP_TRADE_04").isPresent());
-        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice()));
-        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice()));
-        assertEquals(0, new BigDecimal("92").compareTo(position.getLatestPrice()));
+        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice().getValue()));
+        assertEquals(USDT, position.getLowestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice().getValue()));
+        assertEquals(USDT, position.getHighestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("92").compareTo(position.getLatestPrice().getValue()));
+        assertEquals(USDT, position.getLatestPrice().getCurrency());
         assertNotNull(position.getStrategy());
         assertEquals("001", position.getStrategy().getId());
 
@@ -160,7 +173,8 @@ public class PositionTest extends BaseTest {
         assertEquals(4L, position.getId());
         assertEquals(CLOSED, position.getStatus());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), position.getCurrencyPair());
-        assertEquals(0, new BigDecimal("40").compareTo(position.getAmount()));
+        assertEquals(0, new BigDecimal("40").compareTo(position.getAmount().getValue()));
+        assertEquals(BTC, position.getAmount().getCurrency());
         assertTrue(position.getRules().isStopGainPercentageSet());
         assertEquals(30, position.getRules().getStopGainPercentage());
         assertTrue(position.getRules().isStopLossPercentageSet());
@@ -171,9 +185,12 @@ public class PositionTest extends BaseTest {
         assertEquals("BACKUP_CLOSING_ORDER_02", position.getClosingOrder().getId());
         assertEquals(1, position.getClosingTrades().size());
         assertTrue(position.getTrade("BACKUP_TRADE_05").isPresent());
-        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice()));
-        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice()));
-        assertEquals(0, new BigDecimal("93").compareTo(position.getLatestPrice()));
+        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice().getValue()));
+        assertEquals(USDT, position.getLowestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice().getValue()));
+        assertEquals(USDT, position.getHighestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("93").compareTo(position.getLatestPrice().getValue()));
+        assertEquals(USDT, position.getLatestPrice().getCurrency());
         assertNotNull(position.getStrategy());
         assertEquals("001", position.getStrategy().getId());
 
@@ -183,16 +200,20 @@ public class PositionTest extends BaseTest {
         assertEquals(5L, position.getId());
         assertEquals(CLOSED, position.getStatus());
         assertEquals(new CurrencyPairDTO("ETH/USD"), position.getCurrencyPair());
-        assertEquals(0, new BigDecimal("50").compareTo(position.getAmount()));
+        assertEquals(0, new BigDecimal("50").compareTo(position.getAmount().getValue()));
+        assertEquals(ETH, position.getAmount().getCurrency());
         assertTrue(position.getRules().isStopGainPercentageSet());
         assertEquals(30, position.getRules().getStopGainPercentage());
         assertTrue(position.getRules().isStopLossPercentageSet());
         assertEquals(40, position.getRules().getStopLossPercentage());
         assertEquals("BACKUP_OPENING_ORDER_05", position.getOpeningOrder().getId());
         assertEquals("BACKUP_CLOSING_ORDER_03", position.getClosingOrder().getId());
-        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice()));
-        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice()));
-        assertEquals(0, new BigDecimal("94").compareTo(position.getLatestPrice()));
+        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice().getValue()));
+        assertEquals(USD, position.getLowestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice().getValue()));
+        assertEquals(USD, position.getHighestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("94").compareTo(position.getLatestPrice().getValue()));
+        assertEquals(USD, position.getLatestPrice().getCurrency());
         assertNotNull(position.getStrategy());
         assertEquals("001", position.getStrategy().getId());
         // Open trades.
@@ -347,7 +368,6 @@ public class PositionTest extends BaseTest {
 
         // We should have one more position and one more trade in database.
         await().untilAsserted(() -> assertEquals(6, positionRepository.count()));
-        tradeRepository.findByOrderByTimestampAsc().forEach(trade -> System.out.println("==> " + trade));
         await().untilAsserted(() -> assertEquals(11, tradeRepository.count()));
 
         // =============================================================================================================
@@ -363,10 +383,10 @@ public class PositionTest extends BaseTest {
         assertEquals(1000, p.getStopGainPercentageRule());
         assertEquals(100, p.getStopLossPercentageRule());
         assertEquals("DRY_ORDER_000000001", p.getOpeningOrder().getId());
-        tradeRepository.findByOrderByTimestampAsc().forEach(trade -> System.out.println(" > " + trade));
         assertFalse(p.getOpeningOrder().getTrades().isEmpty());
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(t -> "DRY_TRADE_000000001".equals(t.getId())));
         assertNull(p.getClosingOrder());
+        assertNull(p.getLatestPrice());
         assertNull(p.getLowestPrice());
         assertNull(p.getHighestPrice());
 
@@ -399,8 +419,10 @@ public class PositionTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(8, strategy.getTickersUpdateReceived().size()));
         assertTrue(getPositionDTO(positionId).getLowestCalculatedGain().isPresent());
         assertTrue(getPositionDTO(positionId).getHighestCalculatedGain().isPresent());
-        assertEquals(0, new BigDecimal("0.005").compareTo(getPositionDTO(positionId).getLowestPrice()));
-        assertEquals(0, new BigDecimal("0.07").compareTo(getPositionDTO(positionId).getHighestPrice()));
+        assertEquals(0, new BigDecimal("0.005").compareTo(getPositionDTO(positionId).getLowestPrice().getValue()));
+        assertEquals(cp1.getQuoteCurrency(), getPositionDTO(positionId).getLowestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.07").compareTo(getPositionDTO(positionId).getHighestPrice().getValue()));
+        assertEquals(cp1.getQuoteCurrency(), getPositionDTO(positionId).getHighestPrice().getCurrency());
         assertEquals(-50, getPositionDTO(positionId).getLowestCalculatedGain().get().getPercentage());
         assertEquals(600, getPositionDTO(positionId).getHighestCalculatedGain().get().getPercentage());
 
@@ -421,9 +443,9 @@ public class PositionTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().id("000002")
                 .orderId("DRY_ORDER_000000002")
                 .type(ASK)
-                .originalAmount(new BigDecimal("0.5"))
+                .amount(new CurrencyAmountDTO("0.5", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .price(new BigDecimal("1"))
+                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .build());
         await().untilAsserted(() -> assertEquals(1, getPositionDTO(positionId).getClosingTrades().size()));
         await().untilAsserted(() -> assertEquals(12, tradeRepository.count()));
@@ -433,9 +455,9 @@ public class PositionTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().id("000003")
                 .orderId("DRY_ORDER_000000002")
                 .type(ASK)
-                .originalAmount(new BigDecimal("0.5"))
+                .amount(new CurrencyAmountDTO("0.5", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .price(new BigDecimal("1"))
+                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .build());
         await().untilAsserted(() -> assertEquals(2, getPositionDTO(positionId).getClosingTrades().size()));
         await().untilAsserted(() -> assertEquals(13, tradeRepository.count()));

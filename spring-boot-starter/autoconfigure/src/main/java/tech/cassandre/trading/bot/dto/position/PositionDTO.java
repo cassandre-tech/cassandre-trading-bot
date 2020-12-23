@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.dto.position;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
@@ -47,6 +48,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  */
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor(access = PRIVATE)
 public class PositionDTO {
 
@@ -60,7 +62,7 @@ public class PositionDTO {
     private final CurrencyPairDTO currencyPair;
 
     /** Amount ordered. */
-    private final BigDecimal amount;
+    private final CurrencyAmountDTO amount;
 
     /** Position rules. */
     private final PositionRulesDTO rules;
@@ -72,13 +74,13 @@ public class PositionDTO {
     private OrderDTO closingOrder;
 
     /** Lowest price for this position. */
-    private BigDecimal lowestPrice;
+    private CurrencyAmountDTO lowestPrice;
 
     /** Highest price for this position. */
-    private BigDecimal highestPrice;
+    private CurrencyAmountDTO highestPrice;
 
     /** Latest price for this position. */
-    private BigDecimal latestPrice;
+    private CurrencyAmountDTO latestPrice;
 
     /** Strategy. */
     private final StrategyDTO strategy;
@@ -109,13 +111,14 @@ public class PositionDTO {
         this.id = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
-        this.amount = newAmount;
+        this.amount = new CurrencyAmountDTO(newAmount, newCurrencyPair.getBaseCurrency());
         this.openingOrder = newOpenOrder;
         this.rules = newRules;
     }
 
     /**
      * Constructor (prefers passing the order).
+     * TODO Remove ?
      *
      * @param newId           position id
      * @param newStrategy     strategy
@@ -134,7 +137,7 @@ public class PositionDTO {
         this.id = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
-        this.amount = newAmount;
+        this.amount = new CurrencyAmountDTO(newAmount, newCurrencyPair.getBaseCurrency());
         // We create a temporary opening order.
         openingOrder = OrderDTO.builder()
                 .id(newOpenOrderId)
@@ -204,7 +207,7 @@ public class PositionDTO {
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
-            if (amount.compareTo(getTotalAmountFromOpeningTrades(trade)) == 0) {
+            if (amount.getValue().compareTo(getTotalAmountFromOpeningTrades(trade)) == 0) {
                 status = OPENED;
             }
         }
@@ -214,7 +217,7 @@ public class PositionDTO {
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
-            if (amount.compareTo(getTotalAmountFromClosingTrades(trade)) == 0) {
+            if (amount.getValue().compareTo(getTotalAmountFromClosingTrades(trade)) == 0) {
                 status = CLOSED;
             }
         }
@@ -238,7 +241,7 @@ public class PositionDTO {
             final Optional<GainDTO> gain = calculateGainFromPrice(ticker.getLast());
             if (gain.isPresent()) {
                 // We save the last calculated gain.
-                this.latestPrice = ticker.getLast();
+                this.latestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
                 if (rules.isStopGainPercentageSet() && gain.get().getPercentage() >= rules.getStopGainPercentage()
                         || rules.isStopLossPercentageSet() && gain.get().getPercentage() <= -rules.getStopLossPercentage()) {
                     // If the rules tells we should sell.
@@ -246,20 +249,20 @@ public class PositionDTO {
                 } else {
                     // We check if this gain is at a new highest.
                     if (highestPrice == null) {
-                        highestPrice = ticker.getLast();
+                        highestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
                     } else {
-                        final Optional<GainDTO> highestGain = calculateGainFromPrice(highestPrice);
+                        final Optional<GainDTO> highestGain = calculateGainFromPrice(highestPrice.getValue());
                         if (highestGain.isPresent() && highestGain.get().getPercentage() <= gain.get().getPercentage()) {
-                            highestPrice = ticker.getLast();
+                            highestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
                         }
                     }
                     // We check if this gain is at a new lowest.
                     if (lowestPrice == null) {
-                        lowestPrice = ticker.getLast();
+                        lowestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
                     } else {
-                        final Optional<GainDTO> lowestGain = calculateGainFromPrice(lowestPrice);
+                        final Optional<GainDTO> lowestGain = calculateGainFromPrice(lowestPrice.getValue());
                         if (lowestGain.isPresent() && lowestGain.get().getPercentage() >= gain.get().getPercentage()) {
-                            lowestPrice = ticker.getLast();
+                            lowestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
                         }
                     }
                     return false;
@@ -286,11 +289,11 @@ public class PositionDTO {
             //  - Bought 10 ETH with a price of 5 -> Amount of 50.
             //  - Sold 10 ETH with a price of 6 -> Amount of 60.
             //  Gain = (6-5)/5 = 20%.
-            float gainPercentage = (price.subtract(openTrade.getPrice()))
-                    .divide(openTrade.getPrice(), BIGINTEGER_SCALE, RoundingMode.FLOOR)
+            float gainPercentage = (price.subtract(openTrade.getPrice().getValue()))
+                    .divide(openTrade.getPrice().getValue(), BIGINTEGER_SCALE, RoundingMode.FLOOR)
                     .floatValue() * ONE_HUNDRED;
-            BigDecimal gainAmount = ((openTrade.getOriginalAmount().multiply(price))
-                    .subtract((openTrade.getOriginalAmount()).multiply(openTrade.getPrice())));
+            BigDecimal gainAmount = ((openTrade.getAmount().getValue().multiply(price))
+                    .subtract((openTrade.getAmount().getValue()).multiply(openTrade.getPrice().getValue())));
 
             GainDTO gain = new GainDTO(gainPercentage,
                     new CurrencyAmountDTO(gainAmount, currencyPair.getQuoteCurrency()),
@@ -327,12 +330,12 @@ public class PositionDTO {
             // Gain  -> ((150 - 100) / 100) * 100 = 50 %
             BigDecimal bought = getOpeningTrades()
                     .stream()
-                    .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
+                    .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
                     .reduce(ZERO, BigDecimal::add);
 
             BigDecimal sold = getClosingTrades()
                     .stream()
-                    .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
+                    .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
                     .reduce(ZERO, BigDecimal::add);
 
             // Calculate gain.
@@ -370,8 +373,8 @@ public class PositionDTO {
         return openingOrder.getTrades()
                 .stream()
                 .filter(t -> !t.getId().equals(trade.getId()))
-                .map(TradeDTO::getOriginalAmount)
-                .reduce(trade.getOriginalAmount(), BigDecimal::add);
+                .map(t -> t.getAmount().getValue())
+                .reduce(trade.getAmount().getValue(), BigDecimal::add);
     }
 
     /**
@@ -384,8 +387,8 @@ public class PositionDTO {
         return closingOrder.getTrades()
                 .stream()
                 .filter(t -> !t.getId().equals(trade.getId()))
-                .map(TradeDTO::getOriginalAmount)
-                .reduce(trade.getOriginalAmount(), BigDecimal::add);
+                .map(t -> t.getAmount().getValue())
+                .reduce(trade.getAmount().getValue(), BigDecimal::add);
     }
 
     /**
@@ -475,21 +478,16 @@ public class PositionDTO {
     }
 
     /**
-     * Getter lowestPrice.
-     *
-     * @return lowestPrice
-     */
-    public final BigDecimal getLowestPrice() {
-        return lowestPrice;
-    }
-
-    /**
      * Getter latestCalculatedGain.
      *
      * @return latestCalculatedGain
      */
     public final Optional<GainDTO> getLatestCalculatedGain() {
-        return calculateGainFromPrice(latestPrice);
+        if (latestPrice != null) {
+            return calculateGainFromPrice(latestPrice.getValue());
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -498,7 +496,11 @@ public class PositionDTO {
      * @return lowestCalculatedGain
      */
     public final Optional<GainDTO> getLowestCalculatedGain() {
-        return calculateGainFromPrice(lowestPrice);
+        if (lowestPrice != null) {
+            return calculateGainFromPrice(lowestPrice.getValue());
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -507,7 +509,11 @@ public class PositionDTO {
      * @return highestCalculatedGain
      */
     public final Optional<GainDTO> getHighestCalculatedGain() {
-        return calculateGainFromPrice(highestPrice);
+        if (highestPrice != null) {
+        return calculateGainFromPrice(highestPrice.getValue());
+        } else {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -602,7 +608,7 @@ public class PositionDTO {
             }
             return value;
         } catch (Exception e) {
-            return "Position " + getId();
+            return "Position " + getId() + " (error in description generation)";
         }
     }
 

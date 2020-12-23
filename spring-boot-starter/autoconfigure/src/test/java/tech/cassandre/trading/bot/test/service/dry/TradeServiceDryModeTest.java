@@ -76,8 +76,10 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertTrue(order01.isPresent());
         assertEquals(orderId01, order01.get().getId());
         assertEquals(cp1, order01.get().getCurrencyPair());
-        assertEquals(new BigDecimal("0.001"), order01.get().getOriginalAmount());
-        assertEquals(new BigDecimal("0.2"), order01.get().getAveragePrice());
+        assertEquals(0, new BigDecimal("0.001").compareTo(order01.get().getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), order01.get().getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("0.2").compareTo(order01.get().getAveragePrice().getValue()));
+        assertEquals(cp1.getQuoteCurrency(), order01.get().getAveragePrice().getCurrency());
         assertEquals(BID, order01.get().getType());
 
         // Testing the received trade.
@@ -87,8 +89,10 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(tradeId01, trade01.get().getId());
         assertEquals(orderId01, trade01.get().getOrderId());
         assertEquals(cp1, trade01.get().getCurrencyPair());
-        assertEquals(new BigDecimal("0.001"), trade01.get().getOriginalAmount());
-        assertEquals(new BigDecimal("0.2"), trade01.get().getPrice());
+        assertEquals(0, new BigDecimal("0.001").compareTo(trade01.get().getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), trade01.get().getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("0.2").compareTo(trade01.get().getPrice().getValue()));
+        assertEquals(cp1.getQuoteCurrency(), trade01.get().getPrice().getCurrency());
         assertEquals(BID, trade01.get().getType());
 
         // We create a sell order to check order numbers and type.

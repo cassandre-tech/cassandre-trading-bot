@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
@@ -68,7 +69,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .id(orderId)
                     .timestamp(ZonedDateTime.now())
                     .type(orderTypeDTO)
-                    .originalAmount(amount)
+                    .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
                     .currencyPair(currencyPair)
                     .status(PENDING_NEW)
                     .build();
@@ -103,10 +104,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .id(orderId)
                     .timestamp(ZonedDateTime.now())
                     .type(orderTypeDTO)
-                    .originalAmount(amount)
+                    .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
                     .currencyPair(currencyPair)
                     .status(PENDING_NEW)
-                    .limitPrice(limitPrice)
+                    .limitPrice(new CurrencyAmountDTO(limitPrice, currencyPair.getQuoteCurrency()))
                     .build();
             localOrders.put(orderId, openingOrder);
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);

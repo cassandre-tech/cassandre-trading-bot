@@ -5,10 +5,10 @@ import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
@@ -31,7 +31,7 @@ public class OrderDTO {
     OrderTypeDTO type;
 
     /** Amount to be ordered / amount that was ordered. */
-    BigDecimal originalAmount;
+    CurrencyAmountDTO amount;
 
     /** Currency-pair. */
     CurrencyPairDTO currencyPair;
@@ -46,19 +46,19 @@ public class OrderDTO {
     OrderStatusDTO status;
 
     /** Amount to be ordered / amount that has been matched against order on the order book/filled. */
-    BigDecimal cumulativeAmount;
+    CurrencyAmountDTO cumulativeAmount;
 
     /** Weighted Average price of the fills in the order. */
-    BigDecimal averagePrice;
+    CurrencyAmountDTO averagePrice;
 
     /** The total of the fees incurred for all transactions related to this order. */
-    BigDecimal fee;
+    CurrencyAmountDTO fee;
 
     /** The leverage to use for margin related to this order. */
     String leverage;
 
     /** Limit price. */
-    BigDecimal limitPrice;
+    CurrencyAmountDTO limitPrice;
 
     /** All trades related to order. */
     Set<TradeDTO> trades;
@@ -78,7 +78,7 @@ public class OrderDTO {
         return new EqualsBuilder()
                 .append(this.id, that.id)
                 .append(this.type, that.type)
-                .append(this.originalAmount, that.originalAmount)
+                .append(this.amount, that.amount)
                 .append(this.currencyPair, that.currencyPair)
                 .append(this.userReference, that.userReference)
                 .append(this.timestamp, that.timestamp)

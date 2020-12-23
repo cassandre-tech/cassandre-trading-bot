@@ -5,33 +5,33 @@ VALUES ('001', 'My strategy');
 
 -- =====================================================================================================================
 -- Insert orders.
-INSERT INTO ORDERS (ID, TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS, CUMULATIVE_AMOUNT,
-                    AVERAGE_PRICE, FEE, LEVERAGE, LIMIT_PRICE, STRATEGY_ID)
+INSERT INTO ORDERS (ID, TYPE, AMOUNT, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS, CUMULATIVE_AMOUNT,
+                    AVERAGE_PRICE, FEE, FEE_CURRENCY, LEVERAGE, LIMIT_PRICE, STRATEGY_ID)
 VALUES -- Order BACKUP_ORDER_01 (useless).
        ('BACKUP_ORDER_01', 'ASK', 0.000005, 'ETH/BTC', 'My reference 1', '2020-11-18', 'NEW', 0.000004, 0.000003,
-        0.000002, 'LEVERAGE_1', 0.000001, '001'),
+        0.000002, 'KCS', 'LEVERAGE_1', 0.000001, '001'),
 
        -- Order BACKUP_ORDER_02 (useless).
        ('BACKUP_ORDER_02', 'BID', 0.000015, 'USDT/BTC', 'My reference 2', '2020-11-19', 'PENDING_NEW', 0.000014,
-        0.000013, 0.000012, 'LEVERAGE_2', 0.000011, '001'),
+        0.000013, 0.000012, 'KCS', 'LEVERAGE_2', 0.000011, '001'),
 
        -- For position 1 (OPENING).
-       ('BACKUP_OPENING_ORDER_01', 'BID', 10, 'BTC/USDT', '', '2020-11-20', 'NEW', 10, 1, 1, '', 1, '001'),
+       ('BACKUP_OPENING_ORDER_01', 'BID', 10, 'BTC/USDT', '', '2020-11-20', 'NEW', 10, 1, 1, 'KCS', '', 1, '001'),
 
        -- For position 2 (OPENED).
-       ('BACKUP_OPENING_ORDER_02', 'BID', 20, 'BTC/USDT', '', '2020-11-20', 'FILLED', 20, 1, 1, '', 1, '001'),
+       ('BACKUP_OPENING_ORDER_02', 'BID', 20, 'BTC/USDT', '', '2020-11-20', 'FILLED', 20, 1, 1, 'KCS', '', 1, '001'),
 
        -- For position 3 (CLOSING).
-       ('BACKUP_OPENING_ORDER_03', 'BID', 30, 'BTC/USDT', '', '2020-11-20', 'FILLED', 30, 1, 1, '', 1, '001'),
-       ('BACKUP_CLOSING_ORDER_01', 'ASK', 30, 'BTC/USDT', '', '2020-11-20', 'NEW', 30, 1, 1, '', 1, '001'),
+       ('BACKUP_OPENING_ORDER_03', 'BID', 30, 'BTC/USDT', '', '2020-11-20', 'FILLED', 30, 1, 1, 'KCS', '', 1, '001'),
+       ('BACKUP_CLOSING_ORDER_01', 'ASK', 30, 'BTC/USDT', '', '2020-11-20', 'NEW', 30, 1, 1, 'KCS', '', 1, '001'),
 
        -- For position 4 (CLOSED).
-       ('BACKUP_OPENING_ORDER_04', 'BID', 40, 'BTC/USDT', '', '2020-11-20', 'FILLED', 40, 1, 1, '', 1, '001'),
-       ('BACKUP_CLOSING_ORDER_02', 'ASK', 40, 'BTC/USDT', '', '2020-11-20', 'FILLED', 40, 1, 1, '', 1, '001'),
+       ('BACKUP_OPENING_ORDER_04', 'BID', 40, 'BTC/USDT', '', '2020-11-20', 'FILLED', 40, 1, 1, 'KCS', '', 1, '001'),
+       ('BACKUP_CLOSING_ORDER_02', 'ASK', 40, 'BTC/USDT', '', '2020-11-20', 'FILLED', 40, 1, 1, 'KCS', '', 1, '001'),
 
        -- For position 4 (CLOSED).
-       ('BACKUP_OPENING_ORDER_05', 'BID', 50, 'ETH/USD', '', '2020-11-20', 'FILLED', 50, 1, 1, '', 1, '001'),
-       ('BACKUP_CLOSING_ORDER_03', 'ASK', 50, 'ETH/USD', '', '2020-11-20', 'FILLED', 50, 1, 1, '', 1, '001');
+       ('BACKUP_OPENING_ORDER_05', 'BID', 50, 'ETH/USD', '', '2020-11-20', 'FILLED', 50, 1, 1, 'KCS', '', 1, '001'),
+       ('BACKUP_CLOSING_ORDER_03', 'ASK', 50, 'ETH/USD', '', '2020-11-20', 'FILLED', 50, 1, 1, 'KCS', '', 1, '001');
 
 -- =====================================================================================================================
 -- Insert positions.
@@ -55,7 +55,7 @@ VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPENING_ORDER_01 to
 
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO TRADES (ID, ORDER_ID, TYPE, ORIGINAL_AMOUNT, CURRENCY_PAIR, PRICE, TIMESTAMP, FEE_AMOUNT, FEE_CURRENCY)
+INSERT INTO TRADES (ID, ORDER_ID, TYPE, AMOUNT, CURRENCY_PAIR, PRICE, TIMESTAMP, FEE_AMOUNT, FEE_CURRENCY)
 VALUES -- note : No trade for order BACKUP_OPENING_ORDER_01 - This is why position 1 has the opening status.
        -- Order BACKUP_TRADE_01 - Trade from the order buying BACKUP_OPENING_ORDER_02.
        ('BACKUP_TRADE_01', 'BACKUP_OPENING_ORDER_02', 'BID', 20, 'BTC/USDT', 10, '2020-08-01', 1, 'USDT'),

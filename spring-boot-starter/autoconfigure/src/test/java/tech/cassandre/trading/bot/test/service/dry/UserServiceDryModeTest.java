@@ -200,8 +200,10 @@ public class UserServiceDryModeTest extends BaseTest {
                 .filter(t -> t.getOrderId().equals(buyMarketOrder.getOrderId())).findFirst();
         assertTrue(buyingTrade.isPresent());
         assertEquals(BID, buyingTrade.get().getType());
-        assertEquals(0, new BigDecimal("0.02").compareTo(buyingTrade.get().getOriginalAmount()));
-        assertEquals(0, new BigDecimal("0.032666").compareTo(buyingTrade.get().getPrice()));
+        assertEquals(0, new BigDecimal("0.02").compareTo(buyingTrade.get().getAmount().getValue()));
+        assertEquals(ETH, buyingTrade.get().getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("0.032666").compareTo(buyingTrade.get().getPrice().getValue()));
+        assertEquals(BTC, buyingTrade.get().getPrice().getCurrency());
 
         // =============================================================================================================
         // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032466 BTC.
@@ -251,8 +253,9 @@ public class UserServiceDryModeTest extends BaseTest {
                 .filter(t -> t.getOrderId().equals(sellMarketOrder.getOrderId())).findFirst();
         assertTrue(sellingTrade.isPresent());
         assertEquals(ASK, sellingTrade.get().getType());
-        assertEquals(0, new BigDecimal("0.02").compareTo(sellingTrade.get().getOriginalAmount()));
-        assertEquals(0, new BigDecimal("0.032466").compareTo(sellingTrade.get().getPrice()));
+        assertEquals(0, new BigDecimal("0.02").compareTo(sellingTrade.get().getAmount().getValue()));
+        assertEquals(ETH, sellingTrade.get().getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("0.032466").compareTo(sellingTrade.get().getPrice().getValue()));
     }
 
     @Test

@@ -121,11 +121,11 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(BID, trade3.getType());
         assertEquals(cp2, trade3.getCurrencyPair());
         assertEquals("ORDER00002", trade3.getOrderId());
-        assertEquals(0, new BigDecimal("1.110001").compareTo(trade3.getOriginalAmount()));
-        assertEquals(0, new BigDecimal("2.220002").compareTo(trade3.getPrice()));
+        assertEquals(0, new BigDecimal("1.110001").compareTo(trade3.getAmount().getValue()));
+        assertEquals(cp2.getBaseCurrency(), trade3.getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("2.220002").compareTo(trade3.getPrice().getValue()));
+        assertEquals(cp2.getQuoteCurrency(), trade3.getPrice().getCurrency());
         assertTrue(createZonedDateTime("02-09-2021").isEqual(trade3.getTimestamp()));
-        System.out.println("> " + new BigDecimal("3.330003"));
-        System.out.println("> " + trade3.getFee().getValue());
         assertEquals(0, new BigDecimal("3.330003").compareTo(trade3.getFee().getValue()));
         assertEquals(BTC, trade3.getFee().getCurrency());
         // Trade 4.

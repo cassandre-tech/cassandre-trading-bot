@@ -35,6 +35,9 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
 @DisplayName("Domain - Order")
@@ -75,16 +78,19 @@ public class OrderTest extends BaseTest {
         assertNotNull(order);
         assertEquals("BACKUP_ORDER_01", order.getId());
         assertEquals(ASK, order.getType());
-        assertEquals(0, new BigDecimal("0.000005").compareTo(order.getOriginalAmount()));
+        assertEquals(0, new BigDecimal("0.000005").compareTo(order.getAmount().getValue()));
+        assertEquals(ETH, order.getAmount().getCurrency());
         assertEquals(new CurrencyPairDTO("ETH/BTC"), order.getCurrencyPair());
         assertEquals("My reference 1", order.getUserReference());
         assertEquals(createZonedDateTime("18-11-2020"), order.getTimestamp());
         assertEquals(NEW, order.getStatus());
-        assertEquals(0, new BigDecimal("0.000004").compareTo(order.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("0.000003").compareTo(order.getAveragePrice()));
-        assertEquals(0, new BigDecimal("0.000002").compareTo(order.getFee()));
+        assertEquals(0, new BigDecimal("0.000004").compareTo(order.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("0.000003").compareTo(order.getAveragePrice().getValue()));
+        assertEquals(0, new BigDecimal("0.000002").compareTo(order.getFee().getValue()));
+        assertEquals(KCS, order.getFee().getCurrency());
         assertEquals("LEVERAGE_1", order.getLeverage());
-        assertEquals(0, new BigDecimal("0.000001").compareTo(order.getLimitPrice()));
+        assertEquals(0, new BigDecimal("0.000001").compareTo(order.getLimitPrice().getValue()));
+        assertEquals(BTC, order.getLimitPrice().getCurrency());
         assertNotNull(order.getStrategy());
         assertEquals("001", order.getStrategy().getId());
         assertEquals(0, order.getTrades().size());
@@ -95,16 +101,19 @@ public class OrderTest extends BaseTest {
         assertNotNull(order);
         assertEquals("BACKUP_ORDER_02", order.getId());
         assertEquals(BID, order.getType());
-        assertEquals(0, new BigDecimal("0.000015").compareTo(order.getOriginalAmount()));
+        assertEquals(0, new BigDecimal("0.000015").compareTo(order.getAmount().getValue()));
+        assertEquals(USDT, order.getAmount().getCurrency());
         assertEquals(new CurrencyPairDTO("USDT/BTC"), order.getCurrencyPair());
         assertEquals("My reference 2", order.getUserReference());
         assertEquals(createZonedDateTime("19-11-2020"), order.getTimestamp());
         assertEquals(PENDING_NEW, order.getStatus());
-        assertEquals(0, new BigDecimal("0.000014").compareTo(order.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("0.000013").compareTo(order.getAveragePrice()));
-        assertEquals(0, new BigDecimal("0.000012").compareTo(order.getFee()));
+        assertEquals(0, new BigDecimal("0.000014").compareTo(order.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("0.000013").compareTo(order.getAveragePrice().getValue()));
+        assertEquals(0, new BigDecimal("0.000012").compareTo(order.getFee().getValue()));
+        assertEquals(KCS, order.getFee().getCurrency());
         assertEquals("LEVERAGE_2", order.getLeverage());
-        assertEquals(0, new BigDecimal("0.000011").compareTo(order.getLimitPrice()));
+        assertEquals(0, new BigDecimal("0.000011").compareTo(order.getLimitPrice().getValue()));
+        assertEquals(BTC, order.getLimitPrice().getCurrency());
         assertNotNull(order.getStrategy());
         assertEquals("001", order.getStrategy().getId());
         assertEquals(0, order.getTrades().size());
@@ -138,16 +147,16 @@ public class OrderTest extends BaseTest {
         OrderDTO order01 = OrderDTO.builder()
                 .id("BACKUP_ORDER_03")
                 .type(ASK)
-                .originalAmount(new BigDecimal("1.00001"))
+                .amount(new CurrencyAmountDTO("1.00001", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .userReference("MY_REF_3")
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("1.00002"))
-                .averagePrice(new BigDecimal("1.00003"))
-                .fee(new BigDecimal("1.00004"))
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("1.00004", KCS))
                 .leverage("leverage3")
-                .limitPrice(new BigDecimal("1.00005"))
+                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
         orderFlux.emitValue(order01);
@@ -159,7 +168,7 @@ public class OrderTest extends BaseTest {
         assertTrue(orderInDatabase.isPresent());
         assertEquals("BACKUP_ORDER_03", orderInDatabase.get().getId());
         assertEquals(ASK, orderInDatabase.get().getType());
-        assertEquals(0, new BigDecimal("1.00001").compareTo(orderInDatabase.get().getOriginalAmount()));
+        assertEquals(0, new BigDecimal("1.00001").compareTo(orderInDatabase.get().getAmount()));
         assertEquals(cp1.toString(), orderInDatabase.get().getCurrencyPair());
         assertEquals("MY_REF_3", orderInDatabase.get().getUserReference());
         assertEquals(createZonedDateTime("01-01-2020"), orderInDatabase.get().getTimestamp());
@@ -184,16 +193,19 @@ public class OrderTest extends BaseTest {
         assertNotNull(order);
         assertEquals("BACKUP_ORDER_03", order.getId());
         assertEquals(ASK, order.getType());
-        assertEquals(0, new BigDecimal("1.00001").compareTo(order.getOriginalAmount()));
+        assertEquals(0, new BigDecimal("1.00001").compareTo(order.getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), order.getAmount().getCurrency());
         assertEquals(cp1, order.getCurrencyPair());
         assertEquals("MY_REF_3", order.getUserReference());
         assertEquals(createZonedDateTime("01-01-2020"), order.getTimestamp());
         assertEquals(NEW, order.getStatus());
-        assertEquals(0, new BigDecimal("1.00002").compareTo(order.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("1.00003").compareTo(order.getAveragePrice()));
-        assertEquals(0, new BigDecimal("1.00004").compareTo(order.getFee()));
+        assertEquals(0, new BigDecimal("1.00002").compareTo(order.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("1.00003").compareTo(order.getAveragePrice().getValue()));
+        assertEquals(0, new BigDecimal("1.00004").compareTo(order.getFee().getValue()));
+        assertEquals(KCS, order.getFee().getCurrency());
         assertEquals("leverage3", order.getLeverage());
-        assertEquals(0, new BigDecimal("1.00005").compareTo(order.getLimitPrice()));
+        assertEquals(0, new BigDecimal("1.00005").compareTo(order.getLimitPrice().getValue()));
+        assertEquals(cp1.getQuoteCurrency(), order.getLimitPrice().getCurrency());
         assertNotNull(order.getStrategy());
         assertEquals("1", order.getStrategy().getId());
 
@@ -202,16 +214,16 @@ public class OrderTest extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .id("BACKUP_ORDER_03")
                 .type(ASK)
-                .originalAmount(new BigDecimal("1.00002"))
+                .amount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .userReference("MY_REF_3")
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("1.00002"))
-                .averagePrice(new BigDecimal("1.00003"))
-                .fee(new BigDecimal("1.00004"))
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("1.00004", KCS))
                 .leverage("leverage3")
-                .limitPrice(new BigDecimal("1.00005"))
+                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
                 .strategy(wrongStrategyDTO)
                 .build());
         await().untilAsserted(() -> assertNotNull(getOrder("BACKUP_ORDER_03").getUpdatedOn()));
@@ -221,9 +233,9 @@ public class OrderTest extends BaseTest {
                 .id("BACKUP_TRADE_11")
                 .orderId("BACKUP_ORDER_03")
                 .type(BID)
-                .originalAmount(new BigDecimal("1.100001"))
+                .amount(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .price(new BigDecimal("2.200002"))
+                .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
@@ -237,16 +249,16 @@ public class OrderTest extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .id("BACKUP_ORDER_03")
                 .type(ASK)
-                .originalAmount(new BigDecimal("1.00003"))
+                .amount(new CurrencyAmountDTO("1.00003", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .userReference("MY_REF_3")
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("1.00002"))
-                .averagePrice(new BigDecimal("1.00003"))
-                .fee(new BigDecimal("1.00004"))
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("1.00004", KCS))
                 .leverage("leverage3")
-                .limitPrice(new BigDecimal("1.00005"))
+                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
                 .strategy(wrongStrategyDTO)
                 .build());
         await().untilAsserted(() -> assertTrue(updatedOn.isBefore(getOrder("BACKUP_ORDER_03").getUpdatedOn())));

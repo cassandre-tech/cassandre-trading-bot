@@ -40,7 +40,7 @@ public class OrderRepositoryTest extends BaseTest {
         Order order = orders.next();
         assertEquals("BACKUP_ORDER_01", order.getId());
         assertEquals(ASK, order.getType());
-        assertEquals(0, new BigDecimal("0.000005").compareTo(order.getOriginalAmount()));
+        assertEquals(0, new BigDecimal("0.000005").compareTo(order.getAmount()));
         assertEquals("ETH/BTC", order.getCurrencyPair());
         assertEquals("My reference 1", order.getUserReference());
         assertEquals(createZonedDateTime("18-11-2020"), order.getTimestamp());
@@ -56,7 +56,7 @@ public class OrderRepositoryTest extends BaseTest {
         order = orders.next();
         assertEquals("BACKUP_ORDER_02", order.getId());
         assertEquals(BID, order.getType());
-        assertEquals(0, new BigDecimal("0.000015").compareTo(order.getOriginalAmount()));
+        assertEquals(0, new BigDecimal("0.000015").compareTo(order.getAmount()));
         assertEquals("USDT/BTC", order.getCurrencyPair());
         assertEquals("My reference 2", order.getUserReference());
         assertEquals(createZonedDateTime("19-11-2020"), order.getTimestamp());

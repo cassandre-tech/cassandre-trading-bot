@@ -129,8 +129,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                 .filter(p -> p.getCurrencyPair().equals(ticker.getCurrencyPair()))
                 .forEach(p -> {
                     if (p.shouldBeClosed(ticker)) {
-                        System.out.println("straumat " + p.getStrategy() + " : " + ticker.getCurrencyPair() + " : " + p.getAmount());
-                        final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount());
+                        final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
                         if (orderCreationResult.isSuccessful()) {
                             p.setClosingOrderId(orderCreationResult.getOrderId());
                             getLogger().debug("PositionService - Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId());
@@ -186,12 +185,12 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     // We calculate the amounts bought and amount sold..
                     final BigDecimal bought = p.getOpeningTrades()
                             .stream()
-                            .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
+                            .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
                             .reduce(totalBought.get(currency), BigDecimal::add);
                     totalBought.put(currency, bought);
                     final BigDecimal sold = p.getClosingTrades()
                             .stream()
-                            .map(t -> t.getOriginalAmount().multiply(t.getPrice()))
+                            .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
                             .reduce(totalSold.get(currency), BigDecimal::add);
                     totalSold.put(currency, sold);
 

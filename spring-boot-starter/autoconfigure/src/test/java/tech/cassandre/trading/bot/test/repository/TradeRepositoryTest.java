@@ -38,7 +38,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("BACKUP_TRADE_01", trade.getId());
         assertEquals("BACKUP_OPENING_ORDER_02", trade.getOrderId());
         assertEquals(BID, trade.getType());
-        assertEquals(0, trade.getOriginalAmount().compareTo(new BigDecimal("20")));
+        assertEquals(0, trade.getAmount().compareTo(new BigDecimal("20")));
         assertEquals("BTC/USDT", trade.getCurrencyPair());
         assertEquals(0, trade.getPrice().compareTo(new BigDecimal("10")));
         assertEquals(createZonedDateTime("01-08-2020"), trade.getTimestamp());
@@ -49,7 +49,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("BACKUP_TRADE_02", trade.getId());
         assertEquals("BACKUP_OPENING_ORDER_03", trade.getOrderId());
         assertEquals(BID, trade.getType());
-        assertEquals(0, trade.getOriginalAmount().compareTo(new BigDecimal("30")));
+        assertEquals(0, trade.getAmount().compareTo(new BigDecimal("30")));
         assertEquals("BTC/USDT", trade.getCurrencyPair());
         assertEquals(0, trade.getPrice().compareTo(new BigDecimal("20")));
         assertEquals(createZonedDateTime("02-08-2020"), trade.getTimestamp());
@@ -60,7 +60,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("BACKUP_TRADE_03", trade.getId());
         assertEquals("BACKUP_OPENING_ORDER_04", trade.getOrderId());
         assertEquals(BID, trade.getType());
-        assertEquals(0, trade.getOriginalAmount().compareTo(new BigDecimal("40")));
+        assertEquals(0, trade.getAmount().compareTo(new BigDecimal("40")));
         assertEquals("BTC/USDT", trade.getCurrencyPair());
         assertEquals(0, trade.getPrice().compareTo(new BigDecimal("30")));
         assertEquals(createZonedDateTime("03-08-2020"), trade.getTimestamp());
@@ -71,7 +71,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("BACKUP_TRADE_04", trade.getId());
         assertEquals("BACKUP_CLOSING_ORDER_01", trade.getOrderId());
         assertEquals(ASK, trade.getType());
-        assertEquals(0, trade.getOriginalAmount().compareTo(new BigDecimal("40")));
+        assertEquals(0, trade.getAmount().compareTo(new BigDecimal("40")));
         assertEquals("BTC/USDT", trade.getCurrencyPair());
         assertEquals(0, trade.getPrice().compareTo(new BigDecimal("40")));
         assertEquals(createZonedDateTime("04-08-2020"), trade.getTimestamp());
@@ -82,7 +82,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("BACKUP_TRADE_05", trade.getId());
         assertEquals("BACKUP_CLOSING_ORDER_02", trade.getOrderId());
         assertEquals(ASK, trade.getType());
-        assertEquals(0, trade.getOriginalAmount().compareTo(new BigDecimal("50")));
+        assertEquals(0, trade.getAmount().compareTo(new BigDecimal("50")));
         assertEquals("ETH/USD", trade.getCurrencyPair());
         assertEquals(0, trade.getPrice().compareTo(new BigDecimal("50")));
         assertEquals(createZonedDateTime("05-08-2020"), trade.getTimestamp());

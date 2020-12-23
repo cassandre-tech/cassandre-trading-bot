@@ -8,7 +8,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -51,13 +50,13 @@ public class TradeDTO {
     OrderTypeDTO type;
 
     /** Amount to be ordered / amount that was ordered. */
-    BigDecimal originalAmount;
+    CurrencyAmountDTO amount;
 
     /** Currency-pair. */
     CurrencyPairDTO currencyPair;
 
     /** The price. */
-    BigDecimal price;
+    CurrencyAmountDTO price;
 
     /** The timestamp of the order. */
     ZonedDateTime timestamp;
@@ -78,7 +77,7 @@ public class TradeDTO {
                 .append(this.id, that.id)
                 .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
-                .append(this.originalAmount, that.originalAmount)
+                .append(this.amount, that.amount)
                 .append(this.currencyPair, that.currencyPair)
                 .append(this.price, that.price)
                 .append(this.timestamp, that.timestamp)

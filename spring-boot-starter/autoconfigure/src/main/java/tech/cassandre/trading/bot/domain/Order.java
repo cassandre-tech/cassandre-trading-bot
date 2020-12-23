@@ -45,8 +45,8 @@ public class Order extends BaseDomain {
     private OrderTypeDTO type;
 
     /** Amount to be ordered / amount that was ordered. */
-    @Column(name = "ORIGINAL_AMOUNT", precision = PRECISION, scale = SCALE)
-    private BigDecimal originalAmount;
+    @Column(name = "AMOUNT", precision = PRECISION, scale = SCALE)
+    private BigDecimal amount;
 
     /** The currency-pair. */
     @Column(name = "CURRENCY_PAIR")
@@ -76,6 +76,10 @@ public class Order extends BaseDomain {
     /** The total of the fees incurred for all transactions related to this order. */
     @Column(name = "FEE", precision = PRECISION, scale = SCALE)
     private BigDecimal fee;
+
+    /** The fee that was charged by the exchange for this trade. */
+    @Column(name = "FEE_CURRENCY")
+    private String feeCurrency;
 
     /** The leverage to use for margin related to this order. */
     @Column(name = "LEVERAGE")
@@ -108,7 +112,7 @@ public class Order extends BaseDomain {
         return new EqualsBuilder()
                 .append(this.id, that.id)
                 .append(this.type, that.type)
-                .append(this.originalAmount, that.originalAmount)
+                .append(this.amount, that.amount)
                 .append(this.currencyPair, that.currencyPair)
                 .append(this.userReference, that.userReference)
                 .append(this.timestamp, that.timestamp)
@@ -116,6 +120,7 @@ public class Order extends BaseDomain {
                 .append(this.cumulativeAmount, that.cumulativeAmount)
                 .append(this.averagePrice, that.averagePrice)
                 .append(this.fee, that.fee)
+                .append(this.feeCurrency, that.feeCurrency)
                 .append(this.leverage, that.leverage)
                 .append(this.limitPrice, that.limitPrice)
                 .isEquals();

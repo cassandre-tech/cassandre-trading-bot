@@ -41,8 +41,8 @@ public class Trade extends BaseDomain {
     private OrderTypeDTO type;
 
     /** Amount to be ordered / amount that was ordered. */
-    @Column(name = "ORIGINAL_AMOUNT", precision = PRECISION, scale = SCALE)
-    private BigDecimal originalAmount;
+    @Column(name = "AMOUNT", precision = PRECISION, scale = SCALE)
+    private BigDecimal amount;
 
     /** The currency-pair. */
     @Column(name = "CURRENCY_PAIR")
@@ -77,7 +77,7 @@ public class Trade extends BaseDomain {
                 .append(this.id, that.id)
                 .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
-                .append(this.originalAmount, that.originalAmount)
+                .append(this.amount, that.amount)
                 .append(this.currencyPair, that.currencyPair)
                 .append(this.price, that.price)
                 .append(this.timestamp, that.timestamp)

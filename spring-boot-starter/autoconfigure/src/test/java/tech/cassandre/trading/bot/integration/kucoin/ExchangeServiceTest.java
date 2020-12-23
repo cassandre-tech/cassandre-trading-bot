@@ -7,14 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import tech.cassandre.trading.bot.service.ExchangeService;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.service.ExchangeService;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
@@ -59,13 +62,13 @@ public class ExchangeServiceTest {
 		assertEquals(expectedMinimumNumberOfAvailableCurrencyPairs, currencyPairs.size());
 
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("KCS", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.KCS, CurrencyDTO.USDT)));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO(KCS, USDT)));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT)));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO(ETH, USDT)));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("BTC", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.BTC, CurrencyDTO.USDT)));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO(BTC, USDT)));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "BTC")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC)));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO(ETH, BTC)));
 	}
 
 }

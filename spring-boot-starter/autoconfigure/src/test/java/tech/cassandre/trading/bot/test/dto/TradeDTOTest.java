@@ -2,10 +2,8 @@ package tech.cassandre.trading.bot.test.dto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
@@ -26,10 +24,10 @@ public class TradeDTOTest {
         TradeDTO t1 = TradeDTO.builder().id("0000001").build();
         TradeDTO t1Bis = TradeDTO.builder().id("0000001")
                 .currencyPair(new CurrencyPairDTO(ETH, BTC))
-                .fee(new CurrencyAmountDTO(new BigDecimal(1), BTC))
+                .fee(new CurrencyAmountDTO("1", BTC))
                 .orderId("000002")
-                .originalAmount(new BigDecimal(1))
-                .price(new BigDecimal(1))
+                .amount(new CurrencyAmountDTO("1", ETH))
+                .price(new CurrencyAmountDTO("1", BTC))
                 .timestamp(ZonedDateTime.now())
                 .type(BID)
                 .build();
@@ -37,8 +35,6 @@ public class TradeDTOTest {
 
         // Test that the id makes the trade different.
         TradeDTO t2 = TradeDTO.builder().id("0000002").build();
-        System.out.println(t1.getId());
-        System.out.println(t2.getId());
         assertNotEquals(t1, t2);
     }
 

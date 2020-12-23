@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -37,6 +38,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
@@ -131,51 +133,51 @@ public class OrderFluxTestMock {
         // Order 000001.
         OrderDTO order01 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
         // Order 000002.
         OrderDTO order02 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
         // Order 000003.
         OrderDTO order03 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
@@ -192,68 +194,68 @@ public class OrderFluxTestMock {
         // Order 000001.
         OrderDTO order04 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
         // Order 000002.
         OrderDTO order05 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
         // Order 000003 : the original amount changed.
         OrderDTO order06 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("2"))
+                .amount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
         // Order 000004 : new order.
         OrderDTO order07 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000004")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
@@ -271,68 +273,68 @@ public class OrderFluxTestMock {
         // Order 000001.
         OrderDTO order08 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
         // Order 000002 : average price changed.
         OrderDTO order09 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("1"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
         // Order 000003.
         OrderDTO order10 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("2"))
+                .amount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("4"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("4", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 
         // Order 000004 : fee changed.
         OrderDTO order11 = OrderDTO.builder()
                 .type(ASK)
-                .originalAmount(new BigDecimal("1"))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
                 .id("000004")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
-                .cumulativeAmount(new BigDecimal("2"))
-                .averagePrice(new BigDecimal("3"))
-                .fee(new BigDecimal("1"))
+                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
+                .fee(new CurrencyAmountDTO("1", KCS))
                 .leverage("leverage1")
-                .limitPrice(new BigDecimal("5"))
+                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build();
 

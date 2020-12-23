@@ -34,6 +34,18 @@ public class CurrencyAmountDTO {
      * @param newValue    amount value
      * @param newCurrency amount currency
      */
+    public CurrencyAmountDTO(final String newValue, final CurrencyDTO newCurrency) {
+        this.valueProvided = true;
+        this.value = new BigDecimal(newValue);
+        this.currency = newCurrency;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param newValue    amount value
+     * @param newCurrency amount currency
+     */
     public CurrencyAmountDTO(final BigDecimal newValue, final CurrencyDTO newCurrency) {
         this.valueProvided = true;
         this.value = newValue;

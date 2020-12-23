@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static java.math.BigDecimal.ZERO;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
@@ -171,9 +170,9 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .currencyPair(currencyPair)
                     .type(orderTypeDTO)
                     .status(FILLED)
-                    .averagePrice(t.getLast())
-                    .originalAmount(amount)
-                    .fee(ZERO)
+                    .averagePrice(new CurrencyAmountDTO(t.getLast(), currencyPair.getQuoteCurrency()))
+                    .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
+                    .fee(new CurrencyAmountDTO())
                     .timestamp(ZonedDateTime.now())
                     .build();
 
@@ -184,8 +183,8 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .orderId(orderId)
                     .currencyPair(currencyPair)
                     .type(orderTypeDTO)
-                    .originalAmount(amount)
-                    .price(t.getLast())
+                    .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
+                    .price(new CurrencyAmountDTO(t.getLast(), currencyPair.getQuoteCurrency()))
                     .timestamp(ZonedDateTime.now())
                     .fee(new CurrencyAmountDTO())
                     .build();

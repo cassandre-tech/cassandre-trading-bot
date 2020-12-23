@@ -11,6 +11,7 @@ import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.ValueMapping;
 import org.mapstruct.ValueMappings;
 import tech.cassandre.trading.bot.domain.Position;
@@ -123,7 +124,63 @@ public interface CassandreMapper {
      * @param source LimitOrder
      * @return OrderDTO
      */
+    @Mapping(source = "source", target = "amount", qualifiedByName = "mapLimitOrderToOrderDTOAmount")
+    @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapLimitOrderToOrderDTOCumulativeAmount")
+    @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapLimitOrderToOrderDTOAveragePrice")
+    @Mapping(source = "source", target = "fee", qualifiedByName = "mapLimitOrderToOrderDTOFee")
+    @Mapping(source = "source", target = "limitPrice", qualifiedByName = "mapLimitOrderToOrderDTOLimitPrice")
     OrderDTO mapToOrderDTO(LimitOrder source);
+
+    @Named("mapLimitOrderToOrderDTOAmount")
+    default CurrencyAmountDTO mapLimitOrderToOrderDTOAmount(LimitOrder source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getOriginalAmount() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getOriginalAmount(), cp.getBaseCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapLimitOrderToOrderDTOCumulativeAmount")
+    default CurrencyAmountDTO mapLimitOrderToOrderDTOCumulativeAmount(LimitOrder source) {
+        // TODO Add null variables in the constructor.
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getCumulativeAmount() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getCumulativeAmount(), cp.getBaseCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapLimitOrderToOrderDTOAveragePrice")
+    default CurrencyAmountDTO mapLimitOrderToOrderDTOAveragePrice(LimitOrder source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getAveragePrice() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getAveragePrice(), cp.getQuoteCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapLimitOrderToOrderDTOFee")
+    default CurrencyAmountDTO mapLimitOrderToOrderDTOFee(LimitOrder source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getFee() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getFee(), cp.getQuoteCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapLimitOrderToOrderDTOLimitPrice")
+    default CurrencyAmountDTO mapLimitOrderToOrderDTOLimitPrice(LimitOrder source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getLimitPrice() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getLimitPrice(), cp.getQuoteCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
 
     /**
      * Map UserTrade to TradeDTO.
@@ -131,7 +188,39 @@ public interface CassandreMapper {
      * @param source UserTrade
      * @return TradeDTO
      */
+    @Mapping(source = "source", target = "amount", qualifiedByName = "mapUserTradeToTradeDTOAmount")
+    @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
+    @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
     TradeDTO mapToTradeDTO(UserTrade source);
+
+    @Named("mapUserTradeToTradeDTOAmount")
+    default CurrencyAmountDTO mapUserTradeToTradeDTOAmount(UserTrade source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getOriginalAmount() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getOriginalAmount(), cp.getBaseCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapUserTradeToTradeDTOPrice")
+    default CurrencyAmountDTO mapUserTradeToTradeDTOPrice(UserTrade source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getPrice() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getPrice(), cp.getQuoteCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapUserTradeToTradeDTOFee")
+    default CurrencyAmountDTO mapUserTradeToTradeDTOFee(UserTrade source) {
+        if (source.getFeeAmount() != null && source.getFeeCurrency() != null) {
+            return new CurrencyAmountDTO(source.getFeeAmount(), mapToCurrencyDTO(source.getFeeCurrency()));
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
 
     /**
      * Map to OrderTypeDTO.
@@ -165,6 +254,8 @@ public interface CassandreMapper {
      * @param source tradeDTO
      * @return trade
      */
+    @Mapping(source = "amount.value", target = "amount")
+    @Mapping(source = "price.value", target = "price")
     @Mapping(source = "fee.value", target = "feeAmount")
     @Mapping(source = "fee.currency", target = "feeCurrency")
     Trade mapToTrade(TradeDTO source);
@@ -199,8 +290,63 @@ public interface CassandreMapper {
      * @param source order
      * @return OrderDTO
      */
+    @Mapping(source = "source", target = "amount", qualifiedByName = "mapOrderToOrderDTOAmount")
+    @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapOrderToOrderDTOCumulativeAmount")
+    @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapOrderToOrderDTOAveragePrice")
+    @Mapping(source = "source", target = "fee", qualifiedByName = "mapOrderToOrderDTOFee")
+    @Mapping(source = "source", target = "limitPrice", qualifiedByName = "mapOrderToOrderDTOLimitPrice")
     @Mapping(source = "trades", target = "trades")
     OrderDTO mapToOrderDTO(tech.cassandre.trading.bot.domain.Order source);
+
+    @Named("mapOrderToOrderDTOAmount")
+    default CurrencyAmountDTO mapOrderToOrderDTOAmount(tech.cassandre.trading.bot.domain.Order source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getAmount() != null & source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getAmount(), cp.getBaseCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapOrderToOrderDTOCumulativeAmount")
+    default CurrencyAmountDTO mapOrderToOrderDTOCumulativeAmount(tech.cassandre.trading.bot.domain.Order source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getCumulativeAmount() != null & source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getCumulativeAmount(), cp.getBaseCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapOrderToOrderDTOAveragePrice")
+    default CurrencyAmountDTO mapOrderToOrderDTOAveragePrice(tech.cassandre.trading.bot.domain.Order source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getAveragePrice() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getAveragePrice(), cp.getQuoteCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapOrderToOrderDTOFee")
+    default CurrencyAmountDTO mapOrderToOrderDTOFee(tech.cassandre.trading.bot.domain.Order source) {
+        if (source.getFee() != null && source.getFeeCurrency() != null) {
+            return new CurrencyAmountDTO(source.getFee(), new CurrencyDTO(source.getFeeCurrency()));
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+
+    @Named("mapOrderToOrderDTOLimitPrice")
+    default CurrencyAmountDTO mapOrderToOrderDTOLimitPrice(tech.cassandre.trading.bot.domain.Order source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getLimitPrice() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getLimitPrice(), cp.getQuoteCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
 
     /**
      * Map to order.
@@ -208,6 +354,12 @@ public interface CassandreMapper {
      * @param source source
      * @return Order
      */
+    @Mapping(target = "amount", source = "amount.value")
+    @Mapping(target = "cumulativeAmount", source = "cumulativeAmount.value")
+    @Mapping(target = "averagePrice", source = "averagePrice.value")
+    @Mapping(target = "fee", source = "fee.value")
+    @Mapping(target = "feeCurrency", source = "fee.currency")
+    @Mapping(target = "limitPrice", source = "limitPrice.value")
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
 
     /**
@@ -216,11 +368,34 @@ public interface CassandreMapper {
      * @param source trade
      * @return tradeDRO
      */
-    @Mapping(target = "fee", source = "source")
+    @Mapping(target = "amount", source = "source", qualifiedByName = "mapTradeToTradeDTOAmount")
+    @Mapping(target = "price", source = "source", qualifiedByName = "mapTradeToTradeDTOPrice")
+    @Mapping(target = "fee", source = "source", qualifiedByName = "mapTradeToTradeDTOFee")
     TradeDTO mapToTradeDTO(Trade source);
 
-    default CurrencyAmountDTO mapToCurrencyAmountDTO(Trade source) {
-        if (source.getFeeAmount() != null || source.getFeeCurrency() != null) {
+    @Named("mapTradeToTradeDTOAmount")
+    default CurrencyAmountDTO mapTradeToTradeDTOAmount(Trade source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getAmount() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getAmount(), cp.getBaseCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapTradeToTradeDTOPrice")
+    default CurrencyAmountDTO mapTradeToTradeDTOPrice(Trade source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getAmount() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getPrice(), cp.getQuoteCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapTradeToTradeDTOFee")
+    default CurrencyAmountDTO mapTradeToTradeDTOFee(Trade source) {
+        if (source.getFeeAmount() != null && source.getFeeCurrency() != null) {
             return new CurrencyAmountDTO(source.getFeeAmount(), new CurrencyDTO(source.getFeeCurrency()));
         } else {
             return new CurrencyAmountDTO();
@@ -234,7 +409,51 @@ public interface CassandreMapper {
      * @return positionDTO
      */
     @Mapping(target = "rules", source = "source")
+    @Mapping(target = "amount", source = "source", qualifiedByName = "mapPositionToPositionDTOAmount")
+    @Mapping(target = "lowestPrice", source = "source", qualifiedByName = "mapPositionToPositionDTOLowestPrice")
+    @Mapping(target = "highestPrice", source = "source", qualifiedByName = "mapPositionToPositionDTOHighestPrice")
+    @Mapping(target = "latestPrice", source = "source", qualifiedByName = "mapPositionToPositionDTOLatestPrice")
     PositionDTO mapToPositionDTO(Position source);
+
+    @Named("mapPositionToPositionDTOAmount")
+    default CurrencyAmountDTO mapPositionToPositionDTOAmount(Position source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getAmount() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getAmount(), cp.getBaseCurrency());
+        } else {
+            return new CurrencyAmountDTO();
+        }
+    }
+
+    @Named("mapPositionToPositionDTOLowestPrice")
+    default CurrencyAmountDTO mapPositionToPositionDTOLowestPrice(Position source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getLowestPrice() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getLowestPrice(), cp.getQuoteCurrency());
+        } else {
+            return null;
+        }
+    }
+
+    @Named("mapPositionToPositionDTOHighestPrice")
+    default CurrencyAmountDTO mapPositionToPositionDTOHighestPrice(Position source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getHighestPrice() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getHighestPrice(), cp.getQuoteCurrency());
+        } else {
+            return null;
+        }
+    }
+
+    @Named("mapPositionToPositionDTOLatestPrice")
+    default CurrencyAmountDTO mapPositionToPositionDTOLatestPrice(Position source) {
+        CurrencyPairDTO cp = mapToCurrencyPairDTO(source.getCurrencyPair());
+        if (source.getLatestPrice() != null && source.getCurrencyPair() != null) {
+            return new CurrencyAmountDTO(source.getLatestPrice(), cp.getQuoteCurrency());
+        } else {
+            return null;
+        }
+    }
 
     default PositionRulesDTO mapToPositionRulesDTO(Position source) {
         PositionRulesDTO rules = PositionRulesDTO.builder().build();
@@ -282,6 +501,10 @@ public interface CassandreMapper {
      */
     @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
     @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
+    @Mapping(source = "amount.value", target = "amount")
+    @Mapping(source = "lowestPrice.value", target = "lowestPrice")
+    @Mapping(source = "highestPrice.value", target = "highestPrice")
+    @Mapping(source = "latestPrice.value", target = "latestPrice")
     Position mapToPosition(PositionDTO source);
 
     /***
