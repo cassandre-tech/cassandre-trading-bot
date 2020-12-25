@@ -47,7 +47,6 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals(NEW, order.getStatus());
         assertEquals(0, new BigDecimal("0.000004").compareTo(order.getCumulativeAmount()));
         assertEquals(0, new BigDecimal("0.000003").compareTo(order.getAveragePrice()));
-        assertEquals(0, new BigDecimal("0.000002").compareTo(order.getFee()));
         assertEquals("LEVERAGE_1", order.getLeverage());
         assertEquals(0, new BigDecimal("0.000001").compareTo(order.getLimitPrice()));
         assertNotNull(order.getStrategy());
@@ -63,7 +62,6 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals(PENDING_NEW, order.getStatus());
         assertEquals(0, new BigDecimal("0.000014").compareTo(order.getCumulativeAmount()));
         assertEquals(0, new BigDecimal("0.000013").compareTo(order.getAveragePrice()));
-        assertEquals(0, new BigDecimal("0.000012").compareTo(order.getFee()));
         assertEquals("LEVERAGE_2", order.getLeverage());
         assertEquals(0, new BigDecimal("0.000011").compareTo(order.getLimitPrice()));
         assertNotNull(order.getStrategy());

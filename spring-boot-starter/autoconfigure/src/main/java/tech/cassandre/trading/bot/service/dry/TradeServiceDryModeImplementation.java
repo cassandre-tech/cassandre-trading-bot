@@ -172,7 +172,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .status(FILLED)
                     .averagePrice(new CurrencyAmountDTO(t.getLast(), currencyPair.getQuoteCurrency()))
                     .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
-                    .fee(new CurrencyAmountDTO())
                     .timestamp(ZonedDateTime.now())
                     .build();
 

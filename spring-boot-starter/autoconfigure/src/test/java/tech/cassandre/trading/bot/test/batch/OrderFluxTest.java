@@ -125,8 +125,8 @@ public class OrderFluxTest extends BaseTest {
         // Value 6 : fee changed.
         o = orders.next();
         assertEquals("000004", o.getId());
-        assertEquals(0, new BigDecimal(1).compareTo(o.getFee().getValue()));
-        assertEquals(KCS, o.getFee().getCurrency());
+        // assertEquals(0, new BigDecimal(1).compareTo(o.getFee().getValue()));
+        // assertEquals(KCS, o.getFee().getCurrency());
 
         // =============================================================================================================
         // Check data we have in strategy.
@@ -147,8 +147,6 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(NEW, order1DTO.getStatus());
         assertEquals(0, new BigDecimal("2").compareTo(order1DTO.getCumulativeAmount().getValue()));
         assertEquals(0, new BigDecimal("3").compareTo(order1DTO.getAveragePrice().getValue()));
-        assertEquals(0, new BigDecimal("4").compareTo(order1DTO.getFee().getValue()));
-        assertEquals(KCS, order1DTO.getFee().getCurrency());
         assertEquals("leverage1", order1DTO.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order1DTO.getLimitPrice().getValue()));
         assertEquals(cp1.getQuoteCurrency(), order1DTO.getLimitPrice().getCurrency());
@@ -166,8 +164,6 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(NEW, order2DTO.getStatus());
         assertEquals(0, new BigDecimal("2").compareTo(order2DTO.getCumulativeAmount().getValue()));
         assertEquals(0, new BigDecimal("1").compareTo(order2DTO.getAveragePrice().getValue()));
-        assertEquals(0, new BigDecimal("4").compareTo(order2DTO.getFee().getValue()));
-        assertEquals(KCS, order2DTO.getFee().getCurrency());
         assertEquals("leverage1", order2DTO.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order2DTO.getLimitPrice().getValue()));
         assertEquals(cp1.getQuoteCurrency(), order2DTO.getLimitPrice().getCurrency());
@@ -185,8 +181,6 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(NEW, order3DTO.getStatus());
         assertEquals(0, new BigDecimal("2").compareTo(order3DTO.getCumulativeAmount().getValue()));
         assertEquals(0, new BigDecimal("3").compareTo(order3DTO.getAveragePrice().getValue()));
-        assertEquals(0, new BigDecimal("4").compareTo(order3DTO.getFee().getValue()));
-        assertEquals(KCS, order3DTO.getFee().getCurrency());
         assertEquals("leverage1", order3DTO.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order3DTO.getLimitPrice().getValue()));
         assertEquals(cp1.getQuoteCurrency(), order3DTO.getLimitPrice().getCurrency());
@@ -204,9 +198,7 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(NEW, order4DTO.getStatus());
         assertEquals(0, new BigDecimal("2").compareTo(order4DTO.getCumulativeAmount().getValue()));
         assertEquals(0, new BigDecimal("3").compareTo(order4DTO.getAveragePrice().getValue()));
-        assertEquals(0, new BigDecimal("1").compareTo(order4DTO.getFee().getValue()));
-        assertEquals(KCS, order4DTO.getFee().getCurrency());
-        assertEquals("leverage1", order4DTO.getLeverage());
+        assertEquals("leverage2", order4DTO.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order4DTO.getLimitPrice().getValue()));
         assertEquals(cp1.getQuoteCurrency(), order4DTO.getLimitPrice().getCurrency());
 
@@ -228,7 +220,6 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(NEW, order1.getStatus());
         assertEquals(0, new BigDecimal("2").compareTo(order1.getCumulativeAmount()));
         assertEquals(0, new BigDecimal("3").compareTo(order1.getAveragePrice()));
-        assertEquals(0, new BigDecimal("4").compareTo(order1.getFee()));
         assertEquals("leverage1", order1.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order1.getLimitPrice()));
         // Order 000002.
@@ -244,7 +235,6 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(NEW, order2.getStatus());
         assertEquals(0, new BigDecimal("2").compareTo(order2.getCumulativeAmount()));
         assertEquals(0, new BigDecimal("1").compareTo(order2.getAveragePrice()));
-        assertEquals(0, new BigDecimal("4").compareTo(order2.getFee()));
         assertEquals("leverage1", order2.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order2.getLimitPrice()));
         // Order 000003.
@@ -260,7 +250,6 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(NEW, order3.getStatus());
         assertEquals(0, new BigDecimal("2").compareTo(order3.getCumulativeAmount()));
         assertEquals(0, new BigDecimal("3").compareTo(order3.getAveragePrice()));
-        assertEquals(0, new BigDecimal("4").compareTo(order3.getFee()));
         assertEquals("leverage1", order3.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order3.getLimitPrice()));
         // Order 000004.
@@ -276,8 +265,7 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(NEW, order4.getStatus());
         assertEquals(0, new BigDecimal("2").compareTo(order4.getCumulativeAmount()));
         assertEquals(0, new BigDecimal("3").compareTo(order4.getAveragePrice()));
-        assertEquals(0, new BigDecimal("1").compareTo(order4.getFee()));
-        assertEquals("leverage1", order4.getLeverage());
+        assertEquals("leverage2", order4.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order4.getLimitPrice()));
     }
 

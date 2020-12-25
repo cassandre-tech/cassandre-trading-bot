@@ -105,10 +105,6 @@
                     remarks="Amount to be ordered/amount that has been matched against order on the order book/filled"/>
             <column name="AVERAGE_PRICE" type="numeric(16, 8)"
                     remarks="Weighted Average price of the fills in the order"/>
-            <column name="FEE" type="numeric(16, 8)"
-                    remarks="The total of the fees incurred for all transactions related to this order"/>
-            <column name="FEE_CURRENCY" type="VARCHAR(255)"
-                    remarks="The fee currency that was charged by the exchange for this order"/>
             <column name="LEVERAGE" type="VARCHAR(255)"
                     remarks="The leverage to use for margin related to this order"/>
             <column name="LIMIT_PRICE" type="numeric(16, 8)"

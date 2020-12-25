@@ -269,7 +269,6 @@ public class TradeTest extends BaseTest {
                 .status(NEW)
                 .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
-                .fee(new CurrencyAmountDTO("1.00004", KCS))
                 .leverage("leverage3")
                 .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)

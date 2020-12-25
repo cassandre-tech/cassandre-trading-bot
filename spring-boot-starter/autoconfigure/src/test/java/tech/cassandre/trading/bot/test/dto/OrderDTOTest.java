@@ -43,7 +43,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -59,7 +58,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -77,7 +75,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -95,7 +92,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -113,7 +109,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -131,7 +126,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -149,7 +143,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -167,7 +160,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -185,7 +177,6 @@ public class OrderDTOTest {
 				.status(OrderStatusDTO.PENDING_NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -203,7 +194,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("9", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -221,14 +211,13 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("9", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
 		assertNotEquals(order01, order11);
 		assertNotEquals(order11, order01);
 
-		// Order 12 - fee changed.
+		// Order 12 - leverage changed.
 		OrderDTO order12 = OrderDTO.builder()
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
@@ -239,8 +228,7 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("9", KCS))
-				.leverage("leverage1")
+				.leverage("leverage2")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
 		assertNotEquals(order01, order12);
@@ -257,7 +245,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage2")
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
 				.build();
@@ -275,7 +262,6 @@ public class OrderDTOTest {
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.fee(new CurrencyAmountDTO("4", KCS))
 				.leverage("leverage1")
 				.limitPrice(new CurrencyAmountDTO("9", cp1.getQuoteCurrency()))
 				.build();

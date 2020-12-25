@@ -27,7 +27,6 @@ public interface OrderMapper {
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapLimitOrderToOrderDTOAmount")
     @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapLimitOrderToOrderDTOCumulativeAmount")
     @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapLimitOrderToOrderDTOAveragePrice")
-    @Mapping(source = "source", target = "fee", qualifiedByName = "mapLimitOrderToOrderDTOFee")
     @Mapping(source = "source", target = "limitPrice", qualifiedByName = "mapLimitOrderToOrderDTOLimitPrice")
     OrderDTO mapToOrderDTO(LimitOrder source);
 
@@ -61,16 +60,6 @@ public interface OrderMapper {
         }
     }
 
-    @Named("mapLimitOrderToOrderDTOFee")
-    default CurrencyAmountDTO mapLimitOrderToOrderDTOFee(LimitOrder source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getFee() != null && source.getCurrencyPair() != null) {
-            return new CurrencyAmountDTO(source.getFee(), cp.getQuoteCurrency());
-        } else {
-            return new CurrencyAmountDTO();
-        }
-    }
-
     @Named("mapLimitOrderToOrderDTOLimitPrice")
     default CurrencyAmountDTO mapLimitOrderToOrderDTOLimitPrice(LimitOrder source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
@@ -93,8 +82,6 @@ public interface OrderMapper {
     @Mapping(source = "amount.value", target = "amount")
     @Mapping(source = "cumulativeAmount.value", target = "cumulativeAmount")
     @Mapping(source = "averagePrice.value", target = "averagePrice")
-    @Mapping(source = "fee.value", target = "fee")
-    @Mapping(source = "fee.currency", target = "feeCurrency")
     @Mapping(source = "limitPrice.value", target = "limitPrice")
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
 
@@ -110,7 +97,6 @@ public interface OrderMapper {
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapOrderToOrderDTOAmount")
     @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapOrderToOrderDTOCumulativeAmount")
     @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapOrderToOrderDTOAveragePrice")
-    @Mapping(source = "source", target = "fee", qualifiedByName = "mapOrderToOrderDTOFee")
     @Mapping(source = "source", target = "limitPrice", qualifiedByName = "mapOrderToOrderDTOLimitPrice")
     @Mapping(source = "trades", target = "trades")
     OrderDTO mapToOrderDTO(tech.cassandre.trading.bot.domain.Order source);
@@ -140,16 +126,6 @@ public interface OrderMapper {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
         if (source.getAveragePrice() != null && source.getCurrencyPair() != null) {
             return new CurrencyAmountDTO(source.getAveragePrice(), cp.getQuoteCurrency());
-        } else {
-            return new CurrencyAmountDTO();
-        }
-    }
-
-    @Named("mapOrderToOrderDTOFee")
-    default CurrencyAmountDTO mapOrderToOrderDTOFee(tech.cassandre.trading.bot.domain.Order source) {
-        // TODO Find why fee currency is null.
-        if (source.getFee() != null && source.getFeeCurrency() != null) {
-            return new CurrencyAmountDTO(source.getFee(), new CurrencyDTO(source.getFeeCurrency()));
         } else {
             return new CurrencyAmountDTO();
         }

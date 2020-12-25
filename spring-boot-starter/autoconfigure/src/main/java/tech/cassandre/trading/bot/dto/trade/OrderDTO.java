@@ -51,9 +51,6 @@ public class OrderDTO {
     /** Weighted Average price of the fills in the order. */
     CurrencyAmountDTO averagePrice;
 
-    /** The total of the fees incurred for all transactions related to this order. */
-    CurrencyAmountDTO fee;
-
     /** The leverage to use for margin related to this order. */
     String leverage;
 
@@ -85,7 +82,6 @@ public class OrderDTO {
                 .append(this.status, that.status)
                 .append(this.cumulativeAmount, that.cumulativeAmount)
                 .append(this.averagePrice, that.averagePrice)
-                .append(this.fee, that.fee)
                 .append(this.leverage, that.leverage)
                 .append(this.limitPrice, that.limitPrice)
                 .isEquals();

@@ -86,8 +86,6 @@ public class OrderTest extends BaseTest {
         assertEquals(NEW, order.getStatus());
         assertEquals(0, new BigDecimal("0.000004").compareTo(order.getCumulativeAmount().getValue()));
         assertEquals(0, new BigDecimal("0.000003").compareTo(order.getAveragePrice().getValue()));
-        assertEquals(0, new BigDecimal("0.000002").compareTo(order.getFee().getValue()));
-        assertEquals(KCS, order.getFee().getCurrency());
         assertEquals("LEVERAGE_1", order.getLeverage());
         assertEquals(0, new BigDecimal("0.000001").compareTo(order.getLimitPrice().getValue()));
         assertEquals(BTC, order.getLimitPrice().getCurrency());
@@ -109,8 +107,6 @@ public class OrderTest extends BaseTest {
         assertEquals(PENDING_NEW, order.getStatus());
         assertEquals(0, new BigDecimal("0.000014").compareTo(order.getCumulativeAmount().getValue()));
         assertEquals(0, new BigDecimal("0.000013").compareTo(order.getAveragePrice().getValue()));
-        assertEquals(0, new BigDecimal("0.000012").compareTo(order.getFee().getValue()));
-        assertEquals(KCS, order.getFee().getCurrency());
         assertEquals("LEVERAGE_2", order.getLeverage());
         assertEquals(0, new BigDecimal("0.000011").compareTo(order.getLimitPrice().getValue()));
         assertEquals(BTC, order.getLimitPrice().getCurrency());
@@ -154,7 +150,6 @@ public class OrderTest extends BaseTest {
                 .status(NEW)
                 .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
-                .fee(new CurrencyAmountDTO("1.00004", KCS))
                 .leverage("leverage3")
                 .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
                 .strategy(strategyDTO)
@@ -175,7 +170,6 @@ public class OrderTest extends BaseTest {
         assertEquals(NEW, orderInDatabase.get().getStatus());
         assertEquals(0, new BigDecimal("1.00002").compareTo(orderInDatabase.get().getCumulativeAmount()));
         assertEquals(0, new BigDecimal("1.00003").compareTo(orderInDatabase.get().getAveragePrice()));
-        assertEquals(0, new BigDecimal("1.00004").compareTo(orderInDatabase.get().getFee()));
         assertEquals("leverage3", orderInDatabase.get().getLeverage());
         assertEquals(0, new BigDecimal("1.00005").compareTo(orderInDatabase.get().getLimitPrice()));
         assertNotNull(orderInDatabase.get().getStrategy());
@@ -201,8 +195,6 @@ public class OrderTest extends BaseTest {
         assertEquals(NEW, order.getStatus());
         assertEquals(0, new BigDecimal("1.00002").compareTo(order.getCumulativeAmount().getValue()));
         assertEquals(0, new BigDecimal("1.00003").compareTo(order.getAveragePrice().getValue()));
-        assertEquals(0, new BigDecimal("1.00004").compareTo(order.getFee().getValue()));
-        assertEquals(KCS, order.getFee().getCurrency());
         assertEquals("leverage3", order.getLeverage());
         assertEquals(0, new BigDecimal("1.00005").compareTo(order.getLimitPrice().getValue()));
         assertEquals(cp1.getQuoteCurrency(), order.getLimitPrice().getCurrency());
@@ -221,7 +213,6 @@ public class OrderTest extends BaseTest {
                 .status(NEW)
                 .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
-                .fee(new CurrencyAmountDTO("1.00004", KCS))
                 .leverage("leverage3")
                 .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
                 .strategy(wrongStrategyDTO)
@@ -256,7 +247,6 @@ public class OrderTest extends BaseTest {
                 .status(NEW)
                 .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
-                .fee(new CurrencyAmountDTO("1.00004", KCS))
                 .leverage("leverage3")
                 .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
                 .strategy(wrongStrategyDTO)

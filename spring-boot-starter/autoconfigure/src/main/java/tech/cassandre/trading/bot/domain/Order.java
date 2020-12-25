@@ -73,14 +73,6 @@ public class Order extends BaseDomain {
     @Column(name = "AVERAGE_PRICE", precision = PRECISION, scale = SCALE)
     private BigDecimal averagePrice;
 
-    /** The total of the fees incurred for all transactions related to this order. */
-    @Column(name = "FEE", precision = PRECISION, scale = SCALE)
-    private BigDecimal fee;
-
-    /** The fee that was charged by the exchange for this trade. */
-    @Column(name = "FEE_CURRENCY")
-    private String feeCurrency;
-
     /** The leverage to use for margin related to this order. */
     @Column(name = "LEVERAGE")
     private String leverage;
@@ -119,8 +111,6 @@ public class Order extends BaseDomain {
                 .append(this.status, that.status)
                 .append(this.cumulativeAmount, that.cumulativeAmount)
                 .append(this.averagePrice, that.averagePrice)
-                .append(this.fee, that.fee)
-                .append(this.feeCurrency, that.feeCurrency)
                 .append(this.leverage, that.leverage)
                 .append(this.limitPrice, that.limitPrice)
                 .isEquals();
