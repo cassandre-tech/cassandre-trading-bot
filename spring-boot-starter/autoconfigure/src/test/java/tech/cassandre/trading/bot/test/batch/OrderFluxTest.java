@@ -97,7 +97,6 @@ public class OrderFluxTest extends BaseTest {
 
         // Value 1.
         OrderDTO o = orders.next();
-        System.out.println("=> " + o);
         assertEquals("000001", o.getOrderId());
 
         // Value 2.
@@ -110,7 +109,6 @@ public class OrderFluxTest extends BaseTest {
 
         // Value 3 : the original amount changed.
         o = orders.next();
-        System.out.println("=> " + o);
         assertEquals("000003", o.getOrderId());
         assertEquals(0, new BigDecimal("2").compareTo(o.getAmount().getValue()));
 

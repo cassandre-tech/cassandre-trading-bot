@@ -81,7 +81,6 @@ public class PositionFluxTest extends BaseTest {
     public void checkReceivedData() {
         assertEquals(0, strategy.getPositionsUpdateReceived().size());
 
-        System.out.println("==> " + strategy.getStrategyDTO());
         // =============================================================================================================
         // Creates position 1 - should be OPENING.
         final PositionCreationResultDTO position1Result = strategy.createPosition(cp1,

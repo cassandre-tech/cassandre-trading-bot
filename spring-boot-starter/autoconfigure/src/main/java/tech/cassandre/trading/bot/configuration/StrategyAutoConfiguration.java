@@ -221,7 +221,6 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             s.setStrategyId(cassandreStrategyAnnotation.strategyId());
             s.setName(cassandreStrategyAnnotation.strategyName());
             Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
-            System.out.println("==>" + exchangeAccount);
             exchangeAccount.ifPresent(s::setExchangeAccount);
             strategyRepository.save(s);
             strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(s));
