@@ -6,7 +6,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import tech.cassandre.trading.bot.domain.Trade;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
@@ -19,7 +18,7 @@ import java.util.Set;
 /**
  * Trade mapper.
  */
-@Mapper(uses = {TypeMapper.class, CurrencyMapper.class})
+@Mapper(uses = {UtilMapper.class, CurrencyMapper.class})
 public interface TradeMapper {
 
     // =================================================================================================================
@@ -35,6 +34,7 @@ public interface TradeMapper {
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapUserTradeToTradeDTOAmount")
     @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
     @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
+    // TODO Add userreferance
     TradeDTO mapToTradeDTO(UserTrade source);
 
     @Named("mapUserTradeToTradeDTOAmount")
@@ -68,17 +68,9 @@ public interface TradeMapper {
      * @return Trade
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "amount.value", target = "amount")
-    @Mapping(source = "price.value", target = "price")
-    @Mapping(source = "fee.value", target = "feeAmount")
-    @Mapping(source = "fee.currency", target = "feeCurrency")
     Trade mapToTrade(TradeDTO source);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "amount.value", target = "amount")
-    @Mapping(source = "price.value", target = "price")
-    @Mapping(source = "fee.value", target = "feeAmount")
-    @Mapping(source = "fee.currency", target = "feeCurrency")
     void updateOrder(TradeDTO source, @MappingTarget Trade target);
 
     // =================================================================================================================
@@ -90,32 +82,8 @@ public interface TradeMapper {
      * @param source trade
      * @return tradeDRO
      */
-    @Mapping(source = "source", target = "amount", qualifiedByName = "mapTradeToTradeDTOAmount")
-    @Mapping(source = "source", target = "price", qualifiedByName = "mapTradeToTradeDTOPrice")
-    @Mapping(source = "source", target = "fee", qualifiedByName = "mapTradeToTradeDTOFee")
     TradeDTO mapToTradeDTO(Trade source);
 
-    @Named("mapTradeToTradeDTOAmount")
-    default CurrencyAmountDTO mapTradeToTradeDTOAmount(Trade source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        return new CurrencyAmountDTO(source.getAmount(), cp.getBaseCurrency());
-    }
-
-    @Named("mapTradeToTradeDTOPrice")
-    default CurrencyAmountDTO mapTradeToTradeDTOPrice(Trade source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        return new CurrencyAmountDTO(source.getPrice(), cp.getQuoteCurrency());
-    }
-
-    @Named("mapTradeToTradeDTOFee")
-    default CurrencyAmountDTO mapTradeToTradeDTOFee(Trade source) {
-        // TODO Find why fee currency is null.
-        if (source.getFeeAmount() != null && source.getFeeCurrency() != null) {
-            return new CurrencyAmountDTO(source.getFeeAmount(), new CurrencyDTO(source.getFeeCurrency()));
-        } else {
-            return new CurrencyAmountDTO();
-        }
-    }
 
     // =================================================================================================================
     // Util.

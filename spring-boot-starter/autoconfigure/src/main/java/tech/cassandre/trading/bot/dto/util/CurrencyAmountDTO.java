@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 public class CurrencyAmountDTO {
 
     /** Amount value. */
-    private final BigDecimal value;
+    private BigDecimal value;
 
     /** Currency. */
-    private final CurrencyDTO currency;
+    private CurrencyDTO currency;
 
     /** Value provided. */
     private final boolean valueProvided;
@@ -65,6 +65,24 @@ public class CurrencyAmountDTO {
     }
 
     /**
+     * Setter value.
+     *
+     * @param newValue the value to set
+     */
+    public final void setValue(final BigDecimal newValue) {
+        value = newValue;
+    }
+
+    /**
+     * Setter currency.
+     *
+     * @param newCurrency the currency to set
+     */
+    public final void setCurrency(final CurrencyDTO newCurrency) {
+        currency = newCurrency;
+    }
+
+    /**
      * Getter for value.
      *
      * @return value
@@ -82,6 +100,8 @@ public class CurrencyAmountDTO {
         return currency;
     }
 
+
+
     /**
      * Getter for valueProvided.
      *
@@ -90,6 +110,8 @@ public class CurrencyAmountDTO {
     public final boolean isValueProvided() {
         return valueProvided;
     }
+
+
 
     @Override
     public final boolean equals(final Object o) {

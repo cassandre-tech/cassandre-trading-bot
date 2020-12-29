@@ -4,8 +4,10 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.util.jpa.CurrencyAmount;
 
 /**
  * Currency mapper.
@@ -35,6 +37,9 @@ public interface CurrencyMapper {
     @Mapping(source = "counter", target = "quoteCurrency")
     CurrencyPairDTO mapToCurrencyPairDTO(CurrencyPair source);
 
+    @Mapping(source = "value", target = "value")
+    @Mapping(source = "currency", target = "currency")
+    CurrencyAmountDTO mapToCurrencyAmountDTO(CurrencyAmount source);
 
     /***
      * Map String to CurrencyPairDTO.
@@ -68,6 +73,10 @@ public interface CurrencyMapper {
         } else {
             return null;
         }
+    }
+
+    default CurrencyDTO mapToCurrencyDTO(String value) {
+        return new CurrencyDTO(value);
     }
 
 }

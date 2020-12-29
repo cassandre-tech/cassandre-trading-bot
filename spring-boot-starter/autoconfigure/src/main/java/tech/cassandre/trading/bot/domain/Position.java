@@ -5,8 +5,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.util.base.BaseDomain;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.jpa.CurrencyAmount;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -15,14 +19,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
-import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
-import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
 /**
  * Position (used to save data between restarts).
@@ -48,8 +49,12 @@ public class Position extends BaseDomain {
     private String currencyPair;
 
     /** Amount to be ordered / amount that was ordered. */
-    @Column(name = "AMOUNT", precision = PRECISION, scale = SCALE)
-    private BigDecimal amount;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "AMOUNT_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "AMOUNT_CURRENCY"))
+    })
+    private CurrencyAmount amount;
 
     /** Position rules - stop gain percentage. */
     @Column(name = "RULES_STOP_GAIN_PERCENTAGE")
@@ -70,16 +75,28 @@ public class Position extends BaseDomain {
     private Order closingOrder;
 
     /** Lowest price. */
-    @Column(name = "LOWEST_PRICE", precision = PRECISION, scale = SCALE)
-    private BigDecimal lowestPrice;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "LOWEST_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "LOWEST_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount lowestPrice;
 
     /** Highest price. */
-    @Column(name = "HIGHEST_PRICE", precision = PRECISION, scale = SCALE)
-    private BigDecimal highestPrice;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "HIGHEST_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "HIGHEST_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount highestPrice;
 
     /** Latest price. */
-    @Column(name = "LATEST_PRICE", precision = PRECISION, scale = SCALE)
-    private BigDecimal latestPrice;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "LATEST_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "LATEST_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount latestPrice;
 
     /** Strategy. */
     @ManyToOne(fetch = EAGER)

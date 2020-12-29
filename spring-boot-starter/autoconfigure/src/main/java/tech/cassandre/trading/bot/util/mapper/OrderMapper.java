@@ -7,13 +7,12 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 /**
  * Order mapper.
  */
-@Mapper(uses = {TypeMapper.class, CurrencyMapper.class, TradeMapper.class})
+@Mapper(uses = {UtilMapper.class, CurrencyMapper.class, TradeMapper.class})
 public interface OrderMapper {
 
     // =================================================================================================================
@@ -82,17 +81,9 @@ public interface OrderMapper {
      * @return Order
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "amount.value", target = "amount")
-    @Mapping(source = "cumulativeAmount.value", target = "cumulativeAmount")
-    @Mapping(source = "averagePrice.value", target = "averagePrice")
-    @Mapping(source = "limitPrice.value", target = "limitPrice")
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "amount.value", target = "amount")
-    @Mapping(source = "cumulativeAmount.value", target = "cumulativeAmount")
-    @Mapping(source = "averagePrice.value", target = "averagePrice")
-    @Mapping(source = "limitPrice.value", target = "limitPrice")
     @Mapping(target = "strategy", ignore = true)
     void updateOrder(OrderDTO source, @MappingTarget tech.cassandre.trading.bot.domain.Order target);
 
@@ -105,51 +96,7 @@ public interface OrderMapper {
      * @param source order
      * @return OrderDTO
      */
-    @Mapping(source = "source", target = "amount", qualifiedByName = "mapOrderToOrderDTOAmount")
-    @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapOrderToOrderDTOCumulativeAmount")
-    @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapOrderToOrderDTOAveragePrice")
-    @Mapping(source = "source", target = "limitPrice", qualifiedByName = "mapOrderToOrderDTOLimitPrice")
     @Mapping(source = "trades", target = "trades")
     OrderDTO mapToOrderDTO(tech.cassandre.trading.bot.domain.Order source);
-
-    @Named("mapOrderToOrderDTOAmount")
-    default CurrencyAmountDTO mapOrderToOrderDTOAmount(tech.cassandre.trading.bot.domain.Order source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getAmount() != null & source.getCurrencyPair() != null) {
-            return new CurrencyAmountDTO(source.getAmount(), cp.getBaseCurrency());
-        } else {
-            return new CurrencyAmountDTO();
-        }
-    }
-
-    @Named("mapOrderToOrderDTOCumulativeAmount")
-    default CurrencyAmountDTO mapOrderToOrderDTOCumulativeAmount(tech.cassandre.trading.bot.domain.Order source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getCumulativeAmount() != null & source.getCurrencyPair() != null) {
-            return new CurrencyAmountDTO(source.getCumulativeAmount(), cp.getBaseCurrency());
-        } else {
-            return new CurrencyAmountDTO();
-        }
-    }
-
-    @Named("mapOrderToOrderDTOAveragePrice")
-    default CurrencyAmountDTO mapOrderToOrderDTOAveragePrice(tech.cassandre.trading.bot.domain.Order source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getAveragePrice() != null && source.getCurrencyPair() != null) {
-            return new CurrencyAmountDTO(source.getAveragePrice(), cp.getQuoteCurrency());
-        } else {
-            return new CurrencyAmountDTO();
-        }
-    }
-
-    @Named("mapOrderToOrderDTOLimitPrice")
-    default CurrencyAmountDTO mapOrderToOrderDTOLimitPrice(tech.cassandre.trading.bot.domain.Order source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getLimitPrice() != null && source.getCurrencyPair() != null) {
-            return new CurrencyAmountDTO(source.getLimitPrice(), cp.getQuoteCurrency());
-        } else {
-            return new CurrencyAmountDTO();
-        }
-    }
 
 }

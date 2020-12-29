@@ -187,12 +187,12 @@ public class TradeTest extends BaseTest {
         assertEquals("BACKUP_TRADE_11", tradeInDatabase.get().getTradeId());
         assertEquals("BACKUP_ORDER_01", tradeInDatabase.get().getOrderId());
         assertEquals(BID, tradeInDatabase.get().getType());
-        assertEquals(0, tradeInDatabase.get().getAmount().compareTo(new BigDecimal("1.100001")));
+        assertEquals(0, tradeInDatabase.get().getAmount().getValue().compareTo(new BigDecimal("1.100001")));
         assertEquals("ETH/BTC", tradeInDatabase.get().getCurrencyPair());
-        assertEquals(0, tradeInDatabase.get().getPrice().compareTo(new BigDecimal("2.200002")));
+        assertEquals(0, tradeInDatabase.get().getPrice().getValue().compareTo(new BigDecimal("2.200002")));
         assertEquals(createZonedDateTime("01-09-2020"), tradeInDatabase.get().getTimestamp());
-        assertEquals(0, tradeInDatabase.get().getFeeAmount().compareTo(new BigDecimal("3.300003")));
-        assertEquals("BTC", tradeInDatabase.get().getFeeCurrency());
+        assertEquals(0, tradeInDatabase.get().getFee().getValue().compareTo(new BigDecimal("3.300003")));
+        assertEquals("BTC", tradeInDatabase.get().getFee().getCurrency());
         // Tests for created on and updated on fields.
         ZonedDateTime createdOn = tradeInDatabase.get().getCreatedOn();
         assertNotNull(createdOn);

@@ -10,7 +10,7 @@ import tech.cassandre.trading.bot.util.mapper.PositionMapper;
 import tech.cassandre.trading.bot.util.mapper.StrategyMapper;
 import tech.cassandre.trading.bot.util.mapper.TickerMapper;
 import tech.cassandre.trading.bot.util.mapper.TradeMapper;
-import tech.cassandre.trading.bot.util.mapper.TypeMapper;
+import tech.cassandre.trading.bot.util.mapper.UtilMapper;
 
 /**
  * Base.
@@ -21,7 +21,7 @@ public abstract class Base {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /** Type mapper. */
-    protected final TypeMapper typeMapper = Mappers.getMapper(TypeMapper.class);
+    protected final UtilMapper utilMapper = Mappers.getMapper(UtilMapper.class);
 
     /** Currency mapper. */
     protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);

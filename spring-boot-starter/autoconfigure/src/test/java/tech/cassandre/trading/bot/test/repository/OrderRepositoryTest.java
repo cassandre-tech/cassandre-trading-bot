@@ -40,30 +40,30 @@ public class OrderRepositoryTest extends BaseTest {
         Order order = orders.next();
         assertEquals("BACKUP_ORDER_01", order.getOrderId());
         assertEquals(ASK, order.getType());
-        assertEquals(0, new BigDecimal("0.000005").compareTo(order.getAmount()));
+        assertEquals(0, new BigDecimal("0.000005").compareTo(order.getAmount().getValue()));
         assertEquals("ETH/BTC", order.getCurrencyPair());
         assertEquals("My reference 1", order.getUserReference());
         assertEquals(createZonedDateTime("18-11-2020"), order.getTimestamp());
         assertEquals(NEW, order.getStatus());
-        assertEquals(0, new BigDecimal("0.000004").compareTo(order.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("0.000003").compareTo(order.getAveragePrice()));
+        assertEquals(0, new BigDecimal("0.000004").compareTo(order.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("0.000003").compareTo(order.getAveragePrice().getValue()));
         assertEquals("LEVERAGE_1", order.getLeverage());
-        assertEquals(0, new BigDecimal("0.000001").compareTo(order.getLimitPrice()));
+        assertEquals(0, new BigDecimal("0.000001").compareTo(order.getLimitPrice().getValue()));
         assertNotNull(order.getStrategy());
         assertEquals("01", order.getStrategy().getStrategyId());
         // Order 2.
         order = orders.next();
         assertEquals("BACKUP_ORDER_02", order.getOrderId());
         assertEquals(BID, order.getType());
-        assertEquals(0, new BigDecimal("0.000015").compareTo(order.getAmount()));
+        assertEquals(0, new BigDecimal("0.000015").compareTo(order.getAmount().getValue()));
         assertEquals("USDT/BTC", order.getCurrencyPair());
         assertEquals("My reference 2", order.getUserReference());
         assertEquals(createZonedDateTime("19-11-2020"), order.getTimestamp());
         assertEquals(PENDING_NEW, order.getStatus());
-        assertEquals(0, new BigDecimal("0.000014").compareTo(order.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("0.000013").compareTo(order.getAveragePrice()));
+        assertEquals(0, new BigDecimal("0.000014").compareTo(order.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("0.000013").compareTo(order.getAveragePrice().getValue()));
         assertEquals("LEVERAGE_2", order.getLeverage());
-        assertEquals(0, new BigDecimal("0.000011").compareTo(order.getLimitPrice()));
+        assertEquals(0, new BigDecimal("0.000011").compareTo(order.getLimitPrice().getValue()));
         assertNotNull(order.getStrategy());
         assertEquals("01", order.getStrategy().getStrategyId());
     }

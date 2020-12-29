@@ -161,18 +161,19 @@ public class OrderTest extends BaseTest {
         // Order - Check created order (domain).
         final Optional<Order> orderInDatabase = orderRepository.findByOrderId("BACKUP_ORDER_03");
         assertTrue(orderInDatabase.isPresent());
+        System.out.println("* " + orderInDatabase.get().getAmount().getValue());
         assertEquals(11, orderInDatabase.get().getId());
         assertEquals("BACKUP_ORDER_03", orderInDatabase.get().getOrderId());
         assertEquals(ASK, orderInDatabase.get().getType());
-        assertEquals(0, new BigDecimal("1.00001").compareTo(orderInDatabase.get().getAmount()));
+        assertEquals(0, new BigDecimal("1.00001").compareTo(orderInDatabase.get().getAmount().getValue()));
         assertEquals(cp1.toString(), orderInDatabase.get().getCurrencyPair());
         assertEquals("MY_REF_3", orderInDatabase.get().getUserReference());
         assertEquals(createZonedDateTime("01-01-2020"), orderInDatabase.get().getTimestamp());
         assertEquals(NEW, orderInDatabase.get().getStatus());
-        assertEquals(0, new BigDecimal("1.00002").compareTo(orderInDatabase.get().getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("1.00003").compareTo(orderInDatabase.get().getAveragePrice()));
+        assertEquals(0, new BigDecimal("1.00002").compareTo(orderInDatabase.get().getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("1.00003").compareTo(orderInDatabase.get().getAveragePrice().getValue()));
         assertEquals("leverage3", orderInDatabase.get().getLeverage());
-        assertEquals(0, new BigDecimal("1.00005").compareTo(orderInDatabase.get().getLimitPrice()));
+        assertEquals(0, new BigDecimal("1.00005").compareTo(orderInDatabase.get().getLimitPrice().getValue()));
         assertNotNull(orderInDatabase.get().getStrategy());
         assertEquals("01", orderInDatabase.get().getStrategy().getStrategyId());
         // Tests for created on and updated on fields.
@@ -188,6 +189,7 @@ public class OrderTest extends BaseTest {
         assertNotNull(order);
         assertEquals("BACKUP_ORDER_03", order.getOrderId());
         assertEquals(ASK, order.getType());
+        System.out.println("** " + order.getAmount().getValue());
         assertEquals(0, new BigDecimal("1.00001").compareTo(order.getAmount().getValue()));
         assertEquals(cp1.getBaseCurrency(), order.getAmount().getCurrency());
         assertEquals(cp1, order.getCurrencyPair());

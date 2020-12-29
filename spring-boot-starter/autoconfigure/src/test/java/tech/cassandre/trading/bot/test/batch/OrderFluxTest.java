@@ -97,6 +97,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Value 1.
         OrderDTO o = orders.next();
+        System.out.println("=> " + o);
         assertEquals("000001", o.getOrderId());
 
         // Value 2.
@@ -109,6 +110,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Value 3 : the original amount changed.
         o = orders.next();
+        System.out.println("=> " + o);
         assertEquals("000003", o.getOrderId());
         assertEquals(0, new BigDecimal("2").compareTo(o.getAmount().getValue()));
 
@@ -212,60 +214,60 @@ public class OrderFluxTest extends BaseTest {
         final Order order1 = optionalOrder1.get();
         assertEquals("000001", order1.getOrderId());
         assertEquals(ASK, order1.getType());
-        assertEquals(0, new BigDecimal("1").compareTo(order1.getAmount()));
+        assertEquals(0, new BigDecimal("1").compareTo(order1.getAmount().getValue()));
         assertEquals(cp1.toString(), order1.getCurrencyPair());
         assertEquals("MY_REF_1", order1.getUserReference());
         assertTrue(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).isEqual(order1.getTimestamp()));
         assertEquals(NEW, order1.getStatus());
-        assertEquals(0, new BigDecimal("2").compareTo(order1.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("3").compareTo(order1.getAveragePrice()));
+        assertEquals(0, new BigDecimal("2").compareTo(order1.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("3").compareTo(order1.getAveragePrice().getValue()));
         assertEquals("leverage1", order1.getLeverage());
-        assertEquals(0, new BigDecimal("5").compareTo(order1.getLimitPrice()));
+        assertEquals(0, new BigDecimal("5").compareTo(order1.getLimitPrice().getValue()));
         // Order 000002.
         final Optional<Order> optionalOrder2 = orderRepository.findByOrderId("000002");
         assertTrue(optionalOrder2.isPresent());
         final Order order2 = optionalOrder2.get();
         assertEquals("000002", order2.getOrderId());
         assertEquals(ASK, order2.getType());
-        assertEquals(0, new BigDecimal("1").compareTo(order2.getAmount()));
+        assertEquals(0, new BigDecimal("1").compareTo(order2.getAmount().getValue()));
         assertEquals(cp1.toString(), order2.getCurrencyPair());
         assertEquals("MY_REF_1", order2.getUserReference());
         assertTrue(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).isEqual(order2.getTimestamp()));
         assertEquals(NEW, order2.getStatus());
-        assertEquals(0, new BigDecimal("2").compareTo(order2.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("1").compareTo(order2.getAveragePrice()));
+        assertEquals(0, new BigDecimal("2").compareTo(order2.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("1").compareTo(order2.getAveragePrice().getValue()));
         assertEquals("leverage1", order2.getLeverage());
-        assertEquals(0, new BigDecimal("5").compareTo(order2.getLimitPrice()));
+        assertEquals(0, new BigDecimal("5").compareTo(order2.getLimitPrice().getValue()));
         // Order 000003.
         final Optional<Order> optionalOrder3 = orderRepository.findByOrderId("000003");
         assertTrue(optionalOrder3.isPresent());
         final Order order3 = optionalOrder3.get();
         assertEquals("000003", order3.getOrderId());
         assertEquals(ASK, order3.getType());
-        assertEquals(0, new BigDecimal("2").compareTo(order3.getAmount()));
+        assertEquals(0, new BigDecimal("2").compareTo(order3.getAmount().getValue()));
         assertEquals(cp1.toString(), order3.getCurrencyPair());
         assertEquals("MY_REF_1", order3.getUserReference());
         assertTrue(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).isEqual(order3.getTimestamp()));
         assertEquals(NEW, order3.getStatus());
-        assertEquals(0, new BigDecimal("2").compareTo(order3.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("3").compareTo(order3.getAveragePrice()));
+        assertEquals(0, new BigDecimal("2").compareTo(order3.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("3").compareTo(order3.getAveragePrice().getValue()));
         assertEquals("leverage1", order3.getLeverage());
-        assertEquals(0, new BigDecimal("5").compareTo(order3.getLimitPrice()));
+        assertEquals(0, new BigDecimal("5").compareTo(order3.getLimitPrice().getValue()));
         // Order 000004.
         final Optional<Order> optionalOrder4 = orderRepository.findByOrderId("000004");
         assertTrue(optionalOrder4.isPresent());
         final Order order4 = optionalOrder4.get();
         assertEquals("000004", order4.getOrderId());
         assertEquals(ASK, order4.getType());
-        assertEquals(0, new BigDecimal("1").compareTo(order4.getAmount()));
+        assertEquals(0, new BigDecimal("1").compareTo(order4.getAmount().getValue()));
         assertEquals(cp1.toString(), order4.getCurrencyPair());
         assertEquals("MY_REF_1", order4.getUserReference());
         assertTrue(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).isEqual(order4.getTimestamp()));
         assertEquals(NEW, order4.getStatus());
-        assertEquals(0, new BigDecimal("2").compareTo(order4.getCumulativeAmount()));
-        assertEquals(0, new BigDecimal("3").compareTo(order4.getAveragePrice()));
+        assertEquals(0, new BigDecimal("2").compareTo(order4.getCumulativeAmount().getValue()));
+        assertEquals(0, new BigDecimal("3").compareTo(order4.getAveragePrice().getValue()));
         assertEquals("leverage2", order4.getLeverage());
-        assertEquals(0, new BigDecimal("5").compareTo(order4.getLimitPrice()));
+        assertEquals(0, new BigDecimal("5").compareTo(order4.getLimitPrice().getValue()));
     }
 
 }

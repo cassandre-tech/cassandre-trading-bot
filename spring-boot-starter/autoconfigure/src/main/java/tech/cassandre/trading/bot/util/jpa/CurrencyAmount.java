@@ -1,6 +1,6 @@
 package tech.cassandre.trading.bot.util.jpa;
 
-import lombok.Value;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -12,7 +12,6 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 /**
  * Currency amount (amount value + currency).
  */
-@Value
 @Embeddable
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class CurrencyAmount {
@@ -23,5 +22,57 @@ public class CurrencyAmount {
 
     /** Amount currency. */
     String currency;
+
+    public CurrencyAmount() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param currencyAmountDTO currency amount
+     */
+    public CurrencyAmount(final CurrencyAmountDTO currencyAmountDTO) {
+        this.value = currencyAmountDTO.getValue();
+        this.currency = currencyAmountDTO.getCurrency().toString();
+    }
+
+    /**
+     * Getter value.
+     *
+     * @return value
+     */
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    /**
+     * Setter value.
+     *
+     * @param newValue the value to set
+     */
+    public void setValue(final BigDecimal newValue) {
+        value = newValue;
+    }
+
+    /**
+     * Getter currency.
+     *
+     * @return currency
+     */
+    public String getCurrency() {
+        return currency;
+    }
+
+    /**
+     * Setter currency.
+     *
+     * @param newCurrency the currency to set
+     */
+    public void setCurrency(final String newCurrency) {
+        currency = newCurrency;
+    }
+
+
+    // TODO Implement equals !
 
 }

@@ -59,26 +59,43 @@
                     remarks="An identifier that uniquely identifies the position">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="POSITIONS_PRIMARY_KEY"/>
             </column>
+            <column name="POSITION_ID" type="BIGINT"
+                    remarks="An identifier that uniquely identifies the position for an exchange account"/>
             <column name="STATUS" type="VARCHAR(255)"
                     remarks="Position status"/>
             <column name="CURRENCY_PAIR" type="VARCHAR(255)"
                     remarks="Currency pair"/>
-            <column name="AMOUNT" type="numeric(16, 8)"
-                    remarks="Amount ordered"/>
+
+            <column name="AMOUNT_VALUE" type="numeric(16, 8)"
+                    remarks="Amount value ordered"/>
+            <column name="AMOUNT_CURRENCY" type="VARCHAR(255)"
+                    remarks="Amount currency ordered"/>
+
             <column name="RULES_STOP_GAIN_PERCENTAGE" type="FLOAT"
                     remarks="Stop gain percentage rule"/>
             <column name="RULES_STOP_LOSS_PERCENTAGE" type="FLOAT"
                     remarks="Stop loss percentage rule"/>
+
             <column name="FK_OPENING_ORDER_ID" type="BIGINT"
                     remarks="The order that opened the position"/>
             <column name="FK_CLOSING_ORDER_ID" type="BIGINT"
                     remarks="The order that closed the position"/>
-            <column name="HIGHEST_PRICE" type="numeric(16, 8)"
-                    remarks="Lowest price for this position"/>
-            <column name="LOWEST_PRICE" type="numeric(16, 8)"
-                    remarks="Highest price for this position"/>
-            <column name="LATEST_PRICE" type="numeric(16, 8)"
-                    remarks="Latest price for this position"/>
+
+            <column name="LOWEST_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="Lowest price value for this position"/>
+            <column name="LOWEST_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Lowest price currency for this position"/>
+
+            <column name="HIGHEST_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="Highest price value for this position"/>
+            <column name="HIGHEST_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Highest price currency for this position"/>
+
+            <column name="LATEST_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="Latest price value for this position"/>
+            <column name="LATEST_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Latest price currency for this position"/>
+
             <column name="FK_STRATEGY_ID" type="BIGINT"
                     remarks="The strategy that created the position"/>
             <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
@@ -103,8 +120,12 @@
                     remarks="An identifier set by the exchange that uniquely identifies the order"/>
             <column name="TYPE" type="VARCHAR(255)"
                     remarks="Order type i.e. bid or ask"/>
-            <column name="AMOUNT" type="numeric(16, 8)"
+
+            <column name="AMOUNT_VALUE" type="numeric(16, 8)"
                     remarks="Amount to be ordered / amount that was ordered"/>
+            <column name="AMOUNT_CURRENCY" type="VARCHAR(255)"
+                    remarks="Amount to be ordered / amount that was ordered"/>
+
             <column name="CURRENCY_PAIR" type="VARCHAR(255)"
                     remarks="The currency-pair"/>
             <column name="USER_REFERENCE" type="VARCHAR(255)"
@@ -113,14 +134,25 @@
                     remarks="The timestamp of the order"/>
             <column name="STATUS" type="VARCHAR(255)"
                     remarks="Order status"/>
-            <column name="CUMULATIVE_AMOUNT" type="numeric(16, 8)"
-                    remarks="Amount to be ordered/amount that has been matched against order on the order book/filled"/>
-            <column name="AVERAGE_PRICE" type="numeric(16, 8)"
+
+            <column name="CUMULATIVE_AMOUNT_VALUE" type="numeric(16, 8)"
+                    remarks="Amount value to be ordered/amount that has been matched against order on the order book/filled"/>
+            <column name="CUMULATIVE_AMOUNT_CURRENCY" type="VARCHAR(255)"
+                    remarks="Amount currency to be ordered/amount that has been matched against order on the order book/filled"/>
+
+            <column name="AVERAGE_PRICE_VALUE" type="numeric(16, 8)"
                     remarks="Weighted Average price of the fills in the order"/>
+            <column name="AVERAGE_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Weighted Average price of the fills in the order"/>
+
             <column name="LEVERAGE" type="VARCHAR(255)"
                     remarks="The leverage to use for margin related to this order"/>
-            <column name="LIMIT_PRICE" type="numeric(16, 8)"
+
+            <column name="LIMIT_PRICE_VALUE" type="numeric(16, 8)"
                     remarks="Limit price"/>
+            <column name="LIMIT_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Limit price"/>
+
             <column name="FK_STRATEGY_ID" type="BIGINT"
                     remarks="The strategy that created the order"/>
             <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
@@ -149,18 +181,28 @@
                     remarks="The id of the order responsible for execution of this trade"/>
             <column name="TYPE" type="VARCHAR(255)"
                     remarks="A bid or a ask"/>
-            <column name="AMOUNT" type="numeric(16, 8)"
+
+            <column name="AMOUNT_VALUE" type="numeric(16, 8)"
                     remarks="Amount to be ordered / amount that was ordered"/>
+            <column name="AMOUNT_CURRENCY" type="VARCHAR(255)"
+                    remarks="Amount to be ordered / amount that was ordered"/>
+
             <column name="CURRENCY_PAIR" type="VARCHAR(255)"
                     remarks="Currency-pair"/>
-            <column name="PRICE" type="numeric(16, 8)"
+
+            <column name="PRICE_VALUE" type="numeric(16, 8)"
                     remarks="The price"/>
+            <column name="PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="The price"/>
+
             <column name="TIMESTAMP" type="TIMESTAMP WITH TIME ZONE"
                     remarks="The timestamp of the order"/>
-            <column name="FEE_AMOUNT" type="numeric(16, 8)"
+
+            <column name="FEE_VALUE" type="numeric(16, 8)"
                     remarks="The fee amount that was charged by the exchange for this trade"/>
             <column name="FEE_CURRENCY" type="VARCHAR(255)"
                     remarks="The fee currency that was charged by the exchange for this trade"/>
+
             <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
                     remarks="Data created on"/>
             <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"

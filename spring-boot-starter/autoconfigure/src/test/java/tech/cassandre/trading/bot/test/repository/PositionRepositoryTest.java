@@ -61,9 +61,9 @@ public class PositionRepositoryTest {
         assertNull(position.getStopLossPercentageRule());
         assertEquals("BACKUP_OPENING_ORDER_02", position.getOpeningOrder().getOrderId());
         assertNull(position.getClosingOrder());
-        assertEquals(0, new BigDecimal("1").compareTo(position.getLowestPrice()));
-        assertEquals(0, new BigDecimal("2").compareTo(position.getHighestPrice()));
-        assertEquals(0, new BigDecimal("3").compareTo(position.getLatestPrice()));
+        assertEquals(0, new BigDecimal("1").compareTo(position.getLowestPrice().getValue()));
+        assertEquals(0, new BigDecimal("2").compareTo(position.getHighestPrice().getValue()));
+        assertEquals(0, new BigDecimal("3").compareTo(position.getLatestPrice().getValue()));
         assertEquals(1, position.getOpeningOrder().getTrades().size());
         assertTrue(position.getOpeningOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_01".equals(trade.getTradeId())));
         assertNotNull(position.getStrategy());
@@ -76,9 +76,9 @@ public class PositionRepositoryTest {
         assertEquals(20, position.getStopLossPercentageRule());
         assertEquals("BACKUP_OPENING_ORDER_03", position.getOpeningOrder().getOrderId());
         assertEquals("BACKUP_CLOSING_ORDER_01", position.getClosingOrder().getOrderId());
-        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice()));
-        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice()));
-        assertEquals(0, new BigDecimal("92").compareTo(position.getLatestPrice()));
+        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice().getValue()));
+        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice().getValue()));
+        assertEquals(0, new BigDecimal("92").compareTo(position.getLatestPrice().getValue()));
         assertEquals(1, position.getOpeningOrder().getTrades().size());
         assertTrue(position.getOpeningOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_02".equals(trade.getTradeId())));
         assertNotNull(position.getStrategy());
@@ -91,9 +91,9 @@ public class PositionRepositoryTest {
         assertEquals(40, position.getStopLossPercentageRule());
         assertEquals("BACKUP_OPENING_ORDER_04", position.getOpeningOrder().getOrderId());
         assertEquals("BACKUP_CLOSING_ORDER_02", position.getClosingOrder().getOrderId());
-        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice()));
-        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice()));
-        assertEquals(0, new BigDecimal("93").compareTo(position.getLatestPrice()));
+        assertEquals(0, new BigDecimal("17").compareTo(position.getLowestPrice().getValue()));
+        assertEquals(0, new BigDecimal("68").compareTo(position.getHighestPrice().getValue()));
+        assertEquals(0, new BigDecimal("93").compareTo(position.getLatestPrice().getValue()));
         assertEquals(1, position.getOpeningOrder().getTrades().size());
         assertEquals(1, position.getClosingOrder().getTrades().size());
         assertTrue(position.getOpeningOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_03".equals(trade.getTradeId())));

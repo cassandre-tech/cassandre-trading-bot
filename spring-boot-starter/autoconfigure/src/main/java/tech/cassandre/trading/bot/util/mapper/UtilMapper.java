@@ -2,15 +2,19 @@ package tech.cassandre.trading.bot.util.mapper;
 
 import org.knowm.xchange.dto.Order;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;
 import org.mapstruct.ValueMappings;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.util.jpa.CurrencyAmount;
 
 /**
  * Type mapper.
  */
-@Mapper
-public interface TypeMapper {
+@Mapper(uses = {CurrencyMapper.class})
+public interface UtilMapper {
 
     // =================================================================================================================
     // DTO to domain.

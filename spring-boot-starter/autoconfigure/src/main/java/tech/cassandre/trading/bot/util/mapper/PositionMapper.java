@@ -15,7 +15,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 /**
  * Position mapper.
  */
-@Mapper(uses = {CurrencyMapper.class, OrderMapper.class})
+@Mapper(uses = {CurrencyMapper.class, OrderMapper.class, UtilMapper.class})
 public interface PositionMapper {
 
     // =================================================================================================================
@@ -30,19 +30,11 @@ public interface PositionMapper {
      */
     @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
     @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
-    @Mapping(source = "amount.value", target = "amount")
-    @Mapping(source = "lowestPrice.value", target = "lowestPrice")
-    @Mapping(source = "highestPrice.value", target = "highestPrice")
-    @Mapping(source = "latestPrice.value", target = "latestPrice")
     Position mapToPosition(PositionDTO source);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
     @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
-    @Mapping(source = "amount.value", target = "amount")
-    @Mapping(source = "lowestPrice.value", target = "lowestPrice")
-    @Mapping(source = "highestPrice.value", target = "highestPrice")
-    @Mapping(source = "latestPrice.value", target = "latestPrice")
     void updatePosition(PositionDTO source, @MappingTarget Position target);
 
     // =================================================================================================================
@@ -55,47 +47,7 @@ public interface PositionMapper {
      * @return positionDTO
      */
     @Mapping(source = "source", target = "rules")
-    @Mapping(source = "source", target = "amount", qualifiedByName = "mapPositionToPositionDTOAmount")
-    @Mapping(source = "source", target = "lowestPrice", qualifiedByName = "mapPositionToPositionDTOLowestPrice")
-    @Mapping(source = "source", target = "highestPrice", qualifiedByName = "mapPositionToPositionDTOHighestPrice")
-    @Mapping(source = "source", target = "latestPrice", qualifiedByName = "mapPositionToPositionDTOLatestPrice")
     PositionDTO mapToPositionDTO(Position source);
-
-    @Named("mapPositionToPositionDTOAmount")
-    default CurrencyAmountDTO mapPositionToPositionDTOAmount(Position source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        return new CurrencyAmountDTO(source.getAmount(), cp.getBaseCurrency());
-    }
-
-    @Named("mapPositionToPositionDTOLowestPrice")
-    default CurrencyAmountDTO mapPositionToPositionDTOLowestPrice(Position source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getLowestPrice() != null && source.getCurrencyPair() != null) {
-            return new CurrencyAmountDTO(source.getLowestPrice(), cp.getQuoteCurrency());
-        } else {
-            return null;
-        }
-    }
-
-    @Named("mapPositionToPositionDTOHighestPrice")
-    default CurrencyAmountDTO mapPositionToPositionDTOHighestPrice(Position source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getHighestPrice() != null && source.getCurrencyPair() != null) {
-            return new CurrencyAmountDTO(source.getHighestPrice(), cp.getQuoteCurrency());
-        } else {
-            return null;
-        }
-    }
-
-    @Named("mapPositionToPositionDTOLatestPrice")
-    default CurrencyAmountDTO mapPositionToPositionDTOLatestPrice(Position source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getLatestPrice() != null && source.getCurrencyPair() != null) {
-            return new CurrencyAmountDTO(source.getLatestPrice(), cp.getQuoteCurrency());
-        } else {
-            return null;
-        }
-    }
 
     default PositionRulesDTO mapToPositionRulesDTO(Position source) {
         PositionRulesDTO rules = PositionRulesDTO.builder().build();

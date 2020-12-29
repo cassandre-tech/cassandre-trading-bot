@@ -6,8 +6,12 @@ import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.util.base.BaseDomain;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.jpa.CurrencyAmount;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -17,7 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -25,8 +28,6 @@ import java.util.Set;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
-import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
-import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
 /**
  * Order (used to save data between restarts).
@@ -51,13 +52,17 @@ public class Order extends BaseDomain {
     @Column(name = "TYPE")
     private OrderTypeDTO type;
 
-    /** Amount to be ordered / amount that was ordered. */
-    @Column(name = "AMOUNT", precision = PRECISION, scale = SCALE)
-    private BigDecimal amount;
-
     /** The currency-pair. */
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
+
+    /** Amount to be ordered / amount that was ordered. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "AMOUNT_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "AMOUNT_CURRENCY"))
+    })
+    private CurrencyAmount amount;
 
     /** An identifier provided by the user on placement that uniquely identifies the order. */
     @Column(name = "USER_REFERENCE")
@@ -73,20 +78,32 @@ public class Order extends BaseDomain {
     private OrderStatusDTO status;
 
     /** Amount to be ordered / amount that has been matched against order on the order book/filled. */
-    @Column(name = "CUMULATIVE_AMOUNT", precision = PRECISION, scale = SCALE)
-    private BigDecimal cumulativeAmount;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "CUMULATIVE_AMOUNT_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "CUMULATIVE_AMOUNT_CURRENCY"))
+    })
+    private CurrencyAmount cumulativeAmount;
 
     /** Weighted Average price of the fills in the order. */
-    @Column(name = "AVERAGE_PRICE", precision = PRECISION, scale = SCALE)
-    private BigDecimal averagePrice;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "AVERAGE_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "AVERAGE_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount averagePrice;
 
     /** The leverage to use for margin related to this order. */
     @Column(name = "LEVERAGE")
     private String leverage;
 
     /** Limit price. */
-    @Column(name = "LIMIT_PRICE", precision = PRECISION, scale = SCALE)
-    private BigDecimal limitPrice;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "LIMIT_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "LIMIT_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount limitPrice;
 
     /** All trades related to order. */
     @OneToMany(fetch = EAGER)

@@ -91,7 +91,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
             Position position = new Position();
             position.setStrategy(strategyMapper.mapToStrategy(strategy));
             position.setStatus(OPENING);
-            position.setAmount(amount);
+
+            //            position.setAmount(new CurrencyAmount(amount, currencyPair.getBaseCurrency()));
             position.setCurrencyPair(currencyPair.toString());
             if (rules.isStopGainPercentageSet()) {
                 position.setStopGainPercentageRule(rules.getStopGainPercentage());

@@ -43,6 +43,13 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
             final Optional<Order> orderInDatabase = orderRepository.findByOrderId(order.getOrderId());
             // If it does not exist or something changed, we do it.
             if (orderInDatabase.isEmpty() || !orderMapper.mapToOrderDTO(orderInDatabase.get()).equals(order)) {
+
+                if (orderInDatabase.isPresent()) {
+                    System.out.println("=================================");
+                    System.out.println("Database : " + orderMapper.mapToOrderDTO(orderInDatabase.get()));
+                    System.out.println("Received : " + order);
+                    System.out.println("=================================");
+                }
                 logger.debug("OrderFlux - Order {} has changed : {}", order.getOrderId(), order);
                 newValues.add(order);
             }

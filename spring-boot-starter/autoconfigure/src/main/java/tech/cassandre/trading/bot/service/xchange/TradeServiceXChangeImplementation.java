@@ -60,7 +60,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     private OrderCreationResultDTO createMarketOrder(final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
         try {
             // Making the order.
-            MarketOrder m = new MarketOrder(typeMapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair));
+            MarketOrder m = new MarketOrder(utilMapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair));
             logger.debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
@@ -95,7 +95,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     private OrderCreationResultDTO createLimitOrder(final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
         try {
             // Making the order.
-            LimitOrder l = new LimitOrder(typeMapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair), null, null, limitPrice);
+            LimitOrder l = new LimitOrder(utilMapper.mapToOrderType(orderTypeDTO), amount, getCurrencyPair(currencyPair), null, null, limitPrice);
             logger.debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending & creating the order.
