@@ -31,17 +31,27 @@
 
         <!-- Strategies -->
         <createTable tableName="STRATEGIES">
-            <column name="ID" type="VARCHAR(255)"
-                    remarks="An identifier that uniquely identifies the strategy">
+            <column name="ID" type="BIGINT"
+                    remarks="Technical ID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="STRATEGIES_PRIMARY_KEY"/>
             </column>
+            <column name="STRATEGY_ID" type="VARCHAR(255)"
+                    remarks="An identifier that uniquely identifies the order"/>
             <column name="NAME" type="VARCHAR(255)"
                     remarks="Strategy name"/>
+            <column name="FK_EXCHANGE_ACCOUNT_ID" type="BIGINT"
+                    remarks="The exchange account linked to this strategy"/>
             <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
                     remarks="Data created on"/>
             <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
                     remarks="Data updated on"/>
         </createTable>
+        <!-- Auto increment on ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="STRATEGIES"/>
 
         <!-- Positions -->
         <createTable tableName="POSITIONS">
@@ -59,9 +69,9 @@
                     remarks="Stop gain percentage rule"/>
             <column name="RULES_STOP_LOSS_PERCENTAGE" type="FLOAT"
                     remarks="Stop loss percentage rule"/>
-            <column name="OPENING_ORDER_ID" type="VARCHAR(255)"
+            <column name="FK_OPENING_ORDER_ID" type="BIGINT"
                     remarks="The order that opened the position"/>
-            <column name="CLOSING_ORDER_ID" type="VARCHAR(255)"
+            <column name="FK_CLOSING_ORDER_ID" type="BIGINT"
                     remarks="The order that closed the position"/>
             <column name="HIGHEST_PRICE" type="numeric(16, 8)"
                     remarks="Lowest price for this position"/>
@@ -69,7 +79,7 @@
                     remarks="Highest price for this position"/>
             <column name="LATEST_PRICE" type="numeric(16, 8)"
                     remarks="Latest price for this position"/>
-            <column name="STRATEGY_ID" type="VARCHAR(255)"
+            <column name="FK_STRATEGY_ID" type="BIGINT"
                     remarks="The strategy that created the position"/>
             <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
                     remarks="Data created on"/>
@@ -85,10 +95,12 @@
 
         <!-- Orders -->
         <createTable tableName="ORDERS">
-            <column name="ID" type="VARCHAR(255)"
-                    remarks="An identifier set by the exchange that uniquely identifies the order">
+            <column name="ID" type="BIGINT"
+                    remarks="Technical ID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ORDERS_PRIMARY_KEY"/>
             </column>
+            <column name="ORDER_ID" type="VARCHAR(255)"
+                    remarks="An identifier set by the exchange that uniquely identifies the order"/>
             <column name="TYPE" type="VARCHAR(255)"
                     remarks="Order type i.e. bid or ask"/>
             <column name="AMOUNT" type="numeric(16, 8)"
@@ -109,20 +121,30 @@
                     remarks="The leverage to use for margin related to this order"/>
             <column name="LIMIT_PRICE" type="numeric(16, 8)"
                     remarks="Limit price"/>
-            <column name="STRATEGY_ID" type="VARCHAR(255)"
+            <column name="FK_STRATEGY_ID" type="BIGINT"
                     remarks="The strategy that created the order"/>
             <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
                     remarks="Data created on"/>
             <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
                     remarks="Data updated on"/>
         </createTable>
+        <!-- Auto increment on ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="ORDERS"/>
 
         <!-- Trades -->
         <createTable tableName="TRADES">
-            <column name="ID" type="VARCHAR(255)"
-                    remarks="An identifier set by the exchange that uniquely identifies the trade">
+            <column name="ID" type="BIGINT"
+                    remarks="Technical ID">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="TRADES_PRIMARY_KEY"/>
             </column>
+            <column name="TRADE_ID" type="VARCHAR(255)"
+                    remarks="An identifier set by the exchange that uniquely identifies the trade"/>
+            <column name="FK_ORDER_ID" type="BIGINT"
+                    remarks="The id of the order responsible for execution of this trade"/>
             <column name="ORDER_ID" type="VARCHAR(255)"
                     remarks="The id of the order responsible for execution of this trade"/>
             <column name="TYPE" type="VARCHAR(255)"
@@ -144,14 +166,22 @@
             <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
                     remarks="Data updated on"/>
         </createTable>
+        <!-- Auto increment on ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="TRADES"/>
 
         <!-- ======================================================================================================= -->
 
         <!-- ======================================================================================================= -->
         <!-- Foreign keys -->
+        <!-- TODO Add FK for strategies to exchange account -->
 
-        <!-- POSITIONS.STRATEGY_ID to ID in STRATEGY -->
-        <addForeignKeyConstraint baseColumnNames="STRATEGY_ID"
+
+        <!-- POSITIONS.FK_STRATEGY_ID to ID in STRATEGY -->
+        <addForeignKeyConstraint baseColumnNames="FK_STRATEGY_ID"
                                  baseTableName="POSITIONS"
                                  constraintName="FK_POSITIONS_STRATEGY_ID"
                                  deferrable="false"
@@ -163,7 +193,7 @@
                                  validate="true"/>
 
         <!-- POSITIONS.OPEN_ORDER_ID to ID in ORDERS -->
-        <addForeignKeyConstraint baseColumnNames="OPENING_ORDER_ID"
+        <addForeignKeyConstraint baseColumnNames="FK_OPENING_ORDER_ID"
                                  baseTableName="POSITIONS"
                                  constraintName="FK_POSITIONS_OPEN_ORDER_ID"
                                  deferrable="false"
@@ -175,7 +205,7 @@
                                  validate="true"/>
 
         <!-- POSITIONS.CLOSE_ORDER_ID to ID in ORDERS -->
-        <addForeignKeyConstraint baseColumnNames="CLOSING_ORDER_ID"
+        <addForeignKeyConstraint baseColumnNames="FK_CLOSING_ORDER_ID"
                                  baseTableName="POSITIONS"
                                  constraintName="FK_POSITIONS_CLOSE_ORDER_ID"
                                  deferrable="false"
@@ -187,7 +217,7 @@
                                  validate="true"/>
 
         <!-- ORDERS.STRATEGY_ID to ID in STRATEGY -->
-        <addForeignKeyConstraint baseColumnNames="STRATEGY_ID"
+        <addForeignKeyConstraint baseColumnNames="FK_STRATEGY_ID"
                                  baseTableName="ORDERS"
                                  constraintName="FK_ORDERS_STRATEGY_ID"
                                  deferrable="false"
@@ -198,8 +228,8 @@
                                  referencedColumnNames="ID"
                                  validate="true"/>
 
-        <!-- TRADES.STRATEGY_ID to ID in STRATEGY -->
-        <addForeignKeyConstraint baseColumnNames="ORDER_ID"
+        <!-- TRADES.ORDER to ID in STRATEGY -->
+        <addForeignKeyConstraint baseColumnNames="FK_ORDER_ID"
                                  baseTableName="TRADES"
                                  constraintName="FK_TRADES_ORDER_ID"
                                  deferrable="false"
@@ -228,7 +258,7 @@
                      indexName="IDX_POSITIONS_STRATEGY_ID"
                      tableName="POSITIONS"
                      unique="false">
-            <column descending="true" name="STRATEGY_ID"/>
+            <column descending="true" name="FK_STRATEGY_ID"/>
         </createIndex>
 
         <!-- Index on ORDERS.STRATEGY_ID -->
@@ -236,7 +266,7 @@
                      indexName="IDX_ORDERS_STRATEGY_ID"
                      tableName="ORDERS"
                      unique="false">
-            <column descending="true" name="STRATEGY_ID"/>
+            <column descending="true" name="FK_STRATEGY_ID"/>
         </createIndex>
 
         <!-- Index on TRADES.ORDER_ID -->

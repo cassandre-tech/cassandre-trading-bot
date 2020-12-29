@@ -5,15 +5,25 @@ import org.springframework.stereotype.Repository;
 import tech.cassandre.trading.bot.domain.Trade;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Trade repository.
  */
 @Repository
-public interface TradeRepository extends CrudRepository<Trade, String> {
+public interface TradeRepository extends CrudRepository<Trade, Long> {
+
+    /**
+     * Find by trade id.
+     *
+     * @param tradeId trade id
+     * @return trade
+     */
+    Optional<Trade> findByTradeId(String tradeId);
 
     /**
      * Find all orders by timestamp.
+     *
      * @return positions
      */
     List<Trade> findByOrderByTimestampAsc();

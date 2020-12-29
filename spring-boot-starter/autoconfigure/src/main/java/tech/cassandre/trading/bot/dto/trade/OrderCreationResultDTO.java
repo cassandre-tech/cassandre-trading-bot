@@ -31,7 +31,7 @@ public final class OrderCreationResultDTO {
      */
     public OrderCreationResultDTO(final OrderDTO newOrder) {
         successful = true;
-        this.orderId = newOrder.getId();
+        this.orderId = newOrder.getOrderId();
         this.order = newOrder;
         this.errorMessage = null;
         this.exception = null;
@@ -47,7 +47,7 @@ public final class OrderCreationResultDTO {
         successful = true;
         this.orderId = newOrderId;
         this.order = OrderDTO.builder()
-                .id(newOrderId)
+                .orderId(newOrderId)
                 .timestamp(ZonedDateTime.now())
                 .status(PENDING_NEW)
                 .build();

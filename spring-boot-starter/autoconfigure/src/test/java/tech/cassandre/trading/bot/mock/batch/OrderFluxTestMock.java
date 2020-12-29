@@ -38,7 +38,6 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
@@ -128,14 +127,14 @@ public class OrderFluxTestMock {
 
         // =============================================================================================================
         // Loading strategy.
-        StrategyDTO strategyDTO = StrategyDTO.builder().id("1").name("Test").build();
+        StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("01").build();
 
         // Order 000001.
         OrderDTO order01 = OrderDTO.builder()
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000001")
+                .orderId("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -151,7 +150,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000002")
+                .orderId("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -167,7 +166,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000003")
+                .orderId("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -193,7 +192,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000001")
+                .orderId("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -209,7 +208,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000002")
+                .orderId("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -225,7 +224,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000003")
+                .orderId("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -241,7 +240,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000004")
+                .orderId("000004")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -268,7 +267,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000001")
+                .orderId("000001")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -284,7 +283,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000002")
+                .orderId("000002")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -300,7 +299,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000003")
+                .orderId("000003")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)
@@ -316,7 +315,7 @@ public class OrderFluxTestMock {
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
-                .id("000004")
+                .orderId("000004")
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .status(NEW)

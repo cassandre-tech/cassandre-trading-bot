@@ -33,7 +33,6 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
 
 @SpringBootTest
@@ -98,33 +97,33 @@ public class OrderFluxTest extends BaseTest {
 
         // Value 1.
         OrderDTO o = orders.next();
-        assertEquals("000001", o.getId());
+        assertEquals("000001", o.getOrderId());
 
         // Value 2.
         o = orders.next();
-        assertEquals("000002", o.getId());
+        assertEquals("000002", o.getOrderId());
 
         // Value 3.
         o = orders.next();
-        assertEquals("000003", o.getId());
+        assertEquals("000003", o.getOrderId());
 
         // Value 3 : the original amount changed.
         o = orders.next();
-        assertEquals("000003", o.getId());
+        assertEquals("000003", o.getOrderId());
         assertEquals(0, new BigDecimal("2").compareTo(o.getAmount().getValue()));
 
         // Value 4 : new order.
         o = orders.next();
-        assertEquals("000004", o.getId());
+        assertEquals("000004", o.getOrderId());
 
         // Value 5 : average price changed.
         o = orders.next();
-        assertEquals("000002", o.getId());
+        assertEquals("000002", o.getOrderId());
         assertEquals(0, new BigDecimal(1).compareTo(o.getAveragePrice().getValue()));
 
         // Value 6 : fee changed.
         o = orders.next();
-        assertEquals("000004", o.getId());
+        assertEquals("000004", o.getOrderId());
         // assertEquals(0, new BigDecimal(1).compareTo(o.getFee().getValue()));
         // assertEquals(KCS, o.getFee().getCurrency());
 
@@ -137,7 +136,7 @@ public class OrderFluxTest extends BaseTest {
         final OrderDTO order1DTO = strategyOrders.get("000001");
         assertNotNull(order1DTO);
         assertNotNull(strategy.getOrderById("000001"));
-        assertEquals("000001", order1DTO.getId());
+        assertEquals("000001", order1DTO.getOrderId());
         assertEquals(ASK, order1DTO.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order1DTO.getAmount().getValue()));
         assertEquals(cp1.getBaseCurrency(), order1DTO.getAmount().getCurrency());
@@ -154,7 +153,7 @@ public class OrderFluxTest extends BaseTest {
         final OrderDTO order2DTO = strategyOrders.get("000002");
         assertNotNull(order2DTO);
         assertNotNull(strategy.getOrderById("000002"));
-        assertEquals("000002", order2DTO.getId());
+        assertEquals("000002", order2DTO.getOrderId());
         assertEquals(ASK, order2DTO.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order1DTO.getAmount().getValue()));
         assertEquals(cp1.getBaseCurrency(), order1DTO.getAmount().getCurrency());
@@ -171,7 +170,7 @@ public class OrderFluxTest extends BaseTest {
         final OrderDTO order3DTO = strategyOrders.get("000003");
         assertNotNull(order3DTO);
         assertNotNull(strategy.getOrderById("000003"));
-        assertEquals("000003", order3DTO.getId());
+        assertEquals("000003", order3DTO.getOrderId());
         assertEquals(ASK, order3DTO.getType());
         assertEquals(0, new BigDecimal("2").compareTo(order3DTO.getAmount().getValue()));
         assertEquals(cp1.getBaseCurrency(), order3DTO.getAmount().getCurrency());
@@ -188,7 +187,7 @@ public class OrderFluxTest extends BaseTest {
         final OrderDTO order4DTO = strategyOrders.get("000004");
         assertNotNull(order4DTO);
         assertNotNull(strategy.getOrderById("000004"));
-        assertEquals("000004", order4DTO.getId());
+        assertEquals("000004", order4DTO.getOrderId());
         assertEquals(ASK, order4DTO.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order4DTO.getAmount().getValue()));
         assertEquals(cp1.getBaseCurrency(), order4DTO.getAmount().getCurrency());
@@ -205,13 +204,13 @@ public class OrderFluxTest extends BaseTest {
         // =============================================================================================================
         // Check data in database.
         assertEquals(4, orderRepository.count());
-        assertTrue(orderRepository.findById("NON_EXISTING").isEmpty());
+        assertTrue(orderRepository.findByOrderId("NON_EXISTING").isEmpty());
 
         // Order 000001.
-        final Optional<Order> optionalOrder1 = orderRepository.findById("000001");
+        final Optional<Order> optionalOrder1 = orderRepository.findByOrderId("000001");
         assertTrue(optionalOrder1.isPresent());
         final Order order1 = optionalOrder1.get();
-        assertEquals("000001", order1.getId());
+        assertEquals("000001", order1.getOrderId());
         assertEquals(ASK, order1.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order1.getAmount()));
         assertEquals(cp1.toString(), order1.getCurrencyPair());
@@ -223,10 +222,10 @@ public class OrderFluxTest extends BaseTest {
         assertEquals("leverage1", order1.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order1.getLimitPrice()));
         // Order 000002.
-        final Optional<Order> optionalOrder2 = orderRepository.findById("000002");
+        final Optional<Order> optionalOrder2 = orderRepository.findByOrderId("000002");
         assertTrue(optionalOrder2.isPresent());
         final Order order2 = optionalOrder2.get();
-        assertEquals("000002", order2.getId());
+        assertEquals("000002", order2.getOrderId());
         assertEquals(ASK, order2.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order2.getAmount()));
         assertEquals(cp1.toString(), order2.getCurrencyPair());
@@ -238,10 +237,10 @@ public class OrderFluxTest extends BaseTest {
         assertEquals("leverage1", order2.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order2.getLimitPrice()));
         // Order 000003.
-        final Optional<Order> optionalOrder3 = orderRepository.findById("000003");
+        final Optional<Order> optionalOrder3 = orderRepository.findByOrderId("000003");
         assertTrue(optionalOrder3.isPresent());
         final Order order3 = optionalOrder3.get();
-        assertEquals("000003", order3.getId());
+        assertEquals("000003", order3.getOrderId());
         assertEquals(ASK, order3.getType());
         assertEquals(0, new BigDecimal("2").compareTo(order3.getAmount()));
         assertEquals(cp1.toString(), order3.getCurrencyPair());
@@ -253,10 +252,10 @@ public class OrderFluxTest extends BaseTest {
         assertEquals("leverage1", order3.getLeverage());
         assertEquals(0, new BigDecimal("5").compareTo(order3.getLimitPrice()));
         // Order 000004.
-        final Optional<Order> optionalOrder4 = orderRepository.findById("000004");
+        final Optional<Order> optionalOrder4 = orderRepository.findByOrderId("000004");
         assertTrue(optionalOrder4.isPresent());
         final Order order4 = optionalOrder4.get();
-        assertEquals("000004", order4.getId());
+        assertEquals("000004", order4.getOrderId());
         assertEquals(ASK, order4.getType());
         assertEquals(0, new BigDecimal("1").compareTo(order4.getAmount()));
         assertEquals(cp1.toString(), order4.getCurrencyPair());

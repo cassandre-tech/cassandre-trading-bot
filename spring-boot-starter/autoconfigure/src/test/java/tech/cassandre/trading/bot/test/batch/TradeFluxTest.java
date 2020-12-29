@@ -86,14 +86,14 @@ public class TradeFluxTest extends BaseTest {
         // =============================================================================================================
         // Test all values received by the strategy with update methods.
         final Iterator<TradeDTO> iterator = strategy.getTradesUpdateReceived().iterator();
-        assertEquals("0000001", iterator.next().getId());
-        assertEquals("0000002", iterator.next().getId());
-        assertEquals("0000003", iterator.next().getId());
-        assertEquals("0000004", iterator.next().getId());
-        assertEquals("0000005", iterator.next().getId());
-        assertEquals("0000006", iterator.next().getId());
-        assertEquals("0000003", iterator.next().getId());
-        assertEquals("0000008", iterator.next().getId());
+        assertEquals("0000001", iterator.next().getTradeId());
+        assertEquals("0000002", iterator.next().getTradeId());
+        assertEquals("0000003", iterator.next().getTradeId());
+        assertEquals("0000004", iterator.next().getTradeId());
+        assertEquals("0000005", iterator.next().getTradeId());
+        assertEquals("0000006", iterator.next().getTradeId());
+        assertEquals("0000003", iterator.next().getTradeId());
+        assertEquals("0000008", iterator.next().getTradeId());
 
         // =============================================================================================================
         // Check data we have in strategy.
@@ -103,21 +103,21 @@ public class TradeFluxTest extends BaseTest {
         final TradeDTO trade1 = strategyTrades.get("0000001");
         assertNotNull(trade1);
         assertNotNull(strategy.getTradeById("0000001"));
-        assertEquals("0000001", trade1.getId());
+        assertEquals("0000001", trade1.getTradeId());
         assertEquals(BID, trade1.getType());
         assertEquals(cp1, trade1.getCurrencyPair());
         // Trade 2.
         final TradeDTO trade2 = strategyTrades.get("0000002");
         assertNotNull(trade2);
         assertNotNull(strategy.getTradeById("0000002"));
-        assertEquals("0000002", trade2.getId());
+        assertEquals("0000002", trade2.getTradeId());
         assertEquals(BID, trade2.getType());
         assertEquals(cp1, trade2.getCurrencyPair());
         // Trade 3 - The trade 3 was received two times so data have been updated.
         final TradeDTO trade3 = strategyTrades.get("0000003");
         assertNotNull(trade3);
         assertNotNull(strategy.getTradeById("0000003"));
-        assertEquals("0000003", trade3.getId());
+        assertEquals("0000003", trade3.getTradeId());
         assertEquals(BID, trade3.getType());
         assertEquals(cp2, trade3.getCurrencyPair());
         assertEquals("ORDER00002", trade3.getOrderId());
@@ -132,37 +132,37 @@ public class TradeFluxTest extends BaseTest {
         final TradeDTO trade4 = strategyTrades.get("0000004");
         assertNotNull(trade4);
         assertNotNull(strategy.getTradeById("0000004"));
-        assertEquals("0000004", trade4.getId());
+        assertEquals("0000004", trade4.getTradeId());
         assertEquals(BID, trade4.getType());
         assertEquals(cp1, trade4.getCurrencyPair());
         // Trade 5.
         final TradeDTO trade5 = strategyTrades.get("0000005");
         assertNotNull(trade5);
         assertNotNull(strategy.getTradeById("0000005"));
-        assertEquals("0000005", trade5.getId());
+        assertEquals("0000005", trade5.getTradeId());
         assertEquals(BID, trade5.getType());
         assertEquals(cp1, trade5.getCurrencyPair());
         // Trade 6.
         final TradeDTO trade6 = strategyTrades.get("0000006");
         assertNotNull(trade6);
         assertNotNull(strategy.getTradeById("0000006"));
-        assertEquals("0000006", trade6.getId());
+        assertEquals("0000006", trade6.getTradeId());
         assertEquals(BID, trade6.getType());
         assertEquals(cp2, trade6.getCurrencyPair());
         // Trade 7.
         final TradeDTO trade8 = strategyTrades.get("0000008");
         assertNotNull(trade8);
         assertNotNull(strategy.getTradeById("0000008"));
-        assertEquals("0000008", trade8.getId());
+        assertEquals("0000008", trade8.getTradeId());
         assertEquals(BID, trade8.getType());
         assertEquals(cp1, trade8.getCurrencyPair());
 
         // =============================================================================================================
         // Check if all is ok in database.
-        final Optional<Order> order00001 = orderRepository.findById("ORDER00001");
+        final Optional<Order> order00001 = orderRepository.findByOrderId("ORDER00001");
         assertTrue(order00001.isPresent());
         assertEquals(6 , order00001.get().getTrades().size());
-        final Optional<Order> order00002 = orderRepository.findById("ORDER00002");
+        final Optional<Order> order00002 = orderRepository.findByOrderId("ORDER00002");
         assertTrue(order00002.isPresent());
         assertEquals(1 , order00002.get().getTrades().size());
     }

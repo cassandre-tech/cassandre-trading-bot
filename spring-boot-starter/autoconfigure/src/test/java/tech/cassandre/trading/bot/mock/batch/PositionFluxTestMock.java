@@ -59,7 +59,7 @@ public class PositionFluxTestMock extends BaseTest {
     @Bean
     @Primary
     public PositionFlux positionFlux() {
-        return new PositionFlux(positionRepository);
+        return new PositionFlux(positionRepository, orderRepository);
     }
 
     @Bean
@@ -79,7 +79,7 @@ public class PositionFluxTestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        StrategyDTO strategy = StrategyDTO.builder().id("1").build();
+        StrategyDTO strategy = StrategyDTO.builder().id(1L).strategyId("01").build();
 
         // Position 1 creation reply (ORDER00010) - used for max and min gain test.
         given(service.createBuyMarketOrder(strategy, cp1, new BigDecimal("10")))

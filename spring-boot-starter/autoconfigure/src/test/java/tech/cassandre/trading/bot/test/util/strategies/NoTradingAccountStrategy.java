@@ -17,7 +17,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountSt
  * Strategy with not trading account.
  */
 @SuppressWarnings("unused")
-@CassandreStrategy(name = "Testable strategy without existing trading account")
+@CassandreStrategy(strategyName = "Testable strategy without existing trading account")
 @ConditionalOnProperty(
         value = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED,
         havingValue = "true")

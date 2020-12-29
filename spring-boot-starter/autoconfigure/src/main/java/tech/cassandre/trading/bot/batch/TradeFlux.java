@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.batch;
 
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -47,10 +48,10 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
 
         // Finding which trades has been updated.
         tradeService.getTrades().forEach(trade -> {
-            logger.debug("TradeFlux - Treating trade : {}", trade.getId());
-            final Optional<Trade> tradeInDatabase = tradeRepository.findById(trade.getId());
+            logger.debug("TradeFlux - Treating trade : {}", trade.getTradeId());
+            final Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(trade.getTradeId());
             if (tradeInDatabase.isEmpty() || !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
-                logger.info("TradeFlux - Trade {} has changed : {}", trade.getId(), trade);
+                logger.info("TradeFlux - Trade {} has changed : {}", trade.getTradeId(), trade);
                 newValues.add(trade);
             }
         });
@@ -60,7 +61,19 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
 
     @Override
     public final void backupValue(final TradeDTO newValue) {
-        tradeRepository.save(tradeMapper.mapToTrade(newValue));
+        Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(newValue.getTradeId());
+        tradeInDatabase.ifPresentOrElse(trade -> {
+            // Update trade.
+            tradeMapper.updateOrder(newValue, trade);
+            tradeRepository.save(trade);
+        }, () -> {
+            // Create trade.
+            final Trade newTrade = tradeMapper.mapToTrade(newValue);
+            // Retrieve the existing order of the trade.
+            final Optional<Order> order = orderRepository.findByOrderId(newValue.getOrderId());
+            order.ifPresent(value -> newTrade.setOrder(value.getId()));
+            tradeRepository.save(newTrade);
+        });
     }
 
 }

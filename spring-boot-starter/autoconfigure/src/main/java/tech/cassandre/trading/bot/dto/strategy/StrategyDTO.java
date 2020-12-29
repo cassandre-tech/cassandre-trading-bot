@@ -17,8 +17,11 @@ import static lombok.AccessLevel.PRIVATE;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class StrategyDTO {
 
+    /** Technical id. */
+    Long id;
+
     /** An identifier that uniquely identifies the strategy. */
-    String id;
+    String strategyId;
 
     /** Strategy name. */
     String name;
@@ -34,6 +37,7 @@ public class StrategyDTO {
         final StrategyDTO that = (StrategyDTO) o;
         return new EqualsBuilder()
                 .append(this.id, that.id)
+                .append(this.strategyId, that.strategyId)
                 .isEquals();
     }
 

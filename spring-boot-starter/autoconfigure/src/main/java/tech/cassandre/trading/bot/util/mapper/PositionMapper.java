@@ -2,10 +2,13 @@ package tech.cassandre.trading.bot.util.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import tech.cassandre.trading.bot.domain.Position;
+import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
@@ -32,6 +35,15 @@ public interface PositionMapper {
     @Mapping(source = "highestPrice.value", target = "highestPrice")
     @Mapping(source = "latestPrice.value", target = "latestPrice")
     Position mapToPosition(PositionDTO source);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
+    @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
+    @Mapping(source = "amount.value", target = "amount")
+    @Mapping(source = "lowestPrice.value", target = "lowestPrice")
+    @Mapping(source = "highestPrice.value", target = "highestPrice")
+    @Mapping(source = "latestPrice.value", target = "latestPrice")
+    void updatePosition(PositionDTO source, @MappingTarget Position target);
 
     // =================================================================================================================
     // Domain to DTO.

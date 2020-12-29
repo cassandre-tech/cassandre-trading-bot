@@ -15,15 +15,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 @SpringBootTest
 @DisplayName("Domain - Strategy")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
+        @Property(key = "spring.datasource.data", value = "")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
@@ -36,15 +34,16 @@ public class StrategyTest {
     @DisplayName("Check saved strategy in database")
     public void checkLoadOrderFromDatabase() {
         // Test existing strategy.
-        final Optional<Strategy> strategy = strategyRepository.findById("1");
+        final Optional<Strategy> strategy = strategyRepository.findByStrategyId("01");
         assertTrue(strategy.isPresent());
+        assertEquals(1, strategy.get().getId());
+        assertEquals("01", strategy.get().getStrategyId());
         assertEquals("Testable strategy", strategy.get().getName());
-        assertNotNull(strategy.get().getCreatedOn());
-        assertNull(strategy.get().getUpdatedOn());
+        assertEquals("kucoin", strategy.get().getExchangeAccount().getExchange());
+        assertEquals("cassandre.crypto.bot@gmail.com", strategy.get().getExchangeAccount().getAccount());
 
         // Test non existing strategy.
-        assertFalse(strategyRepository.findById("NON_EXISTING").isPresent());
-
+        assertFalse(strategyRepository.findByStrategyId("NON_EXISTING").isPresent());
     }
 
 }

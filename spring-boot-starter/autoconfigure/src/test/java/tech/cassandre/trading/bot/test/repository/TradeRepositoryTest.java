@@ -35,7 +35,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals(10, tradeRepository.count());
         // Trade 01.
         Trade trade = trades.next();
-        assertEquals("BACKUP_TRADE_01", trade.getId());
+        assertEquals("BACKUP_TRADE_01", trade.getTradeId());
         assertEquals("BACKUP_OPENING_ORDER_02", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, trade.getAmount().compareTo(new BigDecimal("20")));
@@ -46,7 +46,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("USDT", trade.getFeeCurrency());
         // Trade 02.
         trade = trades.next();
-        assertEquals("BACKUP_TRADE_02", trade.getId());
+        assertEquals("BACKUP_TRADE_02", trade.getTradeId());
         assertEquals("BACKUP_OPENING_ORDER_03", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, trade.getAmount().compareTo(new BigDecimal("30")));
@@ -57,7 +57,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("USDT", trade.getFeeCurrency());
         // Trade 03.
         trade = trades.next();
-        assertEquals("BACKUP_TRADE_03", trade.getId());
+        assertEquals("BACKUP_TRADE_03", trade.getTradeId());
         assertEquals("BACKUP_OPENING_ORDER_04", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, trade.getAmount().compareTo(new BigDecimal("40")));
@@ -68,7 +68,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("USDT", trade.getFeeCurrency());
         // Trade 04.
         trade = trades.next();
-        assertEquals("BACKUP_TRADE_04", trade.getId());
+        assertEquals("BACKUP_TRADE_04", trade.getTradeId());
         assertEquals("BACKUP_CLOSING_ORDER_01", trade.getOrderId());
         assertEquals(ASK, trade.getType());
         assertEquals(0, trade.getAmount().compareTo(new BigDecimal("40")));
@@ -79,7 +79,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals("USDT", trade.getFeeCurrency());
         // Trade 05.
         trade = trades.next();
-        assertEquals("BACKUP_TRADE_05", trade.getId());
+        assertEquals("BACKUP_TRADE_05", trade.getTradeId());
         assertEquals("BACKUP_CLOSING_ORDER_02", trade.getOrderId());
         assertEquals(ASK, trade.getType());
         assertEquals(0, trade.getAmount().compareTo(new BigDecimal("50")));

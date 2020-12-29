@@ -83,7 +83,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     @Bean
     @Primary
     public PositionFlux positionFlux() {
-        return new PositionFlux(positionRepository);
+        return new PositionFlux(positionRepository, orderRepository);
     }
 
     @SuppressWarnings("unchecked")
@@ -268,17 +268,17 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Returns three values.
         Set<OrderDTO> reply = new LinkedHashSet<>();
-        reply.add(OrderDTO.builder().id("000001").type(BID).currencyPair(cp3).build());                // Order 01.
-        reply.add(OrderDTO.builder().id("000002").type(BID).currencyPair(cp3).build());                // Order 02.
-        reply.add(OrderDTO.builder().id("000003").type(BID).currencyPair(cp3).build());                // Order 03.
-        reply.add(OrderDTO.builder().id("000004").type(BID).currencyPair(cp3).build());                // Order 04.
+        reply.add(OrderDTO.builder().orderId("000001").type(BID).currencyPair(cp3).build());                // Order 01.
+        reply.add(OrderDTO.builder().orderId("000002").type(BID).currencyPair(cp3).build());                // Order 02.
+        reply.add(OrderDTO.builder().orderId("000003").type(BID).currencyPair(cp3).build());                // Order 03.
+        reply.add(OrderDTO.builder().orderId("000004").type(BID).currencyPair(cp3).build());                // Order 04.
         given(service.getOrders()).willReturn(reply);
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-        replyGetTrades.add(TradeDTO.builder().id("0000001").type(BID).currencyPair(cp3).build());      // Trade 01.
-        replyGetTrades.add(TradeDTO.builder().id("0000002").type(BID).currencyPair(cp3).build());      // Trade 02.
-        replyGetTrades.add(TradeDTO.builder().id("0000003").type(BID).currencyPair(cp3).build());      // Trade 03.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000001").type(BID).currencyPair(cp3).build());      // Trade 01.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000002").type(BID).currencyPair(cp3).build());      // Trade 02.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000003").type(BID).currencyPair(cp3).build());      // Trade 03.
         given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;
@@ -294,7 +294,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         final CurrencyPairDTO cp3 = new CurrencyPairDTO(ETH, BTC);
         final BigDecimal amount = new BigDecimal("1");
 
-        StrategyDTO strategy = StrategyDTO.builder().id("1").build();
+        StrategyDTO strategy = StrategyDTO.builder().strategyId("1").build();
 
         // Reply 1 : 2 positions.
         PositionDTO p1 = new PositionDTO(1, strategy, cp3, amount, "O000001", noRules);

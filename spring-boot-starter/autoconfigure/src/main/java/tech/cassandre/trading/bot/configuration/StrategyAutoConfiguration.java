@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.domain.ExchangeAccount;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -16,6 +17,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
@@ -31,6 +33,7 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
+import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashSet;
@@ -46,6 +49,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
     /** Application context. */
     private final ApplicationContext applicationContext;
+
+    /** Exchange parameters. */
+    private final ExchangeParameters exchangeParameters;
 
     /** Trade service. */
     private final TradeService tradeService;
@@ -64,6 +70,9 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
     /** Order flux. */
     private final OrderFlux orderFlux;
+
+    /** Exchange account repository. */
+    private final ExchangeAccountRepository exchangeAccountRepository;
 
     /** Strategy repository. */
     private final StrategyRepository strategyRepository;
@@ -86,39 +95,45 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
     /**
      * Constructor.
      *
-     * @param newApplicationContext application context
-     * @param newUserService        user service
-     * @param newTradeService       trade service
-     * @param newAccountFlux        account flux
-     * @param newTickerFlux         ticker flux
-     * @param newOrderFlux          order flux
-     * @param newTradeFlux          trade flux
-     * @param newStrategyRepository strategy repository
-     * @param newOrderRepository    order repository
-     * @param newTradeRepository    trade repository
-     * @param newPositionRepository position repository
-     * @param newPositionFlux       position flux
+     * @param newApplicationContext        application context
+     * @param newExchangeParameters        exchange parameters
+     * @param newUserService               user service
+     * @param newTradeService              trade service
+     * @param newAccountFlux               account flux
+     * @param newTickerFlux                ticker flux
+     * @param newOrderFlux                 order flux
+     * @param newTradeFlux                 trade flux
+     * @param newExchangeAccountRepository exchange account repository
+     * @param newStrategyRepository        strategy repository
+     * @param newOrderRepository           order repository
+     * @param newTradeRepository           trade repository
+     * @param newPositionRepository        position repository
+     * @param newPositionFlux              position flux
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategyAutoConfiguration(final ApplicationContext newApplicationContext,
+                                     final ExchangeParameters newExchangeParameters,
                                      final UserService newUserService,
                                      final TradeService newTradeService,
                                      final AccountFlux newAccountFlux,
                                      final TickerFlux newTickerFlux,
                                      final OrderFlux newOrderFlux,
                                      final TradeFlux newTradeFlux,
+                                     final ExchangeAccountRepository newExchangeAccountRepository,
                                      final StrategyRepository newStrategyRepository,
                                      final OrderRepository newOrderRepository,
                                      final TradeRepository newTradeRepository,
                                      final PositionRepository newPositionRepository,
                                      final PositionFlux newPositionFlux) {
         this.applicationContext = newApplicationContext;
+        this.exchangeParameters = newExchangeParameters;
         this.userService = newUserService;
         this.tradeService = newTradeService;
         this.accountFlux = newAccountFlux;
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
         this.tradeFlux = newTradeFlux;
+        this.exchangeAccountRepository = newExchangeAccountRepository;
         this.strategyRepository = newStrategyRepository;
         this.orderRepository = newOrderRepository;
         this.tradeRepository = newTradeRepository;
@@ -180,7 +195,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Displaying strategy name.
         CassandreStrategy cassandreStrategyAnnotation = o.getClass().getAnnotation(CassandreStrategy.class);
-        logger.info("StrategyConfiguration - Running strategy '{}'", cassandreStrategyAnnotation.name());
+        logger.info("StrategyConfiguration - Running strategy '{}'", cassandreStrategyAnnotation.strategyName());
 
         // Displaying requested currency pairs.
         StringJoiner currencyPairList = new StringJoiner(", ");
@@ -196,13 +211,23 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Setting up strategy.
 
         // Saving strategy in database.
-        Strategy s = new Strategy();
-        s.setId(cassandreStrategyAnnotation.id());
-        s.setName(cassandreStrategyAnnotation.name());
-        strategyRepository.save(s);
+        final Optional<Strategy> strategyInDatabase = strategyRepository.findByStrategyId(cassandreStrategyAnnotation.strategyId());
+        strategyInDatabase.ifPresentOrElse(existingStrategy -> {
+            existingStrategy.setName(cassandreStrategyAnnotation.strategyName());
+            strategyRepository.save(existingStrategy);
+            strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(existingStrategy));
+        }, () -> {
+            Strategy s = new Strategy();
+            s.setStrategyId(cassandreStrategyAnnotation.strategyId());
+            s.setName(cassandreStrategyAnnotation.strategyName());
+            Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
+            System.out.println("==>" + exchangeAccount);
+            exchangeAccount.ifPresent(s::setExchangeAccount);
+            strategyRepository.save(s);
+            strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(s));
+        });
 
         // Setting services & repositories.
-        strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(s));
         strategy.setOrderRepository(orderRepository);
         strategy.setTradeRepository(tradeRepository);
         strategy.setTradeService(tradeService);

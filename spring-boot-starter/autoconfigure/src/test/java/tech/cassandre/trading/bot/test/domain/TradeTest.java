@@ -38,7 +38,6 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
@@ -81,7 +80,7 @@ public class TradeTest extends BaseTest {
         // Check trade 01.
         TradeDTO trade = strategy.getTrades().get("BACKUP_TRADE_01");
         assertNotNull(trade);
-        assertEquals("BACKUP_TRADE_01", trade.getId());
+        assertEquals("BACKUP_TRADE_01", trade.getTradeId());
         assertEquals("BACKUP_OPENING_ORDER_02", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, new BigDecimal("20").compareTo(trade.getAmount().getValue()));
@@ -95,7 +94,7 @@ public class TradeTest extends BaseTest {
         // Check trade 02.
         trade = strategy.getTrades().get("BACKUP_TRADE_02");
         assertNotNull(trade);
-        assertEquals("BACKUP_TRADE_02", trade.getId());
+        assertEquals("BACKUP_TRADE_02", trade.getTradeId());
         assertEquals("BACKUP_OPENING_ORDER_03", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, new BigDecimal("30").compareTo(trade.getAmount().getValue()));
@@ -109,7 +108,7 @@ public class TradeTest extends BaseTest {
         // Check trade 03.
         trade = strategy.getTrades().get("BACKUP_TRADE_03");
         assertNotNull(trade);
-        assertEquals("BACKUP_TRADE_03", trade.getId());
+        assertEquals("BACKUP_TRADE_03", trade.getTradeId());
         assertEquals("BACKUP_OPENING_ORDER_04", trade.getOrderId());
         assertEquals(BID, trade.getType());
         assertEquals(0, new BigDecimal("40").compareTo(trade.getAmount().getValue()));
@@ -123,7 +122,7 @@ public class TradeTest extends BaseTest {
         // Check trade 04.
         trade = strategy.getTrades().get("BACKUP_TRADE_04");
         assertNotNull(trade);
-        assertEquals("BACKUP_TRADE_04", trade.getId());
+        assertEquals("BACKUP_TRADE_04", trade.getTradeId());
         assertEquals("BACKUP_CLOSING_ORDER_01", trade.getOrderId());
         assertEquals(ASK, trade.getType());
         assertEquals(0, new BigDecimal("40").compareTo(trade.getAmount().getValue()));
@@ -137,7 +136,7 @@ public class TradeTest extends BaseTest {
         // Check trade 05.
         trade = strategy.getTrades().get("BACKUP_TRADE_05");
         assertNotNull(trade);
-        assertEquals("BACKUP_TRADE_05", trade.getId());
+        assertEquals("BACKUP_TRADE_05", trade.getTradeId());
         assertEquals("BACKUP_CLOSING_ORDER_02", trade.getOrderId());
         assertEquals(ASK, trade.getType());
         assertEquals(0, new BigDecimal("50").compareTo(trade.getAmount().getValue()));
@@ -161,14 +160,14 @@ public class TradeTest extends BaseTest {
 
         // =============================================================================================================
         // Loading strategy.
-        final Optional<Strategy> optionalStrategy = strategyRepository.findById("001");
+        final Optional<Strategy> optionalStrategy = strategyRepository.findByStrategyId("01");
         assertTrue(optionalStrategy.isPresent());
         final Strategy strategyDTO = optionalStrategy.get();
 
         // =============================================================================================================
         // Add a trade and check that it's correctly saved in database.
         TradeDTO t1 = TradeDTO.builder()
-                .id("BACKUP_TRADE_11")
+                .tradeId("BACKUP_TRADE_11")
                 .orderId("BACKUP_ORDER_01")
                 .type(BID)
                 .currencyPair(cp1)
@@ -182,9 +181,10 @@ public class TradeTest extends BaseTest {
 
         // =============================================================================================================
         // Trade - Check created order (domain).
-        Optional<Trade> tradeInDatabase = tradeRepository.findById("BACKUP_TRADE_11");
+        Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId("BACKUP_TRADE_11");
         assertTrue(tradeInDatabase.isPresent());
-        assertEquals("BACKUP_TRADE_11", tradeInDatabase.get().getId());
+        assertEquals(11, tradeInDatabase.get().getId());
+        assertEquals("BACKUP_TRADE_11", tradeInDatabase.get().getTradeId());
         assertEquals("BACKUP_ORDER_01", tradeInDatabase.get().getOrderId());
         assertEquals(BID, tradeInDatabase.get().getType());
         assertEquals(0, tradeInDatabase.get().getAmount().compareTo(new BigDecimal("1.100001")));
@@ -202,7 +202,7 @@ public class TradeTest extends BaseTest {
         // TradeDTO - Check created trade (dto).
         final TradeDTO tradeDTO = strategy.getTrades().get("BACKUP_TRADE_11");
         assertNotNull(tradeDTO);
-        assertEquals("BACKUP_TRADE_11", tradeDTO.getId());
+        assertEquals("BACKUP_TRADE_11", tradeDTO.getTradeId());
         assertEquals("BACKUP_ORDER_01", tradeDTO.getOrderId());
         assertEquals(BID, tradeDTO.getType());
         assertEquals(0, tradeDTO.getAmount().getValue().compareTo(new BigDecimal("1.100001")));
@@ -216,7 +216,7 @@ public class TradeTest extends BaseTest {
         // =============================================================================================================
         // Updating the trade - first time.
         tradeFlux.emitValue(TradeDTO.builder()
-                .id("BACKUP_TRADE_11")
+                .tradeId("BACKUP_TRADE_11")
                 .orderId("BACKUP_ORDER_01")
                 .type(BID)
                 .amount(new CurrencyAmountDTO("1.100002", cp1.getBaseCurrency()))
@@ -226,14 +226,14 @@ public class TradeTest extends BaseTest {
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
         await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdateReceived().size()));
-        await().untilAsserted(() -> assertNotNull(tradeRepository.findById("BACKUP_TRADE_11").get().getUpdatedOn()));
-        assertEquals(createdOn, tradeRepository.findById("BACKUP_TRADE_11").get().getCreatedOn());
+        await().untilAsserted(() -> assertNotNull(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn()));
+        assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
         ZonedDateTime updatedOn = tradeInDatabase.get().getCreatedOn();
 
         // =============================================================================================================
         // Updating the order - second time.
         tradeFlux.emitValue(TradeDTO.builder()
-                .id("BACKUP_TRADE_11")
+                .tradeId("BACKUP_TRADE_11")
                 .orderId("BACKUP_ORDER_01")
                 .type(BID)
                 .currencyPair(cp1)
@@ -242,8 +242,8 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
-        await().untilAsserted(() -> assertTrue(updatedOn.isBefore(tradeRepository.findById("BACKUP_TRADE_11").get().getUpdatedOn())));
-        assertEquals(createdOn, tradeRepository.findById("BACKUP_TRADE_11").get().getCreatedOn());
+        await().untilAsserted(() -> assertTrue(updatedOn.isBefore(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn())));
+        assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
         // We check if we still have the strategy set.
         final Optional<TradeDTO> optionalTrade = strategy.getTradeById("BACKUP_TRADE_11");
         assertTrue(optionalTrade.isPresent());
@@ -254,13 +254,13 @@ public class TradeTest extends BaseTest {
     public void checkStrategyValueInTrade() {
         // =============================================================================================================
         // Loading strategy.
-        StrategyDTO strategyDTO = StrategyDTO.builder().id("1").build();
+        StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("01").build();
 
         // =============================================================================================================
         // First, we have an order (NEW_ORDER) that arrives with a strategy.
         long orderCount = orderRepository.count();
         orderFlux.emitValue(OrderDTO.builder()
-                .id("NEW_ORDER")
+                .orderId("NEW_ORDER")
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1.00001", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
@@ -279,7 +279,7 @@ public class TradeTest extends BaseTest {
         // Then a new trade arrives for order NEW_ORDER and weh check that the strategy is set.
         long tradeCount = tradeRepository.count();
         tradeFlux.emitValue(TradeDTO.builder()
-                .id("NEW_TRADE")
+                .tradeId("NEW_TRADE")
                 .orderId("NEW_ORDER")
                 .type(BID)
                 .amount(new CurrencyAmountDTO("1.100003", cp1.getBaseCurrency()))
@@ -289,7 +289,7 @@ public class TradeTest extends BaseTest {
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
         await().untilAsserted(() -> assertEquals(tradeCount + 1, tradeRepository.count()));
-        final Optional<Trade> optionalTrade = tradeRepository.findById("NEW_TRADE");
+        final Optional<Trade> optionalTrade = tradeRepository.findByTradeId("NEW_TRADE");
         assertTrue(optionalTrade.isPresent());
     }
 

@@ -100,7 +100,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     // =================================================================================================================
     // Internal methods to setup dependencies.
 
-
     /**
      * Getter strategyDTO.
      *
@@ -230,7 +229,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return orderRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(orderMapper::mapToOrderDTO)
-                .collect(Collectors.toMap(OrderDTO::getId, orderDTO -> orderDTO));
+                .collect(Collectors.toMap(OrderDTO::getOrderId, orderDTO -> orderDTO));
     }
 
     /**
@@ -240,7 +239,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return order
      */
     public final Optional<OrderDTO> getOrderById(final String id) {
-        return orderRepository.findById(id).map(orderMapper::mapToOrderDTO);
+        return orderRepository.findByOrderId(id).map(orderMapper::mapToOrderDTO);
     }
 
     // =================================================================================================================
@@ -255,7 +254,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(tradeMapper::mapToTradeDTO)
-                .collect(Collectors.toMap(TradeDTO::getId, tradeDTO -> tradeDTO));
+                .collect(Collectors.toMap(TradeDTO::getTradeId, tradeDTO -> tradeDTO));
     }
 
     /**
@@ -265,7 +264,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return trade
      */
     public final Optional<TradeDTO> getTradeById(final String id) {
-        return tradeRepository.findById(id).map(tradeMapper::mapToTradeDTO);
+        return tradeRepository.findByTradeId(id).map(tradeMapper::mapToTradeDTO);
     }
 
     // =================================================================================================================

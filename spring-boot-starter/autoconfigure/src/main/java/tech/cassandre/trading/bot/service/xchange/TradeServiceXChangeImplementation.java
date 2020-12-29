@@ -66,7 +66,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // Sending the order.
             final String orderId = tradeService.placeMarketOrder(m);
             OrderDTO openingOrder = OrderDTO.builder()
-                    .id(orderId)
+                    .orderId(orderId)
                     .timestamp(ZonedDateTime.now())
                     .type(orderTypeDTO)
                     .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
@@ -101,7 +101,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // Sending & creating the order.
             final String orderId = tradeService.placeLimitOrder(l);
             OrderDTO openingOrder = OrderDTO.builder()
-                    .id(orderId)
+                    .orderId(orderId)
                     .timestamp(ZonedDateTime.now())
                     .type(orderTypeDTO)
                     .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))

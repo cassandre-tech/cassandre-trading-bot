@@ -71,10 +71,10 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(orderId01, buyMarketOrder01.getOrderId());
 
         // Testing the received order.
-        with().await().until(() -> strategy.getOrdersUpdateReceived().stream().anyMatch(o -> o.getId().equals(orderId01)));
-        final Optional<OrderDTO> order01 = strategy.getOrdersUpdateReceived().stream().filter(o -> o.getId().equals(orderId01)).findFirst();
+        with().await().until(() -> strategy.getOrdersUpdateReceived().stream().anyMatch(o -> o.getOrderId().equals(orderId01)));
+        final Optional<OrderDTO> order01 = strategy.getOrdersUpdateReceived().stream().filter(o -> o.getOrderId().equals(orderId01)).findFirst();
         assertTrue(order01.isPresent());
-        assertEquals(orderId01, order01.get().getId());
+        assertEquals(orderId01, order01.get().getOrderId());
         assertEquals(cp1, order01.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.001").compareTo(order01.get().getAmount().getValue()));
         assertEquals(cp1.getBaseCurrency(), order01.get().getAmount().getCurrency());
@@ -83,10 +83,10 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(BID, order01.get().getType());
 
         // Testing the received trade.
-        with().await().until(() -> strategy.getTradesUpdateReceived().stream().anyMatch(o -> o.getId().equals(tradeId01)));
-        final Optional<TradeDTO> trade01 = strategy.getTradesUpdateReceived().stream().filter(o -> o.getId().equals(tradeId01)).findFirst();
+        with().await().until(() -> strategy.getTradesUpdateReceived().stream().anyMatch(o -> o.getTradeId().equals(tradeId01)));
+        final Optional<TradeDTO> trade01 = strategy.getTradesUpdateReceived().stream().filter(o -> o.getTradeId().equals(tradeId01)).findFirst();
         assertTrue(trade01.isPresent());
-        assertEquals(tradeId01, trade01.get().getId());
+        assertEquals(tradeId01, trade01.get().getTradeId());
         assertEquals(orderId01, trade01.get().getOrderId());
         assertEquals(cp1, trade01.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.001").compareTo(trade01.get().getAmount().getValue()));
@@ -101,23 +101,23 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(orderId02, buyMarketOrder02.getOrderId());
 
         // Testing the received order.
-        with().await().until(() -> strategy.getOrdersUpdateReceived().stream().anyMatch(o -> o.getId().equals(orderId02)));
-        final Optional<OrderDTO> order02 = strategy.getOrdersUpdateReceived().stream().filter(o -> o.getId().equals(orderId02)).findFirst();
+        with().await().until(() -> strategy.getOrdersUpdateReceived().stream().anyMatch(o -> o.getOrderId().equals(orderId02)));
+        final Optional<OrderDTO> order02 = strategy.getOrdersUpdateReceived().stream().filter(o -> o.getOrderId().equals(orderId02)).findFirst();
         assertTrue(order02.isPresent());
         assertEquals(ASK, order02.get().getType());
 
         // Testing the received trade.
-        with().await().until(() -> strategy.getTradesUpdateReceived().stream().anyMatch(o -> o.getId().equals(tradeId02)));
-        final Optional<TradeDTO> trade02 = strategy.getTradesUpdateReceived().stream().filter(o -> o.getId().equals(tradeId02)).findFirst();
+        with().await().until(() -> strategy.getTradesUpdateReceived().stream().anyMatch(o -> o.getTradeId().equals(tradeId02)));
+        final Optional<TradeDTO> trade02 = strategy.getTradesUpdateReceived().stream().filter(o -> o.getTradeId().equals(tradeId02)).findFirst();
         assertTrue(trade02.isPresent());
         assertEquals(ASK, trade02.get().getType());
 
         // Testing retrieve methods.
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(2, tradeService.getOrders().size());
-        assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals("NON_EXISTING")));
-        assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals(orderId01)));
-        assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getId().equals(orderId02)));
+        assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals("NON_EXISTING")));
+        assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals(orderId01)));
+        assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals(orderId02)));
         assertEquals(2, tradeService.getTrades().size());
     }
 

@@ -166,7 +166,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
             // We create and send the order.
             final String orderId = getNextOrderNumber();
             final OrderDTO order = OrderDTO.builder()
-                    .id(orderId)
+                    .orderId(orderId)
                     .currencyPair(currencyPair)
                     .type(orderTypeDTO)
                     .status(FILLED)
@@ -178,7 +178,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
             // We create and send the trade.
             final String tradeId = getNextTradeNumber();
             final TradeDTO trade = TradeDTO.builder()
-                    .id(tradeId)
+                    .tradeId(tradeId)
                     .orderId(orderId)
                     .currencyPair(currencyPair)
                     .type(orderTypeDTO)
@@ -187,7 +187,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .timestamp(ZonedDateTime.now())
                     .fee(new CurrencyAmountDTO())
                     .build();
-
             // Sending the results after the method returns the result.
             Executors.newFixedThreadPool(1).submit(() -> {
                 try {
@@ -202,6 +201,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                 } catch (InterruptedException e) {
                     logger.debug("InterruptedException");
                 }
+
                 localTrades.put(tradeId, trade);
                 tradeFlux.emitValue(trade);
             });
@@ -247,11 +247,11 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
         final Map<String, OrderDTO> results = orderRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(orderMapper::mapToOrderDTO)
-                .collect(Collectors.toMap(OrderDTO::getId, order -> order));
+                .collect(Collectors.toMap(OrderDTO::getOrderId, order -> order));
         localOrders.values()
                 .stream()
-                .filter(order -> !results.containsKey(order.getId()))
-                .forEach(order -> results.put(order.getId(), order));
+                .filter(order -> !results.containsKey(order.getOrderId()))
+                .forEach(order -> results.put(order.getOrderId(), order));
         return new HashSet<>(results.values());
     }
 
@@ -265,7 +265,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     @Override
     public final boolean cancelOrder(final String orderId) {
-        final Optional<Order> order = orderRepository.findById(orderId);
+        final Optional<Order> order = orderRepository.findByOrderId(orderId);
         if (order.isPresent()) {
             orderRepository.delete(order.get());
             return true;
@@ -279,11 +279,11 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
         final Map<String, TradeDTO> results = tradeRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(tradeMapper::mapToTradeDTO)
-                .collect(Collectors.toMap(TradeDTO::getId, trade -> trade));
+                .collect(Collectors.toMap(TradeDTO::getTradeId, trade -> trade));
         localTrades.values()
                 .stream()
-                .filter(trade -> !results.containsKey(trade.getId()))
-                .forEach(trade -> results.put(trade.getId(), trade));
+                .filter(trade -> !results.containsKey(trade.getTradeId()))
+                .forEach(trade -> results.put(trade.getTradeId(), trade));
         return new HashSet<>(results.values());
     }
 

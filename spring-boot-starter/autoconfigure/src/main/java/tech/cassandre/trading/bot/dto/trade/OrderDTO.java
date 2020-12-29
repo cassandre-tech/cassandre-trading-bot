@@ -24,8 +24,11 @@ import static lombok.AccessLevel.PRIVATE;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class OrderDTO {
 
+    /** Technical id. */
+    Long id;
+
     /** An identifier set by the exchange that uniquely identifies the order. */
-    String id;
+    String orderId;
 
     /** Order type i.e. bid or ask. */
     OrderTypeDTO type;
@@ -73,7 +76,7 @@ public class OrderDTO {
         }
         final OrderDTO that = (OrderDTO) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
                 .append(this.amount, that.amount)
                 .append(this.currencyPair, that.currencyPair)
@@ -90,7 +93,7 @@ public class OrderDTO {
     @Override
     public final int hashCode() {
         return  new HashCodeBuilder()
-                .append(id)
+                .append(orderId)
                 .toHashCode();
     }
 

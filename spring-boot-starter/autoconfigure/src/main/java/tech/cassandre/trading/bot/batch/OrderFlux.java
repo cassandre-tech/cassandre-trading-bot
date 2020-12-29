@@ -39,11 +39,11 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
 
         // Finding which order has been updated.
         tradeService.getOrders().forEach(order -> {
-            logger.debug("OrderFlux - Treating order : {}", order.getId());
-            final Optional<Order> orderInDatabase = orderRepository.findById(order.getId());
+            logger.debug("OrderFlux - Treating order : {}", order.getOrderId());
+            final Optional<Order> orderInDatabase = orderRepository.findByOrderId(order.getOrderId());
             // If it does not exist or something changed, we do it.
             if (orderInDatabase.isEmpty() || !orderMapper.mapToOrderDTO(orderInDatabase.get()).equals(order)) {
-                logger.debug("OrderFlux - Order {} has changed : {}", order.getId(), order);
+                logger.debug("OrderFlux - Order {} has changed : {}", order.getOrderId(), order);
                 newValues.add(order);
             }
         });
@@ -53,17 +53,15 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
 
     @Override
     public final void backupValue(final OrderDTO newValue) {
-        final Order valueToSave = orderMapper.mapToOrder(newValue);
-        // We retrieve value already in database.
-        final Optional<Order> orderInDatabase = orderRepository.findById(newValue.getId());
-        orderInDatabase.ifPresent(order -> {
-            // We set the strategy.
-            valueToSave.setStrategy(order.getStrategy());
-            // We add the trades we already have.
-            // orderInDatabase.get().getTrades().forEach(trade -> valueToSave.getTrades().add(trade));
+        final Optional<Order> orderInDatabase = orderRepository.findByOrderId(newValue.getOrderId());
+        orderInDatabase.ifPresentOrElse(order -> {
+            // Update order.
+            orderMapper.updateOrder(newValue, order);
+            orderRepository.save(order);
+        }, () -> {
+            // Create order.
+            orderRepository.save(orderMapper.mapToOrder(newValue));
         });
-        // We save.
-        orderRepository.save(valueToSave);
     }
 
 }

@@ -106,7 +106,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // Creates the position dto.
             PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, orderCreationResult.getOrder(), rules);
             positionRepository.save(positionMapper.mapToPosition(p));
-            logger.debug("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrder().getId());
+            logger.debug("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrder().getOrderId());
 
             // =========================================================================================================
             // Creates the result.

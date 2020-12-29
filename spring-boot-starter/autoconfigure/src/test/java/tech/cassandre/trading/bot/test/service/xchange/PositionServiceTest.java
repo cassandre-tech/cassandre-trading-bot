@@ -93,7 +93,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -105,7 +105,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(p2.isSuccessful());
         assertEquals(2, p2.getPosition().getId());
-        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getOrderId());
         assertNull(p2.getErrorMessage());
         assertNull(p2.getException());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -135,7 +135,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -146,7 +146,7 @@ public class PositionServiceTest extends BaseTest {
         orderFlux.emitValue(strategy.getOrderById("ORDER00010").get());
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
         final OrderDTO orderP1 = strategy.getOrdersUpdateReceived().get(0);
-        assertEquals("ORDER00010", orderP1.getId());
+        assertEquals("ORDER00010", orderP1.getOrderId());
         assertEquals(PENDING_NEW, orderP1.getStatus());
 
         // Creates position 2 (ETH/BTC, 0.0002, 20% stop loss).
@@ -155,7 +155,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(p2.isSuccessful());
         assertEquals(2, p2.getPosition().getId());
-        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getOrderId());
         assertNull(p2.getErrorMessage());
         assertNull(p2.getException());
         assertTrue(positionService.getPositionById(2).isPresent());
@@ -168,7 +168,7 @@ public class PositionServiceTest extends BaseTest {
         // Opening order.
         OrderDTO p1OpeningOrder = position1.get().getOpeningOrder();
         assertNotNull(p1OpeningOrder);
-        assertEquals("ORDER00010", p1OpeningOrder.getId());
+        assertEquals("ORDER00010", p1OpeningOrder.getOrderId());
         assertEquals(BID, p1OpeningOrder.getType());
         assertEquals(cp1, p1OpeningOrder.getCurrencyPair());
         assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
@@ -182,7 +182,7 @@ public class PositionServiceTest extends BaseTest {
         // Opening order.
         OrderDTO p2OpeningOrder = position2.get().getOpeningOrder();
         assertNotNull(p2OpeningOrder);
-        assertEquals("ORDER00020", p2OpeningOrder.getId());
+        assertEquals("ORDER00020", p2OpeningOrder.getOrderId());
         assertEquals(cp2, p2OpeningOrder.getCurrencyPair());
         assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
         // Closing order.
@@ -193,7 +193,7 @@ public class PositionServiceTest extends BaseTest {
         // An update for opening order ORDER00020 (position 2) arrives and change status.
         final long positionUpdateCount1 = strategy.getPositionsUpdateReceived().size();
         OrderDTO order00020 = OrderDTO.builder()
-                .id("ORDER00020")
+                .orderId("ORDER00020")
                 .type(BID)
                 .amount(new CurrencyAmountDTO("1.00001", cp2.getBaseCurrency()))
                 .currencyPair(cp2)
@@ -210,7 +210,7 @@ public class PositionServiceTest extends BaseTest {
         // Opening order.
         p1OpeningOrder = position1.get().getOpeningOrder();
         assertNotNull(p1OpeningOrder);
-        assertEquals("ORDER00010", p1OpeningOrder.getId());
+        assertEquals("ORDER00010", p1OpeningOrder.getOrderId());
         assertEquals(BID, p1OpeningOrder.getType());
         assertEquals(cp1, p1OpeningOrder.getCurrencyPair());
         assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
@@ -224,7 +224,7 @@ public class PositionServiceTest extends BaseTest {
         // Opening order.
         p2OpeningOrder = position2.get().getOpeningOrder();
         assertNotNull(p2OpeningOrder);
-        assertEquals("ORDER00020", p2OpeningOrder.getId());
+        assertEquals("ORDER00020", p2OpeningOrder.getOrderId());
         assertEquals(cp2, p2OpeningOrder.getCurrencyPair());
         assertEquals(FILLED, p2OpeningOrder.getStatus());
         // Closing order.
@@ -235,7 +235,7 @@ public class PositionServiceTest extends BaseTest {
         // We are now closing position 1 with a trade and setCloseOrderId.
 
         // We move the position 1 to OPENED.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002")
+        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
@@ -254,7 +254,7 @@ public class PositionServiceTest extends BaseTest {
         // An update arrives to and change status order of position 1.
         final long positionUpdateCount2 = strategy.getPositionsUpdateReceived().size();
         OrderDTO closingOrder01 = OrderDTO.builder()
-                .id("CLOSING_ORDER_01")
+                .orderId("CLOSING_ORDER_01")
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1.00001", cp2.getBaseCurrency()))
                 .currencyPair(cp1)
@@ -271,14 +271,14 @@ public class PositionServiceTest extends BaseTest {
         // Opening order.
         p1OpeningOrder = position1.get().getOpeningOrder();
         assertNotNull(p1OpeningOrder);
-        assertEquals("ORDER00010", p1OpeningOrder.getId());
+        assertEquals("ORDER00010", p1OpeningOrder.getOrderId());
         assertEquals(BID, p1OpeningOrder.getType());
         assertEquals(cp1, p1OpeningOrder.getCurrencyPair());
         assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
         // Closing order.
         p1ClosingOrder = position1.get().getClosingOrder();
         assertNotNull(p1ClosingOrder);
-        assertEquals("CLOSING_ORDER_01", p1ClosingOrder.getId());
+        assertEquals("CLOSING_ORDER_01", p1ClosingOrder.getOrderId());
         assertEquals(ASK, p1ClosingOrder.getType());
         assertEquals(cp1, p1ClosingOrder.getCurrencyPair());
         assertEquals(FILLED, p1ClosingOrder.getStatus());
@@ -289,7 +289,7 @@ public class PositionServiceTest extends BaseTest {
         // Opening order.
         p2OpeningOrder = position2.get().getOpeningOrder();
         assertNotNull(p2OpeningOrder);
-        assertEquals("ORDER00020", p2OpeningOrder.getId());
+        assertEquals("ORDER00020", p2OpeningOrder.getOrderId());
         assertEquals(cp2, p2OpeningOrder.getCurrencyPair());
         assertEquals(FILLED, p2OpeningOrder.getStatus());
         // Closing order.
@@ -310,7 +310,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -323,7 +323,7 @@ public class PositionServiceTest extends BaseTest {
         // Opening order.
         OrderDTO p1OpeningOrder = position1.get().getOpeningOrder();
         assertNotNull(p1OpeningOrder);
-        assertEquals("ORDER00010", p1OpeningOrder.getId());
+        assertEquals("ORDER00010", p1OpeningOrder.getOrderId());
         assertEquals(BID, p1OpeningOrder.getType());
         assertEquals(cp1, p1OpeningOrder.getCurrencyPair());
         assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
@@ -334,7 +334,7 @@ public class PositionServiceTest extends BaseTest {
         // =============================================================================================================
         // An update for opening order ORDER00020 (position 2) arrives and change status with an error !
         OrderDTO order00010 = OrderDTO.builder()
-                .id("ORDER00010")
+                .orderId("ORDER00010")
                 .type(BID)
                 .amount(new CurrencyAmountDTO("0.00012", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
@@ -359,7 +359,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -372,7 +372,7 @@ public class PositionServiceTest extends BaseTest {
         // Opening order.
         OrderDTO p1OpeningOrder = position1.get().getOpeningOrder();
         assertNotNull(p1OpeningOrder);
-        assertEquals("ORDER00010", p1OpeningOrder.getId());
+        assertEquals("ORDER00010", p1OpeningOrder.getOrderId());
         assertEquals(BID, p1OpeningOrder.getType());
         assertEquals(cp1, p1OpeningOrder.getCurrencyPair());
         assertEquals(PENDING_NEW, p1OpeningOrder.getStatus());
@@ -383,7 +383,7 @@ public class PositionServiceTest extends BaseTest {
         // =============================================================================================================
         // We are now closing position 1 with a trade and setCloseOrderId.
         // We move the position 1 to OPENED.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002")
+        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
@@ -401,7 +401,7 @@ public class PositionServiceTest extends BaseTest {
         // =============================================================================================================
         // An update arrives to change status order of position 1 in error.
         OrderDTO closingOrder01 = OrderDTO.builder()
-                .id("CLOSING_ORDER_01")
+                .orderId("CLOSING_ORDER_01")
                 .type(ASK)
                 .amount(new CurrencyAmountDTO("1.00001", cp1.getBaseCurrency()))
                 .currencyPair(cp1)
@@ -446,7 +446,7 @@ public class PositionServiceTest extends BaseTest {
         final PositionCreationResultDTO p1 = strategy.createPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
 
@@ -454,17 +454,17 @@ public class PositionServiceTest extends BaseTest {
         final PositionCreationResultDTO p2 = strategy.createPosition(cp2,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
-        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getOrderId());
         assertTrue(positionService.getPositionById(2).isPresent());
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 2 - should change status of position 1.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002").currencyPair(cp1).type(BID).currencyPair(cp1).amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency())).orderId("ORDER00010").build());
+        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002").currencyPair(cp1).type(BID).currencyPair(cp1).amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency())).orderId("ORDER00010").build());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 3 - should change status of position 2.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002").currencyPair(cp1).type(BID).currencyPair(cp1).amount(new CurrencyAmountDTO("0.0002", cp1.getBaseCurrency())).orderId("ORDER00020").build());
+        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002").currencyPair(cp1).type(BID).currencyPair(cp1).amount(new CurrencyAmountDTO("0.0002", cp1.getBaseCurrency())).orderId("ORDER00020").build());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
     }
@@ -478,10 +478,10 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         final long position1Id = creationResult1.getPosition().getId();
-        assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getId());
+        assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getOrderId());
 
         // The open trade arrives, change the status to OPENED and set the price.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002")
+        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
@@ -521,7 +521,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(CLOSING, getPositionDTO(position1Id).getStatus());
 
         // The close trade arrives, change the status and set the price.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002")
+        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(cp1)
@@ -549,7 +549,7 @@ public class PositionServiceTest extends BaseTest {
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
 
         // Trade arrives, position is now opened.
-        tradeFlux.emitValue(TradeDTO.builder().id("000001")
+        tradeFlux.emitValue(TradeDTO.builder().tradeId("000001")
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
@@ -622,7 +622,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(CLOSING, position1.getStatus());
 
         // The close trade arrives, change the status and set the price.
-        tradeFlux.emitValue(TradeDTO.builder().id("000002")
+        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(cp1)

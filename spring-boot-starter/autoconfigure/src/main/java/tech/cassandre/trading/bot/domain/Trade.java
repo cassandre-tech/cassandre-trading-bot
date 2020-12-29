@@ -9,12 +9,14 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.IDENTITY;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
@@ -26,14 +28,23 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 @Table(name = "TRADES")
 public class Trade extends BaseDomain {
 
-    /** An identifier set by the exchange that uniquely identifies the trade. */
+    /** Technical ID. */
     @Id
     @Column(name = "ID")
-    private String id;
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    /** An identifier set by the exchange that uniquely identifies the trade. */
+    @Column(name = "TRADE_ID")
+    private String tradeId;
 
     /** The id of the order responsible for execution of this trade. */
     @Column(name = "ORDER_ID", updatable = false)
     private String orderId;
+
+    /** The id of the order responsible for execution of this trade. */
+    @Column(name = "FK_ORDER_ID", updatable = false)
+    private Long order;
 
     /** A bid or a ask. */
     @Enumerated(STRING)
@@ -75,6 +86,7 @@ public class Trade extends BaseDomain {
         final Trade that = (Trade) o;
         return new EqualsBuilder()
                 .append(this.id, that.id)
+                .append(this.tradeId, that.tradeId)
                 .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
                 .append(this.amount, that.amount)

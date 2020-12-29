@@ -29,8 +29,8 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreS
  */
 @SuppressWarnings("unused")
 @CassandreStrategy(
-        id = "1",
-        name = "Testable strategy")
+        strategyId = "01",
+        strategyName = "Testable strategy")
 @ConditionalOnProperty(
         value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
         havingValue = "true")

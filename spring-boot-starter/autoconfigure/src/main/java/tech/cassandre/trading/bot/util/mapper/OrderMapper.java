@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.util.mapper;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
@@ -24,6 +25,7 @@ public interface OrderMapper {
      * @param source LimitOrder
      * @return OrderDTO
      */
+    @Mapping(source = "id", target = "orderId")
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapLimitOrderToOrderDTOAmount")
     @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapLimitOrderToOrderDTOCumulativeAmount")
     @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapLimitOrderToOrderDTOAveragePrice")
@@ -79,11 +81,20 @@ public interface OrderMapper {
      * @param source source
      * @return Order
      */
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "amount.value", target = "amount")
     @Mapping(source = "cumulativeAmount.value", target = "cumulativeAmount")
     @Mapping(source = "averagePrice.value", target = "averagePrice")
     @Mapping(source = "limitPrice.value", target = "limitPrice")
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "amount.value", target = "amount")
+    @Mapping(source = "cumulativeAmount.value", target = "cumulativeAmount")
+    @Mapping(source = "averagePrice.value", target = "averagePrice")
+    @Mapping(source = "limitPrice.value", target = "limitPrice")
+    @Mapping(target = "strategy", ignore = true)
+    void updateOrder(OrderDTO source, @MappingTarget tech.cassandre.trading.bot.domain.Order target);
 
     // =================================================================================================================
     // Domain to DTO.

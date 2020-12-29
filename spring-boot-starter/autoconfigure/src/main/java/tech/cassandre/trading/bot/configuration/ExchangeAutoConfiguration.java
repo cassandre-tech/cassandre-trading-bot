@@ -15,6 +15,8 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.domain.ExchangeAccount;
+import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -35,6 +37,7 @@ import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.StringJoiner;
 
 /**
@@ -86,6 +89,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Position flux. */
     private PositionFlux positionFlux;
 
+    /** Exchange account repository. */
+    private final ExchangeAccountRepository exchangeAccountRepository;
+
     /** Order repository. */
     private final OrderRepository orderRepository;
 
@@ -98,19 +104,22 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /**
      * Constructor.
      *
-     * @param newApplicationContext application context
-     * @param newExchangeParameters exchange parameters
-     * @param newOrderRepository    order repository
-     * @param newTradeRepository    trade repository
-     * @param newPositionRepository position repository
+     * @param newApplicationContext        application context
+     * @param newExchangeParameters        exchange parameters
+     * @param newExchangeAccountRepository exchange account repository
+     * @param newOrderRepository           order repository
+     * @param newTradeRepository           trade repository
+     * @param newPositionRepository        position repository
      */
     public ExchangeAutoConfiguration(final ApplicationContext newApplicationContext,
                                      final ExchangeParameters newExchangeParameters,
+                                     final ExchangeAccountRepository newExchangeAccountRepository,
                                      final OrderRepository newOrderRepository,
                                      final TradeRepository newTradeRepository,
                                      final PositionRepository newPositionRepository) {
         this.applicationContext = newApplicationContext;
         this.exchangeParameters = newExchangeParameters;
+        this.exchangeAccountRepository = newExchangeAccountRepository;
         this.orderRepository = newOrderRepository;
         this.tradeRepository = newTradeRepository;
         this.positionRepository = newPositionRepository;
@@ -180,7 +189,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             tickerFlux = new TickerFlux(marketService);
             orderFlux = new OrderFlux(tradeService, orderRepository);
             tradeFlux = new TradeFlux(tradeService, orderRepository, tradeRepository);
-            positionFlux = new PositionFlux(positionRepository);
+            positionFlux = new PositionFlux(positionRepository, orderRepository);
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();
@@ -196,6 +205,14 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             if (tradeService instanceof TradeServiceDryModeImplementation) {
                 assert tradeServiceDryMode != null;
                 tradeServiceDryMode.setDependencies(orderFlux, tradeFlux);
+            }
+
+            Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
+            if (exchangeAccount.isEmpty()) {
+                ExchangeAccount ea = new ExchangeAccount();
+                ea.setExchange(exchangeParameters.getName());
+                ea.setAccount(exchangeParameters.getUsername());
+                exchangeAccountRepository.save(ea);
             }
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.

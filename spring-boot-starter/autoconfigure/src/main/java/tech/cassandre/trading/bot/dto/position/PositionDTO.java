@@ -140,7 +140,7 @@ public class PositionDTO {
         this.amount = new CurrencyAmountDTO(newAmount, newCurrencyPair.getBaseCurrency());
         // We create a temporary opening order.
         openingOrder = OrderDTO.builder()
-                .id(newOpenOrderId)
+                .orderId(newOpenOrderId)
                 .type(BID)
                 .currencyPair(currencyPair)
                 .status(PENDING_NEW)
@@ -156,7 +156,7 @@ public class PositionDTO {
      * @return true if updated
      */
     public final boolean updateOrder(final OrderDTO updatedOrder) {
-        if (openingOrder != null && openingOrder.getId().equals(updatedOrder.getId())) {
+        if (openingOrder != null && openingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
             this.openingOrder = updatedOrder;
             if (updatedOrder.getStatus().isInError()) {
                 this.status = OPENING_FAILURE;
@@ -164,7 +164,7 @@ public class PositionDTO {
             }
             return true;
         }
-        if (closingOrder != null && closingOrder.getId().equals(updatedOrder.getId())) {
+        if (closingOrder != null && closingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
             this.closingOrder = updatedOrder;
             if (updatedOrder.getStatus().isInError()) {
                 this.status = CLOSING_FAILURE;
@@ -187,7 +187,7 @@ public class PositionDTO {
         status = CLOSING;
         // We create a temporary closing order.
         closingOrder = OrderDTO.builder()
-                .id(newCloseOrderId)
+                .orderId(newCloseOrderId)
                 .timestamp(ZonedDateTime.now())
                 .type(ASK)
                 .currencyPair(currencyPair)
@@ -372,7 +372,7 @@ public class PositionDTO {
     private BigDecimal getTotalAmountFromOpeningTrades(final TradeDTO trade) {
         return openingOrder.getTrades()
                 .stream()
-                .filter(t -> !t.getId().equals(trade.getId()))
+                .filter(t -> !t.getTradeId().equals(trade.getTradeId()))
                 .map(t -> t.getAmount().getValue())
                 .reduce(trade.getAmount().getValue(), BigDecimal::add);
     }
@@ -386,7 +386,7 @@ public class PositionDTO {
     private BigDecimal getTotalAmountFromClosingTrades(final TradeDTO trade) {
         return closingOrder.getTrades()
                 .stream()
-                .filter(t -> !t.getId().equals(trade.getId()))
+                .filter(t -> !t.getTradeId().equals(trade.getTradeId()))
                 .map(t -> t.getAmount().getValue())
                 .reduce(trade.getAmount().getValue(), BigDecimal::add);
     }
@@ -398,7 +398,7 @@ public class PositionDTO {
      */
     private String getOpeningOrderId() {
         if (openingOrder != null) {
-            return openingOrder.getId();
+            return openingOrder.getOrderId();
         } else {
             return null;
         }
@@ -411,7 +411,7 @@ public class PositionDTO {
      */
     private String getClosingOrderId() {
         if (closingOrder != null) {
-            return closingOrder.getId();
+            return closingOrder.getOrderId();
         } else {
             return null;
         }
@@ -442,7 +442,7 @@ public class PositionDTO {
                 trades = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream());
             }
             return trades
-                    .filter(t -> tradeId.equals(t.getId()))
+                    .filter(t -> tradeId.equals(t.getTradeId()))
                     .findFirst();
         }
     }
@@ -582,7 +582,7 @@ public class PositionDTO {
             value += ")";
             switch (status) {
                 case OPENING:
-                    value += " - Opening - Waiting for the trades of order " + openingOrder.getId();
+                    value += " - Opening - Waiting for the trades of order " + openingOrder.getOrderId();
                     break;
                 case OPENED:
                     value += " on " + getCurrencyPair() + " - Opened";
@@ -594,7 +594,7 @@ public class PositionDTO {
                 case OPENING_FAILURE:
                     value = "Position " + getId() + " - Opening failure";
                 case CLOSING:
-                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trades of order " + closingOrder.getId();
+                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
                     break;
                 case CLOSING_FAILURE:
                     value = "Position " + getId() + " - Closing failure";

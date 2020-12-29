@@ -36,7 +36,7 @@ public class Position extends BaseDomain {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = IDENTITY)
-    private long id;
+    private Long id;
 
     /** Position . */
     @Enumerated(STRING)
@@ -61,12 +61,12 @@ public class Position extends BaseDomain {
 
     /** The order that opened the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
-    @JoinColumn(name = "OPENING_ORDER_ID")
+    @JoinColumn(name = "FK_OPENING_ORDER_ID")
     private Order openingOrder;
 
     /** The order that closed the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
-    @JoinColumn(name = "CLOSING_ORDER_ID")
+    @JoinColumn(name = "FK_CLOSING_ORDER_ID")
     private Order closingOrder;
 
     /** Lowest price. */
@@ -83,7 +83,7 @@ public class Position extends BaseDomain {
 
     /** Strategy. */
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "STRATEGY_ID", updatable = false)
+    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
     private Strategy strategy;
 
     @Override

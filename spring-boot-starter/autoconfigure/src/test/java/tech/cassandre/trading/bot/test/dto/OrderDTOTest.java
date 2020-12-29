@@ -7,7 +7,6 @@ import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
-import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -18,7 +17,6 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @DisplayName("DTO - OrderDTO")
@@ -37,7 +35,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -52,7 +50,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -69,7 +67,7 @@ public class OrderDTOTest {
 				.type(BID)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -86,7 +84,7 @@ public class OrderDTOTest {
 				.type(BID)
 				.amount(new CurrencyAmountDTO("9", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -103,7 +101,7 @@ public class OrderDTOTest {
 				.type(BID)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp2)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -120,7 +118,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000002")
+				.orderId("000002")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -137,7 +135,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_2")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -154,7 +152,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 2, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -171,7 +169,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(OrderStatusDTO.PENDING_NEW)
@@ -188,7 +186,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -205,7 +203,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -222,7 +220,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -239,7 +237,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)
@@ -256,7 +254,7 @@ public class OrderDTOTest {
 				.type(ASK)
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.currencyPair(cp1)
-				.id("000001")
+				.orderId("000001")
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.status(NEW)

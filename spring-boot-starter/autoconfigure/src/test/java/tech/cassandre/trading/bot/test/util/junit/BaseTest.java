@@ -81,7 +81,7 @@ public class BaseTest {
                                        final BigDecimal amount,
                                        final CurrencyPairDTO currencyPair) {
         return OrderDTO.builder()
-                .id(orderId)
+                .orderId(orderId)
                 .timestamp(ZonedDateTime.now())
                 .type(orderTypeDTO)
                 .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))

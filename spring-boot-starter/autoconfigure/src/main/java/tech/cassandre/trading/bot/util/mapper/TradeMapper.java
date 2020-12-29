@@ -3,8 +3,10 @@ package tech.cassandre.trading.bot.util.mapper;
 import org.knowm.xchange.dto.trade.UserTrade;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import tech.cassandre.trading.bot.domain.Trade;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
@@ -29,6 +31,7 @@ public interface TradeMapper {
      * @param source User trade
      * @return TradeDTO
      */
+    @Mapping(source = "id", target = "tradeId")
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapUserTradeToTradeDTOAmount")
     @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
     @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
@@ -64,11 +67,19 @@ public interface TradeMapper {
      * @param source TradeDTO
      * @return Trade
      */
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "amount.value", target = "amount")
     @Mapping(source = "price.value", target = "price")
     @Mapping(source = "fee.value", target = "feeAmount")
     @Mapping(source = "fee.currency", target = "feeCurrency")
     Trade mapToTrade(TradeDTO source);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "amount.value", target = "amount")
+    @Mapping(source = "price.value", target = "price")
+    @Mapping(source = "fee.value", target = "feeAmount")
+    @Mapping(source = "fee.currency", target = "feeCurrency")
+    void updateOrder(TradeDTO source, @MappingTarget Trade target);
 
     // =================================================================================================================
     // Domain to DTO.
@@ -117,7 +128,7 @@ public interface TradeMapper {
      */
     default Map<String, TradeDTO> map(Set<Trade> source) {
         Map<String, TradeDTO> results = new LinkedHashMap<>();
-        source.forEach(trade -> results.put(trade.getId(), mapToTradeDTO(trade)));
+        source.forEach(trade -> results.put(trade.getTradeId(), mapToTradeDTO(trade)));
         return results;
     }
 

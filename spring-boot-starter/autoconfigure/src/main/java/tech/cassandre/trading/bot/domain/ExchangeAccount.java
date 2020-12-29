@@ -7,41 +7,29 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.GenerationType.IDENTITY;
-
 /**
- * Strategy.
+ * Exchange account.
  */
 @Data
 @Entity
-@Table(name = "STRATEGIES")
-public class Strategy extends BaseDomain {
+@Table(name = "EXCHANGE_ACCOUNTS")
+public class ExchangeAccount extends BaseDomain {
 
-    /** Technical ID. */
+    /** An identifier set by the exchange that uniquely identifies the exchange account. */
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private long id;
 
-    /** An identifier that uniquely identifies the strategy. */
-    @Column(name = "STRATEGY_ID")
-    private String strategyId;
+    /** Exchange name. */
+    @Column(name = "EXCHANGE_NAME")
+    private String exchange;
 
-    /** Strategy name. */
-    @Column(name = "NAME")
-    private String name;
-
-    /** Strategy. */
-    @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "FK_EXCHANGE_ACCOUNT_ID", updatable = false)
-    private ExchangeAccount exchangeAccount;
+    /** Exchange account. */
+    @Column(name = "EXCHANGE_ACCOUNT")
+    private String account;
 
     @Override
     public final boolean equals(final Object o) {
@@ -51,10 +39,11 @@ public class Strategy extends BaseDomain {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Strategy that = (Strategy) o;
+        final ExchangeAccount that = (ExchangeAccount) o;
         return new EqualsBuilder()
                 .append(this.id, that.id)
-                .append(this.strategyId, that.strategyId)
+                .append(this.exchange, that.exchange)
+                .append(this.account, that.account)
                 .isEquals();
     }
 
@@ -62,6 +51,8 @@ public class Strategy extends BaseDomain {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
+                .append(this.exchange)
+                .append(this.account)
                 .toHashCode();
     }
 

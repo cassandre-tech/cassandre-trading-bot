@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,6 +24,7 @@ import java.util.Set;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
@@ -34,10 +36,15 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 @Table(name = "ORDERS")
 public class Order extends BaseDomain {
 
-    /** An identifier set by the exchange that uniquely identifies the order. */
+    /** Technical ID. */
     @Id
     @Column(name = "ID")
-    private String id;
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    /** An identifier set by the exchange that uniquely identifies the order. */
+    @Column(name = "ORDER_ID")
+    private String orderId;
 
     /** Order type i.e. bid or ask. */
     @Enumerated(STRING)
@@ -84,12 +91,12 @@ public class Order extends BaseDomain {
     /** All trades related to order. */
     @OneToMany(fetch = EAGER)
     @OrderBy("timestamp")
-    @JoinColumn(name = "ORDER_ID", updatable = false)
+    @JoinColumn(name = "FK_ORDER_ID", updatable = false)
     private Set<Trade> trades = new LinkedHashSet<>();
 
     /** Strategy. */
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "STRATEGY_ID", updatable = false)
+    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
     private Strategy strategy;
 
     @Override
@@ -103,6 +110,7 @@ public class Order extends BaseDomain {
         final Order that = (Order) o;
         return new EqualsBuilder()
                 .append(this.id, that.id)
+                .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
                 .append(this.amount, that.amount)
                 .append(this.currencyPair, that.currencyPair)

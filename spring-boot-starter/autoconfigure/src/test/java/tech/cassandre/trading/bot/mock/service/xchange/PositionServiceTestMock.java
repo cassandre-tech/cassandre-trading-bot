@@ -70,7 +70,7 @@ public class PositionServiceTestMock extends BaseTest {
     @Bean
     @Primary
     public PositionFlux positionFlux() {
-        return new PositionFlux(positionRepository);
+        return new PositionFlux(positionRepository, orderRepository);
     }
 
     @Bean
@@ -132,7 +132,7 @@ public class PositionServiceTestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        StrategyDTO strategyDTO = StrategyDTO.builder().id("1").build();
+        StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("01").build();
 
         // Position 1 creation reply (order ORDER00010).
         given(service.createBuyMarketOrder(strategyDTO, cp1, new BigDecimal("0.0001")))

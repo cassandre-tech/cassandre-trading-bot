@@ -40,8 +40,11 @@ import static lombok.AccessLevel.PRIVATE;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class TradeDTO {
 
+    /** Technical id. */
+    Long id;
+
     /** An identifier set by the exchange that uniquely identifies the trade. */
-    String id;
+    String tradeId;
 
     /** The id of the order responsible for execution of this trade. */
     String orderId;
@@ -74,7 +77,7 @@ public class TradeDTO {
         }
         final TradeDTO that = (TradeDTO) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.tradeId, that.tradeId)
                 .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
                 .append(this.amount, that.amount)
@@ -88,7 +91,7 @@ public class TradeDTO {
     @Override
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(tradeId)
                 .toHashCode();
     }
 

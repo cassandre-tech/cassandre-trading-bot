@@ -128,7 +128,7 @@ public class TradeFluxTestMock extends BaseTest {
 
         // =========================================================================================================
         // First reply : 2 trades.
-        TradeDTO trade01 = TradeDTO.builder().id("0000001")
+        TradeDTO trade01 = TradeDTO.builder().tradeId("0000001")
                 .type(BID)
                 .currencyPair(cp1)
                 .orderId("ORDER00001")
@@ -136,7 +136,7 @@ public class TradeFluxTestMock extends BaseTest {
                 .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build();
-        TradeDTO trade02 = TradeDTO.builder().id("0000002")
+        TradeDTO trade02 = TradeDTO.builder().tradeId("0000002")
                 .type(BID)
                 .currencyPair(cp1)
                 .orderId("ORDER00001")
@@ -152,7 +152,7 @@ public class TradeFluxTestMock extends BaseTest {
 
         // =========================================================================================================
         // First reply : 3 trades.
-        TradeDTO trade03 = TradeDTO.builder().id("0000003")
+        TradeDTO trade03 = TradeDTO.builder().tradeId("0000003")
                 .type(BID)
                 .currencyPair(cp2)
                 .orderId("ORDER00002")
@@ -161,7 +161,7 @@ public class TradeFluxTestMock extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build();
-        TradeDTO trade04 = TradeDTO.builder().id("0000004")
+        TradeDTO trade04 = TradeDTO.builder().tradeId("0000004")
                 .type(BID)
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
@@ -169,7 +169,7 @@ public class TradeFluxTestMock extends BaseTest {
                 .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
                 .orderId("ORDER00001")
                 .build();
-        TradeDTO trade05 = TradeDTO.builder().id("0000005")
+        TradeDTO trade05 = TradeDTO.builder().tradeId("0000005")
                 .type(BID)
                 .currencyPair(cp1)
                 .orderId("ORDER00001")
@@ -185,7 +185,7 @@ public class TradeFluxTestMock extends BaseTest {
 
         // =========================================================================================================
         // First reply : 3 trades - Trade07 is trade 0000003 again.
-        TradeDTO trade06 = TradeDTO.builder().id("0000006")
+        TradeDTO trade06 = TradeDTO.builder().tradeId("0000006")
                 .type(BID)
                 .currencyPair(cp2)
                 .orderId("ORDER00001")
@@ -194,7 +194,7 @@ public class TradeFluxTestMock extends BaseTest {
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
                 .build();
-        TradeDTO trade07 = TradeDTO.builder().id("0000002")
+        TradeDTO trade07 = TradeDTO.builder().tradeId("0000002")
                 .type(BID)
                 .currencyPair(cp1)
                 .orderId("ORDER00001")
@@ -203,7 +203,7 @@ public class TradeFluxTestMock extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build();
-        TradeDTO trade08 = TradeDTO.builder().id("0000003")
+        TradeDTO trade08 = TradeDTO.builder().tradeId("0000003")
                 .type(BID)
                 .currencyPair(cp2)
                 .orderId("ORDER00002")
@@ -212,7 +212,7 @@ public class TradeFluxTestMock extends BaseTest {
                 .timestamp(createZonedDateTime("02-09-2021"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.330003"), BTC))
                 .build();
-        TradeDTO trade09 = TradeDTO.builder().id("0000008")
+        TradeDTO trade09 = TradeDTO.builder().tradeId("0000008")
                 .type(BID)
                 .currencyPair(cp1)
                 .orderId("ORDER00001")
