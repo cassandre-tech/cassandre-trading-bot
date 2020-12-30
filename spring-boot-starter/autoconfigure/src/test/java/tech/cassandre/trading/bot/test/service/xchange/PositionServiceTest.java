@@ -361,6 +361,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
+        assertEquals(1, p1.getPosition().getPositionId());
         assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());

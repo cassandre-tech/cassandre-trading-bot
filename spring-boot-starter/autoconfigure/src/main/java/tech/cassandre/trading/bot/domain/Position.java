@@ -40,6 +40,10 @@ public class Position extends BaseDomain {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    /** Position ID. */
+    @Column(name = "POSITION_ID")
+    private Long positionId;
+
     /** Position type. */
     @Enumerated(STRING)
     @Column(name = "TYPE")

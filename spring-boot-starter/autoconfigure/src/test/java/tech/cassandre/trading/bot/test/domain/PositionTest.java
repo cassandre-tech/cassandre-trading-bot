@@ -312,6 +312,7 @@ public class PositionTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(positionCount + 2, positionRepository.count()));
         Position p7 = getPosition(7L);
         assertEquals(7L, p7.getId());
+        assertEquals(7L, p7.getPositionId());
         assertEquals(OPENING, p7.getStatus());
         assertEquals(cp1.toString(), p7.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0002").compareTo(p7.getAmount().getValue()));

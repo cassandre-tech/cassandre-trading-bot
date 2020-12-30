@@ -56,6 +56,9 @@ public class PositionDTO {
     /** An identifier that uniquely identifies the position. */
     private final long id;
 
+    /** Position ID. */
+    private Long positionId;
+
     /** Position type. */
     private final PositionTypeDTO type;
 
@@ -114,6 +117,7 @@ public class PositionDTO {
         this.status = OPENING;
         this.type = LONG;
         this.id = newId;
+        this.positionId = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
         this.amount = new CurrencyAmountDTO(newAmount, newCurrencyPair.getBaseCurrency());
@@ -141,6 +145,7 @@ public class PositionDTO {
         this.status = OPENING;
         this.type = LONG;
         this.id = newId;
+        this.positionId = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
         this.amount = new CurrencyAmountDTO(newAmount, newCurrencyPair.getBaseCurrency());
