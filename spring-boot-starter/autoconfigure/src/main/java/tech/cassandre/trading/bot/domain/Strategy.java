@@ -42,14 +42,14 @@ public class Strategy extends BaseDomain {
     @Column(name = "TYPE")
     private StrategyTypeDTO type;
 
-    /** Strategy name. */
-    @Column(name = "NAME")
-    private String name;
-
-    /** Strategy. */
+    /** Exchange account used by the strategy. */
     @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "FK_EXCHANGE_ACCOUNT_ID", updatable = false)
     private ExchangeAccount exchangeAccount;
+
+    /** Strategy name. */
+    @Column(name = "NAME")
+    private String name;
 
     @Override
     public final boolean equals(final Object o) {

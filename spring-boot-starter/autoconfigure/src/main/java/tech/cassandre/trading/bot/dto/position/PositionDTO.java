@@ -53,44 +53,44 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 @AllArgsConstructor(access = PRIVATE)
 public class PositionDTO {
 
-    /** An identifier that uniquely identifies the position. */
+    /** Technical ID. */
     private final long id;
 
-    /** Position ID. */
-    private Long positionId;
+    /** An identifier that uniquely identifies the position. */
+    private final Long positionId;
 
     /** Position type. */
     private final PositionTypeDTO type;
 
-    /** Position status. */
-    private PositionStatusDTO status;
+    /** The strategy that created the position. */
+    private final StrategyDTO strategy;
 
     /** Currency pair. */
     private final CurrencyPairDTO currencyPair;
 
-    /** Amount ordered. */
+    /** Amount that was ordered. */
     private final CurrencyAmountDTO amount;
 
     /** Position rules. */
     private final PositionRulesDTO rules;
 
-    /** The order id that opened the position. */
+    /** Position status. */
+    private PositionStatusDTO status;
+
+    /** The order created to open the position. */
     private OrderDTO openingOrder;
 
-    /** The order id that closed the position. */
+    /** The order created to close the position. */
     private OrderDTO closingOrder;
 
-    /** Lowest price for this position. */
+    /** Lowest price reached by tis position. */
     private CurrencyAmountDTO lowestPrice;
 
-    /** Highest price for this position. */
+    /** Highest price reached by tis position. */
     private CurrencyAmountDTO highestPrice;
 
     /** Latest price for this position. */
     private CurrencyAmountDTO latestPrice;
-
-    /** Strategy. */
-    private final StrategyDTO strategy;
 
     /** Percentage. */
     private static final int ONE_HUNDRED = 100;

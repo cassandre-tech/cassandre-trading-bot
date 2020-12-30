@@ -30,7 +30,7 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Order (used to save data between restarts).
+ * Order.
  */
 @Data
 @Entity
@@ -52,11 +52,16 @@ public class Order extends BaseDomain {
     @Column(name = "TYPE")
     private OrderTypeDTO type;
 
-    /** The currency-pair. */
+    /** The strategy that created the order. */
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
+    private Strategy strategy;
+
+    /** Currency pair. */
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
 
-    /** Amount to be ordered / amount that was ordered. */
+    /** Amount that was ordered. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "AMOUNT_VALUE")),
@@ -64,13 +69,25 @@ public class Order extends BaseDomain {
     })
     private CurrencyAmount amount;
 
-    /** An identifier provided by the user on placement that uniquely identifies the order. */
-    @Column(name = "USER_REFERENCE")
-    private String userReference;
+    /** Weighted Average price of the fills in the order. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "AVERAGE_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "AVERAGE_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount averagePrice;
 
-    /** The timestamp of the order. */
-    @Column(name = "TIMESTAMP")
-    private ZonedDateTime timestamp;
+    /** Limit price. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "LIMIT_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "LIMIT_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount limitPrice;
+
+    /** The leverage to use for margin related to this order. */
+    @Column(name = "LEVERAGE")
+    private String leverage;
 
     /** Order status. */
     @Enumerated(STRING)
@@ -85,36 +102,19 @@ public class Order extends BaseDomain {
     })
     private CurrencyAmount cumulativeAmount;
 
-    /** Weighted Average price of the fills in the order. */
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "AVERAGE_PRICE_VALUE")),
-            @AttributeOverride(name = "currency", column = @Column(name = "AVERAGE_PRICE_CURRENCY"))
-    })
-    private CurrencyAmount averagePrice;
+    /** An identifier provided by the user on placement that uniquely identifies the order. */
+    @Column(name = "USER_REFERENCE")
+    private String userReference;
 
-    /** The leverage to use for margin related to this order. */
-    @Column(name = "LEVERAGE")
-    private String leverage;
-
-    /** Limit price. */
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "LIMIT_PRICE_VALUE")),
-            @AttributeOverride(name = "currency", column = @Column(name = "LIMIT_PRICE_CURRENCY"))
-    })
-    private CurrencyAmount limitPrice;
+    /** The timestamp of the order. */
+    @Column(name = "TIMESTAMP")
+    private ZonedDateTime timestamp;
 
     /** All trades related to order. */
     @OneToMany(fetch = EAGER)
     @OrderBy("timestamp")
     @JoinColumn(name = "FK_ORDER_ID", updatable = false)
     private Set<Trade> trades = new LinkedHashSet<>();
-
-    /** Strategy. */
-    @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
-    private Strategy strategy;
 
     @Override
     public final boolean equals(final Object o) {

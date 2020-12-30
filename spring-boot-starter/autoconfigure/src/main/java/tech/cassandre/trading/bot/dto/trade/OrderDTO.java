@@ -33,17 +33,23 @@ public class OrderDTO {
     /** Order type i.e. bid or ask. */
     OrderTypeDTO type;
 
-    /** Amount to be ordered / amount that was ordered. */
-    CurrencyAmountDTO amount;
+    /** The strategy that created the order. */
+    StrategyDTO strategy;
 
-    /** Currency-pair. */
+    /** Currency pair. */
     CurrencyPairDTO currencyPair;
 
-    /** An identifier provided by the user on placement that uniquely identifies the order. */
-    String userReference;
+    /** Amount that was ordered. */
+    CurrencyAmountDTO amount;
 
-    /** The timestamp of the order. */
-    ZonedDateTime timestamp;
+    /** Weighted Average price of the fills in the order. */
+    CurrencyAmountDTO averagePrice;
+
+    /** Limit price. */
+    CurrencyAmountDTO limitPrice;
+
+    /** The leverage to use for margin related to this order. */
+    String leverage;
 
     /** Order status. */
     OrderStatusDTO status;
@@ -51,20 +57,14 @@ public class OrderDTO {
     /** Amount to be ordered / amount that has been matched against order on the order book/filled. */
     CurrencyAmountDTO cumulativeAmount;
 
-    /** Weighted Average price of the fills in the order. */
-    CurrencyAmountDTO averagePrice;
+    /** An identifier provided by the user on placement that uniquely identifies the order. */
+    String userReference;
 
-    /** The leverage to use for margin related to this order. */
-    String leverage;
-
-    /** Limit price. */
-    CurrencyAmountDTO limitPrice;
+    /** The timestamp of the order. */
+    ZonedDateTime timestamp;
 
     /** All trades related to order. */
     Set<TradeDTO> trades;
-
-    /** Strategy. */
-    StrategyDTO strategy;
 
     @Override
     public final boolean equals(final Object o) {

@@ -18,17 +18,17 @@ import javax.persistence.Table;
 @Table(name = "EXCHANGE_ACCOUNTS")
 public class ExchangeAccount extends BaseDomain {
 
-    /** An identifier set by the exchange that uniquely identifies the exchange account. */
+    /** Technical ID. */
     @Id
     @Column(name = "ID")
     private long id;
 
     /** Exchange name. */
-    @Column(name = "EXCHANGE_NAME")
+    @Column(name = "EXCHANGE")
     private String exchange;
 
     /** Exchange account. */
-    @Column(name = "EXCHANGE_ACCOUNT")
+    @Column(name = "ACCOUNT")
     private String account;
 
     @Override

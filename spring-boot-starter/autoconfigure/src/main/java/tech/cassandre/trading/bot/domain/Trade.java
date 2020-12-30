@@ -22,7 +22,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Trade (used to save data between restarts).
+ * Trade.
  */
 @Data
 @Entity
@@ -39,34 +39,30 @@ public class Trade extends BaseDomain {
     @Column(name = "TRADE_ID")
     private String tradeId;
 
-    /** The id of the order responsible for execution of this trade. */
-    @Column(name = "ORDER_ID", updatable = false)
-    private String orderId;
+    /** Order type i.e. bid or ask. */
+    @Enumerated(STRING)
+    @Column(name = "TYPE")
+    private OrderTypeDTO type;
 
     /** The id of the order responsible for execution of this trade. */
     @Column(name = "FK_ORDER_ID", updatable = false)
     private Long order;
 
-    /** A bid or a ask. */
-    @Enumerated(STRING)
-    @Column(name = "TYPE")
-    private OrderTypeDTO type;
+    /** The id of the order responsible for execution of this trade. */
+    @Column(name = "ORDER_ID", updatable = false)
+    private String orderId;
 
-    /** An identifier provided by the user on placement that uniquely identifies the order. */
-    @Column(name = "USER_REFERENCE")
-    private String userReference;
+    /** Currency pair. */
+    @Column(name = "CURRENCY_PAIR")
+    private String currencyPair;
 
-    /** Amount to be ordered / amount that was ordered. */
+    /** Amount that was ordered (currency). */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "AMOUNT_VALUE")),
             @AttributeOverride(name = "currency", column = @Column(name = "AMOUNT_CURRENCY"))
     })
     private CurrencyAmount amount;
-
-    /** The currency-pair. */
-    @Column(name = "CURRENCY_PAIR")
-    private String currencyPair;
 
     /** The price. */
     @Embedded
@@ -76,10 +72,6 @@ public class Trade extends BaseDomain {
     })
     private CurrencyAmount price;
 
-    /** The timestamp of the trade. */
-    @Column(name = "TIMESTAMP")
-    private ZonedDateTime timestamp;
-
     /** The fee that was charged by the exchange for this trade. */
     @Embedded
     @AttributeOverrides({
@@ -87,6 +79,14 @@ public class Trade extends BaseDomain {
             @AttributeOverride(name = "currency", column = @Column(name = "FEE_CURRENCY"))
     })
     private CurrencyAmount fee;
+
+    /** An identifier provided by the user on placement that uniquely identifies the order. */
+    @Column(name = "USER_REFERENCE")
+    private String userReference;
+
+    /** The timestamp of the trade. */
+    @Column(name = "TIMESTAMP")
+    private ZonedDateTime timestamp;
 
     @Override
     public final boolean equals(final Object o) {

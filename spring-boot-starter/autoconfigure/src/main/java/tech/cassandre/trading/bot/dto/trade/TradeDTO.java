@@ -46,29 +46,29 @@ public class TradeDTO {
     /** An identifier set by the exchange that uniquely identifies the trade. */
     String tradeId;
 
+    /** Order type i.e. bid or ask. */
+    OrderTypeDTO type;
+
     /** The id of the order responsible for execution of this trade. */
     String orderId;
 
-    /** A bid or a ask. */
-    OrderTypeDTO type;
+    /** Currency pair. */
+    CurrencyPairDTO currencyPair;
 
     /** Amount to be ordered / amount that was ordered. */
     CurrencyAmountDTO amount;
 
-    /** Currency-pair. */
-    CurrencyPairDTO currencyPair;
+    /** The price. */
+    CurrencyAmountDTO price;
+
+    /** The fee that was charged by the exchange for this trade. */
+    CurrencyAmountDTO fee;
 
     /** An identifier provided by the user on placement that uniquely identifies the order. */
     String userReference;
 
-    /** The price. */
-    CurrencyAmountDTO price;
-
-    /** The timestamp of the order. */
+    /** The timestamp of the trade. */
     ZonedDateTime timestamp;
-
-    /** The fee that was charged by the exchange for this trade. */
-    CurrencyAmountDTO fee;
 
     @Override
     public final boolean equals(final Object o) {

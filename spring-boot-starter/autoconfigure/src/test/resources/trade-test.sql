@@ -1,6 +1,6 @@
 -- =====================================================================================================================
 -- Insert exchange accounts.
-INSERT INTO EXCHANGE_ACCOUNTS (ID, EXCHANGE_NAME, EXCHANGE_ACCOUNT)
+INSERT INTO EXCHANGE_ACCOUNTS (ID, EXCHANGE, ACCOUNT)
 VALUES (1, 'kucoin', 'cassandre.crypto.bot@gmail.com');
 
 -- =====================================================================================================================

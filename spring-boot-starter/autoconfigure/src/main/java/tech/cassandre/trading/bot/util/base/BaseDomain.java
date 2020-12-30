@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.util.base;
 
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,6 +13,7 @@ import java.time.ZonedDateTime;
 /**
  * Base domain.
  */
+@Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseDomain {
@@ -23,43 +25,7 @@ public abstract class BaseDomain {
 
     /** Data updated on. */
     @LastModifiedDate
-    @Column(name = "UPDATED_ON", insertable = false)
+    @Column(name = "UPDATED_ON", nullable = false, insertable = false)
     private ZonedDateTime updatedOn;
-
-    /**
-     * Getter createdOn.
-     *
-     * @return createdAt
-     */
-    public ZonedDateTime getCreatedOn() {
-        return createdOn;
-    }
-
-    /**
-     * Setter createdOn.
-     *
-     * @param newCreatedOn the createdOn to set
-     */
-    public void setCreatedOn(final ZonedDateTime newCreatedOn) {
-        createdOn = newCreatedOn;
-    }
-
-    /**
-     * Getter updatedOn.
-     *
-     * @return updatedOn
-     */
-    public ZonedDateTime getUpdatedOn() {
-        return updatedOn;
-    }
-
-    /**
-     * Setter updatedOn.
-     *
-     * @param newUpdatedOn the updatedOn to set
-     */
-    public void setUpdatedOn(final ZonedDateTime newUpdatedOn) {
-        updatedOn = newUpdatedOn;
-    }
 
 }

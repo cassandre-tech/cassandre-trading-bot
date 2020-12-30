@@ -27,20 +27,20 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Position (used to save data between restarts).
+ * Position.
  */
 @Data
 @Entity
 @Table(name = "POSITIONS")
 public class Position extends BaseDomain {
 
-    /** An identifier that uniquely identifies the position. */
+    /** Technical ID. */
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    /** Position ID. */
+    /** An identifier that uniquely identifies the position. */
     @Column(name = "POSITION_ID")
     private Long positionId;
 
@@ -49,16 +49,16 @@ public class Position extends BaseDomain {
     @Column(name = "TYPE")
     private PositionTypeDTO type;
 
-    /** Position . */
-    @Enumerated(STRING)
-    @Column(name = "STATUS")
-    private PositionStatusDTO status;
+    /** The strategy that created the position. */
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
+    private Strategy strategy;
 
     /** The currency-pair. */
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
 
-    /** Amount to be ordered / amount that was ordered. */
+    /** Amount that was ordered. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "AMOUNT_VALUE")),
@@ -74,17 +74,22 @@ public class Position extends BaseDomain {
     @Column(name = "RULES_STOP_LOSS_PERCENTAGE")
     private Float stopLossPercentageRule;
 
-    /** The order that opened the position. */
+    /** Position status. */
+    @Enumerated(STRING)
+    @Column(name = "STATUS")
+    private PositionStatusDTO status;
+
+    /** The order created to open the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
     @JoinColumn(name = "FK_OPENING_ORDER_ID")
     private Order openingOrder;
 
-    /** The order that closed the position. */
+    /** The order created to close the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
     @JoinColumn(name = "FK_CLOSING_ORDER_ID")
     private Order closingOrder;
 
-    /** Lowest price. */
+    /** Lowest price reached by tis position. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "LOWEST_PRICE_VALUE")),
@@ -92,7 +97,7 @@ public class Position extends BaseDomain {
     })
     private CurrencyAmount lowestPrice;
 
-    /** Highest price. */
+    /** Highest price reached by tis position. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "HIGHEST_PRICE_VALUE")),
@@ -100,18 +105,13 @@ public class Position extends BaseDomain {
     })
     private CurrencyAmount highestPrice;
 
-    /** Latest price. */
+    /** Latest price for this position. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "LATEST_PRICE_VALUE")),
             @AttributeOverride(name = "currency", column = @Column(name = "LATEST_PRICE_CURRENCY"))
     })
     private CurrencyAmount latestPrice;
-
-    /** Strategy. */
-    @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
-    private Strategy strategy;
 
     @Override
     public final boolean equals(final Object o) {
