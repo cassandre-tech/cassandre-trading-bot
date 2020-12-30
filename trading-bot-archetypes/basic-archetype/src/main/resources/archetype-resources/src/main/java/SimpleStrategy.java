@@ -26,7 +26,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
  * How to do it : https://trading-bot.cassandre.tech/how-tos/how-to-create-a-kucoin-sandbox-account
  */
-@CassandreStrategy(name = "Simple strategy")
+@CassandreStrategy(strategyName = "Simple strategy")
 public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override

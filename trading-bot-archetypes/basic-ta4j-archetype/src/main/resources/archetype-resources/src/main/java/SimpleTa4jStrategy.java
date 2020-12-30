@@ -30,7 +30,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
  * How to do it : https://trading-bot.cassandre.tech/how-tos/how-to-create-a-kucoin-sandbox-account
  */
-@CassandreStrategy(name = "Simple ta4j strategy")
+@CassandreStrategy(strategyName = "Simple ta4j strategy")
 public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
@@ -81,7 +81,7 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
                     .builder()
                     .stopGainPercentage(10f)
                     .stopLossPercentage(5f)
-                    .create();
+                    .build();
             // Create position.
             createLongPosition(
                     new CurrencyPairDTO(BTC, USDT),
