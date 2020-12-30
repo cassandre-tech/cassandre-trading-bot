@@ -91,6 +91,7 @@ public class TradeTest extends BaseTest {
         assertEquals(createZonedDateTime("01-08-2020"), trade.getTimestamp());
         assertEquals(0, new BigDecimal("1").compareTo(trade.getFee().getValue()));
         assertEquals(USDT, trade.getFee().getCurrency());
+        assertEquals("Trade 01", trade.getUserReference());
         // Check trade 02.
         trade = strategy.getTrades().get("BACKUP_TRADE_02");
         assertNotNull(trade);
@@ -175,6 +176,7 @@ public class TradeTest extends BaseTest {
                 .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
+                .userReference("My reference !")
                 .build();
         tradeFlux.emitValue(t1);
         await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdateReceived().size()));
@@ -193,6 +195,7 @@ public class TradeTest extends BaseTest {
         assertEquals(createZonedDateTime("01-09-2020"), tradeInDatabase.get().getTimestamp());
         assertEquals(0, tradeInDatabase.get().getFee().getValue().compareTo(new BigDecimal("3.300003")));
         assertEquals("BTC", tradeInDatabase.get().getFee().getCurrency());
+        assertEquals("My reference !", tradeInDatabase.get().getUserReference());
         // Tests for created on and updated on fields.
         ZonedDateTime createdOn = tradeInDatabase.get().getCreatedOn();
         assertNotNull(createdOn);
@@ -212,6 +215,7 @@ public class TradeTest extends BaseTest {
         assertEquals(createZonedDateTime("01-09-2020"), tradeDTO.getTimestamp());
         assertEquals(0, tradeDTO.getFee().getValue().compareTo(new BigDecimal("3.300003")));
         assertEquals(BTC, tradeDTO.getFee().getCurrency());
+        assertEquals("My reference !", tradeDTO.getUserReference());
 
         // =============================================================================================================
         // Updating the trade - first time.

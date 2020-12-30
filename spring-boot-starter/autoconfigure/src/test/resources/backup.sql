@@ -60,26 +60,27 @@ VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPENING_ORDER_01 to
 
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO TRADES (ID, TRADE_ID, ORDER_ID, FK_ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR, PRICE_VALUE, PRICE_CURRENCY, TIMESTAMP, FEE_VALUE, FEE_CURRENCY)
+INSERT INTO TRADES (ID, TRADE_ID, ORDER_ID, FK_ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR, PRICE_VALUE,
+                    PRICE_CURRENCY, TIMESTAMP, FEE_VALUE, FEE_CURRENCY, USER_REFERENCE)
 VALUES -- note : No trade for order BACKUP_OPENING_ORDER_01 - This is why position 1 has the opening status.
        -- Order BACKUP_TRADE_01 - Trade from the order buying BACKUP_OPENING_ORDER_02.
-       (1, 'BACKUP_TRADE_01', 'BACKUP_OPENING_ORDER_02', 4, 'BID', 20, 'BTC', 'BTC/USDT', 10, 'USDT', '2020-08-01', 1, 'USDT'),
+       (1, 'BACKUP_TRADE_01', 'BACKUP_OPENING_ORDER_02', 4, 'BID', 20, 'BTC', 'BTC/USDT', 10, 'USDT', '2020-08-01', 1, 'USDT', 'Trade 01'),
 
        -- Order BACKUP_TRADE_02 - Trade from the order buying BACKUP_OPENING_ORDER_03.
-       (2, 'BACKUP_TRADE_02', 'BACKUP_OPENING_ORDER_03', 5, 'BID', 30, 'BTC', 'BTC/USDT', 20, 'USDT', '2020-08-02', 2, 'USDT'),
+       (2, 'BACKUP_TRADE_02', 'BACKUP_OPENING_ORDER_03', 5, 'BID', 30, 'BTC', 'BTC/USDT', 20, 'USDT', '2020-08-02', 2, 'USDT', 'Trade 02'),
 
        -- Order BACKUP_TRADE_03 - Trade from the order buying BACKUP_OPENING_ORDER_04.
-       (3, 'BACKUP_TRADE_03', 'BACKUP_OPENING_ORDER_04', 7, 'BID', 40, 'BTC', 'BTC/USDT', 30, 'USDT', '2020-08-03', 3, 'USDT'),
+       (3, 'BACKUP_TRADE_03', 'BACKUP_OPENING_ORDER_04', 7, 'BID', 40, 'BTC', 'BTC/USDT', 30, 'USDT', '2020-08-03', 3, 'USDT', 'Trade 03'),
 
        -- Order BACKUP_TRADE_04 - Trade from the order selling BACKUP_OPENING_ORDER_04.
-       (4, 'BACKUP_TRADE_04', 'BACKUP_CLOSING_ORDER_01', 6, 'ASK', 40, 'BTC', 'BTC/USDT', 40, 'USDT', '2020-08-04', 4, 'USDT'),
+       (4, 'BACKUP_TRADE_04', 'BACKUP_CLOSING_ORDER_01', 6, 'ASK', 40, 'BTC', 'BTC/USDT', 40, 'USDT', '2020-08-04', 4, 'USDT', 'Trade 04'),
 
        -- Order BACKUP_TRADE_05 - Trade from the order selling BACKUP_OPENING_ORDER_05.
-       (5, 'BACKUP_TRADE_05', 'BACKUP_CLOSING_ORDER_02', 8, 'ASK', 50, 'ETH', 'ETH/USD', 50, 'USD', '2020-08-05', 5, 'USD'),
+       (5, 'BACKUP_TRADE_05', 'BACKUP_CLOSING_ORDER_02', 8, 'ASK', 50, 'ETH', 'ETH/USD', 50, 'USD', '2020-08-05', 5, 'USD', 'Trade 05'),
 
        -- For position 5.
-       (6, 'BACKUP_TRADE_06', 'BACKUP_OPENING_ORDER_05', 9, 'BID', 10, 'ETH', 'ETH/USD', 11, 'USD', '2020-08-05', 5, 'USD'),
-       (7, 'BACKUP_TRADE_07', 'BACKUP_OPENING_ORDER_05', 9, 'BID', 40, 'ETH', 'ETH/USD', 12, 'USD', '2020-08-06', 5, 'USD'),
-       (8, 'BACKUP_TRADE_08', 'BACKUP_CLOSING_ORDER_03', 10, 'ASK', 15, 'ETH', 'ETH/USD', 13, 'USD', '2020-08-07', 5, 'USD'),
-       (9, 'BACKUP_TRADE_09', 'BACKUP_CLOSING_ORDER_03', 10, 'ASK', 5, 'ETH', 'ETH/USD', 14, 'USD', '2020-08-08', 5, 'USD'),
-       (10, 'BACKUP_TRADE_10', 'BACKUP_CLOSING_ORDER_03', 10, 'ASK', 30, 'ETH', 'ETH/USD', 15, 'USD', '2020-08-09', 5, 'USD');
+       (6, 'BACKUP_TRADE_06', 'BACKUP_OPENING_ORDER_05', 9, 'BID', 10, 'ETH', 'ETH/USD', 11, 'USD', '2020-08-05', 5, 'USD', 'Trade 06'),
+       (7, 'BACKUP_TRADE_07', 'BACKUP_OPENING_ORDER_05', 9, 'BID', 40, 'ETH', 'ETH/USD', 12, 'USD', '2020-08-06', 5, 'USD', 'Trade 07'),
+       (8, 'BACKUP_TRADE_08', 'BACKUP_CLOSING_ORDER_03', 10, 'ASK', 15, 'ETH', 'ETH/USD', 13, 'USD', '2020-08-07', 5, 'USD', 'Trade 08'),
+       (9, 'BACKUP_TRADE_09', 'BACKUP_CLOSING_ORDER_03', 10, 'ASK', 5, 'ETH', 'ETH/USD', 14, 'USD', '2020-08-08', 5, 'USD', 'Trade 09'),
+       (10, 'BACKUP_TRADE_10', 'BACKUP_CLOSING_ORDER_03', 10, 'ASK', 30, 'ETH', 'ETH/USD', 15, 'USD', '2020-08-09', 5, 'USD', 'Trade 10');

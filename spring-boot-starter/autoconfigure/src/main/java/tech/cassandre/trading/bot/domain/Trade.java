@@ -52,6 +52,10 @@ public class Trade extends BaseDomain {
     @Column(name = "TYPE")
     private OrderTypeDTO type;
 
+    /** An identifier provided by the user on placement that uniquely identifies the order. */
+    @Column(name = "USER_REFERENCE")
+    private String userReference;
+
     /** Amount to be ordered / amount that was ordered. */
     @Embedded
     @AttributeOverrides({

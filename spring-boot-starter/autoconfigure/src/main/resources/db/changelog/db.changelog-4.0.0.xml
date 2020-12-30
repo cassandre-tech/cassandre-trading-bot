@@ -209,6 +209,9 @@
             <column name="FEE_CURRENCY" type="VARCHAR(255)"
                     remarks="The fee currency that was charged by the exchange for this trade"/>
 
+            <column name="USER_REFERENCE" type="VARCHAR(255)"
+                    remarks="An identifier provided by the user on placement that uniquely identifies the order"/>
+
             <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
                     remarks="Data created on"/>
             <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"

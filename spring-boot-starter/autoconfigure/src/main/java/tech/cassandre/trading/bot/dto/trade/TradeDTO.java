@@ -58,6 +58,9 @@ public class TradeDTO {
     /** Currency-pair. */
     CurrencyPairDTO currencyPair;
 
+    /** An identifier provided by the user on placement that uniquely identifies the order. */
+    String userReference;
+
     /** The price. */
     CurrencyAmountDTO price;
 

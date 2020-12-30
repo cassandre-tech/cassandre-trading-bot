@@ -34,7 +34,7 @@ public interface TradeMapper {
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapUserTradeToTradeDTOAmount")
     @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
     @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
-    // TODO Add userreferance
+    @Mapping(source = "orderUserReference", target = "userReference")
     TradeDTO mapToTradeDTO(UserTrade source);
 
     @Named("mapUserTradeToTradeDTOAmount")
