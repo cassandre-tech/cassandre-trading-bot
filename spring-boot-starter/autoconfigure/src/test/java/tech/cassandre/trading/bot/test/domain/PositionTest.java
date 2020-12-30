@@ -43,6 +43,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -266,7 +267,7 @@ public class PositionTest extends BaseTest {
         // Creates a position with ID 6 - waiting for order DRY_ORDER_000000001.
         long positionCount = positionRepository.count();
         PositionRulesDTO rules = PositionRulesDTO.builder().stopGainPercentage(1f).stopLossPercentage(2f).build();
-        PositionCreationResultDTO creationResult1 = strategy.createPosition(cp1, new BigDecimal("0.0001"), rules);
+        PositionCreationResultDTO creationResult1 = strategy.createLongPosition(cp1, new BigDecimal("0.0001"), rules);
         assertTrue(creationResult1.isSuccessful());
         assertEquals(6, creationResult1.getPosition().getId());
         assertEquals("DRY_ORDER_000000001", creationResult1.getPosition().getOpeningOrder().getOrderId());
@@ -303,7 +304,7 @@ public class PositionTest extends BaseTest {
 
         // =============================================================================================================
         // Creates a position with ID to 7.
-        PositionCreationResultDTO creationResult2 = strategy.createPosition(cp1, new BigDecimal("0.0002"), PositionRulesDTO.builder().build());
+        PositionCreationResultDTO creationResult2 = strategy.createLongPosition(cp1, new BigDecimal("0.0002"), PositionRulesDTO.builder().build());
         assertTrue(creationResult2.isSuccessful());
         assertEquals("DRY_ORDER_000000002", creationResult2.getPosition().getOpeningOrder().getOrderId());
 
@@ -318,6 +319,7 @@ public class PositionTest extends BaseTest {
         assertNull(p7.getStopLossPercentageRule());
         assertEquals("DRY_ORDER_000000002", p7.getOpeningOrder().getOrderId());
         assertNull(p7.getClosingOrder());
+        assertEquals(LONG, p7.getType());
     }
 
     @Test
@@ -337,7 +339,7 @@ public class PositionTest extends BaseTest {
         // A position is opening on ETH/BTC - ID 6.
         // We buy 1 ETH for 0.01 BTC.
         // Waiting for order DRY_ORDER_000000001.
-        final PositionCreationResultDTO positionResult = strategy.createPosition(cp1,
+        final PositionCreationResultDTO positionResult = strategy.createLongPosition(cp1,
                 new BigDecimal("1"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000f)   // 1 000% max gain.

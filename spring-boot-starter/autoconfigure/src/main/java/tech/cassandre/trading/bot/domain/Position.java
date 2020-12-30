@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.domain;
 import lombok.Data;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
+import tech.cassandre.trading.bot.dto.position.PositionTypeDTO;
 import tech.cassandre.trading.bot.util.base.BaseDomain;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 import tech.cassandre.trading.bot.util.jpa.CurrencyAmount;
@@ -38,6 +39,11 @@ public class Position extends BaseDomain {
     @Column(name = "ID")
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    /** Position type. */
+    @Enumerated(STRING)
+    @Column(name = "TYPE")
+    private PositionTypeDTO type;
 
     /** Position . */
     @Enumerated(STRING)

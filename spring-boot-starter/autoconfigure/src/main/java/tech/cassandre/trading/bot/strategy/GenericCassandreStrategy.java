@@ -364,10 +364,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param rules        rules
      * @return position creation result
      */
-    public PositionCreationResultDTO createPosition(final CurrencyPairDTO currencyPair,
-                                                    final BigDecimal amount,
-                                                    final PositionRulesDTO rules) {
-        return positionService.createPosition(strategyDTO, currencyPair, amount, rules);
+    public PositionCreationResultDTO createLongPosition(final CurrencyPairDTO currencyPair,
+                                                        final BigDecimal amount,
+                                                        final PositionRulesDTO rules) {
+        return positionService.createLongPosition(strategyDTO, currencyPair, amount, rules);
     }
 
     // =================================================================================================================

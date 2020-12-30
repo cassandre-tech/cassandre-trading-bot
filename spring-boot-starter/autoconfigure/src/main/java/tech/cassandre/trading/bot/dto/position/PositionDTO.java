@@ -38,6 +38,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING_
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING_FAILURE;
+import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
@@ -54,6 +55,9 @@ public class PositionDTO {
 
     /** An identifier that uniquely identifies the position. */
     private final long id;
+
+    /** Position type. */
+    private final PositionTypeDTO type;
 
     /** Position status. */
     private PositionStatusDTO status;
@@ -108,6 +112,7 @@ public class PositionDTO {
                        final OrderDTO newOpenOrder,
                        final PositionRulesDTO newRules) {
         this.status = OPENING;
+        this.type = LONG;
         this.id = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
@@ -134,6 +139,7 @@ public class PositionDTO {
                        final String newOpenOrderId,
                        final PositionRulesDTO newRules) {
         this.status = OPENING;
+        this.type = LONG;
         this.id = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;

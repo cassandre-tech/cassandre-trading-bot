@@ -40,23 +40,23 @@ VALUES -- Order BACKUP_ORDER_01 (useless).
 
 -- =====================================================================================================================
 -- Insert positions.
-INSERT INTO POSITIONS (ID, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE,
+INSERT INTO POSITIONS (ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE,
                        FK_OPENING_ORDER_ID, FK_CLOSING_ORDER_ID, LOWEST_PRICE_VALUE, LOWEST_PRICE_CURRENCY, HIGHEST_PRICE_VALUE,
                        HIGHEST_PRICE_CURRENCY, LATEST_PRICE_VALUE, LATEST_PRICE_CURRENCY, FK_STRATEGY_ID)
 VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPENING_ORDER_01 to arrive (but will not arrive).
-       (1, 'OPENING', 'BTC/USDT', 10, 'BTC', null, null, 3, null, null, null, null, null, null, null, 1),
+       (1, 'LONG', 'OPENING', 'BTC/USDT', 10, 'BTC', null, null, 3, null, null, null, null, null, null, null, 1),
 
        -- Position 2 : Opened position, 10% gain rule.
-       (2, 'OPENED', 'BTC/USDT', 20, 'BTC', 10, null, 4, null, 1, 'USDT', 2, 'USDT', 3, 'USDT', 1),
+       (2, 'LONG', 'OPENED', 'BTC/USDT', 20, 'BTC', 10, null, 4, null, 1, 'USDT', 2, 'USDT', 3, 'USDT', 1),
 
        -- Position 3 : Closing position, 20% loss rule, waiting for a not coming trade 'NON_EXISTING_TRADE'.
-       (3, 'CLOSING', 'BTC/USDT', 30, 'BTC', null, 20, 5, 6, 17, 'USDT', 68, 'USDT', 92, 'USDT', 1),
+       (3, 'LONG', 'CLOSING', 'BTC/USDT', 30, 'BTC', null, 20, 5, 6, 17, 'USDT', 68, 'USDT', 92, 'USDT', 1),
 
        -- Position 4 : Closed position, 30% gain & 40 % loss.
-       (4, 'CLOSED', 'BTC/USDT', 40, 'BTC', 30, 40, 7, 8, 17, 'USDT', 68, 'USDT', 93, 'USDT', 1),
+       (4, 'LONG', 'CLOSED', 'BTC/USDT', 40, 'BTC', 30, 40, 7, 8, 17, 'USDT', 68, 'USDT', 93, 'USDT', 1),
 
        -- Position 5 : closed.
-       (5, 'CLOSED', 'ETH/USD', 50, 'ETH', 30, 40, 9, 10, 17, 'USD', 68, 'USD', 94, 'USD', 1);
+       (5, 'LONG', 'CLOSED', 'ETH/USD', 50, 'ETH', 30, 40, 9, 10, 17, 'USD', 68, 'USD', 94, 'USD', 1);
 
 -- =====================================================================================================================
 -- Insert trades.

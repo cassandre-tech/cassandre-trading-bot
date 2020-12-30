@@ -37,7 +37,7 @@ public interface PositionService {
     Optional<PositionDTO> getPositionById(long id);
 
     /**
-     * Creates a position with its associated rules.
+     * Creates a long position with its associated rules.
      *
      * @param strategy     strategy
      * @param currencyPair currency pair
@@ -45,10 +45,10 @@ public interface PositionService {
      * @param rules        rules
      * @return position creation result
      */
-    PositionCreationResultDTO createPosition(StrategyDTO strategy,
-                                             CurrencyPairDTO currencyPair,
-                                             BigDecimal amount,
-                                             PositionRulesDTO rules);
+    PositionCreationResultDTO createLongPosition(StrategyDTO strategy,
+                                                 CurrencyPairDTO currencyPair,
+                                                 BigDecimal amount,
+                                                 PositionRulesDTO rules);
 
     /**
      * Method called by streams at every ticker update.

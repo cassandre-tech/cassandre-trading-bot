@@ -45,6 +45,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING_
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING_FAILURE;
+import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.CANCELED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
@@ -88,7 +89,7 @@ public class PositionServiceTest extends BaseTest {
     @DisplayName("Check position creation")
     public void checkCreatePosition() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
-        final PositionCreationResultDTO p1 = strategy.createPosition(cp1,
+        final PositionCreationResultDTO p1 = strategy.createLongPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
@@ -98,9 +99,10 @@ public class PositionServiceTest extends BaseTest {
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
+        assertEquals(LONG, positionService.getPositionById(1).get().getType());
 
         // Creates position 2 (ETH/BTC, 0.0002, 20% stop loss).
-        final PositionCreationResultDTO p2 = strategy.createPosition(cp2,
+        final PositionCreationResultDTO p2 = strategy.createLongPosition(cp2,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(p2.isSuccessful());
@@ -112,7 +114,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Creates position 3 (ETH/BTC, 0.0003, 30% stop gain, 30% stop loss).
-        final PositionCreationResultDTO p3 = strategy.createPosition(cp1,
+        final PositionCreationResultDTO p3 = strategy.createLongPosition(cp1,
                 new BigDecimal("0.0003"),
                 PositionRulesDTO.builder().stopGainPercentage(30f).stopLossPercentage(30f).build());
         assertFalse(p3.isSuccessful());
@@ -130,7 +132,7 @@ public class PositionServiceTest extends BaseTest {
         // The two positions have the by the manually created order.
 
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
-        final PositionCreationResultDTO p1 = strategy.createPosition(cp1,
+        final PositionCreationResultDTO p1 = strategy.createLongPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
@@ -150,7 +152,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(PENDING_NEW, orderP1.getStatus());
 
         // Creates position 2 (ETH/BTC, 0.0002, 20% stop loss).
-        final PositionCreationResultDTO p2 = strategy.createPosition(cp2,
+        final PositionCreationResultDTO p2 = strategy.createLongPosition(cp2,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(p2.isSuccessful());
@@ -305,7 +307,7 @@ public class PositionServiceTest extends BaseTest {
         // The position must end up being in OPENING_FAILURE
 
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
-        final PositionCreationResultDTO p1 = strategy.createPosition(cp1,
+        final PositionCreationResultDTO p1 = strategy.createLongPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
@@ -354,7 +356,7 @@ public class PositionServiceTest extends BaseTest {
         // The position must end up being in CLOSING_FAILURE
 
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
-        final PositionCreationResultDTO p1 = strategy.createPosition(cp1,
+        final PositionCreationResultDTO p1 = strategy.createLongPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
@@ -411,21 +413,22 @@ public class PositionServiceTest extends BaseTest {
                 .build();
         orderFlux.emitValue(closingOrder01);
         await().untilAsserted(() -> assertEquals(CLOSING_FAILURE, getPositionDTO(position1Id).getStatus()));
+        assertEquals(LONG, positionService.getPositionById(position1Id).get().getType());
     }
 
     @Test
     @DisplayName("Check get positions and get positions by id")
     public void checkGetPosition() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
-        strategy.createPosition(cp1,
+        strategy.createLongPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         // Creates position 2 (ETH/BTC, 0.0002, 20% stop loss).
-        strategy.createPosition(cp2,
+        strategy.createLongPosition(cp2,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         // Creates position 3 (ETH/BTC, 0.0003, 30% stop gain, 30% stop loss).
-        strategy.createPosition(cp1,
+        strategy.createLongPosition(cp1,
                 new BigDecimal("0.0003"),
                 PositionRulesDTO.builder().stopGainPercentage(30f).stopLossPercentage(30f).build());
 
@@ -443,7 +446,7 @@ public class PositionServiceTest extends BaseTest {
     @DisplayName("Check trade update")
     public void checkTradeUpdate() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
-        final PositionCreationResultDTO p1 = strategy.createPosition(cp1,
+        final PositionCreationResultDTO p1 = strategy.createLongPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
@@ -451,7 +454,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
 
         // Creates position 2 (ETH/BTC, 0.0002, 20% stop loss).
-        final PositionCreationResultDTO p2 = strategy.createPosition(cp2,
+        final PositionCreationResultDTO p2 = strategy.createLongPosition(cp2,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertEquals("ORDER00020", p2.getPosition().getOpeningOrder().getOrderId());
@@ -474,7 +477,7 @@ public class PositionServiceTest extends BaseTest {
     public void checkClosePosition() throws InterruptedException {
         // =============================================================================================================
         // Creates position 1 (ETH/BTC, 0.0001, 100% stop gain).
-        final PositionCreationResultDTO creationResult1 = strategy.createPosition(cp1,
+        final PositionCreationResultDTO creationResult1 = strategy.createLongPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         final long position1Id = creationResult1.getPosition().getId();
@@ -535,7 +538,7 @@ public class PositionServiceTest extends BaseTest {
     public void checkLowestHighestAndLatestGain() throws InterruptedException {
         // A position is opening on ETH/BTC.
         // We buy 10 ETH for 100 BTC.
-        final PositionCreationResultDTO creationResult1 = strategy.createPosition(cp1,
+        final PositionCreationResultDTO creationResult1 = strategy.createLongPosition(cp1,
                 new BigDecimal("10"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000f)   // 1 000% max gain.

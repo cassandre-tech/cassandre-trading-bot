@@ -63,6 +63,10 @@
             </column>
             <column name="POSITION_ID" type="BIGINT"
                     remarks="An identifier that uniquely identifies the position for an exchange account"/>
+
+            <column name="TYPE" type="VARCHAR(255)"
+                    remarks="Position type"/>
+
             <column name="STATUS" type="VARCHAR(255)"
                     remarks="Position status"/>
             <column name="CURRENCY_PAIR" type="VARCHAR(255)"

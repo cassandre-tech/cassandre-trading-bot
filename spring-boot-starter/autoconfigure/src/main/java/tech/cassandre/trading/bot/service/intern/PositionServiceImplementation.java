@@ -79,7 +79,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     }
 
     @Override
-    public final PositionCreationResultDTO createPosition(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
+    public final PositionCreationResultDTO createLongPosition(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
         // Trying to create an order.
         logger.debug("PositionService - Creating a position for {} on {} with the rules : {}", amount, currencyPair, rules);
         final OrderCreationResultDTO orderCreationResult = tradeService.createBuyMarketOrder(strategy, currencyPair, amount);

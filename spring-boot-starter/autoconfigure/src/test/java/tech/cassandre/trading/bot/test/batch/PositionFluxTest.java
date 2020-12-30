@@ -83,7 +83,7 @@ public class PositionFluxTest extends BaseTest {
 
         // =============================================================================================================
         // Creates position 1 - should be OPENING.
-        final PositionCreationResultDTO position1Result = strategy.createPosition(cp1,
+        final PositionCreationResultDTO position1Result = strategy.createLongPosition(cp1,
                 new BigDecimal("10"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000f)   // 1 000% max gain.
@@ -136,7 +136,7 @@ public class PositionFluxTest extends BaseTest {
 
         // =============================================================================================================
         // Creates positions 2 - should be OPENING.
-        final PositionCreationResultDTO position2Result = strategy.createPosition(cp2,
+        final PositionCreationResultDTO position2Result = strategy.createLongPosition(cp2,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(10000000f)
