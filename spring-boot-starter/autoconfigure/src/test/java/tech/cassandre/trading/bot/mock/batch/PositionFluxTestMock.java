@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
@@ -79,20 +80,20 @@ public class PositionFluxTestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        StrategyDTO strategy = StrategyDTO.builder().id(1L).strategyId("01").build();
+        StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("01").type(BASIC_STRATEGY).build();
 
         // Position 1 creation reply (ORDER00010) - used for max and min gain test.
-        given(service.createBuyMarketOrder(strategy, cp1, new BigDecimal("10")))
+        given(service.createBuyMarketOrder(strategyDTO, cp1, new BigDecimal("10")))
                 .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00010", BID, new BigDecimal("10"), cp1)));
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
-        given(service.createSellMarketOrder(strategy, cp1, new BigDecimal("10.00000000")))   // Was forced to do that as after going to database, we have a 10.00000000 value
+        given(service.createSellMarketOrder(strategyDTO, cp1, new BigDecimal("10.00000000")))   // Was forced to do that as after going to database, we have a 10.00000000 value
                 .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00011", ASK, new BigDecimal("10.00000000"), cp1)));
 
         // Position 1 creation reply (order ORDER00010).
-        given(service.createBuyMarketOrder(strategy, cp2, new BigDecimal("0.0001")))
+        given(service.createBuyMarketOrder(strategyDTO, cp2, new BigDecimal("0.0001")))
                 .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00010", BID, new BigDecimal("0.0001"), cp2)));
         // Position 2 creation reply (order ORDER00020).
-        given(service.createBuyMarketOrder(strategy, cp2, new BigDecimal("0.0002")))
+        given(service.createBuyMarketOrder(strategyDTO, cp2, new BigDecimal("0.0002")))
                 .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00020", BID, new BigDecimal("0.0002"), cp2)));
 
         return service;

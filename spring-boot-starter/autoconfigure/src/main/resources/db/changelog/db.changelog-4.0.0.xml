@@ -37,6 +37,8 @@
             </column>
             <column name="STRATEGY_ID" type="VARCHAR(255)"
                     remarks="An identifier that uniquely identifies the order"/>
+            <column name="TYPE" type="VARCHAR(255)"
+                    remarks="Strategy type"/>
             <column name="NAME" type="VARCHAR(255)"
                     remarks="Strategy name"/>
             <column name="FK_EXCHANGE_ACCOUNT_ID" type="BIGINT"

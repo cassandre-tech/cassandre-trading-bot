@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
@@ -31,6 +32,7 @@ import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -132,7 +134,7 @@ public class PositionServiceTestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("01").build();
+        StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("01").type(BASIC_STRATEGY).build();
 
         // Position 1 creation reply (order ORDER00010).
         given(service.createBuyMarketOrder(strategyDTO, cp1, new BigDecimal("0.0001")))

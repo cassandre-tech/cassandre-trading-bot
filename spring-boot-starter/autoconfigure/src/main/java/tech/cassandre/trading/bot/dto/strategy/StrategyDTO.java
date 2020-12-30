@@ -23,6 +23,9 @@ public class StrategyDTO {
     /** An identifier that uniquely identifies the strategy. */
     String strategyId;
 
+    /** Strategy type. */
+    StrategyTypeDTO type;
+
     /** Strategy name. */
     String name;
 
@@ -38,6 +41,7 @@ public class StrategyDTO {
         return new EqualsBuilder()
                 .append(this.id, that.id)
                 .append(this.strategyId, that.strategyId)
+                .append(this.type, that.type)
                 .isEquals();
     }
 

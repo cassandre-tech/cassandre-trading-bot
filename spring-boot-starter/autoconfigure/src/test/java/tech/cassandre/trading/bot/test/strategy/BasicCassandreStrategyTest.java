@@ -2,17 +2,21 @@ package tech.cassandre.trading.bot.test.strategy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.mock.strategy.BasicCassandreStrategyTestMock;
+import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.mock.strategy.BasicCassandreStrategyTestMock;
+import tech.cassandre.trading.bot.util.mapper.StrategyMapper;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -23,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
@@ -47,10 +52,21 @@ public class BasicCassandreStrategyTest extends BaseTest {
     @Autowired
     private TestableCassandreStrategy strategy;
 
+    @Autowired
+    private StrategyRepository strategyRepository;
+
+    private final StrategyMapper strategyMapper = Mappers.getMapper(StrategyMapper.class);
+
     @Test
     @DisplayName("check strategy behavior")
     public void checkStrategyBehavior() {
         final int numberOfValuesExpected = 7;
+
+        // Check type.
+        Optional<Strategy> strategyInDatabase = strategyRepository.findByStrategyId("01");
+        assertTrue(strategyInDatabase.isPresent());
+        assertEquals(BASIC_STRATEGY, strategyInDatabase.get().getType());
+        assertEquals(BASIC_STRATEGY, strategyMapper.mapToStrategyDTO(strategyInDatabase.get()).getType());
 
         // Wait for the strategy to have received all the account test values.
         with().await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfValuesExpected));

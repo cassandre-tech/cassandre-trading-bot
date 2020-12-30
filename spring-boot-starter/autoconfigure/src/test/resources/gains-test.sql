@@ -5,8 +5,8 @@ VALUES (1, 'kucoin', 'cassandre.crypto.bot@gmail.com');
 
 -- =====================================================================================================================
 -- Insert strategies.
-INSERT INTO STRATEGIES (ID, STRATEGY_ID, NAME, FK_EXCHANGE_ACCOUNT_ID)
-VALUES (1, '01', 'My strategy', 1);
+INSERT INTO STRATEGIES (ID, STRATEGY_ID, TYPE, NAME, FK_EXCHANGE_ACCOUNT_ID)
+VALUES (1, '01', 'BASIC_STRATEGY', 'My strategy', 1);
 
 -- =====================================================================================================================
 -- Insert orders.

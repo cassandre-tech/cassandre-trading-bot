@@ -29,7 +29,9 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
  * Testable ta4j strategy (used for tests).
  */
 @SuppressWarnings("unused")
-@CassandreStrategy(strategyName = "Testable ta4j strategy")
+@CassandreStrategy(
+        strategyId = "01",
+        strategyName = "Testable ta4j strategy")
 @ConditionalOnProperty(
         value = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED,
         havingValue = "true")

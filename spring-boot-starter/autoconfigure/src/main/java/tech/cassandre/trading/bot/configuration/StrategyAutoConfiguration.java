@@ -28,6 +28,8 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
+import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
@@ -40,6 +42,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
+
+import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
+import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J_STRATEGY;
 
 /**
  * StrategyAutoConfiguration configures the strategy.
@@ -220,8 +225,16 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             Strategy s = new Strategy();
             s.setStrategyId(cassandreStrategyAnnotation.strategyId());
             s.setName(cassandreStrategyAnnotation.strategyName());
+            // Set exchange account.
             Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
             exchangeAccount.ifPresent(s::setExchangeAccount);
+            // Set type.
+            if (o instanceof BasicCassandreStrategy) {
+                s.setType(BASIC_STRATEGY);
+            }
+            if (o instanceof BasicTa4jCassandreStrategy) {
+                s.setType(BASIC_TA4J_STRATEGY);
+            }
             strategyRepository.save(s);
             strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(s));
         });

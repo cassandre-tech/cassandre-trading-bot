@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.test.util.junit;
 
 import org.awaitility.Awaitility;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -8,6 +9,14 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.util.mapper.AccountMapper;
+import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
+import tech.cassandre.trading.bot.util.mapper.OrderMapper;
+import tech.cassandre.trading.bot.util.mapper.PositionMapper;
+import tech.cassandre.trading.bot.util.mapper.StrategyMapper;
+import tech.cassandre.trading.bot.util.mapper.TickerMapper;
+import tech.cassandre.trading.bot.util.mapper.TradeMapper;
+import tech.cassandre.trading.bot.util.mapper.UtilMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
