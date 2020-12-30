@@ -83,7 +83,7 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
                     .stopLossPercentage(5f)
                     .create();
             // Create position.
-            createPosition(
+            createLongPosition(
                     new CurrencyPairDTO(BTC, USDT),
                     new BigDecimal("0.01"),
                     rules);
