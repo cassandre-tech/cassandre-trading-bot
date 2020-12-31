@@ -249,7 +249,7 @@ public class PositionServiceTest extends BaseTest {
         // We close position 1 with setClosingOrderId().
         position1 = strategy.getPositionById(position1Id);
         assertTrue(position1.isPresent());
-        position1.get().setClosingOrderId("CLOSING_ORDER_01");
+        position1.get().closePositionWithOrderId("CLOSING_ORDER_01");
         positionFlux.emitValue(position1.get());
         await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));
 
@@ -397,7 +397,7 @@ public class PositionServiceTest extends BaseTest {
         // We close position 1 with setClosingOrderId().
         position1 = strategy.getPositionById(position1Id);
         assertTrue(position1.isPresent());
-        position1.get().setClosingOrderId("CLOSING_ORDER_01");
+        position1.get().closePositionWithOrderId("CLOSING_ORDER_01");
         positionFlux.emitValue(position1.get());
         await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));
 

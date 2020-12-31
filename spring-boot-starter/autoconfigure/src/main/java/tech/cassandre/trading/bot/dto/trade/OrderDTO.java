@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.dto.trade;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Singular;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
@@ -10,6 +11,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -64,7 +66,24 @@ public class OrderDTO {
     ZonedDateTime timestamp;
 
     /** All trades related to order. */
+    @Singular
     Set<TradeDTO> trades;
+
+    /**
+     * Returns trade from its id.
+     *
+     * @param tradeId trade id
+     * @return trade
+     */
+    public final Optional<TradeDTO> getTrade(final String tradeId) {
+        if (tradeId == null) {
+            return Optional.empty();
+        } else {
+            return trades.stream()
+                    .filter(t -> tradeId.equals(t.getTradeId()))
+                    .findFirst();
+        }
+    }
 
     @Override
     public final boolean equals(final Object o) {
