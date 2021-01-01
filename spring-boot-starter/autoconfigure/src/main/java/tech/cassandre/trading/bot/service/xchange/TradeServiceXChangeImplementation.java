@@ -157,11 +157,6 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<OrderDTO> getOpenOrders() {
-        return getOrders();
-    }
-
-    @Override
     public final Set<OrderDTO> getOrders() {
         logger.debug("TradeService - Getting open orders from exchange");
         try {

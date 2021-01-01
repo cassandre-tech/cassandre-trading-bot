@@ -75,15 +75,6 @@ public interface TradeService {
     boolean cancelOrder(String orderId);
 
     /**
-     * Get open orders.
-     *
-     * @return list of open orders
-     * @deprecated use getOrders instead.
-     */
-    @Deprecated(since = "4.0")
-    Set<OrderDTO> getOpenOrders();
-
-    /**
      * Get orders from exchange.
      *
      * @return list of orders

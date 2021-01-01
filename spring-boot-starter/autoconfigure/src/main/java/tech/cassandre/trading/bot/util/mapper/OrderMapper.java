@@ -29,12 +29,16 @@ public interface OrderMapper {
     @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapLimitOrderToOrderDTOCumulativeAmount")
     @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapLimitOrderToOrderDTOAveragePrice")
     @Mapping(source = "source", target = "limitPrice", qualifiedByName = "mapLimitOrderToOrderDTOLimitPrice")
+    @Mapping(source = "instrument", target = "currencyPair")
+    @Mapping(target = "strategy", ignore = true)
+    @Mapping(target = "trades", ignore = true)
+    @Mapping(target = "trade", ignore = true)
     OrderDTO mapToOrderDTO(LimitOrder source);
 
     @Named("mapLimitOrderToOrderDTOAmount")
     default CurrencyAmountDTO mapLimitOrderToOrderDTOAmount(LimitOrder source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getOriginalAmount() != null && source.getCurrencyPair() != null) {
+        CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
+        if (source.getOriginalAmount() != null && source.getInstrument() != null) {
             return new CurrencyAmountDTO(source.getOriginalAmount(), cp.getBaseCurrency());
         } else {
             return new CurrencyAmountDTO();
@@ -43,8 +47,8 @@ public interface OrderMapper {
 
     @Named("mapLimitOrderToOrderDTOCumulativeAmount")
     default CurrencyAmountDTO mapLimitOrderToOrderDTOCumulativeAmount(LimitOrder source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getCumulativeAmount() != null && source.getCurrencyPair() != null) {
+        CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
+        if (source.getCumulativeAmount() != null && source.getInstrument() != null) {
             return new CurrencyAmountDTO(source.getCumulativeAmount(), cp.getBaseCurrency());
         } else {
             return new CurrencyAmountDTO();
@@ -53,8 +57,8 @@ public interface OrderMapper {
 
     @Named("mapLimitOrderToOrderDTOAveragePrice")
     default CurrencyAmountDTO mapLimitOrderToOrderDTOAveragePrice(LimitOrder source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getAveragePrice() != null && source.getCurrencyPair() != null) {
+        CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
+        if (source.getAveragePrice() != null && source.getInstrument() != null) {
             return new CurrencyAmountDTO(source.getAveragePrice(), cp.getQuoteCurrency());
         } else {
             return new CurrencyAmountDTO();
@@ -63,8 +67,8 @@ public interface OrderMapper {
 
     @Named("mapLimitOrderToOrderDTOLimitPrice")
     default CurrencyAmountDTO mapLimitOrderToOrderDTOLimitPrice(LimitOrder source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
-        if (source.getLimitPrice() != null && source.getCurrencyPair() != null) {
+        CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
+        if (source.getLimitPrice() != null && source.getInstrument() != null) {
             return new CurrencyAmountDTO(source.getLimitPrice(), cp.getQuoteCurrency());
         } else {
             return new CurrencyAmountDTO();
@@ -81,10 +85,15 @@ public interface OrderMapper {
      * @return Order
      */
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "updatedOn", ignore = true)
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "strategy", ignore = true)
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "updatedOn", ignore = true)
+    @Mapping(target = "trades", ignore = true)
     void updateOrder(OrderDTO source, @MappingTarget tech.cassandre.trading.bot.domain.Order target);
 
     // =================================================================================================================
@@ -97,6 +106,7 @@ public interface OrderMapper {
      * @return OrderDTO
      */
     @Mapping(source = "trades", target = "trades")
+    @Mapping(target = "trade", ignore = true)
     OrderDTO mapToOrderDTO(tech.cassandre.trading.bot.domain.Order source);
 
 }

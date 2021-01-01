@@ -68,7 +68,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         // We create a buy order.
         final OrderCreationResultDTO buyMarketOrder01 = strategy.createBuyMarketOrder(cp1, new BigDecimal("0.001"));
         assertTrue(buyMarketOrder01.isSuccessful());
-        assertEquals(orderId01, buyMarketOrder01.getOrderId());
+        assertEquals(orderId01, buyMarketOrder01.getOrder().getOrderId());
 
         // Testing the received order.
         with().await().until(() -> strategy.getOrdersUpdateReceived().stream().anyMatch(o -> o.getOrderId().equals(orderId01)));
@@ -98,7 +98,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         // We create a sell order to check order numbers and type.
         final OrderCreationResultDTO buyMarketOrder02 = strategy.createSellMarketOrder(cp1, new BigDecimal("0.002"));
         assertTrue(buyMarketOrder02.isSuccessful());
-        assertEquals(orderId02, buyMarketOrder02.getOrderId());
+        assertEquals(orderId02, buyMarketOrder02.getOrder().getOrderId());
 
         // Testing the received order.
         with().await().until(() -> strategy.getOrdersUpdateReceived().stream().anyMatch(o -> o.getOrderId().equals(orderId02)));

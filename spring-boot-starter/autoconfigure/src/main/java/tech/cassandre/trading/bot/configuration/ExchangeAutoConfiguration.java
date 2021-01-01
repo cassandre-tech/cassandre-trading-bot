@@ -132,9 +132,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     public void configure() {
         try {
             // Instantiate exchange.
-            @SuppressWarnings("rawtypes")
-            Class exchangeClass = Class.forName(getExchangeClassName());
-            //noinspection unchecked
+            Class<? extends Exchange> exchangeClass = Class.forName(getExchangeClassName()).asSubclass(Exchange.class);
             ExchangeSpecification exchangeSpecification = new ExchangeSpecification(exchangeClass);
 
             // Exchange configuration.

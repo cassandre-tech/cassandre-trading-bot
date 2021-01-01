@@ -1,6 +1,8 @@
 package tech.cassandre.trading.bot.util.mapper;
 
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.instrument.Instrument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;

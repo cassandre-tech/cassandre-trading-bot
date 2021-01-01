@@ -17,11 +17,15 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.FUNDING;
 import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.TRADING;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ANC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
@@ -94,16 +98,16 @@ public class UserServiceTest {
         assertEquals(expectedWalletsInTradingAccount, tradeWallet.getBalances().size());
         // Existing balances.
         assertTrue(tradeWallet.getBalance("BTC").isPresent());
-        assertTrue(tradeWallet.getBalance(CurrencyDTO.BTC).isPresent());
+        assertTrue(tradeWallet.getBalance(BTC).isPresent());
         assertTrue(tradeWallet.getBalance("ETH").isPresent());
-        assertTrue(tradeWallet.getBalance(CurrencyDTO.ETH).isPresent());
+        assertTrue(tradeWallet.getBalance(ETH).isPresent());
         assertTrue(mainWallet.getBalance("KCS").isPresent());
         // Non existing balances.
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());
-        assertTrue(tradeWallet.getBalance(CurrencyDTO.ANC).isEmpty());
+        assertTrue(tradeWallet.getBalance(ANC).isEmpty());
         // Values.
-        assertEquals(1, tradeWallet.getBalance("BTC").get().getTotal().compareTo(BigDecimal.ZERO));
-        assertEquals(1, tradeWallet.getBalance("ETH").get().getTotal().compareTo(BigDecimal.ZERO));
+        assertEquals(1, tradeWallet.getBalance("BTC").get().getTotal().compareTo(ZERO));
+        assertEquals(1, tradeWallet.getBalance("ETH").get().getTotal().compareTo(ZERO));
         assertEquals(0, mainWallet.getBalance("KCS").get().getTotal().compareTo(expectedAmountInKCS));
         assertEquals(0, mainWallet.getBalance("KCS").get().getAvailable().compareTo(expectedAmountInKCS));
     }

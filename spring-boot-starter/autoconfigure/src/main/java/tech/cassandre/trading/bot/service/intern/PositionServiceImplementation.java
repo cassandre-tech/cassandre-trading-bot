@@ -132,8 +132,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     if (p.shouldBeClosed(ticker)) {
                         final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
                         if (orderCreationResult.isSuccessful()) {
-                            p.closePositionWithOrderId(orderCreationResult.getOrderId());
-                            logger.debug("PositionService - Position {} closed with order {}", p.getId(), orderCreationResult.getOrderId());
+                            p.closePositionWithOrderId(orderCreationResult.getOrder().getOrderId());
+                            logger.debug("PositionService - Position {} closed with order {}", p.getId(), orderCreationResult.getOrder().getOrderId());
                         }
                     }
                     positionFlux.emitValue(p);

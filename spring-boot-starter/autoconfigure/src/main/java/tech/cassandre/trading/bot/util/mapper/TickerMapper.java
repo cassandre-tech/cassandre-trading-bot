@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.util.mapper;
 
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 
 /**
@@ -19,6 +20,7 @@ public interface TickerMapper {
      * @param source Ticker
      * @return TickerDTO
      */
+    @Mapping(source = "instrument", target = "currencyPair")
     TickerDTO mapToTickerDTO(Ticker source);
 
 }

@@ -194,10 +194,10 @@ public class UserServiceDryModeTest extends BaseTest {
         // Testing the trade.
         // Amount => 0.02
         // Price => 0.032666
-        with().await().until(() -> tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(buyMarketOrder.getOrderId())));
+        with().await().until(() -> tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())));
         final Optional<TradeDTO> buyingTrade = tradeService.getTrades()
                 .stream()
-                .filter(t -> t.getOrderId().equals(buyMarketOrder.getOrderId())).findFirst();
+                .filter(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())).findFirst();
         assertTrue(buyingTrade.isPresent());
         assertEquals(BID, buyingTrade.get().getType());
         assertEquals(0, new BigDecimal("0.02").compareTo(buyingTrade.get().getAmount().getValue()));
@@ -247,10 +247,10 @@ public class UserServiceDryModeTest extends BaseTest {
         // Testing the trade.
         // Amount => 0.02
         // Price => 0.032466
-        with().await().until(() -> tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(sellMarketOrder.getOrderId())));
+        with().await().until(() -> tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())));
         final Optional<TradeDTO> sellingTrade = tradeService.getTrades()
                 .stream()
-                .filter(t -> t.getOrderId().equals(sellMarketOrder.getOrderId())).findFirst();
+                .filter(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())).findFirst();
         assertTrue(sellingTrade.isPresent());
         assertEquals(ASK, sellingTrade.get().getType());
         assertEquals(0, new BigDecimal("0.02").compareTo(sellingTrade.get().getAmount().getValue()));

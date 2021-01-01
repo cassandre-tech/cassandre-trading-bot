@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.dto.util;
 
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.instrument.Instrument;
 
 import java.util.Objects;
 
@@ -57,6 +58,17 @@ public final class CurrencyPairDTO {
     public CurrencyPairDTO(final CurrencyDTO newBaseCurrency, final CurrencyDTO newQuoteCurrency) {
         this.baseCurrency = newBaseCurrency;
         this.quoteCurrency = newQuoteCurrency;
+    }
+
+    /**
+     * Constructor from XChange instrument.
+     *
+     * @param instrument instrument
+     */
+    public CurrencyPairDTO(final Instrument instrument) {
+        final CurrencyPair cp = (CurrencyPair) instrument;
+        this.baseCurrency = new CurrencyDTO(cp.base.getCurrencyCode());
+        this.quoteCurrency = new CurrencyDTO(cp.counter.getCurrencyCode());
     }
 
     /**

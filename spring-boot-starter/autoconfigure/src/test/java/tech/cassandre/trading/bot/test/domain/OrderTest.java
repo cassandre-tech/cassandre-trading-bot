@@ -178,8 +178,6 @@ public class OrderTest extends BaseTest {
         // Tests for created on and updated on fields.
         ZonedDateTime createdOn = orderInDatabase.get().getCreatedOn();
         assertNotNull(createdOn);
-        // TODO Strange behavior - An update is made just after insert - So the update field is set.
-        // It seems it comes from Updated field and it's ZonedDateTime value.
         assertNull(orderInDatabase.get().getUpdatedOn());
 
         // =============================================================================================================

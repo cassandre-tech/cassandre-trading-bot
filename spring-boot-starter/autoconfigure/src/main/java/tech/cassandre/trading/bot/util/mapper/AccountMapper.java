@@ -38,6 +38,7 @@ public interface AccountMapper {
      * @param source Wallet
      * @return AccountDTO
      */
+    @Mapping(target = "feature", ignore = true)
     AccountDTO mapToWalletDTO(Wallet source);
 
     /**

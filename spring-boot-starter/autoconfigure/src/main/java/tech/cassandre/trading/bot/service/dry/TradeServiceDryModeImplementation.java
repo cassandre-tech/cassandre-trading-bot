@@ -243,19 +243,6 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<OrderDTO> getOpenOrders() {
-        final Map<String, OrderDTO> results = orderRepository.findByOrderByTimestampAsc()
-                .stream()
-                .map(orderMapper::mapToOrderDTO)
-                .collect(Collectors.toMap(OrderDTO::getOrderId, order -> order));
-        localOrders.values()
-                .stream()
-                .filter(order -> !results.containsKey(order.getOrderId()))
-                .forEach(order -> results.put(order.getOrderId(), order));
-        return new HashSet<>(results.values());
-    }
-
-    @Override
     public final Set<OrderDTO> getOrders() {
         return orderRepository.findByOrderByTimestampAsc()
                 .stream()

@@ -35,17 +35,20 @@ public interface TradeMapper {
     @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
     @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
     @Mapping(source = "orderUserReference", target = "userReference")
+    @Mapping(source = "instrument", target = "currencyPair")
     TradeDTO mapToTradeDTO(UserTrade source);
 
     @Named("mapUserTradeToTradeDTOAmount")
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "updatedOn", ignore = true)
     default CurrencyAmountDTO mapUserTradeToTradeDTOAmount(UserTrade source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
+        CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
         return new CurrencyAmountDTO(source.getOriginalAmount(), cp.getBaseCurrency());
     }
 
     @Named("mapUserTradeToTradeDTOPrice")
     default CurrencyAmountDTO mapUserTradeToTradeDTOPrice(UserTrade source) {
-        CurrencyPairDTO cp = new CurrencyPairDTO(source.getCurrencyPair());
+        CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
         return new CurrencyAmountDTO(source.getPrice(), cp.getQuoteCurrency());
     }
 
@@ -68,9 +71,15 @@ public interface TradeMapper {
      * @return Trade
      */
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "updatedOn", ignore = true)
+    @Mapping(target = "order", ignore = true)
     Trade mapToTrade(TradeDTO source);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "updatedOn", ignore = true)
+    @Mapping(target = "order", ignore = true)
     void updateOrder(TradeDTO source, @MappingTarget Trade target);
 
     // =================================================================================================================

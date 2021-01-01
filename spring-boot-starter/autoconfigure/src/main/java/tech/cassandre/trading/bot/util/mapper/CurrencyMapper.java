@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.util.mapper;
 
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.instrument.Instrument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
@@ -17,6 +18,13 @@ public interface CurrencyMapper {
 
     // =================================================================================================================
     // XChange to DTO.
+
+    default CurrencyPairDTO mapToCurrencyPairDTO(Instrument source) {
+        final CurrencyPair cp = (CurrencyPair) source;
+        CurrencyDTO base = new CurrencyDTO(cp.base.getCurrencyCode());
+        CurrencyDTO quote = new CurrencyDTO(cp.counter.getCurrencyCode());
+        return CurrencyPairDTO.builder().baseCurrency(base).quoteCurrency(quote).build();
+    }
 
     /**
      * Map Currency to CurrencyDTO.

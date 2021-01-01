@@ -30,11 +30,17 @@ public interface PositionMapper {
      */
     @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
     @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "updatedOn", ignore = true)
+    @Mapping(target = "strategy", ignore = true)
     Position mapToPosition(PositionDTO source);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
     @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "updatedOn", ignore = true)
+    @Mapping(target = "strategy", ignore = true)
     void updatePosition(PositionDTO source, @MappingTarget Position target);
 
     // =================================================================================================================
