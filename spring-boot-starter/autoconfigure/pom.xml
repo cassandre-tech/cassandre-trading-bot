@@ -88,6 +88,11 @@
             <artifactId>mapstruct</artifactId>
             <version>1.4.1.Final</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.1-jre</version>
+        </dependency>
 
         <!-- Tests -->
         <dependency>

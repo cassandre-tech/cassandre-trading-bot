@@ -59,6 +59,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
+
         assertTrue(strategy.getAccountsUpdateReceived().size() > 0);
         assertTrue(strategy.getAccountsUpdateReceived().size() <= numberOfUpdatesExpected);
 

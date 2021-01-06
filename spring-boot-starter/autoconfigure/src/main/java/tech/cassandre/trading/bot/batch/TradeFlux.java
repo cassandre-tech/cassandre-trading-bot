@@ -60,12 +60,13 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
     }
 
     @Override
-    public final void backupValue(final TradeDTO newValue) {
+    public final void saveValue(final TradeDTO newValue) {
         Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(newValue.getTradeId());
         tradeInDatabase.ifPresentOrElse(trade -> {
             // Update trade.
             tradeMapper.updateOrder(newValue, trade);
             tradeRepository.save(trade);
+            logger.debug("TradeFlux - trade updated in database {}", trade);
         }, () -> {
             // Create trade.
             final Trade newTrade = tradeMapper.mapToTrade(newValue);
@@ -73,6 +74,7 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
             final Optional<Order> order = orderRepository.findByOrderId(newValue.getOrderId());
             order.ifPresent(value -> newTrade.setOrder(value.getId()));
             tradeRepository.save(newTrade);
+            logger.debug("TradeFlux - trade created in database {}", newTrade);
         });
     }
 

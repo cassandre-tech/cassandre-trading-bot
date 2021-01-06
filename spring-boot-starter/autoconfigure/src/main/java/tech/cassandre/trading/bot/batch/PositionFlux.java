@@ -33,11 +33,11 @@ public class PositionFlux extends BaseInternalFlux<PositionDTO> {
     }
 
     @Override
-    public final void backupValue(final PositionDTO newValue) {
+    public final void saveValue(final PositionDTO newValue) {
         Optional<Position> positionInDatabase = positionRepository.findById(newValue.getId());
         positionInDatabase.ifPresentOrElse(position -> {
             positionMapper.updatePosition(newValue, position);
-            // Opening & closing order.
+            // Setting opening & closing order.
             if (newValue.getOpeningOrder() != null) {
                 final Optional<Order> openingOrder = orderRepository.findByOrderId(newValue.getOpeningOrder().getOrderId());
                 openingOrder.ifPresent(position::setOpeningOrder);
@@ -47,9 +47,9 @@ public class PositionFlux extends BaseInternalFlux<PositionDTO> {
                 closingOrder.ifPresent(position::setClosingOrder);
             }
             positionRepository.save(position);
-        }, () -> {
-            logger.error("Position {} was not saved because it was not found in database", newValue.getId());
-        });
+            logger.error("PositionFlux - Position {} updated in database", position);
+
+        }, () -> logger.error("PositionFlux - Position {} was not found in database", newValue.getId()));
     }
 
 }

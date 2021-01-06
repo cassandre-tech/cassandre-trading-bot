@@ -34,13 +34,13 @@ public class AccountFlux extends BaseExternalFlux<AccountDTO> {
         logger.debug("AccountFlux - Retrieving new values");
         Set<AccountDTO> newValues = new LinkedHashSet<>();
 
-        // Calling the service and treating results
+        // Calling the service and treating results.
         userService.getUser().ifPresent(user -> {
             // For each account, we check if there is something new.
             user.getAccounts().forEach((accountId, account) -> {
                 logger.debug("AccountFlux - Treating account : {}", accountId);
                 if (previousValues.containsKey(accountId)) {
-                    // If in the previous values, heck the balances.
+                    // If in the previous values, check the balances.
                     if (!account.equals(previousValues.get(accountId))) {
                         logger.debug("AccountFlux - Account {} has changed : {}", accountId, account);
                         newValues.add(account);

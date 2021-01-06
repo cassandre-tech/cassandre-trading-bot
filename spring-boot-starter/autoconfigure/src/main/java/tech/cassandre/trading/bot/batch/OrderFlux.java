@@ -41,7 +41,7 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
         tradeService.getOrders().forEach(order -> {
             logger.debug("OrderFlux - Treating order : {}", order.getOrderId());
             final Optional<Order> orderInDatabase = orderRepository.findByOrderId(order.getOrderId());
-            // If it does not exist or something changed, we do it.
+            // If it does not exist or something changed, we add it to new values.
             if (orderInDatabase.isEmpty() || !orderMapper.mapToOrderDTO(orderInDatabase.get()).equals(order)) {
                 logger.debug("OrderFlux - Order {} has changed : {}", order.getOrderId(), order);
                 newValues.add(order);
@@ -52,15 +52,17 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
     }
 
     @Override
-    public final void backupValue(final OrderDTO newValue) {
+    public final void saveValue(final OrderDTO newValue) {
         final Optional<Order> orderInDatabase = orderRepository.findByOrderId(newValue.getOrderId());
         orderInDatabase.ifPresentOrElse(order -> {
             // Update order.
             orderMapper.updateOrder(newValue, order);
             orderRepository.save(order);
+            logger.debug("OrderFlux - order updated in database {}", order);
         }, () -> {
             // Create order.
-            orderRepository.save(orderMapper.mapToOrder(newValue));
+            final Order order = orderRepository.save(orderMapper.mapToOrder(newValue));
+            logger.debug("OrderFlux - order created in database {}", order);
         });
     }
 
