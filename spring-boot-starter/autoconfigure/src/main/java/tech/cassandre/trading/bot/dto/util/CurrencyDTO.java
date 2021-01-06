@@ -905,7 +905,6 @@ public final class CurrencyDTO {
      * @return currency codes
      */
     public static SortedSet<String> getAvailableCurrencyCodes() {
-
         return new TreeSet<>(CURRENCIES.keySet());
     }
 

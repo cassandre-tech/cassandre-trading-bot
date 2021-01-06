@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.dto.trade;
 
+import lombok.Getter;
+
 import java.time.ZonedDateTime;
 
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
@@ -7,6 +9,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 /**
  * Order creation result for {@link OrderDTO}.
  */
+@Getter
 public final class OrderCreationResultDTO {
 
     /** Order ID (filled if order creation is successful). */
@@ -42,7 +45,6 @@ public final class OrderCreationResultDTO {
      *
      * @param newOrderId order id
      */
-    @Deprecated(since = "4.0.0")
     public OrderCreationResultDTO(final String newOrderId) {
         successful = true;
         this.orderId = newOrderId;
@@ -68,57 +70,11 @@ public final class OrderCreationResultDTO {
         this.exception = newException;
     }
 
-    /**
-     * Getter for orderId.
-     *
-     * @return orderId
-     */
-    @Deprecated(since = "4.0.0")
-    public String getOrderId() {
-        return orderId;
-    }
-
-    /**
-     * Getter order.
-     *
-     * @return order
-     */
-    public OrderDTO getOrder() {
-        return order;
-    }
-
-    /**
-     * Getter for errorMessage.
-     *
-     * @return errorMessage
-     */
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    /**
-     * Getter for exception.
-     *
-     * @return exception
-     */
-    public Exception getException() {
-        return exception;
-    }
-
-    /**
-     * Getter for successful.
-     *
-     * @return successful
-     */
-    public boolean isSuccessful() {
-        return successful;
-    }
-
     @Override
     public String toString() {
         if (successful) {
             return "OrderCreationResultDTO{"
-                    + " orderId='" + orderId + '\''
+                    + " order='" + order + '\''
                     + '}';
         } else {
             return "OrderCreationResultDTO{"
@@ -126,7 +82,6 @@ public final class OrderCreationResultDTO {
                     + ", exception=" + exception
                     + '}';
         }
-
     }
 
 }

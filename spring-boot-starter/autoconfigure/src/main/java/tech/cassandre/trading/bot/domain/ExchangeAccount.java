@@ -51,8 +51,8 @@ public class ExchangeAccount extends BaseDomain {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(this.exchange)
-                .append(this.account)
+                .append(exchange)
+                .append(account)
                 .toHashCode();
     }
 

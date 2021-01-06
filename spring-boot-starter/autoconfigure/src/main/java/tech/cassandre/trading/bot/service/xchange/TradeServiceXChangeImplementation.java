@@ -40,8 +40,8 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     /**
      * Constructor.
      *
-     * @param rate               rate in ms
-     * @param newTradeService    market data service
+     * @param rate            rate in ms
+     * @param newTradeService market data service
      */
     public TradeServiceXChangeImplementation(final long rate,
                                              final org.knowm.xchange.service.trade.TradeService newTradeService) {
@@ -69,7 +69,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .orderId(orderId)
                     .timestamp(ZonedDateTime.now())
                     .type(orderTypeDTO)
-                    .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
                     .currencyPair(currencyPair)
                     .status(PENDING_NEW)
                     .build();
@@ -104,10 +107,16 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .orderId(orderId)
                     .timestamp(ZonedDateTime.now())
                     .type(orderTypeDTO)
-                    .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
                     .currencyPair(currencyPair)
                     .status(PENDING_NEW)
-                    .limitPrice(new CurrencyAmountDTO(limitPrice, currencyPair.getQuoteCurrency()))
+                    .limitPrice(CurrencyAmountDTO.builder()
+                            .value(limitPrice)
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
                     .build();
             localOrders.put(orderId, openingOrder);
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);

@@ -16,13 +16,13 @@ import tech.cassandre.trading.bot.util.exception.PositionException;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.FLOOR;
 import static java.math.RoundingMode.HALF_UP;
 import static lombok.AccessLevel.PRIVATE;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
@@ -44,6 +44,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 @Builder
 @ToString
 @AllArgsConstructor(access = PRIVATE)
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class PositionDTO {
 
     /** Technical ID. */
@@ -113,7 +114,10 @@ public class PositionDTO {
         this.positionId = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
-        this.amount = new CurrencyAmountDTO(newAmount, newCurrencyPair.getBaseCurrency());
+        this.amount = CurrencyAmountDTO.builder()
+                .value(newAmount)
+                .currency(newCurrencyPair.getBaseCurrency())
+                .build();
         this.openingOrder = newOpenOrder;
         this.rules = newRules;
     }
@@ -140,7 +144,10 @@ public class PositionDTO {
         this.positionId = newId;
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
-        this.amount = new CurrencyAmountDTO(newAmount, newCurrencyPair.getBaseCurrency());
+        this.amount = CurrencyAmountDTO.builder()
+                .value(newAmount)
+                .currency(newCurrencyPair.getBaseCurrency())
+                .build();
         // We create a temporary opening order.
         openingOrder = OrderDTO.builder()
                 .orderId(newOpenOrderId)
@@ -195,15 +202,22 @@ public class PositionDTO {
             //  - Sold 10 ETH with a price of 6 -> Amount of 60.
             //  Gain = (6-5)/5 = 20%.
             float gainPercentage = (price.subtract(openTrade.getPrice().getValue()))
-                    .divide(openTrade.getPrice().getValue(), BIGINTEGER_SCALE, RoundingMode.FLOOR)
+                    .divide(openTrade.getPrice().getValue(), BIGINTEGER_SCALE, FLOOR)
                     .floatValue() * ONE_HUNDRED;
             BigDecimal gainAmount = ((openTrade.getAmount().getValue().multiply(price))
                     .subtract((openTrade.getAmount().getValue()).multiply(openTrade.getPrice().getValue())));
 
-            GainDTO gain = new GainDTO(gainPercentage,
-                    new CurrencyAmountDTO(gainAmount, currencyPair.getQuoteCurrency()),
-                    new CurrencyAmountDTO(ZERO, currencyPair.getQuoteCurrency()));
-            return Optional.of(gain);
+            return Optional.of(GainDTO.builder()
+                    .percentage(gainPercentage)
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(gainAmount)
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
+                    .fees(CurrencyAmountDTO.builder()
+                            .value(ZERO)
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
+                    .build());
         } else {
             return Optional.empty();
         }
@@ -290,7 +304,12 @@ public class PositionDTO {
             final Optional<GainDTO> gain = calculateGainFromPrice(ticker.getLast());
             if (gain.isPresent()) {
                 // We save the last calculated gain.
-                this.latestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
+                latestPrice = CurrencyAmountDTO.builder()
+                        .value(ticker.getLast())
+                        .currency(ticker.getCurrencyPair().getQuoteCurrency())
+                        .build();
+
+                // We check with the rules and returns true if it should be closed.
                 if (rules.isStopGainPercentageSet() && gain.get().getPercentage() >= rules.getStopGainPercentage()
                         || rules.isStopLossPercentageSet() && gain.get().getPercentage() <= -rules.getStopLossPercentage()) {
                     // If the rules tells we should sell.
@@ -298,20 +317,32 @@ public class PositionDTO {
                 } else {
                     // We check if this gain is at a new highest.
                     if (highestPrice == null) {
-                        highestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
+                        highestPrice = CurrencyAmountDTO.builder()
+                                .value(ticker.getLast())
+                                .currency(ticker.getCurrencyPair().getQuoteCurrency())
+                                .build();
                     } else {
                         final Optional<GainDTO> highestGain = calculateGainFromPrice(highestPrice.getValue());
                         if (highestGain.isPresent() && highestGain.get().getPercentage() <= gain.get().getPercentage()) {
-                            highestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
+                            highestPrice = CurrencyAmountDTO.builder()
+                                    .value(ticker.getLast())
+                                    .currency(ticker.getCurrencyPair().getQuoteCurrency())
+                                    .build();
                         }
                     }
                     // We check if this gain is at a new lowest.
                     if (lowestPrice == null) {
-                        lowestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
+                        lowestPrice = CurrencyAmountDTO.builder()
+                                .value(ticker.getLast())
+                                .currency(ticker.getCurrencyPair().getQuoteCurrency())
+                                .build();
                     } else {
                         final Optional<GainDTO> lowestGain = calculateGainFromPrice(lowestPrice.getValue());
                         if (lowestGain.isPresent() && lowestGain.get().getPercentage() >= gain.get().getPercentage()) {
-                            lowestPrice = new CurrencyAmountDTO(ticker.getLast(), ticker.getCurrencyPair().getQuoteCurrency());
+                            lowestPrice = CurrencyAmountDTO.builder()
+                                    .value(ticker.getLast())
+                                    .currency(ticker.getCurrencyPair().getQuoteCurrency())
+                                    .build();
                         }
                     }
                     return false;
@@ -425,13 +456,22 @@ public class PositionDTO {
                     .map(t -> t.getFee().getValue())
                     .reduce(ZERO, BigDecimal::add);
 
+
             // Return position gain.
-            return new GainDTO(gainPercentage.setScale(2, HALF_UP).doubleValue(),
-                    new CurrencyAmountDTO(gainAmount, currencyPair.getQuoteCurrency()),
-                    new CurrencyAmountDTO(fees, currencyPair.getQuoteCurrency()));
+            return GainDTO.builder()
+                    .percentage(gainPercentage.setScale(2, HALF_UP).doubleValue())
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(gainAmount)
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
+                    .fees(CurrencyAmountDTO.builder()
+                            .value(fees)
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
+                    .build();
         } else {
             // No gain for the moment !
-            return new GainDTO();
+            return GainDTO.ZERO;
         }
     }
 
@@ -467,20 +507,11 @@ public class PositionDTO {
     }
 
     /**
-     * Returns formatted value.
-     *
-     * @param value value
-     * @return formatted value
-     */
-    private String getFormattedValue(final double value) {
-        return new DecimalFormat("#0.##").format(value);
-    }
-
-    /**
      * Get position description.
      *
      * @return description
      */
+    @SuppressWarnings("unused")
     public final String description() {
         try {
             String value = "Position n°" + id + " (";
@@ -529,6 +560,16 @@ public class PositionDTO {
         } catch (Exception e) {
             return "Position " + getId() + " (error in description generation)";
         }
+    }
+
+    /**
+     * Returns formatted value.
+     *
+     * @param value value
+     * @return formatted value
+     */
+    private String getFormattedValue(final double value) {
+        return new DecimalFormat("#0.##").format(value);
     }
 
 }

@@ -210,9 +210,17 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     BigDecimal gainAmount = sold.subtract(bought);
                     BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(new BigDecimal("100"));
 
-                    GainDTO g = new GainDTO(gainPercentage.setScale(2, HALF_UP).doubleValue(),
-                            new CurrencyAmountDTO(gainAmount, currency),
-                            new CurrencyAmountDTO(fees, currency));
+                    GainDTO g = GainDTO.builder()
+                            .percentage(gainPercentage.setScale(2, HALF_UP).doubleValue())
+                            .amount(CurrencyAmountDTO.builder()
+                                    .value(gainAmount)
+                                    .currency(currency)
+                                    .build())
+                            .fees(CurrencyAmountDTO.builder()
+                                    .value(fees)
+                                    .currency(currency)
+                                    .build())
+                            .build();
                     gains.put(currency, g);
                 });
         return gains;

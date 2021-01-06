@@ -49,6 +49,7 @@ public class StrategyDTO {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
+                .append(strategyId)
                 .toHashCode();
     }
 

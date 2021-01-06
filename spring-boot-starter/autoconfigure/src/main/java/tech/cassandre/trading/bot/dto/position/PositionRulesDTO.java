@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.dto.position;
 
+import lombok.Getter;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
@@ -12,6 +13,7 @@ import java.text.DecimalFormat;
  * - Stop gain with percentage.
  * - Stop loss with percentage.
  */
+@Getter
 public class PositionRulesDTO {
 
     /** Stop gain percentage has been set. */
@@ -45,42 +47,6 @@ public class PositionRulesDTO {
      */
     public static Builder builder() {
         return new Builder();
-    }
-
-    /**
-     * Getter for stopGainPercentageSet.
-     *
-     * @return stopGainPercentageSet
-     */
-    public final boolean isStopGainPercentageSet() {
-        return stopGainPercentageSet;
-    }
-
-    /**
-     * Getter for stopGainPercentage.
-     *
-     * @return stopGainPercentage
-     */
-    public final Float getStopGainPercentage() {
-        return stopGainPercentage;
-    }
-
-    /**
-     * Getter for stopLossPercentageSet.
-     *
-     * @return stopLossPercentageSet
-     */
-    public final boolean isStopLossPercentageSet() {
-        return stopLossPercentageSet;
-    }
-
-    /**
-     * Getter for stopLossPercentage.
-     *
-     * @return stopLossPercentage
-     */
-    public final Float getStopLossPercentage() {
-        return stopLossPercentage;
     }
 
     @Override

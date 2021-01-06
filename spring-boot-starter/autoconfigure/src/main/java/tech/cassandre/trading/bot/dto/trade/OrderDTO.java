@@ -17,7 +17,7 @@ import java.util.Set;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
- * DTO representing order information.
+ * DTO representing an order.
  * A market order is a request by an investor to buy or sell in the current market.
  */
 @Value

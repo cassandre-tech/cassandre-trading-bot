@@ -16,12 +16,14 @@ public class GainDTOTest {
     @Test
     @DisplayName("Check toString method")
     public void checkToString() {
-        final GainDTO gain1 = new GainDTO();
+        final GainDTO gain1 = GainDTO.ZERO;
         assertEquals("No gain", gain1.toString());
 
-        final GainDTO gain2 = new GainDTO(1,
-                new CurrencyAmountDTO(new BigDecimal("2"), BTC),
-                new CurrencyAmountDTO(new BigDecimal("3"), BTC));
+        final GainDTO gain2 = GainDTO.builder()
+                .percentage(1)
+                .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
+                .fees(new CurrencyAmountDTO(new BigDecimal("3"), BTC))
+                .build();
         assertEquals("Gains: 2 BTC (1.0 %) / Fees: 3 BTC", gain2.toString());
     }
 

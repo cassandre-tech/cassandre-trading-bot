@@ -170,8 +170,14 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .currencyPair(currencyPair)
                     .type(orderTypeDTO)
                     .status(FILLED)
-                    .averagePrice(new CurrencyAmountDTO(t.getLast(), currencyPair.getQuoteCurrency()))
-                    .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
+                    .averagePrice(CurrencyAmountDTO.builder()
+                            .value(t.getLast())
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
                     .timestamp(ZonedDateTime.now())
                     .build();
 
@@ -182,10 +188,16 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                     .orderId(orderId)
                     .currencyPair(currencyPair)
                     .type(orderTypeDTO)
-                    .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
-                    .price(new CurrencyAmountDTO(t.getLast(), currencyPair.getQuoteCurrency()))
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
+                    .price(CurrencyAmountDTO.builder()
+                            .value(t.getLast())
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
                     .timestamp(ZonedDateTime.now())
-                    .fee(new CurrencyAmountDTO())
+                    .fee(CurrencyAmountDTO.ZERO)
                     .build();
             // Sending the results after the method returns the result.
             Executors.newFixedThreadPool(1).submit(() -> {

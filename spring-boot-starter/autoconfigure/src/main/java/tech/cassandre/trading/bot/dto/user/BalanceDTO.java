@@ -75,7 +75,7 @@ public class BalanceDTO {
                 .append(loaned)
                 .append(borrowed)
                 .append(withdrawing)
-                .append(withdrawing)
+                .append(depositing)
                 .toHashCode();
     }
 

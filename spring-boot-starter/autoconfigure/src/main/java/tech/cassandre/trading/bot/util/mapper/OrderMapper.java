@@ -39,9 +39,12 @@ public interface OrderMapper {
     default CurrencyAmountDTO mapLimitOrderToOrderDTOAmount(LimitOrder source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
         if (source.getOriginalAmount() != null && source.getInstrument() != null) {
-            return new CurrencyAmountDTO(source.getOriginalAmount(), cp.getBaseCurrency());
+            return CurrencyAmountDTO.builder()
+                    .value(source.getOriginalAmount())
+                    .currency(cp.getBaseCurrency())
+                    .build();
         } else {
-            return new CurrencyAmountDTO();
+            return null;
         }
     }
 
@@ -49,9 +52,12 @@ public interface OrderMapper {
     default CurrencyAmountDTO mapLimitOrderToOrderDTOCumulativeAmount(LimitOrder source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
         if (source.getCumulativeAmount() != null && source.getInstrument() != null) {
-            return new CurrencyAmountDTO(source.getCumulativeAmount(), cp.getBaseCurrency());
+            return CurrencyAmountDTO.builder()
+                    .value(source.getCumulativeAmount())
+                    .currency(cp.getBaseCurrency())
+                    .build();
         } else {
-            return new CurrencyAmountDTO();
+            return null;
         }
     }
 
@@ -59,9 +65,12 @@ public interface OrderMapper {
     default CurrencyAmountDTO mapLimitOrderToOrderDTOAveragePrice(LimitOrder source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
         if (source.getAveragePrice() != null && source.getInstrument() != null) {
-            return new CurrencyAmountDTO(source.getAveragePrice(), cp.getQuoteCurrency());
+            return CurrencyAmountDTO.builder()
+                    .value(source.getAveragePrice())
+                    .currency(cp.getQuoteCurrency())
+                    .build();
         } else {
-            return new CurrencyAmountDTO();
+            return null;
         }
     }
 
@@ -69,9 +78,12 @@ public interface OrderMapper {
     default CurrencyAmountDTO mapLimitOrderToOrderDTOLimitPrice(LimitOrder source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
         if (source.getLimitPrice() != null && source.getInstrument() != null) {
-            return new CurrencyAmountDTO(source.getLimitPrice(), cp.getQuoteCurrency());
+            return CurrencyAmountDTO.builder()
+                    .value(source.getLimitPrice())
+                    .currency(cp.getQuoteCurrency())
+                    .build();
         } else {
-            return new CurrencyAmountDTO();
+            return null;
         }
     }
 
@@ -87,6 +99,7 @@ public interface OrderMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
+    // TODO Fix why adding strategy creates an error.
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
 
     @Mapping(target = "id", ignore = true)

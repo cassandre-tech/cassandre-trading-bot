@@ -1,32 +1,33 @@
 package tech.cassandre.trading.bot.dto.util;
 
+import lombok.Builder;
+import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import java.math.BigDecimal;
 
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+
 /**
  * Currency amount (amount value + currency).
  */
+@Value
+@Builder
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class CurrencyAmountDTO {
 
+    /** Zero. */
+    public static final CurrencyAmountDTO ZERO = CurrencyAmountDTO.builder()
+            .value(BigDecimal.ZERO)
+            .currency(BTC)
+            .build();
+
     /** Amount value. */
-    private BigDecimal value;
+    BigDecimal value;
 
     /** Currency. */
-    private CurrencyDTO currency;
-
-    /** Value provided. */
-    private final boolean valueProvided;
-
-    /**
-     * Constructor for empty amount (0 USD).
-     */
-    public CurrencyAmountDTO() {
-        this.valueProvided = false;
-        this.value = new BigDecimal(0);
-        this.currency = CurrencyDTO.USD;
-    }
+    CurrencyDTO currency;
 
     /**
      * Constructor.
@@ -36,13 +37,11 @@ public class CurrencyAmountDTO {
      */
     public CurrencyAmountDTO(final String newValue, final CurrencyDTO newCurrency) {
         if (newValue != null && newCurrency != null) {
-            this.valueProvided = true;
             this.value = new BigDecimal(newValue);
             this.currency = newCurrency;
         } else {
-            this.valueProvided = false;
             this.value = new BigDecimal(0);
-            this.currency = CurrencyDTO.USD;
+            this.currency = BTC;
         }
     }
 
@@ -54,59 +53,12 @@ public class CurrencyAmountDTO {
      */
     public CurrencyAmountDTO(final BigDecimal newValue, final CurrencyDTO newCurrency) {
         if (newValue != null && newCurrency != null) {
-            this.valueProvided = true;
             this.value = newValue;
             this.currency = newCurrency;
         } else {
-            this.valueProvided = false;
             this.value = new BigDecimal(0);
-            this.currency = CurrencyDTO.USD;
+            this.currency = BTC;
         }
-    }
-
-    /**
-     * Setter value.
-     *
-     * @param newValue the value to set
-     */
-    public final void setValue(final BigDecimal newValue) {
-        value = newValue;
-    }
-
-    /**
-     * Setter currency.
-     *
-     * @param newCurrency the currency to set
-     */
-    public final void setCurrency(final CurrencyDTO newCurrency) {
-        currency = newCurrency;
-    }
-
-    /**
-     * Getter for value.
-     *
-     * @return value
-     */
-    public final BigDecimal getValue() {
-        return value;
-    }
-
-    /**
-     * Getter for currency.
-     *
-     * @return currency
-     */
-    public final CurrencyDTO getCurrency() {
-        return currency;
-    }
-
-    /**
-     * Getter for valueProvided.
-     *
-     * @return valueProvided
-     */
-    public final boolean isValueProvided() {
-        return valueProvided;
     }
 
     @Override
@@ -134,11 +86,7 @@ public class CurrencyAmountDTO {
 
     @Override
     public final String toString() {
-        if (isValueProvided()) {
-            return value.toString() + " " + currency;
-        } else {
-            return "Not provided";
-        }
+        return value.toString() + " " + currency;
     }
 
 }

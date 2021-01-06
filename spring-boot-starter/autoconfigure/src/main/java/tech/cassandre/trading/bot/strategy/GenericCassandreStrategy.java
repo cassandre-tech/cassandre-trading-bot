@@ -436,8 +436,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
             return Optional.empty();
         } else {
             // Make the calculation.
-            return Optional.of(new CurrencyAmountDTO(ticker.getLast().multiply(amount),
-                    currencyPair.getQuoteCurrency()));
+            return Optional.of(CurrencyAmountDTO.builder()
+                    .value(ticker.getLast().multiply(amount))
+                    .currency(currencyPair.getQuoteCurrency())
+                    .build());
         }
     }
 
