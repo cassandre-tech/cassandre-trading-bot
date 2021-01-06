@@ -17,9 +17,6 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 @EnableScheduling
 public class ScheduleAutoConfiguration {
 
-    /** Position update delay. */
-    private static final long ONE_SECOND = 1_000;
-
     /** Account flux. */
     private final AccountFlux accountFlux;
 
@@ -35,10 +32,10 @@ public class ScheduleAutoConfiguration {
     /**
      * Constructor.
      *
-     * @param newAccountFlux  account flux
-     * @param newTickerFlux   ticker flux
-     * @param newOrderFlux    order flux
-     * @param newTradeFlux    trade flux
+     * @param newAccountFlux account flux
+     * @param newTickerFlux  ticker flux
+     * @param newOrderFlux   order flux
+     * @param newTradeFlux   trade flux
      */
     public ScheduleAutoConfiguration(final AccountFlux newAccountFlux,
                                      final TickerFlux newTickerFlux,
@@ -53,9 +50,8 @@ public class ScheduleAutoConfiguration {
     /**
      * Recurrent calls the account flux.
      */
-    // TODO Remove initialDelay
     @Scheduled(fixedDelay = 1)
-    public void setupAccountFlux() {
+    public void accountFluxUpdate() {
         accountFlux.update();
     }
 
@@ -63,23 +59,16 @@ public class ScheduleAutoConfiguration {
      * Recurrent calls the ticker flux.
      */
     @Scheduled(fixedDelay = 1)
-    public void setupTickerFlux() {
+    public void tickerFluxUpdate() {
         tickerFlux.update();
-    }
-
-    /**
-     * Recurrent calls the order flux.
-     */
-    @Scheduled(fixedDelay = 1)
-    public void setupOrderFlux() {
-        orderFlux.update();
     }
 
     /**
      * Recurrent calls the trade flux.
      */
     @Scheduled(fixedDelay = 1)
-    public void setupTradeFlux() {
+    public void tradeFluxUpdate() {
+        orderFlux.update();
         tradeFlux.update();
     }
 

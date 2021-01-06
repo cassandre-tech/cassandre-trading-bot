@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 /**
- * Database autoconfiguration.
+ * Database configures the database connection.
  */
 @Configuration
 @EnableJpaAuditing(dateTimeProviderRef = "auditingDateTimeProvider")

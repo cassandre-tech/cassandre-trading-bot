@@ -161,7 +161,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         if (strategyBeans.isEmpty()) {
             logger.error("No strategy found");
             throw new ConfigurationException("No strategy found",
-                    "You must have one class with @Strategy");
+                    "You must have one class with @CassandreStrategy");
         }
 
         // Check if there are several strategies.
@@ -169,7 +169,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             logger.error("Several strategies found");
             strategyBeans.forEach((s, o) -> logger.error(" - " + s));
             throw new ConfigurationException("Several strategies found",
-                    "Cassandre trading bot only supports one strategy at a time (@Strategy)");
+                    "Cassandre trading bot only supports one strategy at a time (@CassandreStrategy)");
         }
 
         // Check if the strategy extends CassandreStrategy.
@@ -191,7 +191,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
             }
         } else {
             throw new ConfigurationException("Impossible to retrieve your user information",
-                    "Impossible to retrieve your user information. Check logs.");
+                    "Impossible to retrieve your user information. Check logs");
         }
 
         // =============================================================================================================
@@ -204,9 +204,8 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Displaying requested currency pairs.
         StringJoiner currencyPairList = new StringJoiner(", ");
-        strategy.getRequestedCurrencyPairs()
-                .forEach(currencyPair -> currencyPairList.add(currencyPair.toString()));
-        logger.info("StrategyConfiguration - The strategy requires the following currency pair(s) : " + currencyPairList);
+        strategy.getRequestedCurrencyPairs().forEach(currencyPair -> currencyPairList.add(currencyPair.toString()));
+        logger.info("StrategyConfiguration - The strategy requires the following currency pair(s) : {}", currencyPairList);
 
         // =============================================================================================================
         // Setting up position service.
@@ -218,25 +217,29 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Saving strategy in database.
         final Optional<Strategy> strategyInDatabase = strategyRepository.findByStrategyId(cassandreStrategyAnnotation.strategyId());
         strategyInDatabase.ifPresentOrElse(existingStrategy -> {
+            // Update.
             existingStrategy.setName(cassandreStrategyAnnotation.strategyName());
             strategyRepository.save(existingStrategy);
             strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(existingStrategy));
+            logger.debug("StrategyConfiguration - strategy updated in database {}", existingStrategy);
         }, () -> {
-            Strategy s = new Strategy();
-            s.setStrategyId(cassandreStrategyAnnotation.strategyId());
-            s.setName(cassandreStrategyAnnotation.strategyName());
+            // Creation.
+            Strategy newStrategy = new Strategy();
+            newStrategy.setStrategyId(cassandreStrategyAnnotation.strategyId());
+            newStrategy.setName(cassandreStrategyAnnotation.strategyName());
             // Set exchange account.
             Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
-            exchangeAccount.ifPresent(s::setExchangeAccount);
+            exchangeAccount.ifPresent(newStrategy::setExchangeAccount);
             // Set type.
             if (o instanceof BasicCassandreStrategy) {
-                s.setType(BASIC_STRATEGY);
+                newStrategy.setType(BASIC_STRATEGY);
             }
             if (o instanceof BasicTa4jCassandreStrategy) {
-                s.setType(BASIC_TA4J_STRATEGY);
+                newStrategy.setType(BASIC_TA4J_STRATEGY);
             }
-            strategyRepository.save(s);
-            strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(s));
+            strategyRepository.save(newStrategy);
+            logger.debug("StrategyConfiguration - strategy saved in database {}", newStrategy);
+            strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(newStrategy));
         });
 
         // Setting services & repositories.
@@ -248,7 +251,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Account flux.
         final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();
-        connectableAccountFlux.subscribe(strategy::accountUpdate);
+        connectableAccountFlux.subscribe(strategy::accountUpdate);          // For strategy.
         connectableAccountFlux.connect();
 
         // Position flux.
@@ -259,7 +262,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         // Order flux.
         final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
         connectableOrderFlux.subscribe(strategy::orderUpdate);              // For strategy.
-        connectableOrderFlux.subscribe(positionService::orderUpdate);       // For strategy.
+        connectableOrderFlux.subscribe(positionService::orderUpdate);       // For position service.
         connectableOrderFlux.connect();
 
         // Trade flux to strategy.

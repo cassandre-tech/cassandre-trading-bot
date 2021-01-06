@@ -72,7 +72,12 @@ public class CurrencyAmount {
         currency = newCurrency;
     }
 
-
-    // TODO Implement equals !
+    @Override
+    public final String toString() {
+        return "CurrencyAmount{"
+                + " value=" + value
+                + ", currency='" + currency + '\''
+                + '}';
+    }
 
 }

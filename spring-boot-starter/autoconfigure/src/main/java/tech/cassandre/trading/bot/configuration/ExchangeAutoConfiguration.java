@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.configuration;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
@@ -166,14 +167,14 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             TradeServiceDryModeImplementation tradeServiceDryMode = null;
             if (!exchangeParameters.getModes().isDry()) {
                 // Normal mode.
-                logger.info("Dry mode is off");
+                logger.info("Dry mode is OFF");
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
                 this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
                 this.tradeService = new TradeServiceXChangeImplementation(tradeRate, xChangeTradeService);
             } else {
                 // Dry mode.
-                logger.info("Dry mode is on");
+                logger.info("Dry mode is ON");
                 this.exchangeService = new ExchangeServiceDryModeImplementation(applicationContext);
                 userServiceDryMode = new UserServiceDryModeImplementation();
                 this.userService = userServiceDryMode;
@@ -195,9 +196,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
             // Prints all the supported currency pairs.
             StringJoiner currencyPairList = new StringJoiner(", ");
-            exchangeService.getAvailableCurrencyPairs()
-                    .forEach(currencyPairDTO -> currencyPairList.add(currencyPairDTO.toString()));
-            logger.info("ExchangeConfiguration - Supported currency pairs : " + currencyPairList);
+            exchangeService.getAvailableCurrencyPairs().forEach(currencyPairDTO -> currencyPairList.add(currencyPairDTO.toString()));
+            logger.info("ExchangeConfiguration - Supported currency pairs : {} ", currencyPairList);
 
             // if in dry mode, we set dependencies.
             if (tradeService instanceof TradeServiceDryModeImplementation) {
@@ -205,17 +205,19 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 tradeServiceDryMode.setDependencies(orderFlux, tradeFlux);
             }
 
+            // Save the exchange account in database.
             Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
             if (exchangeAccount.isEmpty()) {
                 ExchangeAccount ea = new ExchangeAccount();
                 ea.setExchange(exchangeParameters.getName());
                 ea.setAccount(exchangeParameters.getUsername());
                 exchangeAccountRepository.save(ea);
+                logger.debug("ExchangeConfiguration - exchange configuration saved in database {}", ea);
             }
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.
             throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getName(),
-                    "Choose a valid exchange (https://github.com/knowm/XChange) and/or add the dependency to Cassandre");
+                    "Choose a valid exchange (https://github.com/knowm/XChange) and add the dependency to Cassandre");
         } catch (HttpStatusIOException e) {
             if (e.getHttpStatusCode() == UNAUTHORIZED_STATUS_CODE) {
                 // Authorization failure.
@@ -253,36 +255,17 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Return rate value.
+     * Return rate value in ms.
      *
      * @param stringValue string value
      * @return long value (ms)
      */
     private static long getRateValue(final String stringValue) {
-        if (isNumeric(stringValue)) {
+        if (NumberUtils.isCreatable(stringValue)) {
             return Long.parseLong(stringValue);
         } else {
             return Duration.parse(stringValue).toMillis();
         }
-    }
-
-    /**
-     * Returns true if a string is a number.
-     *
-     * @param string string to test
-     * @return true if numeric
-     */
-    private static boolean isNumeric(final String string) {
-        // null or empty
-        if (string == null || string.length() == 0) {
-            return false;
-        }
-        for (char c : string.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
