@@ -100,8 +100,6 @@ public class CurrencyAmountDTO {
         return currency;
     }
 
-
-
     /**
      * Getter for valueProvided.
      *
@@ -110,8 +108,6 @@ public class CurrencyAmountDTO {
     public final boolean isValueProvided() {
         return valueProvided;
     }
-
-
 
     @Override
     public final boolean equals(final Object o) {

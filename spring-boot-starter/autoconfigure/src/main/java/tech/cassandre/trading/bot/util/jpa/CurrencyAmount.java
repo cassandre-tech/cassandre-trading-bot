@@ -1,6 +1,8 @@
 package tech.cassandre.trading.bot.util.jpa;
 
-import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
+import lombok.Data;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -12,6 +14,7 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 /**
  * Currency amount (amount value + currency).
  */
+@Data
 @Embeddable
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class CurrencyAmount {
@@ -23,61 +26,36 @@ public class CurrencyAmount {
     /** Amount currency. */
     String currency;
 
-    public CurrencyAmount() {
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final CurrencyAmount that = (CurrencyAmount) o;
+        return new EqualsBuilder()
+                .append(this.value, that.value)
+                .append(this.currency, that.currency)
+                .isEquals();
     }
 
-    /**
-     * Constructor.
-     *
-     * @param currencyAmountDTO currency amount
-     */
-    public CurrencyAmount(final CurrencyAmountDTO currencyAmountDTO) {
-        this.value = currencyAmountDTO.getValue();
-        this.currency = currencyAmountDTO.getCurrency().toString();
-    }
-
-    /**
-     * Getter value.
-     *
-     * @return value
-     */
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    /**
-     * Setter value.
-     *
-     * @param newValue the value to set
-     */
-    public void setValue(final BigDecimal newValue) {
-        value = newValue;
-    }
-
-    /**
-     * Getter currency.
-     *
-     * @return currency
-     */
-    public String getCurrency() {
-        return currency;
-    }
-
-    /**
-     * Setter currency.
-     *
-     * @param newCurrency the currency to set
-     */
-    public void setCurrency(final String newCurrency) {
-        currency = newCurrency;
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(value)
+                .append(currency)
+                .toHashCode();
     }
 
     @Override
     public final String toString() {
-        return "CurrencyAmount{"
-                + " value=" + value
-                + ", currency='" + currency + '\''
-                + '}';
+        if (value != null) {
+            return value.toString() + " " + currency;
+        } else {
+            return "Not provided";
+        }
     }
 
 }
