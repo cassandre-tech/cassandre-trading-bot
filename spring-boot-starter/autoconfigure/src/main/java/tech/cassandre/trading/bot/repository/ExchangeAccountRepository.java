@@ -15,10 +15,10 @@ public interface ExchangeAccountRepository extends CrudRepository<ExchangeAccoun
     /**
      * Find the exchange account with the exchange name and exchange account.
      *
-     * @param name    exchange name
-     * @param account exchange account
+     * @param exchange exchange name
+     * @param account  exchange account
      * @return exchange account
      */
-    Optional<ExchangeAccount> findByExchangeAndAccount(String name, String account);
+    Optional<ExchangeAccount> findByExchangeAndAccount(String exchange, String account);
 
 }

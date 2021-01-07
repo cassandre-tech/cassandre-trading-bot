@@ -22,7 +22,7 @@ public interface TradeRepository extends CrudRepository<Trade, Long> {
     Optional<Trade> findByTradeId(String tradeId);
 
     /**
-     * Find all orders by timestamp.
+     * Find all trades by timestamp.
      *
      * @return positions
      */
