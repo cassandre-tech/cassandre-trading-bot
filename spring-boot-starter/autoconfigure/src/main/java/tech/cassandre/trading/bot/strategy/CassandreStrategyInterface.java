@@ -24,7 +24,7 @@ import java.util.Set;
 public interface CassandreStrategyInterface {
 
     /**
-     * Set strategyDTO.
+     * Setter strategyDTO.
      *
      * @param newStrategyDTO strategy DTO.
      */

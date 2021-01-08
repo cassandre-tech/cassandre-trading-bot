@@ -18,16 +18,12 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.mapper.AccountMapper;
 import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
 import tech.cassandre.trading.bot.util.mapper.OrderMapper;
 import tech.cassandre.trading.bot.util.mapper.PositionMapper;
-import tech.cassandre.trading.bot.util.mapper.StrategyMapper;
-import tech.cassandre.trading.bot.util.mapper.TickerMapper;
 import tech.cassandre.trading.bot.util.mapper.TradeMapper;
 
 import java.math.BigDecimal;
@@ -41,22 +37,13 @@ import java.util.stream.Collectors;
 import static java.math.BigDecimal.ZERO;
 
 /**
- * Generic Cassandre strategy.
+ * Generic Cassandre strategy implementation.
  */
 @SuppressWarnings("checkstyle:DesignForExtension")
 public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
 
     /** Currency mapper. */
     protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);
-
-    /** Strategy mapper. */
-    protected final StrategyMapper strategyMapper = Mappers.getMapper(StrategyMapper.class);
-
-    /** Account mapper. */
-    protected final AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
-
-    /** Ticker mapper. */
-    protected final TickerMapper tickerMapper = Mappers.getMapper(TickerMapper.class);
 
     /** Order mapper. */
     protected final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
@@ -69,9 +56,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     /** Strategy. */
     private StrategyDTO strategyDTO;
-
-    /** Strategy repository. */
-    private StrategyRepository strategyRepository;
 
     /** Order repository. */
     private OrderRepository orderRepository;
@@ -204,17 +188,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public final Map<CurrencyPairDTO, TickerDTO> getLastTickers() {
         return lastTickers;
-    }
-
-    /**
-     * Return last received ticker for a currency pair.
-     *
-     * @param currencyPair currency pair
-     * @return ticker
-     */
-    public final Optional<TickerDTO> getLastTicker(final CurrencyPairDTO currencyPair) {
-        // TODO Add a test for this method.
-        return Optional.ofNullable(getLastTickers().get(currencyPair));
     }
 
     // =================================================================================================================
