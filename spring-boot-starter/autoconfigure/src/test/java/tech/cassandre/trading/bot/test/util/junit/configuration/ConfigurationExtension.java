@@ -16,7 +16,6 @@ import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Data
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_PASSWORD;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_URL;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_USERNAME;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.PARAMETER_DATABASE_TABLE_PREFIX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_SANDBOX;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_KEY;
@@ -88,9 +87,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
     /** Database datasource password. */
     public static final String PARAMETER_DATABASE_DATASOURCE_PASSWORD_DEFAULT_VALUE = "";
 
-    /** Table prefix. */
-    public static final String PARAMETER_DATABASE_TABLE_PREFIX_DEFAULT_VALUE = "MY_STRATEGY_";
-
     @Override
     public void beforeAll(ExtensionContext context) {
         // Set default values.
@@ -111,7 +107,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.setProperty(PARAMETER_DATABASE_DATASOURCE_URL, PARAMETER_DATABASE_DATASOURCE_URL_DEFAULT_VALUE);                             // jdbc:hsqldb:mem:cassandre-database;shutdown=true
         System.setProperty(PARAMETER_DATABASE_DATASOURCE_USERNAME, PARAMETER_DATABASE_DATASOURCE_USERNAME_DEFAULT_VALUE);                   // sa
         System.setProperty(PARAMETER_DATABASE_DATASOURCE_PASSWORD, PARAMETER_DATABASE_DATASOURCE_PASSWORD_DEFAULT_VALUE);                   // empty
-        System.setProperty(PARAMETER_DATABASE_TABLE_PREFIX, PARAMETER_DATABASE_TABLE_PREFIX_DEFAULT_VALUE);                                 // MY_STRATEGY_
         // Strategies configuration.
         System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE);                                   // false
         System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE);             // false
@@ -155,7 +150,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.clearProperty(PARAMETER_DATABASE_DATASOURCE_URL);
         System.clearProperty(PARAMETER_DATABASE_DATASOURCE_USERNAME);
         System.clearProperty(PARAMETER_DATABASE_DATASOURCE_PASSWORD);
-        System.clearProperty(PARAMETER_DATABASE_TABLE_PREFIX);
         // Strategies configuration.
         System.clearProperty(PARAMETER_INVALID_STRATEGY_ENABLED);
         System.clearProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED);

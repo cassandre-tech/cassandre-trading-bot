@@ -1,5 +1,8 @@
 package tech.cassandre.trading.bot.util.parameters;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 import tech.cassandre.trading.bot.util.validator.Rate;
@@ -12,6 +15,9 @@ import javax.validation.constraints.NotNull;
  * Exchange parameters from application.properties.
  */
 @Validated
+@Getter
+@Setter
+@ToString
 @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange")
 public class ExchangeParameters {
 
@@ -72,6 +78,9 @@ public class ExchangeParameters {
 
     /** Exchange API rate calls. */
     @Validated
+    @Getter
+    @Setter
+    @ToString
     @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.modes")
     public class Modes {
 
@@ -89,54 +98,13 @@ public class ExchangeParameters {
         @NotNull(message = "Dry parameter required, set it to true to use the dry mode")
         private Boolean dry;
 
-        /**
-         * Getter for sandbox.
-         *
-         * @return sandbox
-         */
-        public Boolean isSandbox() {
-            return sandbox;
-        }
-
-        /**
-         * Setter for sandbox.
-         *
-         * @param newSandbox the sandbox to set
-         */
-        public void setSandbox(final Boolean newSandbox) {
-            sandbox = newSandbox;
-        }
-
-        /**
-         * Getter dry.
-         *
-         * @return dry
-         */
-        public Boolean isDry() {
-            return dry;
-        }
-
-        /**
-         * Setter dry.
-         *
-         * @param newDry the dry to set
-         */
-        public void setDry(final Boolean newDry) {
-            dry = newDry;
-        }
-
-        @Override
-        public final String toString() {
-            return "Modes{"
-                    + " sandbox=" + sandbox
-                    + ", dry=" + dry
-                    + '}';
-        }
-
     }
 
     /** Exchange API rate calls. */
     @Validated
+    @Getter
+    @Setter
+    @ToString
     @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.rates")
     public static class Rates {
 
@@ -164,244 +132,6 @@ public class ExchangeParameters {
         @Rate(message = "Invalid trade rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String trade;
 
-        /**
-         * Getter for account.
-         *
-         * @return account
-         */
-        public String getAccount() {
-            return account;
-        }
-
-        /**
-         * Setter for account.
-         *
-         * @param newAccount the account to set
-         */
-        public void setAccount(final String newAccount) {
-            account = newAccount;
-        }
-
-        /**
-         * Getter for ticker.
-         *
-         * @return ticker
-         */
-        public String getTicker() {
-            return ticker;
-        }
-
-        /**
-         * Setter for ticker.
-         *
-         * @param newTicker the ticker to set
-         */
-        public void setTicker(final String newTicker) {
-            ticker = newTicker;
-        }
-
-        /**
-         * Getter for order.
-         *
-         * @return order
-         */
-        public String getTrade() {
-            return trade;
-        }
-
-        /**
-         * Setter for order.
-         *
-         * @param newOrder the order
-         */
-        public void setTrade(final String newOrder) {
-            trade = newOrder;
-        }
-
-        @Override
-        public final String toString() {
-            return "Rate{"
-                    + " account=" + getAccount()
-                    + ", ticker=" + getTicker()
-                    + ", order=" + getTrade()
-                    + '}';
-        }
-
-    }
-
-    /**
-     * Getter for name.
-     *
-     * @return name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Setter for name.
-     *
-     * @param newName the name to set
-     */
-    public void setName(final String newName) {
-        name = newName;
-    }
-
-    /**
-     * Getter modes.
-     *
-     * @return mode
-     */
-    public Modes getModes() {
-        return modes;
-    }
-
-    /**
-     * Setter modes.
-     *
-     * @param newModes the modes to set
-     */
-    public void setModes(final Modes newModes) {
-        modes = newModes;
-    }
-
-    /**
-     * Getter for username.
-     *
-     * @return username
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Setter for username.
-     *
-     * @param newUsername the username to set
-     */
-    public void setUsername(final String newUsername) {
-        username = newUsername;
-    }
-
-    /**
-     * Getter for passphrase.
-     *
-     * @return passphrase
-     */
-    public String getPassphrase() {
-        return passphrase;
-    }
-
-    /**
-     * Setter for passphrase.
-     *
-     * @param newPassphrase the passphrase to set
-     */
-    public void setPassphrase(final String newPassphrase) {
-        passphrase = newPassphrase;
-    }
-
-    /**
-     * Getter for key.
-     *
-     * @return key
-     */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * Setter for key.
-     *
-     * @param newKey the key to set
-     */
-    public void setKey(final String newKey) {
-        key = newKey;
-    }
-
-    /**
-     * Getter for secret.
-     *
-     * @return secret
-     */
-    public String getSecret() {
-        return secret;
-    }
-
-    /**
-     * Setter for secret.
-     *
-     * @param newSecret the secret to set
-     */
-    public void setSecret(final String newSecret) {
-        secret = newSecret;
-    }
-
-    /**
-     * Getter proxyHost.
-     *
-     * @return proxyHost
-     */
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * Setter proxyHost.
-     *
-     * @param newProxyHost the proxyHost to set
-     */
-    public void setProxyHost(final String newProxyHost) {
-        proxyHost = newProxyHost;
-    }
-
-    /**
-     * Getter proxyPort.
-     *
-     * @return proxyPort
-     */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * Setter proxyPort.
-     *
-     * @param newProxyPort the proxyPort to set
-     */
-    public void setProxyPort(final Integer newProxyPort) {
-        proxyPort = newProxyPort;
-    }
-
-    /**
-     * Getter for rate.
-     *
-     * @return rate
-     */
-    public Rates getRates() {
-        return rates;
-    }
-
-    /**
-     * Setter for rate.
-     *
-     * @param newRates the rate to set
-     */
-    public void setRates(final Rates newRates) {
-        rates = newRates;
-    }
-
-    @Override
-    public final String toString() {
-        return "ExchangeParameters{"
-                + " name='" + getName() + '\''
-                + ", username='" + getUsername() + '\''
-                + ", passphrase='" + getPassphrase() + '\''
-                + ", key='" + getKey() + '\''
-                + ", secret='" + getSecret() + '\''
-                + ", modes=" + getModes()
-                + ", rates=" + getRates()
-                + '}';
     }
 
 }

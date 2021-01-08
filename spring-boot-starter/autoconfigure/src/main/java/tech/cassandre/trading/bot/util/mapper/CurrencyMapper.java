@@ -19,63 +19,7 @@ public interface CurrencyMapper {
     // =================================================================================================================
     // XChange to DTO.
 
-    default CurrencyPairDTO mapToCurrencyPairDTO(Instrument source) {
-        final CurrencyPair cp = (CurrencyPair) source;
-        CurrencyDTO base = new CurrencyDTO(cp.base.getCurrencyCode());
-        CurrencyDTO quote = new CurrencyDTO(cp.counter.getCurrencyCode());
-        return CurrencyPairDTO.builder().baseCurrency(base).quoteCurrency(quote).build();
-    }
-
-    /**
-     * Map Currency to CurrencyDTO.
-     *
-     * @param source Currency
-     * @return CurrencyDTO
-     */
-    @Mapping(source = "currencyCode", target = "code")
-    CurrencyDTO mapToCurrencyDTO(Currency source);
-
-    /**
-     * Map CurrencyPair to CurrencyPairDTO.
-     *
-     * @param source CurrencyPair
-     * @return CurrencyPairDTO
-     */
-    @Mapping(source = "base", target = "baseCurrency")
-    @Mapping(source = "counter", target = "quoteCurrency")
-    CurrencyPairDTO mapToCurrencyPairDTO(CurrencyPair source);
-
-    @Mapping(source = "value", target = "value")
-    @Mapping(source = "currency", target = "currency")
-    CurrencyAmountDTO mapToCurrencyAmountDTO(CurrencyAmount source);
-
-    /***
-     * Map String to CurrencyPairDTO.
-     *
-     * @param source string
-     * @return CurrencyPairDTO
-     */
-    default CurrencyPairDTO mapToCurrencyPairDTO(String source) {
-        return new CurrencyPairDTO(source);
-    }
-
-    /**
-     * Map CurrencyPairDTO to String.
-     *
-     * @param source CurrencyPairDTO
-     * @return String
-     */
-    default String mapToCurrencyPair(CurrencyPairDTO source) {
-        return source.toString();
-    }
-
-    /**
-     * Map CurrencyDTO to String.
-     *
-     * @param source CurrencyDTO
-     * @return String
-     */
-    default String mapToCurrency(CurrencyDTO source) {
+    default String mapToCurrencyString(CurrencyDTO source) {
         if (source != null) {
             return source.toString();
         } else {
@@ -85,6 +29,39 @@ public interface CurrencyMapper {
 
     default CurrencyDTO mapToCurrencyDTO(String value) {
         return new CurrencyDTO(value);
+    }
+
+    @Mapping(source = "currencyCode", target = "code")
+    CurrencyDTO mapToCurrencyDTO(Currency source);
+
+    default String mapToCurrencyPairString(CurrencyPairDTO source) {
+        return source.toString();
+    }
+
+    default CurrencyPairDTO mapToCurrencyPairDTO(Instrument source) {
+        final CurrencyPair cp = (CurrencyPair) source;
+        CurrencyDTO base = new CurrencyDTO(cp.base.getCurrencyCode());
+        CurrencyDTO quote = new CurrencyDTO(cp.counter.getCurrencyCode());
+        return CurrencyPairDTO.builder().baseCurrency(base).quoteCurrency(quote).build();
+    }
+
+    default CurrencyPairDTO mapToCurrencyPairDTO(String source) {
+        return new CurrencyPairDTO(source);
+    }
+
+    @Mapping(source = "base", target = "baseCurrency")
+    @Mapping(source = "counter", target = "quoteCurrency")
+    CurrencyPairDTO mapToCurrencyPairDTO(CurrencyPair source);
+
+    @Mapping(source = "value", target = "value")
+    @Mapping(source = "currency", target = "currency")
+    CurrencyAmountDTO mapToCurrencyAmountDTO(CurrencyAmount source);
+
+    // =================================================================================================================
+    // XChange to DTO.
+
+    default CurrencyPair mapToCurrencyPair(CurrencyPairDTO source) {
+        return new CurrencyPair(source.getBaseCurrency().getCode(), source.getQuoteCurrency().getCode());
     }
 
 }

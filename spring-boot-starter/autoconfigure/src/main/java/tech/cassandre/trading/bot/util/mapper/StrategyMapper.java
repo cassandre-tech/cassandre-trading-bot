@@ -14,12 +14,6 @@ public interface StrategyMapper {
     // =================================================================================================================
     // DTO to Domain.
 
-    /**
-     * Map StrategyDTO to Strategy.
-     *
-     * @param source StrategyDTO
-     * @return Strategy
-     */
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
     @Mapping(target = "exchangeAccount", ignore = true)
@@ -28,12 +22,6 @@ public interface StrategyMapper {
     // =================================================================================================================
     // Domain to DTO.
 
-    /**
-     * Map Strategy to StrategyDTO.
-     *
-     * @param source Strategy
-     * @return StrategyDTO
-     */
     StrategyDTO mapToStrategyDTO(Strategy source);
 
 }

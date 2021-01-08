@@ -50,8 +50,16 @@ public abstract class BaseExternalFlux<T> extends Base {
      * Method executed when values must be updated (usually called by the Scheduler).
      */
     public final void update() {
-        final Set<T> newValues = getNewValues();
-        newValues.forEach(this::emitValue);
+        getNewValues().forEach(this::emitValue);
+    }
+
+    /**
+     * Implements this method to backup each update.
+     *
+     * @param newValue new value
+     */
+    public void saveValue(final T newValue) {
+
     }
 
     /**
@@ -63,15 +71,6 @@ public abstract class BaseExternalFlux<T> extends Base {
         logger.debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
         saveValue(newValue);
         fluxSink.next(newValue);
-    }
-
-    /**
-     * Implements this method to backup each update.
-     *
-     * @param newValue new value
-     */
-    public void saveValue(final T newValue) {
-
     }
 
     /**

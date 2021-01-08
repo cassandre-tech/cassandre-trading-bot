@@ -137,7 +137,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             ExchangeSpecification exchangeSpecification = new ExchangeSpecification(exchangeClass);
 
             // Exchange configuration.
-            exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX_PARAMETER, exchangeParameters.getModes().isSandbox());
+            exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX_PARAMETER, exchangeParameters.getModes().getSandbox());
             exchangeSpecification.setUserName(exchangeParameters.getUsername());
             exchangeSpecification.setExchangeSpecificParametersItem(PASSPHRASE_PARAMETER, exchangeParameters.getPassphrase());
             exchangeSpecification.setApiKey(exchangeParameters.getKey());
@@ -165,7 +165,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             // Creates Cassandre services.
             UserServiceDryModeImplementation userServiceDryMode;
             TradeServiceDryModeImplementation tradeServiceDryMode = null;
-            if (!exchangeParameters.getModes().isDry()) {
+            if (!exchangeParameters.getModes().getDry()) {
                 // Normal mode.
                 logger.info("Dry mode is OFF");
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.service.xchange;
 
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -37,8 +36,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             getBucket().asScheduler().consume(1);
 
             logger.debug("MarketService - Getting ticker for {}", currencyPair);
-            CurrencyPair cp = new CurrencyPair(currencyPair.getBaseCurrency().getCode(), currencyPair.getQuoteCurrency().getCode());
-            TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(cp));
+            TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)));
             logger.debug("MarketService - Retrieved value is : {}", t);
             return Optional.ofNullable(t);
         } catch (IOException e) {

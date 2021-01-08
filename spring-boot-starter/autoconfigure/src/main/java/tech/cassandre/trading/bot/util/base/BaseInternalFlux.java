@@ -38,6 +38,15 @@ public abstract class BaseInternalFlux<T> extends Base {
     }
 
     /**
+     * Implements this method to backup each update.
+     *
+     * @param newValue new value
+     */
+    public void saveValue(final T newValue) {
+
+    }
+
+    /**
      * Emit a new value.
      *
      * @param newValue new value
@@ -48,15 +57,6 @@ public abstract class BaseInternalFlux<T> extends Base {
             saveValue(newValue);
             fluxSink.next(newValue);
         }
-    }
-
-    /**
-     * Implements this method to backup each update.
-     *
-     * @param newValue new value
-     */
-    public void saveValue(final T newValue) {
-
     }
 
     /**

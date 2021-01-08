@@ -3,8 +3,6 @@ package tech.cassandre.trading.bot.util.base;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
-import org.knowm.xchange.currency.CurrencyPair;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.time.Duration;
 
@@ -41,16 +39,6 @@ public abstract class BaseService extends Base {
      */
     public final Bucket getBucket() {
         return bucket;
-    }
-
-    /**
-     * Returns a XChange currency pair from a currency pair DTO.
-     *
-     * @param currencyPairDTO currency pair DTO
-     * @return XChange currency pair
-     */
-    protected CurrencyPair getCurrencyPair(final CurrencyPairDTO currencyPairDTO) {
-        return new CurrencyPair(currencyPairDTO.getBaseCurrency().getCode(), currencyPairDTO.getQuoteCurrency().getCode());
     }
 
 }

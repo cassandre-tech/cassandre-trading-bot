@@ -22,39 +22,15 @@ public interface AccountMapper {
     // =================================================================================================================
     // XChange to DTO.
 
-    /**
-     * Map AccountInfo to UserDTO.
-     *
-     * @param source AccountInfo
-     * @return UserDTO
-     */
     @Mapping(source = "username", target = "id")
     @Mapping(source = "wallets", target = "accounts")
     UserDTO mapToUserDTO(AccountInfo source);
 
-    /**
-     * Map Wallet to AccountDTO.
-     *
-     * @param source Wallet
-     * @return AccountDTO
-     */
     @Mapping(target = "feature", ignore = true)
     AccountDTO mapToWalletDTO(Wallet source);
 
-    /**
-     * Map Balance to BalanceDTO.
-     *
-     * @param source Balance
-     * @return BalanceDTO
-     */
-    BalanceDTO mapToBalanceDTO(Balance source);
-
-    /**
-     * Map balance.
-     *
-     * @param source map of Currency and Balance
-     * @return Map of CurrencyDTO and BalanceDTO
-     */
     Map<CurrencyDTO, BalanceDTO> mapToCurrencyDTOAndBalanceDTO(Map<Currency, Balance> source);
+
+    BalanceDTO mapToBalanceDTO(Balance source);
 
 }

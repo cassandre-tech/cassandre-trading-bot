@@ -18,12 +18,6 @@ public interface OrderMapper {
     // =================================================================================================================
     // XChange to DTO.
 
-    /**
-     * Map Order to OrderDTO.
-     *
-     * @param source LimitOrder
-     * @return OrderDTO
-     */
     @Mapping(source = "id", target = "orderId")
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapLimitOrderToOrderDTOAmount")
     @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapLimitOrderToOrderDTOCumulativeAmount")
@@ -90,12 +84,6 @@ public interface OrderMapper {
     // =================================================================================================================
     // DTO to domain.
 
-    /**
-     * Map OrderDTO to Order.
-     *
-     * @param source source
-     * @return Order
-     */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)

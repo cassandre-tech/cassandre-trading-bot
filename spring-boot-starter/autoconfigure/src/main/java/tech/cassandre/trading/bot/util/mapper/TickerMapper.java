@@ -14,12 +14,6 @@ public interface TickerMapper {
     // =================================================================================================================
     // XChange to DTO.
 
-    /**
-     * Map Ticker to TickerDTO.
-     *
-     * @param source Ticker
-     * @return TickerDTO
-     */
     @Mapping(source = "instrument", target = "currencyPair")
     TickerDTO mapToTickerDTO(Ticker source);
 
