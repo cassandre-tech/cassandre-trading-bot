@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
@@ -60,6 +61,32 @@ public class TickerDTO {
 
     /** Information timestamp. */
     ZonedDateTime timestamp;
+
+    /**
+     * Returns base currency.
+     *
+     * @return base currency
+     */
+    public CurrencyDTO getBaseCurrency() {
+        if (currencyPair != null) {
+            return currencyPair.getBaseCurrency();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns quote currency.
+     *
+     * @return quote currency
+     */
+    public CurrencyDTO getQuoteCurrency() {
+        if (currencyPair != null) {
+            return currencyPair.getQuoteCurrency();
+        } else {
+            return null;
+        }
+    }
 
     @Override
     public final boolean equals(final Object o) {

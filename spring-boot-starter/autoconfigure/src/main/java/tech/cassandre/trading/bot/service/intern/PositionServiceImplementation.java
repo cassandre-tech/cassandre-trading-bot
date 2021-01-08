@@ -28,21 +28,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 
 /**
  * Position service implementation.
  */
 public class PositionServiceImplementation extends BaseService implements PositionService {
 
-    /** Trade service. */
-    private final TradeService tradeService;
-
     /** Position repository. */
     private final PositionRepository positionRepository;
+
+    /** Trade service. */
+    private final TradeService tradeService;
 
     /** Position flux. */
     private final PositionFlux positionFlux;
@@ -50,16 +50,49 @@ public class PositionServiceImplementation extends BaseService implements Positi
     /**
      * Constructor.
      *
-     * @param newTradeService       trade service
      * @param newPositionRepository position repository
+     * @param newTradeService       trade service
      * @param newPositionFlux       position flux
      */
-    public PositionServiceImplementation(final TradeService newTradeService,
-                                         final PositionRepository newPositionRepository,
+    public PositionServiceImplementation(final PositionRepository newPositionRepository,
+                                         final TradeService newTradeService,
                                          final PositionFlux newPositionFlux) {
-        this.tradeService = newTradeService;
         this.positionRepository = newPositionRepository;
+        this.tradeService = newTradeService;
         this.positionFlux = newPositionFlux;
+    }
+
+    @Override
+    public final PositionCreationResultDTO createLongPosition(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
+        // Trying to create an order.
+        logger.debug("PositionService - Creating a position for {} on {} with the rules : {}", amount, currencyPair, rules);
+        // =============================================================================================================
+        // Creates the order.
+        final OrderCreationResultDTO orderCreationResult = tradeService.createBuyMarketOrder(strategy, currencyPair, amount);
+
+        // If it works, creates the position.
+        if (orderCreationResult.isSuccessful()) {
+            // =========================================================================================================
+            // Creates the position in database.
+            Position position = new Position();
+            position.setStrategy(strategyMapper.mapToStrategy(strategy));
+            position = positionRepository.save(position);
+
+            // =========================================================================================================
+            // Creates the position dto.
+            PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, orderCreationResult.getOrder(), rules);
+            positionRepository.save(positionMapper.mapToPosition(p));
+            logger.debug("PositionService - Position {} opened with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
+
+            // =========================================================================================================
+            // Creates the result.
+            positionFlux.emitValue(p);
+            return new PositionCreationResultDTO(p);
+        } else {
+            logger.error("PositionService - Position creation failure : {}", orderCreationResult.getErrorMessage());
+            // If it doesn't work, returns the error.
+            return new PositionCreationResultDTO(orderCreationResult.getErrorMessage(), orderCreationResult.getException());
+        }
     }
 
     @Override
@@ -79,74 +112,14 @@ public class PositionServiceImplementation extends BaseService implements Positi
     }
 
     @Override
-    public final PositionCreationResultDTO createLongPosition(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
-        // Trying to create an order.
-        logger.debug("PositionService - Creating a position for {} on {} with the rules : {}", amount, currencyPair, rules);
-        final OrderCreationResultDTO orderCreationResult = tradeService.createBuyMarketOrder(strategy, currencyPair, amount);
-        // If it works, create the position.
-        if (orderCreationResult.isSuccessful()) {
-            // =========================================================================================================
-            // Creates the position in database.
-            // TODO Don't build all in here as we will save the positionDTO just after.
-            Position position = new Position();
-            position.setStrategy(strategyMapper.mapToStrategy(strategy));
-            position.setStatus(OPENING);
-
-            //            position.setAmount(new CurrencyAmount(amount, currencyPair.getBaseCurrency()));
-            position.setCurrencyPair(currencyPair.toString());
-            if (rules.isStopGainPercentageSet()) {
-                position.setStopGainPercentageRule(rules.getStopGainPercentage());
-            }
-            if (rules.isStopLossPercentageSet()) {
-                position.setStopLossPercentageRule(rules.getStopLossPercentage());
-            }
-            position = positionRepository.save(position);
-            // =========================================================================================================
-
-            // =========================================================================================================
-            // Creates the position dto.
-            PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, orderCreationResult.getOrder(), rules);
-            positionRepository.save(positionMapper.mapToPosition(p));
-            logger.debug("PositionService - Position {} opened with order {}", p.getId(), orderCreationResult.getOrder().getOrderId());
-
-            // =========================================================================================================
-            // Creates the result.
-            positionFlux.emitValue(p);
-            return new PositionCreationResultDTO(p);
-        } else {
-            logger.error("PositionService - Position creation failure : {}", orderCreationResult.getErrorMessage());
-            // If it doesn't work, returns the error.
-            return new PositionCreationResultDTO(orderCreationResult.getErrorMessage(), orderCreationResult.getException());
-        }
-    }
-
-    @Override
-    public final void tickerUpdate(final TickerDTO ticker) {
-        // With the ticker received, we check for every position, if it should be closed.
-        positionRepository.findByStatus(OPENED)
-                .stream()
-                .map(positionMapper::mapToPositionDTO)
-                .filter(p -> p.getCurrencyPair() != null)
-                .filter(p -> p.getCurrencyPair().equals(ticker.getCurrencyPair()))
-                .forEach(p -> {
-                    if (p.shouldBeClosed(ticker)) {
-                        final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
-                        if (orderCreationResult.isSuccessful()) {
-                            p.closePositionWithOrderId(orderCreationResult.getOrder().getOrderId());
-                            logger.debug("PositionService - Position {} closed with order {}", p.getId(), orderCreationResult.getOrder().getOrderId());
-                        }
-                    }
-                    positionFlux.emitValue(p);
-                });
-    }
-
-    @Override
     public final void orderUpdate(final OrderDTO order) {
+        logger.debug("PositionService - Updating position with order {}", order);
         positionRepository.findByStatusNot(CLOSED)
                 .stream()
                 .map(positionMapper::mapToPositionDTO)
                 .forEach(p -> {
                     if (p.orderUpdate(order)) {
+                        logger.debug("PositionService - Position {} updated with order {}", p.getPositionId(), order);
                         positionFlux.emitValue(p);
                     }
                 });
@@ -154,13 +127,37 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final void tradeUpdate(final TradeDTO trade) {
+        logger.debug("PositionService - Updating position with trade {}", trade);
         positionRepository.findByStatusNot(CLOSED)
                 .stream()
                 .map(positionMapper::mapToPositionDTO)
                 .forEach(p -> {
                     if (p.tradeUpdate(trade)) {
+                        logger.debug("PositionService - Position {} updated with trade {}", p.getPositionId(), trade);
                         positionFlux.emitValue(p);
                     }
+                });
+    }
+
+    @Override
+    public final void tickerUpdate(final TickerDTO ticker) {
+        // With the ticker received, we check for every position, if it should be closed.
+        logger.debug("PositionService - Updating position with ticker {}", ticker);
+        positionRepository.findByStatus(OPENED)
+                .stream()
+                .map(positionMapper::mapToPositionDTO)
+                .filter(p -> p.tickerUpdate(ticker))
+                .peek(p -> logger.debug("PositionService - Position {} updated with ticker {}", p.getPositionId(), ticker))
+                .forEach(p -> {
+                    // We close the position if it triggers the rules.
+                    if (p.shouldBeClosed()) {
+                        final OrderCreationResultDTO orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
+                        if (orderCreationResult.isSuccessful()) {
+                            p.closePositionWithOrderId(orderCreationResult.getOrder().getOrderId());
+                            logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
+                        }
+                    }
+                    positionFlux.emitValue(p);
                 });
     }
 
@@ -172,30 +169,31 @@ public class PositionServiceImplementation extends BaseService implements Positi
         HashMap<CurrencyDTO, GainDTO> gains = new LinkedHashMap<>();
 
         // We calculate, by currency, the amount bought & sold.
-        getPositions()      // TODO Replace with repository.
+        positionRepository.findByStatus(CLOSED)
                 .stream()
                 .filter(p -> CLOSED.equals(p.getStatus()))
+                .map(positionMapper::mapToPositionDTO)
                 .forEach(p -> {
                     // We retrieve the currency and initiate the maps if they are empty
                     CurrencyDTO currency = p.getCurrencyPair().getQuoteCurrency();
                     gains.putIfAbsent(currency, null);
-                    totalBought.putIfAbsent(currency, BigDecimal.ZERO);
-                    totalSold.putIfAbsent(currency, BigDecimal.ZERO);
-                    totalFees.putIfAbsent(currency, BigDecimal.ZERO);
+                    totalBought.putIfAbsent(currency, ZERO);
+                    totalSold.putIfAbsent(currency, ZERO);
+                    totalFees.putIfAbsent(currency, ZERO);
 
-                    // We calculate the amounts bought and amount sold..
-                    final BigDecimal bought = p.getOpeningOrder().getTrades()
+                    // We calculate the amounts bought and amount sold.
+                    totalBought.put(currency, p.getOpeningOrder().getTrades()
                             .stream()
                             .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
-                            .reduce(totalBought.get(currency), BigDecimal::add);
-                    totalBought.put(currency, bought);
-                    final BigDecimal sold = p.getClosingOrder().getTrades()
+                            .reduce(totalBought.get(currency), BigDecimal::add));
+                    totalSold.put(currency, p.getClosingOrder().getTrades()
                             .stream()
                             .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
-                            .reduce(totalSold.get(currency), BigDecimal::add);
-                    totalSold.put(currency, sold);
+                            .reduce(totalSold.get(currency), BigDecimal::add));
 
-                    final BigDecimal fees = Stream.concat(p.getOpeningOrder().getTrades().stream(), p.getClosingOrder().getTrades().stream())
+                    // And now the feeds.
+                    final BigDecimal fees = Stream.concat(p.getOpeningOrder().getTrades().stream(),
+                            p.getClosingOrder().getTrades().stream())
                             .map(t -> t.getFee().getValue())
                             .reduce(totalFees.get(currency), BigDecimal::add);
                     totalFees.put(currency, fees);

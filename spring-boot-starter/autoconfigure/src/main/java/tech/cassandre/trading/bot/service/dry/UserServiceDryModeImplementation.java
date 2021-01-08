@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.Scanner;
 
 /**
- * User service in dry mode.
+ * User service (dry mode implementation).
  */
 public class UserServiceDryModeImplementation extends BaseService implements UserService {
 
@@ -34,10 +34,10 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
     private static final String USER_FILE_SUFFIX = ".*sv";
 
     /** User ID. */
-    public static final String USER_ID = "user";
+    private static final String USER_ID = "user";
 
     /** Trade account ID. */
-    public static final String TRADE_ACCOUNT_ID = "trade";
+    private static final String TRADE_ACCOUNT_ID = "trade";
 
     /** Simulated user information. */
     private UserDTO user;
@@ -91,13 +91,18 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 // Creating account.
                 accounts.put(accountName,
                         AccountDTO.builder()
-                        .id(accountName)
-                        .name(accountName)
-                        .balances(balances)
-                        .build());
+                                .id(accountName)
+                                .name(accountName)
+                                .balances(balances)
+                                .build());
             }
         });
-        user = UserDTO.builder().id(USER_ID).accounts(accounts).build();
+
+        // Creates the user.
+        user = UserDTO.builder()
+                .id(USER_ID)
+                .accounts(accounts)
+                .build();
     }
 
     /**
@@ -115,23 +120,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
     }
 
     /**
-     * Returns the list of files to import.
-     *
-     * @return files to import.
-     */
-    public List<Resource> getFilesToLoad() {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        try {
-            final Resource[] resources = resolver.getResources("classpath*:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
-            return Arrays.asList(resources);
-        } catch (IOException e) {
-            logger.error("TickerFluxMock encountered an error : " + e.getMessage());
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Update balance of trade account.
+     * Update balance of trade account (method call by trade service).
      *
      * @param currency currency
      * @param amount   amount
@@ -172,11 +161,31 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                         .build();
                 accounts.put(account.getId(), account);
             });
+
             // Change the user value and the account in the strategy.
             strategy.getAccounts().clear();
             strategy.getAccounts().putAll(accounts);
-            this.user = UserDTO.builder().id(USER_ID).accounts(accounts).build();
+            user = UserDTO.builder()
+                    .id(USER_ID)
+                    .accounts(accounts)
+                    .build();
         }
+    }
+
+    /**
+     * Returns the list of files to import.
+     *
+     * @return files to import.
+     */
+    private List<Resource> getFilesToLoad() {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        try {
+            final Resource[] resources = resolver.getResources("classpath*:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
+            return Arrays.asList(resources);
+        } catch (IOException e) {
+            logger.error("TickerFluxMock encountered an error : " + e.getMessage());
+        }
+        return Collections.emptyList();
     }
 
 }

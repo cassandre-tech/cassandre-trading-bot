@@ -6,7 +6,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import java.util.Optional;
 
 /**
- * Service giving information about market price.
+ * Service getting information about market price.
  */
 public interface MarketService {
 

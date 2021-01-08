@@ -9,7 +9,6 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
-import tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
@@ -78,7 +77,7 @@ public class PositionServiceTestMock extends BaseTest {
     @Bean
     @Primary
     public PositionService positionService() {
-        return new PositionServiceImplementation(tradeService(), positionRepository, positionFlux());
+        return new PositionServiceImplementation(positionRepository, tradeService(), positionFlux());
     }
 
     @SuppressWarnings("unchecked")

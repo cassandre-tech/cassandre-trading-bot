@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Exchange service in dry mode.
+ * Exchange service (dry mode implementation).
  */
 public class ExchangeServiceDryModeImplementation implements ExchangeService {
 
-    /** Strategy. */
-    private final CassandreStrategyInterface strategy;
+    /** Currency pairs retrieved from the strategy. */
+    private final Set<CurrencyPairDTO> currencyPairs;
 
     /**
      * Constructor.
@@ -25,12 +25,12 @@ public class ExchangeServiceDryModeImplementation implements ExchangeService {
     public ExchangeServiceDryModeImplementation(final ApplicationContext applicationContext) {
         final Map<String, Object> strategyBeans = applicationContext.getBeansWithAnnotation(CassandreStrategy.class);
         Object o = strategyBeans.values().iterator().next();
-        strategy = (CassandreStrategyInterface) o;
+        currencyPairs = ((CassandreStrategyInterface) o).getRequestedCurrencyPairs();
     }
 
     @Override
     public final Set<CurrencyPairDTO> getAvailableCurrencyPairs() {
-        return strategy.getRequestedCurrencyPairs();
+        return currencyPairs;
     }
 
 }

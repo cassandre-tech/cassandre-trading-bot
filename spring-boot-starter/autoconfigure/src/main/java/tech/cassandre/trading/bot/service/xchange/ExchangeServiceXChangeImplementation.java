@@ -1,13 +1,13 @@
 package tech.cassandre.trading.bot.service.xchange;
 
 import org.knowm.xchange.Exchange;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.util.base.BaseService;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Exchange service - XChange implementation.
@@ -29,17 +29,13 @@ public class ExchangeServiceXChangeImplementation extends BaseService implements
     @Override
     public final Set<CurrencyPairDTO> getAvailableCurrencyPairs() {
         logger.debug("ExchangeService - Retrieving available currency pairs");
-        Set<CurrencyPairDTO> availableCurrencyPairs = new LinkedHashSet<>();
-        exchange.getExchangeMetaData()
+        return exchange.getExchangeMetaData()
                 .getCurrencyPairs()
-                .forEach((currencyPair, currencyPairMetaData) -> {
-                    CurrencyDTO base = currencyMapper.mapToCurrencyDTO(currencyPair.base);
-                    CurrencyDTO counter = currencyMapper.mapToCurrencyDTO(currencyPair.counter);
-                    CurrencyPairDTO cp = new CurrencyPairDTO(base, counter);
-                    availableCurrencyPairs.add(cp);
-                    logger.debug("ExchangeService - Adding currency pair {} ", cp);
-                });
-        return availableCurrencyPairs;
+                .keySet()
+                .stream()
+                .peek(cp -> logger.debug("ExchangeService - Adding currency pair {} ", cp))
+                .map(currencyMapper::mapToCurrencyPairDTO)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

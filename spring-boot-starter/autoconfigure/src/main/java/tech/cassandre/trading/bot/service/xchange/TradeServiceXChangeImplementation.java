@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
 /**
  * Trade service - XChange implementation.
@@ -130,22 +132,22 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     public final OrderCreationResultDTO createBuyMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
-        return createMarketOrder(OrderTypeDTO.BID, currencyPair, amount);
+        return createMarketOrder(BID, currencyPair, amount);
     }
 
     @Override
     public final OrderCreationResultDTO createSellMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
-        return createMarketOrder(OrderTypeDTO.ASK, currencyPair, amount);
+        return createMarketOrder(ASK, currencyPair, amount);
     }
 
     @Override
     public final OrderCreationResultDTO createBuyLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
-        return createLimitOrder(OrderTypeDTO.BID, currencyPair, amount, limitPrice);
+        return createLimitOrder(BID, currencyPair, amount, limitPrice);
     }
 
     @Override
     public final OrderCreationResultDTO createSellLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
-        return createLimitOrder(OrderTypeDTO.ASK, currencyPair, amount, limitPrice);
+        return createLimitOrder(ASK, currencyPair, amount, limitPrice);
     }
 
     @Override

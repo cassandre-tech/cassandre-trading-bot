@@ -66,7 +66,7 @@ public class PositionFluxTestMock extends BaseTest {
     @Bean
     @Primary
     public PositionService positionService() {
-        return new PositionServiceImplementation(tradeService(), positionRepository, positionFlux());
+        return new PositionServiceImplementation(positionRepository, tradeService(), positionFlux());
     }
 
     @Bean

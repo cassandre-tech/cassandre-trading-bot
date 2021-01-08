@@ -49,6 +49,34 @@ public class GainDTO {
         }
     }
 
+    /**
+     * Returns true if the current gain is inferior to the gain passed as a parameter.
+     *
+     * @param other other gain
+     * @return true if this gain is inferior to the gain passed as a parameter
+     */
+    public boolean isInferiorTo(final GainDTO other) {
+        if (other != null) {
+            return getPercentage() < other.getPercentage();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the current gain is superior to the gain passed as a parameter.
+     *
+     * @param other other gain
+     * @return true if this gain is superior to the gain passed as a parameter
+     */
+    public boolean isSuperiorTo(final GainDTO other) {
+        if (other != null) {
+            return getPercentage() > other.getPercentage();
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public final boolean equals(final Object o) {
         if (this == o) {

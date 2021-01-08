@@ -209,7 +209,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // =============================================================================================================
         // Setting up position service.
-        this.positionService = new PositionServiceImplementation(tradeService, positionRepository, positionFlux);
+        this.positionService = new PositionServiceImplementation(positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
         // Setting up strategy.

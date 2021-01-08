@@ -22,21 +22,6 @@ import java.util.Set;
 public interface PositionService {
 
     /**
-     * Get positions.
-     *
-     * @return position list
-     */
-    Set<PositionDTO> getPositions();
-
-    /**
-     * Get position by id.
-     *
-     * @param id id
-     * @return position
-     */
-    Optional<PositionDTO> getPositionById(long id);
-
-    /**
      * Creates a long position with its associated rules.
      *
      * @param strategy     strategy
@@ -51,11 +36,19 @@ public interface PositionService {
                                                  PositionRulesDTO rules);
 
     /**
-     * Method called by streams at every ticker update.
+     * Get positions.
      *
-     * @param ticker ticker
+     * @return position list
      */
-    void tickerUpdate(TickerDTO ticker);
+    Set<PositionDTO> getPositions();
+
+    /**
+     * Get position by id.
+     *
+     * @param id id
+     * @return position
+     */
+    Optional<PositionDTO> getPositionById(long id);
 
     /**
      * Method called by streams at every order update.
@@ -72,7 +65,14 @@ public interface PositionService {
     void tradeUpdate(TradeDTO trade);
 
     /**
-     * Return the gains made by all positions.
+     * Method called by streams at every ticker update.
+     *
+     * @param ticker ticker
+     */
+    void tickerUpdate(TickerDTO ticker);
+
+    /**
+     * Return the gains made by all closed positions.
      *
      * @return gains by currency.
      */

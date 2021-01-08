@@ -226,8 +226,8 @@ public class PositionDTO {
     /**
      * Method called by on every order update.
      *
-     * @param updatedOrder updated value
-     * @return true if updated
+     * @param updatedOrder order
+     * @return true if the the order updated the position.
      */
     public final boolean orderUpdate(final OrderDTO updatedOrder) {
         if (openingOrder != null && openingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
@@ -290,67 +290,59 @@ public class PositionDTO {
     }
 
     /**
-     * Returns true if the position should be closed.
+     * Method called by on every ticker update.
      *
      * @param ticker ticker
-     * @return true if the rules says the position should be closed.
+     * @return true if the the ticker updated the position.
      */
-    public boolean shouldBeClosed(final TickerDTO ticker) {
-        // The status must be OPENED to be closed.
-        // The currency pair of the ticker must be the same than the currency pair of the open trade.
-        if (getClosingOrderId() != null || !ticker.getCurrencyPair().equals(currencyPair)) {
-            return false;
-        } else {
-            final Optional<GainDTO> gain = calculateGainFromPrice(ticker.getLast());
-            if (gain.isPresent()) {
-                // We save the last calculated gain.
-                latestPrice = CurrencyAmountDTO.builder()
+    public final boolean tickerUpdate(final TickerDTO ticker) {
+        // If the position is not closing and the ticker is the one expected.
+        if (getClosingOrder() == null && ticker.getCurrencyPair().equals(currencyPair)) {
+
+            // We retrieve the gains.
+            final Optional<GainDTO> calculatedGain = calculateGainFromPrice(ticker.getLast());
+            final Optional<GainDTO> lowestCalculatedGain = getLowestCalculatedGain();
+            final Optional<GainDTO> highestCalculatedGain = getHighestCalculatedGain();
+
+            // We set the new values.
+            calculatedGain.ifPresent(gain -> {
+                final CurrencyAmountDTO price = CurrencyAmountDTO.builder()
                         .value(ticker.getLast())
-                        .currency(ticker.getCurrencyPair().getQuoteCurrency())
+                        .currency(ticker.getQuoteCurrency())
                         .build();
 
-                // We check with the rules and returns true if it should be closed.
-                if (rules.isStopGainPercentageSet() && gain.get().getPercentage() >= rules.getStopGainPercentage()
-                        || rules.isStopLossPercentageSet() && gain.get().getPercentage() <= -rules.getStopLossPercentage()) {
-                    // If the rules tells we should sell.
-                    return true;
-                } else {
-                    // We check if this gain is at a new highest.
-                    if (highestPrice == null) {
-                        highestPrice = CurrencyAmountDTO.builder()
-                                .value(ticker.getLast())
-                                .currency(ticker.getCurrencyPair().getQuoteCurrency())
-                                .build();
-                    } else {
-                        final Optional<GainDTO> highestGain = calculateGainFromPrice(highestPrice.getValue());
-                        if (highestGain.isPresent() && highestGain.get().getPercentage() <= gain.get().getPercentage()) {
-                            highestPrice = CurrencyAmountDTO.builder()
-                                    .value(ticker.getLast())
-                                    .currency(ticker.getCurrencyPair().getQuoteCurrency())
-                                    .build();
-                        }
+                // We save the last calculated gain.
+                latestPrice = price;
+
+                // If we don't close now, we update lowest and latest.
+                if (!shouldBeClosed()) {
+                    // If we don't have a lowest gain or if it's a lowest gain.
+                    if (lowestCalculatedGain.isEmpty() || calculatedGain.get().isInferiorTo(lowestCalculatedGain.get())) {
+                        lowestPrice = price;
                     }
-                    // We check if this gain is at a new lowest.
-                    if (lowestPrice == null) {
-                        lowestPrice = CurrencyAmountDTO.builder()
-                                .value(ticker.getLast())
-                                .currency(ticker.getCurrencyPair().getQuoteCurrency())
-                                .build();
-                    } else {
-                        final Optional<GainDTO> lowestGain = calculateGainFromPrice(lowestPrice.getValue());
-                        if (lowestGain.isPresent() && lowestGain.get().getPercentage() >= gain.get().getPercentage()) {
-                            lowestPrice = CurrencyAmountDTO.builder()
-                                    .value(ticker.getLast())
-                                    .currency(ticker.getCurrencyPair().getQuoteCurrency())
-                                    .build();
-                        }
+                    // If we don't have a highest gain or if it's a highest gain.
+                    if (highestCalculatedGain.isEmpty() || calculatedGain.get().isSuperiorTo(highestCalculatedGain.get())) {
+                        highestPrice = price;
                     }
-                    return false;
                 }
-            } else {
-                return false;
-            }
+            });
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    /**
+     * Returns true if the position should be closed.
+     *
+     * @return true if the rules says the position should be closed.
+     */
+    public boolean shouldBeClosed() {
+        final Optional<GainDTO> latestCalculatedGain = getLatestCalculatedGain();
+        // Returns true if one of the rule is triggered.
+        return latestCalculatedGain.filter(gainDTO -> rules.isStopGainPercentageSet() && gainDTO.getPercentage() >= rules.getStopGainPercentage()
+                || rules.isStopLossPercentageSet() && gainDTO.getPercentage() <= -rules.getStopLossPercentage())
+                .isPresent();
     }
 
     /**
@@ -364,7 +356,7 @@ public class PositionDTO {
             throw new PositionException("Impossible to set close order id for position " + id);
         }
         status = CLOSING;
-        // We create a temporary closing order.
+        // We create a temporary closing order that will be saved in database.
         closingOrder = OrderDTO.builder()
                 .orderId(newCloseOrderId)
                 .timestamp(ZonedDateTime.now())

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Account service - XChange implementation.
+ * User service - XChange implementation.
  */
 public class UserServiceXChangeImplementation extends BaseService implements UserService {
 
