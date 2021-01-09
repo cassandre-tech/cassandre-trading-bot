@@ -148,6 +148,15 @@
     <build>
         <!-- Plugins -->
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <propertiesEncoding>${project.build.sourceEncoding}</propertiesEncoding>
+                    <escapeString>\</escapeString>
+                </configuration>
+            </plugin>
             <!-- Checkstyle verification -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -252,6 +261,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
+                    <detectOfflineLinks>false</detectOfflineLinks>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                     <sourceFileIncludes>
                         <include>${project.build.directory}/generated-sources/delombok</include>
