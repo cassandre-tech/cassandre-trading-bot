@@ -125,6 +125,17 @@
             <version>5.0.4</version>
             <scope>test</scope>
         </dependency>
+        <!-- Tests for Coinbase -->
+        <dependency>
+            <groupId>org.knowm.xchange</groupId>
+            <artifactId>xchange-coinbase</artifactId>
+            <version>5.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.knowm.xchange</groupId>
+            <artifactId>xchange-coinbasepro</artifactId>
+            <version>5.0.4</version>
+        </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->
 

@@ -133,15 +133,15 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     public void configure() {
         try {
             // Instantiate exchange.
-            Class<? extends Exchange> exchangeClass = Class.forName(getExchangeClassName()).asSubclass(Exchange.class);
+            Class<? extends Exchange> exchangeClass = Class.forName(getExchangeClassName().replace("\n", "")).asSubclass(Exchange.class);
             ExchangeSpecification exchangeSpecification = new ExchangeSpecification(exchangeClass);
 
             // Exchange configuration.
             exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX_PARAMETER, exchangeParameters.getModes().getSandbox());
             exchangeSpecification.setUserName(exchangeParameters.getUsername());
             exchangeSpecification.setExchangeSpecificParametersItem(PASSPHRASE_PARAMETER, exchangeParameters.getPassphrase());
-            exchangeSpecification.setApiKey(exchangeParameters.getKey());
-            exchangeSpecification.setSecretKey(exchangeParameters.getSecret());
+            exchangeSpecification.setApiKey(exchangeParameters.getKey().replace("\n", ""));
+            exchangeSpecification.setSecretKey(exchangeParameters.getSecret().replace("\n", ""));
 
             // Specific parameters.
             if (exchangeParameters.getProxyHost() != null) {
@@ -244,6 +244,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
         // XChange class package name and suffix.
         final String xChangeClassPackage = "org.knowm.xchange.";
         final String xChangeCLassSuffix = "Exchange";
+
+        // Coinbase pro specific.
+        if (exchangeParameters.getName().equalsIgnoreCase("coinbasePro")) {
+            return "org.knowm.xchange.coinbasepro.CoinbaseProExchange";
+        }
 
         // Returns the XChange package name.
         return xChangeClassPackage                                                      // Package (org.knowm.xchange.).
