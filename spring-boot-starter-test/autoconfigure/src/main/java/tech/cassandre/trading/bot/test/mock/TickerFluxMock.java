@@ -99,7 +99,7 @@ public class TickerFluxMock {
                             try {
                                 TimeUnit.SECONDS.sleep(1);
                             } catch (InterruptedException e) {
-                                logger.debug("InterruptedException");
+                                Thread.currentThread().interrupt();
                             }
                             if (tickers.hasNext()) {
                                 return Optional.of(tickers.next());

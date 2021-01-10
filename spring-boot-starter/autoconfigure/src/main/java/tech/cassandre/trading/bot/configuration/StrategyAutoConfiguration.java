@@ -159,14 +159,14 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
 
         // Check if there is no strategy.
         if (strategyBeans.isEmpty()) {
-            logger.error("No strategy found");
+            logger.error("StrategyConfiguration - No strategy found");
             throw new ConfigurationException("No strategy found",
                     "You must have one class with @CassandreStrategy");
         }
 
         // Check if there are several strategies.
         if (strategyBeans.size() > 1) {
-            logger.error("Several strategies found");
+            logger.error("StrategyConfiguration - Several strategies found");
             strategyBeans.forEach((s, o) -> logger.error(" - " + s));
             throw new ConfigurationException("Several strategies found",
                     "Cassandre trading bot only supports one strategy at a time (@CassandreStrategy)");

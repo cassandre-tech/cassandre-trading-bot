@@ -85,7 +85,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
-            logger.debug("InterruptedException");
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -96,7 +96,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
-            logger.debug("InterruptedException");
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -107,7 +107,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
-            logger.debug("InterruptedException");
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -118,7 +118,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
-            logger.debug("InterruptedException");
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -129,7 +129,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
-            logger.debug("InterruptedException");
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -141,7 +141,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
-            logger.debug("InterruptedException");
+            Thread.currentThread().interrupt();
         }
     }
 

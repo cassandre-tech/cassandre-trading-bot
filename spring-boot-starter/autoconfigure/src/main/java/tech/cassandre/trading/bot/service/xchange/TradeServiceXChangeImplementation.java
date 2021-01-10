@@ -165,11 +165,11 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 logger.debug("TradeService - Successfully canceled order {}", orderId);
                 return tradeService.cancelOrder(orderId);
             } catch (Exception e) {
-                logger.error("Error canceling order {} : {}", orderId, e.getMessage());
+                logger.error("TradeService - Error canceling order {} : {}", orderId, e.getMessage());
                 return false;
             }
         } else {
-            logger.error("Error canceling order, order id provided is null");
+            logger.error("TradeService - Error canceling order, order id provided is null");
             return false;
         }
     }
