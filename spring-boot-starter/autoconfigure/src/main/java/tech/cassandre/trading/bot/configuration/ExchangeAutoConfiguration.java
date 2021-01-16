@@ -133,15 +133,15 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     public void configure() {
         try {
             // Instantiate exchange.
-            Class<? extends Exchange> exchangeClass = Class.forName(getExchangeClassName().replace("\n", "")).asSubclass(Exchange.class);
+            Class<? extends Exchange> exchangeClass = Class.forName(getExchangeClassName()).asSubclass(Exchange.class);
             ExchangeSpecification exchangeSpecification = new ExchangeSpecification(exchangeClass);
 
             // Exchange configuration.
             exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX_PARAMETER, exchangeParameters.getModes().getSandbox());
             exchangeSpecification.setUserName(exchangeParameters.getUsername());
             exchangeSpecification.setExchangeSpecificParametersItem(PASSPHRASE_PARAMETER, exchangeParameters.getPassphrase());
-            exchangeSpecification.setApiKey(exchangeParameters.getKey().replace("\n", ""));
-            exchangeSpecification.setSecretKey(exchangeParameters.getSecret().replace("\n", ""));
+            exchangeSpecification.setApiKey(exchangeParameters.getKey());
+            exchangeSpecification.setSecretKey(exchangeParameters.getSecret());
 
             // Specific parameters.
             if (exchangeParameters.getProxyHost() != null) {
