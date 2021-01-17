@@ -21,6 +21,7 @@ public interface TradeMapper {
     // XChange to DTO.
 
     @Mapping(source = "id", target = "tradeId")
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapUserTradeToTradeDTOAmount")
     @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
     @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
