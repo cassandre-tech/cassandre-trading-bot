@@ -448,7 +448,6 @@ public class PositionDTO {
                     .map(t -> t.getFee().getValue())
                     .reduce(ZERO, BigDecimal::add);
 
-
             // Return position gain.
             return GainDTO.builder()
                     .percentage(gainPercentage.setScale(2, HALF_UP).doubleValue())
@@ -504,22 +503,22 @@ public class PositionDTO {
      * @return description
      */
     @SuppressWarnings("unused")
-    public final String description() {
+    public final String getDescription() {
         try {
-            String value = "Position n°" + id + " (";
+            String value = "Position n°" + id + " (rules : ";
             // Rules.
             if (!rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
                 value += "no rules";
             }
             if (rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
-                value += rules.getStopGainPercentage() + " % gain rule";
+                value += rules.getStopGainPercentage() + " % gain";
             }
             if (rules.isStopLossPercentageSet() && !rules.isStopGainPercentageSet()) {
-                value += rules.getStopLossPercentage() + " % loss rule";
+                value += rules.getStopLossPercentage() + " % loss";
             }
             if (rules.isStopGainPercentageSet() && rules.isStopLossPercentageSet()) {
-                value += rules.getStopGainPercentage() + " % gain rule / ";
-                value += rules.getStopLossPercentage() + " % loss rule";
+                value += rules.getStopGainPercentage() + " % gain / ";
+                value += rules.getStopLossPercentage() + " % loss";
             }
             value += ")";
             switch (status) {

@@ -118,6 +118,12 @@
             <version>2.5.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.qase</groupId>
+            <artifactId>qase-junit5</artifactId>
+            <version>1.0.2</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Our tests are made using Kucoin exchange sandbox -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
@@ -234,6 +240,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <properties>
+                        <configurationParameters>
+                            junit.jupiter.extensions.autodetection.enabled = true
+                        </configurationParameters>
+                    </properties>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
                     <excludes>

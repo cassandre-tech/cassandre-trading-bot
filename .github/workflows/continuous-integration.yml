@@ -21,10 +21,6 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       # ================================================================================================================
-      - name: Retrieve the sources
-        uses: actions/checkout@v1
-
-      # ================================================================================================================
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
@@ -34,31 +30,51 @@ jobs:
           server-password: MAVEN_PASSWORD
 
       # ================================================================================================================
-      - name: Build, run tests, package and deploy to Maven central
+      - name: Retrieve the sources
+        uses: actions/checkout@v1
+
+      # ================================================================================================================
+      - name: Retrieve the version
+        id: version
+        run: |
+          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+
+      # ================================================================================================================
+      - name: Creates a Qase run
+        id: qase
+        run: |
+          echo "::set-output name=qase_run_id::$( \
+            curl "https://api.qase.io/v1/run/CTB" \
+            -X POST \
+            -H "Token: ${{ QASE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"title": "Test run for ${{ steps.version.outputs.version }}","description": "${{ github.event.head_commit.message }}","environment_id": null,"cases": [2]}' \
+            | jq -r -c ".result.id")"
+
+      # ================================================================================================================
+      - name: Build, run tests, package and deploy to Maven central - Also sends Qase tests reports
+        id: package
         env: # Environment variables.
-          # Ossrh credentials.
+          # OSSRH credentials.
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           # GPG.
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          # Kucoin credentials.
-          KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}
-          KUCOIN_USERNAME: ${{ secrets.KUCOIN_USERNAME }}
-          KUCOIN_PASSPHRASE: ${{ secrets.KUCOIN_PASSPHRASE }}
-          KUCOIN_KEY: ${{ secrets.KUCOIN_KEY }}
-          KUCOIN_SECRET: ${{ secrets.KUCOIN_SECRET }}
         run: |
-          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
-          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE} \
+            -Dqase.enable=true
+            -Dqase.project.code=CTB
+            -Dqase.run.id=${{ steps.qase.outputs.qase_run_id }}
+            -Dqase.api.token=${{ QASE_TOKEN }}
 
       # ================================================================================================================
       - name : Test Cassandre trading bot maven archetype - basic strategy
         run: |
-          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype -DarchetypeVersion=${{ steps.package.outputs.version }} -DgroupId=com.example -DartifactId=archetype-test-basic -Dversion=1.0-SNAPSHOT -Dpackage=com.example
+          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype -DarchetypeVersion=${{ steps.version.outputs.version }} -DgroupId=com.example -DartifactId=archetype-test-basic -Dversion=1.0-SNAPSHOT -Dpackage=com.example
           mvn -f archetype-test-basic/pom.xml test
 
       # ================================================================================================================
       - name : Test Cassandre trading bot maven archetype - basic ta4j strategy
         run: |
-          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype -DarchetypeVersion=${{ steps.package.outputs.version }} -DgroupId=com.example -DartifactId=archetype-test-ta4j-basic -Dversion=1.0-SNAPSHOT -Dpackage=com.example
+          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype -DarchetypeVersion=${{ steps.version.outputs.version }} -DgroupId=com.example -DartifactId=archetype-test-ta4j-basic -Dversion=1.0-SNAPSHOT -Dpackage=com.example
           mvn -f archetype-test-ta4j-basic/pom.xml test
