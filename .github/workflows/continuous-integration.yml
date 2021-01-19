@@ -65,9 +65,9 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
           mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE} \
-            -Dqase.enable=true
-            -Dqase.project.code=CTB
-            -Dqase.run.id=${{ steps.qase.outputs.qase_run_id }}
+            -Dqase.enable=true \
+            -Dqase.project.code=CTB \
+            -Dqase.run.id=${{ steps.qase.outputs.qase_run_id }} \
             -Dqase.api.token=${{ secrets.QASE_TOKEN }}
 
       # ================================================================================================================
