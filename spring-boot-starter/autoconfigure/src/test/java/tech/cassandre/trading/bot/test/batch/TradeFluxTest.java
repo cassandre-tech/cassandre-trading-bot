@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.batch;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,17 +8,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.OrderFlux;
-import tech.cassandre.trading.bot.domain.Order;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.mock.batch.TradeFluxTestMock;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
-import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -48,6 +50,9 @@ public class TradeFluxTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Autowired
+    private TradeRepository tradeRepository;
+
+    @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
@@ -57,6 +62,7 @@ public class TradeFluxTest extends BaseTest {
     private TradeService tradeService;
 
     @Test
+    @CaseId(6)
     @DisplayName("Check received data")
     public void checkReceivedData() {
         // =============================================================================================================
@@ -64,12 +70,12 @@ public class TradeFluxTest extends BaseTest {
 
         // We will call the service 5 times with the first and third reply empty.
         // We receive:
-        // First reply: 0000001, 0000002.
+        // First reply: TRADE_0000001, TRADE_0000002.
         // Second reply: empty.
         // Third reply: empty.
-        // Fourth reply: 0000003, 0000004, 0000005.
-        // Fifth reply: 0000006, 0000002 ,0000003, 0000008.
-        // 0000003 is an update. 0000002 is the same.
+        // Fourth reply: TRADE_0000003, TRADE_0000004, TRADE_0000005.
+        // Fifth reply: TRADE_0000006, TRADE_0000002 ,TRADE_0000003, TRADE_0000008.
+        // TRADE_0000003 is an update. TRADE_0000002 is the same.
         final int numberOfUpdatesExpected = 8;
         final int numberOfServiceCallsExpected = 5;
 
@@ -86,87 +92,231 @@ public class TradeFluxTest extends BaseTest {
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.
-        final Iterator<TradeDTO> iterator = strategy.getTradesUpdateReceived().iterator();
-        assertEquals("0000001", iterator.next().getTradeId());
-        assertEquals("0000002", iterator.next().getTradeId());
-        assertEquals("0000003", iterator.next().getTradeId());
-        assertEquals("0000004", iterator.next().getTradeId());
-        assertEquals("0000005", iterator.next().getTradeId());
-        assertEquals("0000006", iterator.next().getTradeId());
-        assertEquals("0000003", iterator.next().getTradeId());
-        assertEquals("0000008", iterator.next().getTradeId());
+        final Iterator<TradeDTO> trades = strategy.getTradesUpdateReceived().iterator();
+
+        // Check update 1.
+        TradeDTO t = trades.next();
+        assertNull(t.getId());
+        assertEquals("TRADE_0000001", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000001", t.getOrderId());
+        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000001", t.getUserReference());
+        assertTrue(createDate(1).isEqual(t.getTimestamp()));
+
+        // Check update 2.
+        t = trades.next();
+        assertNull(t.getId());
+        assertEquals("TRADE_0000002", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000001", t.getOrderId());
+        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000002", t.getUserReference());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(t.getTimestamp()));
+
+        // Check update 3.
+        t = trades.next();
+        assertNull(t.getId());
+        assertEquals("TRADE_0000003", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000002", t.getOrderId());
+        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp2.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp2.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000003", t.getUserReference());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(t.getTimestamp()));
+
+        // Check update 4.
+        t = trades.next();
+        assertNull(t.getId());
+        assertEquals("TRADE_0000004", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000001", t.getOrderId());
+        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000004", t.getUserReference());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(t.getTimestamp()));
+
+        // Check update 5.
+        t = trades.next();
+        assertNull(t.getId());
+        assertEquals("TRADE_0000005", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000001", t.getOrderId());
+        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000005", t.getUserReference());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(t.getTimestamp()));
+
+        // Check update 6.
+        t = trades.next();
+        assertNull(t.getId());
+        assertEquals("TRADE_0000006", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000001", t.getOrderId());
+        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp2.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp2.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000006", t.getUserReference());
+        assertTrue(createZonedDateTime("02-09-2020").isEqual(t.getTimestamp()));
+
+        // Check update 7.
+        t = trades.next();
+        assertNull(t.getId());
+        assertEquals("TRADE_0000003", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000002", t.getOrderId());
+        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.110001", cp2.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.220002", cp2.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.330003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000003", t.getUserReference());
+        assertTrue(createZonedDateTime("02-09-2021").isEqual(t.getTimestamp()));
+
+        // Check update 8.
+        t = trades.next();
+        assertNull(t.getId());
+        assertEquals("TRADE_0000008", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000001", t.getOrderId());
+        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000008", t.getUserReference());
+        assertTrue(createZonedDateTime("02-09-2020").isEqual(t.getTimestamp()));
 
         // =============================================================================================================
-        // Check data we have in strategy.
+        // Check data we have in strategy & database.
+        assertEquals(7, tradeRepository.count());
         final Map<String, TradeDTO> strategyTrades = strategy.getTrades();
         assertEquals(7, strategyTrades.size());
-        // Trade 1.
-        final TradeDTO trade1 = strategyTrades.get("0000001");
-        assertNotNull(trade1);
-        assertNotNull(strategy.getTradeById("0000001"));
-        assertEquals("0000001", trade1.getTradeId());
-        assertEquals(BID, trade1.getType());
-        assertEquals(cp1, trade1.getCurrencyPair());
-        // Trade 2.
-        final TradeDTO trade2 = strategyTrades.get("0000002");
-        assertNotNull(trade2);
-        assertNotNull(strategy.getTradeById("0000002"));
-        assertEquals("0000002", trade2.getTradeId());
-        assertEquals(BID, trade2.getType());
-        assertEquals(cp1, trade2.getCurrencyPair());
-        // Trade 3 - The trade 3 was received two times so data have been updated.
-        final TradeDTO trade3 = strategyTrades.get("0000003");
-        assertNotNull(trade3);
-        assertNotNull(strategy.getTradeById("0000003"));
-        assertEquals("0000003", trade3.getTradeId());
-        assertEquals(BID, trade3.getType());
-        assertEquals(cp2, trade3.getCurrencyPair());
-        assertEquals("ORDER00002", trade3.getOrderId());
-        assertEquals(0, new BigDecimal("1.110001").compareTo(trade3.getAmount().getValue()));
-        assertEquals(cp2.getBaseCurrency(), trade3.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("2.220002").compareTo(trade3.getPrice().getValue()));
-        // TODO Check why there was an error
-        // assertEquals(cp2.getQuoteCurrency(), trade3.getPrice().getCurrency());
-        assertTrue(createZonedDateTime("02-09-2021").isEqual(trade3.getTimestamp()));
-        assertEquals(0, new BigDecimal("3.330003").compareTo(trade3.getFee().getValue()));
-        assertEquals(BTC, trade3.getFee().getCurrency());
-        // Trade 4.
-        final TradeDTO trade4 = strategyTrades.get("0000004");
-        assertNotNull(trade4);
-        assertNotNull(strategy.getTradeById("0000004"));
-        assertEquals("0000004", trade4.getTradeId());
-        assertEquals(BID, trade4.getType());
-        assertEquals(cp1, trade4.getCurrencyPair());
-        // Trade 5.
-        final TradeDTO trade5 = strategyTrades.get("0000005");
-        assertNotNull(trade5);
-        assertNotNull(strategy.getTradeById("0000005"));
-        assertEquals("0000005", trade5.getTradeId());
-        assertEquals(BID, trade5.getType());
-        assertEquals(cp1, trade5.getCurrencyPair());
-        // Trade 6.
-        final TradeDTO trade6 = strategyTrades.get("0000006");
-        assertNotNull(trade6);
-        assertNotNull(strategy.getTradeById("0000006"));
-        assertEquals("0000006", trade6.getTradeId());
-        assertEquals(BID, trade6.getType());
-        assertEquals(cp2, trade6.getCurrencyPair());
-        // Trade 7.
-        final TradeDTO trade8 = strategyTrades.get("0000008");
-        assertNotNull(trade8);
-        assertNotNull(strategy.getTradeById("0000008"));
-        assertEquals("0000008", trade8.getTradeId());
-        assertEquals(BID, trade8.getType());
-        assertEquals(cp1, trade8.getCurrencyPair());
+        assertNotNull(strategyTrades.get("TRADE_0000001"));
+        assertNotNull(strategyTrades.get("TRADE_0000002"));
+        assertNotNull(strategyTrades.get("TRADE_0000003"));
+        assertNotNull(strategyTrades.get("TRADE_0000004"));
+        assertNotNull(strategyTrades.get("TRADE_0000005"));
+        assertNotNull(strategyTrades.get("TRADE_0000006"));
+        assertNotNull(strategyTrades.get("TRADE_0000008"));
+
+        // Trade TRADE_0000001.
+        final Optional<TradeDTO> t1 = strategy.getTradeById("TRADE_0000001");
+        assertTrue(t1.isPresent());
+        assertEquals(1, t1.get().getId());
+        assertEquals("TRADE_0000001", t1.get().getTradeId());
+        assertEquals(BID, t1.get().getType());
+        assertEquals("ORDER_0000001", t1.get().getOrderId());
+        assertEquals(cp1, t1.get().getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()), t1.get().getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t1.get().getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t1.get().getFee());
+        assertEquals("Ref TRADE_0000001", t1.get().getUserReference());
+        assertTrue(createDate(1).isEqual(t1.get().getTimestamp()));
+
+        // Trade TRADE_0000002.
+        final Optional<TradeDTO> t2 = strategy.getTradeById("TRADE_0000002");
+        assertTrue(t2.isPresent());
+        assertEquals(2, t2.get().getId());
+        assertEquals("TRADE_0000002", t2.get().getTradeId());
+        assertEquals(BID, t2.get().getType());
+        assertEquals("ORDER_0000001", t2.get().getOrderId());
+        assertEquals(cp1, t2.get().getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()), t2.get().getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t2.get().getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t2.get().getFee());
+        assertEquals("Ref TRADE_0000002", t2.get().getUserReference());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(t2.get().getTimestamp()));
+
+        // Trade TRADE_0000003 - The trade 3 was received two times so data have been updated.
+        final Optional<TradeDTO> t3 = strategy.getTradeById("TRADE_0000003");
+        assertTrue(t3.isPresent());
+        assertEquals(3, t3.get().getId());
+        assertEquals("TRADE_0000003", t3.get().getTradeId());
+        assertEquals(BID, t3.get().getType());
+        assertEquals("ORDER_0000002", t3.get().getOrderId());
+        assertEquals(cp2, t3.get().getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.110001", cp2.getBaseCurrency()), t3.get().getAmount());
+        assertEquals(new CurrencyAmountDTO("2.220002", cp2.getQuoteCurrency()), t3.get().getPrice());
+        assertEquals(new CurrencyAmountDTO("3.330003", BTC), t3.get().getFee());
+        assertEquals("Ref TRADE_0000003", t3.get().getUserReference());
+        assertTrue(createZonedDateTime("02-09-2021").isEqual(t3.get().getTimestamp()));
+
+        // Trade TRADE_0000004.
+        final Optional<TradeDTO> t4 = strategy.getTradeById("TRADE_0000004");
+        assertTrue(t4.isPresent());
+        assertEquals(4, t4.get().getId());
+        assertEquals("TRADE_0000004", t4.get().getTradeId());
+        assertEquals(BID, t4.get().getType());
+        assertEquals("ORDER_0000001", t4.get().getOrderId());
+        assertEquals(cp1, t4.get().getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), t4.get().getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t4.get().getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t4.get().getFee());
+        assertEquals("Ref TRADE_0000004", t4.get().getUserReference());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(t4.get().getTimestamp()));
+
+        // Trade TRADE_0000005.
+        final Optional<TradeDTO> t5 = strategy.getTradeById("TRADE_0000005");
+        assertTrue(t5.isPresent());
+        assertEquals(5, t5.get().getId());
+        assertEquals("TRADE_0000005", t5.get().getTradeId());
+        assertEquals(BID, t5.get().getType());
+        assertEquals("ORDER_0000001", t5.get().getOrderId());
+        assertEquals(cp1, t5.get().getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), t5.get().getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t5.get().getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t5.get().getFee());
+        assertEquals("Ref TRADE_0000005", t5.get().getUserReference());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(t5.get().getTimestamp()));
+
+        // Trade TRADE_0000006.
+        final Optional<TradeDTO> t6 = strategy.getTradeById("TRADE_0000006");
+        assertTrue(t6.isPresent());
+        assertEquals(6, t6.get().getId());
+        assertEquals("TRADE_0000006", t6.get().getTradeId());
+        assertEquals(BID, t6.get().getType());
+        assertEquals("ORDER_0000001", t6.get().getOrderId());
+        assertEquals(cp2, t6.get().getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp2.getBaseCurrency()), t6.get().getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp2.getQuoteCurrency()), t6.get().getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t6.get().getFee());
+        assertEquals("Ref TRADE_0000006", t6.get().getUserReference());
+        assertTrue(createZonedDateTime("02-09-2020").isEqual(t6.get().getTimestamp()));
+
+        // Trade TRADE_0000008.
+        final Optional<TradeDTO> t8 = strategy.getTradeById("TRADE_0000008");
+        assertTrue(t8.isPresent());
+        assertEquals(7, t8.get().getId());
+        assertEquals("TRADE_0000008", t8.get().getTradeId());
+        assertEquals(BID, t8.get().getType());
+        assertEquals("ORDER_0000001", t8.get().getOrderId());
+        assertEquals(cp1, t8.get().getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), t8.get().getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t8.get().getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t8.get().getFee());
+        assertEquals("Ref TRADE_0000008", t8.get().getUserReference());
+        assertTrue(createZonedDateTime("02-09-2020").isEqual(t8.get().getTimestamp()));
 
         // =============================================================================================================
-        // Check if all is ok in database.
-        final Optional<Order> order00001 = orderRepository.findByOrderId("ORDER00001");
-        assertTrue(order00001.isPresent());
-        assertEquals(6 , order00001.get().getTrades().size());
-        final Optional<Order> order00002 = orderRepository.findByOrderId("ORDER00002");
-        assertTrue(order00002.isPresent());
-        assertEquals(1 , order00002.get().getTrades().size());
+        // Check if all is ok with order links.
+        final Optional<OrderDTO> ORDER_0000001 = strategy.getOrderById("ORDER_0000001");
+        assertTrue(ORDER_0000001.isPresent());
+        assertEquals(6, ORDER_0000001.get().getTrades().size());
+        final Optional<OrderDTO> ORDER_0000002 = strategy.getOrderById("ORDER_0000002");
+        assertTrue(ORDER_0000002.isPresent());
+        assertEquals(1, ORDER_0000002.get().getTrades().size());
     }
 
 }

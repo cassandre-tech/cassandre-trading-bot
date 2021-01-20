@@ -102,7 +102,6 @@ public class TradeServiceTest extends BaseTest {
         // =============================================================================================================
         // Making a buy limit order (Buy 0.0001 ETH).
         final OrderCreationResultDTO result1 = strategy.createBuyLimitOrder(cp, new BigDecimal("0.0001"), new BigDecimal("0.000001"));
-        getLogger().info("Error message : " + result1.getErrorMessage());
         assertTrue(result1.isSuccessful());
         assertNull(result1.getErrorMessage());
         assertNull(result1.getException());

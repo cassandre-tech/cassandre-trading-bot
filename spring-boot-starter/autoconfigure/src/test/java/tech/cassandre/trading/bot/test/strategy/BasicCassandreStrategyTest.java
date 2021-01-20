@@ -77,7 +77,7 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertFalse(strategy.getTickersUpdateReceived().isEmpty());
         assertFalse(strategy.getTradesUpdateReceived().isEmpty());
         assertEquals(2, strategy.getLastTickers().size());
-        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTickers().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
+        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTickers().get(new CurrencyPairDTO(ETH, BTC)).getLast()));
 
         // Check getEstimatedBuyingCost()
         assertTrue(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).isPresent());

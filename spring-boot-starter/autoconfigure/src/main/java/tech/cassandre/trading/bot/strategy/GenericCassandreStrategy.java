@@ -172,6 +172,19 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return accounts;
     }
 
+    /**
+     * Search and return and account by its id.
+     *
+     * @param accountId account id
+     * @return account
+     */
+    public final Optional<AccountDTO> getAccountById(final String accountId) {
+        if (accounts.containsKey(accountId)) {
+            return Optional.of(accounts.get(accountId));
+        } else {
+            return Optional.empty();
+        }
+    }
 
     @Override
     public final Optional<AccountDTO> getTradeAccount() {
@@ -188,6 +201,34 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public final Map<CurrencyPairDTO, TickerDTO> getLastTickers() {
         return lastTickers;
+    }
+
+    /**
+     * Return the last ticker for a currency pair.
+     *
+     * @param currencyPair currency pair
+     * @return last ticker received
+     */
+    public final Optional<TickerDTO> getLastTickerByCurrencyPair(final String currencyPair) {
+        if (currencyPair == null) {
+            return Optional.empty();
+        } else {
+            return getLastTickerByCurrencyPair(new CurrencyPairDTO(currencyPair));
+        }
+    }
+
+    /**
+     * Return the last ticker for a currency pair.
+     *
+     * @param currencyPair currency pair
+     * @return last ticker received
+     */
+    public final Optional<TickerDTO> getLastTickerByCurrencyPair(final CurrencyPairDTO currencyPair) {
+        if (currencyPair == null) {
+            return Optional.empty();
+        } else {
+            return Optional.ofNullable(lastTickers.get(currencyPair));
+        }
     }
 
     // =================================================================================================================

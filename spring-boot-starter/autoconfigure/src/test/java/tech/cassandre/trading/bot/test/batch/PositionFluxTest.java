@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.batch;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Order;
-import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -40,6 +40,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
@@ -77,9 +78,11 @@ public class PositionFluxTest extends BaseTest {
     private PositionRepository positionRepository;
 
     @Test
+    @CaseId(4)
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertEquals(0, strategy.getPositionsUpdateReceived().size());
+        int positionStatusUpdateIndex = 0;
+        int positionUpdateIndex = 0;
 
         // =============================================================================================================
         // Creates position 1 - should be OPENING.
@@ -91,8 +94,6 @@ public class PositionFluxTest extends BaseTest {
                         .build());
         assertEquals("ORDER00010", position1Result.getPosition().getOpeningOrder().getOrderId());
         long position1Id = position1Result.getPosition().getId();
-        int positionStatusUpdateIndex = 0;
-        int positionUpdateIndex = 0;
 
         // onPositionUpdate - Position 1 should arrive (OPENING).
         await().untilAsserted(() -> assertEquals(1, strategy.getPositionsStatusUpdateReceived().size()));
@@ -108,30 +109,31 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(position1Id, p.getId());
         assertEquals(OPENING, p.getStatus());
 
-        // Checking what we have in database.
+        // Check data we have in strategy & database.
         assertEquals(1, positionRepository.count());
         assertEquals(1, strategy.getPositions().size());
-        PositionDTO p1 = strategy.getPositions().get(position1Id);
-        assertNotNull(p1);
-        assertNotNull(strategy.getPositionById(position1Id));
-        assertEquals(1L, p1.getId());
-        assertEquals(OPENING, p1.getStatus());
-        assertEquals(cp1, p1.getCurrencyPair());
-        assertEquals(0, new BigDecimal("10").compareTo(p1.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.getAmount().getCurrency());
-        assertTrue(p1.getRules().isStopGainPercentageSet());
-        assertEquals(1000f, p1.getRules().getStopGainPercentage());
-        assertTrue(p1.getRules().isStopLossPercentageSet());
-        assertEquals(100f, p1.getRules().getStopLossPercentage());
-        assertEquals("ORDER00010", p1.getOpeningOrder().getOrderId());
-        assertTrue(p1.getOpeningOrder().getTrades().isEmpty());
-        assertNull(p1.getClosingOrder());
-        assertNull(p1.getLowestPrice());
-        assertNull(p1.getHighestPrice());
-        assertNull(p1.getLatestPrice());
-        assertNotNull(p1.getStrategy());
-        assertEquals(1, p1.getStrategy().getId());
-        assertEquals("01", p1.getStrategy().getStrategyId());
+        Optional<PositionDTO> p1 = strategy.getPositionById(position1Id);
+        assertTrue(p1.isPresent());
+        assertEquals(1, p1.get().getId());
+        assertEquals(1, p1.get().getPositionId());
+        assertEquals(LONG, p1.get().getType());
+        assertNotNull(p1.get().getStrategy());
+        assertEquals(1, p1.get().getStrategy().getId());
+        assertEquals("01", p1.get().getStrategy().getStrategyId());
+        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertTrue(p1.get().getRules().isStopGainPercentageSet());
+        assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
+        assertTrue(p1.get().getRules().isStopLossPercentageSet());
+        assertEquals(100f, p1.get().getRules().getStopLossPercentage());
+        assertEquals(OPENING, p1.get().getStatus());
+        assertEquals("ORDER00010", p1.get().getOpeningOrder().getOrderId());
+        assertTrue(p1.get().getOpeningOrder().getTrades().isEmpty());
+        assertNull(p1.get().getClosingOrder());
+        assertNull(p1.get().getLowestPrice());
+        assertNull(p1.get().getHighestPrice());
+        assertNull(p1.get().getLatestPrice());
 
         // =============================================================================================================
         // Creates positions 2 - should be OPENING.
@@ -150,7 +152,7 @@ public class PositionFluxTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsStatusUpdateReceived().size()));
         p = strategy.getPositionsStatusUpdateReceived().get(positionStatusUpdateIndex);
         assertNotNull(p);
-        assertEquals(2, p.getId());
+        assertEquals(position2Id, p.getId());
         assertEquals(OPENING, p.getStatus());
 
         // onPosition - Position 2 should arrive (OPENING).
@@ -160,38 +162,41 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(position2Id, p.getId());
         assertEquals(OPENING, p.getStatus());
 
-        // Checking what we have in database.
+        // Check data we have in strategy & database.
         assertEquals(2, positionRepository.count());
         assertEquals(2, strategy.getPositions().size());
-        PositionDTO p2 = strategy.getPositions().get(position2Id);
-        assertNotNull(p2);
-        assertNotNull(strategy.getPositionById(position2Id));
-        assertEquals(2L, p2.getId());
-        assertEquals(OPENING, p2.getStatus());
-        assertEquals(cp2, p2.getCurrencyPair());
-        assertEquals(0, new BigDecimal("0.0002").compareTo(p2.getAmount().getValue()));
-        assertEquals(cp2.getBaseCurrency(), p2.getAmount().getCurrency());
-        assertTrue(p2.getRules().isStopGainPercentageSet());
-        assertEquals(10000000f, p2.getRules().getStopGainPercentage());
-        assertTrue(p2.getRules().isStopLossPercentageSet());
-        assertEquals(10000000f, p2.getRules().getStopLossPercentage());
-        assertEquals("ORDER00020", p2.getOpeningOrder().getOrderId());
-        assertTrue(p2.getOpeningOrder().getTrades().isEmpty());
-        assertNull(p2.getClosingOrder());
-        assertNull(p2.getLowestPrice());
-        assertNull(p2.getHighestPrice());
-        assertNull(p2.getLatestPrice());
-        assertEquals(1, p1.getStrategy().getId());
-        assertEquals("01", p1.getStrategy().getStrategyId());
+        Optional<PositionDTO> p2 = strategy.getPositionById(position2Id);
+        assertTrue(p2.isPresent());
+        assertEquals(2, p2.get().getId());
+        assertEquals(2, p2.get().getPositionId());
+        assertEquals(LONG, p2.get().getType());
+        assertNotNull(p2.get().getStrategy());
+        assertEquals(1, p2.get().getStrategy().getId());
+        assertEquals("01", p2.get().getStrategy().getStrategyId());
+        assertEquals(cp2, p2.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.0002").compareTo(p2.get().getAmount().getValue()));
+        assertEquals(cp2.getBaseCurrency(), p2.get().getAmount().getCurrency());
+        assertTrue(p2.get().getRules().isStopGainPercentageSet());
+        assertEquals(10000000f, p2.get().getRules().getStopGainPercentage());
+        assertTrue(p2.get().getRules().isStopLossPercentageSet());
+        assertEquals(10000000f, p2.get().getRules().getStopLossPercentage());
+        assertEquals(OPENING, p2.get().getStatus());
+        assertEquals("ORDER00020", p2.get().getOpeningOrder().getOrderId());
+        assertTrue(p2.get().getOpeningOrder().getTrades().isEmpty());
+        assertNull(p2.get().getClosingOrder());
+        assertNull(p2.get().getLowestPrice());
+        assertNull(p2.get().getHighestPrice());
+        assertNull(p2.get().getLatestPrice());
 
         // =============================================================================================================
         // As the two trades expected by position 1 arrives, position 1 should now be OPENED.
         // 11 is before 1 to test the timestamp order of getOpenTrades & getCloseTrades.
 
         // First trade.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000011")
-                .orderId("ORDER00010")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000011")
                 .type(BID)
+                .orderId("ORDER00010")
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("4", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
@@ -199,18 +204,21 @@ public class PositionFluxTest extends BaseTest {
                 .build());
         positionUpdateIndex++;
         // The same trade is emitted two times with an update (on time).
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000011")
-                .orderId("ORDER00010")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000011")
                 .type(BID)
+                .type(BID)
+                .orderId("ORDER00010")
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("4", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
-                .timestamp(createZonedDateTime("02-02-2020"))
+                .timestamp(createZonedDateTime("03-02-2020"))
                 .build());
         positionUpdateIndex++;
 
         // Second trade.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000001")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000001")
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
@@ -220,13 +228,14 @@ public class PositionFluxTest extends BaseTest {
                 .build());
         positionUpdateIndex++;
         // The same trade is emitted two times with an update (on time).
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000001")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000001")
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("6", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
-                .timestamp(createZonedDateTime("01-01-2020"))
+                .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
         positionUpdateIndex++;
 
@@ -249,27 +258,30 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p1 = strategy.getPositions().get(position1Id);
-        assertNotNull(p1);
-        assertEquals(1L, p1.getId());
-        assertEquals(OPENED, p1.getStatus());
-        assertEquals(cp1, p1.getCurrencyPair());
-        assertEquals(0, new BigDecimal("10").compareTo(p1.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.getAmount().getCurrency());
-        assertTrue(p1.getRules().isStopGainPercentageSet());
-        assertEquals(1000f, p1.getRules().getStopGainPercentage());
-        assertTrue(p1.getRules().isStopLossPercentageSet());
-        assertEquals(100f, p1.getRules().getStopLossPercentage());
-        assertEquals("ORDER00010", p1.getOpeningOrder().getOrderId());
-        assertEquals(2, p1.getOpeningOrder().getTrades().size());
-        assertNull(p1.getClosingOrder());
-        assertNull(p1.getLowestPrice());
-        assertNull(p1.getHighestPrice());
-        assertNull(p1.getLatestPrice());
-        // Check trade orders.
-        Iterator<TradeDTO> openTradesIterator = p1.getOpeningOrder().getTrades().iterator();
-        assertEquals("000001", openTradesIterator.next().getTradeId());
-        assertEquals("000011", openTradesIterator.next().getTradeId());
+        p1 = strategy.getPositionById(position1Id);
+        assertTrue(p1.isPresent());
+        assertEquals(1, p1.get().getId());
+        assertEquals(1, p1.get().getPositionId());
+        assertEquals(LONG, p1.get().getType());
+        assertNotNull(p1.get().getStrategy());
+        assertEquals(1, p1.get().getStrategy().getId());
+        assertEquals("01", p1.get().getStrategy().getStrategyId());
+        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertTrue(p1.get().getRules().isStopGainPercentageSet());
+        assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
+        assertTrue(p1.get().getRules().isStopLossPercentageSet());
+        assertEquals(100f, p1.get().getRules().getStopLossPercentage());
+        assertEquals(OPENED, p1.get().getStatus());
+        assertEquals("ORDER00010", p1.get().getOpeningOrder().getOrderId());
+        Iterator<TradeDTO> openingTradesIterator = p1.get().getOpeningOrder().getTrades().iterator();
+        assertEquals("000001", openingTradesIterator.next().getTradeId());
+        assertEquals("000011", openingTradesIterator.next().getTradeId());
+        assertNull(p1.get().getClosingOrder());
+        assertNull(p1.get().getLowestPrice());
+        assertNull(p1.get().getHighestPrice());
+        assertNull(p1.get().getLatestPrice());
 
         // Check if we don't have duplicated trades in database !
         assertEquals(2, tradeRepository.count());
@@ -335,36 +347,40 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p1 = strategy.getPositions().get(position1Id);
-        assertNotNull(p1);
-        assertEquals(1L, p1.getId());
-        assertEquals(OPENED, p1.getStatus());
-        assertEquals(cp1, p1.getCurrencyPair());
-        assertEquals(0, new BigDecimal("10").compareTo(p1.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.getAmount().getCurrency());
-        assertTrue(p1.getRules().isStopGainPercentageSet());
-        assertEquals(1000f, p1.getRules().getStopGainPercentage());
-        assertTrue(p1.getRules().isStopLossPercentageSet());
-        assertEquals(100f, p1.getRules().getStopLossPercentage());
-        assertEquals("ORDER00010", p1.getOpeningOrder().getOrderId());
-        assertEquals(2, p1.getOpeningOrder().getTrades().size());
-        assertNull(p1.getClosingOrder());
-        assertEquals(0, new BigDecimal("0.015").compareTo(p1.getLowestPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p1.getHighestPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p1.getLatestPrice().getValue()));
-        // Check trade orders.
-        openTradesIterator = p1.getOpeningOrder().getTrades().iterator();
-        assertEquals("000001", openTradesIterator.next().getTradeId());
-        assertEquals("000011", openTradesIterator.next().getTradeId());
+        p1 = strategy.getPositionById(position1Id);
+        assertTrue(p1.isPresent());
+        assertEquals(1, p1.get().getId());
+        assertEquals(1, p1.get().getPositionId());
+        assertEquals(LONG, p1.get().getType());
+        assertNotNull(p1.get().getStrategy());
+        assertEquals(1, p1.get().getStrategy().getId());
+        assertEquals("01", p1.get().getStrategy().getStrategyId());
+        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertTrue(p1.get().getRules().isStopGainPercentageSet());
+        assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
+        assertTrue(p1.get().getRules().isStopLossPercentageSet());
+        assertEquals(100f, p1.get().getRules().getStopLossPercentage());
+        assertEquals(OPENED, p1.get().getStatus());
+        assertEquals("ORDER00010", p1.get().getOpeningOrder().getOrderId());
+        openingTradesIterator = p1.get().getOpeningOrder().getTrades().iterator();
+        assertEquals("000001", openingTradesIterator.next().getTradeId());
+        assertEquals("000011", openingTradesIterator.next().getTradeId());
+        assertNull(p1.get().getClosingOrder());
+        assertEquals(0, new BigDecimal("0.015").compareTo(p1.get().getLowestPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.21").compareTo(p1.get().getHighestPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.21").compareTo(p1.get().getLatestPrice().getValue()));
 
         // =============================================================================================================
-        // Trade arrives to open position 2 - should now be OPENED
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
-                .orderId("ORDER00020")
+        // Trade arrives for position 2 - should now be OPENED
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000002")
                 .type(BID)
+                .orderId("ORDER00020")
                 .currencyPair(cp2)
                 .amount(new CurrencyAmountDTO("0.0002", cp2.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .price(new CurrencyAmountDTO("0.03", cp2.getQuoteCurrency()))
                 .build());
         positionStatusUpdateIndex++;
         positionUpdateIndex++;
@@ -385,46 +401,43 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p2 = strategy.getPositions().get(position2Id);
-        assertNotNull(p2);
-        assertEquals(2L, p2.getId());
-        assertEquals(OPENED, p2.getStatus());
-        assertEquals(cp2, p2.getCurrencyPair());
-        assertEquals(0, new BigDecimal("0.0002").compareTo(p2.getAmount().getValue()));
-        assertEquals(cp2.getBaseCurrency(), p2.getAmount().getCurrency());
-        assertTrue(p2.getRules().isStopGainPercentageSet());
-        assertEquals(10000000f, p2.getRules().getStopGainPercentage());
-        assertTrue(p2.getRules().isStopLossPercentageSet());
-        assertEquals(10000000f, p2.getRules().getStopLossPercentage());
-        assertEquals("ORDER00020", p2.getOpeningOrder().getOrderId());
-        assertEquals(1, p2.getOpeningOrder().getTrades().size());
-        assertNull(p2.getClosingOrder());
-        assertNull(p2.getLowestPrice());
-        assertNull(p2.getHighestPrice());
-        assertNull(p2.getLatestPrice());
-        // Check trade orders.
-        openTradesIterator = p2.getOpeningOrder().getTrades().iterator();
-        assertEquals("000002", openTradesIterator.next().getTradeId());
-
-        // Check that the strategy is well set :
-        p1 = strategy.getPositions().get(position1Id);
-        p2 = strategy.getPositions().get(position2Id);
-        assertNotNull(p1.getStrategy());
-        assertNotNull(p2.getStrategy());
-        assertEquals(1, p1.getStrategy().getId());
-        assertEquals("01", p2.getStrategy().getStrategyId());
+        p2 = strategy.getPositionById(position2Id);
+        assertTrue(p2.isPresent());
+        assertEquals(2, p2.get().getId());
+        assertEquals(2, p2.get().getPositionId());
+        assertEquals(LONG, p2.get().getType());
+        assertNotNull(p2.get().getStrategy());
+        assertEquals(1, p2.get().getStrategy().getId());
+        assertEquals("01", p2.get().getStrategy().getStrategyId());
+        assertEquals(cp2, p2.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.0002").compareTo(p2.get().getAmount().getValue()));
+        assertEquals(cp2.getBaseCurrency(), p2.get().getAmount().getCurrency());
+        assertTrue(p2.get().getRules().isStopGainPercentageSet());
+        assertEquals(10000000f, p2.get().getRules().getStopGainPercentage());
+        assertTrue(p2.get().getRules().isStopLossPercentageSet());
+        assertEquals(10000000f, p2.get().getRules().getStopLossPercentage());
+        assertEquals(OPENED, p2.get().getStatus());
+        assertEquals("ORDER00020", p2.get().getOpeningOrder().getOrderId());
+        openingTradesIterator = p2.get().getOpeningOrder().getTrades().iterator();
+        assertEquals("000002", openingTradesIterator.next().getTradeId());
+        assertNull(p2.get().getClosingOrder());
+        assertNull(p2.get().getLowestPrice());
+        assertNull(p2.get().getHighestPrice());
+        assertNull(p2.get().getLatestPrice());
 
         // =============================================================================================================
         // A ticker arrives that triggers max gain rules of position 1 - should now be CLOSING.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).build());
         positionStatusUpdateIndex++;
         positionUpdateIndex++;
+
         // onPositionUpdate - Position should be closing.
         await().untilAsserted(() -> assertEquals(5, strategy.getPositionsStatusUpdateReceived().size()));
         p = strategy.getPositionsStatusUpdateReceived().get(positionStatusUpdateIndex);
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSING, p.getStatus());
+
         // onPosition.
         await().untilAsserted(() -> assertEquals(13, strategy.getPositionsUpdateReceived().size()));
         p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
@@ -434,28 +447,31 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p1 = strategy.getPositions().get(position1Id);
-        assertNotNull(p1);
-        assertEquals(1L, p1.getId());
-        assertEquals(CLOSING, p1.getStatus());
-        assertEquals(cp1, p1.getCurrencyPair());
-        assertEquals(0, new BigDecimal("10").compareTo(p1.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.getAmount().getCurrency());
-        assertTrue(p1.getRules().isStopGainPercentageSet());
-        assertEquals(1000f, p1.getRules().getStopGainPercentage());
-        assertTrue(p1.getRules().isStopLossPercentageSet());
-        assertEquals(100f, p1.getRules().getStopLossPercentage());
-        assertEquals("ORDER00010", p1.getOpeningOrder().getOrderId());
-        assertEquals(2, p1.getOpeningOrder().getTrades().size());
-        assertEquals("ORDER00011", p1.getClosingOrder().getOrderId());
-        assertTrue(p1.getClosingOrder().getTrades().isEmpty());
-        assertEquals(0, new BigDecimal("0.015").compareTo(p1.getLowestPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p1.getHighestPrice().getValue()));
-        assertEquals(0, new BigDecimal("100").compareTo(p1.getLatestPrice().getValue()));
-        // Check trade orders.
-        openTradesIterator = p1.getOpeningOrder().getTrades().iterator();
-        assertEquals("000001", openTradesIterator.next().getTradeId());
-        assertEquals("000011", openTradesIterator.next().getTradeId());
+        p1 = strategy.getPositionById(position1Id);
+        assertTrue(p1.isPresent());
+        assertEquals(1, p1.get().getId());
+        assertEquals(1, p1.get().getPositionId());
+        assertEquals(LONG, p1.get().getType());
+        assertNotNull(p1.get().getStrategy());
+        assertEquals(1, p1.get().getStrategy().getId());
+        assertEquals("01", p1.get().getStrategy().getStrategyId());
+        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertTrue(p1.get().getRules().isStopGainPercentageSet());
+        assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
+        assertTrue(p1.get().getRules().isStopLossPercentageSet());
+        assertEquals(100f, p1.get().getRules().getStopLossPercentage());
+        assertEquals(CLOSING, p1.get().getStatus());
+        assertEquals("ORDER00010", p1.get().getOpeningOrder().getOrderId());
+        openingTradesIterator = p1.get().getOpeningOrder().getTrades().iterator();
+        assertEquals("000001", openingTradesIterator.next().getTradeId());
+        assertEquals("000011", openingTradesIterator.next().getTradeId());
+        assertEquals("ORDER00011", p1.get().getClosingOrder().getOrderId());
+        assertTrue(p1.get().getClosingOrder().getTrades().isEmpty());
+        assertEquals(0, new BigDecimal("0.015").compareTo(p1.get().getLowestPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.21").compareTo(p1.get().getHighestPrice().getValue()));
+        assertEquals(0, new BigDecimal("100").compareTo(p1.get().getLatestPrice().getValue()));
 
         // =============================================================================================================
         // Position 1 will have CLOSED status as the trade arrives.
@@ -525,31 +541,33 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p1 = strategy.getPositions().get(position1Id);
-        assertNotNull(p1);
-        assertEquals(1L, p1.getId());
-        assertEquals(CLOSED, p1.getStatus());
-        assertEquals(cp1, p1.getCurrencyPair());
-        assertEquals(0, new BigDecimal("10").compareTo(p1.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.getAmount().getCurrency());
-        assertTrue(p1.getRules().isStopGainPercentageSet());
-        assertEquals(1000f, p1.getRules().getStopGainPercentage());
-        assertTrue(p1.getRules().isStopLossPercentageSet());
-        assertEquals(100f, p1.getRules().getStopLossPercentage());
-        assertEquals("ORDER00010", p1.getOpeningOrder().getOrderId());
-        assertEquals(2, p1.getOpeningOrder().getTrades().size());
-        assertEquals("ORDER00011", p1.getClosingOrder().getOrderId());
-        assertEquals(2, p1.getClosingOrder().getTrades().size());
-        assertEquals(0, new BigDecimal("0.015").compareTo(p1.getLowestPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p1.getHighestPrice().getValue()));
-        assertEquals(0, new BigDecimal("100").compareTo(p1.getLatestPrice().getValue()));
-        // Check trade orders.
-        openTradesIterator = p1.getOpeningOrder().getTrades().iterator();
-        assertEquals("000001", openTradesIterator.next().getTradeId());
-        assertEquals("000011", openTradesIterator.next().getTradeId());
-        final Iterator<TradeDTO> closeTradesIterator = p1.getClosingOrder().getTrades().iterator();
-        assertEquals("000003", closeTradesIterator.next().getTradeId());
-        assertEquals("000004", closeTradesIterator.next().getTradeId());
+        p1 = strategy.getPositionById(position1Id);
+        assertTrue(p1.isPresent());
+        assertEquals(1, p1.get().getId());
+        assertEquals(1, p1.get().getPositionId());
+        assertEquals(LONG, p1.get().getType());
+        assertNotNull(p1.get().getStrategy());
+        assertEquals(1, p1.get().getStrategy().getId());
+        assertEquals("01", p1.get().getStrategy().getStrategyId());
+        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertTrue(p1.get().getRules().isStopGainPercentageSet());
+        assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
+        assertTrue(p1.get().getRules().isStopLossPercentageSet());
+        assertEquals(100f, p1.get().getRules().getStopLossPercentage());
+        assertEquals(CLOSED, p1.get().getStatus());
+        assertEquals("ORDER00010", p1.get().getOpeningOrder().getOrderId());
+        openingTradesIterator = p1.get().getOpeningOrder().getTrades().iterator();
+        assertEquals("000001", openingTradesIterator.next().getTradeId());
+        assertEquals("000011", openingTradesIterator.next().getTradeId());
+        assertEquals("ORDER00011", p1.get().getClosingOrder().getOrderId());
+        final Iterator<TradeDTO> closingTradesIterator = p1.get().getClosingOrder().getTrades().iterator();
+        assertEquals("000003", closingTradesIterator.next().getTradeId());
+        assertEquals("000004", closingTradesIterator.next().getTradeId());
+        assertEquals(0, new BigDecimal("0.015").compareTo(p1.get().getLowestPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.21").compareTo(p1.get().getHighestPrice().getValue()));
+        assertEquals(0, new BigDecimal("100").compareTo(p1.get().getLatestPrice().getValue()));
 
         // Just checking trades creation.
         assertNotNull(strategy.getPositionById(position1Id));
@@ -564,14 +582,6 @@ public class PositionFluxTest extends BaseTest {
         final Optional<Order> order00011 = orderRepository.findByOrderId("ORDER00011");
         assertTrue(order00011.isPresent());
         assertEquals(2, order00011.get().getTrades().size());
-
-        // Check strategy id.
-        final Optional<Position> optionalPosition1 = positionRepository.findById(position1Id);
-        final Optional<Position> optionalPosition2 = positionRepository.findById(position2Id);
-        assertTrue(optionalPosition1.isPresent());
-        assertEquals(1, optionalPosition1.get().getStrategy().getId());
-        assertTrue(optionalPosition2.isPresent());
-        assertEquals("01", optionalPosition2.get().getStrategy().getStrategyId());
     }
 
 }

@@ -1,6 +1,8 @@
 package tech.cassandre.trading.bot.test.util.junit;
 
 import org.awaitility.Awaitility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
@@ -26,9 +28,9 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
- * Base for tests.
+ * Base for mocks.
  */
-public class BaseTest {
+public class BaseMock {
 
     /** cp1 for tests. */
     protected final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
@@ -38,74 +40,6 @@ public class BaseTest {
 
     /** cp3 for tests. */
     protected final CurrencyPairDTO cp3 = new CurrencyPairDTO(BTC, USDT);
-
-    /** Ten seconds wait. */
-    protected static final long WAITING_TIME_IN_SECONDS = 5L;
-
-    /** How much we should wait for tests until it is declared as failed. */
-    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 30;
-
-    /**
-     * Constructor.
-     */
-    public BaseTest() {
-        // Default Configuration for Awaitility.
-        Awaitility.setDefaultPollInterval(fibonacci(SECONDS));
-        Awaitility.setDefaultTimeout(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS);
-    }
-
-    /**
-     * Get pending order.
-     *
-     * @param orderId      orderId
-     * @param orderTypeDTO order type
-     * @param currencyPair currency pair
-     * @return order
-     */
-    protected OrderDTO getPendingOrder(final String orderId,
-                                       final OrderTypeDTO orderTypeDTO,
-                                       final BigDecimal amount,
-                                       final CurrencyPairDTO currencyPair) {
-        return OrderDTO.builder()
-                .orderId(orderId)
-                .timestamp(ZonedDateTime.now())
-                .type(orderTypeDTO)
-                .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
-                .currencyPair(currencyPair)
-                .status(PENDING_NEW)
-                .build();
-    }
-
-    /**
-     * Util method to return a fake ticker.
-     *
-     * @param cp  currency pair
-     * @param bid bid price
-     * @return ticket
-     */
-    protected static Optional<TickerDTO> getFakeTicker(final CurrencyPairDTO cp, final BigDecimal bid) {
-        return Optional.of(TickerDTO.builder()
-                .currencyPair(cp)
-                .timestamp(getRandomDate())
-                .last(bid)
-                .build());
-    }
-
-    /**
-     * Util method to return a fake ticker with date.
-     *
-     * @param date date
-     * @param cp   currency pair
-     * @param bid  bid price
-     * @return ticket
-     */
-    protected static Optional<TickerDTO> getFakeTicker(final ZonedDateTime date, final CurrencyPairDTO cp, final BigDecimal bid) {
-        return Optional.of(TickerDTO.builder()
-                .currencyPair(cp)
-                .timestamp(date)
-                .last(bid)
-                .build());
-    }
 
     /**
      * Get random date.
@@ -124,17 +58,6 @@ public class BaseTest {
                 .nextLong(startMillis, endMillis);
         return ZonedDateTime.ofInstant(Instant.ofEpochSecond(randomMillisSinceEpoch), ZoneId.systemDefault());
     }
-
-    /**
-     * Get exception message from parameter exception.
-     *
-     * @param e exception
-     * @return message
-     */
-    protected String getParametersExceptionMessage(Exception e) {
-        return e.getCause().getCause().getCause().getMessage();
-    }
-
 
     /**
      * Generate a date in 2020 with a day.

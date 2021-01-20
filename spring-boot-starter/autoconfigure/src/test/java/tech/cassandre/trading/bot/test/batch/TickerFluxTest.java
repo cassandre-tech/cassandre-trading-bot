@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.batch;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.mock.batch.TickerFluxTestMock;
+import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -16,10 +17,10 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 
 import java.math.BigDecimal;
 import java.util.Iterator;
+import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
@@ -43,6 +44,7 @@ public class TickerFluxTest extends BaseTest {
     private MarketService marketService;
 
     @Test
+    @CaseId(5)
     @DisplayName("Check received data")
     public void checkReceivedData() {
         // =============================================================================================================
@@ -74,79 +76,81 @@ public class TickerFluxTest extends BaseTest {
         // First value cp1 - 1.
         TickerDTO t = iterator.next();
         assertEquals(cp1, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("1").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("1").compareTo(t.getLast()));
 
         // Second value cp2 - 10.
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("10").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("10").compareTo(t.getLast()));
 
         // Third value cp1 - 2.
         t = iterator.next();
         assertEquals(cp1, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("2").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("2").compareTo(t.getLast()));
 
         // Fourth value cp2 - 20.
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("20").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("20").compareTo(t.getLast()));
 
         // Fifth value cp1 - 3.
         t = iterator.next();
         assertEquals(cp1, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("3").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("3").compareTo(t.getLast()));
 
         // Sixth value cp2 - 30.
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("30").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("30").compareTo(t.getLast()));
 
         // Seventh value cp2 - 40.
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("40").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("40").compareTo(t.getLast()));
 
         // Eighth value cp1 - 4.
         t = iterator.next();
         assertEquals(cp1, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("4").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("4").compareTo(t.getLast()));
 
         // Ninth value cp2 - 50.
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("50").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("50").compareTo(t.getLast()));
 
         // Tenth value cp1 - 5.
         t = iterator.next();
         assertEquals(cp1, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("5").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("5").compareTo(t.getLast()));
 
         // Eleventh value cp2 - 60.
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("60").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("60").compareTo(t.getLast()));
 
         // Twelfth value cp1 - 6.
         t = iterator.next();
         assertEquals(cp1, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("6").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("6").compareTo(t.getLast()));
 
         // Thirteenth value cp2 - 70.
         t = iterator.next();
         assertEquals(cp2, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("70").compareTo(t.getBid()));
+        assertEquals(0, new BigDecimal("70").compareTo(t.getLast()));
 
         // =============================================================================================================
         // Check data we have in strategy.
         assertEquals(2, strategy.getLastTickers().size());
-        final TickerDTO lastTickerForCp1 = strategy.getLastTickers().get(cp1);
-        assertNotNull(lastTickerForCp1);
-        assertEquals(cp1, lastTickerForCp1.getCurrencyPair());
-        assertEquals(0, new BigDecimal("6").compareTo(lastTickerForCp1.getLast()));
-        final TickerDTO lastTickerForCp2 = strategy.getLastTickers().get(cp2);
-        assertNotNull(lastTickerForCp2);
-        assertEquals(cp2, lastTickerForCp2.getCurrencyPair());
-        assertEquals(0, new BigDecimal("70").compareTo(lastTickerForCp2.getLast()));
+        // For CP1.
+        final Optional<TickerDTO> lastTickerForCP1 = strategy.getLastTickerByCurrencyPair("ETH/BTC");
+        assertTrue(lastTickerForCP1.isPresent());
+        assertEquals(cp1, lastTickerForCP1.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("6").compareTo(lastTickerForCP1.get().getLast()));
+        // For CP2.
+        final Optional<TickerDTO> lastTickerForCP2 = strategy.getLastTickerByCurrencyPair(cp2);
+        assertTrue(lastTickerForCP2.isPresent());
+        assertEquals(cp2, lastTickerForCP2.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("70").compareTo(lastTickerForCP2.get().getLast()));
     }
 
 }

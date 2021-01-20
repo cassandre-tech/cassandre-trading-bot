@@ -51,7 +51,7 @@ jobs:
             -X POST \
             -H "Token: ${{ secrets.QASE_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"title": "${{ github.event.head_commit.message }}","description": "Test run for ${{ steps.version.outputs.version }}","environment_id": null,"cases": [2]}' \
+            -d '{"title": "${{ github.event.head_commit.message }}","description": "Test run for ${{ steps.version.outputs.version }}","environment_id": null,"cases": [2,3,4,5,6]}' \
             | jq -r -c ".result.id")"
 
       # ================================================================================================================

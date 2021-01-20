@@ -107,29 +107,29 @@ public class TickerFluxTestMock extends BaseTest {
         final ZonedDateTime time = ZonedDateTime.now();
         given(marketService
                 .getTicker(cp1))
-                .willReturn(BaseTest.getFakeTicker(cp1, new BigDecimal("1")),   // Value 01.
-                        BaseTest.getFakeTicker(cp1, new BigDecimal("2")),       // Value 03.
-                        BaseTest.getFakeTicker(cp1, new BigDecimal("3")),       // Value 05.
-                        Optional.empty(),                                           // Value 07.
-                        BaseTest.getFakeTicker(time, cp1, new BigDecimal("4")), // Value 09.
-                        BaseTest.getFakeTicker(time, cp1, new BigDecimal("4")), // Value 11.
-                        BaseTest.getFakeTicker(cp1, new BigDecimal("5")),       // Value 13.
-                        BaseTest.getFakeTicker(cp1, new BigDecimal("6")),       // Value 15.
+                .willReturn(BaseTest.getFakeTicker(cp1, new BigDecimal("1")),       // Value 01.
+                        BaseTest.getFakeTicker(cp1, new BigDecimal("2")),           // Value 03.
+                        BaseTest.getFakeTicker(cp1, new BigDecimal("3")),           // Value 05.
+                        Optional.empty(),                                               // Value 07.
+                        BaseTest.getFakeTicker(time, cp1, new BigDecimal("4")),     // Value 09.
+                        BaseTest.getFakeTicker(time, cp1, new BigDecimal("40")),    // Value 11.
+                        BaseTest.getFakeTicker(cp1, new BigDecimal("5")),           // Value 13.
+                        BaseTest.getFakeTicker(cp1, new BigDecimal("6")),           // Value 15.
                         Optional.empty()
                 );
 
         // Replies for ETH / USDT.
         given(marketService
                 .getTicker(cp2))
-                .willReturn(BaseTest.getFakeTicker(cp2, new BigDecimal("10")),  // Value 02.
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("20")),      // Value 04.
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("30")),      // Value 06.
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("40")),      // Value 08.
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("50")),      // Value 10.
-                        Optional.empty(),                                           // Value 12.
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("60")),      // Value 14.
-                        Optional.empty(),                                           // Value 16.
-                        BaseTest.getFakeTicker(cp2, new BigDecimal("70"))       // Value 17.
+                .willReturn(BaseTest.getFakeTicker(cp2, new BigDecimal("10")),      // Value 02.
+                        BaseTest.getFakeTicker(cp2, new BigDecimal("20")),          // Value 04.
+                        BaseTest.getFakeTicker(cp2, new BigDecimal("30")),          // Value 06.
+                        BaseTest.getFakeTicker(cp2, new BigDecimal("40")),          // Value 08.
+                        BaseTest.getFakeTicker(cp2, new BigDecimal("50")),          // Value 10.
+                        Optional.empty(),                                               // Value 12.
+                        BaseTest.getFakeTicker(cp2, new BigDecimal("60")),          // Value 14.
+                        Optional.empty(),                                               // Value 16.
+                        BaseTest.getFakeTicker(cp2, new BigDecimal("70"))           // Value 17.
                 );
         return marketService;
     }

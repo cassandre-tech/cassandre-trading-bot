@@ -86,7 +86,7 @@ public class PositionFluxTestMock extends BaseTest {
         given(service.createBuyMarketOrder(strategyDTO, cp1, new BigDecimal("10")))
                 .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00010", BID, new BigDecimal("10"), cp1)));
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
-        given(service.createSellMarketOrder(strategyDTO, cp1, new BigDecimal("10.00000000")))   // Was forced to do that as after going to database, we have a 10.00000000 value
+        given(service.createSellMarketOrder(strategyDTO, cp1, new BigDecimal("10.00000000")))   // Was forced to do that as after going to database, we have a 10.00000000 value.
                 .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00011", ASK, new BigDecimal("10.00000000"), cp1)));
 
         // Position 1 creation reply (order ORDER00010).
