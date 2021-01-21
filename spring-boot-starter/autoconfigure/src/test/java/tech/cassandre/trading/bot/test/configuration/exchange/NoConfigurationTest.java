@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.test.configuration.exchange;
 
+import io.qase.api.annotation.CaseId;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
@@ -40,6 +42,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 public class NoConfigurationTest extends BaseTest {
 
     @Test
+    @CaseId(17)
     @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {
@@ -47,7 +50,7 @@ public class NoConfigurationTest extends BaseTest {
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
-            final String message = getParametersExceptionMessage(e);
+            final String message = ExceptionUtils.getRootCause(e).getMessage();
             e.printStackTrace();
             assertTrue(message.contains("'name'"));
             assertTrue(message.contains("'username'"));

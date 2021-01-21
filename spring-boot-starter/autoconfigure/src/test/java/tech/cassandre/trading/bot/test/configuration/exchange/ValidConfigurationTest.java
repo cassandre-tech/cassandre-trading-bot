@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.configuration.exchange;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
@@ -20,6 +21,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 public class ValidConfigurationTest extends BaseTest {
 
     @Test
+    @CaseId(18)
     @DisplayName("Connection test")
     public void checkConnection() {
         try {

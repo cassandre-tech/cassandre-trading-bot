@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.test.configuration.exchange;
 
+import io.qase.api.annotation.CaseId;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
@@ -22,6 +24,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARA
 public class UnknownExchangeTest extends BaseTest {
 
     @Test
+    @CaseId(18)
     @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {
@@ -29,7 +32,8 @@ public class UnknownExchangeTest extends BaseTest {
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("Impossible to find the exchange you requested : foo"));
+            final String message = ExceptionUtils.getRootCause(e).getMessage();
+            assertTrue(message.contains("Impossible to find the exchange you requested : foo"));
         }
     }
 

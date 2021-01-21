@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.test.configuration.database;
 
+import io.qase.api.annotation.CaseId;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
@@ -28,6 +30,7 @@ import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Data
 public class NoConfigurationTest extends BaseTest {
 
     @Test
+    @CaseId(7)
     @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {
@@ -35,7 +38,7 @@ public class NoConfigurationTest extends BaseTest {
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
-            final String message = e.getCause().getCause().getCause().getCause().getMessage();
+            final String message = ExceptionUtils.getRootCause(e).getMessage();
             assertTrue(message.contains("'datasource.username'"));
             assertTrue(message.contains("'datasource.url'"));
             assertTrue(message.contains("'datasource.driverClassName'"));

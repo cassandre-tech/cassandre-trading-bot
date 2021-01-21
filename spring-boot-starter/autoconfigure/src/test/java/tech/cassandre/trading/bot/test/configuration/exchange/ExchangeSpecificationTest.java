@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.configuration.exchange;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
@@ -27,6 +28,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARA
 public class ExchangeSpecificationTest extends BaseTest {
 
     @Test
+    @CaseId(12)
     @DisplayName("Check proxy host & port")
     public void checkProxyAndHostParameters() {
         try {

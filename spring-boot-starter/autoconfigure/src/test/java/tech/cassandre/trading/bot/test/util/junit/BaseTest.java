@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.test.util.junit;
 
 import org.awaitility.Awaitility;
+import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
@@ -124,17 +125,6 @@ public class BaseTest {
                 .nextLong(startMillis, endMillis);
         return ZonedDateTime.ofInstant(Instant.ofEpochSecond(randomMillisSinceEpoch), ZoneId.systemDefault());
     }
-
-    /**
-     * Get exception message from parameter exception.
-     *
-     * @param e exception
-     * @return message
-     */
-    protected String getParametersExceptionMessage(Exception e) {
-        return e.getCause().getCause().getCause().getMessage();
-    }
-
 
     /**
      * Generate a date in 2020 with a day.
