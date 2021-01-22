@@ -43,21 +43,25 @@ jobs:
           echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
 
       # ================================================================================================================
-      - name: Creates a Qase run
-        id: qase
+      - name: Get Qase cases list
+        id: qase-list
         run: |
           echo "::set-output name=qase_cases_id::$( \
-            curl "https://api.qase.io/v1/case/CTB?limit=100" \
+            curl -s "https://api.qase.io/v1/case/CTB?limit=100" \
             -H "Token: ${{ secrets.QASE_TOKEN }}" \
             -H "Content-type: application/json" \
             | jq -r -c '[.result.entities[].id | tostring] | join(",")')"
 
+      # ================================================================================================================
+      - name: Creates a Qase run
+        id: qase
+        run: |
           echo "::set-output name=qase_run_id::$( \
-            curl "https://api.qase.io/v1/run/CTB" \
+            curl -s "https://api.qase.io/v1/run/CTB" \
             -X POST \
             -H "Token: ${{ secrets.QASE_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"title": "${{ github.event.head_commit.message }}","description": "Test run for ${{ steps.version.outputs.version }}","environment_id": null,"cases": [${{ steps.qase.outputs.qase_cases_id }}]}' \
+            -d '{"title": "${{ github.event.head_commit.message }}","description": "Test run for ${{ steps.version.outputs.version }}","environment_id": null,"cases": [${{ steps.qase-list.outputs.qase_cases_id }}]}' \
             | jq -r -c ".result.id")"
 
       # ================================================================================================================
