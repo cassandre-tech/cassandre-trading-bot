@@ -48,7 +48,7 @@ jobs:
         run: |
           echo "::set-output name=qase_cases_id::$( \
             curl "https://api.qase.io/v1/case/CTB?limit=100" \
-            -H "Token: 92fa8e025e3895ea5958760930833178344398e3" \
+            -H "Token: ${{ secrets.QASE_TOKEN }}" \
             -H "Content-type: application/json" \
             | jq -r -c '[.result.entities[].id | tostring] | join(",")')
 
