@@ -21,7 +21,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 public class ValidConfigurationTest extends BaseTest {
 
     @Test
-    @CaseId(18)
+    @CaseId(19)
     @DisplayName("Connection test")
     public void checkConnection() {
         try {

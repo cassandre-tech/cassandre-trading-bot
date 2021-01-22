@@ -29,7 +29,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
 class CassandreStrategyAutoConfigurationTest {
 
     @Test
-    @CaseId(10)
+    @CaseId(20)
     @DisplayName("Check when a valid strategy was found")
     public void checkValidStrategyFound() {
         try {
