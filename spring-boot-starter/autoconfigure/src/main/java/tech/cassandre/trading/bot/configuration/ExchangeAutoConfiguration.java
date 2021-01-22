@@ -211,8 +211,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 ExchangeAccount ea = new ExchangeAccount();
                 ea.setExchange(exchangeParameters.getName());
                 ea.setAccount(exchangeParameters.getUsername());
-                exchangeAccountRepository.save(ea);
-                logger.debug("ExchangeConfiguration - exchange configuration saved in database {}", ea);
+                ea = exchangeAccountRepository.save(ea);
+                logger.info("ExchangeConfiguration - exchange configuration saved in database {}", ea);
             }
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.

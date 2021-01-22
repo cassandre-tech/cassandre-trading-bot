@@ -7,8 +7,11 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * Exchange account.
@@ -21,6 +24,7 @@ public class ExchangeAccount extends BaseDomain {
     /** Technical ID. */
     @Id
     @Column(name = "ID")
+    @GeneratedValue(strategy = IDENTITY)
     private long id;
 
     /** Exchange name. */

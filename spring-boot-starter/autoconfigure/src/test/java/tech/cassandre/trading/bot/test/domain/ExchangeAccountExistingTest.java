@@ -20,20 +20,20 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
 
 @SpringBootTest
-@DisplayName("Domain - ExchangeAccount - Creation")
+@DisplayName("Domain - ExchangeAccount - After restart")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "")
+        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
-public class ExchangeAccountTest {
+public class ExchangeAccountExistingTest {
 
     @Autowired
     private ExchangeAccountRepository exchangeAccountRepository;
 
     @Test
-    @CaseId(26)
-    @DisplayName("Check exchange account from database when ")
+    @CaseId(27)
+    @DisplayName("Check exchange account from database when already exists")
     public void checkExchangeAccountFromDatabase() {
         assertEquals(1, exchangeAccountRepository.count());
         final Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findById(1L);

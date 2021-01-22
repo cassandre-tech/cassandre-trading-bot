@@ -20,19 +20,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 @SpringBootTest
-@DisplayName("Domain - Strategy - Creation")
+@DisplayName("Domain - Strategy - After restart")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "")
+        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
-public class StrategyTest {
+public class StrategyExistingTest {
 
     @Autowired
     private StrategyRepository strategyRepository;
 
     @Test
-    @CaseId(34)
+    @CaseId(33)
     @DisplayName("Check saved strategy in database")
     public void checkLoadOrderFromDatabase() {
         // Test existing strategy.
