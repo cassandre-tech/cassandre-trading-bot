@@ -46,12 +46,18 @@ jobs:
       - name: Creates a Qase run
         id: qase
         run: |
+          echo "::set-output name=qase_cases_id::$( \
+            curl "https://api.qase.io/v1/case/CTB?limit=100" \
+            -H "Token: 92fa8e025e3895ea5958760930833178344398e3" \
+            -H "Content-type: application/json" \
+            | jq -r -c '[.result.entities[].id | tostring] | join(",")')
+
           echo "::set-output name=qase_run_id::$( \
             curl "https://api.qase.io/v1/run/CTB" \
             -X POST \
             -H "Token: ${{ secrets.QASE_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"title": "${{ github.event.head_commit.message }}","description": "Test run for ${{ steps.version.outputs.version }}","environment_id": null,"cases": [2,3,4,5,6]}' \
+            -d '{"title": "${{ github.event.head_commit.message }}","description": "Test run for ${{ steps.version.outputs.version }}","environment_id": null,"cases": [${{ steps.qase.outputs.qase_cases_id }}]}' \
             | jq -r -c ".result.id")"
 
       # ================================================================================================================
@@ -74,12 +80,26 @@ jobs:
       - name: Test Cassandre trading bot maven archetype - basic strategy
         id: cassandre-trading-bot-spring-boot-starter-basic-archetype
         run: |
-          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype -DarchetypeVersion=${{ steps.version.outputs.version }} -DgroupId=com.example -DartifactId=archetype-test-basic -Dversion=1.0-SNAPSHOT -Dpackage=com.example
+          mvn -B archetype:generate \
+            -DarchetypeGroupId=tech.cassandre.trading.bot \
+            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
+            -DarchetypeVersion=${{ steps.version.outputs.version }} \
+            -DgroupId=com.example \
+            -DartifactId=archetype-test-basic \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.example
           mvn -f archetype-test-basic/pom.xml test
 
       # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic ta4j strategy
         id: cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype
         run: |
-          mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype -DarchetypeVersion=${{ steps.version.outputs.version }} -DgroupId=com.example -DartifactId=archetype-test-ta4j-basic -Dversion=1.0-SNAPSHOT -Dpackage=com.example
+          mvn -B archetype:generate \
+            -DarchetypeGroupId=tech.cassandre.trading.bot \
+            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype \
+            -DarchetypeVersion=${{ steps.version.outputs.version }} \
+            -DgroupId=com.example \
+            -DartifactId=archetype-test-ta4j-basic \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.example
           mvn -f archetype-test-ta4j-basic/pom.xml test
