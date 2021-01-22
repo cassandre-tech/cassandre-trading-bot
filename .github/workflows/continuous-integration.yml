@@ -50,7 +50,7 @@ jobs:
             curl "https://api.qase.io/v1/case/CTB?limit=100" \
             -H "Token: ${{ secrets.QASE_TOKEN }}" \
             -H "Content-type: application/json" \
-            | jq -r -c '[.result.entities[].id | tostring] | join(",")')
+            | jq -r -c '[.result.entities[].id | tostring] | join(",")')"
 
           echo "::set-output name=qase_run_id::$( \
             curl "https://api.qase.io/v1/run/CTB" \
