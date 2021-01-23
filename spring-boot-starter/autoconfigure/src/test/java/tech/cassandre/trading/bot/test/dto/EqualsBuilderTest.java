@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.dto;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EqualsBuilderTest {
 
     @Test
+    @CaseId(41)
     @DisplayName("Check strings")
     public void checkStringEquals() {
         boolean result;
@@ -25,7 +27,7 @@ public class EqualsBuilderTest {
         result = new EqualsBuilder().append(null, "e").isEquals();
         assertFalse(result);
 
-        // First object non null and second null -> Not equals.
+        // First object non null and the second null -> Not equals.
         result = new EqualsBuilder().append("e", null).isEquals();
         assertFalse(result);
 
@@ -37,7 +39,7 @@ public class EqualsBuilderTest {
         result = new EqualsBuilder().append("test", "test").isEquals();
         assertTrue(result);
 
-        // Two with several equals and one not equals.
+        // Two with several equals and one not equal.
         result = new EqualsBuilder()
                 .append(null, null)
                 .append(null, "e")
@@ -57,6 +59,7 @@ public class EqualsBuilderTest {
     }
 
     @Test
+    @CaseId(42)
     @DisplayName("Check BigDecimal")
     public void checkBigDecimalEquals() {
         boolean result;
@@ -65,11 +68,11 @@ public class EqualsBuilderTest {
         result = new EqualsBuilder().append(new BigDecimal("1.00000"), null).isEquals();
         assertFalse(result);
 
-        // Same BigDecimal but with different format.
+        // Same BigDecimal but with a different format.
         result = new EqualsBuilder().append(new BigDecimal("1.00000"), new BigDecimal("1")).isEquals();
         assertTrue(result);
 
-        // Two BigDecimals.
+        // Two different BigDecimals.
         result = new EqualsBuilder().append(new BigDecimal("1.00000"), new BigDecimal("1.1")).isEquals();
         assertFalse(result);
     }

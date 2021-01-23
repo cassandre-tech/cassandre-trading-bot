@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.dto;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PositionRulesDTOTest {
 
     @Test
+    @CaseId(49)
     @DisplayName("Check no rules & toString()")
     public void checkNoRules() {
         // Position creation.
@@ -23,6 +25,7 @@ public class PositionRulesDTOTest {
     }
 
     @Test
+    @CaseId(50)
     @DisplayName("Check stop gain rule & toString()")
     public void checkStopGainRule() {
         // Position creation.
@@ -36,6 +39,7 @@ public class PositionRulesDTOTest {
     }
 
     @Test
+    @CaseId(51)
     @DisplayName("Check stop loss rule & toString()")
     public void checkStopLossRule() {
         // Position creation.
@@ -49,6 +53,7 @@ public class PositionRulesDTOTest {
     }
 
     @Test
+    @CaseId(52)
     @DisplayName("Check All rules & toString()")
     public void checkAllRules() {
         // Position creation.

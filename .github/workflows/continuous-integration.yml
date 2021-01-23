@@ -15,11 +15,11 @@ jobs:
       # ================================================================================================================
       - name: GPG Setup
         id: gpg
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           echo "$GPG_PRIVATE_KEY" > private.asc
           gpg --import --batch private.asc
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       # ================================================================================================================
       - name: JDK 11 Setup
