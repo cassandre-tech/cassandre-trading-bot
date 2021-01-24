@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.repository;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,11 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
@@ -31,41 +34,58 @@ public class OrderRepositoryTest extends BaseTest {
     private OrderRepository orderRepository;
 
     @Test
+    @CaseId(56)
     @DisplayName("Check imported data")
     public void checkImportedOrders() {
         // Orders.
         final Iterator<Order> orders = orderRepository.findByOrderByTimestampAsc().iterator();
         assertEquals(10, orderRepository.count());
+
         // Order 1.
-        Order order = orders.next();
-        assertEquals("BACKUP_ORDER_01", order.getOrderId());
-        assertEquals(ASK, order.getType());
-        assertEquals(0, new BigDecimal("0.000005").compareTo(order.getAmount().getValue()));
-        assertEquals("ETH/BTC", order.getCurrencyPair());
-        assertEquals("My reference 1", order.getUserReference());
-        assertEquals(createZonedDateTime("18-11-2020"), order.getTimestamp());
-        assertEquals(NEW, order.getStatus());
-        assertEquals(0, new BigDecimal("0.000004").compareTo(order.getCumulativeAmount().getValue()));
-        assertEquals(0, new BigDecimal("0.000003").compareTo(order.getAveragePrice().getValue()));
-        assertEquals("LEVERAGE_1", order.getLeverage());
-        assertEquals(0, new BigDecimal("0.000001").compareTo(order.getLimitPrice().getValue()));
-        assertNotNull(order.getStrategy());
-        assertEquals("01", order.getStrategy().getStrategyId());
+        Order o = orders.next();
+        assertEquals(1, o.getId());
+        assertEquals("BACKUP_ORDER_01", o.getOrderId());
+        assertEquals(ASK, o.getType());
+        assertNotNull(o.getStrategy());
+        assertEquals(1, o.getStrategy().getId());
+        assertEquals("01", o.getStrategy().getStrategyId());
+        assertEquals("ETH/BTC", o.getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.000005").compareTo(o.getAmount().getValue()));
+        assertEquals(0, new BigDecimal("0.000003").compareTo(o.getAveragePrice().getValue()));
+        assertEquals(0, new BigDecimal("0.000001").compareTo(o.getLimitPrice().getValue()));
+        assertEquals("LEVERAGE_1", o.getLeverage());
+        assertEquals(NEW, o.getStatus());
+        assertEquals(0, new BigDecimal("0.000004").compareTo(o.getCumulativeAmount().getValue()));
+        assertEquals("My reference 1", o.getUserReference());
+        assertEquals(createZonedDateTime("18-11-2020"), o.getTimestamp());
+
+        // Retrieving order 1 with findByOrderId().
+        Optional<Order> oBis = orderRepository.findByOrderId("BACKUP_ORDER_01");
+        assertTrue(oBis.isPresent());
+        assertEquals(o, oBis.get());
+
         // Order 2.
-        order = orders.next();
-        assertEquals("BACKUP_ORDER_02", order.getOrderId());
-        assertEquals(BID, order.getType());
-        assertEquals(0, new BigDecimal("0.000015").compareTo(order.getAmount().getValue()));
-        assertEquals("USDT/BTC", order.getCurrencyPair());
-        assertEquals("My reference 2", order.getUserReference());
-        assertEquals(createZonedDateTime("19-11-2020"), order.getTimestamp());
-        assertEquals(PENDING_NEW, order.getStatus());
-        assertEquals(0, new BigDecimal("0.000014").compareTo(order.getCumulativeAmount().getValue()));
-        assertEquals(0, new BigDecimal("0.000013").compareTo(order.getAveragePrice().getValue()));
-        assertEquals("LEVERAGE_2", order.getLeverage());
-        assertEquals(0, new BigDecimal("0.000011").compareTo(order.getLimitPrice().getValue()));
-        assertNotNull(order.getStrategy());
-        assertEquals("01", order.getStrategy().getStrategyId());
+        o = orders.next();
+        assertEquals(2, o.getId());
+        assertEquals("BACKUP_ORDER_02", o.getOrderId());
+        assertEquals(BID, o.getType());
+        assertNotNull(o.getStrategy());
+        assertEquals(1, o.getStrategy().getId());
+        assertEquals("01", o.getStrategy().getStrategyId());
+        assertEquals("USDT/BTC", o.getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.000015").compareTo(o.getAmount().getValue()));
+        assertEquals(0, new BigDecimal("0.000013").compareTo(o.getAveragePrice().getValue()));
+        assertEquals(0, new BigDecimal("0.000011").compareTo(o.getLimitPrice().getValue()));
+        assertEquals("LEVERAGE_2", o.getLeverage());
+        assertEquals(PENDING_NEW, o.getStatus());
+        assertEquals(0, new BigDecimal("0.000014").compareTo(o.getCumulativeAmount().getValue()));
+        assertEquals("My reference 2", o.getUserReference());
+        assertEquals(createZonedDateTime("19-11-2020"), o.getTimestamp());
+
+        // Retrieving order 2 with findByOrderId().
+        oBis = orderRepository.findByOrderId("BACKUP_ORDER_02");
+        assertTrue(oBis.isPresent());
+        assertEquals(o, oBis.get());
     }
 
 }
