@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.strategy;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -51,19 +52,17 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
     @Autowired
     private StrategyRepository strategyRepository;
 
-    private final StrategyMapper strategyMapper = Mappers.getMapper(StrategyMapper.class);
-
     @Test
-    @DisplayName("check strategy behavior")
+    @CaseId(83)
+    @DisplayName("Check strategy behavior")
     public void checkStrategyBehavior() {
 
         // Check type.
         Optional<Strategy> strategyInDatabase = strategyRepository.findByStrategyId("01");
         assertTrue(strategyInDatabase.isPresent());
         assertEquals(BASIC_TA4J_STRATEGY, strategyInDatabase.get().getType());
-        assertEquals(BASIC_TA4J_STRATEGY, strategyMapper.mapToStrategyDTO(strategyInDatabase.get()).getType());
 
-        // Checking received data.
+        // Check received data.
         await().untilAsserted(() -> assertEquals(2, strategy.getAccounts().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getOrders().size()));
         await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));
@@ -71,7 +70,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTickers().get(cp3).getLast())));
 
-        // Checking ta4j results.
+        // Check ta4j results.
         await().untilAsserted(() -> assertEquals(5, strategy.getEnterCount()));
         await().untilAsserted(() -> assertEquals(2, strategy.getExitCount()));
         await().untilAsserted(() -> assertEquals(8, strategy.getSeries().getBarCount()));
@@ -86,7 +85,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         final AccountDTO account = strategy.getAccounts().get("03");
         assertNotNull(account);
 
-        // canBuy().
+        // Check canBuy().
         // Trying to buy 1 bitcoin for 390 USDT per bitcoin - should work.
         assertTrue(strategy.canBuy(new BigDecimal("1")));
         assertTrue(strategy.canBuy(account, new BigDecimal("1")));
@@ -97,7 +96,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         assertFalse(strategy.canBuy(new BigDecimal("2"), new BigDecimal("400")));
         assertFalse(strategy.canBuy(account, new BigDecimal("2"), new BigDecimal("400")));
 
-        // canSell().
+        // Check canSell().
         // 1 BTC / 500 in my account.
         // Wanting to sell 1 bitcoin - I have them.
         assertTrue(strategy.canSell(new BigDecimal("1")));
