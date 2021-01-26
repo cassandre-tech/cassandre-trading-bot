@@ -135,28 +135,32 @@ public class PositionServiceTestMock extends BaseTest {
 
         StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("01").type(BASIC_STRATEGY).build();
 
+        // =============================================================================================================
         // Position 1 creation reply (order ORDER00010).
         given(service.createBuyMarketOrder(strategyDTO, cp1, new BigDecimal("0.0001")))
-                .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00010", BID, new BigDecimal("0.0001"), cp1)));
+                .willReturn(new OrderCreationResultDTO(getPendingOrder(strategyDTO, "ORDER00010", BID, new BigDecimal("0.0001"), cp1)));
 
         // Position 2 creation reply (order ORDER00020).
         given(service.createBuyMarketOrder(strategyDTO, cp2, new BigDecimal("0.0002")))
-                .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00020", BID, new BigDecimal("0.0002"), cp2)));
+                .willReturn(new OrderCreationResultDTO(getPendingOrder(strategyDTO, "ORDER00020", BID, new BigDecimal("0.0002"), cp2)));
 
         // Position 3 creation reply (order ORDER00030).
         given(service.createBuyMarketOrder(strategyDTO, cp1, new BigDecimal("0.0003")))
                 .willReturn(new OrderCreationResultDTO("Error message", new RuntimeException("Error exception")));
 
+        // =============================================================================================================
         // Position 1 closed reply (ORDER00011).
         given(service.createSellMarketOrder(strategyDTO, cp1, new BigDecimal("0.00010000")))
-                .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00011", ASK, new BigDecimal("0.00010000"), cp1)));
+                .willReturn(new OrderCreationResultDTO(getPendingOrder(strategyDTO, "ORDER00011", ASK, new BigDecimal("0.00010000"), cp1)));
+
+        // =============================================================================================================
 
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
         given(service.createBuyMarketOrder(strategyDTO, cp1, new BigDecimal("10")))
-                .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00010", BID, new BigDecimal("10"), cp1)));
+                .willReturn(new OrderCreationResultDTO(getPendingOrder(strategyDTO, "ORDER00010", BID, new BigDecimal("10"), cp1)));
         // Position 1 closed reply (ORDER00011) - used for max and min gain test.
         given(service.createSellMarketOrder(strategyDTO, cp1, new BigDecimal("10.00000000")))
-                .willReturn(new OrderCreationResultDTO(getPendingOrder("ORDER00011", ASK, new BigDecimal("10.00000000"), cp1)));
+                .willReturn(new OrderCreationResultDTO(getPendingOrder(strategyDTO, "ORDER00011", ASK, new BigDecimal("10.00000000"), cp1)));
 
         return service;
     }

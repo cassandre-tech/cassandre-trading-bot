@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.service.xchange;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ public class RatesTest extends BaseTest {
 	private TradeService tradeService;
 
 	@Test
+	@CaseId(79)
 	@DisplayName("Check account service rate")
 	public void checkAccountServiceRate() throws InterruptedException {
 		TimeUnit.SECONDS.sleep(20);
@@ -71,6 +73,7 @@ public class RatesTest extends BaseTest {
 	}
 
 	@Test
+	@CaseId(80)
 	@DisplayName("Check market service rate")
 	public void checkMarketServiceRate() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
@@ -98,6 +101,7 @@ public class RatesTest extends BaseTest {
 	}
 
 	@Test
+	@CaseId(81)
 	@DisplayName("Check trade service rate")
 	public void checkTradeServiceRate() throws InterruptedException {
 		TimeUnit.SECONDS.sleep(25);

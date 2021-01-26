@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.service.dry;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ public class PositionServiceDryModeTest extends BaseTest {
     private PositionRepository positionRepository;
 
     @Test
+    @CaseId(64)
     @DisplayName("Check position lifecycle")
     public void checkPositionLifecycle() throws InterruptedException {
         // First tickers - cp1 & cp2 (dry mode).
@@ -83,8 +85,8 @@ public class PositionServiceDryModeTest extends BaseTest {
         // Two updates will have been received.
         assertEquals(OPENING, getPositionDTO(position1Id).getStatus());
         await().untilAsserted(() -> assertEquals(3, strategy.getPositionsUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsStatusUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdateReceived().get(1).getStatus()));
 
         // =============================================================================================================
@@ -102,8 +104,8 @@ public class PositionServiceDryModeTest extends BaseTest {
         // Two updates will have been received.
         assertEquals(OPENING, getPositionDTO(position2Id).getStatus());
         await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
         await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
         await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdateReceived().get(3).getStatus()));
 
         // =============================================================================================================
@@ -129,7 +131,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         assertEquals(CLOSED, getPositionDTO(position1Id).getStatus());
         assertEquals(OPENED, getPositionDTO(position2Id).getStatus());
 
-        // Third tickers - cp1 & cp2.
+        // Fourth tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.4 - 100% gain.
         // ETH, USDT - bid 0,3 / ask 0.1 - 70% loss.
         // No change.

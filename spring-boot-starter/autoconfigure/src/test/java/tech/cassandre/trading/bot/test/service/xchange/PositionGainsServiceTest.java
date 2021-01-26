@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.service.xchange;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,6 +37,7 @@ public class PositionGainsServiceTest {
     private PositionService positionService;
 
     @Test
+    @CaseId(70)
     @DisplayName("Check gains calculation")
     public void checkGainsCalculation() {
         /*
@@ -112,26 +115,27 @@ public class PositionGainsServiceTest {
         assertEquals(0, new BigDecimal("139").compareTo(gain3.getNetAmount().getValue()));
         assertEquals(USDT, gain3.getNetAmount().getCurrency());
 
-        // The should not not gain for positions 4, 5 & 6.
+        // The should not not gain for positions 4,5 & 6.
         final Optional<PositionDTO> p4 = positionService.getPositionById(4L);
         assertTrue(p4.isPresent());
         assertEquals(0, p4.get().getGain().getPercentage());
-        assertEquals(0, BigDecimal.ZERO.compareTo(p4.get().getGain().getAmount().getValue()));
-        assertEquals(0, BigDecimal.ZERO.compareTo(p4.get().getGain().getNetAmount().getValue()));
+        assertEquals(0, ZERO.compareTo(p4.get().getGain().getAmount().getValue()));
+        assertEquals(0, ZERO.compareTo(p4.get().getGain().getNetAmount().getValue()));
         final Optional<PositionDTO> p5 = positionService.getPositionById(5L);
         assertTrue(p5.isPresent());
         assertEquals(0, p5.get().getGain().getPercentage());
-        assertEquals(0, BigDecimal.ZERO.compareTo(p5.get().getGain().getAmount().getValue()));
-        assertEquals(0, BigDecimal.ZERO.compareTo(p5.get().getGain().getNetAmount().getValue()));
+        assertEquals(0, ZERO.compareTo(p5.get().getGain().getAmount().getValue()));
+        assertEquals(0, ZERO.compareTo(p5.get().getGain().getNetAmount().getValue()));
         final Optional<PositionDTO> p6 = positionService.getPositionById(6L);
         assertTrue(p6.isPresent());
         assertEquals(0, p6.get().getGain().getPercentage());
-        assertEquals(0, BigDecimal.ZERO.compareTo(p6.get().getGain().getAmount().getValue()));
-        assertEquals(0, BigDecimal.ZERO.compareTo(p6.get().getGain().getNetAmount().getValue()));
+        assertEquals(0, ZERO.compareTo(p6.get().getGain().getAmount().getValue()));
+        assertEquals(0, ZERO.compareTo(p6.get().getGain().getNetAmount().getValue()));
 
         // Check all gains.
         final HashMap<CurrencyDTO, GainDTO> gains = positionService.getGains();
         assertEquals(2, gains.size());
+
         // Gains USDT.
         final GainDTO usdtGain = gains.get(USDT);
         assertNotNull(usdtGain);

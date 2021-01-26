@@ -105,12 +105,13 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /**
      * Creates a fake market order.
      *
+     * @param strategy     strategy
      * @param orderTypeDTO order type
      * @param currencyPair currency pair
      * @param amount       amount
      * @return order creation result
      */
-    private OrderCreationResultDTO createMarketOrder(final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    private OrderCreationResultDTO createMarketOrder(final StrategyDTO strategy, final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
         // We retrieve the last pricing from tickers.
         TickerDTO t = lastTickers.get(currencyPair);
 
@@ -167,14 +168,19 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
             final String orderId = getNextOrderNumber();
             final OrderDTO order = OrderDTO.builder()
                     .orderId(orderId)
-                    .currencyPair(currencyPair)
                     .type(orderTypeDTO)
-                    .status(FILLED)
+                    .strategy(strategy)
+                    .currencyPair(currencyPair)
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
                     .averagePrice(CurrencyAmountDTO.builder()
                             .value(t.getLast())
                             .currency(currencyPair.getQuoteCurrency())
                             .build())
-                    .amount(CurrencyAmountDTO.builder()
+                    .status(FILLED)
+                    .cumulativeAmount(CurrencyAmountDTO.builder()
                             .value(amount)
                             .currency(currencyPair.getBaseCurrency())
                             .build())
@@ -185,9 +191,9 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
             final String tradeId = getNextTradeNumber();
             final TradeDTO trade = TradeDTO.builder()
                     .tradeId(tradeId)
+                    .type(orderTypeDTO)
                     .orderId(orderId)
                     .currencyPair(currencyPair)
-                    .type(orderTypeDTO)
                     .amount(CurrencyAmountDTO.builder()
                             .value(amount)
                             .currency(currencyPair.getBaseCurrency())
@@ -196,8 +202,8 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                             .value(t.getLast())
                             .currency(currencyPair.getQuoteCurrency())
                             .build())
-                    .timestamp(ZonedDateTime.now())
                     .fee(CurrencyAmountDTO.ZERO)
+                    .timestamp(ZonedDateTime.now())
                     .build();
 
             // Sending the results after the method returns the result.
@@ -234,12 +240,12 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
 
     @Override
     public final OrderCreationResultDTO createBuyMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
-        return createMarketOrder(BID, currencyPair, amount);
+        return createMarketOrder(strategy, BID, currencyPair, amount);
     }
 
     @Override
     public final OrderCreationResultDTO createSellMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
-        return createMarketOrder(ASK, currencyPair, amount);
+        return createMarketOrder(strategy, ASK, currencyPair, amount);
     }
 
     @Override

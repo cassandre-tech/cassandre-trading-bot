@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.service.dry;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,7 @@ public class UserServiceDryModeTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Test
+    @CaseId(66)
     @DisplayName("Check imported user data")
     public void checkImportUserData() {
         // Retrieve user.
@@ -116,6 +118,7 @@ public class UserServiceDryModeTest extends BaseTest {
     }
 
     @Test
+    @CaseId(67)
     @DisplayName("Check balances updates")
     public void checkBalancesUpdate() {
         // We retrieve the account information in the strategy.
@@ -259,6 +262,7 @@ public class UserServiceDryModeTest extends BaseTest {
     }
 
     @Test
+    @CaseId(68)
     @DisplayName("Check buying error")
     public void checkBuyingError() {
         // =============================================================================================================
@@ -276,9 +280,10 @@ public class UserServiceDryModeTest extends BaseTest {
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
                 .build();
         tickerFlux.emitValue(ticker);
+        await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
         // =============================================================================================================
-        // Received ticker for ETH/EUR
+        // Received ticker for ETH/EUR.
         ticker = TickerDTO.builder()
                 .currencyPair(new CurrencyPairDTO(ETH, EUR))
                 .last(new BigDecimal("0.032666"))
@@ -299,13 +304,14 @@ public class UserServiceDryModeTest extends BaseTest {
         assertTrue(buyMarketOrder1.getErrorMessage().contains("No assets for EUR"));
 
         // =============================================================================================================
-        // Buying 1000 ether - should not work.
+        // Buying 1000 ether we can’t afford.
         final OrderCreationResultDTO buyMarketOrder2 = strategy.createBuyMarketOrder(cp1, new BigDecimal("1000"));
         assertFalse(buyMarketOrder2.isSuccessful());
         assertTrue(buyMarketOrder2.getErrorMessage().contains("Not enough assets"));
     }
 
     @Test
+    @CaseId(69)
     @DisplayName("Check selling error")
     public void checkSellingError() {
         // =============================================================================================================
@@ -325,7 +331,7 @@ public class UserServiceDryModeTest extends BaseTest {
         tickerFlux.emitValue(ticker);
 
         // =============================================================================================================
-        // Received ticker for ETH/EUR
+        // Received ticker for ETH/EUR.
         ticker = TickerDTO.builder()
                 .currencyPair(new CurrencyPairDTO(ETH, EUR))
                 .last(new BigDecimal("0.032666"))
@@ -340,13 +346,13 @@ public class UserServiceDryModeTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(2, strategy.getLastTickers().size()));
 
         // =============================================================================================================
-        // Buying with a currency we don't have.
+        // Selling with a currency we don't have.
         final OrderCreationResultDTO sellMarketOrder1 = strategy.createSellMarketOrder(new CurrencyPairDTO(ETH, EUR), new BigDecimal("1000"));
         assertFalse(sellMarketOrder1.isSuccessful());
         assertTrue(sellMarketOrder1.getErrorMessage().contains("Not enough assets"));
 
         // =============================================================================================================
-        // Buying 1000 ether - should not work.
+        // Selling 1000 ether we don't have.
         final OrderCreationResultDTO sellMarketOrder2 = strategy.createSellMarketOrder(cp1, new BigDecimal("1000"));
         assertFalse(sellMarketOrder2.isSuccessful());
         assertTrue(sellMarketOrder2.getErrorMessage().contains("Not enough assets"));

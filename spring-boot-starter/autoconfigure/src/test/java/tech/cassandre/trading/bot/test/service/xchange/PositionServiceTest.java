@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.service.xchange;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static java.math.BigDecimal.ZERO;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -86,6 +88,7 @@ public class PositionServiceTest extends BaseTest {
     private PositionFlux positionFlux;
 
     @Test
+    @CaseId(71)
     @DisplayName("Check position creation")
     public void checkCreatePosition() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
@@ -125,11 +128,11 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(72)
     @DisplayName("Check position order update")
     public void checkPositionOrderUpdate() {
         // =============================================================================================================
         // Creates two positions (1 & 2).
-        // The two positions have the by the manually created order.
 
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
         final PositionCreationResultDTO p1 = strategy.createLongPosition(cp1,
@@ -144,12 +147,26 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
         long position1Id = p1.getPosition().getId();
 
-        // We should receive an order update (created by cassandre).
+        // Check order created internally by Cassandre.
         orderFlux.emitValue(strategy.getOrderById("ORDER00010").get());
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
         final OrderDTO orderP1 = strategy.getOrdersUpdateReceived().get(0);
+        assertNotNull(orderP1);
         assertEquals("ORDER00010", orderP1.getOrderId());
+        assertEquals(BID, orderP1.getType());
+        assertNotNull(orderP1.getStrategy());
+        assertEquals(1, orderP1.getStrategy().getId());
+        assertEquals("01", orderP1.getStrategy().getStrategyId());
+        assertEquals(cp1, orderP1.getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.0001").compareTo(orderP1.getAmount().getValue()));
+        assertEquals(cp1.getBaseCurrency(), orderP1.getAmount().getCurrency());
+        assertNull(orderP1.getAveragePrice());
+        assertNull(orderP1.getLimitPrice());
+        assertNull(orderP1.getLeverage());
         assertEquals(PENDING_NEW, orderP1.getStatus());
+        assertNull(orderP1.getCumulativeAmount());
+        assertNull(orderP1.getUserReference());
+        assertNotNull(orderP1.getTimestamp());
 
         // Creates position 2 (ETH/BTC, 0.0002, 20% stop loss).
         final PositionCreationResultDTO p2 = strategy.createLongPosition(cp2,
@@ -197,11 +214,10 @@ public class PositionServiceTest extends BaseTest {
         OrderDTO order00020 = OrderDTO.builder()
                 .orderId("ORDER00020")
                 .type(BID)
-                .amount(new CurrencyAmountDTO("1.00001", cp2.getBaseCurrency()))
                 .currencyPair(cp2)
-                .timestamp(ZonedDateTime.now())
+                .amount(new CurrencyAmountDTO("1.00001", cp2.getBaseCurrency()))
                 .status(FILLED)
-                .cumulativeAmount(new CurrencyAmountDTO("0.0002", cp2.getBaseCurrency()))
+                .timestamp(ZonedDateTime.now())
                 .build();
         orderFlux.emitValue(order00020);
         await().untilAsserted(() -> assertEquals(positionUpdateCount1 + 1, strategy.getPositionsUpdateReceived().size()));
@@ -237,9 +253,10 @@ public class PositionServiceTest extends BaseTest {
         // We are now closing position 1 with a trade and setCloseOrderId.
 
         // We move the position 1 to OPENED.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
-                .orderId("ORDER00010")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000002")
                 .type(BID)
+                .orderId("ORDER00010")
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.2", cp1.getQuoteCurrency()))
@@ -253,16 +270,15 @@ public class PositionServiceTest extends BaseTest {
         positionFlux.emitValue(position1.get());
         await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));
 
-        // An update arrives to and change status order of position 1.
+        // An update arrives and changes the status order of position 1.
         final long positionUpdateCount2 = strategy.getPositionsUpdateReceived().size();
         OrderDTO closingOrder01 = OrderDTO.builder()
                 .orderId("CLOSING_ORDER_01")
                 .type(ASK)
-                .amount(new CurrencyAmountDTO("1.00001", cp2.getBaseCurrency()))
                 .currencyPair(cp1)
-                .timestamp(ZonedDateTime.now())
+                .amount(new CurrencyAmountDTO("1.00001", cp2.getBaseCurrency()))
                 .status(FILLED)
-                .cumulativeAmount(new CurrencyAmountDTO("0.0002", cp1.getBaseCurrency()))
+                .timestamp(ZonedDateTime.now())
                 .build();
         orderFlux.emitValue(closingOrder01);
         await().untilAsserted(() -> assertEquals(positionUpdateCount2 + 1, strategy.getPositionsUpdateReceived().size()));
@@ -300,6 +316,7 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(73)
     @DisplayName("Check opening order failure")
     public void checkOpeningOrderFailure() {
         // =============================================================================================================
@@ -349,6 +366,7 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(74)
     @DisplayName("Check closing order failure")
     public void checkClosingOrderFailure() {
         // =============================================================================================================
@@ -418,6 +436,7 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(75)
     @DisplayName("Check get positions and get positions by id")
     public void checkGetPosition() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
@@ -444,6 +463,7 @@ public class PositionServiceTest extends BaseTest {
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
+    @CaseId(76)
     @DisplayName("Check trade update")
     public void checkTradeUpdate() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
@@ -463,12 +483,24 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 2 - should change status of position 1.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002").currencyPair(cp1).type(BID).currencyPair(cp1).amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency())).orderId("ORDER00010").build());
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000002")
+                .type(BID)
+                .orderId("ORDER00010")
+                .currencyPair(cp1)
+                .amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency()))
+                .build());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(1).get().getStatus()));
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
         // Trade 3 - should change status of position 2.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002").currencyPair(cp1).type(BID).currencyPair(cp1).amount(new CurrencyAmountDTO("0.0002", cp1.getBaseCurrency())).orderId("ORDER00020").build());
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000003")
+                .type(BID)
+                .orderId("ORDER00020")
+                .currencyPair(cp1)
+                .amount(new CurrencyAmountDTO("0.0002", cp1.getBaseCurrency()))
+                .build());
         assertEquals(OPENED, positionService.getPositionById(1).get().getStatus());
         await().untilAsserted(() -> assertEquals(OPENED, positionService.getPositionById(2).get().getStatus()));
     }
@@ -485,9 +517,10 @@ public class PositionServiceTest extends BaseTest {
         assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getOrderId());
 
         // The open trade arrives, change the status to OPENED and set the price.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
-                .orderId("ORDER00010")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000002")
                 .type(BID)
+                .orderId("ORDER00010")
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.2", cp1.getQuoteCurrency()))
@@ -516,18 +549,19 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(50, gain.get().getPercentage());
         assertEquals(0, new BigDecimal("0.00001").compareTo(gain.get().getAmount().getValue()));
         assertEquals(BTC, gain.get().getAmount().getCurrency());
-        assertEquals(BigDecimal.ZERO, gain.get().getFees().getValue());
-        assertEquals(BTC, gain.get().getAmount().getCurrency());
+        assertEquals(ZERO, gain.get().getFees().getValue());
+        assertEquals(BTC, gain.get().getFees().getCurrency());
 
-        // A third ticker arrives with a gain of 100%- should close the order.
+        // A third ticker arrives with a gain of 100% should close the order.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.5")).build());
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(CLOSING, getPositionDTO(position1Id).getStatus());
 
         // The close trade arrives, change the status and set the price.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
-                .orderId("ORDER00011")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000002")
                 .type(ASK)
+                .orderId("ORDER00011")
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency()))
                 .build());
@@ -535,9 +569,10 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(78)
     @DisplayName("Check lowest, highest and latest gain")
     public void checkLowestHighestAndLatestGain() throws InterruptedException {
-        // A position is opening on ETH/BTC.
+        // A position is created on ETH/BTC.
         // We buy 10 ETH for 100 BTC.
         final PositionCreationResultDTO creationResult1 = strategy.createLongPosition(cp1,
                 new BigDecimal("10"),
@@ -553,9 +588,10 @@ public class PositionServiceTest extends BaseTest {
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
 
         // Trade arrives, position is now opened.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000001")
-                .orderId("ORDER00010")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000001")
                 .type(BID)
+                .orderId("ORDER00010")
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("10", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
@@ -626,9 +662,10 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(CLOSING, position1.getStatus());
 
         // The close trade arrives, change the status and set the price.
-        tradeFlux.emitValue(TradeDTO.builder().tradeId("000002")
-                .orderId("ORDER00011")
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000002")
                 .type(ASK)
+                .orderId("ORDER00011")
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("10", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("20", cp1.getQuoteCurrency()))

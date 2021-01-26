@@ -51,8 +51,11 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals("ETH/BTC", o.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.000005").compareTo(o.getAmount().getValue()));
+        assertEquals("ETH", o.getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.000003").compareTo(o.getAveragePrice().getValue()));
+        assertEquals("BTC", o.getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("0.000001").compareTo(o.getLimitPrice().getValue()));
+        assertEquals("BTC", o.getLimitPrice().getCurrency());
         assertEquals("LEVERAGE_1", o.getLeverage());
         assertEquals(NEW, o.getStatus());
         assertEquals(0, new BigDecimal("0.000004").compareTo(o.getCumulativeAmount().getValue()));
@@ -74,8 +77,11 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals("USDT/BTC", o.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.000015").compareTo(o.getAmount().getValue()));
+        assertEquals("USDT", o.getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.000013").compareTo(o.getAveragePrice().getValue()));
+        assertEquals("BTC", o.getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("0.000011").compareTo(o.getLimitPrice().getValue()));
+        assertEquals("BTC", o.getLimitPrice().getCurrency());
         assertEquals("LEVERAGE_2", o.getLeverage());
         assertEquals(PENDING_NEW, o.getStatus());
         assertEquals(0, new BigDecimal("0.000014").compareTo(o.getCumulativeAmount().getValue()));

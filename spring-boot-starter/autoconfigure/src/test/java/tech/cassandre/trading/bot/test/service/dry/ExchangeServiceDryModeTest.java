@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.service.dry;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,8 @@ public class ExchangeServiceDryModeTest {
     private ExchangeService exchangeService;
 
     @Test
-    @DisplayName("Check the list of available")
+    @CaseId(63)
+    @DisplayName("Check the list of available currency pairs")
     public void checkGetAvailableCurrencyPairs() {
         // The available currencies should be the same than the strategy.
         final Set<CurrencyPairDTO> availableCurrencyPairs = exchangeService.getAvailableCurrencyPairs();

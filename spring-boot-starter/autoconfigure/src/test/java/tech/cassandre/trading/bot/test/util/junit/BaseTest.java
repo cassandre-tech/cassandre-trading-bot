@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.test.util.junit;
 import org.awaitility.Awaitility;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
@@ -58,22 +59,26 @@ public class BaseTest {
     /**
      * Get pending order.
      *
+     * @param strategy     strategy
      * @param orderId      orderId
      * @param orderTypeDTO order type
+     * @param amount       amount
      * @param currencyPair currency pair
      * @return order
      */
-    protected OrderDTO getPendingOrder(final String orderId,
+    protected OrderDTO getPendingOrder(final StrategyDTO strategy,
+                                       final String orderId,
                                        final OrderTypeDTO orderTypeDTO,
                                        final BigDecimal amount,
                                        final CurrencyPairDTO currencyPair) {
         return OrderDTO.builder()
                 .orderId(orderId)
-                .timestamp(ZonedDateTime.now())
                 .type(orderTypeDTO)
-                .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
+                .strategy(strategy)
                 .currencyPair(currencyPair)
+                .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
                 .status(PENDING_NEW)
+                .timestamp(ZonedDateTime.now())
                 .build();
     }
 
