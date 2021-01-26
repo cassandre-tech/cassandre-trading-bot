@@ -11,6 +11,9 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 
 /**
@@ -29,8 +32,8 @@ public class NoTradingAccountStrategy extends BasicCassandreStrategy {
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
         Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
-        requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC));
-        requestedTickers.add(new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.USDT));
+        requestedTickers.add(new CurrencyPairDTO(ETH, BTC));
+        requestedTickers.add(new CurrencyPairDTO(ETH, USDT));
         return requestedTickers;
     }
 
