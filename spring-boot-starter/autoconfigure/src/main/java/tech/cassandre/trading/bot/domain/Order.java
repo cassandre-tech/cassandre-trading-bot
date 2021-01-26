@@ -129,15 +129,15 @@ public class Order extends BaseDomain {
                 .append(this.id, that.id)
                 .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
-                .append(this.amount, that.amount)
                 .append(this.currencyPair, that.currencyPair)
-                .append(this.userReference, that.userReference)
-                .append(this.timestamp, that.timestamp)
+                .append(this.amount, that.amount)
+                .append(this.averagePrice, that.averagePrice)
+                .append(this.limitPrice, that.limitPrice)
+                .append(this.leverage, that.leverage)
                 .append(this.status, that.status)
                 .append(this.cumulativeAmount, that.cumulativeAmount)
-                .append(this.averagePrice, that.averagePrice)
-                .append(this.leverage, that.leverage)
-                .append(this.limitPrice, that.limitPrice)
+                .append(this.userReference, that.userReference)
+                .append(this.timestamp, that.timestamp)
                 .isEquals();
     }
 

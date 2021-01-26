@@ -124,17 +124,18 @@ public class Position extends BaseDomain {
         final Position that = (Position) o;
         return new EqualsBuilder()
                 .append(this.id, that.id)
-                .append(this.status, that.status)
+                .append(this.positionId, that.positionId)
+                .append(this.type, that.type)
                 .append(this.currencyPair, that.currencyPair)
                 .append(this.amount, that.amount)
                 .append(this.stopGainPercentageRule, that.stopGainPercentageRule)
                 .append(this.stopLossPercentageRule, that.stopLossPercentageRule)
+                .append(this.status, that.status)
                 .append(this.openingOrder, that.openingOrder)
                 .append(this.closingOrder, that.closingOrder)
                 .append(this.lowestPrice, that.lowestPrice)
                 .append(this.highestPrice, that.highestPrice)
                 .append(this.latestPrice, that.latestPrice)
-                .append(this.strategy.getId(), that.strategy.getId())
                 .isEquals();
     }
 

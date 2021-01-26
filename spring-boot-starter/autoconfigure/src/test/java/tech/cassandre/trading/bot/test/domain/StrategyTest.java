@@ -36,13 +36,18 @@ public class StrategyTest {
     @DisplayName("Check saved strategy in database")
     public void checkLoadOrderFromDatabase() {
         // Test existing strategy.
-        final Optional<Strategy> strategy = strategyRepository.findByStrategyId("01");
-        assertTrue(strategy.isPresent());
-        assertEquals(1, strategy.get().getId());
-        assertEquals("01", strategy.get().getStrategyId());
-        assertEquals("Testable strategy", strategy.get().getName());
-        assertEquals("kucoin", strategy.get().getExchangeAccount().getExchange());
-        assertEquals("cassandre.crypto.bot@gmail.com", strategy.get().getExchangeAccount().getAccount());
+        final Optional<Strategy> s = strategyRepository.findByStrategyId("01");
+        assertTrue(s.isPresent());
+        assertEquals(1, s.get().getId());
+        assertEquals("01", s.get().getStrategyId());
+        assertEquals("Testable strategy", s.get().getName());
+        assertEquals("kucoin", s.get().getExchangeAccount().getExchange());
+        assertEquals("cassandre.crypto.bot@gmail.com", s.get().getExchangeAccount().getAccount());
+
+        // Test equals.
+        final Optional<Strategy> sBis = strategyRepository.findByStrategyId("01");
+        assertTrue(sBis.isPresent());
+        assertEquals(s.get(), sBis.get());
 
         // Test non existing strategy.
         assertFalse(strategyRepository.findByStrategyId("NON_EXISTING").isPresent());

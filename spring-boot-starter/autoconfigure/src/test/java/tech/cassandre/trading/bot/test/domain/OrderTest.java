@@ -101,6 +101,11 @@ public class OrderTest extends BaseTest {
         assertEquals(createZonedDateTime("18-11-2020"), o.get().getTimestamp());
         assertEquals(0, o.get().getTrades().size());
 
+        // Test equals.
+        Optional<OrderDTO> oBis = strategy.getOrderById("BACKUP_ORDER_01");
+        assertTrue(oBis.isPresent());
+        assertEquals(o.get(), oBis.get());
+
         // =============================================================================================================
         // Check order 2.
         o = strategy.getOrderById("BACKUP_ORDER_02");

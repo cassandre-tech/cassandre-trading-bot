@@ -63,6 +63,7 @@ public class Strategy extends BaseDomain {
         return new EqualsBuilder()
                 .append(this.id, that.id)
                 .append(this.strategyId, that.strategyId)
+                .append(this.type, that.type)
                 .isEquals();
     }
 

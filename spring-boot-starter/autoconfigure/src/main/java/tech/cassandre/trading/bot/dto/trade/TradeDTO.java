@@ -81,13 +81,14 @@ public class TradeDTO {
         final TradeDTO that = (TradeDTO) o;
         return new EqualsBuilder()
                 .append(this.tradeId, that.tradeId)
-                .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
-                .append(this.amount, that.amount)
+                .append(this.orderId, that.orderId)
                 .append(this.currencyPair, that.currencyPair)
+                .append(this.amount, that.amount)
                 .append(this.price, that.price)
-                .append(this.timestamp, that.timestamp)
                 .append(this.fee, that.fee)
+                .append(this.userReference, that.userReference)
+                .append(this.timestamp, that.timestamp)
                 .isEquals();
     }
 
