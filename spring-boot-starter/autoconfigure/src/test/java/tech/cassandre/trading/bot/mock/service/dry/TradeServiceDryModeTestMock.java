@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;

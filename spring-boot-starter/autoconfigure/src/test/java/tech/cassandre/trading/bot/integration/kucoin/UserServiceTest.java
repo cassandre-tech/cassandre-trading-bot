@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,6 @@ import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -55,8 +55,9 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
+    @CaseId(90)
     @Tag("integration")
-    @DisplayName("CHeck get user, accounts and balances")
+    @DisplayName("Check get user, accounts and balances")
     public void checkGetUser() {
         // Expected values.
         final int expectedAccounts = 2;
@@ -75,7 +76,7 @@ public class UserServiceTest {
         assertTrue(user.get().getTimestamp().isBefore(ZonedDateTime.now().plusSeconds(1)));
 
         // =============================================================================================================
-        // Testing Wallet.
+        // Testing wallets.
         assertEquals(expectedAccounts, user.get().getAccounts().size());
         Map<String, AccountDTO> wallets = user.get().getAccounts();
         AccountDTO mainWallet = wallets.get("main");

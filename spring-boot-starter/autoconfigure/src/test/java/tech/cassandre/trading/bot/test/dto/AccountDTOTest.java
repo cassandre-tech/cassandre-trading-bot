@@ -66,7 +66,7 @@ public class AccountDTOTest {
 		AccountDTO account3 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 
-		// Account 4 - One BTC & one ETH (inverted comparted to account 3).
+		// Account 4 - One BTC & one ETH (inverted compared to account 3).
 		balances.put(BTC, BalanceDTO.builder().build());
 		balances.put(ETH, BalanceDTO.builder().build());
 		AccountDTO account4 = AccountDTO.builder().balances(balances).build();

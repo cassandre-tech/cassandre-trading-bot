@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.test.util.junit;
 
 import org.awaitility.Awaitility;
-import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;

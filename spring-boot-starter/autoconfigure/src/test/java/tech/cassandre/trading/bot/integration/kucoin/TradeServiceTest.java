@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -10,6 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -19,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,8 +70,9 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(86)
     @Tag("integration")
-    @DisplayName("Check creates a buy / sell market order")
+    @DisplayName("Check creates a buy/sell market order")
     public void checkCreateBuySellMarketOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
@@ -94,6 +99,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(87)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     public void checkCreateBuyLimitOrder() {
@@ -108,33 +114,37 @@ public class TradeServiceTest extends BaseTest {
         assertNotNull(result1.getOrder().getOrderId());
 
         // =============================================================================================================
-        // Getting a non existing order.
+        // Getting a non-existing order.
         assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals("")));
 
         // =============================================================================================================
         // Getting the order and testing the data.
         final Optional<OrderDTO> order1 = tradeService.getOrders().stream().filter(o -> o.getOrderId().equals(result1.getOrder().getOrderId())).findFirst();
         assertTrue(order1.isPresent());
+        assertNotNull(order1.get().getOrderId());
+        assertEquals(result1.getOrder().getOrderId(), order1.get().getOrderId());
         assertEquals(BID, order1.get().getType());
+        assertEquals(cp, order1.get().getCurrencyPair());
         assertEquals(0, order1.get().getAmount().getValue().compareTo(new BigDecimal("0.0001")));
         assertEquals(cp.getBaseCurrency(), order1.get().getAmount().getCurrency());
-        assertEquals(cp, order1.get().getCurrencyPair());
-        assertEquals(result1.getOrder().getOrderId(), order1.get().getOrderId());
+        assertTrue(order1.get().getAveragePrice().getValue().compareTo(ZERO) > 0);
+        assertEquals(cp.getQuoteCurrency(), order1.get().getAveragePrice().getCurrency());
+        assertEquals(0, order1.get().getLimitPrice().getValue().compareTo(new BigDecimal("0.000001")));
+        assertEquals(cp.getQuoteCurrency(), order1.get().getLimitPrice().getCurrency());
+        assertNull(order1.get().getLeverage());
+        assertEquals(NEW, order1.get().getStatus());
+        assertNotNull(order1.get().getCumulativeAmount());
         assertNull(order1.get().getUserReference());
         assertNotNull(order1.get().getTimestamp());
         assertTrue(order1.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
         assertTrue(order1.get().getTimestamp().isBefore(ZonedDateTime.now().plusMinutes(1)));
-        assertEquals(NEW, order1.get().getStatus());
-        assertNotNull(order1.get().getCumulativeAmount());
-        assertTrue(order1.get().getAveragePrice().getValue().compareTo(BigDecimal.ZERO) > 0);
-        assertEquals(0, order1.get().getLimitPrice().getValue().compareTo(new BigDecimal("0.000001")));
-        assertEquals(cp.getQuoteCurrency(), order1.get().getLimitPrice().getCurrency());
 
         // Cancel the order.
         tradeService.cancelOrder(result1.getOrder().getOrderId());
     }
 
     @Test
+    @CaseId(88)
     @Tag("integration")
     @DisplayName("Check cancel an order")
     public void checkCancelOrder() {
@@ -158,6 +168,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(89)
     @Tag("integration")
     @DisplayName("Check get trades")
     public void checkGetTrades() {
@@ -172,6 +183,26 @@ public class TradeServiceTest extends BaseTest {
         await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
         assertNotNull(result2.getOrder().getOrderId());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
+
+        // Retrieve trade & test values.
+        final Optional<TradeDTO> t = tradeService.getTrades()
+                .stream()
+                .filter(trade -> trade.getOrderId().equals(result1.getOrder().getOrderId()))
+                .findFirst();
+        assertTrue(t.isPresent());
+        assertNull(t.get().getId());
+        assertNotNull(t.get().getTradeId());
+        assertEquals(BID, t.get().getType());
+        assertEquals(result1.getOrderId(), t.get().getOrderId());
+        assertEquals(cp, t.get().getCurrencyPair());
+        assertNotNull(t.get().getAmount().getValue());
+        assertEquals(ETH, t.get().getAmount().getCurrency());
+        assertNotNull(t.get().getPrice().getValue());
+        assertEquals(BTC, t.get().getAmount().getCurrency());
+        assertNotNull(t.get().getFee().getValue());
+        assertNotNull(t.get().getFee().getCurrency());
+        assertTrue(t.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
+        assertTrue(t.get().getTimestamp().isBefore(ZonedDateTime.now().plusMinutes(1)));
     }
 
 }
