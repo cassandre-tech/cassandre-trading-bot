@@ -80,7 +80,7 @@ public class BasicCassandreStrategyTest extends BaseTest {
         with().await().untilAsserted(() -> assertEquals(3, strategy.getAccountsUpdatesReceived().size()));
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         assertTrue(tradeAccount.isPresent());
-        assertEquals("03", tradeAccount.get().getId());
+        assertEquals("03", tradeAccount.get().getAccountId());
 
         // Check getEstimatedBuyingCost().
         assertTrue(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).isPresent());

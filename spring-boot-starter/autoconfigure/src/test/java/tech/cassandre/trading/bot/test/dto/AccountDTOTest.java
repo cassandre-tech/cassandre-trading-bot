@@ -25,21 +25,21 @@ public class AccountDTOTest {
 	@DisplayName("Check equalTo() on account id & name")
 	public void checkEqualToForAccountIdAndName() {
 		// Account 1 (null).
-		AccountDTO account1 = AccountDTO.builder().id(null).name(null).build();
+		AccountDTO account1 = AccountDTO.builder().accountId(null).name(null).build();
 		// Account 2.
-		AccountDTO account2 = AccountDTO.builder().id("01").name("01").build();
+		AccountDTO account2 = AccountDTO.builder().accountId("01").name("01").build();
 		assertNotEquals(account2, account1);
 		assertNotEquals(account1, account2);
 		// Account 3 - Same.
-		AccountDTO account3 = AccountDTO.builder().id("01").name("01").build();
+		AccountDTO account3 = AccountDTO.builder().accountId("01").name("01").build();
 		assertEquals(account2, account3);
 		assertEquals(account3, account2);
 		// Account 4 - id changed.
-		AccountDTO account4 = AccountDTO.builder().id("CHANGED").name("01").build();
+		AccountDTO account4 = AccountDTO.builder().accountId("CHANGED").name("01").build();
 		assertNotEquals(account2, account4);
 		assertNotEquals(account4, account2);
 		// Account 5 - Name changed.
-		AccountDTO account5 = AccountDTO.builder().id("01").name("CHANGED").build();
+		AccountDTO account5 = AccountDTO.builder().accountId("01").name("CHANGED").build();
 		assertNotEquals(account2, account5);
 		assertNotEquals(account5, account2);
 	}

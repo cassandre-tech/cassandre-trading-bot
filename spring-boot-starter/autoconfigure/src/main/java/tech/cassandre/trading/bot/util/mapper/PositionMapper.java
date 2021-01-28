@@ -24,6 +24,7 @@ public interface PositionMapper {
     Position mapToPosition(PositionDTO source);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "positionId", ignore = true)
     @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
     @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
     @Mapping(target = "createdOn", ignore = true)

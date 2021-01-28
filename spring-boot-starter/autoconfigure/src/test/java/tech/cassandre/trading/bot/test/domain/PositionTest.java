@@ -123,7 +123,7 @@ public class PositionTest extends BaseTest {
         assertNull(p.getLatestPrice());
 
         // Test equals.
-        Optional<PositionDTO> pBis = strategy.getPositionById(1L);
+        Optional<PositionDTO> pBis = strategy.getPositionByPositionId(1L);
         assertTrue(pBis.isPresent());
         assertEquals(p, pBis.get());
 

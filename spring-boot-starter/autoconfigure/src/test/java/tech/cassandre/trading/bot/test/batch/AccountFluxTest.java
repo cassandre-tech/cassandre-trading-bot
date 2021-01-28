@@ -79,7 +79,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Check update 1.
         AccountDTO a = iterator.next();
-        assertEquals("01", a.getId());
+        assertEquals("01", a.getAccountId());
         assertEquals("Account 01", a.getName());
         assertEquals(2, a.getBalances().size());
         final Optional<BalanceDTO> update1BTCBalance = a.getBalance(BTC);
@@ -105,7 +105,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Check update 2.
         a = iterator.next();
-        assertEquals("02", a.getId());
+        assertEquals("02", a.getAccountId());
         assertEquals("Account 02", a.getName());
         assertEquals(1, a.getBalances().size());
         final Optional<BalanceDTO> update2BTCBalance = a.getBalance(BTC);
@@ -121,7 +121,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Check update 3.
         a = iterator.next();
-        assertEquals("01", a.getId());
+        assertEquals("01", a.getAccountId());
         assertEquals("Account 01", a.getName());
         assertEquals(3, a.getBalances().size());
         final Optional<BalanceDTO> update3BTCBalance = a.getBalance(BTC);
@@ -157,7 +157,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Check update 4  - ETH balance of account 01 changed (borrowed value).
         a = iterator.next();
-        assertEquals("01", a.getId());
+        assertEquals("01", a.getAccountId());
         assertEquals("Account 01", a.getName());
         final Optional<BalanceDTO> update4BTCBalance = a.getBalance(BTC);
         assertTrue(update4BTCBalance.isPresent());
@@ -192,7 +192,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Check update 5 - BTC balance of account 02 changed (all values).
         a = iterator.next();
-        assertEquals("02", a.getId());
+        assertEquals("02", a.getAccountId());
         assertEquals("Account 02", a.getName());
         final Optional<BalanceDTO> update5BTCBalance = a.getBalance(BTC);
         assertTrue(update5BTCBalance.isPresent());
@@ -207,7 +207,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Check update 6 - ETH balance removed on account 01.
         a = iterator.next();
-        assertEquals("01", a.getId());
+        assertEquals("01", a.getAccountId());
         assertEquals("Account 01", a.getName());
         assertEquals(2, a.getBalances().size());
         final Optional<BalanceDTO> update6BTCBalance = a.getBalance(BTC);
@@ -235,7 +235,7 @@ public class AccountFluxTest extends BaseTest {
 
         // Check update 7 - New account 03.
         a = iterator.next();
-        assertEquals("03", a.getId());
+        assertEquals("03", a.getAccountId());
         assertEquals("Account 03", a.getName());
         assertEquals(1, a.getBalances().size());
         final Optional<BalanceDTO> update7BTCBalance = a.getBalance(BTC);
@@ -258,9 +258,9 @@ public class AccountFluxTest extends BaseTest {
         assertNotNull(strategyAccounts.get("03"));
 
         // Check account 01.
-        Optional<AccountDTO> a1 = strategy.getAccountById("01");
+        Optional<AccountDTO> a1 = strategy.getAccountByAccountId("01");
         assertTrue(a1.isPresent());
-        assertEquals("01", a1.get().getId());
+        assertEquals("01", a1.get().getAccountId());
         assertEquals("Account 01", a1.get().getName());
         assertEquals(2, a1.get().getBalances().size());
         final Optional<BalanceDTO> account01BTCBalance = a1.get().getBalance(BTC);
@@ -287,9 +287,9 @@ public class AccountFluxTest extends BaseTest {
         assertEquals(0, 0, account01USDTBalance.get().getDepositing().compareTo(new BigDecimal("2")));
 
         // Check account 02.
-        Optional<AccountDTO> a2 = strategy.getAccountById("02");
+        Optional<AccountDTO> a2 = strategy.getAccountByAccountId("02");
         assertTrue(a2.isPresent());
-        assertEquals("02", a2.get().getId());
+        assertEquals("02", a2.get().getAccountId());
         assertEquals("Account 02", a2.get().getName());
         assertEquals(1, a2.get().getBalances().size());
         final Optional<BalanceDTO> account02BTCBalance = a2.get().getBalance(BTC);
@@ -304,9 +304,9 @@ public class AccountFluxTest extends BaseTest {
         assertEquals(0, 0, account02BTCBalance.get().getDepositing().compareTo(new BigDecimal("1")));
 
         // Check account 03.
-        Optional<AccountDTO> a3 = strategy.getAccountById("03");
+        Optional<AccountDTO> a3 = strategy.getAccountByAccountId("03");
         assertTrue(a3.isPresent());
-        assertEquals("03", a3.get().getId());
+        assertEquals("03", a3.get().getAccountId());
         assertEquals("Account 03", a3.get().getName());
         assertEquals(1, a3.get().getBalances().size());
         final Optional<BalanceDTO> account03BTCBalance = a3.get().getBalance(BTC);

@@ -148,7 +148,7 @@ public class PositionServiceTest extends BaseTest {
         long position1Id = p1.getPosition().getId();
 
         // Check order created internally by Cassandre.
-        orderFlux.emitValue(strategy.getOrderById("ORDER00010").get());
+        orderFlux.emitValue(strategy.getOrderByOrderId("ORDER00010").get());
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
         final OrderDTO orderP1 = strategy.getOrdersUpdateReceived().get(0);
         assertNotNull(orderP1);
@@ -182,7 +182,7 @@ public class PositionServiceTest extends BaseTest {
         long position2Id = p2.getPosition().getId();
 
         // Position 1.
-        Optional<PositionDTO> position1 = strategy.getPositionById(position1Id);
+        Optional<PositionDTO> position1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(position1.isPresent());
         // Opening order.
         OrderDTO p1OpeningOrder = position1.get().getOpeningOrder();
@@ -196,7 +196,7 @@ public class PositionServiceTest extends BaseTest {
         assertNull(p1ClosingOrder);
 
         // Position 2.
-        Optional<PositionDTO> position2 = strategy.getPositionById(position2Id);
+        Optional<PositionDTO> position2 = strategy.getPositionByPositionId(position2Id);
         assertTrue(position2.isPresent());
         // Opening order.
         OrderDTO p2OpeningOrder = position2.get().getOpeningOrder();
@@ -223,7 +223,7 @@ public class PositionServiceTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(positionUpdateCount1 + 1, strategy.getPositionsUpdateReceived().size()));
 
         // Position 1 - No changes.
-        position1 = strategy.getPositionById(position1Id);
+        position1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(position1.isPresent());
         // Opening order.
         p1OpeningOrder = position1.get().getOpeningOrder();
@@ -237,7 +237,7 @@ public class PositionServiceTest extends BaseTest {
         assertNull(p1ClosingOrder);
 
         // Position 2 - Order status changed.
-        position2 = strategy.getPositionById(position2Id);
+        position2 = strategy.getPositionByPositionId(position2Id);
         assertTrue(position2.isPresent());
         // Opening order.
         p2OpeningOrder = position2.get().getOpeningOrder();
@@ -264,7 +264,7 @@ public class PositionServiceTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
 
         // We close position 1 with setClosingOrderId().
-        position1 = strategy.getPositionById(position1Id);
+        position1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(position1.isPresent());
         position1.get().closePositionWithOrderId("CLOSING_ORDER_01");
         positionFlux.emitValue(position1.get());
@@ -284,7 +284,7 @@ public class PositionServiceTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(positionUpdateCount2 + 1, strategy.getPositionsUpdateReceived().size()));
 
         // Position 1 - closing order status should have changed.
-        position1 = strategy.getPositionById(position1Id);
+        position1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(position1.isPresent());
         // Opening order.
         p1OpeningOrder = position1.get().getOpeningOrder();
@@ -302,7 +302,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(FILLED, p1ClosingOrder.getStatus());
 
         // Position 2 - No change
-        position2 = strategy.getPositionById(position2Id);
+        position2 = strategy.getPositionByPositionId(position2Id);
         assertTrue(position2.isPresent());
         // Opening order.
         p2OpeningOrder = position2.get().getOpeningOrder();
@@ -337,7 +337,7 @@ public class PositionServiceTest extends BaseTest {
         long position1Id = p1.getPosition().getId();
 
         // Position 1.
-        Optional<PositionDTO> position1 = strategy.getPositionById(position1Id);
+        Optional<PositionDTO> position1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(position1.isPresent());
         // Opening order.
         OrderDTO p1OpeningOrder = position1.get().getOpeningOrder();
@@ -388,7 +388,7 @@ public class PositionServiceTest extends BaseTest {
         long position1Id = p1.getPosition().getId();
 
         // Position 1.
-        Optional<PositionDTO> position1 = strategy.getPositionById(position1Id);
+        Optional<PositionDTO> position1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(position1.isPresent());
         // Opening order.
         OrderDTO p1OpeningOrder = position1.get().getOpeningOrder();
@@ -413,7 +413,7 @@ public class PositionServiceTest extends BaseTest {
                 .build());
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         // We close position 1 with setClosingOrderId().
-        position1 = strategy.getPositionById(position1Id);
+        position1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(position1.isPresent());
         position1.get().closePositionWithOrderId("CLOSING_ORDER_01");
         positionFlux.emitValue(position1.get());
@@ -506,6 +506,7 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
+    @CaseId(77)
     @DisplayName("Check close position")
     public void checkClosePosition() throws InterruptedException {
         // =============================================================================================================

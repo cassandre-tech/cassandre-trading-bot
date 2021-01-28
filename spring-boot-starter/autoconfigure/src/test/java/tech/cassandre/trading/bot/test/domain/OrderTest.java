@@ -78,7 +78,7 @@ public class OrderTest extends BaseTest {
 
         // =============================================================================================================
         // Check order 1.
-        Optional<OrderDTO> o = strategy.getOrderById("BACKUP_ORDER_01");
+        Optional<OrderDTO> o = strategy.getOrderByOrderId("BACKUP_ORDER_01");
         assertTrue(o.isPresent());
         assertEquals(1, o.get().getId());
         assertEquals("BACKUP_ORDER_01", o.get().getOrderId());
@@ -102,13 +102,13 @@ public class OrderTest extends BaseTest {
         assertEquals(0, o.get().getTrades().size());
 
         // Test equals.
-        Optional<OrderDTO> oBis = strategy.getOrderById("BACKUP_ORDER_01");
+        Optional<OrderDTO> oBis = strategy.getOrderByOrderId("BACKUP_ORDER_01");
         assertTrue(oBis.isPresent());
         assertEquals(o.get(), oBis.get());
 
         // =============================================================================================================
         // Check order 2.
-        o = strategy.getOrderById("BACKUP_ORDER_02");
+        o = strategy.getOrderByOrderId("BACKUP_ORDER_02");
         assertTrue(o.isPresent());
         assertEquals(2, o.get().getId());
         assertEquals("BACKUP_ORDER_02", o.get().getOrderId());
@@ -132,14 +132,14 @@ public class OrderTest extends BaseTest {
         assertEquals(0, o.get().getTrades().size());
 
         // Check trades of orders.
-        o = strategy.getOrderById("BACKUP_OPENING_ORDER_05");
+        o = strategy.getOrderByOrderId("BACKUP_OPENING_ORDER_05");
         assertTrue(o.isPresent());
         assertEquals(2, o.get().getTrades().size());
         Iterator<TradeDTO> tradesIterator = o.get().getTrades().iterator();
         assertEquals("BACKUP_TRADE_06", tradesIterator.next().getTradeId());
         assertEquals("BACKUP_TRADE_07", tradesIterator.next().getTradeId());
 
-        o = strategy.getOrderById("BACKUP_CLOSING_ORDER_03");
+        o = strategy.getOrderByOrderId("BACKUP_CLOSING_ORDER_03");
         assertTrue(o.isPresent());
         assertEquals(3, o.get().getTrades().size());
         tradesIterator = o.get().getTrades().iterator();
@@ -212,7 +212,7 @@ public class OrderTest extends BaseTest {
 
         // =============================================================================================================
         // OrderDTO - Check created order (dto).
-        Optional<OrderDTO> order = this.strategy.getOrderById("BACKUP_ORDER_03");
+        Optional<OrderDTO> order = this.strategy.getOrderByOrderId("BACKUP_ORDER_03");
         assertTrue(order.isPresent());
         assertEquals(11, order.get().getId());
         assertEquals("BACKUP_ORDER_03", order.get().getOrderId());
@@ -291,7 +291,7 @@ public class OrderTest extends BaseTest {
         assertEquals(createdOn, getOrder("BACKUP_ORDER_03").getCreatedOn());
 
         // We check if we still have the strategy set.
-        final Optional<OrderDTO> optionalOrder = strategy.getOrderById("BACKUP_ORDER_03");
+        final Optional<OrderDTO> optionalOrder = strategy.getOrderByOrderId("BACKUP_ORDER_03");
         assertTrue(optionalOrder.isPresent());
         assertNotNull(optionalOrder.get().getStrategy());
         assertEquals("01", optionalOrder.get().getStrategy().getStrategyId());

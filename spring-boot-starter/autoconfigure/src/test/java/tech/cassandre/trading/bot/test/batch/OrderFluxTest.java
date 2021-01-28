@@ -228,7 +228,7 @@ public class OrderFluxTest extends BaseTest {
         assertNotNull(strategyOrders.get("ORDER_000004"));
 
         // Order ORDER_000001.
-        final Optional<OrderDTO> o1 = strategy.getOrderById("ORDER_000001");
+        final Optional<OrderDTO> o1 = strategy.getOrderByOrderId("ORDER_000001");
         assertTrue(o1.isPresent());
         assertEquals(1, o1.get().getId());
         assertEquals("ORDER_000001", o1.get().getOrderId());
@@ -250,7 +250,7 @@ public class OrderFluxTest extends BaseTest {
         assertTrue(createDate(1).isEqual(o1.get().getTimestamp()));
 
         // Order ORDER_000002.
-        final Optional<OrderDTO> o2 = strategy.getOrderById("ORDER_000002");
+        final Optional<OrderDTO> o2 = strategy.getOrderByOrderId("ORDER_000002");
         assertTrue(o2.isPresent());
         assertEquals(2, o2.get().getId());
         assertEquals("ORDER_000002", o2.get().getOrderId());
@@ -272,7 +272,7 @@ public class OrderFluxTest extends BaseTest {
         assertTrue(createDate(2).isEqual(o2.get().getTimestamp()));
 
         // Order ORDER_000003.
-        final Optional<OrderDTO> o3 = strategy.getOrderById("ORDER_000003");
+        final Optional<OrderDTO> o3 = strategy.getOrderByOrderId("ORDER_000003");
         assertTrue(o3.isPresent());
         assertEquals(3, o3.get().getId());
         assertEquals("ORDER_000003", o3.get().getOrderId());
@@ -294,7 +294,7 @@ public class OrderFluxTest extends BaseTest {
         assertTrue(createDate(1).isEqual(o3.get().getTimestamp()));
 
         // Order ORDER_000004.
-        final Optional<OrderDTO> o4 = strategy.getOrderById("ORDER_000004");
+        final Optional<OrderDTO> o4 = strategy.getOrderByOrderId("ORDER_000004");
         assertTrue(o4.isPresent());
         assertEquals(4, o4.get().getId());
         assertEquals("ORDER_000004", o4.get().getOrderId());

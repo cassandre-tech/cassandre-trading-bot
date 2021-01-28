@@ -27,7 +27,7 @@ public class PositionCreationResultDTOTest {
     }
 
     @Test
-    @CaseId(49)
+    @CaseId(48)
     @DisplayName("Check unsuccessful position creation")
     public void checkUnsuccessfulPositionCreation() {
         final PositionCreationResultDTO p = new PositionCreationResultDTO("Error message", new RuntimeException("Exception"));

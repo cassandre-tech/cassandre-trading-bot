@@ -212,7 +212,7 @@ public class TradeFluxTest extends BaseTest {
         assertNotNull(strategyTrades.get("TRADE_0000008"));
 
         // Trade TRADE_0000001.
-        final Optional<TradeDTO> t1 = strategy.getTradeById("TRADE_0000001");
+        final Optional<TradeDTO> t1 = strategy.getTradeByTradeId("TRADE_0000001");
         assertTrue(t1.isPresent());
         assertEquals(1, t1.get().getId());
         assertEquals("TRADE_0000001", t1.get().getTradeId());
@@ -226,7 +226,7 @@ public class TradeFluxTest extends BaseTest {
         assertTrue(createDate(1).isEqual(t1.get().getTimestamp()));
 
         // Trade TRADE_0000002.
-        final Optional<TradeDTO> t2 = strategy.getTradeById("TRADE_0000002");
+        final Optional<TradeDTO> t2 = strategy.getTradeByTradeId("TRADE_0000002");
         assertTrue(t2.isPresent());
         assertEquals(2, t2.get().getId());
         assertEquals("TRADE_0000002", t2.get().getTradeId());
@@ -240,7 +240,7 @@ public class TradeFluxTest extends BaseTest {
         assertTrue(createZonedDateTime("01-09-2020").isEqual(t2.get().getTimestamp()));
 
         // Trade TRADE_0000003 - The trade 3 was received two times so data have been updated.
-        final Optional<TradeDTO> t3 = strategy.getTradeById("TRADE_0000003");
+        final Optional<TradeDTO> t3 = strategy.getTradeByTradeId("TRADE_0000003");
         assertTrue(t3.isPresent());
         assertEquals(3, t3.get().getId());
         assertEquals("TRADE_0000003", t3.get().getTradeId());
@@ -254,7 +254,7 @@ public class TradeFluxTest extends BaseTest {
         assertTrue(createZonedDateTime("02-09-2021").isEqual(t3.get().getTimestamp()));
 
         // Trade TRADE_0000004.
-        final Optional<TradeDTO> t4 = strategy.getTradeById("TRADE_0000004");
+        final Optional<TradeDTO> t4 = strategy.getTradeByTradeId("TRADE_0000004");
         assertTrue(t4.isPresent());
         assertEquals(4, t4.get().getId());
         assertEquals("TRADE_0000004", t4.get().getTradeId());
@@ -268,7 +268,7 @@ public class TradeFluxTest extends BaseTest {
         assertTrue(createZonedDateTime("01-09-2020").isEqual(t4.get().getTimestamp()));
 
         // Trade TRADE_0000005.
-        final Optional<TradeDTO> t5 = strategy.getTradeById("TRADE_0000005");
+        final Optional<TradeDTO> t5 = strategy.getTradeByTradeId("TRADE_0000005");
         assertTrue(t5.isPresent());
         assertEquals(5, t5.get().getId());
         assertEquals("TRADE_0000005", t5.get().getTradeId());
@@ -282,7 +282,7 @@ public class TradeFluxTest extends BaseTest {
         assertTrue(createZonedDateTime("01-09-2020").isEqual(t5.get().getTimestamp()));
 
         // Trade TRADE_0000006.
-        final Optional<TradeDTO> t6 = strategy.getTradeById("TRADE_0000006");
+        final Optional<TradeDTO> t6 = strategy.getTradeByTradeId("TRADE_0000006");
         assertTrue(t6.isPresent());
         assertEquals(6, t6.get().getId());
         assertEquals("TRADE_0000006", t6.get().getTradeId());
@@ -296,7 +296,7 @@ public class TradeFluxTest extends BaseTest {
         assertTrue(createZonedDateTime("02-09-2020").isEqual(t6.get().getTimestamp()));
 
         // Trade TRADE_0000008.
-        final Optional<TradeDTO> t8 = strategy.getTradeById("TRADE_0000008");
+        final Optional<TradeDTO> t8 = strategy.getTradeByTradeId("TRADE_0000008");
         assertTrue(t8.isPresent());
         assertEquals(7, t8.get().getId());
         assertEquals("TRADE_0000008", t8.get().getTradeId());
@@ -311,10 +311,10 @@ public class TradeFluxTest extends BaseTest {
 
         // =============================================================================================================
         // Check if all is ok with order links.
-        final Optional<OrderDTO> ORDER_0000001 = strategy.getOrderById("ORDER_0000001");
+        final Optional<OrderDTO> ORDER_0000001 = strategy.getOrderByOrderId("ORDER_0000001");
         assertTrue(ORDER_0000001.isPresent());
         assertEquals(6, ORDER_0000001.get().getTrades().size());
-        final Optional<OrderDTO> ORDER_0000002 = strategy.getOrderById("ORDER_0000002");
+        final Optional<OrderDTO> ORDER_0000002 = strategy.getOrderByOrderId("ORDER_0000002");
         assertTrue(ORDER_0000002.isPresent());
         assertEquals(1, ORDER_0000002.get().getTrades().size());
     }

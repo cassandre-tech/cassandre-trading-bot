@@ -26,6 +26,7 @@ public interface AccountMapper {
     @Mapping(source = "wallets", target = "accounts")
     UserDTO mapToUserDTO(AccountInfo source);
 
+    @Mapping(source = "id", target = "accountId")
     @Mapping(target = "feature", ignore = true)
     AccountDTO mapToWalletDTO(Wallet source);
 

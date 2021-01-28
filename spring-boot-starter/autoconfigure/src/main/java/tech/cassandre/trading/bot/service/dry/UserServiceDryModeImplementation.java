@@ -91,7 +91,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 // Creating account.
                 accounts.put(accountName,
                         AccountDTO.builder()
-                                .id(accountName)
+                                .accountId(accountName)
                                 .name(accountName)
                                 .balances(balances)
                                 .build());
@@ -137,7 +137,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 // For each balance.
                 a.getBalances().forEach((c, b) -> {
                     BalanceDTO newBalance;
-                    if (a.getId().equals(TRADE_ACCOUNT_ID) && b.getCurrency().equals(currency)) {
+                    if (a.getAccountId().equals(TRADE_ACCOUNT_ID) && b.getCurrency().equals(currency)) {
                         // If we are on the account to update, we calculate the new value.
                         newBalance = BalanceDTO.builder()
                                 .currency(b.getCurrency())
@@ -155,11 +155,11 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
 
                 // Creating account
                 AccountDTO account = AccountDTO.builder()
-                        .id(a.getId())
+                        .accountId(a.getAccountId())
                         .name(a.getName())
                         .balances(balances)
                         .build();
-                accounts.put(account.getId(), account);
+                accounts.put(account.getAccountId(), account);
             });
 
             // Change the user value and the account in the strategy.

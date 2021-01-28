@@ -24,9 +24,9 @@ import static lombok.AccessLevel.PRIVATE;
 public class AccountDTO {
 
     /** A unique identifier for this account. */
-    String id;
+    String accountId;
 
-    /** A descriptive name for this account. Defaults to {@link #id}. */
+    /** A descriptive name for this account. Defaults to {@link #accountId}. */
     String name;
 
     /** Account features. */
@@ -74,7 +74,7 @@ public class AccountDTO {
         final AccountDTO that = (AccountDTO) o;
         // Test accounts.
         boolean equals = new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.accountId, that.accountId)
                 .append(this.name, that.name)
                 .append(this.balances.size(), that.balances.size())
                 .isEquals();
@@ -101,7 +101,7 @@ public class AccountDTO {
     @Override
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(accountId)
                 .append(name)
                 .toHashCode();
     }

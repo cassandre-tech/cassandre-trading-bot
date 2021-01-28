@@ -81,7 +81,7 @@ public class TradeFluxTestMock extends BaseTest {
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).build();
+        AccountDTO account01 = AccountDTO.builder().accountId("01").name("trade").balances(balances).build();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
@@ -90,7 +90,7 @@ public class TradeFluxTestMock extends BaseTest {
         // Account 02.
         BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).build();
+        AccountDTO account02 = AccountDTO.builder().accountId("02").name("trade").balances(balances).build();
         accounts.put("02", account02);
         UserDTO user02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
@@ -100,7 +100,7 @@ public class TradeFluxTestMock extends BaseTest {
         balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).build());
         balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).build());
         balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).build());
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).build();
+        AccountDTO account03 = AccountDTO.builder().accountId("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();

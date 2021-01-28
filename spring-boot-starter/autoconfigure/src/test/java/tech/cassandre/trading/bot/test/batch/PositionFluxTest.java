@@ -112,7 +112,7 @@ public class PositionFluxTest extends BaseTest {
         // Check data we have in strategy & database.
         assertEquals(1, positionRepository.count());
         assertEquals(1, strategy.getPositions().size());
-        Optional<PositionDTO> p1 = strategy.getPositionById(position1Id);
+        Optional<PositionDTO> p1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
@@ -165,7 +165,7 @@ public class PositionFluxTest extends BaseTest {
         // Check data we have in strategy & database.
         assertEquals(2, positionRepository.count());
         assertEquals(2, strategy.getPositions().size());
-        Optional<PositionDTO> p2 = strategy.getPositionById(position2Id);
+        Optional<PositionDTO> p2 = strategy.getPositionByPositionId(position2Id);
         assertTrue(p2.isPresent());
         assertEquals(2, p2.get().getId());
         assertEquals(2, p2.get().getPositionId());
@@ -258,7 +258,7 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p1 = strategy.getPositionById(position1Id);
+        p1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
@@ -347,7 +347,7 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p1 = strategy.getPositionById(position1Id);
+        p1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
@@ -401,7 +401,7 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p2 = strategy.getPositionById(position2Id);
+        p2 = strategy.getPositionByPositionId(position2Id);
         assertTrue(p2.isPresent());
         assertEquals(2, p2.get().getId());
         assertEquals(2, p2.get().getPositionId());
@@ -447,7 +447,7 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p1 = strategy.getPositionById(position1Id);
+        p1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
@@ -541,7 +541,7 @@ public class PositionFluxTest extends BaseTest {
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
-        p1 = strategy.getPositionById(position1Id);
+        p1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
@@ -570,8 +570,8 @@ public class PositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("100").compareTo(p1.get().getLatestPrice().getValue()));
 
         // Just checking trades creation.
-        assertNotNull(strategy.getPositionById(position1Id));
-        assertNotNull(strategy.getPositionById(position2Id));
+        assertNotNull(strategy.getPositionByPositionId(position1Id));
+        assertNotNull(strategy.getPositionByPositionId(position2Id));
         assertEquals(5, strategy.getTrades().size());
 
         // Check if we don't have duplicated trades in database !

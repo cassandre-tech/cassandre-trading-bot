@@ -97,14 +97,14 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // =============================================================================================================
         // Account retrieved by configuration.
-        AccountDTO tempAccount = AccountDTO.builder().id("03").name("trade").build();
+        AccountDTO tempAccount = AccountDTO.builder().accountId("03").name("trade").build();
         accounts.put("trade", tempAccount);
         accounts.clear();
 
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).build();
+        AccountDTO account01 = AccountDTO.builder().accountId("01").name("trade").balances(balances).build();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
@@ -113,7 +113,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         // Account 02.
         BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
         balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").balances(balances).build();
+        AccountDTO account02 = AccountDTO.builder().accountId("02").balances(balances).build();
         accounts.put("02", account02);
         UserDTO user02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
@@ -124,7 +124,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         balances.put(BTC, account03Balance1);
         BalanceDTO account03Balance2 = BalanceDTO.builder().available(new BigDecimal("150")).build();
         balances.put(USDT, account03Balance2);
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).build();
+        AccountDTO account03 = AccountDTO.builder().accountId("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();

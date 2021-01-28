@@ -79,7 +79,7 @@ public class UserServiceDryModeTest extends BaseTest {
 
         // Main account.
         final AccountDTO mainAccount = user.get().getAccounts().get("main");
-        assertEquals("main", mainAccount.getId());
+        assertEquals("main", mainAccount.getAccountId());
         assertEquals("main", mainAccount.getName());
         assertEquals(1, mainAccount.getBalances().size());
         Optional<BalanceDTO> mainBTC = mainAccount.getBalance(BTC);
@@ -88,7 +88,7 @@ public class UserServiceDryModeTest extends BaseTest {
 
         // Trade account.
         final AccountDTO tradeAccount = user.get().getAccounts().get("trade");
-        assertEquals("trade", tradeAccount.getId());
+        assertEquals("trade", tradeAccount.getAccountId());
         assertEquals("trade", tradeAccount.getName());
         assertEquals(3, tradeAccount.getBalances().size());
         Optional<BalanceDTO> tradeBTC = tradeAccount.getBalance(BTC);
@@ -103,7 +103,7 @@ public class UserServiceDryModeTest extends BaseTest {
 
         // Savings account.
         final AccountDTO savingsAccount = user.get().getAccounts().get("savings");
-        assertEquals("savings", savingsAccount.getId());
+        assertEquals("savings", savingsAccount.getAccountId());
         assertEquals("savings", savingsAccount.getName());
         assertEquals(3, savingsAccount.getBalances().size());
         Optional<BalanceDTO> savingsBTC = savingsAccount.getBalance(BTC);

@@ -81,14 +81,14 @@ public class UserServiceTest {
         Map<String, AccountDTO> wallets = user.get().getAccounts();
         AccountDTO mainWallet = wallets.get("main");
         assertNotNull(mainWallet);
-        assertEquals("main", mainWallet.getId());
+        assertEquals("main", mainWallet.getAccountId());
         assertEquals("main", mainWallet.getName());
         assertEquals(2, mainWallet.getFeatures().size());
         assertTrue(mainWallet.getFeatures().contains(TRADING));
         assertTrue(mainWallet.getFeatures().contains(FUNDING));
         AccountDTO tradeWallet = wallets.get("trade");
         assertNotNull(tradeWallet);
-        assertEquals("trade", tradeWallet.getId());
+        assertEquals("trade", tradeWallet.getAccountId());
         assertEquals("trade", tradeWallet.getName());
         assertEquals(2, tradeWallet.getFeatures().size());
         assertTrue(tradeWallet.getFeatures().contains(TRADING));
