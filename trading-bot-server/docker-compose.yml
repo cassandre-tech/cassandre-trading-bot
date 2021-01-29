@@ -21,7 +21,7 @@ services:
   # ====================================================================================================================
   # Postgresql - Database used to backup Cassandre trading bot data (strategies/orders/trades/positions).
   # https://hub.docker.com/_/postgres
-  postgresql:
+  cassandre-postgresql:
     image: library/postgres:13-alpine
     restart: always
     networks:
@@ -38,10 +38,10 @@ services:
   # ====================================================================================================================
   # Postgresql backup - Util tools to backup the database.
   # https://github.com/prodrigestivill/docker-postgres-backup-local
-  postgresql-backup:
+  cassandre-postgresql-backup:
     image: prodrigestivill/postgres-backup-local:13-alpine
     depends_on:
-      - postgresql
+      - cassandre-postgresql
     restart: always
     networks:
       - cassandre
@@ -49,7 +49,7 @@ services:
       - cassandre_database_backup:/backups
     environment:
       - TZ=Europe/Paris
-      - POSTGRES_HOST=postgresql
+      - POSTGRES_HOST=cassandre-postgresql
       - POSTGRES_DB=cassandre_trading_bot
       - POSTGRES_USER=cassandre_trading_bot
       - POSTGRES_PASSWORD=mypassword
