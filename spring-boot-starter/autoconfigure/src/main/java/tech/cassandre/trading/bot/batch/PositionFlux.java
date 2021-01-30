@@ -47,7 +47,7 @@ public class PositionFlux extends BaseInternalFlux<PositionDTO> {
                 closingOrder.ifPresent(position::setClosingOrder);
             }
             positionRepository.save(position);
-            logger.error("PositionFlux - Position {} updated in database", position);
+            logger.debug("PositionFlux - Position {} updated in database", position);
 
         }, () -> logger.error("PositionFlux - Position {} was not found in database", newValue.getId()));
     }
