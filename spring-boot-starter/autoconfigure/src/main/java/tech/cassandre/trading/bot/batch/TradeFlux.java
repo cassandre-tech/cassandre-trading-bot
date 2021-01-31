@@ -51,7 +51,7 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
             logger.debug("TradeFlux - Treating trade : {}", trade.getTradeId());
             final Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(trade.getTradeId());
             if (tradeInDatabase.isEmpty() || !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
-                logger.info("TradeFlux - Trade {} has changed : {}", trade.getTradeId(), trade);
+                logger.debug("TradeFlux - Trade {} has changed : {}", trade.getTradeId(), trade);
                 newValues.add(trade);
             }
         });
