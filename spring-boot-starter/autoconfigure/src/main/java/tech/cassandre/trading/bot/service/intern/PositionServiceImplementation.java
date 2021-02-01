@@ -84,7 +84,6 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     .stream()
                     .filter(o -> orderCreationResult.getOrderId().equals(o.getOrderId()))
                     .findFirst();
-            System.out.println("==> " + order);
             if (order.isEmpty()) {
                 order = Optional.of(orderCreationResult.getOrder());
             }
