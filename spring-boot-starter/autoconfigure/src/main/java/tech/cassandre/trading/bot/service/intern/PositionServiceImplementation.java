@@ -80,7 +80,15 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
             // =========================================================================================================
             // Creates the position dto.
-            PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, orderCreationResult.getOrder(), rules);
+            Optional<OrderDTO> order = tradeService.getOrders()
+                    .stream()
+                    .filter(o -> orderCreationResult.getOrderId().equals(o.getOrderId()))
+                    .findFirst();
+            System.out.println("==> " + order);
+            if (order.isEmpty()) {
+                order = Optional.of(orderCreationResult.getOrder());
+            }
+            PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, order.get(), rules);
             positionRepository.save(positionMapper.mapToPosition(p));
             logger.debug("PositionService - Position {} opened with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
 

@@ -99,14 +99,14 @@ public class PositionDTO {
      * @param newStrategy     strategy
      * @param newCurrencyPair currency pair
      * @param newAmount       amount
-     * @param newOpenOrder    open order
+     * @param newOpeningOrder    open order
      * @param newRules        position rules
      */
     public PositionDTO(final long newId,
                        final StrategyDTO newStrategy,
                        final CurrencyPairDTO newCurrencyPair,
                        final BigDecimal newAmount,
-                       final OrderDTO newOpenOrder,
+                       final OrderDTO newOpeningOrder,
                        final PositionRulesDTO newRules) {
         this.status = OPENING;
         this.type = LONG;
@@ -118,7 +118,7 @@ public class PositionDTO {
                 .value(newAmount)
                 .currency(newCurrencyPair.getBaseCurrency())
                 .build();
-        this.openingOrder = newOpenOrder;
+        this.openingOrder = newOpeningOrder;
         this.rules = newRules;
     }
 

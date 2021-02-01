@@ -85,7 +85,6 @@ public interface OrderMapper {
     // =================================================================================================================
     // DTO to domain.
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
     // TODO Fix why adding strategy creates an error.
