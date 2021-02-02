@@ -16,7 +16,6 @@ import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -40,9 +39,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
 public class PositionServiceTestMock extends BaseTest {
-
-    @Autowired
-    private StrategyRepository strategyRepository;
 
     @Autowired
     private PositionRepository positionRepository;

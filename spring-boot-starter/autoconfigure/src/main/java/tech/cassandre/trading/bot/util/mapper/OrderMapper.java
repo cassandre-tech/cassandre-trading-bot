@@ -87,7 +87,6 @@ public interface OrderMapper {
 
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
-    // TODO Fix why adding strategy creates an error.
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
 
     @Mapping(target = "id", ignore = true)

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.mock.batch.OrderFluxTestMock;
@@ -50,9 +49,6 @@ public class OrderFluxTest extends BaseTest {
 
     @Autowired
     private TradeService tradeService;
-
-    @Autowired
-    private TradeFlux tradeFlux;
 
     @Autowired
     private OrderRepository orderRepository;

@@ -7,24 +7,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.OrderFlux;
-import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
-import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.mock.service.dry.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,25 +42,16 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Mode
 public class DuplicatedOrders extends BaseTest {
 
     @Autowired
-    private PositionService positionService;
+    private TestableCassandreStrategy strategy;
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TickerFlux tickerFlux;
 
     @Autowired
     private OrderFlux orderFlux;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private PositionFlux positionFlux;
-
-    @Autowired
-    private PositionRepository positionRepository;
 
     @Test
     @DisplayName("Check duplicated order")
@@ -94,7 +80,8 @@ public class DuplicatedOrders extends BaseTest {
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());
-        assertEquals("DRY_ORDER_000000001", position1Result.getPosition().getOpeningOrder().getOrderId());
+
+        assertEquals(1, orderRepository.count());
     }
 
 }

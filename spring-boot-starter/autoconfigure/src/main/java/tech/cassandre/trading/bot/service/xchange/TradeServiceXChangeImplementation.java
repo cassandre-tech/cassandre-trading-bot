@@ -54,12 +54,16 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     /**
      * Creates market order.
      *
+     * @param strategy     strategy
      * @param orderTypeDTO order type
      * @param currencyPair currency pair
      * @param amount       amount
      * @return order creation result
      */
-    private OrderCreationResultDTO createMarketOrder(final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    private OrderCreationResultDTO createMarketOrder(final StrategyDTO strategy,
+                                                     final OrderTypeDTO orderTypeDTO,
+                                                     final CurrencyPairDTO currencyPair,
+                                                     final BigDecimal amount) {
         try {
             // Making the order.
             MarketOrder m = new MarketOrder(utilMapper.mapToOrderType(orderTypeDTO),
@@ -71,14 +75,15 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             final String orderId = tradeService.placeMarketOrder(m);
             OrderDTO openingOrder = OrderDTO.builder()
                     .orderId(orderId)
-                    .timestamp(ZonedDateTime.now())
                     .type(orderTypeDTO)
+                    .strategy(strategy)
+                    .currencyPair(currencyPair)
                     .amount(CurrencyAmountDTO.builder()
                             .value(amount)
                             .currency(currencyPair.getBaseCurrency())
                             .build())
-                    .currencyPair(currencyPair)
                     .status(PENDING_NEW)
+                    .timestamp(ZonedDateTime.now())
                     .build();
             localOrders.put(orderId, openingOrder);
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);
@@ -93,13 +98,18 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     /**
      * Creates limit order.
      *
+     * @param strategy     strategy
      * @param orderTypeDTO order type
      * @param currencyPair currency pair
      * @param amount       amount
      * @param limitPrice   In a BID this is the highest acceptable price, in an ASK this is the lowest acceptable price
      * @return order creation result
      */
-    private OrderCreationResultDTO createLimitOrder(final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    private OrderCreationResultDTO createLimitOrder(final StrategyDTO strategy,
+                                                    final OrderTypeDTO orderTypeDTO,
+                                                    final CurrencyPairDTO currencyPair,
+                                                    final BigDecimal amount,
+                                                    final BigDecimal limitPrice) {
         try {
             // Making the order.
             LimitOrder l = new LimitOrder(utilMapper.mapToOrderType(orderTypeDTO),
@@ -114,18 +124,19 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             final String orderId = tradeService.placeLimitOrder(l);
             OrderDTO openingOrder = OrderDTO.builder()
                     .orderId(orderId)
-                    .timestamp(ZonedDateTime.now())
                     .type(orderTypeDTO)
+                    .strategy(strategy)
+                    .currencyPair(currencyPair)
                     .amount(CurrencyAmountDTO.builder()
                             .value(amount)
                             .currency(currencyPair.getBaseCurrency())
                             .build())
-                    .currencyPair(currencyPair)
-                    .status(PENDING_NEW)
                     .limitPrice(CurrencyAmountDTO.builder()
                             .value(limitPrice)
                             .currency(currencyPair.getQuoteCurrency())
                             .build())
+                    .status(PENDING_NEW)
+                    .timestamp(ZonedDateTime.now())
                     .build();
             localOrders.put(orderId, openingOrder);
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);
@@ -139,22 +150,22 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     public final OrderCreationResultDTO createBuyMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
-        return createMarketOrder(BID, currencyPair, amount);
+        return createMarketOrder(strategy, BID, currencyPair, amount);
     }
 
     @Override
     public final OrderCreationResultDTO createSellMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
-        return createMarketOrder(ASK, currencyPair, amount);
+        return createMarketOrder(strategy, ASK, currencyPair, amount);
     }
 
     @Override
     public final OrderCreationResultDTO createBuyLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
-        return createLimitOrder(BID, currencyPair, amount, limitPrice);
+        return createLimitOrder(strategy, BID, currencyPair, amount, limitPrice);
     }
 
     @Override
     public final OrderCreationResultDTO createSellLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
-        return createLimitOrder(ASK, currencyPair, amount, limitPrice);
+        return createLimitOrder(strategy, ASK, currencyPair, amount, limitPrice);
     }
 
     @Override

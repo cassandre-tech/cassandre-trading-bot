@@ -21,7 +21,6 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.mock.service.xchange.PositionServiceTestMock;
-import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -71,9 +70,6 @@ public class PositionServiceTest extends BaseTest {
 
     @Autowired
     private PositionService positionService;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private OrderFlux orderFlux;

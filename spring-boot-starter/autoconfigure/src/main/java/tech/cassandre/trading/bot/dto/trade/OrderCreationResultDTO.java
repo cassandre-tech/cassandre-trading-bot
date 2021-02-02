@@ -2,10 +2,6 @@ package tech.cassandre.trading.bot.dto.trade;
 
 import lombok.Getter;
 
-import java.time.ZonedDateTime;
-
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
-
 /**
  * Order creation result for {@link OrderDTO}.
  */
@@ -36,23 +32,6 @@ public final class OrderCreationResultDTO {
         successful = true;
         this.orderId = newOrder.getOrderId();
         this.order = newOrder;
-        this.errorMessage = null;
-        this.exception = null;
-    }
-
-    /**
-     * Constructor for successful order creation.
-     *
-     * @param newOrderId order id
-     */
-    public OrderCreationResultDTO(final String newOrderId) {
-        successful = true;
-        this.orderId = newOrderId;
-        this.order = OrderDTO.builder()
-                .orderId(newOrderId)
-                .status(PENDING_NEW)
-                .timestamp(ZonedDateTime.now())
-                .build();
         this.errorMessage = null;
         this.exception = null;
     }

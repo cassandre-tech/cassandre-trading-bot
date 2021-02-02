@@ -536,11 +536,13 @@ public class PositionDTO {
                     break;
                 case OPENING_FAILURE:
                     value = "Position " + getId() + " - Opening failure";
+                    break;
                 case CLOSING:
                     value += " on " + getCurrencyPair() + " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
                     break;
                 case CLOSING_FAILURE:
                     value = "Position " + getId() + " - Closing failure";
+                    break;
                 case CLOSED:
                     final GainDTO gain = getGain();
                     value += " on " + getCurrencyPair() + " - Closed - Gain : " + getFormattedValue(gain.getPercentage()) + " %";

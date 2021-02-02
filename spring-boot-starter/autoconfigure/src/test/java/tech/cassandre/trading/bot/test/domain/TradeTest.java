@@ -279,7 +279,6 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
-        // TODO Remove warning from optional without isPresent.
         await().untilAsserted(() -> assertTrue(updatedOn.isBefore(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn())));
         assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
         // We check if we still have the strategy set.

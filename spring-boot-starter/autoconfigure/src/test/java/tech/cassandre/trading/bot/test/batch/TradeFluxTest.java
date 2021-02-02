@@ -7,12 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.mock.batch.TradeFluxTestMock;
-import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
@@ -51,12 +49,6 @@ public class TradeFluxTest extends BaseTest {
 
     @Autowired
     private TradeRepository tradeRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderFlux orderFlux;
 
     @Autowired
     private TradeService tradeService;

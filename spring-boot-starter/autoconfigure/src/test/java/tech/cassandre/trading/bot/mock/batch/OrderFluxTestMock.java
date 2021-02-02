@@ -16,7 +16,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
@@ -45,9 +44,6 @@ public class OrderFluxTestMock extends BaseTest {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private TradeRepository tradeRepository;
 
     @Bean
     @Primary

@@ -8,18 +8,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.mock.service.dry.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.mock.service.dry.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -53,9 +53,6 @@ public class PositionServiceDryModeTest extends BaseTest {
 
     @Autowired
     private TickerFlux tickerFlux;
-
-    @Autowired
-    private PositionFlux positionFlux;
 
     @Autowired
     private PositionRepository positionRepository;
@@ -156,7 +153,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         if (p.isPresent()) {
             return p.get();
         } else {
-            throw new RuntimeException("Position not found : " + id);
+            throw new PositionException("Position not found : " + id);
         }
     }
 

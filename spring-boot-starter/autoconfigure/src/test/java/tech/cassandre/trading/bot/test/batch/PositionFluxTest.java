@@ -20,7 +20,6 @@ import tech.cassandre.trading.bot.mock.batch.PositionFluxTestMock;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -58,9 +57,6 @@ public class PositionFluxTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private PositionService positionService;
 
     @Autowired
     private TickerFlux tickerFlux;

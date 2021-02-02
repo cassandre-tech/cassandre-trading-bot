@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.PositionService;
@@ -32,9 +31,6 @@ public class PositionFluxTestMock extends BaseTest {
 
     @Autowired
     private PositionRepository positionRepository;
-
-    @Autowired
-    private StrategyRepository strategyRepository;
 
     @Autowired
     private OrderRepository orderRepository;
