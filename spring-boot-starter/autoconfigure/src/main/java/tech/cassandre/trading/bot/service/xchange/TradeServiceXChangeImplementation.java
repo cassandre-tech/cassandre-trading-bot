@@ -198,9 +198,9 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             tradeService.getOpenOrders()
                     .getOpenOrders()
                     .forEach(order -> {
-                        results.add(orderMapper.mapToOrderDTO(order));
                         // If we received the order from server, we remove local order.
                         localOrders.remove(order.getId());
+                        results.add(orderMapper.mapToOrderDTO(order));
                     });
             logger.debug("TradeService - {} order(s) found", results.size());
             return results;
