@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.batch;
 
-import com.google.common.collect.Sets;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -8,8 +7,7 @@ import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,7 +44,7 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
     @Override
     protected final Set<TradeDTO> getNewValues() {
         logger.debug("TradeFlux - Retrieving new values");
-        HashMap<String, TradeDTO> newValues = new LinkedHashMap<>();
+        Set<TradeDTO> newValues = new LinkedHashSet<>();
 
         // Finding which trades has been updated.
         tradeService.getTrades().forEach(trade -> {
@@ -54,11 +52,11 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
             final Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(trade.getTradeId());
             if (tradeInDatabase.isEmpty() || !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
                 logger.debug("TradeFlux - Trade {} has changed : {}", trade.getTradeId(), trade);
-                newValues.put(trade.getTradeId(), trade);
+                newValues.add(trade);
             }
         });
         logger.debug("TradeFlux - {} trade(s) updated", newValues.size());
-        return Sets.newHashSet(newValues.values());
+        return newValues;
     }
 
     @Override
