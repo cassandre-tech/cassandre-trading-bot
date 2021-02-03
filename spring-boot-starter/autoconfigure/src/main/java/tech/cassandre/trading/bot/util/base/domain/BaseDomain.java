@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.util.base;
+package tech.cassandre.trading.bot.util.base.domain;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;

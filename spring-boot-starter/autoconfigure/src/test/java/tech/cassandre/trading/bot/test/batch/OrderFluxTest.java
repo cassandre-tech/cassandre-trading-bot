@@ -96,7 +96,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 1.
         OrderDTO o = orders.next();
-        assertNull(o.getId());
+        assertEquals(1, o.getId());
         assertEquals("ORDER_000001", o.getOrderId());
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
@@ -113,7 +113,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 2.
         o = orders.next();
-        assertNull(o.getId());
+        assertEquals(2, o.getId());
         assertEquals("ORDER_000002", o.getOrderId());
         assertEquals(BID, o.getType());
         assertEquals(1, o.getStrategy().getId());
@@ -130,7 +130,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 3.
         o = orders.next();
-        assertNull(o.getId());
+        assertEquals(3, o.getId());
         assertEquals("ORDER_000003", o.getOrderId());
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
@@ -147,7 +147,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 3 : the amount changed on ORDER_000003.
         o = orders.next();
-        assertNull(o.getId());
+        assertEquals(3, o.getId());
         assertEquals("ORDER_000003", o.getOrderId());
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
@@ -164,7 +164,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 4 : ORDER_000004 is a new order.
         o = orders.next();
-        assertNull(o.getId());
+        assertEquals(4, o.getId());
         assertEquals("ORDER_000004", o.getOrderId());
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
@@ -181,7 +181,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 5 : average price changed on ORDER_000002.
         o = orders.next();
-        assertNull(o.getId());
+        assertEquals(2, o.getId());
         assertEquals("ORDER_000002", o.getOrderId());
         assertEquals(BID, o.getType());
         assertEquals(1, o.getStrategy().getId());
@@ -198,7 +198,7 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 6 : leverage changed on ORDER_000004.
         o = orders.next();
-        assertNull(o.getId());
+        assertEquals(4, o.getId());
         assertEquals("ORDER_000004", o.getOrderId());
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());

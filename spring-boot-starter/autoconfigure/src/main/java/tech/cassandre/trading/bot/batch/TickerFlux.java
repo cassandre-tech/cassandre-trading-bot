@@ -4,12 +4,13 @@ import com.google.common.collect.Iterators;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.util.base.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -56,6 +57,11 @@ public class TickerFlux extends BaseExternalFlux<TickerDTO> {
             }
         });
         return newValues;
+    }
+
+    @Override
+    protected final Optional<TickerDTO> saveValue(final TickerDTO newValue) {
+        return Optional.ofNullable(newValue);
     }
 
 }

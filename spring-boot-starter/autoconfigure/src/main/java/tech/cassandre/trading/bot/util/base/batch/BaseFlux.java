@@ -1,28 +1,31 @@
-package tech.cassandre.trading.bot.util.base;
+package tech.cassandre.trading.bot.util.base.batch;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Schedulers;
+import tech.cassandre.trading.bot.util.base.Base;
+
+import java.util.Optional;
 
 import static reactor.core.publisher.FluxSink.OverflowStrategy.LATEST;
 
 /**
- * Base external flux.
+ * Base flux.
  *
- * @param <T> flux type
+ * @param <T> flux
  */
-public abstract class BaseInternalFlux<T> extends Base {
+public abstract class BaseFlux<T> extends Base {
 
     /** Flux. */
-    private final Flux<T> flux;
+    protected final Flux<T> flux;
 
     /** Flux sink. */
-    private FluxSink<T> fluxSink;
+    protected FluxSink<T> fluxSink;
 
     /**
      * Constructor.
      */
-    public BaseInternalFlux() {
+    public BaseFlux() {
         Flux<T> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
         flux = fluxTemp.publishOn(Schedulers.elastic());
     }
@@ -37,14 +40,14 @@ public abstract class BaseInternalFlux<T> extends Base {
         return LATEST;
     }
 
+
     /**
      * Implements this method to backup each update.
      *
      * @param newValue new value
+     * @return the value saved
      */
-    public void saveValue(final T newValue) {
-
-    }
+    protected abstract Optional<T> saveValue(T newValue);
 
     /**
      * Emit a new value.
@@ -52,11 +55,11 @@ public abstract class BaseInternalFlux<T> extends Base {
      * @param newValue new value
      */
     public void emitValue(final T newValue) {
-        logger.debug("{} flux emits a new value : {}", this.getClass().getName(), newValue);
-        if (newValue != null) {
-            saveValue(newValue);
-            fluxSink.next(newValue);
-        }
+        saveValue(newValue)
+                .ifPresent(t -> {
+                    logger.debug("{} flux emits a new value : {}", this.getClass().getName(), t);
+                    fluxSink.next(t);
+                });
     }
 
     /**
@@ -64,7 +67,7 @@ public abstract class BaseInternalFlux<T> extends Base {
      *
      * @return flux
      */
-    public final Flux<T> getFlux() {
+    public Flux<T> getFlux() {
         return flux;
     }
 

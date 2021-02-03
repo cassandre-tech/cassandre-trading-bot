@@ -1,13 +1,13 @@
 package tech.cassandre.trading.bot.batch;
 
-import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.util.base.BaseInternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseInternalFlux;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Position flux - push {@link PositionDTO}.
@@ -33,23 +33,27 @@ public class PositionFlux extends BaseInternalFlux<PositionDTO> {
     }
 
     @Override
-    public final void saveValue(final PositionDTO newValue) {
-        Optional<Position> positionInDatabase = positionRepository.findById(newValue.getId());
-        positionInDatabase.ifPresentOrElse(position -> {
-            positionMapper.updatePosition(newValue, position);
-            // Setting opening & closing order.
-            if (newValue.getOpeningOrder() != null) {
-                final Optional<Order> openingOrder = orderRepository.findByOrderId(newValue.getOpeningOrder().getOrderId());
-                openingOrder.ifPresent(position::setOpeningOrder);
-            }
-            if (newValue.getClosingOrder() != null && newValue.getClosingOrder().getId() != null) {
-                final Optional<Order> closingOrder = orderRepository.findByOrderId(newValue.getClosingOrder().getOrderId());
-                closingOrder.ifPresent(position::setClosingOrder);
-            }
-            positionRepository.save(position);
-            logger.debug("PositionFlux - Position {} updated in database", position);
+    public final Optional<PositionDTO> saveValue(final PositionDTO newValue) {
+        AtomicReference<Position> valueToSave = new AtomicReference<>();
 
-        }, () -> logger.error("PositionFlux - Position {} was not found in database", newValue.getId()));
+        positionRepository.findById(newValue.getId())
+                .ifPresentOrElse(position -> {
+                    positionMapper.updatePosition(newValue, position);
+                    // Setting opening & closing order.
+                    if (newValue.getOpeningOrder() != null) {
+                        orderRepository.findByOrderId(newValue.getOpeningOrder().getOrderId())
+                                .ifPresent(position::setOpeningOrder);
+                    }
+                    if (newValue.getClosingOrder() != null && newValue.getClosingOrder().getId() != null) {
+                        orderRepository.findByOrderId(newValue.getClosingOrder().getOrderId())
+                                .ifPresent(position::setClosingOrder);
+                    }
+                    valueToSave.set(position);
+                    logger.debug("PositionFlux - Updating position in database {}", position);
+
+                }, () -> logger.error("PositionFlux - Position {} was not found in database", newValue.getId()));
+
+        return Optional.ofNullable(positionMapper.mapToPositionDTO(positionRepository.save(valueToSave.get())));
     }
 
 }

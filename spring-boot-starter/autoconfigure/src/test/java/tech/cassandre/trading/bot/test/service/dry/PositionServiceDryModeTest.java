@@ -13,7 +13,6 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.mock.service.dry.PositionServiceDryModeTestMock;
-import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -53,9 +52,6 @@ public class PositionServiceDryModeTest extends BaseTest {
 
     @Autowired
     private TickerFlux tickerFlux;
-
-    @Autowired
-    private PositionRepository positionRepository;
 
     @Test
     @CaseId(64)

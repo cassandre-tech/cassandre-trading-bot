@@ -17,7 +17,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.base.BaseService;
+import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

@@ -4,7 +4,7 @@ import lombok.Data;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
-import tech.cassandre.trading.bot.util.base.BaseDomain;
+import tech.cassandre.trading.bot.util.base.domain.BaseDomain;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 import tech.cassandre.trading.bot.util.jpa.CurrencyAmount;
 

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.issues;
+package tech.cassandre.trading.bot.issues;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -88,7 +88,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 1.
         TradeDTO t = trades.next();
-        assertNull(t.getId());
+        assertEquals(1, t.getId());
         assertEquals("TRADE_0000001", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -101,7 +101,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 2.
         t = trades.next();
-        assertNull(t.getId());
+        assertEquals(2, t.getId());
         assertEquals("TRADE_0000002", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -114,7 +114,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 3.
         t = trades.next();
-        assertNull(t.getId());
+        assertEquals(3, t.getId());
         assertEquals("TRADE_0000003", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000002", t.getOrderId());
@@ -127,7 +127,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 4.
         t = trades.next();
-        assertNull(t.getId());
+        assertEquals(4, t.getId());
         assertEquals("TRADE_0000004", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -140,7 +140,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 5.
         t = trades.next();
-        assertNull(t.getId());
+        assertEquals(5, t.getId());
         assertEquals("TRADE_0000005", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -153,7 +153,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 6.
         t = trades.next();
-        assertNull(t.getId());
+        assertEquals(6, t.getId());
         assertEquals("TRADE_0000006", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -166,7 +166,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 7.
         t = trades.next();
-        assertNull(t.getId());
+        assertEquals(3, t.getId());
         assertEquals("TRADE_0000003", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000002", t.getOrderId());
@@ -179,7 +179,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 8.
         t = trades.next();
-        assertNull(t.getId());
+        assertEquals(7, t.getId());
         assertEquals("TRADE_0000008", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());

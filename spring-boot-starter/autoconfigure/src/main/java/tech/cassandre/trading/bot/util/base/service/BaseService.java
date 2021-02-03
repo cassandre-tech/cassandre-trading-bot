@@ -1,8 +1,9 @@
-package tech.cassandre.trading.bot.util.base;
+package tech.cassandre.trading.bot.util.base.service;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
+import tech.cassandre.trading.bot.util.base.Base;
 
 import java.time.Duration;
 

@@ -17,7 +17,7 @@ import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.base.BaseService;
+import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

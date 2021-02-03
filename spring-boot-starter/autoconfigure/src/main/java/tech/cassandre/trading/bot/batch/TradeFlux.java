@@ -1,16 +1,16 @@
 package tech.cassandre.trading.bot.batch;
 
-import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.base.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Trade flux - push {@link TradeDTO}.
@@ -60,22 +60,25 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
     }
 
     @Override
-    public final void saveValue(final TradeDTO newValue) {
-        Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(newValue.getTradeId());
-        tradeInDatabase.ifPresentOrElse(trade -> {
-            // Update trade.
-            tradeMapper.updateOrder(newValue, trade);
-            tradeRepository.save(trade);
-            logger.debug("TradeFlux - trade updated in database {}", trade);
-        }, () -> {
-            // Create trade.
-            final Trade newTrade = tradeMapper.mapToTrade(newValue);
-            // Retrieve the existing order of the trade.
-            final Optional<Order> order = orderRepository.findByOrderId(newValue.getOrderId());
-            order.ifPresent(value -> newTrade.setOrder(value.getId()));
-            tradeRepository.save(newTrade);
-            logger.debug("TradeFlux - trade created in database {}", newTrade);
-        });
+    public final Optional<TradeDTO> saveValue(final TradeDTO newValue) {
+        AtomicReference<Trade> valueToSave = new AtomicReference<>();
+
+        tradeRepository.findByTradeId(newValue.getTradeId())
+                .ifPresentOrElse(trade -> {
+                    // Update trade.
+                    tradeMapper.updateOrder(newValue, trade);
+                    valueToSave.set(trade);
+                    logger.debug("TradeFlux - Updating trade in database {}", trade);
+                }, () -> {
+                    // Create trade.
+                    final Trade newTrade = tradeMapper.mapToTrade(newValue);
+                    orderRepository.findByOrderId(newValue.getOrderId())
+                            .ifPresent(value -> newTrade.setOrder(value.getId()));
+                    valueToSave.set(newTrade);
+                    logger.debug("TradeFlux - Creating trade in database {}", newTrade);
+                });
+
+        return Optional.ofNullable(tradeMapper.mapToTradeDTO(tradeRepository.save(valueToSave.get())));
     }
 
 }

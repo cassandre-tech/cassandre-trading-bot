@@ -4,11 +4,12 @@ import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.base.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Order flux - push {@link OrderDTO}.
@@ -52,18 +53,23 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
     }
 
     @Override
-    public final void saveValue(final OrderDTO newValue) {
-        final Optional<Order> orderInDatabase = orderRepository.findByOrderId(newValue.getOrderId());
-        orderInDatabase.ifPresentOrElse(order -> {
-            // Update order.
-            orderMapper.updateOrder(newValue, order);
-            orderRepository.save(order);
-            logger.debug("OrderFlux - order updated in database {}", order);
-        }, () -> {
-            // Create order.
-            final Order order = orderRepository.save(orderMapper.mapToOrder(newValue));
-            logger.debug("OrderFlux - order created in database {}", order);
-        });
+    protected final Optional<OrderDTO> saveValue(final OrderDTO newValue) {
+        AtomicReference<Order> valueToSave = new AtomicReference<>();
+
+        orderRepository.findByOrderId(newValue.getOrderId())
+                .ifPresentOrElse(order -> {
+                    // Update order.
+                    orderMapper.updateOrder(newValue, order);
+                    valueToSave.set(order);
+                    logger.debug("OrderFlux - Updating order in database {}", order);
+
+                }, () -> {
+                    // Create order.
+                    valueToSave.set(orderMapper.mapToOrder(newValue));
+                    logger.debug("OrderFlux - Creating order in database {}", newValue);
+                });
+
+        return Optional.ofNullable(orderMapper.mapToOrderDTO(orderRepository.save(valueToSave.get())));
     }
 
 }

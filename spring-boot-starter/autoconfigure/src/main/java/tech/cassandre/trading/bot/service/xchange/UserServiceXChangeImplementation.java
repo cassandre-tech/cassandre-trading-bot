@@ -2,7 +2,7 @@ package tech.cassandre.trading.bot.service.xchange;
 
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.util.base.BaseService;
+import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.IOException;
 import java.util.Optional;

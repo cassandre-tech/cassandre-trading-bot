@@ -2,11 +2,12 @@ package tech.cassandre.trading.bot.batch;
 
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.util.base.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -55,6 +56,11 @@ public class AccountFlux extends BaseExternalFlux<AccountDTO> {
         });
         logger.debug("AccountFlux - {} account(s) updated", newValues.size());
         return newValues;
+    }
+
+    @Override
+    protected final Optional<AccountDTO> saveValue(final AccountDTO newValue) {
+        return Optional.ofNullable(newValue);
     }
 
 }

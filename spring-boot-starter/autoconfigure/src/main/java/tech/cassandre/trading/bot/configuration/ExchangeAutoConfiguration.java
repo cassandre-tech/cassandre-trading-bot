@@ -32,7 +32,7 @@ import tech.cassandre.trading.bot.service.xchange.ExchangeServiceXChangeImplemen
 import tech.cassandre.trading.bot.service.xchange.MarketServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.xchange.UserServiceXChangeImplementation;
-import tech.cassandre.trading.bot.util.base.BaseConfiguration;
+import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
