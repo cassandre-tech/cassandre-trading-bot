@@ -42,8 +42,8 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     /**
      * Constructor.
      *
-     * @param rate            rate in ms
-     * @param newTradeService market data service
+     * @param rate               rate in ms
+     * @param newTradeService    market data service
      */
     public TradeServiceXChangeImplementation(final long rate,
                                              final org.knowm.xchange.service.trade.TradeService newTradeService) {

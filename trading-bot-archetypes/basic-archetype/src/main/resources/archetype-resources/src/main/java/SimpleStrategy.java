@@ -31,12 +31,13 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-		// We only ask about ETC/BTC (Base currency : ETH / Quote currency : BTC).
+		// We only ask about ETC/BTC (Base currency : BTC / Quote currency : USDT).
 		return Set.of(new CurrencyPairDTO(BTC, USDT));
 	}
 
 	@Override
 	public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
+		// From all the accounts retrieved by the server, we return the one we used for trading.
 		return accounts.stream()
 				.filter(a -> "trade".equals(a.getName()))
 				.findFirst();
@@ -56,25 +57,25 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public void onOrderUpdate(final OrderDTO order) {
-		// Here, we will receive an OrderDTO each time an order data has changed in the exchange.
+		// Here, we will receive an OrderDTO each time order data has changed on the exchange.
 		System.out.println("Received information about an order : " + order);
 	}
 
 	@Override
 	public void onTradeUpdate(final TradeDTO trade) {
-		// Here, we will receive a TradeDTO each time a trade data has changed in the exchange.
+		// Here, we will receive a TradeDTO each time trade data has changed on the exchange.
 		System.out.println("Received information about a trade : " + trade);
 	}
 
 	@Override
 	public void onPositionUpdate(final PositionDTO position) {
-		// Here, we will receive an PositionDTO each a position has changed.
+		// Here, we will receive a PositionDTO each time a position has changed.
 		System.out.println("Received information about a position : " + position);
 	}
 
 	@Override
 	public void onPositionStatusUpdate(final PositionDTO position) {
-		// Here, we will receive an PositionDTO each a position has changed.
+		// Here, we will receive a PositionDTO each time a position status has changed.
 		System.out.println("Received information about a position status : " + position);
 	}
 

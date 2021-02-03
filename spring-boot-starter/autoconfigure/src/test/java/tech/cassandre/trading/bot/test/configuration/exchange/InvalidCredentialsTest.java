@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.test.CassandreTradingBot;
+import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 

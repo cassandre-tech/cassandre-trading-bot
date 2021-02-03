@@ -1,12 +1,14 @@
 package tech.cassandre.trading.bot.batch;
 
+import com.google.common.collect.Sets;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
 
-import java.util.LinkedHashSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,7 +38,7 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
     @Override
     protected final Set<OrderDTO> getNewValues() {
         logger.debug("OrderFlux - Retrieving new values");
-        Set<OrderDTO> newValues = new LinkedHashSet<>();
+        HashMap<String, OrderDTO> newValues = new LinkedHashMap<>();
 
         // Finding which order has been updated.
         tradeService.getOrders().forEach(order -> {
@@ -45,11 +47,11 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
             // If it does not exist or something changed, we add it to new values.
             if (orderInDatabase.isEmpty() || !orderMapper.mapToOrderDTO(orderInDatabase.get()).equals(order)) {
                 logger.debug("OrderFlux - Order {} has changed : {}", order.getOrderId(), order);
-                newValues.add(order);
+                newValues.put(order.getOrderId(), order);
             }
         });
         logger.debug("OrderFlux - {} order(s) updated", newValues.size());
-        return newValues;
+        return Sets.newHashSet(newValues.values());
     }
 
     @Override

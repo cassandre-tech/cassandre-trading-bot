@@ -63,7 +63,16 @@ public class DuplicatedOrders extends BaseTest {
         tickerFlux.update();
 
         // =============================================================================================================
-        // The order created arrives before the order is created locally by the position.
+        // The orders created arrives before the order is created locally by the position.
+        orderFlux.emitValue(OrderDTO.builder()
+                .orderId("DRY_ORDER_000000001")
+                .type(BID)
+                .strategy(strategy.getStrategyDTO())
+                .currencyPair(cp1)
+                .amount(new CurrencyAmountDTO(new BigDecimal("0.0001"), cp1.getBaseCurrency()))
+                .status(NEW)
+                .build());
+
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("DRY_ORDER_000000001")
                 .type(BID)

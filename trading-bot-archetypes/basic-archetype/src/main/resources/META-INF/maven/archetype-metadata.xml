@@ -12,6 +12,7 @@
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/resources</directory>
       <includes>
+        <include>**/*.tsv</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
@@ -24,7 +25,8 @@
     <fileSet filtered="false" packaged="false" encoding="UTF-8">
       <directory>src/test/resources</directory>
       <includes>
-        <include>*.tsv</include>
+        <include>**/*.tsv</include>
+        <include>**/*.properties</include>
       </includes>
     </fileSet>
   </fileSets>

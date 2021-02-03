@@ -35,11 +35,13 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public CurrencyPairDTO getRequestedCurrencyPair() {
+        // We only ask about ETC/BTC (Base currency : BTC / Quote currency : USDT).
         return new CurrencyPairDTO(BTC, USDT);
     }
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
+        // From all the accounts retrieved by the server, we return the one we used for trading.
         return accounts.stream()
                 .filter(a -> "trade".equals(a.getName()))
                 .findFirst();
@@ -47,16 +49,19 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public int getMaximumBarCount() {
+        // Number of bars to keep.
         return 10;
     }
 
     @Override
     public Duration getDelayBetweenTwoBars() {
+        // Delay between two bars.
         return Duration.ofDays(1);
     }
 
     @Override
     public Strategy getStrategy() {
+        // Creates strategy.
         ClosePriceIndicator closePrice = new ClosePriceIndicator(getSeries());
         SMAIndicator sma = new SMAIndicator(closePrice, getMaximumBarCount());
         return new BaseStrategy(new OverIndicatorRule(sma, closePrice), new UnderIndicatorRule(sma, closePrice));
@@ -70,11 +75,13 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public void onPositionStatusUpdate(PositionDTO position) {
+        // Here, we will receive a PositionDTO each time a position status has changed.
         System.out.println(" > Position update : " + position);
     }
 
     @Override
     public void shouldEnter() {
+        // Called when the strategy says we should enter.
         if (canBuy(new BigDecimal("0.01"))) {
             // Create rules.
             PositionRulesDTO rules = PositionRulesDTO
@@ -92,6 +99,7 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public void shouldExit() {
+        // Called when the strategy says we should exit.
     }
 
 }

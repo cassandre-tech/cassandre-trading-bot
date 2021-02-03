@@ -47,7 +47,7 @@ public class SimpleTa4jStrategyTest {
                 .values()
                 .stream()
                 .filter(p -> p.getStatus().equals(OPENED))
-                .forEach(p -> System.out.println(" - " + p));
+                .forEach(p -> System.out.println(" - " + p.getDescription()));
 
         assertTrue(gains.get(strategy.getRequestedCurrencyPair().getQuoteCurrency()).getPercentage() > 0);
     }
