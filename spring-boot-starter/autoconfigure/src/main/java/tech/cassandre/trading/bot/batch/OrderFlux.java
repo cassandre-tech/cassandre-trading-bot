@@ -39,16 +39,23 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
         Set<OrderDTO> newValues = new LinkedHashSet<>();
 
         // Finding which order has been updated.
-        tradeService.getOrders().forEach(order -> {
-            System.out.println("Order => " + order);
-            logger.debug("OrderFlux - Treating order : {}", order.getOrderId());
-            final Optional<Order> orderInDatabase = orderRepository.findByOrderId(order.getOrderId());
-            // If it does not exist or something changed, we add it to new values.
-            if (orderInDatabase.isEmpty() || !orderMapper.mapToOrderDTO(orderInDatabase.get()).equals(order)) {
-                logger.debug("OrderFlux - Order {} has changed : {}", order.getOrderId(), order);
-                newValues.add(order);
-            }
-        });
+        tradeService.getOrders()
+                .forEach(order -> {
+                    logger.debug("OrderFlux - Treating order : {}", order.getOrderId());
+                    final Optional<Order> orderInDatabase = orderRepository.findByOrderId(order.getOrderId());
+
+                    // If it's not in database, we insert it only if strategy is set - meaning it's the local order.
+                    if (orderInDatabase.isEmpty() && order.getStrategy() != null) {
+                        logger.debug("OrderFlux - Local order {} changed : {}", order.getOrderId(), order);
+                        newValues.add(order);
+                    }
+
+                    // If the local order is already saved in database and this update change the data, it's a change.
+                    if (orderInDatabase.isPresent() && !orderMapper.mapToOrderDTO(orderInDatabase.get()).equals(order)) {
+                        logger.debug("OrderFlux - Order {} has changed : {}", order.getOrderId(), order);
+                        newValues.add(order);
+                    }
+                });
 
         logger.debug("OrderFlux - {} order(s) updated", newValues.size());
         return newValues;
