@@ -79,10 +79,18 @@ public class Position extends BaseDomain {
     @Column(name = "STATUS")
     private PositionStatusDTO status;
 
+    /** The order id created to open the position. */
+    @Column(name = "OPENING_ORDER_ID")
+    private String openingOrderId;
+
     /** The order created to open the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
     @JoinColumn(name = "FK_OPENING_ORDER_ID")
     private Order openingOrder;
+
+    /** The order id created to open the position. */
+    @Column(name = "CLOSING_ORDER_ID")
+    private String closingOrderId;
 
     /** The order created to close the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
@@ -131,7 +139,9 @@ public class Position extends BaseDomain {
                 .append(this.stopGainPercentageRule, that.stopGainPercentageRule)
                 .append(this.stopLossPercentageRule, that.stopLossPercentageRule)
                 .append(this.status, that.status)
+                .append(this.openingOrderId, that.openingOrderId)
                 .append(this.openingOrder, that.openingOrder)
+                .append(this.closingOrderId, that.closingOrderId)
                 .append(this.closingOrder, that.closingOrder)
                 .append(this.lowestPrice, that.lowestPrice)
                 .append(this.highestPrice, that.highestPrice)
@@ -143,7 +153,6 @@ public class Position extends BaseDomain {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(strategy.getId())
                 .toHashCode();
     }
 

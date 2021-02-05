@@ -32,17 +32,19 @@ values  -- For position 1.
         (11, 'OPEN_ORDER_06', 'BID', 50, 'BTC', 'BTC/USDT', '', '2020-11-20', 'FILLED', 10, 'BTC', 1, 'USDT', '', 1, 'USDT', 1),
         (12, 'CLOSE_ORDER_06', 'ASK', 50, 'BTC', 'BTC/USDT', '', '2020-11-20', 'NEW', 10, 'BTC', 1, 'USDT', '', 1, 'USDT', 1);
 
-       -- =====================================================================================================================
+-- =====================================================================================================================
 -- Insert positions.
-INSERT INTO POSITIONS (ID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY, RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE,
-                       FK_OPENING_ORDER_ID, FK_CLOSING_ORDER_ID, LOWEST_PRICE_VALUE, HIGHEST_PRICE_VALUE, LATEST_PRICE_VALUE,
-                       LOWEST_PRICE_CURRENCY, HIGHEST_PRICE_CURRENCY, LATEST_PRICE_CURRENCY, FK_STRATEGY_ID)
-VALUES  (1, 1, 'LONG', 'CLOSED', 'BTC/USDT', 10, 'BTC', null, null, 1, 2, null, null, null, null, null, null, 1),
-        (2, 2, 'LONG', 'CLOSED', 'ETH/BTC', 20, 'ETH', null, null, 3, 4, null, null, null, null, null, null, 1),
-        (3, 3, 'LONG', 'CLOSED', 'BTC/USDT', 30, 'BTC', null, null, 5, 6, null, null, null, null, null, null, 1),
-        (4, 4, 'LONG', 'OPENING', 'BTC/USDT', 50, 'BTC', null, null, 7, 8, null, null, null, null, null, null, 1),
-        (5, 5, 'LONG', 'OPENED', 'BTC/USDT', 50, 'BTC', null, null, 9, 10, null, null, null, null, null, null, 1),
-        (6, 6, 'LONG', 'CLOSING', 'BTC/USDT', 50, 'BTC', null, null, 11, 12, null, null, null, null, null, null, 1);
+INSERT INTO POSITIONS (ID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY,
+                       RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, OPENING_ORDER_ID,
+                       FK_OPENING_ORDER_ID, CLOSING_ORDER_ID, FK_CLOSING_ORDER_ID, LOWEST_PRICE_VALUE,
+                       HIGHEST_PRICE_VALUE, LATEST_PRICE_VALUE, LOWEST_PRICE_CURRENCY, HIGHEST_PRICE_CURRENCY,
+                       LATEST_PRICE_CURRENCY, FK_STRATEGY_ID)
+VALUES (1, 1, 'LONG', 'CLOSED', 'BTC/USDT', 10, 'BTC', null, null, 'OPEN_ORDER_01', 1, 'CLOSE_ORDER_01', 2, null, null, null, null, null, null, 1),
+       (2, 2, 'LONG', 'CLOSED', 'ETH/BTC', 20, 'ETH', null, null, 'OPEN_ORDER_02', 3, 'CLOSE_ORDER_02', 4, null, null, null, null, null, null, 1),
+       (3, 3, 'LONG', 'CLOSED', 'BTC/USDT', 30, 'BTC', null, null, 'OPEN_ORDER_03', 5, 'CLOSE_ORDER_03', 6, null, null, null, null, null, null, 1),
+       (4, 4, 'LONG', 'OPENING', 'BTC/USDT', 50, 'BTC', null, null, 'OPEN_ORDER_04', 7, 'CLOSE_ORDER_04', 8, null, null, null, null, null, null, 1),
+       (5, 5, 'LONG', 'OPENED', 'BTC/USDT', 50, 'BTC', null, null, 'OPEN_ORDER_05', 9, 'CLOSE_ORDER_05', 10, null, null, null, null, null, null, 1),
+       (6, 6, 'LONG', 'CLOSING', 'BTC/USDT', 50, 'BTC', null, null, 'OPEN_ORDER_06', 11, 'CLOSE_ORDER_06', 12, null, null, null, null, null, null, 1);
 
 -- =====================================================================================================================
 -- Insert trades.

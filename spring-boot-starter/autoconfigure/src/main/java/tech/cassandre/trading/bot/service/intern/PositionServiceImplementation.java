@@ -80,14 +80,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
             // =========================================================================================================
             // Creates the position dto.
-            Optional<OrderDTO> order = tradeService.getOrders()
-                    .stream()
-                    .filter(o -> orderCreationResult.getOrderId().equals(o.getOrderId()))
-                    .findFirst();
-            if (order.isEmpty()) {
-                order = Optional.of(orderCreationResult.getOrder());
-            }
-            PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, order.get(), rules);
+            PositionDTO p = new PositionDTO(position.getId(), strategy, currencyPair, amount, orderCreationResult.getOrderId(), rules);
             positionRepository.save(positionMapper.mapToPosition(p));
             logger.debug("PositionService - Position {} opened with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
 
@@ -139,6 +132,14 @@ public class PositionServiceImplementation extends BaseService implements Positi
                 .stream()
                 .map(positionMapper::mapToPositionDTO)
                 .forEach(p -> {
+/*                    tradeService.getOrders()
+                            .stream()
+                            .filter(o -> o.getOrderId().equals(trade.getOrderId()))
+                            .findFirst()
+                            .ifPresent(orderDTO -> {
+                                System.out.println("==> order update !");
+                                p.orderUpdate(orderDTO);
+                            });*/
                     if (p.tradeUpdate(trade)) {
                         logger.debug("PositionService - Position {} updated with trade {}", p.getPositionId(), trade);
                         positionFlux.emitValue(p);

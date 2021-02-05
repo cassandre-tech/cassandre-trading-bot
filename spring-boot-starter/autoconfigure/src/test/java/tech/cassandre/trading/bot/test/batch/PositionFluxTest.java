@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Order;
@@ -62,6 +63,9 @@ public class PositionFluxTest extends BaseTest {
     private TickerFlux tickerFlux;
 
     @Autowired
+    private OrderFlux orderFlux;
+
+    @Autowired
     private TradeFlux tradeFlux;
 
     @Autowired
@@ -88,7 +92,7 @@ public class PositionFluxTest extends BaseTest {
                         .stopGainPercentage(1000f)   // 1 000% max gain.
                         .stopLossPercentage(100f)    // 100% max lost.
                         .build());
-        assertEquals("ORDER00010", position1Result.getPosition().getOpeningOrder().getOrderId());
+        assertEquals("ORDER00010", position1Result.getPosition().getOpeningOrderId());
         long position1Id = position1Result.getPosition().getId();
 
         // onPositionUpdate - Position 1 should arrive (OPENING).
@@ -124,8 +128,10 @@ public class PositionFluxTest extends BaseTest {
         assertTrue(p1.get().getRules().isStopLossPercentageSet());
         assertEquals(100f, p1.get().getRules().getStopLossPercentage());
         assertEquals(OPENING, p1.get().getStatus());
+        assertEquals("ORDER00010", p1.get().getOpeningOrderId());
         assertEquals("ORDER00010", p1.get().getOpeningOrder().getOrderId());
         assertTrue(p1.get().getOpeningOrder().getTrades().isEmpty());
+        assertNull(p1.get().getClosingOrderId());
         assertNull(p1.get().getClosingOrder());
         assertNull(p1.get().getLowestPrice());
         assertNull(p1.get().getHighestPrice());
@@ -139,7 +145,7 @@ public class PositionFluxTest extends BaseTest {
                         .stopGainPercentage(10000000f)
                         .stopLossPercentage(10000000f)
                         .build());
-        assertEquals("ORDER00020", position2Result.getPosition().getOpeningOrder().getOrderId());
+        assertEquals("ORDER00020", position2Result.getPosition().getOpeningOrderId());
         long position2Id = position2Result.getPosition().getId();
         positionStatusUpdateIndex++;
         positionUpdateIndex++;

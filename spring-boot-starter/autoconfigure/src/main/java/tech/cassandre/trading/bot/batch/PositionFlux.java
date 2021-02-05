@@ -40,18 +40,17 @@ public class PositionFlux extends BaseInternalFlux<PositionDTO> {
                 .ifPresentOrElse(position -> {
                     positionMapper.updatePosition(newValue, position);
                     // Setting opening & closing order.
-                    if (newValue.getOpeningOrder() != null) {
-                        orderRepository.findByOrderId(newValue.getOpeningOrder().getOrderId())
+                    if (newValue.getOpeningOrder() == null && newValue.getOpeningOrderId() != null) {
+                        orderRepository.findByOrderId(newValue.getOpeningOrderId())
                                 .ifPresent(position::setOpeningOrder);
                     }
-                    if (newValue.getClosingOrder() != null && newValue.getClosingOrder().getId() != null) {
-                        orderRepository.findByOrderId(newValue.getClosingOrder().getOrderId())
+                    if (newValue.getClosingOrder() == null && newValue.getClosingOrderId() != null) {
+                        orderRepository.findByOrderId(newValue.getClosingOrderId())
                                 .ifPresent(position::setClosingOrder);
                     }
                     valueToSave.set(position);
                     logger.debug("PositionFlux - Updating position in database {}", position);
-
-                }, () -> logger.error("PositionFlux - Position {} was not found in database", newValue.getId()));
+                }, () -> logger.error("PositionFlux - Position {} was not found in database", newValue));
 
         return Optional.ofNullable(positionMapper.mapToPositionDTO(positionRepository.save(valueToSave.get())));
     }

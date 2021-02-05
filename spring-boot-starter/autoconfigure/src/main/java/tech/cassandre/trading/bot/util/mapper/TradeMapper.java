@@ -74,7 +74,7 @@ public interface TradeMapper {
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
     @Mapping(target = "order", ignore = true)
-    void updateOrder(TradeDTO source, @MappingTarget Trade target);
+    void updateTrade(TradeDTO source, @MappingTarget Trade target);
 
     // =================================================================================================================
     // Domain to DTO.

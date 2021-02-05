@@ -49,7 +49,7 @@ public class Trade extends BaseDomain {
     private Long order;
 
     /** The id of the order responsible for execution of this trade. */
-    @Column(name = "ORDER_ID", updatable = false)
+    @Column(name = "ORDER_ID")
     private String orderId;
 
     /** Currency pair. */

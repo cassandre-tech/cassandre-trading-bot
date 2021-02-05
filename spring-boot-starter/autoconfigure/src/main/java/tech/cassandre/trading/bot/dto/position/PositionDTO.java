@@ -17,7 +17,6 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -32,9 +31,6 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING_FAILURE;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
-import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
-import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
 /**
  * DTO representing a position.
@@ -71,8 +67,14 @@ public class PositionDTO {
     /** Position status. */
     private PositionStatusDTO status;
 
+    /** The order id created to open the position. */
+    private String openingOrderId;
+
     /** The order created to open the position. */
     private OrderDTO openingOrder;
+
+    /** The order id created to open the position. */
+    private String closingOrderId;
 
     /** The order created to close the position. */
     private OrderDTO closingOrder;
@@ -99,36 +101,6 @@ public class PositionDTO {
      * @param newStrategy     strategy
      * @param newCurrencyPair currency pair
      * @param newAmount       amount
-     * @param newOpeningOrder    open order
-     * @param newRules        position rules
-     */
-    public PositionDTO(final long newId,
-                       final StrategyDTO newStrategy,
-                       final CurrencyPairDTO newCurrencyPair,
-                       final BigDecimal newAmount,
-                       final OrderDTO newOpeningOrder,
-                       final PositionRulesDTO newRules) {
-        this.status = OPENING;
-        this.type = LONG;
-        this.id = newId;
-        this.positionId = newId;
-        this.strategy = newStrategy;
-        this.currencyPair = newCurrencyPair;
-        this.amount = CurrencyAmountDTO.builder()
-                .value(newAmount)
-                .currency(newCurrencyPair.getBaseCurrency())
-                .build();
-        this.openingOrder = newOpeningOrder;
-        this.rules = newRules;
-    }
-
-    /**
-     * Constructor (Use only if you don't have the order).
-     *
-     * @param newId           position id
-     * @param newStrategy     strategy
-     * @param newCurrencyPair currency pair
-     * @param newAmount       amount
      * @param newOpenOrderId  open order id
      * @param newRules        position rules
      */
@@ -148,41 +120,8 @@ public class PositionDTO {
                 .value(newAmount)
                 .currency(newCurrencyPair.getBaseCurrency())
                 .build();
-        // We create a temporary opening order.
-        openingOrder = OrderDTO.builder()
-                .orderId(newOpenOrderId)
-                .type(BID)
-                .currencyPair(currencyPair)
-                .status(PENDING_NEW)
-                .timestamp(ZonedDateTime.now())
-                .build();
+        this.openingOrderId = newOpenOrderId;
         this.rules = newRules;
-    }
-
-    /**
-     * Returns opening order id.
-     *
-     * @return opening order id
-     */
-    private String getOpeningOrderId() {
-        if (openingOrder != null) {
-            return openingOrder.getOrderId();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns closing order id.
-     *
-     * @return closing order id
-     */
-    private String getClosingOrderId() {
-        if (closingOrder != null) {
-            return closingOrder.getOrderId();
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -230,15 +169,14 @@ public class PositionDTO {
      * @return true if the the order updated the position.
      */
     public final boolean orderUpdate(final OrderDTO updatedOrder) {
-        if (openingOrder != null && openingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
+        if (openingOrderId.equals(updatedOrder.getOrderId())) {
             this.openingOrder = updatedOrder;
             if (updatedOrder.getStatus().isInError()) {
                 this.status = OPENING_FAILURE;
-
             }
             return true;
         }
-        if (closingOrder != null && closingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
+        if (closingOrderId != null && closingOrderId.equals(updatedOrder.getOrderId())) {
             this.closingOrder = updatedOrder;
             if (updatedOrder.getStatus().isInError()) {
                 this.status = CLOSING_FAILURE;
@@ -256,9 +194,9 @@ public class PositionDTO {
      */
     public boolean tradeUpdate(final TradeDTO trade) {
         // If status is OPENING and the trades for the open order arrives for the whole amount ==> status = OPENED.
-        if (trade.getOrderId().equals(getOpeningOrderId()) && status == OPENING) {
+        if (trade.getOrderId().equals(openingOrderId) && status == OPENING) {
 
-            // We calculate the sum of amount in the all the trades.
+             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
             final BigDecimal total = openingOrder.getTrades()
                     .stream()
@@ -271,7 +209,7 @@ public class PositionDTO {
         }
 
         // If status is CLOSING and the trades for the close order arrives for the whole amount ==> status = CLOSED.
-        if (trade.getOrderId().equals(getClosingOrderId()) && status == CLOSING) {
+        if (trade.getOrderId().equals(closingOrderId) && status == CLOSING) {
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
@@ -355,15 +293,8 @@ public class PositionDTO {
         if (status != OPENED) {
             throw new PositionException("Impossible to set close order id for position " + id);
         }
+        closingOrderId = newCloseOrderId;
         status = CLOSING;
-        // We create a temporary closing order that will be saved in database.
-        closingOrder = OrderDTO.builder()
-                .orderId(newCloseOrderId)
-                .timestamp(ZonedDateTime.now())
-                .type(ASK)
-                .currencyPair(currencyPair)
-                .status(PENDING_NEW)
-                .build();
     }
 
     /**
@@ -484,7 +415,9 @@ public class PositionDTO {
                 .append(this.rules, that.rules)
                 .append(this.status, that.status)
                 .append(this.openingOrder, that.openingOrder)
+                .append(this.openingOrderId, that.openingOrderId)
                 .append(this.closingOrder, that.closingOrder)
+                .append(this.closingOrderId, that.closingOrderId)
                 .append(this.lowestPrice, that.lowestPrice)
                 .append(this.highestPrice, that.highestPrice)
                 .append(this.latestPrice, that.latestPrice)
@@ -495,7 +428,6 @@ public class PositionDTO {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(strategy.getId())
                 .toHashCode();
     }
 

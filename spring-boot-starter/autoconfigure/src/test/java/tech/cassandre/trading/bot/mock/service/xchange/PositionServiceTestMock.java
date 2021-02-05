@@ -10,9 +10,11 @@ import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
@@ -27,10 +29,12 @@ import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -158,6 +162,28 @@ public class PositionServiceTestMock extends BaseTest {
         given(service.createSellMarketOrder(strategyDTO, cp1, new BigDecimal("10.00000000")))
                 .willReturn(new OrderCreationResultDTO(getPendingOrder(strategyDTO, "ORDER00011", ASK, new BigDecimal("10.00000000"), cp1)));
 
+        // Returns getOrders().
+        given(service.getOrders()).willReturn(
+                Set.of(OrderDTO.builder()       // Opening order.
+                                .orderId("ORDER00010")
+                                .type(BID)
+                                .strategy(strategyDTO)
+                                .currencyPair(cp1)
+                                .amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency()))
+                                .averagePrice(new CurrencyAmountDTO("0.2", cp1.getQuoteCurrency()))
+                                .status(NEW)
+                                .build(),
+                        OrderDTO.builder()      // Closing order.
+                                .orderId("ORDER00011")
+                                .type(ASK)
+                                .strategy(strategyDTO)
+                                .currencyPair(cp1)
+                                .amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency()))
+                                .averagePrice(new CurrencyAmountDTO("0.2", cp1.getQuoteCurrency()))
+                                .status(NEW)
+                                .build()
+                )
+        );
         return service;
     }
 

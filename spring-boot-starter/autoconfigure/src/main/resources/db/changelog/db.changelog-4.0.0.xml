@@ -102,8 +102,12 @@
                     remarks="Position status"/>
             <column name="FK_OPENING_ORDER_ID" type="BIGINT"
                     remarks="The order created to open the position"/>
+            <column name="OPENING_ORDER_ID" type="VARCHAR(255)"
+                    remarks="The order id created to open the position"/>
             <column name="FK_CLOSING_ORDER_ID" type="BIGINT"
                     remarks="The order created to close the position"/>
+            <column name="CLOSING_ORDER_ID" type="VARCHAR(255)"
+                    remarks="The order id created to close the position"/>
 
             <column name="LOWEST_PRICE_VALUE" type="numeric(16, 8)"
                     remarks="Lowest price reached by tis position (value)"/>

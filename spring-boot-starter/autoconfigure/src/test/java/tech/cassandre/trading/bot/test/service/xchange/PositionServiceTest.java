@@ -21,6 +21,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.mock.service.xchange.PositionServiceTestMock;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -69,6 +70,9 @@ public class PositionServiceTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
     private PositionService positionService;
 
     @Autowired
@@ -93,7 +97,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -136,7 +140,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -325,7 +329,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -376,7 +380,7 @@ public class PositionServiceTest extends BaseTest {
         assertTrue(p1.isSuccessful());
         assertEquals(1, p1.getPosition().getId());
         assertEquals(1, p1.getPosition().getPositionId());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrderId());
         assertNull(p1.getErrorMessage());
         assertNull(p1.getException());
         assertTrue(positionService.getPositionById(1).isPresent());
@@ -466,7 +470,7 @@ public class PositionServiceTest extends BaseTest {
         final PositionCreationResultDTO p1 = strategy.createLongPosition(cp1,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(10f).build());
-        assertEquals("ORDER00010", p1.getPosition().getOpeningOrder().getOrderId());
+        assertEquals("ORDER00010", p1.getPosition().getOpeningOrderId());
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
 
@@ -511,9 +515,13 @@ public class PositionServiceTest extends BaseTest {
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         final long position1Id = creationResult1.getPosition().getId();
-        assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getOrderId());
+        assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrderId());
 
-        // The open trade arrives, change the status to OPENED and set the price.
+
+        // The opening trade arrives, change the status to OPENED and set the price.
+        System.out.println("Count 1 => " + orderRepository.count());
+
+        orderFlux.update();
         tradeFlux.emitValue(TradeDTO.builder()
                 .tradeId("000002")
                 .type(BID)
@@ -524,6 +532,7 @@ public class PositionServiceTest extends BaseTest {
                 .build());
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
 
+        strategy.getOrders().forEach((s, orderDTO) -> System.out.println("==> " + orderDTO));
         // =============================================================================================================
         // We send tickers.
 
@@ -542,6 +551,8 @@ public class PositionServiceTest extends BaseTest {
         p = getPositionDTO(position1Id);
         // We check the last calculated gain - should be 50%.
         gain = p.getLatestCalculatedGain();
+
+
         assertTrue(gain.isPresent());
         assertEquals(50, gain.get().getPercentage());
         assertEquals(0, new BigDecimal("0.00001").compareTo(gain.get().getAmount().getValue()));
