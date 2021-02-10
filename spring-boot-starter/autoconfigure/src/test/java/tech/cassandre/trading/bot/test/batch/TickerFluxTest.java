@@ -26,12 +26,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
 
 @SpringBootTest
 @DisplayName("Batch - Ticker flux")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_RATE_TICKER, value = "100")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(TickerFluxTestMock.class)

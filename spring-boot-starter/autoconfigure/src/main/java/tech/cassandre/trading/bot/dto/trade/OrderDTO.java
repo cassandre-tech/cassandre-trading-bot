@@ -105,7 +105,6 @@ public class OrderDTO {
                 .append(this.status, that.status)
                 .append(this.cumulativeAmount, that.cumulativeAmount)
                 .append(this.userReference, that.userReference)
-                .append(this.timestamp, that.timestamp)
                 .isEquals();
     }
 

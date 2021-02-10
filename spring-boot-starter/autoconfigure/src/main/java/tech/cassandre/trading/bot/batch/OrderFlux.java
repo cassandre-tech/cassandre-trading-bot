@@ -46,7 +46,7 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
 
                     // If it's not in database, we insert it only if strategy is set - meaning it's the local order.
                     if (orderInDatabase.isEmpty() && order.getStrategy() != null) {
-                        logger.debug("OrderFlux - Local order {} changed : {}", order.getOrderId(), order);
+                        logger.debug("OrderFlux - Local order {} saved : {}", order.getOrderId(), order);
                         newValues.add(order);
                     }
 
@@ -78,7 +78,6 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
                     logger.debug("OrderFlux - Creating order in database {}", newValue);
                 });
 
-        System.out.println(">> saving " + valueToSave.get());
         return Optional.ofNullable(orderMapper.mapToOrderDTO(orderRepository.save(valueToSave.get())));
     }
 

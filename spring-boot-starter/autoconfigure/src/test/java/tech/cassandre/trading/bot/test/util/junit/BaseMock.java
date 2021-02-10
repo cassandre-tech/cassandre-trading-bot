@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.util.junit;
 
-import lombok.extern.java.Log;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.service.account.AccountService;
@@ -9,16 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
+import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.xchange.MarketServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.xchange.UserServiceXChangeImplementation;
 
 import java.io.IOException;
@@ -27,23 +28,14 @@ import java.util.Collections;
 import static java.math.BigDecimal.ZERO;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 
 /**
  * Base mock.
  */
-@Log
-public class BaseMock {
+public class BaseMock extends BaseTest {
 
     /** Service rate. */
-    public static final int SERVICE_RATE = 100;
-
-    /** Default strategy. */
-    protected StrategyDTO strategy = StrategyDTO.builder()
-            .id(1L)
-            .strategyId("01")
-            .type(BASIC_STRATEGY)
-            .build();
+    public static final int SERVICE_RATE = 900;
 
     @Autowired
     private ExchangeAccountRepository exchangeAccountRepository;
@@ -80,17 +72,35 @@ public class BaseMock {
 
     @Bean
     @Primary
+    public OrderFlux orderFlux() {
+        return new OrderFlux(tradeService(), orderRepository);
+    }
+
+    @Bean
+    @Primary
     public UserService userService() {
         AccountService mock;
         try {
             mock = getXChangeAccountServiceMock();
         } catch (IOException e) {
-            log.severe("Impossible to instantiate mocked account service");
+            logger.error("Impossible to instantiate mocked account service");
             return null;
         }
         return new UserServiceXChangeImplementation(SERVICE_RATE, mock);
     }
 
+    @Bean
+    @Primary
+    public TradeService tradeService() {
+        org.knowm.xchange.service.trade.TradeService mock;
+        try {
+            mock = getXChangeTradeServiceMock();
+        } catch (IOException e) {
+            logger.error("Impossible to instantiate mocked account service");
+            return null;
+        }
+        return new TradeServiceXChangeImplementation(SERVICE_RATE, orderRepository, mock);
+    }
 
     /**
      * Returns mocked XChange account service.
@@ -123,7 +133,7 @@ public class BaseMock {
      */
     @Bean
     @Primary
-    public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() {
+    public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() throws IOException {
         return mock(org.knowm.xchange.service.trade.TradeService.class);
     }
 

@@ -37,7 +37,6 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 @SpringBootTest
 @DisplayName("Batch - Trade flux")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "100"),
         @Property(key = "spring.datasource.data", value = "classpath:/trade-test.sql")
 })
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)

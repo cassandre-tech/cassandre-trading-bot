@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.dto.util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import java.util.TreeSet;
  * Currency.
  */
 @SuppressWarnings("unused")
-public final class CurrencyDTO {
+public final class CurrencyDTO implements Serializable {
 
     /** List of currencies. */
     private static final Map<String, CurrencyDTO> CURRENCIES = new HashMap<>();

@@ -11,6 +11,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
@@ -18,10 +19,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
@@ -33,21 +36,27 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
 
+    /** Order repository. */
+    private final OrderRepository orderRepository;
+
     /** XChange service. */
     private final org.knowm.xchange.service.trade.TradeService tradeService;
 
     /** Hashmap used to store orders created locally. */
-    private final HashMap<String, OrderDTO> localOrders = new HashMap<>();
+    private final Map<String, OrderDTO> localOrders = new ConcurrentHashMap<>();
 
     /**
      * Constructor.
      *
      * @param rate               rate in ms
+     * @param newOrderRepository order repository
      * @param newTradeService    market data service
      */
     public TradeServiceXChangeImplementation(final long rate,
+                                             final OrderRepository newOrderRepository,
                                              final org.knowm.xchange.service.trade.TradeService newTradeService) {
         super(rate);
+        this.orderRepository = newOrderRepository;
         this.tradeService = newTradeService;
     }
 
@@ -193,17 +202,28 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // If a token is not available this method will block until the refill adds one to the bucket.
             getBucket().asScheduler().consume(1);
 
-            // We add the local orders to orders received.
-            Set<OrderDTO> results = new LinkedHashSet<>(localOrders.values());
-            tradeService.getOpenOrders()
-                    .getOpenOrders()
-                    .forEach(order -> {
-                        // If we received the order from server, we remove local order.
-                        localOrders.remove(order.getId());
-                        results.add(orderMapper.mapToOrderDTO(order));
-                    });
-            logger.debug("TradeService - {} order(s) found", results.size());
-            return results;
+            // We clean the local orders if they are already in database.
+            localOrders.keySet()
+                    .stream()
+                    .filter(o -> orderRepository.findByOrderId(o).isPresent())
+                    .forEach(localOrders::remove);
+
+            // If we have local orders, we return them.
+            if (!localOrders.isEmpty()) {
+                return localOrders.values()
+                        .stream()
+                        .sorted(Comparator.comparing(OrderDTO::getTimestamp))
+                        .peek(o -> logger.debug("TradeService - {} local order retrieved", o))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+            } else {
+                // Else we get them from the exchange
+                return tradeService.getOpenOrders()
+                        .getOpenOrders()
+                        .stream()
+                        .map(orderMapper::mapToOrderDTO)
+                        .peek(o -> logger.debug("TradeService - {} remote order retrieved", o))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+            }
         } catch (IOException e) {
             logger.error("TradeService - Error retrieving open orders : {}", e.getMessage());
             return Collections.emptySet();
