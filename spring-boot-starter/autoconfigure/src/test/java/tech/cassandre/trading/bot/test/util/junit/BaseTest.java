@@ -98,7 +98,7 @@ public class BaseTest {
     protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
     /** How much we should wait for tests until it is declared as failed. */
-    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 30;
+    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
 
     /**
      * Constructor.
@@ -146,22 +146,6 @@ public class BaseTest {
         return Optional.of(TickerDTO.builder()
                 .currencyPair(cp)
                 .timestamp(getRandomDate())
-                .last(bid)
-                .build());
-    }
-
-    /**
-     * Util method to return a fake ticker with date.
-     *
-     * @param date date
-     * @param cp   currency pair
-     * @param bid  bid price
-     * @return ticket
-     */
-    protected static Optional<TickerDTO> getFakeTicker(final ZonedDateTime date, final CurrencyPairDTO cp, final BigDecimal bid) {
-        return Optional.of(TickerDTO.builder()
-                .currencyPair(cp)
-                .timestamp(date)
                 .last(bid)
                 .build());
     }

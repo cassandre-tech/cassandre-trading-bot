@@ -2,6 +2,9 @@ package tech.cassandre.trading.bot.test.util.junit;
 
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Wallet;
+import org.knowm.xchange.dto.marketdata.Ticker;
+import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,10 @@ import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementat
 import tech.cassandre.trading.bot.service.xchange.UserServiceXChangeImplementation;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static java.math.BigDecimal.ZERO;
 import static org.mockito.BDDMockito.given;
@@ -54,12 +60,6 @@ public class BaseMock extends BaseTest {
 
     @Bean
     @Primary
-    public MarketService marketService() {
-        return new MarketServiceXChangeImplementation(SERVICE_RATE, getXChangeMarketDataServiceMock());
-    }
-
-    @Bean
-    @Primary
     public AccountFlux accountFlux() {
         return new AccountFlux(userService());
     }
@@ -74,6 +74,19 @@ public class BaseMock extends BaseTest {
     @Primary
     public OrderFlux orderFlux() {
         return new OrderFlux(tradeService(), orderRepository);
+    }
+
+    @Bean
+    @Primary
+    public MarketService marketService() {
+        MarketDataService mock;
+        try {
+            mock = getXChangeMarketDataServiceMock();
+        } catch (IOException e) {
+            logger.error("Impossible to instantiate mocked market service");
+            return null;
+        }
+        return new MarketServiceXChangeImplementation(SERVICE_RATE, mock);
     }
 
     @Bean
@@ -122,7 +135,9 @@ public class BaseMock extends BaseTest {
      *
      * @return mocked XChange market data service.
      */
-    private MarketDataService getXChangeMarketDataServiceMock() {
+    @Bean
+    @Primary
+    public MarketDataService getXChangeMarketDataServiceMock() throws IOException {
         return mock(MarketDataService.class);
     }
 
@@ -134,7 +149,9 @@ public class BaseMock extends BaseTest {
     @Bean
     @Primary
     public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() throws IOException {
-        return mock(org.knowm.xchange.service.trade.TradeService.class);
+        final org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
+        given(mock.getOpenOrders()).willReturn(new OpenOrders(Collections.emptyList()));
+        return mock;
     }
 
     /**
@@ -150,6 +167,48 @@ public class BaseMock extends BaseTest {
                         Collections.emptySet(),
                         ZERO,
                         ZERO));
+    }
+
+    /**
+     * Util method to return a generated ticker.
+     *
+     * @param instrument instrument (currency pair)
+     * @param value      value for all fields
+     * @return ticket
+     */
+    protected static Ticker getGeneratedTicker(final Instrument instrument, final BigDecimal value) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return getGeneratedTicker(new Date(), instrument, value);
+    }
+
+    /**
+     * Util method to return a generated ticker.
+     *
+     * @param date       date
+     * @param instrument instrument (currency pair)
+     * @param value      value for all fields
+     * @return ticket
+     */
+    protected static Ticker getGeneratedTicker(Date date, final Instrument instrument, final BigDecimal value) {
+        return new Ticker.Builder()
+                .instrument(instrument) // currency pair.
+                .open(value)            // open.
+                .last(value)            // last.
+                .bid(value)             // bid.
+                .ask(value)             // ask.
+                .high(value)            // high.
+                .low(value)             // low.
+                .vwap(value)            // wmap.
+                .volume(value)          // value.
+                .quoteVolume(value)     // quote volume.
+                .timestamp(date)        // timestamp.
+                .bidSize(value)         // bid size.
+                .askSize(value)         // ask size.
+                .build();
     }
 
 }

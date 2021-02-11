@@ -3,12 +3,12 @@ package tech.cassandre.trading.bot.test.batch;
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.mock.batch.TickerFluxTestMock;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -27,7 +27,6 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
 
 @SpringBootTest
 @DisplayName("Batch - Ticker flux")
@@ -43,6 +42,9 @@ public class TickerFluxTest extends BaseTest {
 
     @Autowired
     private MarketService marketService;
+
+    @Autowired
+    private MarketDataService marketDataService;
 
     @Test
     @CaseId(5)
@@ -60,7 +62,7 @@ public class TickerFluxTest extends BaseTest {
         final int numberOfServiceCallsExpected = 17;
 
         // Waiting for the service to have been called with all the test data (16).
-        await().untilAsserted(() -> verify(marketService, atLeast(numberOfServiceCallsExpected)).getTicker(any()));
+        await().untilAsserted(() -> verify(marketDataService, atLeast(numberOfServiceCallsExpected)).getTicker(any()));
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
