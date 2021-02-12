@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
@@ -74,6 +75,13 @@ public class BaseMock extends BaseTest {
     @Primary
     public OrderFlux orderFlux() {
         return new OrderFlux(tradeService(), orderRepository);
+    }
+
+    @Bean
+    @Primary
+
+    public TradeFlux tradeFlux() {
+        return new TradeFlux(tradeService(), orderRepository,tradeRepository);
     }
 
     @Bean

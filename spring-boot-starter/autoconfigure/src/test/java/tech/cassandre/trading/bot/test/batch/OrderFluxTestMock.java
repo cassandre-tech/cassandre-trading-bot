@@ -23,28 +23,28 @@ public class OrderFluxTestMock extends BaseMock {
 
     @Override
     public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() throws IOException {
-        org.knowm.xchange.service.trade.TradeService tradeServiceMock = mock(org.knowm.xchange.service.trade.TradeService.class);
+        org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
 
         // =============================================================================================================
         // Order creation mock.
 
         // Order ORDER_000001 (ASK, 1, ETH/BTC).
         MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("1"), xChanceCP1);
-        given(tradeServiceMock.placeMarketOrder(m)).willReturn("ORDER_000001");
+        given(mock.placeMarketOrder(m)).willReturn("ORDER_000001");
         // Order ORDER_000002 (BID, 2, ETH/USDT).
         m = new MarketOrder(Order.OrderType.BID, new BigDecimal("2"), xChanceCP2);
-        given(tradeServiceMock.placeMarketOrder(m)).willReturn("ORDER_000002");
+        given(mock.placeMarketOrder(m)).willReturn("ORDER_000002");
         // Order ORDER_000003 (ASK, 3, ETH/BTC).
         m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("3"), xChanceCP1);
-        given(tradeServiceMock.placeMarketOrder(m)).willReturn("ORDER_000003");
+        given(mock.placeMarketOrder(m)).willReturn("ORDER_000003");
         // Order ORDER_000004 (BID, 4, ETH/USDT).
         m = new MarketOrder(Order.OrderType.BID, new BigDecimal("4"), xChanceCP2);
-        given(tradeServiceMock.placeMarketOrder(m)).willReturn("ORDER_000004");
+        given(mock.placeMarketOrder(m)).willReturn("ORDER_000004");
 
         // =============================================================================================================
         // Order creation mock.
 
-        given(tradeServiceMock.getOpenOrders()).willReturn(
+        given(mock.getOpenOrders()).willReturn(
                 // =====================================================================================================
                 // Reply 01.
                 // - Order ORDER_000001.
@@ -65,7 +65,7 @@ public class OrderFluxTestMock extends BaseMock {
                 getReply03()
         );
 
-        return tradeServiceMock;
+        return mock;
     }
 
     /**

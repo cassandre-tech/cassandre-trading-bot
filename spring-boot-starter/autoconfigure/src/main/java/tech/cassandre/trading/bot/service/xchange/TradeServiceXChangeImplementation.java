@@ -251,7 +251,8 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .getUserTrades()
                     .stream()
                     .map(tradeMapper::mapToTradeDTO)
-                    .collect(Collectors.toSet());
+                    .sorted(Comparator.comparing(TradeDTO::getTimestamp))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
             logger.debug("TradeService - {} trade(s) found", results.size());
             return results;
         } catch (IOException e) {

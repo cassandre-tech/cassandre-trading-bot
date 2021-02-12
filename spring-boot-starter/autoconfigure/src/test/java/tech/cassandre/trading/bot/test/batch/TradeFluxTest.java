@@ -10,7 +10,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.mock.batch.TradeFluxTestMock;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
@@ -25,14 +24,15 @@ import java.util.Optional;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
 @DisplayName("Batch - Trade flux")
@@ -52,6 +52,9 @@ public class TradeFluxTest extends BaseTest {
     @Autowired
     private TradeService tradeService;
 
+    @Autowired
+    private org.knowm.xchange.service.trade.TradeService xChangeTradeService;
+
     @Test
     @CaseId(6)
     @DisplayName("Check received data")
@@ -62,16 +65,14 @@ public class TradeFluxTest extends BaseTest {
         // We will call the service 5 times with the first and third reply empty.
         // We receive:
         // First reply: TRADE_0000001, TRADE_0000002.
-        // Second reply: empty.
-        // Third reply: empty.
-        // Fourth reply: TRADE_0000003, TRADE_0000004, TRADE_0000005.
-        // Fifth reply: TRADE_0000006, TRADE_0000002 ,TRADE_0000003, TRADE_0000008.
+        // Second reply: TRADE_0000003, TRADE_0000004, TRADE_0000005.
+        // Third reply: TRADE_0000006, TRADE_0000002 ,TRADE_0000003, TRADE_0000008.
         // TRADE_0000003 is an update. TRADE_0000002 is the same.
         final int numberOfUpdatesExpected = 8;
-        final int numberOfServiceCallsExpected = 5;
+        final int numberOfServiceCallsExpected = 3;
 
         // Waiting for the service to have been called with all the test data.
-        await().untilAsserted(() -> verify(tradeService, atLeast(numberOfServiceCallsExpected)).getTrades());
+        await().untilAsserted(() -> verify(xChangeTradeService, atLeast(numberOfServiceCallsExpected)).getTradeHistory(any()));
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
@@ -120,7 +121,7 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(cp2, t.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("1.100001", cp2.getBaseCurrency()), t.getAmount());
         assertEquals(new CurrencyAmountDTO("2.200002", cp2.getQuoteCurrency()), t.getPrice());
-        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals(new CurrencyAmountDTO("3.300003", ETH), t.getFee());
         assertEquals("Ref TRADE_0000003", t.getUserReference());
         assertTrue(createZonedDateTime("01-09-2020").isEqual(t.getTimestamp()));
 
@@ -159,11 +160,24 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(cp2, t.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("1.100001", cp2.getBaseCurrency()), t.getAmount());
         assertEquals(new CurrencyAmountDTO("2.200002", cp2.getQuoteCurrency()), t.getPrice());
-        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals(new CurrencyAmountDTO("3.300003", USDT), t.getFee());
         assertEquals("Ref TRADE_0000006", t.getUserReference());
-        assertTrue(createZonedDateTime("02-09-2020").isEqual(t.getTimestamp()));
+        assertTrue(createZonedDateTime("01-08-2018").isEqual(t.getTimestamp()));
 
         // Check update 7.
+        t = trades.next();
+        assertEquals(7, t.getId());
+        assertEquals("TRADE_0000008", t.getTradeId());
+        assertEquals(BID, t.getType());
+        assertEquals("ORDER_0000001", t.getOrderId());
+        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()), t.getAmount());
+        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t.getPrice());
+        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
+        assertEquals("Ref TRADE_0000008", t.getUserReference());
+        assertTrue(createZonedDateTime("02-09-2020").isEqual(t.getTimestamp()));
+
+        // Check update 8.
         t = trades.next();
         assertEquals(3, t.getId());
         assertEquals("TRADE_0000003", t.getTradeId());
@@ -174,20 +188,7 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(new CurrencyAmountDTO("2.220002", cp2.getQuoteCurrency()), t.getPrice());
         assertEquals(new CurrencyAmountDTO("3.330003", BTC), t.getFee());
         assertEquals("Ref TRADE_0000003", t.getUserReference());
-        assertTrue(createZonedDateTime("02-09-2021").isEqual(t.getTimestamp()));
-
-        // Check update 8.
-        t = trades.next();
-        assertEquals(7, t.getId());
-        assertEquals("TRADE_0000008", t.getTradeId());
-        assertEquals(BID, t.getType());
-        assertEquals("ORDER_0000001", t.getOrderId());
-        assertEquals(cp1, t.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), t.getAmount());
-        assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t.getPrice());
-        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
-        assertEquals("Ref TRADE_0000008", t.getUserReference());
-        assertTrue(createZonedDateTime("02-09-2020").isEqual(t.getTimestamp()));
+        assertTrue(createZonedDateTime("01-09-2021").isEqual(t.getTimestamp()));
 
         // =============================================================================================================
         // Check data we have in strategy & database.
@@ -242,7 +243,7 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(new CurrencyAmountDTO("2.220002", cp2.getQuoteCurrency()), t3.get().getPrice());
         assertEquals(new CurrencyAmountDTO("3.330003", BTC), t3.get().getFee());
         assertEquals("Ref TRADE_0000003", t3.get().getUserReference());
-        assertTrue(createZonedDateTime("02-09-2021").isEqual(t3.get().getTimestamp()));
+        assertTrue(createZonedDateTime("01-09-2021").isEqual(t3.get().getTimestamp()));
 
         // Trade TRADE_0000004.
         final Optional<TradeDTO> t4 = strategy.getTradeByTradeId("TRADE_0000004");
@@ -282,9 +283,9 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(cp2, t6.get().getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("1.100001", cp2.getBaseCurrency()), t6.get().getAmount());
         assertEquals(new CurrencyAmountDTO("2.200002", cp2.getQuoteCurrency()), t6.get().getPrice());
-        assertEquals(new CurrencyAmountDTO("3.300003", BTC), t6.get().getFee());
+        assertEquals(new CurrencyAmountDTO("3.300003", USDT), t6.get().getFee());
         assertEquals("Ref TRADE_0000006", t6.get().getUserReference());
-        assertTrue(createZonedDateTime("02-09-2020").isEqual(t6.get().getTimestamp()));
+        assertTrue(createZonedDateTime("01-08-2018").isEqual(t6.get().getTimestamp()));
 
         // Trade TRADE_0000008.
         final Optional<TradeDTO> t8 = strategy.getTradeByTradeId("TRADE_0000008");
@@ -294,7 +295,7 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(BID, t8.get().getType());
         assertEquals("ORDER_0000001", t8.get().getOrderId());
         assertEquals(cp1, t8.get().getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), t8.get().getAmount());
+        assertEquals(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()), t8.get().getAmount());
         assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t8.get().getPrice());
         assertEquals(new CurrencyAmountDTO("3.300003", BTC), t8.get().getFee());
         assertEquals("Ref TRADE_0000008", t8.get().getUserReference());
