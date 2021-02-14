@@ -21,6 +21,8 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange")
 public class ExchangeParameters {
 
+    //TODO PARAMETER_EXCHANGE_* are used only in tests, move it where they belong to
+
     /** Exchange name parameter. */
     public static final String PARAMETER_EXCHANGE_NAME = "cassandre.trading.bot.exchange.name";
 
@@ -41,6 +43,18 @@ public class ExchangeParameters {
 
     /** Proxy port. */
     public static final String PARAMETER_EXCHANGE_PROXY_PORT = "cassandre.trading.bot.exchange.proxyPort";
+
+    /** secure API endpoint parameter. */
+    public static final String PARAMETER_EXCHANGE_SSL_URI = "cassandre.trading.bot.exchange.sslUri";
+
+    /** plain text API endpoint parameter. */
+    public static final String PARAMETER_EXCHANGE_PLAIN_TEXT_URI = "cassandre.trading.bot.exchange.plainTextUri";
+
+    /** exchange port parameter. */
+    public static final String PARAMETER_EXCHANGE_HOST = "cassandre.trading.bot.exchange.host";
+
+    /** exchange port parameter. */
+    public static final String PARAMETER_EXCHANGE_PORT = "cassandre.trading.bot.exchange.port";;
 
     /** Exchange name. For example : coinbase, kraken, kucoin. */
     @NotEmpty(message = "Exchange name required, for example : coinbase, kraken, kucoin...")
@@ -67,6 +81,18 @@ public class ExchangeParameters {
 
     /** Proxy port. */
     private Integer proxyPort;
+
+    /** secure API endpoint. */
+    private String sslUri;
+
+    /** plain text API endpoint. */
+    private String plainTextUri;
+
+    /** exchange port parameter. */
+    private String host;
+
+    /** exchange port parameter. */
+    private String port;
 
     /** Modes. */
     @Valid
