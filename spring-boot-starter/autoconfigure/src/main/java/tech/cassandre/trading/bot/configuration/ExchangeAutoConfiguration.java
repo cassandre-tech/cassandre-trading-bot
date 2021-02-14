@@ -248,6 +248,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
         // Coinbase pro specific.
         if (exchangeParameters.getName().equalsIgnoreCase("coinbasePro")) {
             return "org.knowm.xchange.coinbasepro.CoinbaseProExchange";
+        } else if (exchangeParameters.getName().equalsIgnoreCase("gemini")) {
+            return "org.knowm.xchange.gemini.v1.GeminiExchange";
         }
 
         // Returns the XChange package name.
