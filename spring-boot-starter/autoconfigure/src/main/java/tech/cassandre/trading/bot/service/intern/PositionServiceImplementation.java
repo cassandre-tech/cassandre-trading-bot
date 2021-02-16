@@ -119,7 +119,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                 .map(positionMapper::mapToPositionDTO)
                 .forEach(p -> {
                     if (p.orderUpdate(order)) {
-                        logger.debug("PositionService - Position {} updated with order {}", p.getPositionId(), order);
+                        logger.info("PositionService - Position {} updated with order {}", p.getPositionId(), order);
                         positionFlux.emitValue(p);
                     }
                 });

@@ -212,7 +212,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 ea.setExchange(exchangeParameters.getName());
                 ea.setAccount(exchangeParameters.getUsername());
                 ea = exchangeAccountRepository.save(ea);
-                logger.info("ExchangeConfiguration - exchange configuration saved in database {}", ea);
+                logger.info("ExchangeConfiguration - Exchange configuration saved in database {}", ea);
             }
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.
@@ -221,17 +221,14 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
         } catch (HttpStatusIOException e) {
             if (e.getHttpStatusCode() == UNAUTHORIZED_STATUS_CODE) {
                 // Authorization failure.
-                e.printStackTrace();
                 throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getName(),
-                        "Check your exchange credentials " + e.getMessage() + " - login used : " + exchangeParameters.getUsername());
+                        "Check your exchange credentials : " + e.getMessage() + " - login used : " + exchangeParameters.getUsername());
             } else {
                 // Another HTTP failure.
-                e.printStackTrace();
-                throw new ConfigurationException("Error while connecting to the exchange " + e.getMessage());
+                throw new ConfigurationException("Error while connecting to the exchange : " + e.getMessage());
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new ConfigurationException("Unknown Configuration error : " + e.getMessage());
+            throw new ConfigurationException("Unknown configuration error : " + e.getMessage());
         }
     }
 

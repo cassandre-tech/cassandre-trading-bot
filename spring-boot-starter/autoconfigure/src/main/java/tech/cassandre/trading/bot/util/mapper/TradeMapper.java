@@ -11,10 +11,12 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
+import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
+
 /**
  * Trade mapper.
  */
-@Mapper(uses = {UtilMapper.class, CurrencyMapper.class})
+@Mapper(uses = {UtilMapper.class, CurrencyMapper.class}, nullValuePropertyMappingStrategy = IGNORE)
 public interface TradeMapper {
 
     // =================================================================================================================
@@ -70,7 +72,6 @@ public interface TradeMapper {
     @Mapping(target = "order", ignore = true)
     Trade mapToTrade(TradeDTO source);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
     @Mapping(target = "order", ignore = true)

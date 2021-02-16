@@ -4,6 +4,7 @@ import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
@@ -33,6 +34,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static java.math.BigDecimal.ZERO;
+import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -159,6 +162,7 @@ public class BaseMock extends BaseTest {
     public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() throws IOException {
         final org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
         given(mock.getOpenOrders()).willReturn(new OpenOrders(Collections.emptyList()));
+        given(mock.getTradeHistory(any())).willReturn(new UserTrades(Collections.emptyList(), SortByTimestamp));
         return mock;
     }
 

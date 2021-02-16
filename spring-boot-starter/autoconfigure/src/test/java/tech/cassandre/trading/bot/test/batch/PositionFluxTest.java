@@ -17,7 +17,6 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.mock.batch.PositionFluxTestMock;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -29,6 +28,7 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,8 +44,6 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
 
 @SpringBootTest
 @DisplayName("Batch - Position flux")
@@ -77,13 +75,14 @@ public class PositionFluxTest extends BaseTest {
     @Autowired
     private PositionRepository positionRepository;
 
+    final AtomicInteger positionUpdatesCount = new AtomicInteger(0);
+
+    final AtomicInteger positionStatusUpdatesCount = new AtomicInteger(0);
+
     @Test
     @CaseId(4)
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        int positionStatusUpdateIndex = 0;
-        int positionUpdateIndex = 0;
-
         // =============================================================================================================
         // Creates position 1 - should be OPENING.
         final PositionCreationResultDTO position1Result = strategy.createLongPosition(cp1,
@@ -95,16 +94,23 @@ public class PositionFluxTest extends BaseTest {
         assertEquals("ORDER00010", position1Result.getPosition().getOpeningOrderId());
         long position1Id = position1Result.getPosition().getId();
 
-        // onPositionUpdate - Position 1 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(1, strategy.getPositionsStatusUpdateReceived().size()));
-        PositionDTO p = strategy.getPositionsStatusUpdateReceived().get(positionStatusUpdateIndex);
+        // The position 1 is created.
+        // 1 position status update - The position is created with the OPENING status.
+        positionStatusUpdatesCount.incrementAndGet();
+        // 2 positions updates - Position created and the position created with the order set.
+        positionUpdatesCount.incrementAndGet();
+        positionUpdatesCount.incrementAndGet();
+
+        // onPositionStatusUpdate - Position 1 should arrive (OPENING).
+        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        PositionDTO p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENING, p.getStatus());
 
-        // onPosition - Position 1 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(1, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        // onPositionUpdate - Position 1 should arrive (OPENING).
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), strategy.getPositionsUpdateReceived().size()));
+        p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENING, p.getStatus());
@@ -147,19 +153,24 @@ public class PositionFluxTest extends BaseTest {
                         .build());
         assertEquals("ORDER00020", position2Result.getPosition().getOpeningOrderId());
         long position2Id = position2Result.getPosition().getId();
-        positionStatusUpdateIndex++;
-        positionUpdateIndex++;
 
-        // onPositionUpdate - Position 2 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsStatusUpdateReceived().size()));
-        p = strategy.getPositionsStatusUpdateReceived().get(positionStatusUpdateIndex);
+        // The position 2 is created.
+        // 1 position status update - The position is created with the OPENING status.
+        positionStatusUpdatesCount.incrementAndGet();
+        // 2 positions updates - Position created and the position created with the order set.
+        positionUpdatesCount.incrementAndGet();
+        positionUpdatesCount.incrementAndGet();
+
+        // onPositionStatusUpdate - Position 2 should arrive (OPENING).
+        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
         assertEquals(OPENING, p.getStatus());
 
-        // onPosition - Position 2 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        // onPositionUpdate - Position 2 should arrive (OPENING).
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
         assertEquals(OPENING, p.getStatus());
@@ -204,19 +215,18 @@ public class PositionFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-02-2020"))
                 .build());
-        positionUpdateIndex++;
+        positionUpdatesCount.incrementAndGet();
         // The same trade is emitted two times with an update (on time).
         tradeFlux.emitValue(TradeDTO.builder()
                 .tradeId("000011")
-                .type(BID)
-                .type(BID)
                 .orderId("ORDER00010")
+                .type(BID)
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("4", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("03-02-2020"))
                 .build());
-        positionUpdateIndex++;
+        positionUpdatesCount.incrementAndGet();
 
         // Second trade.
         tradeFlux.emitValue(TradeDTO.builder()
@@ -228,7 +238,7 @@ public class PositionFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
-        positionUpdateIndex++;
+        positionUpdatesCount.incrementAndGet();
         // The same trade is emitted two times with an update (on time).
         tradeFlux.emitValue(TradeDTO.builder()
                 .tradeId("000001")
@@ -239,21 +249,21 @@ public class PositionFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
-        positionUpdateIndex++;
+        positionUpdatesCount.incrementAndGet();
 
         // With the two trades emitted, status should change.
-        positionStatusUpdateIndex++;
+        positionStatusUpdatesCount.incrementAndGet();
 
-        // onPositionUpdate - Position 1 should change to OPENED.
-        await().untilAsserted(() -> assertEquals(3, strategy.getPositionsStatusUpdateReceived().size()));
-        p = strategy.getPositionsStatusUpdateReceived().get(positionStatusUpdateIndex);
+        // onPositionStatusUpdate - Position 1 should change to OPENED.
+        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENED, p.getStatus());
 
-        // onPosition - 2 trades emitted 2 times so 4 updates (+2 already received for position opening).
-        await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        // onPositionUpdate - 2 trades emitted 2 times so 4 updates (+2 already received for position opening).
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENED, p.getStatus());
@@ -296,9 +306,9 @@ public class PositionFluxTest extends BaseTest {
 
         // First ticker arrives (500% gain) - min, max and last gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.18")).build());
-        positionUpdateIndex++;
-        await().untilAsserted(() -> assertEquals(7, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        positionUpdatesCount.incrementAndGet();
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getLowestPrice().getValue()));
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestPrice().getValue()));
@@ -306,9 +316,9 @@ public class PositionFluxTest extends BaseTest {
 
         // Second ticker arrives (100% gain) - min and last gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).build());
-        positionUpdateIndex++;
-        await().untilAsserted(() -> assertEquals(8, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        positionUpdatesCount.incrementAndGet();
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.06").compareTo(p.getLowestPrice().getValue()));
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestPrice().getValue()));
@@ -316,9 +326,9 @@ public class PositionFluxTest extends BaseTest {
 
         // Third ticker arrives (200% gain) - only last should change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.09")).build());
-        positionUpdateIndex++;
-        await().untilAsserted(() -> assertEquals(9, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        positionUpdatesCount.incrementAndGet();
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.06").compareTo(p.getLowestPrice().getValue()));
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestPrice().getValue()));
@@ -326,9 +336,9 @@ public class PositionFluxTest extends BaseTest {
 
         // Fourth ticker arrives (50% loss) - min and last gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.015")).build());
-        positionUpdateIndex++;
-        await().untilAsserted(() -> assertEquals(10, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        positionUpdatesCount.incrementAndGet();
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.015").compareTo(p.getLowestPrice().getValue()));
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestPrice().getValue()));
@@ -339,9 +349,9 @@ public class PositionFluxTest extends BaseTest {
 
         // Firth ticker arrives (600% gain) - max and last gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.21")).build());
-        positionUpdateIndex++;
-        await().untilAsserted(() -> assertEquals(11, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        positionUpdatesCount.incrementAndGet();
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.015").compareTo(p.getLowestPrice().getValue()));
         assertEquals(0, new BigDecimal("0.21").compareTo(p.getHighestPrice().getValue()));
@@ -384,19 +394,19 @@ public class PositionFluxTest extends BaseTest {
                 .amount(new CurrencyAmountDTO("0.0002", cp2.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.03", cp2.getQuoteCurrency()))
                 .build());
-        positionStatusUpdateIndex++;
-        positionUpdateIndex++;
+        positionStatusUpdatesCount.incrementAndGet();
+        positionUpdatesCount.incrementAndGet();
 
-        // onPositionUpdate - Position 2 should be opened.
-        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdateReceived().size()));
-        p = strategy.getPositionsStatusUpdateReceived().get(positionStatusUpdateIndex);
+        // onPositionStatusUpdate - Position 2 should be opened.
+        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
         assertEquals(OPENED, p.getStatus());
 
-        // onPosition.
-        await().untilAsserted(() -> assertEquals(12, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        // onPositionUpdate.
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
         assertEquals(OPENED, p.getStatus());
@@ -430,19 +440,21 @@ public class PositionFluxTest extends BaseTest {
         // =============================================================================================================
         // A ticker arrives that triggers max gain rules of position 1 - should now be CLOSING.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).build());
-        positionStatusUpdateIndex++;
-        positionUpdateIndex++;
+        positionStatusUpdatesCount.incrementAndGet();
+        // 2 updates of position (closeOrderId set & then closerOrder set).
+        positionUpdatesCount.incrementAndGet();
+        positionUpdatesCount.incrementAndGet();
 
-        // onPositionUpdate - Position should be closing.
-        await().untilAsserted(() -> assertEquals(5, strategy.getPositionsStatusUpdateReceived().size()));
-        p = strategy.getPositionsStatusUpdateReceived().get(positionStatusUpdateIndex);
+        // onPositionStatusUpdate - Position should be closing.
+        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSING, p.getStatus());
 
-        // onPosition.
-        await().untilAsserted(() -> assertEquals(13, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        // OnPositionUpdate.
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSING, p.getStatus());
@@ -486,8 +498,8 @@ public class PositionFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
-        positionStatusUpdateIndex++;
-        positionUpdateIndex++;
+        positionStatusUpdatesCount.incrementAndGet();
+
         // We send a duplicated value.
         tradeFlux.emitValue(TradeDTO.builder().tradeId("000003")
                 .orderId("ORDER00011")
@@ -497,11 +509,13 @@ public class PositionFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
-        positionUpdateIndex++;
+        // 2 updates of position (closeOrderId set & then closerOrder set).
+        positionUpdatesCount.incrementAndGet();
+        positionUpdatesCount.incrementAndGet();
 
         // onPosition for first trade arrival.
-        await().untilAsserted(() -> assertEquals(15, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSING, p.getStatus());
@@ -515,7 +529,7 @@ public class PositionFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
-        positionUpdateIndex++;
+        positionUpdatesCount.incrementAndGet();
         // We send a duplicated value.
         tradeFlux.emitValue(TradeDTO.builder().tradeId("000004")
                 .orderId("ORDER00011")
@@ -526,17 +540,17 @@ public class PositionFluxTest extends BaseTest {
                 .timestamp(createZonedDateTime("02-01-2020").plusDays(1))
                 .build());
 
-        // onPositionUpdate - Position should be closed.
-        await().untilAsserted(() -> assertEquals(6, strategy.getPositionsStatusUpdateReceived().size()));
-        p = strategy.getPositionsStatusUpdateReceived().get(positionStatusUpdateIndex);
+        // onPositionStatusUpdate - Position should be closed.
+        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSED, p.getStatus());
 
         // onPosition for second trade arrival.
         // 16 and not 17 because as the position is closed with the third trade, the position will not accept new trade !
-        await().untilAsserted(() -> assertEquals(16, strategy.getPositionsUpdateReceived().size()));
-        p = strategy.getPositionsUpdateReceived().get(positionUpdateIndex);
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSED, p.getStatus());
@@ -584,6 +598,22 @@ public class PositionFluxTest extends BaseTest {
         final Optional<Order> order00011 = orderRepository.findByOrderId("ORDER00011");
         assertTrue(order00011.isPresent());
         assertEquals(2, order00011.get().getTrades().size());
+    }
+
+    private int getPositionsUpdatesCount() {
+        return strategy.getPositionsUpdateReceived().size();
+    }
+
+    private int getPositionsStatusUpdatesCount() {
+        return strategy.getPositionsStatusUpdateReceived().size();
+    }
+
+    private PositionDTO getLastPositionUpdate() {
+        return strategy.getPositionsUpdateReceived().get(strategy.getPositionsUpdateReceived().size() - 1);
+    }
+
+    private PositionDTO getLastPositionStatusUpdate() {
+        return strategy.getPositionsStatusUpdateReceived().get(strategy.getPositionsStatusUpdateReceived().size() - 1);
     }
 
 }

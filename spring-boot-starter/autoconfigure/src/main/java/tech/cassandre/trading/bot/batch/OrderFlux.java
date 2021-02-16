@@ -71,7 +71,6 @@ public class OrderFlux extends BaseExternalFlux<OrderDTO> {
                     orderMapper.updateOrder(newValue, order);
                     valueToSave.set(order);
                     logger.debug("OrderFlux - Updating order in database {}", order);
-
                 }, () -> {
                     // Create order.
                     valueToSave.set(orderMapper.mapToOrder(newValue));

@@ -1,20 +1,23 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import liquibase.pro.packaged.B;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.dto.trade.UserTrades;
 import org.springframework.boot.test.context.TestConfiguration;
 import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import static java.math.BigDecimal.ZERO;
 import static org.knowm.xchange.dto.Order.OrderStatus.FILLED;
+import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -24,6 +27,8 @@ public class OrderFluxTestMock extends BaseMock {
     @Override
     public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() throws IOException {
         org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
+
+        given(mock.getTradeHistory(any())).willReturn(new UserTrades(Collections.emptyList(), SortByTimestamp));
 
         // =============================================================================================================
         // Order creation mock.
