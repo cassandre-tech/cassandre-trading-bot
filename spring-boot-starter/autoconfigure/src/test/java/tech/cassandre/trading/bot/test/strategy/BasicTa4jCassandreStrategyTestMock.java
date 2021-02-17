@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.mock.strategy;
+package tech.cassandre.trading.bot.test.strategy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -268,17 +268,17 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Returns three values.
         Set<OrderDTO> reply = new LinkedHashSet<>();
-        reply.add(OrderDTO.builder().orderId("000001").type(BID).currencyPair(cp3).build());                // Order 01.
-        reply.add(OrderDTO.builder().orderId("000002").type(BID).currencyPair(cp3).build());                // Order 02.
-        reply.add(OrderDTO.builder().orderId("000003").type(BID).currencyPair(cp3).build());                // Order 03.
-        reply.add(OrderDTO.builder().orderId("000004").type(BID).currencyPair(cp3).build());                // Order 04.
+        reply.add(OrderDTO.builder().orderId("000001").type(BID).strategy(strategyDTO).currencyPair(cp3).build());                // Order 01.
+        reply.add(OrderDTO.builder().orderId("000002").type(BID).strategy(strategyDTO).currencyPair(cp3).build());                // Order 02.
+        reply.add(OrderDTO.builder().orderId("000003").type(BID).strategy(strategyDTO).currencyPair(cp3).build());                // Order 03.
+        reply.add(OrderDTO.builder().orderId("000004").type(BID).strategy(strategyDTO).currencyPair(cp3).build());                // Order 04.
         given(service.getOrders()).willReturn(reply);
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-        replyGetTrades.add(TradeDTO.builder().tradeId("0000001").type(BID).currencyPair(cp3).build());      // Trade 01.
-        replyGetTrades.add(TradeDTO.builder().tradeId("0000002").type(BID).currencyPair(cp3).build());      // Trade 02.
-        replyGetTrades.add(TradeDTO.builder().tradeId("0000003").type(BID).currencyPair(cp3).build());      // Trade 03.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000001").orderId("000001").type(BID).currencyPair(cp3).build());      // Trade 01.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000002").orderId("000002").type(BID).currencyPair(cp3).build());      // Trade 02.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000003").orderId("000003").type(BID).currencyPair(cp3).build());      // Trade 03.
         given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;

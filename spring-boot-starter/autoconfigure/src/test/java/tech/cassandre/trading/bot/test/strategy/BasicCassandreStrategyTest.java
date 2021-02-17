@@ -10,7 +10,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.mock.strategy.BasicCassandreStrategyTestMock;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
