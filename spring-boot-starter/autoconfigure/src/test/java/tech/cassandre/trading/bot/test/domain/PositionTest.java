@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
@@ -15,6 +16,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -45,6 +47,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -76,6 +79,9 @@ public class PositionTest extends BaseTest {
 
     @Autowired
     private TradeRepository tradeRepository;
+
+    @Autowired
+    private OrderFlux orderFlux;
 
     @Autowired
     private PositionFlux positionFlux;
@@ -352,7 +358,7 @@ public class PositionTest extends BaseTest {
         assertNull(p7.getStopGainPercentageRule());
         assertNull(p7.getStopLossPercentageRule());
         assertEquals(OPENING, p7.getStatus());
-        assertEquals("DRY_ORDER_000000002", p7.getOpeningOrder().getOrderId());
+        assertEquals("DRY_ORDER_000000002", p7.getOpeningOrderId());
         assertNull(p7.getClosingOrder());
     }
 
@@ -495,7 +501,22 @@ public class PositionTest extends BaseTest {
         PositionDTO pDTO = getPositionDTO(positionId);
         pDTO.closePositionWithOrderId("DRY_ORDER_000000002");
         positionFlux.emitValue(pDTO);
+        orderFlux.emitValue(OrderDTO.builder()
+                .orderId("DRY_ORDER_000000002")
+                .type(ASK)
+                .strategy(strategyDTO)
+                .currencyPair(cp1)
+                .amount(new CurrencyAmountDTO("1.00001", cp1.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
+                .leverage("leverage3")
+                .status(NEW)
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
+                .userReference("MY_REF_3")
+                .timestamp(createZonedDateTime("01-01-2020"))
+                .build());
         await().untilAsserted(() -> assertTrue(() -> orderRepository.findByOrderId("DRY_ORDER_000000002").isPresent()));
+        positionFlux.emitValue(pDTO);
 
         // The first close trade arrives, status should not change as it's not the total amount.
         tradeFlux.emitValue(TradeDTO.builder()

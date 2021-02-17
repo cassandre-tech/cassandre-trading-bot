@@ -83,13 +83,13 @@ public class BaseTest {
     protected final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
 
     /** XChange cp1 for tests. */
-    protected final CurrencyPair xChanceCP1 = new CurrencyPair(Currency.ETH, Currency.BTC);
+    protected final CurrencyPair xChangeCP1 = new CurrencyPair(Currency.ETH, Currency.BTC);
 
     /** cp2 for tests. */
     protected final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
 
     /** XChange cp2 for tests. */
-    protected final CurrencyPair xChanceCP2 = new CurrencyPair(Currency.ETH, Currency.USDT);
+    protected final CurrencyPair xChangeCP2 = new CurrencyPair(Currency.ETH, Currency.USDT);
 
     /** cp3 for tests. */
     protected final CurrencyPairDTO cp3 = new CurrencyPairDTO(BTC, USDT);

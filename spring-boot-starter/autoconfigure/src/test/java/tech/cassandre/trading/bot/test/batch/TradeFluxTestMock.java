@@ -68,26 +68,26 @@ public class TradeFluxTestMock extends BaseMock {
         UserTrade trade0000001 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.100001"),             // Original amount.
-                xChanceCP1,                                 // Instrument.
+                xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createDate(1).toInstant()),   // Date.
                 "TRADE_0000001",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP1.counter,                         // fee currency.
+                xChangeCP1.counter,                         // fee currency.
                 "Ref TRADE_0000001"
         );
 
         UserTrade trade0000002 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.100001"),             // Original amount.
-                xChanceCP1,                                 // Instrument.
+                xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
                 "TRADE_0000002",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP1.counter,                         // fee currency.
+                xChangeCP1.counter,                         // fee currency.
                 "Ref TRADE_0000002"
         );
 
@@ -108,65 +108,65 @@ public class TradeFluxTestMock extends BaseMock {
         UserTrade trade0000001 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.100001"),             // Original amount.
-                xChanceCP1,                                 // Instrument.
+                xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createDate(1).toInstant()),   // Date.
                 "TRADE_0000001",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP1.counter,                         // fee currency.
+                xChangeCP1.counter,                         // fee currency.
                 "Ref TRADE_0000001"
         );
 
         UserTrade trade0000002 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.100001"),             // Original amount.
-                xChanceCP1,                                 // Instrument.
+                xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
                 "TRADE_0000002",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP1.counter,                         // fee currency.
+                xChangeCP1.counter,                         // fee currency.
                 "Ref TRADE_0000002"
         );
 
         UserTrade trade0000003 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.100001"),             // Original amount.
-                xChanceCP2,                                 // Instrument.
+                xChangeCP2,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
                 "TRADE_0000003",                         // Trade id.
                 "ORDER_0000002",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP2.base,                            // fee currency.
+                xChangeCP2.base,                            // fee currency.
                 "Ref TRADE_0000003"
         );
 
         UserTrade trade0000004 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1"),                    // Original amount.
-                xChanceCP1,                                 // Instrument.
+                xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
                 "TRADE_0000004",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP1.counter,                         // fee currency.
+                xChangeCP1.counter,                         // fee currency.
                 "Ref TRADE_0000004"
         );
 
         UserTrade trade0000005 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1"),                    // Original amount.
-                xChanceCP1,                                 // Instrument.
+                xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),              // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
                 "TRADE_0000005",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP1.counter,                         // fee currency.
+                xChangeCP1.counter,                         // fee currency.
                 "Ref TRADE_0000005"
         );
 
@@ -191,33 +191,33 @@ public class TradeFluxTestMock extends BaseMock {
         UserTrade trade0000006 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.100001"),             // Original amount.
-                xChanceCP2,                                 // Instrument.
+                xChangeCP2,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createZonedDateTime("01-08-2018").toInstant()),   // Date.
                 "TRADE_0000006",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP2.counter,                         // fee currency.
+                xChangeCP2.counter,                         // fee currency.
                 "Ref TRADE_0000006"
         );
 
         UserTrade trade0000002 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.100001"),             // Original amount.
-                xChanceCP1,                                 // Instrument.
+                xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
                 "TRADE_0000002",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP1.counter,                         // fee currency.
+                xChangeCP1.counter,                         // fee currency.
                 "Ref TRADE_0000002"
         );
 
         UserTrade trade0000003 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.110001"),             // Original amount.
-                xChanceCP2,                                 // Instrument.
+                xChangeCP2,                                 // Instrument.
                 new BigDecimal("2.220002"),             // Price.
                 Date.from(createZonedDateTime("01-09-2021").toInstant()),   // Date.
                 "TRADE_0000003",                         // Trade id.
@@ -230,13 +230,13 @@ public class TradeFluxTestMock extends BaseMock {
         UserTrade trade0000008 = new UserTrade(
                 Order.OrderType.BID,                        // Order type.
                 new BigDecimal("1.100001"),             // Original amount.
-                xChanceCP1,                                 // Instrument.
+                xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
                 Date.from(createZonedDateTime("02-09-2020").toInstant()),   // Date.
                 "TRADE_0000008",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                xChanceCP1.counter,                         // fee currency.
+                xChangeCP1.counter,                         // fee currency.
                 "Ref TRADE_0000008"
         );
 

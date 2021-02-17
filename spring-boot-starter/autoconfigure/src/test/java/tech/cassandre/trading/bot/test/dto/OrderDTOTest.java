@@ -243,7 +243,7 @@ public class OrderDTOTest {
 				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
 				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
 				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
-				.leverage("leverage1")
+				.leverage("leverage2")
 				.status(NEW)
 				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
 				.userReference("MY_REF_1")

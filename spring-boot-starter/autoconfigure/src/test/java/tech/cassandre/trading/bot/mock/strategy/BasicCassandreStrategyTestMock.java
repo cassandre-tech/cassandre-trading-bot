@@ -160,9 +160,9 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
 
         // Returns three values for getOpenOrders.
         Set<OrderDTO> replyGetOpenOrders = new LinkedHashSet<>();
-        replyGetOpenOrders.add(OrderDTO.builder().orderId("000001").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-01-2020")).build());   // Order 01.
-        replyGetOpenOrders.add(OrderDTO.builder().orderId("000002").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-02-2020")).build());   // Order 02.
-        replyGetOpenOrders.add(OrderDTO.builder().orderId("000003").type(BID).currencyPair(cp1).timestamp(createZonedDateTime("01-03-2020")).build());   // Order 03.
+        replyGetOpenOrders.add(OrderDTO.builder().orderId("000001").type(BID).strategy(strategyDTO).currencyPair(cp1).timestamp(createZonedDateTime("01-01-2020")).build());   // Order 01.
+        replyGetOpenOrders.add(OrderDTO.builder().orderId("000002").type(BID).strategy(strategyDTO).currencyPair(cp1).timestamp(createZonedDateTime("01-02-2020")).build());   // Order 02.
+        replyGetOpenOrders.add(OrderDTO.builder().orderId("000003").type(BID).strategy(strategyDTO).currencyPair(cp1).timestamp(createZonedDateTime("01-03-2020")).build());   // Order 03.
         given(service.getOrders()).willReturn(replyGetOpenOrders);
 
         // Returns three values for getTrades().

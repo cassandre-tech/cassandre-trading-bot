@@ -29,18 +29,18 @@ public class PositionFluxTestMock extends BaseMock {
 
         // Position 1.
         // Opening order creation result.
-        MarketOrder m = new MarketOrder(Order.OrderType.BID, new BigDecimal("10"), xChanceCP1);
+        MarketOrder m = new MarketOrder(Order.OrderType.BID, new BigDecimal("10"), xChangeCP1);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00010");
         // Closing order creation result.
-        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), xChanceCP1);
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), xChangeCP1);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00011");
 
         // Position 2.
         // Opening order creation result.
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), xChanceCP2);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), xChangeCP2);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00020");
         // Closing order creation result.
-        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("0.0002"), xChanceCP2);
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("0.0002"), xChangeCP2);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00021");
 
         return mock;
