@@ -122,7 +122,7 @@ public class TickerFluxMock {
     public List<Resource> getFilesToLoad() {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
-            final Resource[] resources = resolver.getResources("classpath:" + TICKERS_FILE_PREFIX + "*" + TICKERS_FILE_SUFFIX);
+            final Resource[] resources = resolver.getResources("classpath*:" + TICKERS_FILE_PREFIX + "*" + TICKERS_FILE_SUFFIX);
             return Arrays.asList(resources);
         } catch (IOException e) {
             logger.error("TickerFluxMock encountered an error : " + e.getMessage());
