@@ -238,14 +238,14 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return XChange class name
      */
     private String getExchangeClassName() {
+        // If the name contains a dot, it means that it's the XChange class name.
+        if (exchangeParameters.getName() != null && exchangeParameters.getName().contains(".")) {
+            return exchangeParameters.getName();
+        }
+
         // XChange class package name and suffix.
         final String xChangeClassPackage = "org.knowm.xchange.";
         final String xChangeCLassSuffix = "Exchange";
-
-        // Coinbase pro specific.
-        if (exchangeParameters.getName().equalsIgnoreCase("coinbasePro")) {
-            return "org.knowm.xchange.coinbasepro.CoinbaseProExchange";
-        }
 
         // Returns the XChange package name.
         return xChangeClassPackage                                                      // Package (org.knowm.xchange.).

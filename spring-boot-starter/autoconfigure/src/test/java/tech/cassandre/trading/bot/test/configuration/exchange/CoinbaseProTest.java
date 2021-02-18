@@ -18,7 +18,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARA
 
 @DisplayName("Configuration - Exchange - Coinbase pro")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_NAME, value = "coinbasePro")
+        @Property(key = PARAMETER_EXCHANGE_NAME, value = "org.knowm.xchange.coinbasepro.CoinbaseProExchange")
 })
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class CoinbaseProTest extends BaseTest {
