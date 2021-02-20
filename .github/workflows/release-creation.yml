@@ -104,7 +104,7 @@ jobs:
           asset_content_type: application/java-archive
 
       # ================================================================================================================
-      - name : Publish the release announce on Twitter
+      - name: Publish the release announce on Twitter
         uses: ethomson/send-tweet-action@v1
         env:
           TWITTER_CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
@@ -117,3 +117,11 @@ jobs:
           consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
           access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+
+      # ================================================================================================================
+      - name: Publish the release announce on Discord
+        uses: Ilshidur/action-discord@0.3.0
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: "Cassandre trading bot ${{ steps.package.outputs.version }} released - More information here : ${{ steps.create_release.outputs.html_url }}"
