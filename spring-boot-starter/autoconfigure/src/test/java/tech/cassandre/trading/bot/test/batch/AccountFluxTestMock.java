@@ -1,397 +1,622 @@
 package tech.cassandre.trading.bot.test.batch;
 
+import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.dto.account.AccountInfo;
+import org.knowm.xchange.dto.account.Balance;
+import org.knowm.xchange.dto.account.Wallet;
+import org.knowm.xchange.service.account.AccountService;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import tech.cassandre.trading.bot.batch.AccountFlux;
-import tech.cassandre.trading.bot.batch.OrderFlux;
-import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.dto.user.BalanceDTO;
-import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 
 @TestConfiguration
-public class AccountFluxTestMock {
+public class AccountFluxTestMock extends BaseMock {
 
-    @Bean
-    @Primary
-    public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
-    }
-
-    @Bean
-    @Primary
-    public AccountFlux accountFlux() {
-        return new AccountFlux(userService());
-    }
-
-    @Bean
-    @Primary
-    public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Bean
-    @Primary
-    public UserService userService() {
-        // Creates the mock.
-        Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
-        final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
-        UserService userService = mock(UserService.class);
+    @Override
+    public AccountService getXChangeAccountServiceMock() throws IOException {
+        final AccountService mockAccountService = mock(AccountService.class);
 
         // =============================================================================================================
-        // Account retrieved by configuration.
-        AccountDTO tempAccount = AccountDTO.builder().id("trade").name("trade").create();
-        accounts.put("trade", tempAccount);
-        UserDTO tempUser = UserDTO.builder().setAccounts(accounts).create();
-        accounts.clear();
+        // Returns the mock.
+        given(mockAccountService.getAccountInfo()).willReturn(
+                getAccountInfoReplyForExchangeConfiguration(),
+                // =====================================================================================================
+                // Reply 01.
+                // Account 01 with 2 balances (1 BTC - 2 ETH).
+                // Account 02 with 1 balance (1 BTC).
+                getReply01(),
+                // =====================================================================================================
+                // Reply 02.
+                // Account 01 with 3 balances (1 BTC - 2 ETH - 2 USDT).
+                // Account 02 with 1 balance.
+                // Change : Account 1 has now 3 balances.
+                getReply02(),
+                // =====================================================================================================
+                // Reply 03.
+                // Account 01 with 3 balances (1 BTC - 2 ETH - 2 USDT).
+                // Account 02 with 1 balance.
+                // Change : No change.
+                getReply03(),
+                // =====================================================================================================
+                // Reply 04.
+                // Account 01 with 3 balances.
+                // Account 02 with 1 balance.
+                // Change : ETH balance of account 01 changed (borrowed value) & balance of account 02 (all values).
+                getReply04(),
+                // =====================================================================================================
+                // Reply 05.
+                // Account 01 with 3 balances.
+                // Account 02 with 1 balance.
+                // Change : No change.
+                getReply05(),
+                // =====================================================================================================
+                // Reply 06.
+                // Account 01 with 2 balances.
+                // Account 02 with 1 balance.
+                getReply06(),
+                // =====================================================================================================
+                // Reply 07.
+                // Account 01 with 3 balances.
+                // Account 02 with 1 balance.
+                // Account 03 with 1 balance.
+                // Change : New account (03).
+                getReply07()
+        );
+        return mockAccountService;
+    }
 
-        // =============================================================================================================
-        // Account 1 with 2 balances.
-        // Account 2 with 1 balance.
-        BalanceDTO account01Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        BalanceDTO account01Balance2 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("2"))
-                .currency(ETH)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        balances.put(CurrencyDTO.BTC, account01Balance1);
-        balances.put(ETH, account01Balance2);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("01").balances(balances).create();
-        BalanceDTO account02Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").name("02").balances(balances).create();
-        accounts.put("01", account01);
-        accounts.put("02", account02);
-        UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
+    /**
+     * Reply 01.
+     * Account 01 with 2 balances (1 BTC - 2 ETH).
+     * Account 02 with 1 balance (1 BTC).
+     *
+     * @return reply
+     */
+    private AccountInfo getReply01() {
+        Balance account01Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
 
-        // =========================================================================================================
-        // Account 1 with 3 balances.
-        // Account 2 with 1 balance.
-        // Change : Account 1 has now 3 balances.
-        BalanceDTO account03Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        BalanceDTO account03Balance2 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("2"))
-                .currency(ETH)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        BalanceDTO account03Balance3 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account03Balance1);
-        balances.put(ETH, account03Balance2);
-        balances.put(CurrencyDTO.USDT, account03Balance3);
-        AccountDTO account03 = AccountDTO.builder().id("01").name("01").balances(balances).create();
-        BalanceDTO account04Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account04Balance1);
-        AccountDTO account04 = AccountDTO.builder().id("02").name("02").balances(balances).create();
-        accounts.clear();
-        accounts.put("01", account03);
-        accounts.put("02", account04);
-        UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
+        Balance account01Balance2 = new Balance(
+                Currency.ETH,               // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
 
-        // =========================================================================================================
-        // Account 1 with 3 balances.
-        // Account 2 with 1 balance.
-        // Change : No change.
-        BalanceDTO account05Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        BalanceDTO account05Balance2 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("2"))
-                .currency(ETH)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        BalanceDTO account05Balance3 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account05Balance1);
-        balances.put(ETH, account05Balance2);
-        balances.put(CurrencyDTO.USDT, account05Balance3);
-        AccountDTO account05 = AccountDTO.builder().id("01").name("01").balances(balances).create();
-        BalanceDTO account06Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account06Balance1);
-        AccountDTO account06 = AccountDTO.builder().id("02").name("02").balances(balances).create();
-        accounts.clear();
-        accounts.put("01", account05);
-        accounts.put("02", account06);
-        UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
+        Wallet account01Wallet = new Wallet(
+                "01",
+                "Account 01",
+                Arrays.asList(account01Balance1, account01Balance2),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
 
-        // =========================================================================================================
-        // Account 1 with 3 balances.
-        // Account 2 with 1 balance.
-        // Change : ETH balance of account 1 changed (borrowed value) & balance of account 2 (frozen).
-        BalanceDTO account07Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        BalanceDTO account07Balance2 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("5"))
-                .currency(ETH)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        BalanceDTO account07Balance3 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account07Balance1);
-        balances.put(ETH, account07Balance2);
-        balances.put(CurrencyDTO.USDT, account07Balance3);
-        AccountDTO account07 = AccountDTO.builder().id("01").name("01").balances(balances).create();
-        BalanceDTO account08Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account08Balance1);
-        AccountDTO account08 = AccountDTO.builder().id("02").name("02").balances(balances).create();
-        accounts.clear();
-        accounts.put("01", account07);
-        accounts.put("02", account08);
-        UserDTO user04 = UserDTO.builder().setAccounts(accounts).create();
+        Balance account02Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
 
-        // =========================================================================================================
-        // Account 1 with 3 balances.
-        // Account 2 with 1 balance.
-        // Change : no change.
-        BalanceDTO account09Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        BalanceDTO account09Balance2 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("5"))
-                .currency(ETH)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        BalanceDTO account09Balance3 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account09Balance1);
-        balances.put(ETH, account09Balance2);
-        balances.put(CurrencyDTO.USDT, account09Balance3);
-        AccountDTO account09 = AccountDTO.builder().id("01").name("01").balances(balances).create();
-        BalanceDTO account10Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account10Balance1);
-        AccountDTO account10 = AccountDTO.builder().id("02").name("02").balances(balances).create();
-        accounts.clear();
-        accounts.put("01", account09);
-        accounts.put("02", account10);
-        UserDTO user05 = UserDTO.builder().setAccounts(accounts).create();
+        Wallet account02Wallet = new Wallet(
+                "02",
+                "Account 02",
+                Collections.singletonList(account02Balance1),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
 
-        // =========================================================================================================
-        // Account 1 with 2 balances.
-        // Account 2 with 1 balance.
-        // Change : one balance removed on account 1.
-        BalanceDTO account11Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("1"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        BalanceDTO account11Balance2 = BalanceDTO.builder()
-                .available(new BigDecimal("2"))
-                .borrowed(new BigDecimal("2"))
-                .currency(CurrencyDTO.USDT)
-                .depositing(new BigDecimal("2"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("2"))
-                .total(new BigDecimal("2"))
-                .withdrawing(new BigDecimal("2"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account11Balance1);
-        balances.put(CurrencyDTO.USDT, account11Balance2);
-        AccountDTO account11 = AccountDTO.builder().id("01").name("01").balances(balances).create();
-        BalanceDTO account12Balance1 = BalanceDTO.builder()
-                .available(new BigDecimal("1"))
-                .borrowed(new BigDecimal("1"))
-                .currency(CurrencyDTO.BTC)
-                .depositing(new BigDecimal("1"))
-                .frozen(new BigDecimal("2"))
-                .loaned(new BigDecimal("1"))
-                .total(new BigDecimal("1"))
-                .withdrawing(new BigDecimal("1"))
-                .create();
-        balances.clear();
-        balances.put(CurrencyDTO.BTC, account12Balance1);
-        AccountDTO account12 = AccountDTO.builder().id("02").name("02").balances(balances).create();
-        accounts.clear();
-        accounts.put("01", account11);
-        accounts.put("02", account12);
-        UserDTO user06 = UserDTO.builder().setAccounts(accounts).create();
+        return new AccountInfo(
+                account01Wallet,
+                account02Wallet
+        );
+    }
 
-        // Mock.
-        given(userService.getUser())
-                .willReturn(Optional.of(tempUser),
-                        Optional.of(user01),
-                        Optional.empty(),
-                        Optional.of(user02),
-                        Optional.of(user03),
-                        Optional.of(user04),
-                        Optional.empty(),
-                        Optional.of(user05),
-                        Optional.of(user06)
-                );
-        return userService;
+    /**
+     * Reply 02.
+     * Account 01 with 3 balances (1 BTC - 2 ETH - 2 USDT).
+     * Account 02 with 1 balance.
+     * Change : Account 1 has now 3 balances.
+     *
+     * @return reply
+     */
+    private AccountInfo getReply02() {
+        Balance account01Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance2 = new Balance(
+                Currency.ETH,               // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance3 = new Balance(
+                Currency.USDT,              // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account01Wallet = new Wallet(
+                "01",
+                "Account 01",
+                Arrays.asList(account01Balance1, account01Balance2, account01Balance3),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        Balance account02Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account02Wallet = new Wallet(
+                "02",
+                "Account 02",
+                Collections.singletonList(account02Balance1),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        return new AccountInfo(
+                account01Wallet,
+                account02Wallet
+        );
+    }
+
+    /**
+     * Reply 03.
+     * Account 01 with 3 balances (1 BTC - 2 ETH - 2 USDT).
+     * Account 02 with 1 balance.
+     * Change : No change.
+     *
+     * @return reply
+     */
+    private AccountInfo getReply03() {
+        Balance account01Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance2 = new Balance(
+                Currency.ETH,               // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance3 = new Balance(
+                Currency.USDT,              // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account01Wallet = new Wallet(
+                "01",
+                "Account 01",
+                Arrays.asList(account01Balance1, account01Balance2, account01Balance3),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        Balance account02Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account02Wallet = new Wallet(
+                "02",
+                "Account 02",
+                Collections.singletonList(account02Balance1),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        return new AccountInfo(
+                account01Wallet,
+                account02Wallet
+        );
+    }
+
+    /**
+     * Reply 04.
+     * Account 01 with 3 balances (1 BTC - 2 ETH - 2 USDT).
+     * Account 02 with 1 balance.
+     * Change : ETH balance of account 01 changed (borrowed value).
+     *
+     * @return reply
+     */
+    private AccountInfo getReply04() {
+        Balance account01Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance2 = new Balance(
+                Currency.ETH,               // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("5"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance3 = new Balance(
+                Currency.USDT,              // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account01Wallet = new Wallet(
+                "01",
+                "Account 01",
+                Arrays.asList(account01Balance1, account01Balance2, account01Balance3),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        Balance account02Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account02Wallet = new Wallet(
+                "02",
+                "Account 02",
+                Collections.singletonList(account02Balance1),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        return new AccountInfo(
+                account01Wallet,
+                account02Wallet
+        );
+    }
+
+    /**
+     * Reply 05.
+     * Account 01 with 3 balances (1 BTC - 2 ETH - 2 USDT).
+     * Account 02 with 1 balance.
+     * Change : No change.
+     *
+     * @return reply
+     */
+    private AccountInfo getReply05() {
+        Balance account01Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance2 = new Balance(
+                Currency.ETH,               // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("5"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance3 = new Balance(
+                Currency.USDT,              // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account01Wallet = new Wallet(
+                "01",
+                "Account 01",
+                Arrays.asList(account01Balance1, account01Balance2, account01Balance3),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        Balance account02Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("3"),    // Total.
+                new BigDecimal("3"),    // Available.
+                new BigDecimal("3"),    // Frozen.
+                new BigDecimal("3"),    // Borrowed
+                new BigDecimal("3"),    // Loaned.
+                new BigDecimal("3"),    // Withdrawing.
+                new BigDecimal("3"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account02Wallet = new Wallet(
+                "02",
+                "Account 02",
+                Collections.singletonList(account02Balance1),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        return new AccountInfo(
+                account01Wallet,
+                account02Wallet
+        );
+    }
+
+    /**
+     * Reply 06.
+     * Account 01 with 2 balances.
+     * Account 02 with 1 balance.
+     * Change : ETH balance removed on account 01.
+     *
+     * @return reply
+     */
+    private AccountInfo getReply06() {
+        Balance account01Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance3 = new Balance(
+                Currency.USDT,              // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account01Wallet = new Wallet(
+                "01",
+                "Account 01",
+                Arrays.asList(account01Balance1, account01Balance3),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        Balance account02Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("3"),    // Total.
+                new BigDecimal("3"),    // Available.
+                new BigDecimal("3"),    // Frozen.
+                new BigDecimal("3"),    // Borrowed
+                new BigDecimal("3"),    // Loaned.
+                new BigDecimal("3"),    // Withdrawing.
+                new BigDecimal("3"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account02Wallet = new Wallet(
+                "02",
+                "Account 02",
+                Collections.singletonList(account02Balance1),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        return new AccountInfo(
+                account01Wallet,
+                account02Wallet
+        );
+    }
+
+    /**
+     * Reply 07.
+     * Account 01 with 3 balances.
+     * Account 02 with 1 balance.
+     * Account 03 with 1 balance.
+     * Change : New account (03).
+     *
+     * @return reply
+     */
+    private AccountInfo getReply07() {
+        Balance account01Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("1"),    // Total.
+                new BigDecimal("1"),    // Available.
+                new BigDecimal("1"),    // Frozen.
+                new BigDecimal("1"),    // Borrowed
+                new BigDecimal("1"),    // Loaned.
+                new BigDecimal("1"),    // Withdrawing.
+                new BigDecimal("1"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Balance account01Balance3 = new Balance(
+                Currency.USDT,              // Currency.
+                new BigDecimal("2"),    // Total.
+                new BigDecimal("2"),    // Available.
+                new BigDecimal("2"),    // Frozen.
+                new BigDecimal("2"),    // Borrowed
+                new BigDecimal("2"),    // Loaned.
+                new BigDecimal("2"),    // Withdrawing.
+                new BigDecimal("2"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account01Wallet = new Wallet(
+                "01",
+                "Account 01",
+                Arrays.asList(account01Balance1, account01Balance3),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        Balance account02Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("3"),    // Total.
+                new BigDecimal("3"),    // Available.
+                new BigDecimal("3"),    // Frozen.
+                new BigDecimal("3"),    // Borrowed
+                new BigDecimal("3"),    // Loaned.
+                new BigDecimal("3"),    // Withdrawing.
+                new BigDecimal("3"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account02Wallet = new Wallet(
+                "02",
+                "Account 02",
+                Collections.singletonList(account02Balance1),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        Balance account03Balance1 = new Balance(
+                Currency.BTC,               // Currency.
+                new BigDecimal("11"),   // Total.
+                new BigDecimal("12"),   // Available.
+                new BigDecimal("13"),   // Frozen.
+                new BigDecimal("14"),   // Borrowed
+                new BigDecimal("15"),   // Loaned.
+                new BigDecimal("16"),   // Withdrawing.
+                new BigDecimal("17"),   // Depositing.
+                new Date()                  // Timestamp.
+        );
+
+        Wallet account03Wallet = new Wallet(
+                "03",
+                "Account 03",
+                Collections.singletonList(account03Balance1),
+                Collections.emptySet(),
+                ZERO,
+                ZERO);
+
+        return new AccountInfo(
+                account01Wallet,
+                account02Wallet,
+                account03Wallet
+        );
     }
 
     @Bean
@@ -406,7 +631,7 @@ public class AccountFluxTestMock {
     @Primary
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
-        given(service.getOpenOrders()).willReturn(new LinkedHashSet<>());
+        given(service.getOrders()).willReturn(new LinkedHashSet<>());
         return service;
     }
 

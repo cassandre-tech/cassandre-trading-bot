@@ -1,5 +1,9 @@
 package tech.cassandre.trading.bot.dto.position;
 
+import lombok.Getter;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+
 import java.text.DecimalFormat;
 
 /**
@@ -9,19 +13,20 @@ import java.text.DecimalFormat;
  * - Stop gain with percentage.
  * - Stop loss with percentage.
  */
+@Getter
 public class PositionRulesDTO {
 
     /** Stop gain percentage has been set. */
     private final boolean stopGainPercentageSet;
 
     /** Stop gain percentage. */
-    private final float stopGainPercentage;
+    private final Float stopGainPercentage;
 
     /** Stop loss percentage has been set. */
     private final boolean stopLossPercentageSet;
 
     /** Stop loss percentage. */
-    private final float stopLossPercentage;
+    private final Float stopLossPercentage;
 
     /**
      * Builder constructor.
@@ -44,40 +49,31 @@ public class PositionRulesDTO {
         return new Builder();
     }
 
-    /**
-     * Getter for stopGainPercentageSet.
-     *
-     * @return stopGainPercentageSet
-     */
-    public final boolean isStopGainPercentageSet() {
-        return stopGainPercentageSet;
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PositionRulesDTO that = (PositionRulesDTO) o;
+        return new EqualsBuilder()
+                .append(this.stopGainPercentageSet, that.stopGainPercentageSet)
+                .append(this.stopLossPercentageSet, that.stopGainPercentageSet)
+                .append(this.stopGainPercentage, that.stopGainPercentage)
+                .append(this.stopLossPercentage, that.stopLossPercentage)
+                .isEquals();
     }
 
-    /**
-     * Getter for stopGainPercentage.
-     *
-     * @return stopGainPercentage
-     */
-    public final float getStopGainPercentage() {
-        return stopGainPercentage;
-    }
-
-    /**
-     * Getter for stopLossPercentageSet.
-     *
-     * @return stopLossPercentageSet
-     */
-    public final boolean isStopLossPercentageSet() {
-        return stopLossPercentageSet;
-    }
-
-    /**
-     * Getter for stopLossPercentage.
-     *
-     * @return stopLossPercentage
-     */
-    public final float getStopLossPercentage() {
-        return stopLossPercentage;
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(stopGainPercentageSet)
+                .append(stopLossPercentageSet)
+                .append(stopGainPercentage)
+                .append(stopLossPercentage)
+                .toHashCode();
     }
 
     @Override
@@ -107,13 +103,13 @@ public class PositionRulesDTO {
         private boolean stopGainPercentageSet = false;
 
         /** Stop gain percentage. */
-        private float stopGainPercentage;
+        private Float stopGainPercentage;
 
         /** Stop loss percentage has been set. */
         private boolean stopLossPercentageSet = false;
 
         /** Stop loss percentage. */
-        private float stopLossPercentage;
+        private Float stopLossPercentage;
 
         /**
          * Stop gain percentage.
@@ -121,7 +117,7 @@ public class PositionRulesDTO {
          * @param newStopGainPercentage stop gain percentage
          * @return builder
          */
-        public Builder stopGainPercentage(final float newStopGainPercentage) {
+        public Builder stopGainPercentage(final Float newStopGainPercentage) {
             this.stopGainPercentageSet = true;
             this.stopGainPercentage = newStopGainPercentage;
             return this;
@@ -133,7 +129,7 @@ public class PositionRulesDTO {
          * @param newStopLossPercentage stop loss percentage
          * @return builder
          */
-        public Builder stopLossPercentage(final float newStopLossPercentage) {
+        public Builder stopLossPercentage(final Float newStopLossPercentage) {
             this.stopLossPercentageSet = true;
             this.stopLossPercentage = newStopLossPercentage;
             return this;
@@ -144,7 +140,7 @@ public class PositionRulesDTO {
          *
          * @return position rules
          */
-        public PositionRulesDTO create() {
+        public PositionRulesDTO build() {
             return new PositionRulesDTO(this);
         }
 

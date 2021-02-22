@@ -8,7 +8,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PA
 /**
  * Invalid strategy (used for tests).
  */
-@CassandreStrategy(name = "Invalid strategy")
+@CassandreStrategy(strategyName = "Invalid strategy")
 @ConditionalOnProperty(
 		value = PARAMETER_INVALID_STRATEGY_ENABLED,
 		havingValue = "true")

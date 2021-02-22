@@ -6,7 +6,7 @@ package tech.cassandre.trading.bot.util.exception;
 public class ConfigurationException extends RuntimeException {
 
     /** Advised action to fix the error. */
-    private String action;
+    private String advisedAction;
 
     /**
      * Constructor without action.
@@ -20,21 +20,21 @@ public class ConfigurationException extends RuntimeException {
     /**
      * Constructor.
      *
-     * @param message   error message
-     * @param newAction advised action to fix this problem
+     * @param message          error message
+     * @param newAdvisedAction advised action to fix this problem
      */
-    public ConfigurationException(final String message, final String newAction) {
+    public ConfigurationException(final String message, final String newAdvisedAction) {
         super(message);
-        action = newAction;
+        advisedAction = newAdvisedAction;
     }
 
     /**
-     * Getter for action.
+     * Getter for advised action.
      *
-     * @return action
+     * @return advised action
      */
-    public final String getAction() {
-        return action;
+    public final String getAdvisedAction() {
+        return advisedAction;
     }
 
 }

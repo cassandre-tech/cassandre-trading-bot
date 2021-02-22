@@ -1,6 +1,8 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,18 +11,21 @@ import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.FUNDING;
 import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.TRADING;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ANC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
@@ -50,7 +55,9 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    @DisplayName("CHeck get user, accounts and balances")
+    @CaseId(90)
+    @Tag("integration")
+    @DisplayName("Check get user, accounts and balances")
     public void checkGetUser() {
         // Expected values.
         final int expectedAccounts = 2;
@@ -69,19 +76,19 @@ public class UserServiceTest {
         assertTrue(user.get().getTimestamp().isBefore(ZonedDateTime.now().plusSeconds(1)));
 
         // =============================================================================================================
-        // Testing Wallet.
+        // Testing wallets.
         assertEquals(expectedAccounts, user.get().getAccounts().size());
         Map<String, AccountDTO> wallets = user.get().getAccounts();
         AccountDTO mainWallet = wallets.get("main");
         assertNotNull(mainWallet);
-        assertEquals("main", mainWallet.getId());
+        assertEquals("main", mainWallet.getAccountId());
         assertEquals("main", mainWallet.getName());
         assertEquals(2, mainWallet.getFeatures().size());
         assertTrue(mainWallet.getFeatures().contains(TRADING));
         assertTrue(mainWallet.getFeatures().contains(FUNDING));
         AccountDTO tradeWallet = wallets.get("trade");
         assertNotNull(tradeWallet);
-        assertEquals("trade", tradeWallet.getId());
+        assertEquals("trade", tradeWallet.getAccountId());
         assertEquals("trade", tradeWallet.getName());
         assertEquals(2, tradeWallet.getFeatures().size());
         assertTrue(tradeWallet.getFeatures().contains(TRADING));
@@ -92,16 +99,16 @@ public class UserServiceTest {
         assertEquals(expectedWalletsInTradingAccount, tradeWallet.getBalances().size());
         // Existing balances.
         assertTrue(tradeWallet.getBalance("BTC").isPresent());
-        assertTrue(tradeWallet.getBalance(CurrencyDTO.BTC).isPresent());
+        assertTrue(tradeWallet.getBalance(BTC).isPresent());
         assertTrue(tradeWallet.getBalance("ETH").isPresent());
-        assertTrue(tradeWallet.getBalance(CurrencyDTO.ETH).isPresent());
+        assertTrue(tradeWallet.getBalance(ETH).isPresent());
         assertTrue(mainWallet.getBalance("KCS").isPresent());
         // Non existing balances.
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());
-        assertTrue(tradeWallet.getBalance(CurrencyDTO.ANC).isEmpty());
+        assertTrue(tradeWallet.getBalance(ANC).isEmpty());
         // Values.
-        assertEquals(1, tradeWallet.getBalance("BTC").get().getTotal().compareTo(BigDecimal.ZERO));
-        assertEquals(1, tradeWallet.getBalance("ETH").get().getTotal().compareTo(BigDecimal.ZERO));
+        assertEquals(1, tradeWallet.getBalance("BTC").get().getTotal().compareTo(ZERO));
+        assertEquals(1, tradeWallet.getBalance("ETH").get().getTotal().compareTo(ZERO));
         assertEquals(0, mainWallet.getBalance("KCS").get().getTotal().compareTo(expectedAmountInKCS));
         assertEquals(0, mainWallet.getBalance("KCS").get().getAvailable().compareTo(expectedAmountInKCS));
     }

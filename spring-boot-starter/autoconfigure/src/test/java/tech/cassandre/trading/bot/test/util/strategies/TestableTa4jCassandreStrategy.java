@@ -23,14 +23,17 @@ import java.util.Set;
 
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 /**
  * Testable ta4j strategy (used for tests).
  */
 @SuppressWarnings("unused")
-@CassandreStrategy(name = "Testable ta4j strategy")
+@CassandreStrategy(
+        strategyId = "01",
+        strategyName = "Testable ta4j strategy")
 @ConditionalOnProperty(
-        value = TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED,
+        value = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED,
         havingValue = "true")
 public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
 

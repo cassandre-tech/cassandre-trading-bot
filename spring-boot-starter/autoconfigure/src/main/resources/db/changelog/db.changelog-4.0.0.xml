@@ -1,0 +1,405 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="straumat" id="changelog-4.0.0">
+
+        <!-- ======================================================================================================= -->
+        <!-- Tables -->
+
+        <!-- Exchange accounts -->
+        <createTable tableName="EXCHANGE_ACCOUNTS">
+            <!-- Technical ID -->
+            <column name="ID" type="BIGINT"
+                    remarks="Technical ID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="EXCHANGE_ACCOUNTS_PRIMARY_KEY"/>
+            </column>
+
+            <!-- ID fields -->
+            <column name="EXCHANGE" type="VARCHAR(255)"
+                    remarks="Exchange name"/>
+            <column name="ACCOUNT" type="VARCHAR(255)"
+                    remarks="Exchange account"/>
+
+            <!-- Technical fields -->
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
+        </createTable>
+        <!-- Auto increment on technical ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="EXCHANGE_ACCOUNTS"/>
+
+        <!-- Strategies -->
+        <createTable tableName="STRATEGIES">
+            <!-- Technical ID -->
+            <column name="ID" type="BIGINT"
+                    remarks="Technical ID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="STRATEGIES_PRIMARY_KEY"/>
+            </column>
+
+            <!-- ID fields -->
+            <column name="STRATEGY_ID" type="VARCHAR(255)"
+                    remarks="An identifier that uniquely identifies the strategy"/>
+            <column name="TYPE" type="VARCHAR(255)"
+                    remarks="Strategy type"/>
+
+            <!-- Foreign keys -->
+            <column name="FK_EXCHANGE_ACCOUNT_ID" type="BIGINT"
+                    remarks="Exchange account used by the strategy"/>
+
+            <!-- Data fields -->
+            <column name="NAME" type="VARCHAR(255)"
+                    remarks="Strategy name"/>
+
+            <!-- Technical fields -->
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
+        </createTable>
+        <!-- Auto increment on technical ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="STRATEGIES"/>
+
+        <!-- Positions -->
+        <createTable tableName="POSITIONS">
+            <!-- Technical ID -->
+            <column name="ID" type="BIGINT"
+                    remarks="Technical ID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="POSITIONS_PRIMARY_KEY"/>
+            </column>
+
+            <!-- ID fields -->
+            <column name="POSITION_ID" type="BIGINT"
+                    remarks="An identifier that uniquely identifies the position"/>
+            <column name="TYPE" type="VARCHAR(255)"
+                    remarks="Position type"/>
+
+            <!-- Foreign keys -->
+            <column name="FK_STRATEGY_ID" type="BIGINT"
+                    remarks="The strategy that created the position"/>
+
+            <!-- Data fields -->
+            <column name="CURRENCY_PAIR" type="VARCHAR(255)"
+                    remarks="Currency pair"/>
+            <column name="AMOUNT_VALUE" type="numeric(16, 8)"
+                    remarks="Amount that was ordered (value)"/>
+            <column name="AMOUNT_CURRENCY" type="VARCHAR(255)"
+                    remarks="Amount that was ordered (currency)"/>
+            <column name="RULES_STOP_GAIN_PERCENTAGE" type="FLOAT"
+                    remarks="Stop gain percentage rule"/>
+            <column name="RULES_STOP_LOSS_PERCENTAGE" type="FLOAT"
+                    remarks="Stop loss percentage rule"/>
+            <column name="STATUS" type="VARCHAR(255)"
+                    remarks="Position status"/>
+            <column name="FK_OPENING_ORDER_ID" type="BIGINT"
+                    remarks="The order created to open the position"/>
+            <column name="OPENING_ORDER_ID" type="VARCHAR(255)"
+                    remarks="The order id created to open the position"/>
+            <column name="FK_CLOSING_ORDER_ID" type="BIGINT"
+                    remarks="The order created to close the position"/>
+            <column name="CLOSING_ORDER_ID" type="VARCHAR(255)"
+                    remarks="The order id created to close the position"/>
+
+            <column name="LOWEST_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="Lowest price reached by tis position (value)"/>
+            <column name="LOWEST_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Lowest price reached by tis position (currency)"/>
+
+            <column name="HIGHEST_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="Highest price reached by tis position (value)"/>
+            <column name="HIGHEST_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Highest price reached by tis position (currency)"/>
+
+            <column name="LATEST_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="Latest price for this position (value)"/>
+            <column name="LATEST_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Latest price for this position (currency)"/>
+
+            <!-- Technical fields. -->
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
+        </createTable>
+        <!-- Auto increment on technical ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="POSITIONS"/>
+
+        <!-- Orders -->
+        <createTable tableName="ORDERS">
+            <!-- Technical ID -->
+            <column name="ID" type="BIGINT"
+                    remarks="Technical ID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ORDERS_PRIMARY_KEY"/>
+            </column>
+
+            <!-- ID fields -->
+            <column name="ORDER_ID" type="VARCHAR(255)"
+                    remarks="An identifier set by the exchange that uniquely identifies the order"/>
+            <column name="TYPE" type="VARCHAR(255)"
+                    remarks="Order type i.e. bid or ask"/>
+
+            <!-- Foreign keys -->
+            <column name="FK_STRATEGY_ID" type="BIGINT"
+                    remarks="The strategy that created the order"/>
+
+            <!-- Data fields -->
+            <column name="CURRENCY_PAIR" type="VARCHAR(255)"
+                    remarks="Currency pair"/>
+            <column name="AMOUNT_VALUE" type="numeric(16, 8)"
+                    remarks="Amount that was ordered (value)"/>
+            <column name="AMOUNT_CURRENCY" type="VARCHAR(255)"
+                    remarks="Amount that was ordered (currency)"/>
+            <column name="AVERAGE_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="Weighted Average price of the fills in the order (value)"/>
+            <column name="AVERAGE_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Weighted Average price of the fills in the order (currency)"/>
+            <column name="LIMIT_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="Limit price (value)"/>
+            <column name="LIMIT_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="Limit price (currency)"/>
+            <column name="LEVERAGE" type="VARCHAR(255)"
+                    remarks="The leverage to use for margin related to this order"/>
+            <column name="STATUS" type="VARCHAR(255)"
+                    remarks="Order status"/>
+            <column name="CUMULATIVE_AMOUNT_VALUE" type="numeric(16, 8)"
+                    remarks="Amount value to be ordered/amount that has been matched against order on the order book/filled (value)"/>
+            <column name="CUMULATIVE_AMOUNT_CURRENCY" type="VARCHAR(255)"
+                    remarks="Amount currency to be ordered/amount that has been matched against order on the order book/filled (currency)"/>
+
+            <!-- Util -->
+            <column name="USER_REFERENCE" type="VARCHAR(255)"
+                    remarks="An identifier provided by the user on placement that uniquely identifies the order"/>
+            <column name="TIMESTAMP" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="The timestamp of the order"/>
+
+            <!-- Technical fields -->
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
+        </createTable>
+        <!-- Auto increment on technical ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="ORDERS"/>
+
+        <!-- Trades -->
+        <createTable tableName="TRADES">
+            <!-- Technical ID -->
+            <column name="ID" type="BIGINT"
+                    remarks="Technical ID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="TRADES_PRIMARY_KEY"/>
+            </column>
+
+            <!-- ID fields -->
+            <column name="TRADE_ID" type="VARCHAR(255)"
+                    remarks="An identifier set by the exchange that uniquely identifies the trade"/>
+            <column name="TYPE" type="VARCHAR(255)"
+                    remarks="Order type i.e. bid or ask"/>
+
+            <!-- Foreign keys -->
+            <column name="FK_ORDER_ID" type="BIGINT"
+                    remarks="The id of the order responsible for execution of this trade"/>
+            <column name="ORDER_ID" type="VARCHAR(255)"
+                    remarks="The id of the order responsible for execution of this trade"/>
+
+            <!-- Data fields -->
+            <column name="CURRENCY_PAIR" type="VARCHAR(255)"
+                    remarks="Currency pair"/>
+            <column name="AMOUNT_VALUE" type="numeric(16, 8)"
+                    remarks="Amount that was ordered (value)"/>
+            <column name="AMOUNT_CURRENCY" type="VARCHAR(255)"
+                    remarks="Amount that was ordered (currency)"/>
+            <column name="PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="The price (value)"/>
+            <column name="PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="The price (currency)"/>
+            <column name="FEE_VALUE" type="numeric(16, 8)"
+                    remarks="The fee amount that was charged by the exchange for this trade (value)"/>
+            <column name="FEE_CURRENCY" type="VARCHAR(255)"
+                    remarks="The fee currency that was charged by the exchange for this trade (currency)"/>
+
+            <!-- Util -->
+            <column name="USER_REFERENCE" type="VARCHAR(255)"
+                    remarks="An identifier provided by the user on placement that uniquely identifies the order"/>
+            <column name="TIMESTAMP" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="The timestamp of the trade"/>
+
+            <!-- Technical fields -->
+            <column name="CREATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data created on"/>
+            <column name="UPDATED_ON" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Data updated on"/>
+        </createTable>
+        <!-- Auto increment on technical ID -->
+        <addAutoIncrement columnDataType="BIGINT"
+                          columnName="ID"
+                          incrementBy="1"
+                          startWith="1"
+                          tableName="TRADES"/>
+
+        <!-- ======================================================================================================= -->
+
+        <!-- ======================================================================================================= -->
+        <!-- Foreign keys -->
+
+        <!-- STRATEGIES.FK_EXCHANGE_ACCOUNT_ID to ID in EXCHANGE_ACCOUNTS -->
+        <addForeignKeyConstraint constraintName="FK_STRATEGIES_EXCHANGE_ACCOUNT_ID"
+                                 baseTableName="STRATEGIES"
+                                 baseColumnNames="FK_EXCHANGE_ACCOUNT_ID"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedTableName="EXCHANGE_ACCOUNTS"
+                                 referencedColumnNames="ID"
+                                 validate="true"/>
+
+        <!-- POSITIONS.FK_STRATEGY_ID to ID in STRATEGIES -->
+        <addForeignKeyConstraint constraintName="FK_POSITIONS_STRATEGY_ID"
+                                 baseTableName="POSITIONS"
+                                 baseColumnNames="FK_STRATEGY_ID"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedTableName="STRATEGIES"
+                                 referencedColumnNames="ID"
+                                 validate="true"/>
+
+        <!-- POSITIONS.OPEN_ORDER_ID to ID in ORDERS -->
+        <addForeignKeyConstraint constraintName="FK_POSITIONS_OPEN_ORDER_ID"
+                                 baseColumnNames="FK_OPENING_ORDER_ID"
+                                 baseTableName="POSITIONS"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedTableName="ORDERS"
+                                 referencedColumnNames="ID"
+                                 validate="true"/>
+
+        <!-- POSITIONS.CLOSE_ORDER_ID to ID in ORDERS -->
+        <addForeignKeyConstraint constraintName="FK_POSITIONS_CLOSE_ORDER_ID"
+                                 baseColumnNames="FK_CLOSING_ORDER_ID"
+                                 baseTableName="POSITIONS"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedTableName="ORDERS"
+                                 referencedColumnNames="ID"
+                                 validate="true"/>
+
+        <!-- ORDERS.STRATEGY_ID to ID in STRATEGY -->
+        <addForeignKeyConstraint constraintName="FK_ORDERS_STRATEGY_ID"
+                                 baseTableName="ORDERS"
+                                 baseColumnNames="FK_STRATEGY_ID"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedTableName="STRATEGIES"
+                                 referencedColumnNames="ID"
+                                 validate="true"/>
+
+        <!-- TRADES.ORDER to ID in STRATEGY -->
+        <addForeignKeyConstraint constraintName="FK_TRADES_ORDER_ID"
+                                 baseColumnNames="FK_ORDER_ID"
+                                 baseTableName="TRADES"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"
+                                 referencedTableName="ORDERS"
+                                 referencedColumnNames="ID"
+                                 validate="true"/>
+
+        <!-- ======================================================================================================= -->
+
+        <!-- ======================================================================================================= -->
+        <!-- Indexes -->
+
+        <!-- Strategies -->
+        <!-- Index on STRATEGIES.STRATEGY_ID -->
+        <createIndex clustered="false"
+                     indexName="IDX_STRATEGIES_STRATEGY_ID"
+                     tableName="STRATEGIES"
+                     unique="false">
+            <column descending="true" name="STRATEGY_ID"/>
+        </createIndex>
+
+        <!-- Positions -->
+        <!-- Index on POSITIONS.POSITION_ID -->
+        <createIndex clustered="false"
+                     indexName="IDX_POSITIONS_POSITION_ID"
+                     tableName="POSITIONS"
+                     unique="false">
+            <column descending="true" name="POSITION_ID"/>
+        </createIndex>
+        <!-- Index on POSITIONS.STATUS -->
+        <createIndex clustered="false"
+                     indexName="IDX_POSITIONS_STATUS"
+                     tableName="POSITIONS"
+                     unique="false">
+            <column descending="true" name="STATUS"/>
+        </createIndex>
+        <!-- Index on POSITIONS.FK_OPENING_ORDER_ID -->
+        <createIndex clustered="false"
+                     indexName="IDX_POSITIONS_FK_OPENING_ORDER_ID"
+                     tableName="POSITIONS"
+                     unique="false">
+            <column descending="true" name="FK_OPENING_ORDER_ID"/>
+        </createIndex>
+        <!-- Index on POSITIONS.FK_CLOSING_ORDER_ID -->
+        <createIndex clustered="false"
+                     indexName="IDX_POSITIONS_FK_CLOSING_ORDER_ID"
+                     tableName="POSITIONS"
+                     unique="false">
+            <column descending="true" name="FK_CLOSING_ORDER_ID"/>
+        </createIndex>
+
+        <!-- Orders -->
+        <!-- Index on ORDERS.ORDER_ID -->
+        <createIndex clustered="false"
+                     indexName="IDX_ORDERS_ORDER_ID"
+                     tableName="ORDERS"
+                     unique="false">
+            <column descending="true" name="ORDER_ID"/>
+        </createIndex>
+
+        <!-- Trades -->
+        <!-- Index on TRADES.TRADE_ID -->
+        <createIndex clustered="false"
+                     indexName="IDX_TRADES_TRADE_ID"
+                     tableName="TRADES"
+                     unique="false">
+            <column descending="true" name="TRADE_ID"/>
+        </createIndex>
+        <!-- Index on TRADES.ORDER_ID -->
+        <createIndex clustered="false"
+                     indexName="IDX_TRADES_ORDER_ID"
+                     tableName="TRADES"
+                     unique="false">
+            <column descending="true" name="ORDER_ID"/>
+        </createIndex>
+
+        <!-- ======================================================================================================= -->
+
+    </changeSet>
+</databaseChangeLog>

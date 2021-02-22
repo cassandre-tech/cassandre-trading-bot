@@ -1,48 +1,70 @@
 package tech.cassandre.trading.bot.domain;
 
+import lombok.Data;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
+import tech.cassandre.trading.bot.dto.position.PositionTypeDTO;
+import tech.cassandre.trading.bot.util.base.domain.BaseDomain;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.jpa.CurrencyAmount;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.math.BigDecimal;
-import java.util.Set;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Position (used to save data between restarts).
+ * Position.
  */
+@Data
 @Entity
 @Table(name = "POSITIONS")
-public class Position {
+public class Position extends BaseDomain {
 
-    /** Precision. */
-    private static final int PRECISION = 16;
-
-    /** Scale. */
-    private static final int SCALE = 8;
-
-    /** An identifier that uniquely identifies the position. */
+    /** Technical ID. */
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
 
-    /** Position . */
-    @Column(name = "STATUS")
-    private String status;
+    /** An identifier that uniquely identifies the position. */
+    @Column(name = "POSITION_ID")
+    private Long positionId;
+
+    /** Position type. */
+    @Enumerated(STRING)
+    @Column(name = "TYPE")
+    private PositionTypeDTO type;
+
+    /** The strategy that created the position. */
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
+    private Strategy strategy;
 
     /** The currency-pair. */
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
 
-    /** Amount to be ordered / amount that was ordered. */
-    @Column(name = "AMOUNT", precision = PRECISION, scale = SCALE)
-    private BigDecimal amount;
+    /** Amount that was ordered. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "AMOUNT_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "AMOUNT_CURRENCY"))
+    })
+    private CurrencyAmount amount;
 
     /** Position rules - stop gain percentage. */
     @Column(name = "RULES_STOP_GAIN_PERCENTAGE")
@@ -52,223 +74,86 @@ public class Position {
     @Column(name = "RULES_STOP_LOSS_PERCENTAGE")
     private Float stopLossPercentageRule;
 
-    /** The order id that opened the position. */
-    @Column(name = "OPEN_ORDER_ID")
-    private String openOrderId;
+    /** Position status. */
+    @Enumerated(STRING)
+    @Column(name = "STATUS")
+    private PositionStatusDTO status;
 
-    /** The order id that closed the position. */
-    @Column(name = "CLOSE_ORDER_ID")
-    private String closeOrderId;
+    /** The order id created to open the position. */
+    @Column(name = "OPENING_ORDER_ID")
+    private String openingOrderId;
 
-    /** All trades related to positions. */
-    @OneToMany(fetch = EAGER)
-    @JoinColumn(name = "POSITION_ID")
-    private Set<Trade> trades;
+    /** The order created to open the position. */
+    @OneToOne(fetch = EAGER, cascade = ALL)
+    @JoinColumn(name = "FK_OPENING_ORDER_ID")
+    private Order openingOrder;
 
-    /** The fee that was charged by the exchange for this trade. */
-    @Column(name = "LOWEST_PRICE", precision = PRECISION, scale = SCALE)
-    private BigDecimal lowestPrice;
+    /** The order id created to open the position. */
+    @Column(name = "CLOSING_ORDER_ID")
+    private String closingOrderId;
 
-    /** The fee that was charged by the exchange for this trade. */
-    @Column(name = "HIGHEST_PRICE", precision = PRECISION, scale = SCALE)
-    private BigDecimal highestPrice;
+    /** The order created to close the position. */
+    @OneToOne(fetch = EAGER, cascade = ALL)
+    @JoinColumn(name = "FK_CLOSING_ORDER_ID")
+    private Order closingOrder;
 
-    /**
-     * Getter id.
-     *
-     * @return id
-     */
-    public long getId() {
-        return id;
+    /** Lowest price reached by tis position. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "LOWEST_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "LOWEST_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount lowestPrice;
+
+    /** Highest price reached by tis position. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "HIGHEST_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "HIGHEST_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount highestPrice;
+
+    /** Latest price for this position. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "LATEST_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "LATEST_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount latestPrice;
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Position that = (Position) o;
+        return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.positionId, that.positionId)
+                .append(this.type, that.type)
+                .append(this.currencyPair, that.currencyPair)
+                .append(this.amount, that.amount)
+                .append(this.stopGainPercentageRule, that.stopGainPercentageRule)
+                .append(this.stopLossPercentageRule, that.stopLossPercentageRule)
+                .append(this.status, that.status)
+                .append(this.openingOrderId, that.openingOrderId)
+                .append(this.openingOrder, that.openingOrder)
+                .append(this.closingOrderId, that.closingOrderId)
+                .append(this.closingOrder, that.closingOrder)
+                .append(this.lowestPrice, that.lowestPrice)
+                .append(this.highestPrice, that.highestPrice)
+                .append(this.latestPrice, that.latestPrice)
+                .isEquals();
     }
 
-    /**
-     * Setter id.
-     *
-     * @param newId the id to set
-     */
-    public void setId(final long newId) {
-        id = newId;
-    }
-
-    /**
-     * Getter status.
-     *
-     * @return status
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * Setter status.
-     *
-     * @param newStatus the status to set
-     */
-    public void setStatus(final String newStatus) {
-        status = newStatus;
-    }
-
-    /**
-     * Getter currencyPair.
-     *
-     * @return currencyPair
-     */
-    public String getCurrencyPair() {
-        return currencyPair;
-    }
-
-    /**
-     * Setter currencyPair.
-     *
-     * @param newCurrencyPair the currencyPair to set
-     */
-    public void setCurrencyPair(final String newCurrencyPair) {
-        currencyPair = newCurrencyPair;
-    }
-
-    /**
-     * Getter amount.
-     *
-     * @return amount
-     */
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    /**
-     * Setter amount.
-     *
-     * @param newAmount the amount to set
-     */
-    public void setAmount(final BigDecimal newAmount) {
-        amount = newAmount;
-    }
-
-    /**
-     * Getter rulesStopGainPercentage.
-     *
-     * @return rulesStopGainPercentage
-     */
-    public Float getStopGainPercentageRule() {
-        return stopGainPercentageRule;
-    }
-
-    /**
-     * Setter rulesStopGainPercentage.
-     *
-     * @param newRulesStopGainPercentage the rulesStopGainPercentage to set
-     */
-    public void setStopGainPercentageRule(final Float newRulesStopGainPercentage) {
-        stopGainPercentageRule = newRulesStopGainPercentage;
-    }
-
-    /**
-     * Getter rulesStopLossPercentage.
-     *
-     * @return rulesStopLossPercentage
-     */
-    public Float getStopLossPercentageRule() {
-        return stopLossPercentageRule;
-    }
-
-    /**
-     * Setter rulesStopLossPercentage.
-     *
-     * @param newRulesStopLossPercentage the rulesStopLossPercentage to set
-     */
-    public void setStopLossPercentageRule(final Float newRulesStopLossPercentage) {
-        stopLossPercentageRule = newRulesStopLossPercentage;
-    }
-
-    /**
-     * Getter openOrderId.
-     *
-     * @return openOrderId
-     */
-    public String getOpenOrderId() {
-        return openOrderId;
-    }
-
-    /**
-     * Setter openOrderId.
-     *
-     * @param newOpenOrderId the openOrderId to set
-     */
-    public void setOpenOrderId(final String newOpenOrderId) {
-        openOrderId = newOpenOrderId;
-    }
-
-    /**
-     * Getter closeOrderId.
-     *
-     * @return closeOrderId
-     */
-    public String getCloseOrderId() {
-        return closeOrderId;
-    }
-
-    /**
-     * Setter closeOrderId.
-     *
-     * @param newCloseOrderId the closeOrderId to set
-     */
-    public void setCloseOrderId(final String newCloseOrderId) {
-        closeOrderId = newCloseOrderId;
-    }
-
-    /**
-     * Getter trades.
-     *
-     * @return trades
-     */
-    public Set<Trade> getTrades() {
-        return trades;
-    }
-
-    /**
-     * Setter trades.
-     *
-     * @param newTrades the trades to set
-     */
-    public void setTrades(final Set<Trade> newTrades) {
-        trades = newTrades;
-    }
-
-    /**
-     * Getter lowestPrice.
-     *
-     * @return lowestPrice
-     */
-    public BigDecimal getLowestPrice() {
-        return lowestPrice;
-    }
-
-    /**
-     * Setter lowestPrice.
-     *
-     * @param newLowestPrice the lowestPrice to set
-     */
-    public void setLowestPrice(final BigDecimal newLowestPrice) {
-        lowestPrice = newLowestPrice;
-    }
-
-    /**
-     * Getter highestPrice.
-     *
-     * @return highestPrice
-     */
-    public BigDecimal getHighestPrice() {
-        return highestPrice;
-    }
-
-    /**
-     * Setter highestPrice.
-     *
-     * @param newHighestPrice the highestPrice to set
-     */
-    public void setHighestPrice(final BigDecimal newHighestPrice) {
-        highestPrice = newHighestPrice;
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .toHashCode();
     }
 
 }

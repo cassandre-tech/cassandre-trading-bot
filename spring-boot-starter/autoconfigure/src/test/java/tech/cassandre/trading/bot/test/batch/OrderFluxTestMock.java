@@ -1,331 +1,279 @@
 package tech.cassandre.trading.bot.test.batch;
 
+import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.dto.trade.UserTrades;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import tech.cassandre.trading.bot.batch.AccountFlux;
-import tech.cassandre.trading.bot.batch.OrderFlux;
-import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
-import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.dto.user.BalanceDTO;
-import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 
+import static java.math.BigDecimal.ZERO;
+import static org.knowm.xchange.dto.Order.OrderStatus.FILLED;
+import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
-public class OrderFluxTestMock {
+public class OrderFluxTestMock extends BaseMock {
 
-    @Bean
-    @Primary
-    public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
+    @Override
+    public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() throws IOException {
+        org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
+
+        given(mock.getTradeHistory(any())).willReturn(new UserTrades(Collections.emptyList(), SortByTimestamp));
+
+        // =============================================================================================================
+        // Order creation mock.
+
+        // Order ORDER_000001 (ASK, 1, ETH/BTC).
+        MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("1"), xChangeCP1);
+        given(mock.placeMarketOrder(m)).willReturn("ORDER_000001");
+        // Order ORDER_000002 (BID, 2, ETH/USDT).
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("2"), xChangeCP2);
+        given(mock.placeMarketOrder(m)).willReturn("ORDER_000002");
+        // Order ORDER_000003 (ASK, 3, ETH/BTC).
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("3"), xChangeCP1);
+        given(mock.placeMarketOrder(m)).willReturn("ORDER_000003");
+        // Order ORDER_000004 (BID, 4, ETH/USDT).
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("4"), xChangeCP2);
+        given(mock.placeMarketOrder(m)).willReturn("ORDER_000004");
+
+        // =============================================================================================================
+        // Order creation mock.
+
+        given(mock.getOpenOrders()).willReturn(
+                // =====================================================================================================
+                // Reply 01.
+                // - Order ORDER_000001.
+                // - Order ORDER_000002.
+                // - Order ORDER_000003.
+                getReply01(),
+                // =====================================================================================================
+                // Reply 02.
+                // - Order ORDER_000001 : no changes.
+                // - Order ORDER_000002 : no changes.
+                // - Order ORDER_000003 : the original amount changed.
+                // - Order ORDER_000004 : new order (but not yet created in database).
+                getReply02(),
+                // =====================================================================================================
+                // Reply 03.
+                // - Order ORDER_000002 : original amount changed.
+                // - Order ORDER_000004 : original Amount changed.
+                getReply03()
+        );
+
+        return mock;
     }
 
-    @Bean
-    @Primary
-    public AccountFlux accountFlux() {
-        return new AccountFlux(userService());
+    /**
+     * Reply 01.
+     * First call : 3 orders.
+     * - Order ORDER_000001.
+     * - Order ORDER_000002.
+     * - Order ORDER_000003.
+     *
+     * @return reply
+     */
+    private OpenOrders getReply01() {
+        LimitOrder order000001 = new LimitOrder(
+                Order.OrderType.ASK,        // Type.
+                new BigDecimal("11"),   // OriginalAmount.
+                xChangeCP1,                 // Instrument.
+                "ORDER_000001",             // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("111"),  // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
+
+        LimitOrder order000002 = new LimitOrder(
+                Order.OrderType.BID,        // Type.
+                new BigDecimal("22"),   // OriginalAmount.
+                xChangeCP2,                 // Instrument.
+                "ORDER_000002",          // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("222"),  // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
+
+        LimitOrder order000003 = new LimitOrder(
+                Order.OrderType.ASK,        // Type.
+                new BigDecimal("33"),   // OriginalAmount.
+                xChangeCP1,                 // Instrument.
+                "ORDER_000003",          // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("333"),  // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
+
+        return new OpenOrders(Arrays.asList(order000001,
+                order000002,
+                order000003));
     }
 
-    @Bean
-    @Primary
-    public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService());
+    /**
+     * Reply 02.
+     * First call : 3 orders.
+     * - Order ORDER_000001 : no changes.
+     * - Order ORDER_000002 : no changes.
+     * - Order ORDER_000003 : the original amount changed.
+     * - Order ORDER_000004 : new order (but not yet created in database).
+     *
+     * @return reply
+     */
+    private OpenOrders getReply02() {
+        LimitOrder order000001 = new LimitOrder(
+                Order.OrderType.ASK,        // Type.
+                new BigDecimal("11"),   // OriginalAmount.
+                xChangeCP1,                 // Instrument.
+                "ORDER_000001",         // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("111"),  // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
+
+        LimitOrder order000002 = new LimitOrder(
+                Order.OrderType.BID,        // Type.
+                new BigDecimal("22"),   // OriginalAmount.
+                xChangeCP2,                 // Instrument.
+                "ORDER_000002",          // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("222"),  // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
+
+        LimitOrder order000003 = new LimitOrder(
+                Order.OrderType.ASK,        // Type.
+                new BigDecimal("3333"), // OriginalAmount.
+                xChangeCP1,                 // Instrument.
+                "ORDER_000003",             // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("33333"),// Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"              // Reference.
+        );
+
+        LimitOrder order000004 = new LimitOrder(
+                Order.OrderType.ASK,        // Type.
+                new BigDecimal("444"),  // OriginalAmount.
+                xChangeCP1,                 // Instrument.
+                "ORDER_000004",          // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("4444"), // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
+
+        return new OpenOrders(Arrays.asList(order000001,
+                order000002,
+                order000003,
+                order000004));
     }
 
-    @SuppressWarnings("unchecked")
-    @Bean
-    @Primary
-    public UserService userService() {
-        Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
-        final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
-        UserService userService = mock(UserService.class);
-        // Returns three updates.
+    /**
+     * Reply 03.
+     * First call : 3 orders.
+     * - Order ORDER_000001 : no change.
+     * - Order ORDER_000002 : average price changed.
+     * - Order ORDER_000003 : no change.
+     * - Order ORDER_000004 : average price changed.
+     *
+     * @return reply
+     */
+    private OpenOrders getReply03() {
+        LimitOrder order000001 = new LimitOrder(
+                Order.OrderType.ASK,        // Type.
+                new BigDecimal("11"),   // OriginalAmount.
+                xChangeCP1,                 // Instrument.
+                "ORDER_000001",         // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("111"),  // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
 
-        // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
-        accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
-        balances.clear();
-        accounts.clear();
+        LimitOrder order000002 = new LimitOrder(
+                Order.OrderType.BID,        // Type.
+                new BigDecimal("22"),   // OriginalAmount.
+                xChangeCP2,                 // Instrument.
+                "ORDER_000002",          // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("2"),    // Average price.
+                new BigDecimal("222"),  // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
 
-        // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).create();
-        accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
-        balances.clear();
-        accounts.clear();
+        LimitOrder order000003 = new LimitOrder(
+                Order.OrderType.ASK,        // Type.
+                new BigDecimal("3333"), // OriginalAmount.
+                xChangeCP1,                 // Instrument.
+                "ORDER_000003",             // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("1"),    // Average price.
+                new BigDecimal("33333"),// Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
 
-        // Account 03.
-        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).create());
-        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).create());
-        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).create());
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
-        accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
-        balances.clear();
-        accounts.clear();
+        LimitOrder order000004 = new LimitOrder(
+                Order.OrderType.ASK,        // Type.
+                new BigDecimal("444"),  // OriginalAmount.
+                xChangeCP1,                 // Instrument.
+                "ORDER_000004",          // ID.
+                new Date(),                 // Date.
+                ZERO,                       // Limit price.
+                new BigDecimal("2"),    // Average price.
+                new BigDecimal("4444"), // Cumulative amount.
+                new BigDecimal("1"),    // Fee.
+                FILLED,                     // Status.
+                "My reference"  // Reference.
+        );
 
-        // Mock replies.
-        given(userService.getUser()).willReturn(Optional.of(user01), Optional.of(user02), Optional.of(user03));
-        return userService;
-    }
-
-    @Bean
-    @Primary
-    public MarketService marketService() {
-        MarketService service = mock(MarketService.class);
-        given(service.getTicker(any())).willReturn(Optional.empty());
-        return service;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Bean
-    @Primary
-    public TradeService tradeService() {
-        // Creates the mock.
-        TradeService tradeService = mock(TradeService.class);
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
-
-        // =========================================================================================================
-        // First reply : 3 orders.
-
-        // Order 000001.
-        OrderDTO order01 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000001")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        // Order 000002.
-        OrderDTO order02 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000002")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        // Order 000003.
-        OrderDTO order03 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000003")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        Set<OrderDTO> reply01 = new LinkedHashSet<>();
-        reply01.add(order01);
-        reply01.add(order02);
-        reply01.add(order03);
-
-        // =========================================================================================================
-        // Second reply.
-        // Order 000003 : the original amount changed.
-        // Order 000004 : new order.
-
-        // Order 000001.
-        OrderDTO order04 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000001")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        // Order 000002.
-        OrderDTO order05 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000002")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        // Order 000003 : the original amount changed.
-        OrderDTO order06 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(2))
-                .currencyPair(cp1)
-                .id("000003")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        // Order 000004 : new order.
-        OrderDTO order07 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000004")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        Set<OrderDTO> reply02 = new LinkedHashSet<>();
-        reply02.add(order04);
-        reply02.add(order05);
-        reply02.add(order06);
-        reply02.add(order07);
-
-        // =========================================================================================================
-        // Second reply.
-        // Order 000002 : average prince changed.
-        // Order 000004 : fee changed.
-
-        // Order 000001.
-        OrderDTO order08 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000001")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        // Order 000002 : average price changed.
-        OrderDTO order09 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000002")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(1))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        // Order 000003.
-        OrderDTO order10 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(2))
-                .currencyPair(cp1)
-                .id("000003")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(4))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        // Order 000004 : fee changed.
-        OrderDTO order11 = OrderDTO.builder()
-                .type(OrderTypeDTO.ASK)
-                .originalAmount(new BigDecimal(1))
-                .currencyPair(cp1)
-                .id("000004")
-                .userReference("MY_REF_1")
-                .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
-                .status(OrderStatusDTO.NEW)
-                .cumulativeAmount(new BigDecimal(2))
-                .averagePrice(new BigDecimal(3))
-                .fee(new BigDecimal(1))
-                .leverage("leverage1")
-                .limitPrice(new BigDecimal(5))
-                .create();
-
-        Set<OrderDTO> reply03 = new LinkedHashSet<>();
-        reply03.add(order08);
-        reply03.add(order09);
-        reply03.add(order10);
-        reply03.add(order11);
-
-        // Creating the mock.
-        given(tradeService.getOpenOrders())
-                .willReturn(reply01,
-                        new LinkedHashSet<>(),
-                        reply02,
-                        reply03);
-        return tradeService;
+        return new OpenOrders(Arrays.asList(order000001,
+                order000002,
+                order000003,
+                order000004));
     }
 
 }

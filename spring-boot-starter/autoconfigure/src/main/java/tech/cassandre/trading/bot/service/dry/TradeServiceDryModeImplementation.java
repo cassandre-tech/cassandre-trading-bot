@@ -2,7 +2,9 @@ package tech.cassandre.trading.bot.service.dry;
 
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
@@ -10,34 +12,44 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.base.BaseService;
+import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
+import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
 /**
- * Trade service in dry mode.
+ * Trade service (dry mode implementation).
  */
 public class TradeServiceDryModeImplementation extends BaseService implements TradeService {
 
     /** Waiting time before sending orders and trades to flux. */
     private static final long WAITING_TIME = 500L;
 
+    /** Dry order prefix. */
+    private static final String DRY_ORDER_PREFIX = "DRY_ORDER_";
+
+    /** Dry trade prefix. */
+    private static final String DRY_TRADE_PREFIX = "DRY_TRADE_";
+
     /** Trade account ID. */
-    public static final String TRADE_ACCOUNT_ID = "trade";
+    private static final String TRADE_ACCOUNT_ID = "trade";
 
     /** Order counter. */
     private final AtomicInteger orderCounter = new AtomicInteger(1);
@@ -45,20 +57,20 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /** Trade counter. */
     private final AtomicInteger tradeCounter = new AtomicInteger(1);
 
+    /** Last received tickers. */
+    private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
+
     /** Order flux. */
     private OrderFlux orderFlux;
 
     /** Trade flux. */
     private TradeFlux tradeFlux;
 
-    /** Last received tickers. */
-    private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
+    /** Order repository. */
+    private final OrderRepository orderRepository;
 
-    /** Orders. */
-    private final Map<String, OrderDTO> orders = new LinkedHashMap<>();
-
-    /** The trades owned by the user. */
-    private final Map<String, TradeDTO> trades = new LinkedHashMap<>();
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
 
     /** User service - dry mode. */
     private final UserServiceDryModeImplementation userService;
@@ -66,10 +78,16 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /**
      * Constructor.
      *
-     * @param newUserService user service
+     * @param newUserService     user service
+     * @param newTradeRepository trade repository
+     * @param newOrderRepository order repository
      */
-    public TradeServiceDryModeImplementation(final UserServiceDryModeImplementation newUserService) {
+    public TradeServiceDryModeImplementation(final UserServiceDryModeImplementation newUserService,
+                                             final TradeRepository newTradeRepository,
+                                             final OrderRepository newOrderRepository) {
         this.userService = newUserService;
+        this.tradeRepository = newTradeRepository;
+        this.orderRepository = newOrderRepository;
     }
 
     /**
@@ -87,12 +105,13 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /**
      * Creates a fake market order.
      *
+     * @param strategy     strategy
      * @param orderTypeDTO order type
      * @param currencyPair currency pair
      * @param amount       amount
      * @return order creation result
      */
-    private OrderCreationResultDTO createMarketOrder(final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    private OrderCreationResultDTO createMarketOrder(final StrategyDTO strategy, final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
         // We retrieve the last pricing from tickers.
         TickerDTO t = lastTickers.get(currencyPair);
 
@@ -115,6 +134,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                 return new OrderCreationResultDTO("No data for user", new Exception("No data for user"));
             }
 
+            // We check if we have enough assets to buy/sell.
             if (orderTypeDTO.equals(BID)) {
                 // Buying order - we buy ETH from BTC.
                 // We are buying the following amount : ticker last price * amount
@@ -147,44 +167,62 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
             // We create and send the order.
             final String orderId = getNextOrderNumber();
             final OrderDTO order = OrderDTO.builder()
-                    .id(orderId)
-                    .currencyPair(currencyPair)
+                    .orderId(orderId)
                     .type(orderTypeDTO)
+                    .strategy(strategy)
+                    .currencyPair(currencyPair)
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
+                    .averagePrice(CurrencyAmountDTO.builder()
+                            .value(t.getLast())
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
                     .status(FILLED)
-                    .averagePrice(t.getLast())
-                    .originalAmount(amount)
-                    .fee(BigDecimal.ZERO)
+                    .cumulativeAmount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
                     .timestamp(ZonedDateTime.now())
-                    .create();
+                    .build();
 
-            // We crate and send the trade.
+            // We create and send the trade.
             final String tradeId = getNextTradeNumber();
             final TradeDTO trade = TradeDTO.builder()
-                    .id(tradeId)
+                    .tradeId(tradeId)
+                    .type(orderTypeDTO)
                     .orderId(orderId)
                     .currencyPair(currencyPair)
-                    .type(orderTypeDTO)
-                    .originalAmount(amount)
-                    .price(t.getLast())
+                    .amount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
+                    .price(CurrencyAmountDTO.builder()
+                            .value(t.getLast())
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
+                    .fee(CurrencyAmountDTO.ZERO)
                     .timestamp(ZonedDateTime.now())
-                    .feeAmount(BigDecimal.ZERO)
-                    .feeCurrency(currencyPair.getBaseCurrency())
-                    .create();
+                    .build();
 
-            // Sending the results after the return.
+            // Sending the results after the method returns the result.
             Executors.newFixedThreadPool(1).submit(() -> {
                 try {
                     TimeUnit.MILLISECONDS.sleep(WAITING_TIME);
                 } catch (InterruptedException e) {
-                    getLogger().debug("InterruptedException");
+                    Thread.currentThread().interrupt();
                 }
                 orderFlux.emitValue(order);
-                orders.put(orderId, order);
+                try {
+                    TimeUnit.MILLISECONDS.sleep(WAITING_TIME);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
                 tradeFlux.emitValue(trade);
-                trades.put(tradeId, trade);
             });
 
-            // We update the balances of the account because of the trade.
+            // We update the balances of the account with the values of the trade.
             if (orderTypeDTO.equals(BID)) {
                 userService.addToBalance(currencyPair.getBaseCurrency(), amount);
                 userService.addToBalance(currencyPair.getQuoteCurrency(), amount.multiply(t.getLast()).multiply(new BigDecimal("-1")));
@@ -193,69 +231,58 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                 userService.addToBalance(currencyPair.getQuoteCurrency(), amount.multiply(t.getLast()));
             }
 
-            // We create the result.
-            return new OrderCreationResultDTO(orderId);
+            // We create and returns the result.
+            return new OrderCreationResultDTO(order);
         } else {
             return new OrderCreationResultDTO("Ticker not found", new Exception("Ticker not found"));
         }
     }
 
     @Override
-    public final OrderCreationResultDTO createBuyMarketOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount) {
-        return createMarketOrder(BID, currencyPair, amount);
+    public final OrderCreationResultDTO createBuyMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+        return createMarketOrder(strategy, BID, currencyPair, amount);
     }
 
     @Override
-    public final OrderCreationResultDTO createSellMarketOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount) {
-        return createMarketOrder(OrderTypeDTO.ASK, currencyPair, amount);
+    public final OrderCreationResultDTO createSellMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+        return createMarketOrder(strategy, ASK, currencyPair, amount);
     }
 
     @Override
-    public final OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    public final OrderCreationResultDTO createBuyLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
         return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
     }
 
     @Override
-    public final OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    public final OrderCreationResultDTO createSellLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
         return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
-    }
-
-    @Override
-    public final Optional<OrderDTO> getOpenOrderByOrderId(final String orderId) {
-        return Optional.ofNullable(orders.get(orderId));
-    }
-
-    @Override
-    public final Set<OrderDTO> getOpenOrders() {
-        return new LinkedHashSet<>(orders.values());
     }
 
     @Override
     public final boolean cancelOrder(final String orderId) {
-        return orders.remove(orderId) != null;
+        final Optional<Order> order = orderRepository.findByOrderId(orderId);
+        if (order.isPresent()) {
+            orderRepository.delete(order.get());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public final Set<OrderDTO> getOrders() {
+        return orderRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(orderMapper::mapToOrderDTO)
+                .collect(Collectors.toSet());
     }
 
     @Override
     public final Set<TradeDTO> getTrades() {
-        return new LinkedHashSet<>(trades.values());
-    }
-
-    /**
-     * Returns next order number.
-     *
-     * @return next order number
-     */
-    private String getNextOrderNumber() {
-        return "DRY_ORDER_".concat(String.format("%09d", orderCounter.getAndIncrement()));
-    }
-
-    /**
-     * Returns next trade number.
-     *
-     * @return next trade number
-     */
-    private String getNextTradeNumber() {
-        return "DRY_TRADE_".concat(String.format("%09d", tradeCounter.getAndIncrement()));
+        return tradeRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(tradeMapper::mapToTradeDTO)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -267,9 +294,22 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
         lastTickers.put(ticker.getCurrencyPair(), ticker);
     }
 
-    @Override
-    public final void restoreTrade(final TradeDTO trade) {
-        trades.put(trade.getId(), trade);
+    /**
+     * Returns next order number.
+     *
+     * @return next order number
+     */
+    private String getNextOrderNumber() {
+        return DRY_ORDER_PREFIX.concat(String.format("%09d", orderCounter.getAndIncrement()));
+    }
+
+    /**
+     * Returns next trade number.
+     *
+     * @return next trade number
+     */
+    private String getNextTradeNumber() {
+        return DRY_TRADE_PREFIX.concat(String.format("%09d", tradeCounter.getAndIncrement()));
     }
 
 }

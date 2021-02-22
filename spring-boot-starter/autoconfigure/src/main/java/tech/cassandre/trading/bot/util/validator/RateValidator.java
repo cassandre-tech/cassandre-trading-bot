@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.util.validator;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.format.DateTimeParseException;
@@ -14,7 +16,7 @@ public class RateValidator implements ConstraintValidator<Rate, String> {
         if (value == null || value.length() == 0) {
             return false;
         }
-        if (isNumeric(value)) {
+        if (NumberUtils.isCreatable(value)) {
             return true;
         } else {
             try {
@@ -24,25 +26,7 @@ public class RateValidator implements ConstraintValidator<Rate, String> {
                 return false;
             }
         }
-    }
 
-    /**
-     * Returns true is a string is a number.
-     *
-     * @param string string to test
-     * @return true if numeric
-     */
-    private static boolean isNumeric(final String string) {
-        // null or empty
-        if (string == null || string.length() == 0) {
-            return false;
-        }
-        for (char c : string.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

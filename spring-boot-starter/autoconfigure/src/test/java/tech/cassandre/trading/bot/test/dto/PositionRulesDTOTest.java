@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.dto;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
@@ -12,10 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PositionRulesDTOTest {
 
     @Test
+    @CaseId(49)
     @DisplayName("Check no rules & toString()")
     public void checkNoRules() {
         // Position creation.
-        PositionRulesDTO p = PositionRulesDTO.builder().create();
+        PositionRulesDTO p = PositionRulesDTO.builder().build();
         // Tests.
         assertFalse(p.isStopGainPercentageSet());
         assertFalse(p.isStopLossPercentageSet());
@@ -23,12 +25,13 @@ public class PositionRulesDTOTest {
     }
 
     @Test
+    @CaseId(50)
     @DisplayName("Check stop gain rule & toString()")
     public void checkStopGainRule() {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopGainPercentage(1f)
-                .create();
+                .build();
         // Tests.
         assertTrue(p.isStopGainPercentageSet());
         assertFalse(p.isStopLossPercentageSet());
@@ -36,12 +39,13 @@ public class PositionRulesDTOTest {
     }
 
     @Test
+    @CaseId(51)
     @DisplayName("Check stop loss rule & toString()")
     public void checkStopLossRule() {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopLossPercentage(2f)
-                .create();
+                .build();
         // Tests.
         assertFalse(p.isStopGainPercentageSet());
         assertTrue(p.isStopLossPercentageSet());
@@ -49,13 +53,14 @@ public class PositionRulesDTOTest {
     }
 
     @Test
-    @DisplayName("Check tll rules & toString()")
+    @CaseId(52)
+    @DisplayName("Check All rules & toString()")
     public void checkAllRules() {
         // Position creation.
         PositionRulesDTO p = PositionRulesDTO.builder()
                 .stopGainPercentage(10f)
-                .stopLossPercentage(11)
-                .create();
+                .stopLossPercentage(11f)
+                .build();
         // Tests.
         assertTrue(p.isStopGainPercentageSet());
         assertTrue(p.isStopLossPercentageSet());

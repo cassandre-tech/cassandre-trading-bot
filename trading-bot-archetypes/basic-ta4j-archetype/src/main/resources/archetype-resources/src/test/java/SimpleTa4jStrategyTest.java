@@ -37,7 +37,7 @@ public class SimpleTa4jStrategyTest {
     public void gainTest() {
         await().forever().until(() -> tickerFluxMock.isFluxDone());
 
-        final HashMap<CurrencyDTO, GainDTO> gains = strategy.getPositionService().getGains();
+        final HashMap<CurrencyDTO, GainDTO> gains = strategy.getGains();
 
         System.out.println("Cumulated gains:");
         gains.forEach((currency, gain) -> System.out.println(currency + " : " + gain.getAmount()));
@@ -47,7 +47,7 @@ public class SimpleTa4jStrategyTest {
                 .values()
                 .stream()
                 .filter(p -> p.getStatus().equals(OPENED))
-                .forEach(p -> System.out.println(" - " + p));
+                .forEach(p -> System.out.println(" - " + p.getDescription()));
 
         assertTrue(gains.get(strategy.getRequestedCurrencyPair().getQuoteCurrency()).getPercentage() > 0);
     }

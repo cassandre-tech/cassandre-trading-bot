@@ -1,14 +1,16 @@
 package tech.cassandre.trading.bot.test.strategy;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.test.strategy.mocks.BasicCassandreStrategyTestMock;
+import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
@@ -47,10 +50,19 @@ public class BasicCassandreStrategyTest extends BaseTest {
     @Autowired
     private TestableCassandreStrategy strategy;
 
+    @Autowired
+    private StrategyRepository strategyRepository;
+
     @Test
-    @DisplayName("check strategy behavior")
+    @CaseId(82)
+    @DisplayName("Check strategy behavior")
     public void checkStrategyBehavior() {
         final int numberOfValuesExpected = 7;
+
+        // Check type.
+        Optional<Strategy> strategyInDatabase = strategyRepository.findByStrategyId("01");
+        assertTrue(strategyInDatabase.isPresent());
+        assertEquals(BASIC_STRATEGY, strategyInDatabase.get().getType());
 
         // Wait for the strategy to have received all the account test values.
         with().await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfValuesExpected));
@@ -60,25 +72,20 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertFalse(strategy.getAccountsUpdatesReceived().isEmpty());
         assertFalse(strategy.getTickersUpdateReceived().isEmpty());
         assertFalse(strategy.getTradesUpdateReceived().isEmpty());
-        assertFalse(strategy.getPositionsUpdateReceived().isEmpty());
-        assertEquals(2, strategy.getLastTicker().size());
-        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTicker().get(new CurrencyPairDTO(ETH, BTC)).getBid()));
-
-        // Checking that services are available.
-        assertNotNull(strategy.getTradeService());
-        assertNotNull(strategy.getPositionService());
-
-        // Check getEstimatedBuyingCost()
-        assertTrue(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).isPresent());
-        assertEquals(0, new BigDecimal("12").compareTo(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).get().getValue()));
+        assertEquals(2, strategy.getLastTickers().size());
+        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTickers().get(new CurrencyPairDTO(ETH, BTC)).getLast()));
 
         // Trading account test.
         with().await().untilAsserted(() -> assertEquals(3, strategy.getAccountsUpdatesReceived().size()));
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         assertTrue(tradeAccount.isPresent());
-        assertEquals("03", tradeAccount.get().getId());
+        assertEquals("03", tradeAccount.get().getAccountId());
 
-        // Test canBuy() & canSell().
+        // Check getEstimatedBuyingCost().
+        assertTrue(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).isPresent());
+        assertEquals(0, new BigDecimal("12").compareTo(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).get().getValue()));
+
+        // Check canBuy() & canSell().
         final AccountDTO account = strategy.getAccounts().get("03");
         assertNotNull(account);
         assertEquals(3, account.getBalances().size());

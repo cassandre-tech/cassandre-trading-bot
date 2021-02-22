@@ -10,7 +10,7 @@ public class ConfigurationFailureAnalyzer extends AbstractFailureAnalyzer<Config
 
     @Override
     protected final FailureAnalysis analyze(final Throwable rootFailure, final ConfigurationException cause) {
-        return new FailureAnalysis(cause.getMessage(), cause.getAction(), rootFailure);
+        return new FailureAnalysis(cause.getMessage(), cause.getAdvisedAction(), rootFailure);
     }
 
 }

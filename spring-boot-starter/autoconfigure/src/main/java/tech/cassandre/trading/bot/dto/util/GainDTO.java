@@ -1,58 +1,37 @@
 package tech.cassandre.trading.bot.dto.util;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+
+import static lombok.AccessLevel.PRIVATE;
+
 /**
  * Gain.
  */
+@Value
+@Builder
+@AllArgsConstructor(access = PRIVATE)
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class GainDTO {
 
+    /** Zero. */
+    public static final GainDTO ZERO = GainDTO.builder()
+            .percentage(0)
+            .amount(CurrencyAmountDTO.ZERO)
+            .fees(CurrencyAmountDTO.ZERO)
+            .build();
+
     /** Gain made (percentage). */
-    private final double percentage;
+    double percentage;
 
     /** Gain made (amount). */
-    private final CurrencyAmountDTO amount;
+    CurrencyAmountDTO amount;
 
     /** Fees. */
-    private final CurrencyAmountDTO fees;
-
-    /**
-     * Constructor (for no gain).
-     */
-    public GainDTO() {
-        percentage = 0;
-        amount = new CurrencyAmountDTO();
-        fees = new CurrencyAmountDTO();
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param newPercentage gain (percentage)
-     * @param newAmount     gain (amount)
-     * @param newFees       fees
-     */
-    public GainDTO(final double newPercentage, final CurrencyAmountDTO newAmount, final CurrencyAmountDTO newFees) {
-        this.amount = newAmount;
-        this.percentage = newPercentage;
-        this.fees = newFees;
-    }
-
-    /**
-     * Getter percentage.
-     *
-     * @return percentage
-     */
-    public final double getPercentage() {
-        return percentage;
-    }
-
-    /**
-     * Getter amount.
-     *
-     * @return amount
-     */
-    public final CurrencyAmountDTO getAmount() {
-        return amount;
-    }
+    CurrencyAmountDTO fees;
 
     /**
      * Getter netAmount.
@@ -60,16 +39,65 @@ public class GainDTO {
      * @return netAmount
      */
     public final CurrencyAmountDTO getNetAmount() {
-        return new CurrencyAmountDTO(amount.getValue().subtract(fees.getValue()), amount.getCurrency());
+        if (amount != null && fees != null) {
+            return CurrencyAmountDTO.builder()
+                    .value(amount.getValue().subtract(fees.getValue()))
+                    .currency(amount.getCurrency())
+                    .build();
+        } else {
+            return CurrencyAmountDTO.ZERO;
+        }
     }
 
     /**
-     * Getter fees.
+     * Returns true if the current gain is inferior to the gain passed as a parameter.
      *
-     * @return fees
+     * @param other other gain
+     * @return true if this gain is inferior to the gain passed as a parameter
      */
-    public final CurrencyAmountDTO getFees() {
-        return fees;
+    public boolean isInferiorTo(final GainDTO other) {
+        if (other != null) {
+            return getPercentage() < other.getPercentage();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the current gain is superior to the gain passed as a parameter.
+     *
+     * @param other other gain
+     * @return true if this gain is superior to the gain passed as a parameter
+     */
+    public boolean isSuperiorTo(final GainDTO other) {
+        if (other != null) {
+            return getPercentage() > other.getPercentage();
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final GainDTO that = (GainDTO) o;
+        return new EqualsBuilder()
+                .append(this.amount, that.amount)
+                .append(this.fees, that.fees)
+                .isEquals();
+    }
+
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(amount)
+                .append(fees)
+                .toHashCode();
     }
 
     @Override
@@ -79,7 +107,6 @@ public class GainDTO {
         } else {
             return "Gains: " + amount + " (" + percentage + " %) / Fees: " + fees;
         }
-
     }
 
 }

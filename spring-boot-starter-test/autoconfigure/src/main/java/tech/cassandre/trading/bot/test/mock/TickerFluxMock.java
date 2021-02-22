@@ -17,8 +17,12 @@ import tech.cassandre.trading.bot.service.MarketService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -52,6 +56,9 @@ public class TickerFluxMock {
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    /** To milliseconds. */
+    public static final int MILLISECONDS = 1000;
 
     /** Tickers file prefix. */
     private static final String TICKERS_FILE_PREFIX = "tickers-";
@@ -92,7 +99,7 @@ public class TickerFluxMock {
                             try {
                                 TimeUnit.SECONDS.sleep(1);
                             } catch (InterruptedException e) {
-                                logger.debug("InterruptedException");
+                                Thread.currentThread().interrupt();
                             }
                             if (tickers.hasNext()) {
                                 return Optional.of(tickers.next());
@@ -115,7 +122,7 @@ public class TickerFluxMock {
     public List<Resource> getFilesToLoad() {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
-            final Resource[] resources = resolver.getResources("classpath:" + TICKERS_FILE_PREFIX + "*" + TICKERS_FILE_SUFFIX);
+            final Resource[] resources = resolver.getResources("classpath*:" + TICKERS_FILE_PREFIX + "*" + TICKERS_FILE_SUFFIX);
             return Arrays.asList(resources);
         } catch (IOException e) {
             logger.error("TickerFluxMock encountered an error : " + e.getMessage());
@@ -173,14 +180,14 @@ public class TickerFluxMock {
                         // Creating the ticker.
                         TickerDTO t = TickerDTO.builder()
                                 .currencyPair(currencyPair)
-                                .timestampAsEpochInSeconds(Long.parseLong(time))
-                                .open(open)
-                                .last(close)
-                                .bid(high)
-                                .ask(low)
-                                .volume(volume)
-                                .quoteVolume(turnover)
-                                .create();
+                                .timestamp(ZonedDateTime.ofInstant(new Date(Long.parseLong(time) * MILLISECONDS).toInstant(), ZoneId.systemDefault()))
+                                .open(new BigDecimal(open))
+                                .last(new BigDecimal(close))
+                                .bid(new BigDecimal(high))
+                                .ask(new BigDecimal(low))
+                                .volume(new BigDecimal(volume))
+                                .quoteVolume(new BigDecimal(turnover))
+                                .build();
 
                         // Add the ticker.
                         tickers.add(t);

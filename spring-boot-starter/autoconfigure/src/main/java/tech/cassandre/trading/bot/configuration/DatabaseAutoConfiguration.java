@@ -1,25 +1,35 @@
 package tech.cassandre.trading.bot.configuration;
 
-import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.auditing.DateTimeProvider;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import tech.cassandre.trading.bot.util.base.BaseConfiguration;
-import tech.cassandre.trading.bot.util.database.CassandreNamingStrategy;
+import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.parameters.DatabaseParameters;
 
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
 /**
- * Database autoconfiguration.
+ * Database configures the database connection.
  */
 @Configuration
+@EnableJpaAuditing(dateTimeProviderRef = "auditingDateTimeProvider")
 @EntityScan(basePackages = "tech.cassandre.trading.bot.domain")
 @EnableJpaRepositories(basePackages = "tech.cassandre.trading.bot.repository")
 @EnableConfigurationProperties(DatabaseParameters.class)
 public class DatabaseAutoConfiguration extends BaseConfiguration {
+
+    /** Precision. */
+    public static final int PRECISION = 16;
+
+    /** Scale. */
+    public static final int SCALE = 8;
 
     /** Database parameters. */
     private final DatabaseParameters databaseParameters;
@@ -50,14 +60,13 @@ public class DatabaseAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Set physical naming strategy.
-     * Adds a prefix to table name via cassandre.trading.bot.database.table-prefix parameter.
-     * @return physical naming strategy
+     * Makes ZonedDateTime compatible with auditing fields.
+     *
+     * @return DateTimeProvider
      */
     @Bean
-    @SuppressWarnings("checkstyle:DesignForExtension")
-    public PhysicalNamingStrategy physical() {
-        return new CassandreNamingStrategy(databaseParameters.getTablePrefix());
+    public DateTimeProvider auditingDateTimeProvider() {
+        return () -> Optional.of(ZonedDateTime.now());
     }
 
 }

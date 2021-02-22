@@ -1,5 +1,10 @@
 package tech.cassandre.trading.bot.dto.util;
 
+import lombok.Builder;
+import lombok.Value;
+import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.instrument.Instrument;
+
 import java.util.Objects;
 
 /**
@@ -7,16 +12,19 @@ import java.util.Objects;
  * The base currency represents how much of the quote currency to get one unit of the base currency.
  * For example, if you were looking at the CAD/USD currency pair, the Canadian dollar would be the base currency, and the U.S. dollar would be the quote currency.
  */
-public final class CurrencyPairDTO {
+@Value
+@Builder
+@SuppressWarnings("checkstyle:VisibilityModifier")
+public class CurrencyPairDTO {
 
     /** Currency pair separator. */
     private static final String CURRENCY_PAIR_SEPARATOR = "/";
 
     /** The base currency is the first currency appearing in a currency pair quotation. */
-    private final CurrencyDTO baseCurrency;
+    CurrencyDTO baseCurrency;
 
     /** The quote currency is the second currency appearing in a currency pair quotation. */
-    private final CurrencyDTO quoteCurrency;
+    CurrencyDTO quoteCurrency;
 
     /**
      * Constructor.
@@ -25,6 +33,15 @@ public final class CurrencyPairDTO {
      */
     public CurrencyPairDTO(final String currencyPair) {
         this(currencyPair.split(CURRENCY_PAIR_SEPARATOR)[0], currencyPair.split(CURRENCY_PAIR_SEPARATOR)[1]);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param currencyPair currency pair
+     */
+    public CurrencyPairDTO(final CurrencyPair currencyPair) {
+        this(currencyPair.base.toString(), currencyPair.counter.toString());
     }
 
     /**
@@ -49,93 +66,18 @@ public final class CurrencyPairDTO {
     }
 
     /**
-     * Builder constructor with {@link CurrencyDTO}.
+     * Constructor from XChange instrument.
      *
-     * @param builder builder
+     * @param instrument instrument
      */
-    protected CurrencyPairDTO(final CurrencyPairDTO.Builder builder) {
-        this(builder.baseCurrency, builder.quoteCurrency);
-    }
-
-    /**
-     * Getter for baseCurrency.
-     *
-     * @return baseCurrency
-     */
-    public CurrencyDTO getBaseCurrency() {
-        return baseCurrency;
-    }
-
-    /**
-     * Getter for quoteCurrency.
-     *
-     * @return quoteCurrency
-     */
-    public CurrencyDTO getQuoteCurrency() {
-        return quoteCurrency;
-    }
-
-    /**
-     * Returns builder.
-     *
-     * @return builder
-     */
-    public static CurrencyPairDTO.Builder builder() {
-        return new CurrencyPairDTO.Builder();
-    }
-
-    public static final class Builder {
-
-        /**
-         * The base currency is the first currency appearing in a currency pair quotation.
-         */
-        private CurrencyDTO baseCurrency;
-
-        /**
-         * The quote currency is the second currency appearing in a currency pair quotation.
-         */
-        private CurrencyDTO quoteCurrency;
-
-        /**
-         * Set baseCurrency.
-         *
-         * @param newBaseCurrency baseCurrency.
-         * @return builder
-         */
-        public Builder baseCurrency(final CurrencyDTO newBaseCurrency) {
-            this.baseCurrency = newBaseCurrency;
-            return this;
-        }
-
-        /**
-         * Set quoteCurrency.
-         *
-         * @param newQuoteCurrency quoteCurrency.
-         * @return builder
-         */
-        public Builder quoteCurrency(final CurrencyDTO newQuoteCurrency) {
-            this.quoteCurrency = newQuoteCurrency;
-            return this;
-        }
-
-        /**
-         * Creator.
-         *
-         * @return Account
-         */
-        public CurrencyPairDTO create() {
-            return new CurrencyPairDTO(this);
-        }
-
+    public CurrencyPairDTO(final Instrument instrument) {
+        final CurrencyPair cp = (CurrencyPair) instrument;
+        this.baseCurrency = new CurrencyDTO(cp.base.getCurrencyCode());
+        this.quoteCurrency = new CurrencyDTO(cp.counter.getCurrencyCode());
     }
 
     @Override
-    public String toString() {
-        return baseCurrency + CURRENCY_PAIR_SEPARATOR + quoteCurrency;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -148,8 +90,13 @@ public final class CurrencyPairDTO {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(getBaseCurrency().getCode(), getQuoteCurrency().getCode());
+    }
+
+    @Override
+    public final String toString() {
+        return baseCurrency + CURRENCY_PAIR_SEPARATOR + quoteCurrency;
     }
 
 }

@@ -20,7 +20,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
  * Testable strategy.
  */
 @SuppressWarnings("unused")
-@CassandreStrategy(name = "Testable strategy")
+@CassandreStrategy(strategyName = "Testable strategy")
 public final class TestableStrategy extends BasicCassandreStrategy {
 
     /** Tickers update received. */
@@ -36,7 +36,7 @@ public final class TestableStrategy extends BasicCassandreStrategy {
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-        return accounts.stream().filter(a -> a.getId().equals("trade")).findFirst();
+        return accounts.stream().filter(a -> a.getAccountId().equals("trade")).findFirst();
     }
 
     @Override

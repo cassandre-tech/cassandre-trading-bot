@@ -28,7 +28,7 @@ jobs:
       with:
         languages: java
 
-    - name: Set up JDK 11
+    - name: JDK 11 Setup
       uses: actions/setup-java@v1
       with:
         java-version: 11.0.x

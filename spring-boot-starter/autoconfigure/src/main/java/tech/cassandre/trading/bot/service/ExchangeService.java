@@ -5,7 +5,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import java.util.Set;
 
 /**
- * Service giving information about the exchange.
+ * Service getting information from the exchange.
  */
 public interface ExchangeService {
 

@@ -1,12 +1,18 @@
 package tech.cassandre.trading.bot.dto.trade;
 
+import lombok.Getter;
+
 /**
  * Order creation result for {@link OrderDTO}.
  */
+@Getter
 public final class OrderCreationResultDTO {
 
     /** Order ID (filled if order creation is successful). */
     private final String orderId;
+
+    /** Order (filled if order creation is successful). */
+    private OrderDTO order;
 
     /** Error message (filled if order creation failed). */
     private final String errorMessage;
@@ -20,11 +26,12 @@ public final class OrderCreationResultDTO {
     /**
      * Constructor for successful order creation.
      *
-     * @param newOrderId order id.
+     * @param newOrder order
      */
-    public OrderCreationResultDTO(final String newOrderId) {
+    public OrderCreationResultDTO(final OrderDTO newOrder) {
         successful = true;
-        this.orderId = newOrderId;
+        this.orderId = newOrder.getOrderId();
+        this.order = newOrder;
         this.errorMessage = null;
         this.exception = null;
     }
@@ -42,47 +49,11 @@ public final class OrderCreationResultDTO {
         this.exception = newException;
     }
 
-    /**
-     * Getter for orderId.
-     *
-     * @return orderId
-     */
-    public String getOrderId() {
-        return orderId;
-    }
-
-    /**
-     * Getter for errorMessage.
-     *
-     * @return errorMessage
-     */
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    /**
-     * Getter for exception.
-     *
-     * @return exception
-     */
-    public Exception getException() {
-        return exception;
-    }
-
-    /**
-     * Getter for successful.
-     *
-     * @return successful
-     */
-    public boolean isSuccessful() {
-        return successful;
-    }
-
     @Override
     public String toString() {
         if (successful) {
             return "OrderCreationResultDTO{"
-                    + " orderId='" + orderId + '\''
+                    + " order='" + order + '\''
                     + '}';
         } else {
             return "OrderCreationResultDTO{"
@@ -90,7 +61,6 @@ public final class OrderCreationResultDTO {
                     + ", exception=" + exception
                     + '}';
         }
-
     }
 
 }

@@ -2,13 +2,13 @@ package tech.cassandre.trading.bot.service.xchange;
 
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.util.base.BaseService;
+import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Account service - XChange implementation.
+ * User service - XChange implementation.
  */
 public class UserServiceXChangeImplementation extends BaseService implements UserService {
 
@@ -33,15 +33,15 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             // If a token is not available this method will block until the refill adds one to the bucket.
             getBucket().asScheduler().consume(1);
 
-            getLogger().debug("UserService - Retrieving account information");
-            final UserDTO user = getMapper().mapToUserDTO(xChangeAccountService.getAccountInfo());
-            getLogger().debug("UserService - Account information retrieved " + user);
+            logger.debug("UserService - Retrieving account information");
+            final UserDTO user = accountMapper.mapToUserDTO(xChangeAccountService.getAccountInfo());
+            logger.debug("UserService - Account information retrieved " + user);
             return Optional.ofNullable(user);
         } catch (IOException e) {
-            getLogger().error("UserService - Error retrieving account information : {}", e.getMessage());
+            logger.error("UserService - Error retrieving account information : {}", e.getMessage());
             return Optional.empty();
         } catch (InterruptedException e) {
-            getLogger().error("UserService - InterruptedException : {}", e.getMessage());
+            logger.error("UserService - InterruptedException : {}", e.getMessage());
             return Optional.empty();
         }
     }

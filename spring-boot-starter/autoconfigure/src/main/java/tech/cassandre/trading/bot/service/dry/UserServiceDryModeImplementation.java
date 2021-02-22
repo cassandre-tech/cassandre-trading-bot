@@ -8,7 +8,7 @@ import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
-import tech.cassandre.trading.bot.util.base.BaseService;
+import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.Scanner;
 
 /**
- * User service in dry mode.
+ * User service (dry mode implementation).
  */
 public class UserServiceDryModeImplementation extends BaseService implements UserService {
 
@@ -34,10 +34,10 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
     private static final String USER_FILE_SUFFIX = ".*sv";
 
     /** User ID. */
-    public static final String USER_ID = "user";
+    private static final String USER_ID = "user";
 
     /** Trade account ID. */
-    public static final String TRADE_ACCOUNT_ID = "trade";
+    private static final String TRADE_ACCOUNT_ID = "trade";
 
     /** Simulated user information. */
     private UserDTO user;
@@ -49,7 +49,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
      * Constructor.
      */
     public UserServiceDryModeImplementation() {
-        user = UserDTO.builder().setId(USER_ID).create();
+        Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
         getFilesToLoad().forEach(file -> {
             if (file.getFilename() != null) {
@@ -58,7 +58,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 final int accountIndexStart = file.getFilename().indexOf(USER_FILE_PREFIX) + USER_FILE_PREFIX.length();
                 final int accountIndexStop = file.getFilename().indexOf("sv") - 2;
                 final String accountName = file.getFilename().substring(accountIndexStart, accountIndexStop);
-                getLogger().info("Adding account '" + accountName + "'");
+                logger.info("Adding account '" + accountName + "'");
 
                 // Balances.
                 HashMap<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
@@ -74,29 +74,35 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                             final String currency = rowScanner.next().replaceAll("\"", "");
                             final String amount = rowScanner.next().replaceAll("\"", "");
                             // Creating balance.
-                            getLogger().info("- Adding balance " + amount + " " + currency);
+                            logger.info("- Adding balance " + amount + " " + currency);
                             BalanceDTO balance = BalanceDTO.builder()
                                     .currency(new CurrencyDTO(currency))
                                     .available(new BigDecimal(amount))
-                                    .create();
+                                    .build();
                             balances.put(new CurrencyDTO(currency), balance);
                         }
                     }
                 } catch (FileNotFoundException e) {
-                    getLogger().error("{} not found !", file.getFilename());
+                    logger.error("{} not found !", file.getFilename());
                 } catch (IOException e) {
-                    getLogger().error("IOException : " + e);
+                    logger.error("IOException : " + e);
                 }
 
                 // Creating account.
-                AccountDTO account = AccountDTO.builder()
-                        .id(accountName)
-                        .name(accountName)
-                        .balances(balances)
-                        .create();
-                user.getAccounts().put(account.getId(), account);
+                accounts.put(accountName,
+                        AccountDTO.builder()
+                                .accountId(accountName)
+                                .name(accountName)
+                                .balances(balances)
+                                .build());
             }
         });
+
+        // Creates the user.
+        user = UserDTO.builder()
+                .id(USER_ID)
+                .accounts(accounts)
+                .build();
     }
 
     /**
@@ -114,23 +120,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
     }
 
     /**
-     * Returns the list of files to import.
-     *
-     * @return files to import.
-     */
-    public List<Resource> getFilesToLoad() {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        try {
-            final Resource[] resources = resolver.getResources("classpath*:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
-            return Arrays.asList(resources);
-        } catch (IOException e) {
-            getLogger().error("TickerFluxMock encountered an error : " + e.getMessage());
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Update balance of trade account.
+     * Update balance of trade account (method call by trade service).
      *
      * @param currency currency
      * @param amount   amount
@@ -145,37 +135,57 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 HashMap<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
                 // For each balance.
-                a.getBalances().forEach(b -> {
+                a.getBalances().forEach((c, b) -> {
                     BalanceDTO newBalance;
-                    if (a.getId().equals(TRADE_ACCOUNT_ID) && b.getCurrency().equals(currency)) {
+                    if (a.getAccountId().equals(TRADE_ACCOUNT_ID) && b.getCurrency().equals(currency)) {
                         // If we are on the account to update, we calculate the new value.
                         newBalance = BalanceDTO.builder()
                                 .currency(b.getCurrency())
                                 .available(b.getAvailable().add(amount))
-                                .create();
+                                .build();
                     } else {
                         // Else we keep the same value.
                         newBalance = BalanceDTO.builder()
                                 .currency(b.getCurrency())
                                 .available(b.getAvailable())
-                                .create();
+                                .build();
                     }
                     balances.put(newBalance.getCurrency(), newBalance);
                 });
 
                 // Creating account
                 AccountDTO account = AccountDTO.builder()
-                        .id(a.getId())
+                        .accountId(a.getAccountId())
                         .name(a.getName())
                         .balances(balances)
-                        .create();
-                accounts.put(account.getId(), account);
+                        .build();
+                accounts.put(account.getAccountId(), account);
             });
+
             // Change the user value and the account in the strategy.
             strategy.getAccounts().clear();
             strategy.getAccounts().putAll(accounts);
-            this.user = UserDTO.builder().setId(USER_ID).setAccounts(accounts).create();
+            user = UserDTO.builder()
+                    .id(USER_ID)
+                    .accounts(accounts)
+                    .build();
         }
+    }
+
+    /**
+     * Returns the list of files to import.
+     *
+     * @return files to import.
+     */
+    private List<Resource> getFilesToLoad() {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        try {
+            final Resource[] resources = resolver.getResources("classpath*:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
+            return Arrays.asList(resources);
+        } catch (IOException e) {
+            logger.error("TickerFluxMock encountered an error : " + e.getMessage());
+        }
+        return Collections.emptyList();
     }
 
 }

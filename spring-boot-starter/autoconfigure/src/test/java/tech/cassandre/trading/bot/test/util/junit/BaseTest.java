@@ -1,12 +1,28 @@
 package tech.cassandre.trading.bot.test.util.junit;
 
 import org.awaitility.Awaitility;
+import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.util.mapper.AccountMapper;
+import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
+import tech.cassandre.trading.bot.util.mapper.OrderMapper;
+import tech.cassandre.trading.bot.util.mapper.PositionMapper;
+import tech.cassandre.trading.bot.util.mapper.StrategyMapper;
+import tech.cassandre.trading.bot.util.mapper.TickerMapper;
+import tech.cassandre.trading.bot.util.mapper.TradeMapper;
+import tech.cassandre.trading.bot.util.mapper.UtilMapper;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -18,20 +34,71 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
+import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
  * Base for tests.
  */
 public class BaseTest {
 
+    /** Default strategy. */
+    protected StrategyDTO strategyDTO = StrategyDTO.builder()
+            .id(1L)
+            .strategyId("01")
+            .type(BASIC_STRATEGY)
+            .build();
+
+    /** Logger. */
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    /** Type mapper. */
+    protected final UtilMapper utilMapper = Mappers.getMapper(UtilMapper.class);
+
+    /** Currency mapper. */
+    protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);
+
+    /** Strategy mapper. */
+    protected final StrategyMapper strategyMapper = Mappers.getMapper(StrategyMapper.class);
+
+    /** Account mapper. */
+    protected final AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
+
+    /** Ticker mapper. */
+    protected final TickerMapper tickerMapper = Mappers.getMapper(TickerMapper.class);
+
+    /** Order mapper. */
+    protected final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
+
+    /** Trade mapper. */
+    protected final TradeMapper tradeMapper = Mappers.getMapper(TradeMapper.class);
+
+    /** Position mapper. */
+    protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
+
+    /** cp1 for tests. */
+    protected final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+
+    /** XChange cp1 for tests. */
+    protected final CurrencyPair xChangeCP1 = new CurrencyPair(Currency.ETH, Currency.BTC);
+
+    /** cp2 for tests. */
+    protected final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
+
+    /** XChange cp2 for tests. */
+    protected final CurrencyPair xChangeCP2 = new CurrencyPair(Currency.ETH, Currency.USDT);
+
+    /** cp3 for tests. */
+    protected final CurrencyPairDTO cp3 = new CurrencyPairDTO(BTC, USDT);
+
     /** Ten seconds wait. */
     protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
     /** How much we should wait for tests until it is declared as failed. */
     protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
-
-    /** Logger. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /**
      * Constructor.
@@ -43,12 +110,29 @@ public class BaseTest {
     }
 
     /**
-     * Getter logger.
+     * Get pending order.
      *
-     * @return logger
+     * @param strategy     strategy
+     * @param orderId      orderId
+     * @param orderTypeDTO order type
+     * @param amount       amount
+     * @param currencyPair currency pair
+     * @return order
      */
-    protected final Logger getLogger() {
-        return logger;
+    protected OrderDTO getPendingOrder(final StrategyDTO strategy,
+                                       final String orderId,
+                                       final OrderTypeDTO orderTypeDTO,
+                                       final BigDecimal amount,
+                                       final CurrencyPairDTO currencyPair) {
+        return OrderDTO.builder()
+                .orderId(orderId)
+                .type(orderTypeDTO)
+                .strategy(strategy)
+                .currencyPair(currencyPair)
+                .amount(new CurrencyAmountDTO(amount, currencyPair.getBaseCurrency()))
+                .status(PENDING_NEW)
+                .timestamp(ZonedDateTime.now())
+                .build();
     }
 
     /**
@@ -62,26 +146,8 @@ public class BaseTest {
         return Optional.of(TickerDTO.builder()
                 .currencyPair(cp)
                 .timestamp(getRandomDate())
-                .bid(bid)
                 .last(bid)
-                .create());
-    }
-
-    /**
-     * Util method to return a fake ticker with date.
-     *
-     * @param timestamp timestamp
-     * @param cp        currency pair
-     * @param bid       bid price
-     * @return ticket
-     */
-    protected static Optional<TickerDTO> getFakeTicker(final Date timestamp, final CurrencyPairDTO cp, final BigDecimal bid) {
-        return Optional.of(TickerDTO.builder()
-                .currencyPair(cp)
-                .timestamp(timestamp)
-                .bid(bid)
-                .last(bid)
-                .create());
+                .build());
     }
 
     /**
@@ -89,7 +155,7 @@ public class BaseTest {
      *
      * @return random date
      */
-    public static Date getRandomDate() {
+    public static ZonedDateTime getRandomDate() {
         long aDay = TimeUnit.DAYS.toMillis(1);
         long now = new Date().getTime();
         Date hundredYearsAgo = new Date(now - aDay * 365 * 100);
@@ -99,36 +165,27 @@ public class BaseTest {
         long randomMillisSinceEpoch = ThreadLocalRandom
                 .current()
                 .nextLong(startMillis, endMillis);
-        return new Date(randomMillisSinceEpoch);
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(randomMillisSinceEpoch), ZoneId.systemDefault());
     }
-
-    /**
-     * Get exception message from parameter exception.
-     *
-     * @param e exception
-     * @return message
-     */
-    protected String getParametersExceptionMessage(Exception e) {
-        return e.getCause().getCause().getCause().getMessage();
-    }
-
 
     /**
      * Generate a date in 2020 with a day.
+     *
      * @param day day
      * @return date
      */
-    protected static Date createDate(final int day) {
-        return Date.from(ZonedDateTime.of(2020, 1, day, 9, 0, 0, 0, ZoneId.systemDefault()).toInstant());
+    protected static ZonedDateTime createDate(final int day) {
+        return ZonedDateTime.of(2020, 1, day, 0, 0, 0, 0, ZoneId.systemDefault());
     }
 
 
     /**
      * Generates a ZonedDateTime.
+     *
      * @param date date with format dd-MM-yyyy
      * @return ZonedDateTime
      */
-    protected ZonedDateTime createZonedDateTime(final String date) {
+    protected static ZonedDateTime createZonedDateTime(final String date) {
         LocalDateTime ldt = LocalDateTime.parse(date + " 00:00", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
         return ldt.atZone(ZoneId.systemDefault());
     }

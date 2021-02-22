@@ -1,86 +1,49 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.dto.trade.UserTrades;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import tech.cassandre.trading.bot.batch.PositionFlux;
-import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
-import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
-import tech.cassandre.trading.bot.test.batch.PositionFluxTest;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 
+import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
-public class PositionFluxTestMock {
+public class PositionFluxTestMock extends BaseMock {
 
-    @Autowired
-    private PositionRepository positionRepository;
+    @Override
+    public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() throws IOException {
+        org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
 
-    @Autowired
-    private TradeRepository tradeRepository;
+        // No trades or orders returned - they will be directly emitted by the test.
+        given(mock.getTradeHistory(any())).willReturn(new UserTrades(Collections.emptyList(), SortByTimestamp));
+        given(mock.getOpenOrders()).willReturn(new OpenOrders(Collections.emptyList()));
 
-    @Bean
-    @Primary
-    public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
-    }
+        // Position 1.
+        // Opening order creation result.
+        MarketOrder m = new MarketOrder(Order.OrderType.BID, new BigDecimal("10"), xChangeCP1);
+        given(mock.placeMarketOrder(m)).willReturn("ORDER00010");
+        // Closing order creation result.
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), xChangeCP1);
+        given(mock.placeMarketOrder(m)).willReturn("ORDER00011");
 
-    @Bean
-    @Primary
-    public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService(), tradeRepository);
-    }
+        // Position 2.
+        // Opening order creation result.
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), xChangeCP2);
+        given(mock.placeMarketOrder(m)).willReturn("ORDER00020");
+        // Closing order creation result.
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("0.0002"), xChangeCP2);
+        given(mock.placeMarketOrder(m)).willReturn("ORDER00021");
 
-    @Bean
-    @Primary
-    public PositionFlux positionFlux() {
-        return new PositionFlux(positionService(), positionRepository);
-    }
-
-    @Bean
-    @Primary
-    public PositionService positionService() {
-        return new PositionServiceImplementation(tradeService(), positionRepository);
-    }
-
-    @Bean
-    @Primary
-    public MarketService marketService() {
-        return mock(MarketService.class);
-    }
-
-    @Bean
-    @Primary
-    public TradeService tradeService() {
-        TradeService service = mock(TradeService.class);
-
-        // Position 1 creation reply (ORDER00010) - used for max and min gain test.
-        given(service.createBuyMarketOrder(PositionFluxTest.cp1, new BigDecimal("10")))
-                .willReturn(new OrderCreationResultDTO("ORDER00010"));
-        // Position 1 closed reply (ORDER00011) - used for max and min gain test.
-        given(service.createSellMarketOrder(PositionFluxTest.cp1, new BigDecimal("10")))
-                .willReturn(new OrderCreationResultDTO("ORDER00011"));
-
-        // Position 1 creation reply (order ORDER00010).
-        given(service.createBuyMarketOrder(PositionFluxTest.cp2, new BigDecimal("0.0001")))
-                .willReturn(new OrderCreationResultDTO("ORDER00010"));
-        // Position 2 creation reply (order ORDER00020).
-        given(service.createBuyMarketOrder(PositionFluxTest.cp2, new BigDecimal("0.0002")))
-                .willReturn(new OrderCreationResultDTO("ORDER00020"));
-
-
-        return service;
+        return mock;
     }
 
 }

@@ -5,7 +5,7 @@ import tech.cassandre.trading.bot.dto.user.UserDTO;
 import java.util.Optional;
 
 /**
- * Service giving information about user, accounts and balances.
+ * Service getting information about user, accounts and balances.
  */
 public interface UserService {
 

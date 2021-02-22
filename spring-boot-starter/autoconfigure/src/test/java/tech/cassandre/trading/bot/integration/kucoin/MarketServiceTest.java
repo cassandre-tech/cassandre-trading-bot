@@ -1,24 +1,27 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.service.MarketService;
 
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
@@ -48,47 +51,47 @@ public class MarketServiceTest {
     private MarketService marketService;
 
     @Test
+    @CaseId(85)
+    @Tag("integration")
     @DisplayName("Check get ticker")
     public void checkGetTicker() {
-        CurrencyPairDTO cp = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
-        Optional<TickerDTO> result = marketService.getTicker(cp);
-        assertTrue(result.isPresent());
-        result.ifPresent(t -> {
-            // currencyPair.
-            assertNotNull(t.getCurrencyPair());
-            assertEquals(t.getCurrencyPair(), cp);
-            // open.
-            assertNull(t.getOpen());
-            // last.
-            assertNotNull(t.getLast());
-            assertTrue(t.getLast().compareTo(BigDecimal.ZERO) > 0);
-            // bid.
-            assertNotNull(t.getBid());
-            assertTrue(t.getBid().compareTo(BigDecimal.ZERO) > 0);
-            // ask.
-            assertNotNull(t.getAsk());
-            assertTrue(t.getAsk().compareTo(BigDecimal.ZERO) > 0);
-            // high.
-            assertNotNull(t.getHigh());
-            assertTrue(t.getHigh().compareTo(BigDecimal.ZERO) > 0);
-            // low.
-            assertNotNull(t.getLow());
-            assertTrue(t.getLow().compareTo(BigDecimal.ZERO) > 0);
-            // volume.
-            assertNotNull(t.getVolume());
-            assertTrue(t.getVolume().compareTo(BigDecimal.ZERO) > 0);
-            // quote volume.
-            assertNotNull(t.getQuoteVolume());
-            assertTrue(t.getQuoteVolume().compareTo(BigDecimal.ZERO) > 0);
-            // timestamp.
-            assertNotNull(t.getTimestamp());
-            assertTrue(t.getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
-            assertTrue(t.getTimestamp().isBefore(ZonedDateTime.now().plusMinutes(1)));
-            // bidSize.
-            assertNull(t.getBidSize());
-            // askSize.
-            assertNull(t.getAskSize());
-        });
+        CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+        Optional<TickerDTO> t = marketService.getTicker(cp);
+        assertTrue(t.isPresent());
+        // currencyPair.
+        assertNotNull(t.get().getCurrencyPair());
+        assertEquals(t.get().getCurrencyPair(), cp);
+        // open.
+        assertNull(t.get().getOpen());
+        // last.
+        assertNotNull(t.get().getLast());
+        assertTrue(t.get().getLast().compareTo(ZERO) > 0);
+        // bid.
+        assertNotNull(t.get().getBid());
+        assertTrue(t.get().getBid().compareTo(ZERO) > 0);
+        // ask.
+        assertNotNull(t.get().getAsk());
+        assertTrue(t.get().getAsk().compareTo(ZERO) > 0);
+        // high.
+        assertNotNull(t.get().getHigh());
+        assertTrue(t.get().getHigh().compareTo(ZERO) > 0);
+        // low.
+        assertNotNull(t.get().getLow());
+        assertTrue(t.get().getLow().compareTo(ZERO) > 0);
+        // volume.
+        assertNotNull(t.get().getVolume());
+        assertTrue(t.get().getVolume().compareTo(ZERO) > 0);
+        // quote volume.
+        assertNotNull(t.get().getQuoteVolume());
+        assertTrue(t.get().getQuoteVolume().compareTo(ZERO) > 0);
+        // bidSize.
+        assertNull(t.get().getBidSize());
+        // askSize.
+        assertNull(t.get().getAskSize());
+        // timestamp.
+        assertNotNull(t.get().getTimestamp());
+        assertTrue(t.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
+        assertTrue(t.get().getTimestamp().isBefore(ZonedDateTime.now().plusMinutes(1)));
     }
 
 }

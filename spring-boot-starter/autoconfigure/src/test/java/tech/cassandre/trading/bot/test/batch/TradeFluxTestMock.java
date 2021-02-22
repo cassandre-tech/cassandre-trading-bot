@@ -1,167 +1,250 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.dto.trade.UserTrades;
+import org.knowm.xchange.service.trade.TradeService;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import tech.cassandre.trading.bot.batch.AccountFlux;
-import tech.cassandre.trading.bot.batch.OrderFlux;
-import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.dto.user.BalanceDTO;
-import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.UserService;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 
+import static org.knowm.xchange.currency.Currency.BTC;
+import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
-public class TradeFluxTestMock {
+public class TradeFluxTestMock extends BaseMock {
 
-    private final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, USDT);
+    @Override
+    public TradeService getXChangeTradeServiceMock() throws IOException {
+        org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
 
-    @Autowired
-    private TradeRepository tradeRepository;
+        given(mock.getOpenOrders()).willReturn(new OpenOrders(Collections.emptyList()));
+        // =============================================================================================================
+        // Trade mock.
 
-    @Bean
-    @Primary
-    public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
+        given(mock.getTradeHistory(any())).willReturn(
+                // =====================================================================================================
+                // Reply 01.
+                // - TRADE_0000001.
+                // - TRADE_0000002.
+                getReply01(),
+                // =====================================================================================================
+                // Reply 02.
+                // - TRADE_0000001 : no changes.
+                // - TRADE_0000002 : no changes.
+                // - TRADE_0000003 : no changes.
+                // - TRADE_0000004 : new.
+                // - TRADE_0000005 : new.
+                getReply02(),
+                // =====================================================================================================
+                // Reply 03.
+                // - TRADE_0000006 : new.
+                // - TRADE_0000002 : no change.
+                // - TRADE_0000003 : amount changed.
+                // - TRADE_0000008 : new.
+                getReply03()
+        );
+
+        return mock;
     }
 
-    @Bean
-    @Primary
-    public AccountFlux accountFlux() {
-        return new AccountFlux(userService());
+    /**
+     * Reply 01.
+     * - TRADE_0000001.
+     * - TRADE_0000002.
+     *
+     * @return reply
+     */
+    private UserTrades getReply01() {
+        UserTrade trade0000001 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.100001"),             // Original amount.
+                xChangeCP1,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createDate(1).toInstant()),   // Date.
+                "TRADE_0000001",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP1.counter,                         // fee currency.
+                "Ref TRADE_0000001"
+        );
+
+        UserTrade trade0000002 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.100001"),             // Original amount.
+                xChangeCP1,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
+                "TRADE_0000002",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP1.counter,                         // fee currency.
+                "Ref TRADE_0000002"
+        );
+
+        return new UserTrades(Arrays.asList(trade0000001, trade0000002), SortByTimestamp);
     }
 
-    @Bean
-    @Primary
-    public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService());
+    /**
+     * Reply 02.
+     * - TRADE_0000001 : no changes.
+     * - TRADE_0000002 : no changes.
+     * - TRADE_0000003 : no changes.
+     * - TRADE_0000004 : new.
+     * - TRADE_0000005 : new.
+     *
+     * @return reply
+     */
+    private UserTrades getReply02() {
+        UserTrade trade0000001 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.100001"),             // Original amount.
+                xChangeCP1,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createDate(1).toInstant()),   // Date.
+                "TRADE_0000001",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP1.counter,                         // fee currency.
+                "Ref TRADE_0000001"
+        );
+
+        UserTrade trade0000002 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.100001"),             // Original amount.
+                xChangeCP1,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
+                "TRADE_0000002",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP1.counter,                         // fee currency.
+                "Ref TRADE_0000002"
+        );
+
+        UserTrade trade0000003 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.100001"),             // Original amount.
+                xChangeCP2,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
+                "TRADE_0000003",                         // Trade id.
+                "ORDER_0000002",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP2.base,                            // fee currency.
+                "Ref TRADE_0000003"
+        );
+
+        UserTrade trade0000004 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1"),                    // Original amount.
+                xChangeCP1,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
+                "TRADE_0000004",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP1.counter,                         // fee currency.
+                "Ref TRADE_0000004"
+        );
+
+        UserTrade trade0000005 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1"),                    // Original amount.
+                xChangeCP1,                                 // Instrument.
+                new BigDecimal("2.200002"),              // Price.
+                Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
+                "TRADE_0000005",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP1.counter,                         // fee currency.
+                "Ref TRADE_0000005"
+        );
+
+        return new UserTrades(Arrays.asList(trade0000001,
+                trade0000002,
+                trade0000003,
+                trade0000004,
+                trade0000005),
+                SortByTimestamp);
     }
 
-    @Bean
-    @Primary
-    public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService(), tradeRepository);
+    /**
+     * Reply 03.
+     * - TRADE_0000006 : new.
+     * - TRADE_0000002 : no change.
+     * - TRADE_0000003 : amount changed.
+     * - TRADE_0000008 : new.
+     *
+     * @return reply
+     */
+    private UserTrades getReply03() {
+        UserTrade trade0000006 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.100001"),             // Original amount.
+                xChangeCP2,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createZonedDateTime("01-08-2018").toInstant()),   // Date.
+                "TRADE_0000006",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP2.counter,                         // fee currency.
+                "Ref TRADE_0000006"
+        );
+
+        UserTrade trade0000002 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.100001"),             // Original amount.
+                xChangeCP1,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
+                "TRADE_0000002",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP1.counter,                         // fee currency.
+                "Ref TRADE_0000002"
+        );
+
+        UserTrade trade0000003 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.110001"),             // Original amount.
+                xChangeCP2,                                 // Instrument.
+                new BigDecimal("2.220002"),             // Price.
+                Date.from(createZonedDateTime("01-09-2021").toInstant()),   // Date.
+                "TRADE_0000003",                         // Trade id.
+                "ORDER_0000002",                     // Order id.
+                new BigDecimal("3.330003"),             // fee.
+                BTC,                                       // fee currency.
+                "Ref TRADE_0000003"
+        );
+
+        UserTrade trade0000008 = new UserTrade(
+                Order.OrderType.BID,                        // Order type.
+                new BigDecimal("1.100001"),             // Original amount.
+                xChangeCP1,                                 // Instrument.
+                new BigDecimal("2.200002"),             // Price.
+                Date.from(createZonedDateTime("02-09-2020").toInstant()),   // Date.
+                "TRADE_0000008",                         // Trade id.
+                "ORDER_0000001",                     // Order id.
+                new BigDecimal("3.300003"),             // fee.
+                xChangeCP1.counter,                         // fee currency.
+                "Ref TRADE_0000008"
+        );
+
+        return new UserTrades(Arrays.asList(trade0000006,
+                trade0000002,
+                trade0000003,
+                trade0000008),
+                SortByTimestamp);
     }
 
-    @SuppressWarnings("unchecked")
-    @Bean
-    @Primary
-    public UserService userService() {
-        Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
-        final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
-        UserService userService = mock(UserService.class);
-        // Returns three updates.
-
-        // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(BTC, account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().id("01").name("trade").balances(balances).create();
-        accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().setAccounts(accounts).create();
-        balances.clear();
-        accounts.clear();
-
-        // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).create();
-        balances.put(BTC, account02Balance1);
-        AccountDTO account02 = AccountDTO.builder().id("02").name("trade").balances(balances).create();
-        accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().setAccounts(accounts).create();
-        balances.clear();
-        accounts.clear();
-
-        // Account 03.
-        balances.put(BTC, BalanceDTO.builder().available(new BigDecimal("2")).create());
-        balances.put(ETH, BalanceDTO.builder().available(new BigDecimal("10")).create());
-        balances.put(USDT, BalanceDTO.builder().available(new BigDecimal("2000")).create());
-        AccountDTO account03 = AccountDTO.builder().id("03").name("trade").balances(balances).create();
-        accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().setAccounts(accounts).create();
-        balances.clear();
-        accounts.clear();
-
-        // Mock replies.
-        given(userService.getUser()).willReturn(Optional.of(user01), Optional.of(user02), Optional.of(user03));
-        return userService;
-    }
-
-    @Bean
-    @Primary
-    public MarketService marketService() {
-        MarketService service = mock(MarketService.class);
-        given(service.getTicker(any())).willReturn(Optional.empty());
-        return service;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Bean
-    @Primary
-    public TradeService tradeService() {
-        // Creates the mock.
-        TradeService tradeService = mock(TradeService.class);
-
-        // =========================================================================================================
-        // First reply : 2 trades.
-        TradeDTO trade01 = TradeDTO.builder().id("0000001").type(BID).currencyPair(cp1).create();
-        TradeDTO trade02 = TradeDTO.builder().id("0000002").type(BID).currencyPair(cp1).create();
-
-        Set<TradeDTO> reply01 = new LinkedHashSet<>();
-        reply01.add(trade01);
-        reply01.add(trade02);
-
-        // =========================================================================================================
-        // First reply : 3 trades.
-        TradeDTO trade03 = TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create();
-        TradeDTO trade04 = TradeDTO.builder().id("0000004").type(BID).currencyPair(cp1).create();
-        TradeDTO trade05 = TradeDTO.builder().id("0000005").type(BID).currencyPair(cp1).create();
-
-        Set<TradeDTO> reply02 = new LinkedHashSet<>();
-        reply02.add(trade03);
-        reply02.add(trade04);
-        reply02.add(trade05);
-
-        // =========================================================================================================
-        // First reply : 3 trades - Trade07 is again trade 0000003.
-        TradeDTO trade06 = TradeDTO.builder().id("0000006").type(BID).currencyPair(cp1).create();
-        TradeDTO trade07 = TradeDTO.builder().id("0000003").type(BID).currencyPair(cp1).create();
-        TradeDTO trade08 = TradeDTO.builder().id("0000008").type(BID).currencyPair(cp1).create();
-
-        Set<TradeDTO> reply03 = new LinkedHashSet<>();
-        reply02.add(trade06);
-        reply02.add(trade07);
-        reply02.add(trade08);
-
-        // =========================================================================================================
-        // Creating the mock.
-        given(tradeService.getTrades())
-                .willReturn(new LinkedHashSet<>(),  // Reply empty for data restore.
-                        reply01,
-                        new LinkedHashSet<>(),
-                        reply02,
-                        reply03);
-        return tradeService;
-    }
 }
