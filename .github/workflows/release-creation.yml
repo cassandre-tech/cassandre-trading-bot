@@ -44,7 +44,7 @@ jobs:
           # GPG.
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
+          mvn deploy -DskipTests=true -B -Dgpg.passphrase=${GPG_PASSPHRASE}
           echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
 
       # ================================================================================================================
