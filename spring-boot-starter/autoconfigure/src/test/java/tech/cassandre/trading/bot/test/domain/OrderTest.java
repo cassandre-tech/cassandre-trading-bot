@@ -158,7 +158,6 @@ public class OrderTest extends BaseTest {
         // =============================================================================================================
         // Loading strategy.
         StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("001").build();
-        StrategyDTO wrongStrategyDTO = StrategyDTO.builder().id(2L).strategyId("002").build();
 
         // =============================================================================================================
         // Add an order and check that it's correctly saved in database.
@@ -235,7 +234,7 @@ public class OrderTest extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("BACKUP_ORDER_03")
                 .type(ASK)
-                .strategy(wrongStrategyDTO)
+                .strategy(strategyDTO)
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
@@ -273,7 +272,7 @@ public class OrderTest extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("BACKUP_ORDER_03")
                 .type(ASK)
-                .strategy(wrongStrategyDTO)
+                .strategy(strategyDTO)
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("1.00003", cp1.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))

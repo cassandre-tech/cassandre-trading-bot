@@ -92,7 +92,6 @@ public interface OrderMapper {
     @Mapping(target = "updatedOn", ignore = true)
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
 
-    @Mapping(target = "strategy", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
     @Mapping(target = "trades", ignore = true)
