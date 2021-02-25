@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.6</version>
         </dependency>
 
         <!-- Ta4j -->
@@ -128,19 +128,19 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.6</version>
             <scope>test</scope>
         </dependency>
         <!-- Tests for Coinbase -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbase</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.6</version>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbasepro</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.6</version>
         </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->

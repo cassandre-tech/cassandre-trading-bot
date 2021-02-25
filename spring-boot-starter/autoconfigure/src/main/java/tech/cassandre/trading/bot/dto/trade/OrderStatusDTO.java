@@ -41,6 +41,12 @@ public enum OrderStatusDTO {
     /** Order has expired it's time to live or trading session and been removed from order book. */
     EXPIRED,
 
+    /** Order is open and waiting to be filled. */
+    OPEN,
+
+    /** Order has been either filled or cancelled. */
+    CLOSED,
+
     /** The exchange returned a state which is not in the exchange's API documentation. The state of the order cannot be confirmed. */
     UNKNOWN;
 
