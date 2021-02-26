@@ -1,7 +1,8 @@
-package tech.cassandre.trading.bot.integration.kucoin;
+package tech.cassandre.trading.bot.integration.gemini;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,13 +37,13 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
+        "cassandre.trading.bot.exchange.name=${GEMINI_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
-        "cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
-        "cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
-        "cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",
-        "cassandre.trading.bot.exchange.secret=${KUCOIN_SECRET}",
+        "cassandre.trading.bot.exchange.username=${GEMINI_USERNAME}",
+        "cassandre.trading.bot.exchange.passphrase=${GEMINI_PASSPHRASE}",
+        "cassandre.trading.bot.exchange.key=${GEMINI_KEY}",
+        "cassandre.trading.bot.exchange.secret=${GEMINI_SECRET}",
         "cassandre.trading.bot.exchange.rates.account=100",
         "cassandre.trading.bot.exchange.rates.ticker=101",
         "cassandre.trading.bot.exchange.rates.trade=102",
@@ -53,7 +54,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
         "testableStrategy.enabled=true",
         "invalidStrategy.enabled=false"
 })
-@DisplayName("Kucoin - Trade service")
+@DisplayName("Gemini - Trade service")
 public class TradeServiceTest extends BaseTest {
 
     @Autowired
@@ -71,6 +72,7 @@ public class TradeServiceTest extends BaseTest {
     @CaseId(86)
     @Tag("integration")
     @DisplayName("Check creates a buy/sell market order")
+    @Disabled("Gemini doesn't support market order")
     public void checkCreateBuySellMarketOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
@@ -78,6 +80,7 @@ public class TradeServiceTest extends BaseTest {
         // Making a buy market order with a size below the minimum requirement. Testing error management.
         final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
         assertFalse(result1.isSuccessful());
+        System.out.println(result1);
         assertNull(result1.getOrder().getOrderId());
         assertEquals("TradeService - Error calling createBuyMarketOrder : Order size below the minimum requirement.", result1.getErrorMessage());
         assertNotNull(result1.getException());
@@ -100,6 +103,7 @@ public class TradeServiceTest extends BaseTest {
     @CaseId(87)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
+    @Disabled("Gemini doesn't support market order")
     public void checkCreateBuyLimitOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
@@ -145,6 +149,7 @@ public class TradeServiceTest extends BaseTest {
     @CaseId(88)
     @Tag("integration")
     @DisplayName("Check cancel an order")
+    @Disabled("Gemini doesn't support market order")
     public void checkCancelOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
@@ -169,6 +174,7 @@ public class TradeServiceTest extends BaseTest {
     @CaseId(89)
     @Tag("integration")
     @DisplayName("Check get trades")
+    @Disabled("Gemini doesn't support market order")
     public void checkGetTrades() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.integration.kucoin;
+package tech.cassandre.trading.bot.integration.gemini;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -17,19 +17,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-		"cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
+		"cassandre.trading.bot.exchange.name=${GEMINI_NAME}",
 		"cassandre.trading.bot.exchange.modes.sandbox=true",
 		"cassandre.trading.bot.exchange.modes.dry=false",
-		"cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
-		"cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
-		"cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",
-		"cassandre.trading.bot.exchange.secret=${KUCOIN_SECRET}",
+		"cassandre.trading.bot.exchange.username=${GEMINI_USERNAME}",
+		"cassandre.trading.bot.exchange.passphrase=${GEMINI_PASSPHRASE}",
+		"cassandre.trading.bot.exchange.key=${GEMINI_KEY}",
+		"cassandre.trading.bot.exchange.secret=${GEMINI_SECRET}",
 		"cassandre.trading.bot.exchange.rates.account=100",
 		"cassandre.trading.bot.exchange.rates.ticker=101",
 		"cassandre.trading.bot.exchange.rates.trade=102",
@@ -40,7 +39,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 		"testableStrategy.enabled=true",
 		"invalidStrategy.enabled=false"
 })
-@DisplayName("Kucoin - Exchange service")
+@DisplayName("Gemini - Exchange service")
 public class ExchangeServiceTest {
 
 	@Autowired
@@ -52,7 +51,7 @@ public class ExchangeServiceTest {
 	@DisplayName("Check get available currency pairs")
 	public void checkGetAvailableCurrencyPairs() {
 		// Expected values.
-		final int expectedMinimumNumberOfAvailableCurrencyPairs = 4;
+		final int expectedMinimumNumberOfAvailableCurrencyPairs = 50;
 
 		// =============================================================================================================
 		// Retrieve the available currency pairs.
@@ -62,12 +61,10 @@ public class ExchangeServiceTest {
 		// Tests results.
 		assertEquals(expectedMinimumNumberOfAvailableCurrencyPairs, currencyPairs.size());
 
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("KCS", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(KCS, USDT)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(ETH, USDT)));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO("BTC", "USDT")));
-		assertTrue(currencyPairs.contains(new CurrencyPairDTO(BTC, USDT)));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "USD")));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO(ETH, USD)));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO("BTC", "USD")));
+		assertTrue(currencyPairs.contains(new CurrencyPairDTO(BTC, USD)));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "BTC")));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO(ETH, BTC)));
 	}

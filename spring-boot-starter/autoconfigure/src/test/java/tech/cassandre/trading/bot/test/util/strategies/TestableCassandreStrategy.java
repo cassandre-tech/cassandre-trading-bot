@@ -73,9 +73,14 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-        return accounts.stream()
-                .filter(a -> "trade".equals(a.getName()))
-                .findFirst();
+        if (accounts.size() == 1) {
+            // Used for Gemini intergation tests.
+            return accounts.stream().findAny();
+        } else {
+            return accounts.stream()
+                    .filter(a -> "trade".equals(a.getName()))
+                    .findFirst();
+        }
     }
 
     @Override

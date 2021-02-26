@@ -142,6 +142,12 @@
             <artifactId>xchange-coinbasepro</artifactId>
             <version>5.0.6</version>
         </dependency>
+        <!-- Tests for Gemini -->
+        <dependency>
+            <groupId>org.knowm.xchange</groupId>
+            <artifactId>xchange-gemini</artifactId>
+            <version>5.0.6</version>
+        </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->
 
