@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ScheduleAutoConfiguration {
 
     /** Indicate that the batch should be running. */
-    private AtomicBoolean enabled = new AtomicBoolean(true);
+    private final AtomicBoolean enabled = new AtomicBoolean(true);
 
     /** Account flux. */
     private final AccountFlux accountFlux;

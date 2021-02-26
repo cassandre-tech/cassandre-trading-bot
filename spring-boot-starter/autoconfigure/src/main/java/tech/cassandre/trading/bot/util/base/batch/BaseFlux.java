@@ -27,7 +27,7 @@ public abstract class BaseFlux<T> extends Base {
      */
     public BaseFlux() {
         Flux<T> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
-        flux = fluxTemp.publishOn(Schedulers.elastic());
+        flux = fluxTemp.publishOn(Schedulers.boundedElastic());
     }
 
     /**
