@@ -19,7 +19,7 @@ public class TradeDTOTest {
 
     @Test
     @CaseId(54)
-    @DisplayName("Check equalTo()")
+    @DisplayName("Check equals()")
     public void checkEqualToForTrades() {
         // Test that only id is important when testing equality.
         TradeDTO t1 = TradeDTO.builder()

@@ -15,7 +15,7 @@ public class EqualsBuilderTest {
 
     @Test
     @CaseId(41)
-    @DisplayName("Check strings")
+    @DisplayName("Check equals on strings")
     public void checkStringEquals() {
         boolean result;
 
@@ -60,7 +60,7 @@ public class EqualsBuilderTest {
 
     @Test
     @CaseId(42)
-    @DisplayName("Check BigDecimal")
+    @DisplayName("Check equals on BigDecimal")
     public void checkBigDecimalEquals() {
         boolean result;
 
