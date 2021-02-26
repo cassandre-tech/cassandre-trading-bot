@@ -48,6 +48,13 @@ jobs:
           echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
 
       # ================================================================================================================
+      - name: Build Changelog
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v1.5.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ================================================================================================================
       - name: Create the release
         id: create_release
         uses: actions/create-release@v1
@@ -56,6 +63,7 @@ jobs:
         with:
           tag_name: ${{ steps.package.outputs.version }}
           release_name: ${{ steps.package.outputs.version }}
+          body: ${{steps.build_changelog.outputs.changelog}}
           draft: false
           prerelease: false
 
