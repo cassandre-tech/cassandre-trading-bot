@@ -142,10 +142,10 @@ public class TickerFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("70").compareTo(t.getLast()));
 
         // =============================================================================================================
-        // Check data we have in strategy.
+        // Check data we have in the strategy.
         assertEquals(2, strategy.getLastTickers().size());
         // For CP1.
-        final Optional<TickerDTO> lastTickerForCP1 = strategy.getLastTickerByCurrencyPair("ETH/BTC");
+        final Optional<TickerDTO> lastTickerForCP1 = strategy.getLastTickerByCurrencyPair(cp1);
         assertTrue(lastTickerForCP1.isPresent());
         assertEquals(cp1, lastTickerForCP1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("6").compareTo(lastTickerForCP1.get().getLast()));
