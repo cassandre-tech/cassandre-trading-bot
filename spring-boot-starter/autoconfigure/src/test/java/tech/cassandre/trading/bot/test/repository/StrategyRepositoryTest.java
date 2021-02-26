@@ -29,12 +29,13 @@ public class StrategyRepositoryTest {
     @CaseId(62)
     @DisplayName("Check imported data")
     public void checkImportedOrders() {
-        // Testing a non existing strategy.
-        Optional<Strategy> strategy = strategyRepository.findByStrategyId("NON_EXISTING");
-        assertFalse(strategy.isPresent());
         // Testing an existing strategy.
-        strategy = strategyRepository.findByStrategyId("01");
+        Optional<Strategy> strategy = strategyRepository.findByStrategyId("01");
         assertTrue(strategy.isPresent());
+
+        // Testing a non existing strategy.
+        strategy = strategyRepository.findByStrategyId("NON_EXISTING");
+        assertFalse(strategy.isPresent());
     }
 
 }
