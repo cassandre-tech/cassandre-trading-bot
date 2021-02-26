@@ -284,7 +284,7 @@ public class PositionTest extends BaseTest {
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.2")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.2")).build());
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
         // =============================================================================================================
@@ -373,7 +373,7 @@ public class PositionTest extends BaseTest {
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createDate(1)).last(new BigDecimal("0.01")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.01")).build());
         await().untilAsserted(() -> assertEquals(1, strategy.getTickersUpdateReceived().size()));
 
         // =============================================================================================================

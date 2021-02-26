@@ -174,10 +174,19 @@ public class BaseTest {
      * @param day day
      * @return date
      */
-    protected static ZonedDateTime createDate(final int day) {
-        return ZonedDateTime.of(2020, 1, day, 0, 0, 0, 0, ZoneId.systemDefault());
+    protected static Date createDate(final int day) {
+        return Date.from(ZonedDateTime.of(2020, 1, day, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant());
     }
 
+    /**
+     * Generate a date in 2020 with a day.
+     *
+     * @param day day
+     * @return date
+     */
+    protected static ZonedDateTime createZonedDateTime(final int day) {
+        return ZonedDateTime.of(2020, 1, day, 0, 0, 0, 0, ZoneId.systemDefault());
+    }
 
     /**
      * Generates a ZonedDateTime.

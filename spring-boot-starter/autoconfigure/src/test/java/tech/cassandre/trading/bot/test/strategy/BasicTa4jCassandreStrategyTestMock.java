@@ -142,7 +142,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         // Returns three values.
         given(service.getTicker(cp3)).willReturn(
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(1))
+                        .timestamp(BaseTest.createZonedDateTime(1))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
@@ -150,7 +150,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1060))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(2))
+                        .timestamp(BaseTest.createZonedDateTime(2))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
@@ -158,7 +158,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1060))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(3))
+                        .timestamp(BaseTest.createZonedDateTime(3))
                         .open(new BigDecimal(110))
                         .high(new BigDecimal(110))
                         .low(new BigDecimal(110))
@@ -166,7 +166,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1070))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(4))
+                        .timestamp(BaseTest.createZonedDateTime(4))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
@@ -174,28 +174,28 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1060))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(5))
+                        .timestamp(BaseTest.createZonedDateTime(5))
                         .open(new BigDecimal(140))
                         .high(new BigDecimal(140))
                         .low(new BigDecimal(140))
                         .last(new BigDecimal(140))
                         .volume(new BigDecimal(1080)).build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(6))
+                        .timestamp(BaseTest.createZonedDateTime(6))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
                         .last(new BigDecimal(100))
                         .volume(new BigDecimal(1060)).build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(7))
+                        .timestamp(BaseTest.createZonedDateTime(7))
                         .open(new BigDecimal(119))
                         .high(new BigDecimal(119))
                         .low(new BigDecimal(119))
                         .last(new BigDecimal(119))
                         .volume(new BigDecimal(1090)).build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(8))
+                        .timestamp(BaseTest.createZonedDateTime(8))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
@@ -203,7 +203,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1060))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(9))
+                        .timestamp(BaseTest.createZonedDateTime(9))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
@@ -211,7 +211,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1100))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(10))
+                        .timestamp(BaseTest.createZonedDateTime(10))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
@@ -219,7 +219,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1060))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(11))
+                        .timestamp(BaseTest.createZonedDateTime(11))
                         .open(new BigDecimal(110))
                         .high(new BigDecimal(110))
                         .low(new BigDecimal(110))
@@ -227,7 +227,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1100))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(12))
+                        .timestamp(BaseTest.createZonedDateTime(12))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
@@ -235,14 +235,14 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1060))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(13))
+                        .timestamp(BaseTest.createZonedDateTime(13))
                         .open(new BigDecimal(120))
                         .high(new BigDecimal(120))
                         .low(new BigDecimal(120))
                         .last(new BigDecimal(120))
                         .volume(new BigDecimal(1120)).build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(14))
+                        .timestamp(BaseTest.createZonedDateTime(14))
                         .open(new BigDecimal(100))
                         .high(new BigDecimal(100))
                         .low(new BigDecimal(100))
@@ -250,7 +250,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .volume(new BigDecimal(1060))
                         .build()),
                 Optional.of(TickerDTO.builder().currencyPair(cp3)
-                        .timestamp(BaseTest.createDate(15))
+                        .timestamp(BaseTest.createZonedDateTime(15))
                         .open(new BigDecimal(130))
                         .high(new BigDecimal(130))
                         .low(new BigDecimal(130))

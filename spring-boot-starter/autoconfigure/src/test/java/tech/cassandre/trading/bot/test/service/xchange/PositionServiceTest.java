@@ -54,12 +54,13 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.STOPPED;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Service - XChange - Position service")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
-        @Property(key = "TEST_NAME", value = "Configuration parameters - Valid configuration")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(PositionServiceTestMock.class)
@@ -279,7 +280,6 @@ public class PositionServiceTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));
 
         // An update arrives and changes the status order of position 1.
-        final long positionUpdateCount2 = strategy.getPositionsUpdateReceived().size();
         OrderDTO closingOrder01 = OrderDTO.builder()
                 .orderId("CLOSING_ORDER_01")
                 .type(ASK)
@@ -451,7 +451,11 @@ public class PositionServiceTest extends BaseTest {
                 .build();
         orderFlux.emitValue(closingOrder01);
         await().untilAsserted(() -> assertEquals(CLOSING_FAILURE, getPositionDTO(position1Id).getStatus()));
-        assertEquals(LONG, positionService.getPositionById(position1Id).get().getType());
+
+        // We check the type.
+        final Optional<PositionDTO> p = positionService.getPositionById(position1Id);
+        assertTrue(p.isPresent());
+        assertEquals(LONG, p.get().getType());
     }
 
     @Test
@@ -588,24 +592,6 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(BTC, gain.get().getAmount().getCurrency());
         assertEquals(ZERO, gain.get().getFees().getValue());
         assertEquals(BTC, gain.get().getFees().getCurrency());
-
-        // A third ticker arrives with a gain of 100% should close the order.
-        // TODO Refactor with the new mocks.
-//        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.5")).build());
-//        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-//        orderFlux.update();
-//        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-//        assertEquals(CLOSING, getPositionDTO(position1Id).getStatus());
-//
-//        // The close trade arrives, change the status and set the price.
-//        tradeFlux.emitValue(TradeDTO.builder()
-//                .tradeId("000002")
-//                .type(ASK)
-//                .orderId("ORDER00011")
-//                .currencyPair(cp1)
-//                .amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency()))
-//                .build());
-//        await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position1Id).getStatus()));
     }
 
     @Test

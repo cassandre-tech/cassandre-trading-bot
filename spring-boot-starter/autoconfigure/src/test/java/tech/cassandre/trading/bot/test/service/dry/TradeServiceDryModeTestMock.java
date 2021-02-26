@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.mock.service.dry;
+package tech.cassandre.trading.bot.test.service.dry;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

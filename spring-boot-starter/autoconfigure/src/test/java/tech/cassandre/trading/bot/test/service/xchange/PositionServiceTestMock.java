@@ -5,21 +5,16 @@ import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.service.trade.TradeService;
 import org.springframework.boot.test.context.TestConfiguration;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Set;
 
 import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
-import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
 @TestConfiguration
 public class PositionServiceTestMock extends BaseMock {
