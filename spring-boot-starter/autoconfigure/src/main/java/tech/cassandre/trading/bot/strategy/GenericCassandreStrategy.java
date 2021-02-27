@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 
 /**
  * Generic Cassandre strategy implementation.
@@ -121,6 +122,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setPositionService(final PositionService newPositionService) {
         this.positionService = newPositionService;
+        this.positionService.getPositions()
+                .stream()
+                .filter(p -> p.getStatus() != CLOSED)
+                .forEach(p -> previousPositionsStatus.put(p.getId(), p.getStatus()));
     }
 
     // =================================================================================================================
@@ -156,6 +161,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         // For every position status update.
         if (previousPositionsStatus.get(position.getId()) != position.getStatus()) {
             previousPositionsStatus.put(position.getId(), position.getStatus());
+            if (position.getStatus() == CLOSED) {
+                // As CLOSED positions cannot change anymore, we don't need to store their previous positions.
+                previousPositionsStatus.remove(position.getId());
+            }
             onPositionStatusUpdate(position);
         }
     }

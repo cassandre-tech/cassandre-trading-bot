@@ -94,6 +94,9 @@ public class BaseTest {
     /** cp3 for tests. */
     protected final CurrencyPairDTO cp3 = new CurrencyPairDTO(BTC, USDT);
 
+    /** XChange cp2 for tests. */
+    protected final CurrencyPair xChangeCP3 = new CurrencyPair(Currency.BTC, Currency.USDT);
+
     /** Ten seconds wait. */
     protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
