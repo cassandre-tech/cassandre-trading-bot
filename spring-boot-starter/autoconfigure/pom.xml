@@ -23,11 +23,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>6.1.7.Final</version>
-        </dependency>
-        <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
         </dependency>
@@ -136,17 +131,20 @@
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbase</artifactId>
             <version>5.0.6</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbasepro</artifactId>
             <version>5.0.6</version>
+            <scope>test</scope>
         </dependency>
         <!-- Tests for Gemini -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-gemini</artifactId>
             <version>5.0.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->

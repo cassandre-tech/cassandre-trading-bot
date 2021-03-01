@@ -23,25 +23,25 @@ public class BalanceDTO {
     /** Currency. */
     CurrencyDTO currency;
 
-    /** Returns the total amount of the <code>currency</code> in this balance. */
+    /** Returns the total amount of the <code>CurrencyDTO</code> in this balance. */
     BigDecimal total;
 
-    /** Returns the amount of the <code>currency</code> in this balance that is available to trade. */
+    /** Returns the amount of the <code>CurrencyDTO</code> in this balance that is available to trade. */
     BigDecimal available;
 
-    /** Returns the frozen amount of the <code>currency</code> in this balance that is locked in trading. */
+    /** Returns the frozen amount of the <code>CurrencyDTO</code> in this balance that is locked in trading. */
     BigDecimal frozen;
 
-    /** Returns the loaned amount of the total <code>currency</code> in this balance that will be returned. */
+    /** Returns the loaned amount of the total <code>CurrencyDTO</code> in this balance that will be returned. */
     BigDecimal loaned;
 
-    /** Returns the borrowed amount of the available <code>currency</code> in this balance that must be repaid. */
+    /** Returns the borrowed amount of the available <code>CurrencyDTO</code> in this balance that must be repaid. */
     BigDecimal borrowed;
 
-    /** Returns the amount of the <code>currency</code> in this balance that is locked in withdrawal. */
+    /** Returns the amount of the <code>CurrencyDTO</code> in this balance that is locked in withdrawal. */
     BigDecimal withdrawing;
 
-    /** Returns the amount of the <code>currency</code> in this balance that is locked in the deposit. */
+    /** Returns the amount of the <code>CurrencyDTO</code> in this balance that is locked in the deposit. */
     BigDecimal depositing;
 
     @Override
