@@ -100,6 +100,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             return result;
         } catch (Exception e) {
             logger.error("TradeService - Error calling createBuyMarketOrder : {}", e.getMessage());
+            e.printStackTrace();
             return new OrderCreationResultDTO("TradeService - Error calling createBuyMarketOrder : " + e.getMessage(), e);
         }
     }

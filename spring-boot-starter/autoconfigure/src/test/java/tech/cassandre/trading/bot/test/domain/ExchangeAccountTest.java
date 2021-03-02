@@ -17,12 +17,12 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_ACCOUNT;
+import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Domain - ExchangeAccount - Creation")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_RATE_ACCOUNT, value = "100")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
@@ -33,7 +33,7 @@ public class ExchangeAccountTest {
 
     @Test
     @CaseId(26)
-    @DisplayName("Check exchange account from database when ")
+    @DisplayName("Check exchange account in database")
     public void checkExchangeAccountFromDatabase() {
         assertEquals(1, exchangeAccountRepository.count());
         final Optional<ExchangeAccount> ea = exchangeAccountRepository.findById(1L);
@@ -45,7 +45,6 @@ public class ExchangeAccountTest {
         final Optional<ExchangeAccount> eaBis = exchangeAccountRepository.findById(1L);
         assertTrue(eaBis.isPresent());
         assertEquals(ea.get(), eaBis.get());
-
     }
 
 }

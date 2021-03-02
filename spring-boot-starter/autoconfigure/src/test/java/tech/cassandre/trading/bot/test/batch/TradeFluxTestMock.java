@@ -70,7 +70,7 @@ public class TradeFluxTestMock extends BaseMock {
                 new BigDecimal("1.100001"),             // Original amount.
                 xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
-                Date.from(createDate(1).toInstant()),   // Date.
+                Date.from(createZonedDateTime(1).toInstant()),   // Date.
                 "TRADE_0000001",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
@@ -110,7 +110,7 @@ public class TradeFluxTestMock extends BaseMock {
                 new BigDecimal("1.100001"),             // Original amount.
                 xChangeCP1,                                 // Instrument.
                 new BigDecimal("2.200002"),             // Price.
-                Date.from(createDate(1).toInstant()),   // Date.
+                Date.from(createZonedDateTime(1).toInstant()),   // Date.
                 "TRADE_0000001",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.

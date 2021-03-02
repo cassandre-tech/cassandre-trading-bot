@@ -28,7 +28,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 /**
  * Simple strategy.
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
- * How to do it : https://trading-bot.cassandre.tech/how-tos/how-to-create-a-kucoin-sandbox-account
+ * How to do it : https://trading-bot.cassandre.tech/how-tos/how-to-create-a-kucoin-account
  */
 @CassandreStrategy(strategyName = "Simple ta4j strategy")
 public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {

@@ -97,7 +97,7 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t.getPrice());
         assertEquals(new CurrencyAmountDTO("3.300003", BTC), t.getFee());
         assertEquals("Ref TRADE_0000001", t.getUserReference());
-        assertTrue(createDate(1).isEqual(t.getTimestamp()));
+        assertTrue(createZonedDateTime(1).isEqual(t.getTimestamp()));
 
         // Check update 2.
         t = trades.next();
@@ -215,7 +215,7 @@ public class TradeFluxTest extends BaseTest {
         assertEquals(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()), t1.get().getPrice());
         assertEquals(new CurrencyAmountDTO("3.300003", BTC), t1.get().getFee());
         assertEquals("Ref TRADE_0000001", t1.get().getUserReference());
-        assertTrue(createDate(1).isEqual(t1.get().getTimestamp()));
+        assertTrue(createZonedDateTime(1).isEqual(t1.get().getTimestamp()));
 
         // Trade TRADE_0000002.
         final Optional<TradeDTO> t2 = strategy.getTradeByTradeId("TRADE_0000002");

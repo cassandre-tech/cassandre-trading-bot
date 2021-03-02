@@ -32,7 +32,7 @@ public class ExchangeAccountExistingTest {
 
     @Test
     @CaseId(27)
-    @DisplayName("Check exchange account from database when already exists")
+    @DisplayName("Check only one exchange account is in database when data already exists")
     public void checkExchangeAccountFromDatabase() {
         assertEquals(1, exchangeAccountRepository.count());
         final Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findById(1L);

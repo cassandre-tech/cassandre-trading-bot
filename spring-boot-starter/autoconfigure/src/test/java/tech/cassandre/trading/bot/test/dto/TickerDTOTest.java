@@ -21,7 +21,7 @@ public class TickerDTOTest extends BaseTest {
 
 	@Test
 	@CaseId(53)
-	@DisplayName("Check equalTo()")
+	@DisplayName("Check equals()")
 	public void checkEqualToForTickers() {
 		// Currency pairs.
 		final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);

@@ -33,7 +33,7 @@ public class StrategyExistingTest {
 
     @Test
     @CaseId(33)
-    @DisplayName("Check saved strategy in database")
+    @DisplayName("Check saved strategy in database when bot restarted")
     public void checkLoadOrderFromDatabase() {
         // Test existing strategy.
         final Optional<Strategy> strategy = strategyRepository.findByStrategyId("01");

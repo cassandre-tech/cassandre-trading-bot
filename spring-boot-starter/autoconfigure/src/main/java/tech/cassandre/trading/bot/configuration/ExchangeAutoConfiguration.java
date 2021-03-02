@@ -63,6 +63,18 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Exchange parameters. */
     private final ExchangeParameters exchangeParameters;
 
+    /** XChange. */
+    private Exchange xChangeExchange;
+
+    /** XChange account service. */
+    private AccountService xChangeAccountService;
+
+    /** XChange market data service. */
+    private MarketDataService xChangeMarketDataService;
+
+    /** XChange trade service. */
+    private org.knowm.xchange.service.trade.TradeService xChangeTradeService;
+
     /** Exchange service. */
     private ExchangeService exchangeService;
 
@@ -152,10 +164,10 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             }
 
             // Creates XChange services.
-            final Exchange xChangeExchange = ExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
-            final AccountService xChangeAccountService = xChangeExchange.getAccountService();
-            final MarketDataService xChangeMarketDataService = xChangeExchange.getMarketDataService();
-            final org.knowm.xchange.service.trade.TradeService xChangeTradeService = xChangeExchange.getTradeService();
+            xChangeExchange = ExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
+            xChangeAccountService = xChangeExchange.getAccountService();
+            xChangeMarketDataService = xChangeExchange.getMarketDataService();
+            xChangeTradeService = xChangeExchange.getTradeService();
 
             // Retrieve rates.
             long accountRate = getRateValue(exchangeParameters.getRates().getAccount());
@@ -268,6 +280,46 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
         } else {
             return Duration.parse(stringValue).toMillis();
         }
+    }
+
+    /**
+     * Getter xChangeExchange.
+     *
+     * @return xChangeExchange
+     */
+    @Bean
+    public Exchange getXChangeExchange() {
+        return xChangeExchange;
+    }
+
+    /**
+     * Getter xChangeAccountService.
+     *
+     * @return xChangeAccountService
+     */
+    @Bean
+    public AccountService getXChangeAccountService() {
+        return xChangeAccountService;
+    }
+
+    /**
+     * Getter xChangeMarketDataService.
+     *
+     * @return xChangeMarketDataService
+     */
+    @Bean
+    public MarketDataService getXChangeMarketDataService() {
+        return xChangeMarketDataService;
+    }
+
+    /**
+     * Getter xChangeTradeService.
+     *
+     * @return xChangeTradeService
+     */
+    @Bean
+    public org.knowm.xchange.service.trade.TradeService getXChangeTradeService() {
+        return xChangeTradeService;
     }
 
     /**

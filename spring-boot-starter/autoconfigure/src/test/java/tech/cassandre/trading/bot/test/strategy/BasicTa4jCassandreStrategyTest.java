@@ -52,7 +52,6 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
     @CaseId(83)
     @DisplayName("Check strategy behavior")
     public void checkStrategyBehavior() {
-
         // Check type.
         Optional<Strategy> strategyInDatabase = strategyRepository.findByStrategyId("01");
         assertTrue(strategyInDatabase.isPresent());

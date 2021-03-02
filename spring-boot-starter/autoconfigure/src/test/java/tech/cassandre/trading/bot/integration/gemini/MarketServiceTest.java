@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.integration.kucoin;
+package tech.cassandre.trading.bot.integration.gemini;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -26,13 +26,13 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
+        "cassandre.trading.bot.exchange.name=${GEMINI_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
-        "cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
-        "cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
-        "cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",
-        "cassandre.trading.bot.exchange.secret=${KUCOIN_SECRET}",
+        "cassandre.trading.bot.exchange.username=${GEMINI_USERNAME}",
+        "cassandre.trading.bot.exchange.passphrase=${GEMINI_PASSPHRASE}",
+        "cassandre.trading.bot.exchange.key=${GEMINI_KEY}",
+        "cassandre.trading.bot.exchange.secret=${GEMINI_SECRET}",
         "cassandre.trading.bot.exchange.rates.account=100",
         "cassandre.trading.bot.exchange.rates.ticker=101",
         "cassandre.trading.bot.exchange.rates.trade=102",
@@ -43,7 +43,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
         "testableStrategy.enabled=true",
         "invalidStrategy.enabled=false"
 })
-@DisplayName("Kucoin - Market service")
+@DisplayName("Gemini - Market service")
 public class MarketServiceTest {
 
     @Autowired
@@ -71,12 +71,6 @@ public class MarketServiceTest {
         // ask.
         assertNotNull(t.get().getAsk());
         assertTrue(t.get().getAsk().compareTo(ZERO) > 0);
-        // high.
-        assertNotNull(t.get().getHigh());
-        assertTrue(t.get().getHigh().compareTo(ZERO) > 0);
-        // low.
-        assertNotNull(t.get().getLow());
-        assertTrue(t.get().getLow().compareTo(ZERO) > 0);
         // volume.
         assertNotNull(t.get().getVolume());
         assertTrue(t.get().getVolume().compareTo(ZERO) > 0);
@@ -89,8 +83,8 @@ public class MarketServiceTest {
         assertNull(t.get().getAskSize());
         // timestamp.
         assertNotNull(t.get().getTimestamp());
-        assertTrue(t.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
-        assertTrue(t.get().getTimestamp().isBefore(ZonedDateTime.now().plusMinutes(1)));
+        assertTrue(t.get().getTimestamp().isAfter(ZonedDateTime.now().minusHours(1)));
+        assertTrue(t.get().getTimestamp().isBefore(ZonedDateTime.now().plusHours(1)));
     }
 
 }

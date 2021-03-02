@@ -5,7 +5,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
-import org.mapstruct.NullValuePropertyMappingStrategy;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -92,7 +91,6 @@ public interface OrderMapper {
     @Mapping(target = "updatedOn", ignore = true)
     tech.cassandre.trading.bot.domain.Order mapToOrder(OrderDTO source);
 
-    @Mapping(target = "strategy", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
     @Mapping(target = "trades", ignore = true)

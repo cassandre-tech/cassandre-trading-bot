@@ -23,11 +23,6 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>6.1.7.Final</version>
-        </dependency>
-        <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
         </dependency>
@@ -54,14 +49,14 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.2.2</version>
+            <version>4.3.1</version>
         </dependency>
 
         <!-- XChange -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.6</version>
         </dependency>
 
         <!-- Ta4j -->
@@ -128,19 +123,28 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.6</version>
             <scope>test</scope>
         </dependency>
         <!-- Tests for Coinbase -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbase</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.6</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbasepro</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Tests for Gemini -->
+        <dependency>
+            <groupId>org.knowm.xchange</groupId>
+            <artifactId>xchange-gemini</artifactId>
+            <version>5.0.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->
@@ -152,7 +156,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Dysprosium-SR16</version>
+                <version>Dysprosium-SR17</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -183,7 +187,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>8.40</version>
+                        <version>8.41</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -279,15 +283,31 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.18.0</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/delombok</outputDirectory>
+                    <addOutputDirectory>false</addOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
                     <detectOfflineLinks>false</detectOfflineLinks>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-                    <sourceFileIncludes>
-                        <include>${project.build.directory}/generated-sources/delombok</include>
-                    </sourceFileIncludes>
+                    <sourcepath>${project.build.directory}/delombok</sourcepath>
                 </configuration>
                 <executions>
                     <execution>
@@ -339,7 +359,7 @@
     <parent>
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->

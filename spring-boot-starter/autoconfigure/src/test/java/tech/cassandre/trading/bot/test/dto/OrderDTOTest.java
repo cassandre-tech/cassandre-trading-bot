@@ -26,7 +26,7 @@ public class OrderDTOTest {
 	@Test
 	@SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength" })
 	@CaseId(46)
-	@DisplayName("Check equalTo()")
+	@DisplayName("Check equals()")
 	public void checkEqualToForOrder() {
 		// Currency pairs.
 		final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);

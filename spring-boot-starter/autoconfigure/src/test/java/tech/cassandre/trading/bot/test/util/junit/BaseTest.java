@@ -94,6 +94,9 @@ public class BaseTest {
     /** cp3 for tests. */
     protected final CurrencyPairDTO cp3 = new CurrencyPairDTO(BTC, USDT);
 
+    /** XChange cp2 for tests. */
+    protected final CurrencyPair xChangeCP3 = new CurrencyPair(Currency.BTC, Currency.USDT);
+
     /** Ten seconds wait. */
     protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
@@ -174,10 +177,19 @@ public class BaseTest {
      * @param day day
      * @return date
      */
-    protected static ZonedDateTime createDate(final int day) {
-        return ZonedDateTime.of(2020, 1, day, 0, 0, 0, 0, ZoneId.systemDefault());
+    protected static Date createDate(final int day) {
+        return Date.from(ZonedDateTime.of(2020, 1, day, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant());
     }
 
+    /**
+     * Generate a date in 2020 with a day.
+     *
+     * @param day day
+     * @return date
+     */
+    protected static ZonedDateTime createZonedDateTime(final int day) {
+        return ZonedDateTime.of(2020, 1, day, 0, 0, 0, 0, ZoneId.systemDefault());
+    }
 
     /**
      * Generates a ZonedDateTime.

@@ -9,6 +9,9 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 
+import javax.annotation.PreDestroy;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * ScheduleAutoConfiguration configures the flux calls.
  */
@@ -16,6 +19,9 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 @Profile("!schedule-disabled")
 @EnableScheduling
 public class ScheduleAutoConfiguration {
+
+    /** Indicate that the batch should be running. */
+    private final AtomicBoolean enabled = new AtomicBoolean(true);
 
     /** Account flux. */
     private final AccountFlux accountFlux;
@@ -52,7 +58,9 @@ public class ScheduleAutoConfiguration {
      */
     @Scheduled(fixedDelay = 1)
     public void accountFluxUpdate() {
-        accountFlux.update();
+        if (enabled.get()) {
+            accountFlux.update();
+        }
     }
 
     /**
@@ -60,7 +68,9 @@ public class ScheduleAutoConfiguration {
      */
     @Scheduled(fixedDelay = 1)
     public void tickerFluxUpdate() {
-        tickerFlux.update();
+        if (enabled.get()) {
+            tickerFlux.update();
+        }
     }
 
     /**
@@ -68,8 +78,19 @@ public class ScheduleAutoConfiguration {
      */
     @Scheduled(fixedDelay = 1)
     public void tradeFluxUpdate() {
-        orderFlux.update();
-        tradeFlux.update();
+        if (enabled.get()) {
+            orderFlux.update();
+            tradeFlux.update();
+        }
+    }
+
+    /**
+     * This method is called before the application shutdown.
+     * We stop the flux.
+     */
+    @PreDestroy
+    public void shutdown() {
+        enabled.set(false);
     }
 
 }

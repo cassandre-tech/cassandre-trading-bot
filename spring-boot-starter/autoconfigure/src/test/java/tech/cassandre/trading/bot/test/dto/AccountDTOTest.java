@@ -22,7 +22,7 @@ public class AccountDTOTest {
 
 	@Test
 	@CaseId(38)
-	@DisplayName("Check equalTo() on account id & name")
+	@DisplayName("Check equals() on account id & name")
 	public void checkEqualToForAccountIdAndName() {
 		// Account 1 (null).
 		AccountDTO account1 = AccountDTO.builder().accountId(null).name(null).build();
@@ -46,7 +46,7 @@ public class AccountDTOTest {
 
 	@Test
 	@CaseId(39)
-	@DisplayName("Check equalTo() on balances list")
+	@DisplayName("Check equals() on balances list")
 	public void checkEqualToForBalancesList() {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
@@ -86,7 +86,7 @@ public class AccountDTOTest {
 	@Test
 	@SuppressWarnings("checkstyle:MethodLength")
 	@CaseId(40)
-	@DisplayName("Check equalTo() on balances values")
+	@DisplayName("Check equals() on balances values")
 	public void checkEqualToForBalancesValues() {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
