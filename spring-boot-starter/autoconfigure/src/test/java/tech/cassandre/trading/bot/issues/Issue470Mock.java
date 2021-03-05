@@ -8,7 +8,6 @@ import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;

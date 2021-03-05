@@ -17,6 +17,8 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -43,6 +45,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
@@ -75,9 +78,9 @@ public class LongPositionFluxTest extends BaseTest {
     @Autowired
     private PositionRepository positionRepository;
 
-    final AtomicInteger positionUpdatesCount = new AtomicInteger(0);
+    private final AtomicInteger positionUpdatesCount = new AtomicInteger(0);
 
-    final AtomicInteger positionStatusUpdatesCount = new AtomicInteger(0);
+    private final AtomicInteger positionStatusUpdatesCount = new AtomicInteger(0);
 
     @Test
     @CaseId(4)
@@ -211,8 +214,8 @@ public class LongPositionFluxTest extends BaseTest {
                 .type(BID)
                 .orderId("ORDER00010")
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("4", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.02", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-02-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -222,8 +225,8 @@ public class LongPositionFluxTest extends BaseTest {
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("4", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.02", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("03-02-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -234,8 +237,8 @@ public class LongPositionFluxTest extends BaseTest {
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("6", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.04", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -245,8 +248,8 @@ public class LongPositionFluxTest extends BaseTest {
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("6", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.04", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -313,6 +316,13 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getLowestGainPrice().getValue()));
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestGainPrice().getValue()));
         assertEquals(0, new BigDecimal("0.18").compareTo(p.getLatestGainPrice().getValue()));
+
+        // We check the gain.
+        Optional<GainDTO> latestCalculatedGain = p.getLatestCalculatedGain();
+        assertTrue(latestCalculatedGain.isPresent());
+        assertEquals(500, latestCalculatedGain.get().getPercentage());
+        assertEquals(0, new BigDecimal("1.5").compareTo(latestCalculatedGain.get().getAmount().getValue()));
+        assertEquals(BTC, latestCalculatedGain.get().getAmount().getCurrency());
 
         // Second ticker arrives (100% gain) - min and last gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).build());

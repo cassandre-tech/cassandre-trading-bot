@@ -90,8 +90,11 @@ public class PositionDTO {
     /** Price of latest gain price for this position. */
     private CurrencyAmountDTO latestGainPrice;
 
-    /** Percentage. */
-    private static final int ONE_HUNDRED = 100;
+    /** 100%. */
+    private static final int ONE_HUNDRED_FLOAT = 100;
+
+    /** 100%. */
+    private static final BigDecimal ONE_HUNDRED_BIG_DECIMAL = new BigDecimal("100");
 
     /** Big integer scale. */
     private static final int BIGINTEGER_SCALE = 4;
@@ -100,7 +103,7 @@ public class PositionDTO {
      * Constructor.
      *
      * @param newId           position id
-     * @param newType            position type
+     * @param newType         position type
      * @param newStrategy     strategy
      * @param newCurrencyPair currency pair
      * @param newAmount       amount
@@ -143,19 +146,25 @@ public class PositionDTO {
             // How gain calculation works for long positions ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50 USDT.
             //  - Sold 10 ETH with a price of 6 -> Amount of 60 USDT.
-            //  Gain = (6-5)/5 = 20%.
+            // Gain en valeur : 10 USDT
+            // Gain en pourcentage= ((60 - 50) / 50) * 100 = 20 %
             if (this.type == LONG) {
-                float gainPercentage = (price.subtract(openTrade.getPrice().getValue()))
-                        .divide(openTrade.getPrice().getValue(), BIGINTEGER_SCALE, FLOOR)
-                        .floatValue() * ONE_HUNDRED;
-                // TODO Probably a bug ! I only take the amount of the open trade but the amount could be on several trades !
-                BigDecimal gainAmount = ((openTrade.getAmount().getValue().multiply(price))
-                        .subtract((openTrade.getAmount().getValue()).multiply(openTrade.getPrice().getValue())));
+                // Amounts.
+                final BigDecimal valueIBought = openingOrder.getTrades()
+                        .stream()
+                        .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                        .reduce(ZERO, BigDecimal::add);
+                final BigDecimal valueICanSell = amount.getValue().multiply(price);
+
+                // Percentage.
+                final BigDecimal gainPercentage = ((valueICanSell.subtract(valueIBought))
+                        .divide(valueIBought, BIGINTEGER_SCALE, FLOOR))
+                        .multiply(ONE_HUNDRED_BIG_DECIMAL);
 
                 return Optional.of(GainDTO.builder()
-                        .percentage(gainPercentage)
+                        .percentage(gainPercentage.floatValue())
                         .amount(CurrencyAmountDTO.builder()
-                                .value(gainAmount)
+                                .value(valueICanSell.subtract(valueIBought))
                                 .currency(currencyPair.getQuoteCurrency())
                                 .build())
                         .fees(CurrencyAmountDTO.builder()
@@ -176,10 +185,6 @@ public class PositionDTO {
             // The amount of ETH I can buy (amountICanBuyInBaseCurrency) = amountIOwnInQuoteCurrency / price.
             // Gain = amountICanBuyInBaseCurrency - amountIOwnInQuoteCurrency.
             if (this.type == SHORT) {
-                float gainPercentage = (openTrade.getPrice().getValue().subtract(price))
-                        .divide(price, BIGINTEGER_SCALE, FLOOR)
-                        .floatValue() * ONE_HUNDRED;
-
                 // Amounts.
                 final BigDecimal amountIOwnInQuoteCurrency = openingOrder.getTrades()
                         .stream()
@@ -187,8 +192,13 @@ public class PositionDTO {
                         .reduce(ZERO, BigDecimal::add);
                 final BigDecimal amountICanBuyInBaseCurrency = amountIOwnInQuoteCurrency.divide(price, BIGINTEGER_SCALE, FLOOR);
 
+                // Percentage.
+                final BigDecimal gainPercentage = ((amountICanBuyInBaseCurrency.subtract(amount.getValue()))
+                        .divide(amount.getValue(), BIGINTEGER_SCALE, FLOOR))
+                        .multiply(ONE_HUNDRED_BIG_DECIMAL);
+
                 return Optional.of(GainDTO.builder()
-                        .percentage(gainPercentage)
+                        .percentage(gainPercentage.floatValue())
                         .amount(CurrencyAmountDTO.builder()
                                 .value(amountICanBuyInBaseCurrency.subtract(amount.getValue()))
                                 .currency(currencyPair.getBaseCurrency())
@@ -282,6 +292,7 @@ public class PositionDTO {
 
             // We retrieve the gains.
             final Optional<GainDTO> calculatedGain = calculateGainFromPrice(ticker.getLast());
+            System.out.println("=> " + calculatedGain);
             final Optional<GainDTO> lowestCalculatedGain = getLowestCalculatedGain();
             final Optional<GainDTO> highestCalculatedGain = getHighestCalculatedGain();
 
@@ -416,7 +427,7 @@ public class PositionDTO {
 
                 // Calculate gain.
                 BigDecimal gainAmount = sold.subtract(bought);
-                BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(new BigDecimal("100"));
+                BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(ONE_HUNDRED_BIG_DECIMAL);
 
                 // Calculate fees.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
@@ -450,7 +461,7 @@ public class PositionDTO {
 
                 // Calculate gain.
                 BigDecimal gainAmount = bought.subtract(sold);
-                BigDecimal gainPercentage = ((bought.subtract(sold)).divide(sold, HALF_UP)).multiply(new BigDecimal("100"));
+                BigDecimal gainPercentage = ((bought.subtract(sold)).divide(sold, HALF_UP)).multiply(ONE_HUNDRED_BIG_DECIMAL);
 
                 // Calculate fees.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())

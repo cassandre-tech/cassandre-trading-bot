@@ -41,7 +41,6 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
-import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
@@ -214,8 +213,8 @@ public class ShortPositionFluxTest extends BaseTest {
                 .type(BID)
                 .orderId("ORDER00010")
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("4", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.02", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-02-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -225,8 +224,8 @@ public class ShortPositionFluxTest extends BaseTest {
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("4", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.02", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("03-02-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -237,8 +236,8 @@ public class ShortPositionFluxTest extends BaseTest {
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("6", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.04", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -248,8 +247,8 @@ public class ShortPositionFluxTest extends BaseTest {
                 .orderId("ORDER00010")
                 .type(BID)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("6", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.04", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
