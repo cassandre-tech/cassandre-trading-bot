@@ -1,7 +1,7 @@
 -- =====================================================================================================================
 -- Insert exchange accounts.
 INSERT INTO EXCHANGE_ACCOUNTS (ID, EXCHANGE, ACCOUNT)
-VALUES (1, 'kucoin', 'cassandre.crypto.bot@gmail.com');
+VALUES (1, 'org.knowm.xchange.simulated.SimulatedExchange', 'cassandre.crypto.bot@gmail.com');
 
 -- =====================================================================================================================
 -- Insert strategies.
@@ -51,9 +51,9 @@ VALUES -- Order BACKUP_ORDER_01 (useless).
 -- Insert positions.
 INSERT INTO POSITIONS (ID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY,
                        RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, OPENING_ORDER_ID, FK_OPENING_ORDER_ID,
-                       CLOSING_ORDER_ID, FK_CLOSING_ORDER_ID, LOWEST_PRICE_VALUE, LOWEST_PRICE_CURRENCY,
-                       HIGHEST_PRICE_VALUE, HIGHEST_PRICE_CURRENCY, LATEST_PRICE_VALUE, LATEST_PRICE_CURRENCY,
-                       FK_STRATEGY_ID)
+                       CLOSING_ORDER_ID, FK_CLOSING_ORDER_ID, LOWEST_GAIN_PRICE_VALUE, LOWEST_GAIN_PRICE_CURRENCY,
+                       HIGHEST_GAIN_PRICE_VALUE, HIGHEST_GAIN_PRICE_CURRENCY, LATEST_GAIN_PRICE_VALUE,
+                       LATEST_GAIN_PRICE_CURRENCY, FK_STRATEGY_ID)
 VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPENING_ORDER_01 to arrive (but will not arrive).
        (1, 1, 'LONG', 'OPENING', 'BTC/USDT', 10, 'BTC', null, null, 'BACKUP_OPENING_ORDER_01', 3, null, null, null,
         null, null, null, null, null, 1),

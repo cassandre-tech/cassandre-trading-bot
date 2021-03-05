@@ -566,7 +566,6 @@ public class PositionServiceTest extends BaseTest {
                 .build());
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
 
-        strategy.getOrders().forEach((s, orderDTO) -> System.out.println("==> " + orderDTO));
         // =============================================================================================================
         // We send tickers.
 

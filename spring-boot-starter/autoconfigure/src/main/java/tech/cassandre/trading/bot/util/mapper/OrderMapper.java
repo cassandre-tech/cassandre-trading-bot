@@ -14,7 +14,7 @@ import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 /**
  * Order mapper.
  */
-@Mapper(uses = {UtilMapper.class, CurrencyMapper.class, TradeMapper.class}, nullValuePropertyMappingStrategy = IGNORE)
+@Mapper(uses = {UtilMapper.class, CurrencyMapper.class, TradeMapper.class, StrategyMapper.class}, nullValuePropertyMappingStrategy = IGNORE)
 public interface OrderMapper {
 
     // =================================================================================================================

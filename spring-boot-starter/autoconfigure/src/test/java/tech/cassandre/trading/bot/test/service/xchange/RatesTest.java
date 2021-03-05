@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -31,6 +32,7 @@ import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rate
 		@Property(key = PARAMETER_EXCHANGE_RATE_TICKER, value = "PT15S"),	// 15 seconds.
 		@Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "PT20S")		// 20 seconds.
 })
+@Import(RatesTestMock.class)
 public class RatesTest extends BaseTest {
 
 	@Autowired

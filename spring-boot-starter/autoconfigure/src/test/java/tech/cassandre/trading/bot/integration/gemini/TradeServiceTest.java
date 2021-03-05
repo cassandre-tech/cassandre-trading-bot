@@ -69,7 +69,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(86)
+    @CaseId(94)
     @Tag("integration")
     @DisplayName("Check creates a buy/sell market order")
     @Disabled("Gemini doesn't support market order")
@@ -80,7 +80,6 @@ public class TradeServiceTest extends BaseTest {
         // Making a buy market order with a size below the minimum requirement. Testing error management.
         final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
         assertFalse(result1.isSuccessful());
-        System.out.println(result1);
         assertNull(result1.getOrder().getOrderId());
         assertEquals("TradeService - Error calling createBuyMarketOrder : Order size below the minimum requirement.", result1.getErrorMessage());
         assertNotNull(result1.getException());
@@ -100,7 +99,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(87)
+    @CaseId(95)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     @Disabled("Gemini doesn't support market order")
@@ -146,7 +145,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(88)
+    @CaseId(96)
     @Tag("integration")
     @DisplayName("Check cancel an order")
     @Disabled("Gemini doesn't support market order")
@@ -171,7 +170,7 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(89)
+    @CaseId(97)
     @Tag("integration")
     @DisplayName("Check get trades")
     @Disabled("Gemini doesn't support market order")

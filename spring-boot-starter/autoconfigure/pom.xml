@@ -119,14 +119,21 @@
             <version>1.0.2</version>
             <scope>test</scope>
         </dependency>
-        <!-- Our tests are made using Kucoin exchange sandbox -->
+        <!-- Used for tests -->
+        <dependency>
+            <groupId>org.knowm.xchange</groupId>
+            <artifactId>xchange-simulated</artifactId>
+            <version>5.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- For Kucoin integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
             <version>5.0.6</version>
             <scope>test</scope>
         </dependency>
-        <!-- Tests for Coinbase -->
+        <!-- For Coinbase integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbase</artifactId>
@@ -139,7 +146,7 @@
             <version>5.0.6</version>
             <scope>test</scope>
         </dependency>
-        <!-- Tests for Gemini -->
+        <!-- For Gemini integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-gemini</artifactId>

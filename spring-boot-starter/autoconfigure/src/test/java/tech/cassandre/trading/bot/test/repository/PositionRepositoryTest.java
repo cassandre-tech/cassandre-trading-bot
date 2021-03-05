@@ -60,9 +60,9 @@ public class PositionRepositoryTest {
         assertEquals("BACKUP_OPENING_ORDER_01", p.getOpeningOrder().getOrderId());
         assertTrue(p.getOpeningOrder().getTrades().isEmpty());
         assertNull(p.getClosingOrder());
-        assertNull(p.getLowestPrice());
-        assertNull(p.getHighestPrice());
-        assertNull(p.getLatestPrice());
+        assertNull(p.getLowestGainPrice());
+        assertNull(p.getHighestGainPrice());
+        assertNull(p.getLatestGainPrice());
 
         // Retrieving position 1 with findByPositionId().
         Optional<Position> pBis = positionRepository.findByPositionId(1L);
@@ -86,12 +86,12 @@ public class PositionRepositoryTest {
         assertEquals("BACKUP_OPENING_ORDER_02", p.getOpeningOrder().getOrderId());
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_01".equals(trade.getTradeId())));
         assertNull(p.getClosingOrder());
-        assertEquals(0, new BigDecimal("1").compareTo(p.getLowestPrice().getValue()));
-        assertEquals("USDT", p.getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("2").compareTo(p.getHighestPrice().getValue()));
-        assertEquals("USDT", p.getHighestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("3").compareTo(p.getLatestPrice().getValue()));
-        assertEquals("USDT", p.getLatestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("1").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals("USDT", p.getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("2").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals("USDT", p.getHighestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("3").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals("USDT", p.getLatestGainPrice().getCurrency());
 
         // Retrieving position 2 with findByPositionId().
         pBis = positionRepository.findByPositionId(2L);
@@ -118,12 +118,12 @@ public class PositionRepositoryTest {
         assertEquals("BACKUP_CLOSING_ORDER_01", p.getClosingOrder().getOrderId());
         assertEquals(1, p.getClosingOrder().getTrades().size());
         assertTrue(p.getClosingOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_04".equals(trade.getTradeId())));
-        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice().getValue()));
-        assertEquals("USDT", p.getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice().getValue()));
-        assertEquals("USDT", p.getHighestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("92").compareTo(p.getLatestPrice().getValue()));
-        assertEquals("USDT", p.getLatestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals("USDT", p.getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals("USDT", p.getHighestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("92").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals("USDT", p.getLatestGainPrice().getCurrency());
 
         // Retrieving position 3 with findByPositionId().
         pBis = positionRepository.findByPositionId(3L);
@@ -150,12 +150,12 @@ public class PositionRepositoryTest {
         assertEquals("BACKUP_CLOSING_ORDER_02", p.getClosingOrder().getOrderId());
         assertEquals(1, p.getClosingOrder().getTrades().size());
         assertTrue(p.getClosingOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_05".equals(trade.getTradeId())));
-        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice().getValue()));
-        assertEquals("USDT", p.getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice().getValue()));
-        assertEquals("USDT", p.getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("93").compareTo(p.getLatestPrice().getValue()));
-        assertEquals("USDT", p.getLowestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals("USDT", p.getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals("USDT", p.getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("93").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals("USDT", p.getLowestGainPrice().getCurrency());
 
         // Retrieving position 4 with findByPositionId().
         pBis = positionRepository.findByPositionId(4L);

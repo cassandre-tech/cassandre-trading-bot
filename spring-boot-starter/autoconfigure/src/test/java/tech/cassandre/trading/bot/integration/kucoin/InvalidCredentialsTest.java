@@ -1,10 +1,11 @@
-package tech.cassandre.trading.bot.test.configuration.exchange;
+package tech.cassandre.trading.bot.integration.kucoin;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -14,9 +15,24 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_SECRET;
 
-@DisplayName("Configuration - Exchange - Invalid credentials")
-@Configuration({
-		@Property(key = PARAMETER_EXCHANGE_SECRET, value = "none")
+@DisplayName("Kucoin - Invalid credentials")
+@TestPropertySource(properties = {
+		"cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
+		"cassandre.trading.bot.exchange.modes.sandbox=true",
+		"cassandre.trading.bot.exchange.modes.dry=false",
+		"cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
+		"cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
+		"cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",
+		"cassandre.trading.bot.exchange.secret=WRONG_SECRET",
+		"cassandre.trading.bot.exchange.rates.account=100",
+		"cassandre.trading.bot.exchange.rates.ticker=101",
+		"cassandre.trading.bot.exchange.rates.trade=102",
+		"cassandre.trading.bot.database.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver",
+		"cassandre.trading.bot.database.datasource.url=jdbc:hsqldb:mem:cassandre-database;shutdown=true",
+		"cassandre.trading.bot.database.datasource.username=sa",
+		"cassandre.trading.bot.database.datasource.password=",
+		"testableStrategy.enabled=true",
+		"invalidStrategy.enabled=false"
 })
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class InvalidCredentialsTest {

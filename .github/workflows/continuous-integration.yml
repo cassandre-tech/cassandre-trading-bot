@@ -82,7 +82,7 @@ jobs:
             -DartifactId=archetype-test-basic \
             -Dversion=1.0-SNAPSHOT \
             -Dpackage=com.example
-          mvn -f archetype-test-basic/pom.xml test
+          mvn -f archetype-test-basic/pom.xml compile
 
       # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic ta4j strategy
@@ -96,4 +96,4 @@ jobs:
             -DartifactId=archetype-test-ta4j-basic \
             -Dversion=1.0-SNAPSHOT \
             -Dpackage=com.example
-          mvn -f archetype-test-ta4j-basic/pom.xml test
+          mvn -f archetype-test-ta4j-basic/pom.xml compile

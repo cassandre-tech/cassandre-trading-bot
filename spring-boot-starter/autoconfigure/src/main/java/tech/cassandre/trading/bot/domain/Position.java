@@ -97,29 +97,29 @@ public class Position extends BaseDomain {
     @JoinColumn(name = "FK_CLOSING_ORDER_ID")
     private Order closingOrder;
 
-    /** Lowest price reached by tis position. */
+    /** Price of lowest gain reached by this position. */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "LOWEST_PRICE_VALUE")),
-            @AttributeOverride(name = "currency", column = @Column(name = "LOWEST_PRICE_CURRENCY"))
+            @AttributeOverride(name = "value", column = @Column(name = "LOWEST_GAIN_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "LOWEST_GAIN_PRICE_CURRENCY"))
     })
-    private CurrencyAmount lowestPrice;
+    private CurrencyAmount lowestGainPrice;
 
-    /** Highest price reached by tis position. */
+    /** Price of highest gain reached by this position. */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "HIGHEST_PRICE_VALUE")),
-            @AttributeOverride(name = "currency", column = @Column(name = "HIGHEST_PRICE_CURRENCY"))
+            @AttributeOverride(name = "value", column = @Column(name = "HIGHEST_GAIN_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "HIGHEST_GAIN_PRICE_CURRENCY"))
     })
-    private CurrencyAmount highestPrice;
+    private CurrencyAmount highestGainPrice;
 
-    /** Latest price for this position. */
+    /** Price of latest gain price for this position. */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "value", column = @Column(name = "LATEST_PRICE_VALUE")),
-            @AttributeOverride(name = "currency", column = @Column(name = "LATEST_PRICE_CURRENCY"))
+            @AttributeOverride(name = "value", column = @Column(name = "LATEST_GAIN_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "LATEST_GAIN_PRICE_CURRENCY"))
     })
-    private CurrencyAmount latestPrice;
+    private CurrencyAmount latestGainPrice;
 
     @Override
     public final boolean equals(final Object o) {
@@ -143,9 +143,9 @@ public class Position extends BaseDomain {
                 .append(this.openingOrder, that.openingOrder)
                 .append(this.closingOrderId, that.closingOrderId)
                 .append(this.closingOrder, that.closingOrder)
-                .append(this.lowestPrice, that.lowestPrice)
-                .append(this.highestPrice, that.highestPrice)
-                .append(this.latestPrice, that.latestPrice)
+                .append(this.lowestGainPrice, that.lowestGainPrice)
+                .append(this.highestGainPrice, that.highestGainPrice)
+                .append(this.latestGainPrice, that.latestGainPrice)
                 .isEquals();
     }
 

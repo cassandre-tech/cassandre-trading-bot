@@ -46,7 +46,7 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
     public static final String PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE = "false";
 
     /** Exchange name parameter. */
-    public static final String PARAMETER_NAME_DEFAULT_VALUE = "kucoin";
+    public static final String PARAMETER_NAME_DEFAULT_VALUE = "org.knowm.xchange.simulated.SimulatedExchange";
 
     /** Sandbox parameter. */
     public static final String PARAMETER_SANDBOX_DEFAULT_VALUE = "true";

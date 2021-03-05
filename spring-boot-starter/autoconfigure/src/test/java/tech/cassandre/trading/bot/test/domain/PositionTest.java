@@ -121,9 +121,9 @@ public class PositionTest extends BaseTest {
         assertEquals("BACKUP_OPENING_ORDER_01", p.getOpeningOrder().getOrderId());
         assertTrue(p.getOpeningOrder().getTrades().isEmpty());
         assertNull(p.getClosingOrder());
-        assertNull(p.getLowestPrice());
-        assertNull(p.getHighestPrice());
-        assertNull(p.getLatestPrice());
+        assertNull(p.getLowestGainPrice());
+        assertNull(p.getHighestGainPrice());
+        assertNull(p.getLatestGainPrice());
 
         // Test equals.
         Optional<PositionDTO> pBis = strategy.getPositionByPositionId(1L);
@@ -151,12 +151,12 @@ public class PositionTest extends BaseTest {
         assertEquals(1, p.getOpeningOrder().getTrades().size());
         assertTrue(p.getOpeningOrder().getTrade("BACKUP_TRADE_01").isPresent());
         assertNull(p.getClosingOrder());
-        assertEquals(0, new BigDecimal("1").compareTo(p.getLowestPrice().getValue()));
-        assertEquals(USDT, p.getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("2").compareTo(p.getHighestPrice().getValue()));
-        assertEquals(USDT, p.getHighestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("3").compareTo(p.getLatestPrice().getValue()));
-        assertEquals(USDT, p.getLatestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("1").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals(USDT, p.getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("2").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals(USDT, p.getHighestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("3").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals(USDT, p.getLatestGainPrice().getCurrency());
 
         // =============================================================================================================
         // Check position 3 - CLOSING.
@@ -181,12 +181,12 @@ public class PositionTest extends BaseTest {
         assertEquals("BACKUP_CLOSING_ORDER_01", p.getClosingOrder().getOrderId());
         assertEquals(1, p.getClosingOrder().getTrades().size());
         assertTrue(p.getClosingOrder().getTrade("BACKUP_TRADE_04").isPresent());
-        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice().getValue()));
-        assertEquals(USDT, p.getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice().getValue()));
-        assertEquals(USDT, p.getHighestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("92").compareTo(p.getLatestPrice().getValue()));
-        assertEquals(USDT, p.getLatestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals(USDT, p.getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals(USDT, p.getHighestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("92").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals(USDT, p.getLatestGainPrice().getCurrency());
 
         // =============================================================================================================
         // Check position 4 - CLOSED.
@@ -212,12 +212,12 @@ public class PositionTest extends BaseTest {
         assertEquals("BACKUP_CLOSING_ORDER_02", p.getClosingOrder().getOrderId());
         assertEquals(1, p.getClosingOrder().getTrades().size());
         assertTrue(p.getClosingOrder().getTrade("BACKUP_TRADE_05").isPresent());
-        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice().getValue()));
-        assertEquals(USDT, p.getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice().getValue()));
-        assertEquals(USDT, p.getHighestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("93").compareTo(p.getLatestPrice().getValue()));
-        assertEquals(USDT, p.getLatestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals(USDT, p.getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals(USDT, p.getHighestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("93").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals(USDT, p.getLatestGainPrice().getCurrency());
 
         // =============================================================================================================
         // Check position 5 - CLOSED with several trades.
@@ -238,12 +238,12 @@ public class PositionTest extends BaseTest {
         assertEquals(CLOSED, p.getStatus());
         assertEquals("BACKUP_OPENING_ORDER_05", p.getOpeningOrder().getOrderId());
         assertEquals("BACKUP_CLOSING_ORDER_03", p.getClosingOrder().getOrderId());
-        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestPrice().getValue()));
-        assertEquals(USD, p.getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestPrice().getValue()));
-        assertEquals(USD, p.getHighestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("94").compareTo(p.getLatestPrice().getValue()));
-        assertEquals(USD, p.getLatestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("17").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals(USD, p.getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("68").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals(USD, p.getHighestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("94").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals(USD, p.getLatestGainPrice().getCurrency());
         // Open trades.
         assertEquals(2, p.getOpeningOrder().getTrades().size());
         assertTrue(p.getOpeningOrder().getTrade("BACKUP_TRADE_06").isPresent());
@@ -412,8 +412,8 @@ public class PositionTest extends BaseTest {
         assertEquals("DRY_ORDER_000000001", p.getOpeningOrderId());
         assertNull(p.getClosingOrder());
         assertNull(p.getClosingOrder());
-        assertNull(p.getLowestPrice());
-        assertNull(p.getHighestPrice());
+        assertNull(p.getLowestGainPrice());
+        assertNull(p.getHighestGainPrice());
         ZonedDateTime createdOn = p.getCreatedOn();
         ZonedDateTime updatedON = p.getUpdatedOn();
         assertNotNull(createdOn);
@@ -449,43 +449,43 @@ public class PositionTest extends BaseTest {
         assertFalse(p.getOpeningOrder().getTrades().isEmpty());
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(t -> "DRY_TRADE_000000001".equals(t.getTradeId())));
         assertNull(p.getClosingOrder());
-        assertNull(p.getLowestPrice());
-        assertNull(p.getHighestPrice());
-        assertNull(p.getLatestPrice());
+        assertNull(p.getLowestGainPrice());
+        assertNull(p.getHighestGainPrice());
+        assertNull(p.getLatestGainPrice());
 
         // =============================================================================================================
         // Now that the position is OPENED, we are sending tickers to see if lowest, highest and latest price change.
-        await().untilAsserted(() -> assertNull(getPosition(positionId).getLatestPrice()));
+        await().untilAsserted(() -> assertNull(getPosition(positionId).getLatestGainPrice()));
 
         // First ticker arrives (500% gain) - min and max gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).build());
-        await().untilAsserted(() -> assertNotNull(getPosition(positionId).getLatestPrice()));
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.06").compareTo(getPosition(positionId).getLatestPrice().getValue())));
+        await().untilAsserted(() -> assertNotNull(getPosition(positionId).getLatestGainPrice()));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.06").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Second ticker arrives (100% gain) - min gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.02")).build());
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.02").compareTo(getPosition(positionId).getLatestPrice().getValue())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.02").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Third ticker arrives (200% gain) - nothing should change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.03")).build());
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.03").compareTo(getPosition(positionId).getLatestPrice().getValue())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.03").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Fourth ticker arrives (50% loss) - min gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.005")).build());
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.005").compareTo(getPosition(positionId).getLatestPrice().getValue())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.005").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Fifth ticker arrives (600% gain) - max gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.07")).build());
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.07").compareTo(getPosition(positionId).getLatestPrice().getValue())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.07").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Check lowest & highest in database.
         await().untilAsserted(() -> assertEquals(6, strategy.getTickersUpdateReceived().size()));
         assertTrue(getPositionDTO(positionId).getLowestCalculatedGain().isPresent());
         assertTrue(getPositionDTO(positionId).getHighestCalculatedGain().isPresent());
-        assertEquals(0, new BigDecimal("0.005").compareTo(getPositionDTO(positionId).getLowestPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), getPositionDTO(positionId).getLowestPrice().getCurrency());
-        assertEquals(0, new BigDecimal("0.07").compareTo(getPositionDTO(positionId).getHighestPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), getPositionDTO(positionId).getHighestPrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.005").compareTo(getPositionDTO(positionId).getLowestGainPrice().getValue()));
+        assertEquals(cp1.getQuoteCurrency(), getPositionDTO(positionId).getLowestGainPrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.07").compareTo(getPositionDTO(positionId).getHighestGainPrice().getValue()));
+        assertEquals(cp1.getQuoteCurrency(), getPositionDTO(positionId).getHighestGainPrice().getCurrency());
         assertEquals(-50, getPositionDTO(positionId).getLowestCalculatedGain().get().getPercentage());
         assertEquals(600, getPositionDTO(positionId).getHighestCalculatedGain().get().getPercentage());
 
@@ -567,9 +567,9 @@ public class PositionTest extends BaseTest {
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(t -> "DRY_TRADE_000000001".equals(t.getTradeId())));
         assertTrue(p.getClosingOrder().getTrades().stream().anyMatch(t -> "000002".equals(t.getTradeId())));
         assertTrue(p.getClosingOrder().getTrades().stream().anyMatch(t -> "000003".equals(t.getTradeId())));
-        assertEquals(0, new BigDecimal("0.005").compareTo(p.getLowestPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.07").compareTo(p.getHighestPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.07").compareTo(p.getLatestPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.005").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.07").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.07").compareTo(p.getLatestGainPrice().getValue()));
         assertEquals(13, tradeRepository.count());
     }
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
@@ -30,6 +32,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @Configuration({
         @Property(key = "spring.datasource.data", value = "classpath:/gains-test.sql")
 })
+@ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionGainsServiceTest {
 
@@ -132,9 +135,32 @@ public class PositionGainsServiceTest {
         assertEquals(0, ZERO.compareTo(p6.get().getGain().getAmount().getValue()));
         assertEquals(0, ZERO.compareTo(p6.get().getGain().getNetAmount().getValue()));
 
+        /*
+            Position 7 (SHORT) - Sold 10 ETH for USDT.
+            TRADE_63 - Sold 10 ETH with a price of 5 = 50 USDT.
+            TRADE_64 - Bought ETH with 50 USDT with a price of 10 = 5 ETH
+            Amount gain : -5 ETH.
+            Amount percentage : -50%.
+            Fees : 4 USDT.
+         */
+        final Optional<PositionDTO> p7 = positionService.getPositionById(7L);
+        assertTrue(p7.isPresent());
+        final GainDTO gain7 = p7.get().getGain();
+        // Gain (amount).
+        assertEquals(0, new BigDecimal("-5").compareTo(gain7.getAmount().getValue()));
+        assertEquals(ETH, gain7.getAmount().getCurrency());
+        // Gain (percentage).
+        assertEquals(-50, gain7.getPercentage());
+        // Gain (fees).
+        assertEquals(0, new BigDecimal("4").compareTo(gain7.getFees().getValue()));
+        assertEquals(ETH, gain7.getFees().getCurrency());
+        // Net gain.
+        assertEquals(0, new BigDecimal("-9").compareTo(gain7.getNetAmount().getValue()));
+        assertEquals(ETH, gain7.getNetAmount().getCurrency());
+
         // Check all gains.
         final HashMap<CurrencyDTO, GainDTO> gains = positionService.getGains();
-        assertEquals(2, gains.size());
+        assertEquals(3, gains.size());
 
         // Gains USDT.
         final GainDTO usdtGain = gains.get(USDT);
@@ -159,6 +185,15 @@ public class PositionGainsServiceTest {
         // Net gain.
         assertEquals(0, new BigDecimal("-1010").compareTo(btcGain.getNetAmount().getValue()));
         assertEquals(BTC, btcGain.getNetAmount().getCurrency());
+
+        // Gains ETH.
+        final GainDTO ethGain = gains.get(ETH);
+        assertNotNull(ethGain);
+        assertEquals(-50, ethGain.getPercentage());
+        assertEquals(0, new BigDecimal("-5").compareTo(ethGain.getAmount().getValue()));
+        assertEquals(ETH, ethGain.getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("4").compareTo(ethGain.getFees().getValue()));
+        assertEquals(ETH, ethGain.getFees().getCurrency());
     }
 
 }

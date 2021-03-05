@@ -17,6 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_NAME_DEFAULT_VALUE;
 import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
@@ -38,7 +39,7 @@ public class ExchangeAccountTest {
         assertEquals(1, exchangeAccountRepository.count());
         final Optional<ExchangeAccount> ea = exchangeAccountRepository.findById(1L);
         assertTrue(ea.isPresent());
-        assertEquals("kucoin", ea.get().getExchange());
+        assertEquals(PARAMETER_NAME_DEFAULT_VALUE, ea.get().getExchange());
         assertEquals("cassandre.crypto.bot@gmail.com", ea.get().getAccount());
 
         // Test equals.

@@ -53,10 +53,10 @@
             <version>2.5.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- Our tests are made using Kucoin exchange sandbox -->
+        <!-- Used for tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
-            <artifactId>xchange-kucoin</artifactId>
+            <artifactId>xchange-simulated</artifactId>
             <version>5.0.6</version>
             <scope>test</scope>
         </dependency>

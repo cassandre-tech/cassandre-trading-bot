@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_NAME_DEFAULT_VALUE;
 
 @SpringBootTest
 @DisplayName("Domain - Strategy - After restart")
@@ -41,7 +42,7 @@ public class StrategyExistingTest {
         assertEquals(1, strategy.get().getId());
         assertEquals("01", strategy.get().getStrategyId());
         assertEquals("Testable strategy", strategy.get().getName());
-        assertEquals("kucoin", strategy.get().getExchangeAccount().getExchange());
+        assertEquals(PARAMETER_NAME_DEFAULT_VALUE, strategy.get().getExchangeAccount().getExchange());
         assertEquals("cassandre.crypto.bot@gmail.com", strategy.get().getExchangeAccount().getAccount());
 
         // Test non existing strategy.

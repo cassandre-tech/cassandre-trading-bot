@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_NAME_DEFAULT_VALUE;
 
 @SpringBootTest
 @DisplayName("Repository - ExchangeAccount")
@@ -33,7 +34,7 @@ public class ExchangeAccountRepositoryTest {
         Optional<ExchangeAccount> ea = exchangeAccountRepository.findByExchangeAndAccount("temp", "temp");
         assertFalse(ea.isPresent());
         // Testing a non existing exchange account.
-        ea = exchangeAccountRepository.findByExchangeAndAccount("kucoin", "cassandre.crypto.bot@gmail.com");
+        ea = exchangeAccountRepository.findByExchangeAndAccount(PARAMETER_NAME_DEFAULT_VALUE, "cassandre.crypto.bot@gmail.com");
         assertTrue(ea.isPresent());
     }
 

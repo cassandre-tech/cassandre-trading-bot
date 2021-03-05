@@ -17,6 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_NAME_DEFAULT_VALUE;
 
 @SpringBootTest
 @DisplayName("Domain - ExchangeAccount - After restart")
@@ -37,7 +38,7 @@ public class ExchangeAccountExistingTest {
         assertEquals(1, exchangeAccountRepository.count());
         final Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findById(1L);
         assertTrue(exchangeAccount.isPresent());
-        assertEquals("kucoin", exchangeAccount.get().getExchange());
+        assertEquals(PARAMETER_NAME_DEFAULT_VALUE, exchangeAccount.get().getExchange());
         assertEquals("cassandre.crypto.bot@gmail.com", exchangeAccount.get().getAccount());
     }
 

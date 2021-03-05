@@ -24,9 +24,7 @@ public class Issue470Mock extends BaseMock {
         CurrencyPair cp = new CurrencyPair(Currency.ETH, Currency.BTC);
         given(marketService
                 .getTicker(cp))
-                .willReturn(getGeneratedTicker(cp, new BigDecimal("1")),
-                        null
-                );
+                .willReturn(getGeneratedTicker(cp, new BigDecimal("1")));
         return marketService;
     }
 
