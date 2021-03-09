@@ -127,49 +127,54 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
      */
     public void addToBalance(final CurrencyDTO currency, final BigDecimal amount) {
         Optional<BalanceDTO> balance = user.getAccounts().get(TRADE_ACCOUNT_ID).getBalance(currency);
-        if (balance.isPresent()) {
-            final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
+        final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
-            // For each account.
-            user.getAccounts().forEach((s, a) -> {
-                HashMap<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
+        // For each account.
+        user.getAccounts().forEach((s, a) -> {
+            HashMap<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
 
-                // For each balance.
-                a.getBalances().forEach((c, b) -> {
-                    BalanceDTO newBalance;
-                    if (a.getAccountId().equals(TRADE_ACCOUNT_ID) && b.getCurrency().equals(currency)) {
-                        // If we are on the account to update, we calculate the new value.
-                        newBalance = BalanceDTO.builder()
-                                .currency(b.getCurrency())
-                                .available(b.getAvailable().add(amount))
-                                .build();
-                    } else {
-                        // Else we keep the same value.
-                        newBalance = BalanceDTO.builder()
-                                .currency(b.getCurrency())
-                                .available(b.getAvailable())
-                                .build();
-                    }
-                    balances.put(newBalance.getCurrency(), newBalance);
-                });
-
-                // Creating account
-                AccountDTO account = AccountDTO.builder()
-                        .accountId(a.getAccountId())
-                        .name(a.getName())
-                        .balances(balances)
-                        .build();
-                accounts.put(account.getAccountId(), account);
+            // For each balance.
+            a.getBalances().forEach((c, b) -> {
+                BalanceDTO newBalance;
+                if (a.getAccountId().equals(TRADE_ACCOUNT_ID) && b.getCurrency().equals(currency)) {
+                    // If we are on the account to update, we calculate the new value.
+                    newBalance = BalanceDTO.builder()
+                            .currency(b.getCurrency())
+                            .available(b.getAvailable().add(amount))
+                            .build();
+                } else {
+                    // Else we keep the same value.
+                    newBalance = BalanceDTO.builder()
+                            .currency(b.getCurrency())
+                            .available(b.getAvailable())
+                            .build();
+                }
+                balances.put(newBalance.getCurrency(), newBalance);
             });
+            // If the balance does not exists, we add it.
+            if (balance.isEmpty()) {
+                balances.put(currency, BalanceDTO.builder()
+                        .currency(currency)
+                        .available(amount)
+                        .build());
+            }
 
-            // Change the user value and the account in the strategy.
-            strategy.getAccounts().clear();
-            strategy.getAccounts().putAll(accounts);
-            user = UserDTO.builder()
-                    .id(USER_ID)
-                    .accounts(accounts)
+            // Creating account
+            AccountDTO account = AccountDTO.builder()
+                    .accountId(a.getAccountId())
+                    .name(a.getName())
+                    .balances(balances)
                     .build();
-        }
+            accounts.put(account.getAccountId(), account);
+        });
+
+        // Change the user value and the account in the strategy.
+        strategy.getAccounts().clear();
+        strategy.getAccounts().putAll(accounts);
+        user = UserDTO.builder()
+                .id(USER_ID)
+                .accounts(accounts)
+                .build();
     }
 
     /**

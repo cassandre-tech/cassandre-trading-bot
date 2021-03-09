@@ -260,6 +260,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
         final String xChangeCLassSuffix = "Exchange";
 
         // Returns the XChange package name.
+        assert exchangeParameters.getName() != null;
         return xChangeClassPackage                                                      // Package (org.knowm.xchange.).
                 .concat(exchangeParameters.getName().toLowerCase())                     // domain (kucoin).
                 .concat(".")                                                            // A dot (.)

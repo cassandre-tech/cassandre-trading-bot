@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.repository;
 
+import com.google.common.collect.Sets;
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -180,6 +181,10 @@ public class PositionRepositoryTest {
         assertEquals(2, closedPositions.size());
         assertEquals(4, closedPositions.get(0).getId());
         assertEquals(5, closedPositions.get(1).getId());
+
+        // Tests for findByStatusIn().
+        final List<Position> positions = positionRepository.findByStatusIn(Sets.newHashSet(CLOSING, CLOSED));
+        assertEquals(3, positions.size());
     }
 
     @Test

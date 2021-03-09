@@ -87,11 +87,7 @@ public class RatesTestMock {
     @Primary
     public MarketService marketService() {
         MarketDataService mock;
-        try {
-            mock = getXChangeMarketDataServiceMock();
-        } catch (IOException e) {
-            return null;
-        }
+        mock = getXChangeMarketDataServiceMock();
         return new MarketServiceXChangeImplementation(15000, mock);
     }
 
@@ -141,7 +137,7 @@ public class RatesTestMock {
      */
     @Bean
     @Primary
-    public MarketDataService getXChangeMarketDataServiceMock() throws IOException {
+    public MarketDataService getXChangeMarketDataServiceMock() {
         return mock(MarketDataService.class);
     }
 

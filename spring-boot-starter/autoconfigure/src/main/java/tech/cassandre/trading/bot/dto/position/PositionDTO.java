@@ -139,10 +139,6 @@ public class PositionDTO {
      */
     private Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
         if (this.status != OPENING && price != null) {
-            // We take the price from the first trade received.
-            // TODO Use the mean of all trades.
-            final TradeDTO openTrade = openingOrder.getTrades().iterator().next();
-
             // How gain calculation works for long positions ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50 USDT.
             //  - Sold 10 ETH with a price of 6 -> Amount of 60 USDT.
@@ -209,10 +205,8 @@ public class PositionDTO {
                                 .build())
                         .build());
             }
-            return Optional.empty();
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     /**
@@ -292,7 +286,6 @@ public class PositionDTO {
 
             // We retrieve the gains.
             final Optional<GainDTO> calculatedGain = calculateGainFromPrice(ticker.getLast());
-            System.out.println("=> " + calculatedGain);
             final Optional<GainDTO> lowestCalculatedGain = getLowestCalculatedGain();
             final Optional<GainDTO> highestCalculatedGain = getHighestCalculatedGain();
 
@@ -322,6 +315,56 @@ public class PositionDTO {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Returns amount locked by this position.
+     *
+     * @return amount
+     */
+    public CurrencyAmountDTO getAmountToLock() {
+        if (status == CLOSED) {
+            return CurrencyAmountDTO.ZERO;
+        }
+
+        if (type == LONG) {
+            // We need to lock the amount we bought.
+            if (openingOrder != null) {
+                // We calculate the amount we bought from opening order trades.
+                final BigDecimal amountBought = openingOrder.getTrades()
+                        .stream()
+                        .map(t -> t.getAmount().getValue())
+                        .reduce(ZERO, BigDecimal::add);
+                // If we have a closing order, we calculate how much we sold.
+                BigDecimal amountSold = ZERO;
+                if (closingOrder != null) {
+                    amountSold = closingOrder.getTrades()
+                            .stream()
+                            .map(t -> t.getAmount().getValue())
+                            .reduce(ZERO, BigDecimal::add);
+                }
+                return new CurrencyAmountDTO(amountBought.subtract(amountSold), currencyPair.getBaseCurrency());
+            }
+        } else {
+            if (openingOrder != null) {
+                // We calculate the amount we sold from opening order trades.
+                final BigDecimal amountSold = openingOrder.getTrades()
+                        .stream()
+                        .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                        .reduce(ZERO, BigDecimal::add);
+                // If we have a closing order, we calculate how much we bought.
+                BigDecimal amountBought = ZERO;
+                if (closingOrder != null) {
+                    amountBought = closingOrder.getTrades()
+                            .stream()
+                            .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                            .reduce(ZERO, BigDecimal::add);
+                }
+                return new CurrencyAmountDTO(amountSold.subtract(amountBought), currencyPair.getQuoteCurrency());
+            }
+        }
+
+        return CurrencyAmountDTO.ZERO;
     }
 
     /**
@@ -481,13 +524,8 @@ public class PositionDTO {
                                 .build())
                         .build();
             }
-
-            // Should never append.
-            return GainDTO.ZERO;
-        } else {
-            // No gain for the moment !
-            return GainDTO.ZERO;
         }
+        return GainDTO.ZERO;
     }
 
     @Override
