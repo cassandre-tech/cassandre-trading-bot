@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 /**
- * Service getting information about orders, trades and allowing to create new orders.
+ * Service giving information about orders and allowing you to create new orders.
  */
 public interface TradeService {
 
@@ -75,6 +75,15 @@ public interface TradeService {
     boolean cancelOrder(String orderId);
 
     /**
+     * Get open orders.
+     *
+     * @return list of open orders
+     * @deprecated use getOrders instead.
+     */
+    @Deprecated(since = "4.0")
+    Set<OrderDTO> getOpenOrders();
+
+    /**
      * Get orders from exchange.
      *
      * @return list of orders
@@ -84,8 +93,9 @@ public interface TradeService {
     /**
      * Get trades from exchange.
      *
+     * @param currencyPairs currency pairs
      * @return list of orders
      */
-    Set<TradeDTO> getTrades();
+    Set<TradeDTO> getTrades(Set<CurrencyPairDTO> currencyPairs);
 
 }

@@ -2,11 +2,13 @@ package tech.cassandre.trading.bot.batch;
 
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -26,6 +28,9 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
     /** Trade repository. */
     private final TradeRepository tradeRepository;
 
+    /** Currency pairs requested. */
+    private final Set<CurrencyPairDTO> currencyPairs = new HashSet<>();
+
     /**
      * Constructor.
      *
@@ -41,13 +46,22 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
         this.tradeService = newTradeService;
     }
 
+    /**
+     * Add currency pairs for trades.
+     *
+     * @param newCurrencyPairs currency pairs
+     */
+    public void addCurrencyPairs(final Set<CurrencyPairDTO> newCurrencyPairs) {
+        currencyPairs.addAll(newCurrencyPairs);
+    }
+
     @Override
     protected final Set<TradeDTO> getNewValues() {
         logger.debug("TradeFlux - Retrieving new values");
         Set<TradeDTO> newValues = new LinkedHashSet<>();
 
         // Finding which trades has been updated.
-        tradeService.getTrades()
+        tradeService.getTrades(currencyPairs)
                 .stream().filter(t -> orderRepository.findByOrderId(t.getOrderId()).isPresent())    // We only accept trades with order present in database
                 .forEach(trade -> {
                     logger.debug("TradeFlux - Treating trade : {}", trade.getTradeId());
