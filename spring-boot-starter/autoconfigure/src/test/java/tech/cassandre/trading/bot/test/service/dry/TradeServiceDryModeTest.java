@@ -19,6 +19,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +69,7 @@ public class TradeServiceDryModeTest extends BaseTest {
 
         // Check that everything is empty.
         assertEquals(0, tradeService.getOrders().size());
-        assertEquals(0, tradeService.getTrades().size());
+        assertEquals(0, tradeService.getTrades(Collections.emptySet()).size());
 
         // We create a buy order.
         final OrderCreationResultDTO buyMarketOrder01 = strategy.createBuyMarketOrder(cp1, new BigDecimal("0.001"));
@@ -166,10 +167,10 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals("NON_EXISTING")));
         assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals(orderId01)));
         assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals(orderId02)));
-        assertEquals(2, tradeService.getTrades().size());
-        assertFalse(tradeService.getTrades().stream().anyMatch(t -> t.getTradeId().equals("NON_EXISTING")));
-        assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getTradeId().equals(tradeId01)));
-        assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getTradeId().equals(tradeId02)));
+        assertEquals(2, tradeService.getTrades(Collections.emptySet()).size());
+        assertFalse(tradeService.getTrades(Collections.emptySet()).stream().anyMatch(t -> t.getTradeId().equals("NON_EXISTING")));
+        assertTrue(tradeService.getTrades(Collections.emptySet()).stream().anyMatch(t -> t.getTradeId().equals(tradeId01)));
+        assertTrue(tradeService.getTrades(Collections.emptySet()).stream().anyMatch(t -> t.getTradeId().equals(tradeId02)));
     }
 
 }

@@ -110,14 +110,14 @@
                     remarks="The order id created to close the position"/>
 
             <column name="LOWEST_PRICE_VALUE" type="numeric(16, 8)"
-                    remarks="Lowest price reached by this position (value)"/>
+                    remarks="Lowest price reached by tis position (value)"/>
             <column name="LOWEST_PRICE_CURRENCY" type="VARCHAR(255)"
                     remarks="Lowest price reached by tis position (currency)"/>
 
             <column name="HIGHEST_PRICE_VALUE" type="numeric(16, 8)"
-                    remarks="Highest price reached by this position (value)"/>
+                    remarks="Highest price reached by tis position (value)"/>
             <column name="HIGHEST_PRICE_CURRENCY" type="VARCHAR(255)"
-                    remarks="Highest price reached by this position (currency)"/>
+                    remarks="Highest price reached by tis position (currency)"/>
 
             <column name="LATEST_PRICE_VALUE" type="numeric(16, 8)"
                     remarks="Latest price for this position (value)"/>

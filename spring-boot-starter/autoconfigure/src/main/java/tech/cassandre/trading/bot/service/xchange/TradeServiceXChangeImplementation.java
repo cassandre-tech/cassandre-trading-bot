@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -196,6 +197,11 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
+    public final Set<OrderDTO> getOpenOrders() {
+        return getOrders();
+    }
+
+    @Override
     public final Set<OrderDTO> getOrders() {
         logger.debug("TradeService - Getting open orders from exchange");
         try {
@@ -235,7 +241,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<TradeDTO> getTrades() {
+    public final Set<TradeDTO> getTrades(final Set<CurrencyPairDTO> currencyPairs) {
         logger.debug("TradeService - Getting trades from exchange");
         try {
             // Consume a token from the token bucket.
@@ -248,6 +254,12 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             Date endDate = new Date();
             params.setStartTime(startDate);
             params.setEndTime(endDate);
+
+            // Set currency pairs (required for exchanges like Gemini or Binance).
+            if (!currencyPairs.isEmpty()) {
+                params.setCurrencyPairs(currencyPairs.stream().map(currencyMapper::mapToCurrencyPair).collect(Collectors.toCollection(LinkedList::new)));
+            }
+
             final Set<TradeDTO> results = tradeService.getTradeHistory(params)
                     .getUserTrades()
                     .stream()

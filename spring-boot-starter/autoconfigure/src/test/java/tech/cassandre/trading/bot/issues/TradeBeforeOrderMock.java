@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
@@ -101,7 +102,7 @@ public class TradeBeforeOrderMock extends BaseTest {
         TradeService service = mock(TradeService.class);
 
         // getTrades() replies.
-        given(service.getTrades()).willReturn(
+        given(service.getTrades(any())).willReturn(
                 Set.of(TradeDTO.builder()
                                 .tradeId("TRADE_000001")
                                 .type(ASK)

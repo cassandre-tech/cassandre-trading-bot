@@ -266,6 +266,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         connectableOrderFlux.connect();
 
         // Trade flux to strategy.
+        tradeFlux.addCurrencyPairs(strategy.getRequestedCurrencyPairs());
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
         connectableTradeFlux.subscribe(strategy::tradeUpdate);              // For strategy.
         connectableTradeFlux.subscribe(positionService::tradeUpdate);       // For position service.

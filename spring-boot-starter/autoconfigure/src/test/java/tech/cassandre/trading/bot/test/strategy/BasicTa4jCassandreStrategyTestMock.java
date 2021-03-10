@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
@@ -280,7 +281,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         replyGetTrades.add(TradeDTO.builder().tradeId("0000001").orderId("000001").type(BID).currencyPair(cp3).build());      // Trade 01.
         replyGetTrades.add(TradeDTO.builder().tradeId("0000002").orderId("000002").type(BID).currencyPair(cp3).build());      // Trade 02.
         replyGetTrades.add(TradeDTO.builder().tradeId("0000003").orderId("000003").type(BID).currencyPair(cp3).build());      // Trade 03.
-        given(service.getTrades()).willReturn(replyGetTrades);
+        given(service.getTrades(any())).willReturn(replyGetTrades);
 
         return service;
     }
