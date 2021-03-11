@@ -16,22 +16,60 @@ import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Data
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_PASSWORD;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_URL;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_USERNAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_SANDBOX;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_KEY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_NAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_PASSPHRASE;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_SECRET;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.PARAMETER_EXCHANGE_USERNAME;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_ACCOUNT;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TICKER;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_TRADE;
 
 /**
  * Configuration extension - set and clear system properties.
  */
 @NotThreadSafe // System properties are JVM-global, so don't run tests in parallel with this rule.
 public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallback {
+
+    /** Exchange name parameter. */
+    public static final String PARAMETER_EXCHANGE_NAME = "cassandre.trading.bot.exchange.name";
+
+    /** Username parameter. */
+    public static final String PARAMETER_EXCHANGE_USERNAME = "cassandre.trading.bot.exchange.username";
+
+    /** Passphrase parameter. */
+    public static final String PARAMETER_EXCHANGE_PASSPHRASE = "cassandre.trading.bot.exchange.passphrase";
+
+    /** Key parameter. */
+    public static final String PARAMETER_EXCHANGE_KEY = "cassandre.trading.bot.exchange.key";
+
+    /** Secret parameter. */
+    public static final String PARAMETER_EXCHANGE_SECRET = "cassandre.trading.bot.exchange.secret";
+
+    /** Proxy host. */
+    public static final String PARAMETER_EXCHANGE_PROXY_HOST = "cassandre.trading.bot.exchange.proxyHost";
+
+    /** Proxy port. */
+    public static final String PARAMETER_EXCHANGE_PROXY_PORT = "cassandre.trading.bot.exchange.proxyPort";
+
+    /** secure API endpoint parameter. */
+    public static final String PARAMETER_EXCHANGE_SSL_URI = "cassandre.trading.bot.exchange.sslUri";
+
+    /** plain text API endpoint parameter. */
+    public static final String PARAMETER_EXCHANGE_PLAIN_TEXT_URI = "cassandre.trading.bot.exchange.plainTextUri";
+
+    /** exchange port parameter. */
+    public static final String PARAMETER_EXCHANGE_HOST = "cassandre.trading.bot.exchange.host";
+
+    /** exchange port parameter. */
+    public static final String PARAMETER_EXCHANGE_PORT = "cassandre.trading.bot.exchange.port";
+
+    /** Sandbox parameter. */
+    public static final String PARAMETER_EXCHANGE_SANDBOX = "cassandre.trading.bot.exchange.modes.sandbox";
+
+    /** Dry parameter. */
+    public static final String PARAMETER_EXCHANGE_DRY = "cassandre.trading.bot.exchange.modes.dry";
+
+    /** Rate for account parameter. */
+    public static final String PARAMETER_EXCHANGE_RATE_ACCOUNT = "cassandre.trading.bot.exchange.rates.account";
+
+    /** Rate for ticker parameter. */
+    public static final String PARAMETER_EXCHANGE_RATE_TICKER = "cassandre.trading.bot.exchange.rates.ticker";
+
+    /** Rate for order parameter. */
+    public static final String PARAMETER_EXCHANGE_RATE_TRADE = "cassandre.trading.bot.exchange.rates.trade";
 
     /** Invalid strategy enabled parameter default value. */
     public static final String PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE = "false";

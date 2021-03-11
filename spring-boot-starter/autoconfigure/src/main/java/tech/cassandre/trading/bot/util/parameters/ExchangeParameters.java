@@ -21,27 +21,6 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange")
 public class ExchangeParameters {
 
-    /** Exchange name parameter. */
-    public static final String PARAMETER_EXCHANGE_NAME = "cassandre.trading.bot.exchange.name";
-
-    /** Username parameter. */
-    public static final String PARAMETER_EXCHANGE_USERNAME = "cassandre.trading.bot.exchange.username";
-
-    /** Passphrase parameter. */
-    public static final String PARAMETER_EXCHANGE_PASSPHRASE = "cassandre.trading.bot.exchange.passphrase";
-
-    /** Key parameter. */
-    public static final String PARAMETER_EXCHANGE_KEY = "cassandre.trading.bot.exchange.key";
-
-    /** Secret parameter. */
-    public static final String PARAMETER_EXCHANGE_SECRET = "cassandre.trading.bot.exchange.secret";
-
-    /** Proxy host. */
-    public static final String PARAMETER_EXCHANGE_PROXY_HOST = "cassandre.trading.bot.exchange.proxyHost";
-
-    /** Proxy port. */
-    public static final String PARAMETER_EXCHANGE_PROXY_PORT = "cassandre.trading.bot.exchange.proxyPort";
-
     /** Exchange name. For example : coinbase, kraken, kucoin. */
     @NotEmpty(message = "Exchange name required, for example : coinbase, kraken, kucoin...")
     private String name;
@@ -68,6 +47,18 @@ public class ExchangeParameters {
     /** Proxy port. */
     private Integer proxyPort;
 
+    /** Secure API endpoint. */
+    private String sslUri;
+
+    /** Plain text API endpoint. */
+    private String plainTextUri;
+
+    /** Exchange port parameter. */
+    private String host;
+
+    /** Exchange port parameter. */
+    private String port;
+
     /** Modes. */
     @Valid
     private Modes modes = new Modes();
@@ -83,12 +74,6 @@ public class ExchangeParameters {
     @ToString
     @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.modes")
     public class Modes {
-
-        /** Sandbox parameter. */
-        public static final String PARAMETER_EXCHANGE_SANDBOX = "cassandre.trading.bot.exchange.modes.sandbox";
-
-        /** Dry parameter. */
-        public static final String PARAMETER_EXCHANGE_DRY = "cassandre.trading.bot.exchange.modes.dry";
 
         /** Set it to true to use the sandbox. */
         @NotNull(message = "Sandbox parameter required, set it to true to use the sandbox")
@@ -107,15 +92,6 @@ public class ExchangeParameters {
     @ToString
     @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.rates")
     public static class Rates {
-
-        /** Rate for account parameter. */
-        public static final String PARAMETER_EXCHANGE_RATE_ACCOUNT = "cassandre.trading.bot.exchange.rates.account";
-
-        /** Rate for ticker parameter. */
-        public static final String PARAMETER_EXCHANGE_RATE_TICKER = "cassandre.trading.bot.exchange.rates.ticker";
-
-        /** Rate for order parameter. */
-        public static final String PARAMETER_EXCHANGE_RATE_TRADE = "cassandre.trading.bot.exchange.rates.trade";
 
         /** Delay between calls to account API. */
         @NotNull(message = "Delay between calls to account API is mandatory")

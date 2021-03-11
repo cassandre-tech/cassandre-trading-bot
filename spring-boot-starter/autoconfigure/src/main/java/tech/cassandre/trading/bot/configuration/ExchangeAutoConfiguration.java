@@ -162,6 +162,18 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             if (exchangeParameters.getProxyPort() != null) {
                 exchangeSpecification.setProxyPort(exchangeParameters.getProxyPort());
             }
+            if (exchangeParameters.getSslUri() != null) {
+                exchangeSpecification.setSslUri(exchangeParameters.getSslUri());
+            }
+            if (exchangeParameters.getPlainTextUri() != null) {
+                exchangeSpecification.setPlainTextUri(exchangeParameters.getPlainTextUri());
+            }
+            if (exchangeParameters.getHost() != null) {
+                exchangeSpecification.setHost(exchangeParameters.getHost());
+            }
+            if (exchangeParameters.getPort() != null) {
+                exchangeSpecification.setPort(Integer.parseInt(exchangeParameters.getPort()));
+            }
 
             // Creates XChange services.
             xChangeExchange = ExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
