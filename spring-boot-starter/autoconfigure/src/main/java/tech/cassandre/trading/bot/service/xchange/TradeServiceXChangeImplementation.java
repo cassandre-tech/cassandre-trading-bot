@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -247,48 +246,39 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     @Override
     public final Set<TradeDTO> getTrades(final Set<CurrencyPairDTO> currencyPairs) {
         logger.debug("TradeService - Getting trades from exchange");
-        try {
-            // Consume a token from the token bucket.
-            // If a token is not available this method will block until the refill adds one to the bucket.
-            getBucket().asScheduler().consume(1);
+        // Query trades from the last 24 jours (24 hours because of Binance).
+        TradeHistoryParamsAll params = new TradeHistoryParamsAll();
+        Date now = TimeProvider.now();
+        Date startDate = DateUtils.addDays(now, -HOURS_IN_DAY);
+        params.setStartTime(startDate);
+        params.setEndTime(now);
 
-            // Query 1 week of trades.
-            TradeHistoryParamsAll params = new TradeHistoryParamsAll();
-            Date now = TimeProvider.now();
-            Date startDate = DateUtils.addDays(now, -HOURS_IN_DAY);
-            params.setStartTime(startDate);
-            params.setEndTime(now);
-
-            Set<TradeDTO> results = new LinkedHashSet<>();
-
-            // Set currency pairs (required for exchanges like Gemini or Binance).
-            if (!currencyPairs.isEmpty()) {
-
-                currencyPairs.forEach(pair -> {
-
-                    params.setCurrencyPair(currencyMapper.mapToCurrencyPair(pair));
-
-                    try {
-                        results.addAll(
-                                tradeService.getTradeHistory(params)
-                                        .getUserTrades()
-                                        .stream()
-                                        .map(tradeMapper::mapToTradeDTO)
-                                        .sorted(Comparator.comparing(TradeDTO::getTimestamp))
-                                        .collect(Collectors.toCollection(LinkedHashSet::new))
-                        );
-                    } catch (IOException e) {
-                        logger.error("TradeService - Error retrieving trades : {}", e.getMessage());
-                    }
-                });
-            }
-
-            logger.debug("TradeService - {} trade(s) found", results.size());
-            return results;
-        } catch (InterruptedException e) {
-            logger.error("TradeService - InterruptedException : {}", e.getMessage());
-            return Collections.emptySet();
+        Set<TradeDTO> results = new LinkedHashSet<>();
+        // Set currency pairs (required for exchanges like Gemini or Binance).
+        if (!currencyPairs.isEmpty()) {
+            currencyPairs.forEach(pair -> {
+                params.setCurrencyPair(currencyMapper.mapToCurrencyPair(pair));
+                try {
+                    // Consume a token from the token bucket.
+                    // If a token is not available this method will block until the refill adds one to the bucket.
+                    getBucket().asScheduler().consume(1);
+                    results.addAll(
+                            tradeService.getTradeHistory(params)
+                                    .getUserTrades()
+                                    .stream()
+                                    .map(tradeMapper::mapToTradeDTO)
+                                    .sorted(Comparator.comparing(TradeDTO::getTimestamp))
+                                    .collect(Collectors.toCollection(LinkedHashSet::new))
+                    );
+                } catch (IOException e) {
+                    logger.error("TradeService - Error retrieving trades : {}", e.getMessage());
+                } catch (InterruptedException e) {
+                    logger.error("TradeService - InterruptedException : {}", e.getMessage());
+                }
+            });
         }
+        logger.debug("TradeService - {} trade(s) found", results.size());
+        return results;
     }
 
 }
