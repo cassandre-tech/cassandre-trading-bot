@@ -37,9 +37,6 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
 
-    /** Amount of hours in one day. */
-    public static final int HOURS_IN_DAY = 24;
-
     /** Order repository. */
     private final OrderRepository orderRepository;
 
@@ -249,7 +246,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         // Query trades from the last 24 jours (24 hours because of Binance).
         TradeHistoryParamsAll params = new TradeHistoryParamsAll();
         Date now = TimeProvider.now();
-        Date startDate = DateUtils.addDays(now, -HOURS_IN_DAY);
+        Date startDate = DateUtils.addDays(now, -1);
         params.setStartTime(startDate);
         params.setEndTime(now);
 
