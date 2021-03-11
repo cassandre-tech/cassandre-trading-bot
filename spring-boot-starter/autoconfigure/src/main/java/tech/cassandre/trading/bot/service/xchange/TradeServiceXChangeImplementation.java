@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
+import tech.cassandre.trading.bot.util.system.TimeProvider;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -36,6 +37,9 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  * Trade service - XChange implementation.
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
+
+    /** Amount of hours in one day. */
+    public static final int HOURS_IN_DAY = 24;
 
     /** Order repository. */
     private final OrderRepository orderRepository;
@@ -250,27 +254,37 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
             // Query 1 week of trades.
             TradeHistoryParamsAll params = new TradeHistoryParamsAll();
-            Date startDate = DateUtils.addWeeks(new Date(), -1);
-            Date endDate = new Date();
+            Date now = TimeProvider.now();
+            Date startDate = DateUtils.addDays(now, -HOURS_IN_DAY);
             params.setStartTime(startDate);
-            params.setEndTime(endDate);
+            params.setEndTime(now);
+
+            Set<TradeDTO> results = new LinkedHashSet<>();
 
             // Set currency pairs (required for exchanges like Gemini or Binance).
             if (!currencyPairs.isEmpty()) {
-                params.setCurrencyPairs(currencyPairs.stream().map(currencyMapper::mapToCurrencyPair).collect(Collectors.toCollection(LinkedList::new)));
+
+                currencyPairs.forEach(pair -> {
+
+                    params.setCurrencyPair(currencyMapper.mapToCurrencyPair(pair));
+
+                    try {
+                        results.addAll(
+                                tradeService.getTradeHistory(params)
+                                        .getUserTrades()
+                                        .stream()
+                                        .map(tradeMapper::mapToTradeDTO)
+                                        .sorted(Comparator.comparing(TradeDTO::getTimestamp))
+                                        .collect(Collectors.toCollection(LinkedHashSet::new))
+                        );
+                    } catch (IOException e) {
+                        logger.error("TradeService - Error retrieving trades : {}", e.getMessage());
+                    }
+                });
             }
 
-            final Set<TradeDTO> results = tradeService.getTradeHistory(params)
-                    .getUserTrades()
-                    .stream()
-                    .map(tradeMapper::mapToTradeDTO)
-                    .sorted(Comparator.comparing(TradeDTO::getTimestamp))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
             logger.debug("TradeService - {} trade(s) found", results.size());
             return results;
-        } catch (IOException e) {
-            logger.error("TradeService - Error retrieving trades : {}", e.getMessage());
-            return Collections.emptySet();
         } catch (InterruptedException e) {
             logger.error("TradeService - InterruptedException : {}", e.getMessage());
             return Collections.emptySet();
