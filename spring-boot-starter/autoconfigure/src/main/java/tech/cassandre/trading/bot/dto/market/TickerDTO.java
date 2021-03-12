@@ -2,11 +2,10 @@ package tech.cassandre.trading.bot.dto.market;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -19,6 +18,7 @@ import static lombok.AccessLevel.PRIVATE;
  */
 @Value
 @Builder
+@EqualsAndHashCode
 @AllArgsConstructor(access = PRIVATE)
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class TickerDTO {
@@ -87,28 +87,4 @@ public class TickerDTO {
             return null;
         }
     }
-
-    @Override
-    public final boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final TickerDTO that = (TickerDTO) o;
-        return new EqualsBuilder()
-                .append(this.currencyPair, that.currencyPair)
-                .append(this.timestamp, that.timestamp)
-                .isEquals();
-    }
-
-    @Override
-    public final int hashCode() {
-        return new HashCodeBuilder()
-                .append(currencyPair)
-                .append(timestamp)
-                .toHashCode();
-    }
-
 }
