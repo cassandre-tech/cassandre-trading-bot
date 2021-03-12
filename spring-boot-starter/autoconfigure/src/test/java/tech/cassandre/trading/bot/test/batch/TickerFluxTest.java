@@ -111,10 +111,10 @@ public class TickerFluxTest extends BaseTest {
         assertEquals(cp2, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("40").compareTo(t.getLast()));
 
-        // Eighth value cp1 - 4.
+        // Eighth value cp1 - 40.
         t = iterator.next();
         assertEquals(cp1, t.getCurrencyPair());
-        assertEquals(0, new BigDecimal("4").compareTo(t.getLast()));
+        assertEquals(0, new BigDecimal("40").compareTo(t.getLast()));
 
         // Ninth value cp2 - 50.
         t = iterator.next();

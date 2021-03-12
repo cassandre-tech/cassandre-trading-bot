@@ -26,7 +26,7 @@ public class TickerFluxTestMock extends BaseMock {
                         getGeneratedTicker(xChangeCP1, new BigDecimal("2")),       // Value 03.
                         getGeneratedTicker(xChangeCP1, new BigDecimal("3")),            // Value 05.
                         null,                                                               // Value 07.
-                        getGeneratedTicker(date, xChangeCP1, new BigDecimal("4")),      // Value 09.
+                        getGeneratedTicker(date, xChangeCP1, new BigDecimal("40")),      // Value 09.
                         getGeneratedTicker(date, xChangeCP1, new BigDecimal("40")),     // Value 11.
                         getGeneratedTicker(xChangeCP1, new BigDecimal("5")),            // Value 13.
                         getGeneratedTicker(xChangeCP1, new BigDecimal("6")),            // Value 15.

@@ -33,11 +33,12 @@ public class TickerDTOTest extends BaseTest {
 
 		// Ticker 1 - ETH/BTC, date1, 1 BTC.
 		TickerDTO t01 = TickerDTO.builder().currencyPair(cp1).timestamp(date1).last(new BigDecimal("1")).build();
+		TickerDTO t011 = TickerDTO.builder().currencyPair(cp1).timestamp(date1).last(new BigDecimal("1")).build();
+		assertEquals(t01, t011);
 
 		// Ticker 2 - ETH/BTC, date1, 2 BTC.
 		TickerDTO t02 = TickerDTO.builder().currencyPair(cp1).timestamp(date1).last(new BigDecimal("2")).build();
-		assertEquals(t01, t02);
-		assertEquals(t02, t01);
+		assertNotEquals(t01, t02);
 
 		// Ticker 3 - ETH/BTC, date2, 1 BTC.
 		TickerDTO t03 = TickerDTO.builder().currencyPair(cp1).timestamp(date2).last(new BigDecimal("1")).build();
