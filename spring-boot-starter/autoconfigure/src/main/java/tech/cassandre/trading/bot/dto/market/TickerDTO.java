@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -88,6 +89,15 @@ public class TickerDTO {
         }
     }
 
+    /**
+     * Getter timestamp.
+     *
+     * @return timestamp
+     */
+    public final ZonedDateTime getTimestamp() {
+        return Objects.requireNonNullElseGet(timestamp, ZonedDateTime::now);
+    }
+
     @Override
     public final boolean equals(final Object o) {
         if (this == o) {
@@ -99,7 +109,7 @@ public class TickerDTO {
         final TickerDTO that = (TickerDTO) o;
         return new EqualsBuilder()
                 .append(this.currencyPair, that.currencyPair)
-                .append(this.timestamp, that.timestamp)
+                .append(this.getTimestamp(), that.getTimestamp())
                 .isEquals();
     }
 
