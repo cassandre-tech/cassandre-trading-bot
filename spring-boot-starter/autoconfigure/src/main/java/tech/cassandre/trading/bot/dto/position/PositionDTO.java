@@ -97,7 +97,7 @@ public class PositionDTO {
     private static final BigDecimal ONE_HUNDRED_BIG_DECIMAL = new BigDecimal("100");
 
     /** Big integer scale. */
-    private static final int BIGINTEGER_SCALE = 4;
+    private static final int BIGINTEGER_SCALE = 8;
 
     /**
      * Constructor.
@@ -187,7 +187,6 @@ public class PositionDTO {
                         .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
                         .reduce(ZERO, BigDecimal::add);
                 final BigDecimal amountICanBuy = amountGained.divide(price, BIGINTEGER_SCALE, FLOOR);
-
                 // Percentage.
                 final BigDecimal gainPercentage = ((amountICanBuy.subtract(amount.getValue()))
                         .divide(amount.getValue(), BIGINTEGER_SCALE, FLOOR))
