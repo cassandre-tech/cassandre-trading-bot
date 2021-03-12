@@ -32,7 +32,7 @@ public class ShortPositionFluxTestMock extends BaseMock {
         MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), xChangeCP1);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00010");
         // Closing order creation result.
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("10"), xChangeCP1);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("1000"), xChangeCP1);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00011");
 
         // Position 2.

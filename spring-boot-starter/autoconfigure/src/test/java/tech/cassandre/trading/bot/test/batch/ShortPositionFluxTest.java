@@ -86,7 +86,7 @@ public class ShortPositionFluxTest extends BaseTest {
     @DisplayName("Check received data")
     public void checkReceivedData() {
         // =============================================================================================================
-        // Creates position 1 - should be OPENING.
+        // Creates short position 1 of 10 ETH (for BTC) - should be OPENING.
         final PositionCreationResultDTO position1Result = strategy.createShortPosition(cp1,
                 new BigDecimal("10"),
                 PositionRulesDTO.builder()
@@ -307,9 +307,9 @@ public class ShortPositionFluxTest extends BaseTest {
         // Test of tickers updating the position 1.
         // I sold 10 ETH for BTC
         // Two trades :
-        // - 4 at 0.03 (1 ETH costs 0.03 BTC).
-        // - 6 at 0.03 (1 ETH costs 0.03 BTC).
-        // Meaning I now have 0.3 BTC (at the price of 0.03).
+        // - 5 at 0.02 (1 ETH costs 0.03 BTC).
+        // - 5 at 0.04 (1 ETH costs 0.03 BTC).
+        // Meaning I now have 0.3 BTC (at the mean price of 0.03).
 
         // First ticker arrives - min, max and last gain should be set to that value.
         // Price goes to 0.01 meaning that with my 0.3 BTC I can buy 30 eth.
@@ -520,7 +520,7 @@ public class ShortPositionFluxTest extends BaseTest {
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .amount(new CurrencyAmountDTO("500", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
@@ -531,7 +531,7 @@ public class ShortPositionFluxTest extends BaseTest {
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .amount(new CurrencyAmountDTO("500", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
@@ -551,7 +551,7 @@ public class ShortPositionFluxTest extends BaseTest {
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
+                .amount(new CurrencyAmountDTO("500", cp1.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
@@ -561,8 +561,8 @@ public class ShortPositionFluxTest extends BaseTest {
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("2", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("500", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020").plusDays(1))
                 .build());
 

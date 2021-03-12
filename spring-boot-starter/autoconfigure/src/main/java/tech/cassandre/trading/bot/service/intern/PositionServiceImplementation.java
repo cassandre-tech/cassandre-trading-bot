@@ -187,11 +187,17 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     if (p.shouldBeClosed()) {
                         final OrderCreationResultDTO orderCreationResult;
                         if (p.getType() == LONG) {
-                            // Long.
+                            // Long - We just sell.
                             orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
                         } else {
-                            // Short.
-                            orderCreationResult = tradeService.createBuyMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
+                            // Short - We buy back with the money we get from the original selling.
+                            // On opening, we had :
+                            // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH and it will give us 10 USDT.
+                            // We will use those 10 USDT to buy back ETH when the rule is triggered.
+                            // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
+                            // We can now use those 10 USDT to buy 5 ETH (amountSold / price).
+                            final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP);
+                            orderCreationResult = tradeService.createBuyMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), amountToBuy);
                         }
 
                         if (orderCreationResult.isSuccessful()) {

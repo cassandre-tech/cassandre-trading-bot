@@ -444,8 +444,6 @@ public class PositionTest extends BaseTest {
         assertEquals(OPENED, p.getStatus());
         assertEquals("DRY_ORDER_000000001", p.getOpeningOrder().getOrderId());
 
-        // tradeRepository.findByOrderByTimestampAsc().forEach(trade -> System.out.println("=> "+ trade));
-
         assertFalse(p.getOpeningOrder().getTrades().isEmpty());
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(t -> "DRY_TRADE_000000001".equals(t.getTradeId())));
         assertNull(p.getClosingOrder());
@@ -506,7 +504,7 @@ public class PositionTest extends BaseTest {
                 .type(ASK)
                 .strategy(strategyDTO)
                 .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1.00001", cp1.getBaseCurrency()))
+                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
                 .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
                 .leverage("leverage3")

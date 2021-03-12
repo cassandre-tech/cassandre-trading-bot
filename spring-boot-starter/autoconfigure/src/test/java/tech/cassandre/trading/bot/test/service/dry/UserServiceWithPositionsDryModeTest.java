@@ -281,32 +281,35 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // CP2 : ETH/USDT - 1 ETH costs 100 USDT - We sell 10 ETH and it will give us 1000 USDT.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("100")).build());
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position2Id).getStatus()));
-        // For the position short 4, we send :
-        // CP2 : ETH/USDT - 1 ETH costs 1 USDT - We buy 1 ETH and it will costs us 8 USDT.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("1")).build());
+
+        // For the position short 4, we started at :
+        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sell 1 ETH and it will give us 10 USDT.
+        // And now we are at :
+        // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("2")).build());
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position4Id).getStatus()));
 
         // We should now have the following amounts
         // Before.              After.
         // 0.99962937 BTC       =>  0.99962937 BTC.
-        // 80 USDT              =>  80 + 1 000 (position 2) - 1 (position 4)
-        // 19.5 ETH             =>  19.5 - 10 (position 2) + 1 (position 4)
+        // 80 USDT              =>  80 + 1 000 (position 2 sell) - 10 (position 4 buy)
+        // 19.5 ETH             =>  19.5 - 10 (position 2 sell) + 5 (position 4 buy)
         // 0 KCS                =>  20 KCS (20 lock in positions).
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         balances = getBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
-        assertEquals(0, new BigDecimal("1079").compareTo(balances.get(USDT).getAvailable()));
-        assertEquals(0, new BigDecimal("10.5").compareTo(balances.get(ETH).getAvailable()));
+        assertEquals(0, new BigDecimal("1070").compareTo(balances.get(USDT).getAvailable()));
+        assertEquals(0, new BigDecimal("14.5").compareTo(balances.get(ETH).getAvailable()));
         assertEquals(0, new BigDecimal("20").compareTo(balances.get(KCS).getAvailable()));
 
-        // We check that the position don't lock amount anymore
+        // We check that the position don't lock amount anymore.
         // Only 0.5 ETH locked because of position 1.
         // 20 KCS because of position 3.
         assertEquals(2, strategy.getAmountsLockedByPosition().size());
         assertEquals(0, new BigDecimal("0.5").compareTo(strategy.getAmountsLockedByCurrency(ETH)));
         assertEquals(0, new BigDecimal("20").compareTo(strategy.getAmountsLockedByCurrency(KCS)));
 
-        // As we now have 1079 ETH and 10.5 locked in positions, we should be able to buy 0.02 BTC but not 0.03 BTC.
+        // As we now have 1070 ETH and 10.5 locked in positions, we should be able to buy 0.02 BTC but not 0.03 BTC.
         assertTrue(strategy.canBuy(cp3, new BigDecimal("0.02")));
         assertFalse(strategy.canBuy(cp3, new BigDecimal("0.03")));
     }

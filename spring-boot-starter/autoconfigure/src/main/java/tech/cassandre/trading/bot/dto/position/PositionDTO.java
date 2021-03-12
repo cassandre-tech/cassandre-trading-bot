@@ -176,27 +176,27 @@ public class PositionDTO {
             //  Gain = ((5 - 10) / 10) * 100 = -50 % (I calculate evolution backward, from bought price to sold price).
             // --
             // When sold : Ticker ETH/USDT : 1 ETH costs 5 USDT.
-            // The amount of USDT I can spend (amountIOwnInQuoteCurrency) = amount * price in trade.
+            // The amount of USDT I can spend (amountGained) = amount * price in trade.
             // When bought : Ticker ETH/USDT : 1 ETH costs 10 USDT.
-            // The amount of ETH I can buy (amountICanBuyInBaseCurrency) = amountIOwnInQuoteCurrency / price.
-            // Gain = amountICanBuyInBaseCurrency - amountIOwnInQuoteCurrency.
+            // The amount of ETH I can buy (amountICanBuy) = amountIOwnInQuoteCurrency / price.
+            // Gain = amountICanBuy - amount.
             if (this.type == SHORT) {
                 // Amounts.
-                final BigDecimal amountIOwnInQuoteCurrency = openingOrder.getTrades()
+                final BigDecimal amountGained = openingOrder.getTrades()
                         .stream()
                         .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
                         .reduce(ZERO, BigDecimal::add);
-                final BigDecimal amountICanBuyInBaseCurrency = amountIOwnInQuoteCurrency.divide(price, BIGINTEGER_SCALE, FLOOR);
+                final BigDecimal amountICanBuy = amountGained.divide(price, BIGINTEGER_SCALE, FLOOR);
 
                 // Percentage.
-                final BigDecimal gainPercentage = ((amountICanBuyInBaseCurrency.subtract(amount.getValue()))
+                final BigDecimal gainPercentage = ((amountICanBuy.subtract(amount.getValue()))
                         .divide(amount.getValue(), BIGINTEGER_SCALE, FLOOR))
                         .multiply(ONE_HUNDRED_BIG_DECIMAL);
 
                 return Optional.of(GainDTO.builder()
                         .percentage(gainPercentage.floatValue())
                         .amount(CurrencyAmountDTO.builder()
-                                .value(amountICanBuyInBaseCurrency.subtract(amount.getValue()))
+                                .value(amountICanBuy.subtract(amount.getValue()))
                                 .currency(currencyPair.getBaseCurrency())
                                 .build())
                         .fees(CurrencyAmountDTO.builder()
@@ -245,12 +245,12 @@ public class PositionDTO {
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
-            final BigDecimal total = openingOrder.getTrades()
+            final BigDecimal tradesTotal = openingOrder.getTrades()
                     .stream()
                     .filter(t -> !t.getTradeId().equals(trade.getTradeId()))
                     .map(t -> t.getAmount().getValue())
                     .reduce(trade.getAmount().getValue(), BigDecimal::add);
-            if (amount.getValue().compareTo(total) == 0) {
+            if (openingOrder.getAmount().getValue().compareTo(tradesTotal) == 0) {
                 status = OPENED;
             }
         }
@@ -260,12 +260,12 @@ public class PositionDTO {
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
-            final BigDecimal total = closingOrder.getTrades()
+            final BigDecimal tradesTotal = closingOrder.getTrades()
                     .stream()
                     .filter(t -> !t.getTradeId().equals(trade.getTradeId()))
                     .map(t -> t.getAmount().getValue())
                     .reduce(trade.getAmount().getValue(), BigDecimal::add);
-            if (amount.getValue().compareTo(total) == 0) {
+            if (closingOrder.getAmount().getValue().compareTo(tradesTotal) == 0) {
                 status = CLOSED;
             }
         }

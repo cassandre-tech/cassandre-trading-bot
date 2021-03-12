@@ -86,7 +86,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     @Override
     public final void onAccountUpdate(final AccountDTO account) {
         accountsUpdateReceived.add(account);
-        logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account);
+        logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account + "\n");
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -97,7 +97,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     @Override
     public final void onTickerUpdate(final TickerDTO ticker) {
         tickersUpdateReceived.add(ticker);
-        logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker);
+        logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n");
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -108,7 +108,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     @Override
     public final void onOrderUpdate(final OrderDTO order) {
         ordersUpdateReceived.add(order);
-        logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order);
+        logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order + "\n");
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -119,7 +119,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     @Override
     public void onTradeUpdate(TradeDTO trade) {
         tradesUpdateReceived.add(trade);
-        logger.info("TestableStrategy-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade);
+        logger.info("TestableStrategy-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade + "\n");
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -130,7 +130,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     @Override
     public void onPositionUpdate(PositionDTO position) {
         positionsUpdateReceived.add(position);
-        logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position);
+        logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position + "\n");
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -141,7 +141,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     @Override
     public void onPositionStatusUpdate(PositionDTO position) {
         positionsStatusUpdateReceived.add(position);
-        logger.info("TestableStrategy-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position);
+        logger.info("TestableStrategy-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position + "\n");
 
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
