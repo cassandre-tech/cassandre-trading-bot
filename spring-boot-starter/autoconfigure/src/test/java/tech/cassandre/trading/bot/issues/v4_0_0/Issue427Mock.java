@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.issues;
+package tech.cassandre.trading.bot.issues.v4_0_0;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -9,7 +9,6 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -24,12 +23,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -38,7 +34,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
 @TestConfiguration
-public class TradeBeforeOrderMock extends BaseTest {
+public class Issue427Mock extends BaseTest {
 
     @Autowired
     private PositionRepository positionRepository;
@@ -101,42 +97,6 @@ public class TradeBeforeOrderMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        // getTrades() replies.
-        given(service.getTrades(any())).willReturn(
-                Set.of(TradeDTO.builder()
-                                .tradeId("TRADE_000001")
-                                .type(ASK)
-                                .orderId("ORDER_000001")
-                                .currencyPair(cp1)
-                                .amount(new CurrencyAmountDTO("0.5", cp1.getBaseCurrency()))
-                                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
-                                .build(),
-                        TradeDTO.builder()
-                                .tradeId("TRADE_000001")
-                                .type(ASK)
-                                .orderId("ORDER_000001")
-                                .currencyPair(cp1)
-                                .amount(new CurrencyAmountDTO("0.5", cp1.getBaseCurrency()))
-                                .price(new CurrencyAmountDTO("2", cp1.getQuoteCurrency()))
-                                .build(),
-                        TradeDTO.builder()
-                                .tradeId("TRADE_000002")
-                                .type(ASK)
-                                .orderId("ORDER_000001")
-                                .currencyPair(cp1)
-                                .amount(new CurrencyAmountDTO("0.5", cp1.getBaseCurrency()))
-                                .price(new CurrencyAmountDTO("2", cp1.getQuoteCurrency()))
-                                .build(),
-                        TradeDTO.builder()
-                                .tradeId("TRADE_000003")
-                                .type(ASK)
-                                .orderId("ORDER_000002")
-                                .currencyPair(cp1)
-                                .amount(new CurrencyAmountDTO("0.5", cp1.getBaseCurrency()))
-                                .price(new CurrencyAmountDTO("2", cp1.getQuoteCurrency()))
-                                .build())
-        );
-
         LinkedHashSet<OrderDTO> orders = new LinkedHashSet<>();
         orders.add(OrderDTO.builder()
                 .orderId("ORDER_000001")
@@ -151,20 +111,20 @@ public class TradeBeforeOrderMock extends BaseTest {
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .build());
+
         orders.add(OrderDTO.builder()
-                .orderId("ORDER_000001")
+                .orderId("ORDER_000002")
                 .type(ASK)
                 .currencyPair(cp1)
                 .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
                 .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
                 .leverage("leverage1")
-                .status(FILLED)
+                .status(NEW)
                 .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .build());
-
         // getOrders() replies.
         given(service.getOrders()).willReturn(orders);
 

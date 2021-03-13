@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.issues;
+package tech.cassandre.trading.bot.issues.v4_0_0;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,18 +28,14 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
-/**
- * Duplicated orders.
- * Issue : https://github.com/cassandre-tech/cassandre-trading-bot/issues/421
- */
 @SpringBootTest
-@DisplayName("Github issues - Duplicated order - 421")
+@DisplayName("Github issue 421")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(PositionServiceDryModeTestMock.class)
-public class DuplicatedOrders extends BaseTest {
+public class Issue421 extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
@@ -54,8 +50,8 @@ public class DuplicatedOrders extends BaseTest {
     private OrderFlux orderFlux;
 
     @Test
-    @DisplayName("Check duplicated order")
-    public void checkDuplicatedOrder() {
+    @DisplayName("Duplicated orders in database")
+    public void checkDuplicatedOrderInDatabase() {
         // First tickers - cp1 & cp2 (dry mode).
         // ETH, BTC - bid 0.2 / ask 0.2.
         // ETH, USDT - bid 0,3 / ask 0.3.

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.issues;
+package tech.cassandre.trading.bot.issues.v4_0_1;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 @SpringBootTest
-@DisplayName("Github issue 421")
+@DisplayName("Github issue 470")
 @Configuration({
         @Property(key = "spring.datasource.data", value = "classpath:/issue470.sql")
 })
@@ -33,8 +33,8 @@ public class Issue470 extends BaseTest {
     private TickerFlux tickerFlux;
 
     @Test
-    @DisplayName("Check onPositionStatusUpdate not called after restart")
-    public void checkGainsCalculation() throws InterruptedException {
+    @DisplayName("When Cassandre restarts, opened positions are sent to onPositionStatusUpdate")
+    public void checkOnPositionStatusUpdate() throws InterruptedException {
         // Position 5 on ETH/BTC is OPENED and is present in database.
         // We call the ticker flux that should update the latestPrice of position.
         // That should trigger a position update but NOT a position status update.

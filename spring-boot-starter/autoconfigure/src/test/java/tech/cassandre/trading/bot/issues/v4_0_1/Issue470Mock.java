@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.issues;
+package tech.cassandre.trading.bot.issues.v4_0_1;
 
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
