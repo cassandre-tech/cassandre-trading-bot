@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.FLOOR;
 import static java.math.RoundingMode.HALF_UP;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -41,6 +42,9 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
  * Position service implementation.
  */
 public class PositionServiceImplementation extends BaseService implements PositionService {
+
+    /** Bigdecimal scale for division. */
+    public static final int SCALE = 8;
 
     /** Position repository. */
     private final PositionRepository positionRepository;
@@ -196,7 +200,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                             // We will use those 10 USDT to buy back ETH when the rule is triggered.
                             // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
                             // We can now use those 10 USDT to buy 5 ETH (amountSold / price).
-                            final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP);
+                            final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
                             orderCreationResult = tradeService.createBuyMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), amountToBuy);
                         }
 
