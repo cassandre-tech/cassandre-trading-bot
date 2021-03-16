@@ -100,9 +100,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("TradeService - Order created : {}", result);
             return result;
         } catch (Exception e) {
-            logger.error("TradeService - Error calling createBuyMarketOrder {} {} : {}", amount, currencyPair, e.getMessage());
+            final String error = "TradeService - Error calling createBuyMarketOrder for " + amount + " " + currencyPair + " : " + e.getMessage();
             e.printStackTrace();
-            return new OrderCreationResultDTO("TradeService - Error calling createBuyMarketOrder : " + e.getMessage(), e);
+            logger.error(error);
+            return new OrderCreationResultDTO(error, e);
         }
     }
 
@@ -154,8 +155,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("TradeService - Order creation result : {}", result);
             return result;
         } catch (Exception e) {
-            logger.error("TradeService - Error calling createLimitOrder {} {} : {}", amount, currencyPair, e.getMessage());
-            return new OrderCreationResultDTO("TradeService - Error calling createLimitOrder : " + e.getMessage(), e);
+            final String error = "TradeService - Error calling createLimitOrder for " + amount + " " + currencyPair + " : " + e.getMessage();
+            e.printStackTrace();
+            logger.error(error);
+            return new OrderCreationResultDTO(error, e);
         }
     }
 
