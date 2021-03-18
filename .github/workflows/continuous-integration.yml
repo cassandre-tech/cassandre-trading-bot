@@ -56,7 +56,6 @@ jobs:
           folder: docs/src/.vuepress/dist
           commit-message: "Documentation web site update for ${{ steps.version.outputs.version }}"
           clean: true
-          clean-exclude: CNAME
 
       # ================================================================================================================
       - name: Creates a Qase run
