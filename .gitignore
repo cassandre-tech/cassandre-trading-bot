@@ -111,7 +111,6 @@ output-*
 /.idea/
 
 # others
-index.md
 /_data/
 /_site/
 /pages/
