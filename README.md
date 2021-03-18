@@ -1,6 +1,6 @@
 <h3 align="center">
     <a href="https://trading-bot.cassandre.tech">
-        <img    src="https://trading-bot.cassandre.tech/assets/images/logo/cassandre-trading-bot-full-small.png"
+        <img    src="https://trading-bot.cassandre.tech/assets/images/logo/cassandre-trading-bot-full.png"
                 alt="Cassandre trading bot"/>
     </a>
 </h3>
