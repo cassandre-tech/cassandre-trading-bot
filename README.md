@@ -1,10 +1,8 @@
 <h3 align="center">
     <a href="https://trading-bot.cassandre.tech">
-        <img    src="https://github.com/cassandre-tech/cassandre-trading-bot-web-site/blob/master/.gitbook/assets/logo_with_text.png?raw=true"
+        <img    src="https://trading-bot.cassandre.tech/assets/images/logo/cassandre-trading-bot-full-small.png"
                 alt="Cassandre trading bot"/>
     </a>
-    <br>
-    Cassandre trading bot
 </h3>
 
 <p align="center">Cassandre makes it easy to create and run a Java crypto trading bot</p>
