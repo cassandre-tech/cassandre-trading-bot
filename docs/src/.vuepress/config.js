@@ -25,7 +25,8 @@ module.exports = {
         ['meta', {property: 'og:description', content: 'Cassandre is an open-source framework that makes it easy to create your Java crypto trading bot'}],
         ['meta', {property: 'og:image', content: 'https://trading-bot.cassandre.tech/assets/images/social/cassandre-trading-bot-open-graph.png'}],
         ['meta', {property: 'og:site_name', content: 'Cassandre'}],
-        ['meta', {name: 'twitter:card', content: 'summary'}],
+        ['meta', {name: 'twitter:title', content: 'Cassandre trading bot framework'}],
+        ['meta', {name: 'twitter:card', content: 'summary_large_image'}],
         ['meta', {name: 'twitter:site', content: '@cassandretech'}],
         ['meta', {name: 'twitter:image:alt', content: 'Cassandre'}]
     ],
