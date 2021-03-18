@@ -1,24 +1,33 @@
----
-description: How to build Cassandre trading bot from the sources on github
----
-
 # Build from sources
 
-### Get the sources from Github. <a id="get-the-sources"></a>
+## Build Cassandre
 
+### Get the sources from Github
 ```bash
 git clone git@github.com:cassandre-tech/cassandre-trading-bot.git
 ```
 
-### Move to the source directory. <a id="go-to-cassandre-directory"></a>
-
+### Move to the source directory
 ```bash
 cd cassandre-trading-bot
 ```
 
-### Run the build. <a id="build"></a>
-
+### Run the build
 ```bash
 mvn package
 ```
 
+## Build documentation
+
+### Run local documentation
+```bash
+cd docs/src/
+vuepress dev
+```
+Documentation web site is now running at [http://0.0.0.0:8080/](http://0.0.0.0:8080/).
+
+### Build static website
+```bash
+cd docs/src/
+yarn --cwd docs build
+```
