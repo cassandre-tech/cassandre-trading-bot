@@ -38,6 +38,7 @@ import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRA
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
@@ -46,7 +47,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 public class BaseTest {
 
     /** Default strategy. */
-    protected StrategyDTO strategyDTO = StrategyDTO.builder()
+    protected final StrategyDTO strategyDTO = StrategyDTO.builder()
             .id(1L)
             .strategyId("01")
             .type(BASIC_STRATEGY)
@@ -96,6 +97,18 @@ public class BaseTest {
 
     /** XChange cp2 for tests. */
     protected final CurrencyPair xChangeCP3 = new CurrencyPair(Currency.BTC, Currency.USDT);
+
+    /** cp4 for tests. */
+    protected final CurrencyPairDTO cp4 = new CurrencyPairDTO(KCS, USDT);
+
+    /** XChange cp4 for tests. */
+    protected final CurrencyPair xChangeCP4 = new CurrencyPair(Currency.KCS, Currency.USDT);
+
+    /** cp5 for tests. */
+    protected final CurrencyPairDTO cp5 = new CurrencyPairDTO(BTC, ETH);
+
+    /** XChange cp5 for tests. */
+    protected final CurrencyPair xChangeCP5 = new CurrencyPair(Currency.BTC, Currency.ETH);
 
     /** Ten seconds wait. */
     protected static final long WAITING_TIME_IN_SECONDS = 5L;

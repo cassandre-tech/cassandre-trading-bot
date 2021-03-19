@@ -21,7 +21,7 @@ public class PositionServiceTestMock extends BaseMock {
 
     @Override
     public TradeService getXChangeTradeServiceMock() throws IOException {
-        org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
+        TradeService mock = mock(TradeService.class);
 
         // No trades returned - they will be directly emitted by the test.
         given(mock.getTradeHistory(any())).willReturn(new UserTrades(Collections.emptyList(), SortByTimestamp));

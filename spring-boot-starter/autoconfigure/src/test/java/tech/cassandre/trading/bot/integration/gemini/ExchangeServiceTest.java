@@ -47,7 +47,7 @@ public class ExchangeServiceTest {
 
 	@Test
 	@Tag("integration")
-	@CaseId(84)
+	@CaseId(92)
 	@DisplayName("Check get available currency pairs")
 	public void checkGetAvailableCurrencyPairs() {
 		// Expected values.

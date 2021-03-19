@@ -25,7 +25,7 @@ public class TradeFluxTestMock extends BaseMock {
 
     @Override
     public TradeService getXChangeTradeServiceMock() throws IOException {
-        org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
+        TradeService mock = mock(TradeService.class);
 
         given(mock.getOpenOrders()).willReturn(new OpenOrders(Collections.emptyList()));
         // =============================================================================================================

@@ -54,7 +54,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.STOPPED;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Service - XChange - Position service")
@@ -122,7 +122,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(30f).stopLossPercentage(30f).build());
         assertFalse(p3.isSuccessful());
         assertNull(p3.getPosition());
-        assertEquals("TradeService - Error calling createBuyMarketOrder : Error exception", p3.getErrorMessage());
+        assertTrue(p3.getErrorMessage().contains("TradeService - Error calling createBuyMarketOrder"));
         assertEquals("Error exception", p3.getException().getMessage());
         assertEquals(2, positionService.getPositions().size());
     }
@@ -566,7 +566,6 @@ public class PositionServiceTest extends BaseTest {
                 .build());
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
 
-        strategy.getOrders().forEach((s, orderDTO) -> System.out.println("==> " + orderDTO));
         // =============================================================================================================
         // We send tickers.
 

@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
@@ -79,6 +80,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Positions previous status. */
     private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
+    /** Amounts locked by positions. */
+    private final Map<Long, CurrencyAmountDTO> amountsLockedByPosition = new ConcurrentHashMap<>();
+
     /** Last ticker received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
 
@@ -122,10 +126,17 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setPositionService(final PositionService newPositionService) {
         this.positionService = newPositionService;
+        // We set the previous positions status from database.
         this.positionService.getPositions()
                 .stream()
                 .filter(p -> p.getStatus() != CLOSED)
                 .forEach(p -> previousPositionsStatus.put(p.getId(), p.getStatus()));
+        // We set the locked amount from database.
+        // TODO Add a test on this.
+        this.positionService.getPositions()
+                .stream()
+                .filter(p -> p.getStatus() != CLOSED)
+                .forEach(p -> amountsLockedByPosition.put(p.getId(), p.getAmountToLock()));
     }
 
     // =================================================================================================================
@@ -155,10 +166,16 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     @Override
     public void positionUpdate(final PositionDTO position) {
+        // On every position update, we update the position locked.
+        amountsLockedByPosition.put(position.getId(), position.getAmountToLock());
+        if (position.getStatus() == CLOSED) {
+            amountsLockedByPosition.remove(position.getId());
+        }
+
         // For every position update.
         onPositionUpdate(position);
 
-        // For every position status update.
+        // From positionUpdate(), we see if it's also a onPositionStatusUpdate().
         if (previousPositionsStatus.get(position.getId()) != position.getStatus()) {
             previousPositionsStatus.put(position.getId(), position.getStatus());
             if (position.getStatus() == CLOSED) {
@@ -198,6 +215,29 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final Optional<AccountDTO> getTradeAccount() {
         return getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+    }
+
+    /**
+     * Getter amountsLockedByPosition.
+     *
+     * @return amountsLockedByPosition
+     */
+    public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
+        return amountsLockedByPosition;
+    }
+
+    /**
+     * Returns the amount locked by currency.
+     *
+     * @param currency currency
+     * @return amount
+     */
+    public final BigDecimal getAmountsLockedByCurrency(final CurrencyDTO currency) {
+        return amountsLockedByPosition.values()
+                .stream()
+                .filter(currencyAmount -> currencyAmount.getCurrency().equals(currency))
+                .map(CurrencyAmountDTO::getValue)
+                .reduce(ZERO, BigDecimal::add);
     }
 
     // =================================================================================================================
@@ -380,7 +420,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     /**
-     * Creates a position with its associated rules.
+     * Creates a long position with its associated rules.
+     * Long position is nothing but buying share.
+     * If you are bullish (means you think that price of X share will rise) at that time you buy some amount of Share is called taking Long Position in share.
      *
      * @param currencyPair currency pair
      * @param amount       amount
@@ -391,6 +433,22 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
                                                         final BigDecimal amount,
                                                         final PositionRulesDTO rules) {
         return positionService.createLongPosition(strategyDTO, currencyPair, amount, rules);
+    }
+
+    /**
+     * Creates a short position with its associated rules.
+     * Short position is nothing but selling share.
+     * If you are bearish (means you think that price of xyz share are going to fall) at that time you sell some amount of share is called taking Short Position in share.
+     *
+     * @param currencyPair currency pair
+     * @param amount       amount
+     * @param rules        rules
+     * @return position creation result
+     */
+    public PositionCreationResultDTO createShortPosition(final CurrencyPairDTO currencyPair,
+                                                         final BigDecimal amount,
+                                                         final PositionRulesDTO rules) {
+        return positionService.createShortPosition(strategyDTO, currencyPair, amount, rules);
     }
 
     // =================================================================================================================
@@ -534,9 +592,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
             // Must be superior to zero
             // If there is no way to calculate the price for the moment (no ticker).
             return estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
-                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter))
+                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter).add(getAmountsLockedByCurrency(currencyAmountDTO.getCurrency())))
                     .compareTo(ZERO) > 0).isPresent() || estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
-                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter))
+                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter).add(getAmountsLockedByCurrency(currencyAmountDTO.getCurrency())))
                     .compareTo(ZERO) == 0).isPresent();
         } else {
             // If the is no balance in this currency, we can't buy.
@@ -604,8 +662,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         // public int compareTo(BigDecimal bg) returns
         // 1 : if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
         // If the is no balance in this currency, we can't buy.
-        return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(ZERO) > 0
-                || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).compareTo(ZERO) == 0).isPresent();
+        return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).subtract(getAmountsLockedByCurrency(currency)).compareTo(ZERO) > 0
+                || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).subtract(getAmountsLockedByCurrency(currency)).compareTo(ZERO) == 0).isPresent();
     }
 
 }

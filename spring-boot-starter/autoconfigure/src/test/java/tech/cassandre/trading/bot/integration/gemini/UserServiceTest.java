@@ -51,7 +51,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    @CaseId(90)
+    @CaseId(98)
     @Tag("integration")
     @DisplayName("Check get user, accounts and balances")
     public void checkGetUser() {

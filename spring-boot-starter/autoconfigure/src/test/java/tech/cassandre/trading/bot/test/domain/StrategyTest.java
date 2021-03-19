@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Modes.PARAMETER_EXCHANGE_DRY;
-import static tech.cassandre.trading.bot.util.parameters.ExchangeParameters.Rates.PARAMETER_EXCHANGE_RATE_ACCOUNT;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_NAME_DEFAULT_VALUE;
 
 @SpringBootTest
 @DisplayName("Domain - Strategy - Creation")
@@ -43,7 +43,7 @@ public class StrategyTest {
         assertEquals(1, s.get().getId());
         assertEquals("01", s.get().getStrategyId());
         assertEquals("Testable strategy", s.get().getName());
-        assertEquals("kucoin", s.get().getExchangeAccount().getExchange());
+        assertEquals(PARAMETER_NAME_DEFAULT_VALUE, s.get().getExchangeAccount().getExchange());
         assertEquals("cassandre.crypto.bot@gmail.com", s.get().getExchangeAccount().getAccount());
 
         // Test equals.

@@ -50,7 +50,7 @@ public class MarketServiceTest {
     private MarketService marketService;
 
     @Test
-    @CaseId(85)
+    @CaseId(93)
     @Tag("integration")
     @DisplayName("Check get ticker")
     public void checkGetTicker() {

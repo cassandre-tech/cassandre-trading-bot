@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -178,12 +179,12 @@ public class TradeServiceTest extends BaseTest {
 
         // Check that the two orders appears in the trade history.
         assertTrue(result1.isSuccessful());
-        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades(any()).stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
         assertNotNull(result2.getOrder().getOrderId());
-        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades(any()).stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
 
         // Retrieve trade & test values.
-        final Optional<TradeDTO> t = tradeService.getTrades()
+        final Optional<TradeDTO> t = tradeService.getTrades(any())
                 .stream()
                 .filter(trade -> trade.getOrderId().equals(result1.getOrder().getOrderId()))
                 .findFirst();

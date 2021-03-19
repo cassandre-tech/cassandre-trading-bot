@@ -23,6 +23,8 @@ public interface PositionService {
 
     /**
      * Creates a long position with its associated rules.
+     * Long position is nothing but buying share.
+     * If you are bullish (means you think that price of X share will rise) at that time you buy some amount of Share is called taking Long Position in share.
      *
      * @param strategy     strategy
      * @param currencyPair currency pair
@@ -34,6 +36,22 @@ public interface PositionService {
                                                  CurrencyPairDTO currencyPair,
                                                  BigDecimal amount,
                                                  PositionRulesDTO rules);
+
+    /**
+     * Creates a long position with its associated rules.
+     * Short position is nothing but selling share.
+     * If you are bearish (means you think that price of xyz share are going to fall) at that time you sell some amount of share is called taking Short Position in share.
+     *
+     * @param strategy     strategy
+     * @param currencyPair currency pair
+     * @param amount       amount
+     * @param rules        rules
+     * @return position creation result
+     */
+    PositionCreationResultDTO createShortPosition(StrategyDTO strategy,
+                                                  CurrencyPairDTO currencyPair,
+                                                  BigDecimal amount,
+                                                  PositionRulesDTO rules);
 
     /**
      * Get positions.

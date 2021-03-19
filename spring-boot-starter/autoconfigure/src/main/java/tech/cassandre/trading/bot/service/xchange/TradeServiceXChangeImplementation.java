@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
+import tech.cassandre.trading.bot.util.system.TimeProvider;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -99,9 +100,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("TradeService - Order created : {}", result);
             return result;
         } catch (Exception e) {
-            logger.error("TradeService - Error calling createBuyMarketOrder : {}", e.getMessage());
+            final String error = "TradeService - Error calling createBuyMarketOrder for " + amount + " " + currencyPair + " : " + e.getMessage();
             e.printStackTrace();
-            return new OrderCreationResultDTO("TradeService - Error calling createBuyMarketOrder : " + e.getMessage(), e);
+            logger.error(error);
+            return new OrderCreationResultDTO(error, e);
         }
     }
 
@@ -153,8 +155,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("TradeService - Order creation result : {}", result);
             return result;
         } catch (Exception e) {
-            logger.error("TradeService - Error calling createLimitOrder : {}", e.getMessage());
-            return new OrderCreationResultDTO("TradeService - Error calling createLimitOrder : " + e.getMessage(), e);
+            final String error = "TradeService - Error calling createLimitOrder for " + amount + " " + currencyPair + " : " + e.getMessage();
+            e.printStackTrace();
+            logger.error(error);
+            return new OrderCreationResultDTO(error, e);
         }
     }
 
@@ -193,6 +197,11 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.error("TradeService - Error canceling order, order id provided is null");
             return false;
         }
+    }
+
+    @Override
+    public final Set<OrderDTO> getOpenOrders() {
+        return getOrders();
     }
 
     @Override
@@ -235,34 +244,41 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<TradeDTO> getTrades() {
+    public final Set<TradeDTO> getTrades(final Set<CurrencyPairDTO> currencyPairs) {
         logger.debug("TradeService - Getting trades from exchange");
-        try {
-            // Consume a token from the token bucket.
-            // If a token is not available this method will block until the refill adds one to the bucket.
-            getBucket().asScheduler().consume(1);
+        // Query trades from the last 24 jours (24 hours because of Binance).
+        TradeHistoryParamsAll params = new TradeHistoryParamsAll();
+        Date now = TimeProvider.now();
+        Date startDate = DateUtils.addDays(now, -1);
+        params.setStartTime(startDate);
+        params.setEndTime(now);
 
-            // Query 1 week of trades.
-            TradeHistoryParamsAll params = new TradeHistoryParamsAll();
-            Date startDate = DateUtils.addWeeks(new Date(), -1);
-            Date endDate = new Date();
-            params.setStartTime(startDate);
-            params.setEndTime(endDate);
-            final Set<TradeDTO> results = tradeService.getTradeHistory(params)
-                    .getUserTrades()
-                    .stream()
-                    .map(tradeMapper::mapToTradeDTO)
-                    .sorted(Comparator.comparing(TradeDTO::getTimestamp))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-            logger.debug("TradeService - {} trade(s) found", results.size());
-            return results;
-        } catch (IOException e) {
-            logger.error("TradeService - Error retrieving trades : {}", e.getMessage());
-            return Collections.emptySet();
-        } catch (InterruptedException e) {
-            logger.error("TradeService - InterruptedException : {}", e.getMessage());
-            return Collections.emptySet();
+        Set<TradeDTO> results = new LinkedHashSet<>();
+        // Set currency pairs (required for exchanges like Gemini or Binance).
+        if (!currencyPairs.isEmpty()) {
+            currencyPairs.forEach(pair -> {
+                params.setCurrencyPair(currencyMapper.mapToCurrencyPair(pair));
+                try {
+                    // Consume a token from the token bucket.
+                    // If a token is not available this method will block until the refill adds one to the bucket.
+                    getBucket().asScheduler().consume(1);
+                    results.addAll(
+                            tradeService.getTradeHistory(params)
+                                    .getUserTrades()
+                                    .stream()
+                                    .map(tradeMapper::mapToTradeDTO)
+                                    .sorted(Comparator.comparing(TradeDTO::getTimestamp))
+                                    .collect(Collectors.toCollection(LinkedHashSet::new))
+                    );
+                } catch (IOException e) {
+                    logger.error("TradeService - Error retrieving trades : {}", e.getMessage());
+                } catch (InterruptedException e) {
+                    logger.error("TradeService - InterruptedException : {}", e.getMessage());
+                }
+            });
         }
+        logger.debug("TradeService - {} trade(s) found", results.size());
+        return results;
     }
 
 }

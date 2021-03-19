@@ -12,7 +12,7 @@ import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 /**
  * Position mapper.
  */
-@Mapper(uses = {CurrencyMapper.class, OrderMapper.class, UtilMapper.class}, nullValuePropertyMappingStrategy = IGNORE)
+@Mapper(uses = {CurrencyMapper.class, OrderMapper.class, UtilMapper.class, StrategyMapper.class}, nullValuePropertyMappingStrategy = IGNORE)
 public interface PositionMapper {
 
     // =================================================================================================================

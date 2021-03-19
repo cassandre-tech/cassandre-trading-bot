@@ -7,6 +7,7 @@ import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Position repository.
@@ -44,5 +45,13 @@ public interface PositionRepository extends CrudRepository<Position, Long> {
      * @return list of positions
      */
     List<Position> findByStatusNot(PositionStatusDTO status);
+
+    /**
+     * Find all positions with a list of status.
+     *
+     * @param status list of status
+     * @return list of positions
+     */
+    List<Position> findByStatusIn(Set<PositionStatusDTO> status);
 
 }

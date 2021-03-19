@@ -259,6 +259,11 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     }
 
     @Override
+    public final Set<OrderDTO> getOpenOrders() {
+        return getOrders();
+    }
+
+    @Override
     public final boolean cancelOrder(final String orderId) {
         final Optional<Order> order = orderRepository.findByOrderId(orderId);
         if (order.isPresent()) {
@@ -278,7 +283,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<TradeDTO> getTrades() {
+    public final Set<TradeDTO> getTrades(final Set<CurrencyPairDTO> currencyPairs) {
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(tradeMapper::mapToTradeDTO)
