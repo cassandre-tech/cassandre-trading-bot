@@ -1,0 +1,33 @@
+name: Website update
+
+on:
+  push:
+    branches:
+      - "development"
+
+jobs:
+  build:
+    # ==================================================================================================================
+    # Configuration.
+    runs-on: ubuntu-latest
+
+    steps:
+      # ================================================================================================================
+      - name: Retrieve the sources
+        id: sources
+        uses: actions/checkout@v1
+
+      # ================================================================================================================
+      - name: Install vuepress and build the documentation website
+        run: |
+          yarn global add vuepress
+          yarn --cwd docs build
+
+      # ================================================================================================================
+      - name: Deploy the documentation website
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages
+          folder: docs/src/.vuepress/dist
+          commit-message: "Documentation website update"
+          clean: true

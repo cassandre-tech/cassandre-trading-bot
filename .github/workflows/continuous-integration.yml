@@ -43,21 +43,6 @@ jobs:
           echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
 
       # ================================================================================================================
-      - name: Install vuepress and build the documentation web site
-        run: |
-          yarn global add vuepress
-          yarn --cwd docs build
-
-      # ================================================================================================================
-      - name: Deploy the documentation web site
-        uses: JamesIves/github-pages-deploy-action@4.1.0
-        with:
-          branch: gh-pages
-          folder: docs/src/.vuepress/dist
-          commit-message: "Documentation web site update for ${{ steps.version.outputs.version }}"
-          clean: true
-
-      # ================================================================================================================
       - name: Creates a Qase run
         id: qase
         run: |
