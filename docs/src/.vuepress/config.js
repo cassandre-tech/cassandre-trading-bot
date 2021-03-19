@@ -22,8 +22,14 @@ module.exports = {
         // For social networks.
         ['meta', {property: 'og:url', content: 'https://trading-bot.cassandre.tech'}],
         ['meta', {property: 'og:title', content: 'Cassandre trading bot framework'}],
-        ['meta', {property: 'og:description', content: 'Cassandre is an open-source framework that makes it easy to create your Java crypto trading bot'}],
-        ['meta', {property: 'og:image', content: 'https://trading-bot.cassandre.tech/assets/images/social/cassandre-trading-bot-open-graph.png'}],
+        ['meta', {
+            property: 'og:description',
+            content: 'Cassandre is an open-source framework that makes it easy to create your Java crypto trading bot'
+        }],
+        ['meta', {
+            property: 'og:image',
+            content: 'https://trading-bot.cassandre.tech/assets/images/social/cassandre-trading-bot-open-graph.png'
+        }],
         ['meta', {property: 'og:site_name', content: 'Cassandre'}],
         ['meta', {name: 'twitter:title', content: 'Cassandre trading bot framework'}],
         ['meta', {name: 'twitter:card', content: 'summary_large_image'}],
@@ -71,7 +77,10 @@ module.exports = {
                             {text: 'Create the project', link: '/learn/technical-analysis/create-the-project'},
                             {text: 'Create your strategy', link: '/learn/technical-analysis/create-your-strategy'},
                             {text: 'React to signals', link: '/learn/technical-analysis/react-to-signals'},
-                            {text: 'Backtest your strategy', link: '/learn/technical-analysis/backtest-your-trading-strategy'},
+                            {
+                                text: 'Backtest your strategy',
+                                link: '/learn/technical-analysis/backtest-your-trading-strategy'
+                            },
                         ]
                     }
                 ]
@@ -85,10 +94,16 @@ module.exports = {
                     {text: 'Books', link: '/ressources/books'},
                     {
                         text: 'How-tos', items: [
-                            {text: 'Install development tools', link: '/ressources/how-tos/how-to-install-development-tools'},
+                            {
+                                text: 'Install development tools',
+                                link: '/ressources/how-tos/how-to-install-development-tools'
+                            },
                             {text: 'Build from sources', link: '/ressources/how-tos/how-to-build-from-sources'},
                             {text: 'Create a release', link: '/ressources/how-tos/how-to-create-a-release'},
-                            {text: 'Create a Kucoin account', link: '/ressources/how-tos/how-to-create-a-kucoin-account'},
+                            {
+                                text: 'Create a Kucoin account',
+                                link: '/ressources/how-tos/how-to-create-a-kucoin-account'
+                            },
                         ]
                     },
                 ],
@@ -117,5 +132,11 @@ module.exports = {
     plugins: [
         '@vuepress/plugin-back-to-top',
         '@vuepress/plugin-medium-zoom',
+        [
+            '@vuepress/google-analytics',
+            {
+                'ga': 'UA-158255496-1'
+            }
+        ]
     ]
 }

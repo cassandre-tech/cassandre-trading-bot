@@ -28,6 +28,5 @@ Documentation web site is now running at [http://0.0.0.0:8080/](http://0.0.0.0:8
 
 ### Build static website
 ```bash
-cd docs/src/
 yarn --cwd docs build
 ```

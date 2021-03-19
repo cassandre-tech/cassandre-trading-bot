@@ -5,7 +5,6 @@
 We are going to use [ta4j](https://ta4j.github.io/ta4j-wiki/), an open-source Java library for technical analysis. It provides the basic components for the creation, evaluation, and execution of trading strategies.
 
 ## Create your project
-
 Type this command :
 
 ```bash

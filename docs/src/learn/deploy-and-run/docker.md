@@ -1,7 +1,6 @@
 # Deploy & run
 
 ## Server installation
-
 We are starting with a fresh [Ubuntu 20.04.2 LTS (Focal Fossa)](https://releases.ubuntu.com/20.04/) installation on a dedicated server, and we will use [Docker](https://www.docker.com/) to run our trading bot and the other components.
 
 This is how it works:
@@ -11,12 +10,11 @@ This is how it works:
   * A [Postgresql backup image](https://hub.docker.com/r/prodrigestivill/postgres-backup-local) to backup Postgresql databases.
 * Our trading bot is built as a Docker image and deployed to the server by our continuous integration server.
 
-{% hint style="info" %}
+::: tip
 We chose PostgreSQL as our database but you can choose the one you want, just add the corresponding JDBC driver to your `pom.xml`.
-{% endhint %}
+:::
 
 ### Install useful & required tools
-
 ```bash
 sudo apt update
 sudo apt -y install apt-transport-https ca-certificates curl gnupg2 pass software-properties-common
@@ -24,7 +22,6 @@ sudo apt -y upgrade
 ```
 
 ### Install Docker & docker-compose
-
 ```bash
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -35,7 +32,6 @@ sudo chmod 666 /var/run/docker.sock
 ```
 
 ### Add a user for the trading bot
-
 Our bot will be deployed to this server from another server (in our case, our continuous integration server), so we need to create a user that can connect with SSH:
 
 ```bash
@@ -46,7 +42,6 @@ sudo usermod --shell /bin/bash sma-trading-bot
 ```
 
 ## Docker images on the server
-
 Download the [docker-compose.yml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-server/docker-compose.yml) file on your server, edit your preferences (password, timezone, backup settings...) and run it with the command:
 
 ```bash
@@ -58,7 +53,6 @@ You can download it directly with the command : `curl -o docker-compose.yml http
 :::
 
 ### Network
-
 ```yaml
 networks:
   cassandre:
@@ -68,7 +62,6 @@ networks:
 This part declares a network named `cassandre`.
 
 ### Volumes
-
 ```yaml
 volumes:
   cassandre_database:
@@ -81,7 +74,6 @@ This part declares two volumes (space on disk) :
 * `cassandre_database_backup` for the database backups.
 
 ### Postgresql
-
 ```yaml
   cassandre-postgresql:
     image: library/postgres:13-alpine
@@ -101,7 +93,6 @@ This part declares two volumes (space on disk) :
 This starts a Postgresql image where our trading bot will store its data (strategies, orders, trades & positions).
 
 ### Postgresql backup
-
 ```yaml
   cassandre-postgresql-backup:
     image: prodrigestivill/postgres-backup-local:13-alpine
@@ -129,7 +120,6 @@ This starts a Postgresql image where our trading bot will store its data (strate
 This starts an image that will connect to the Postgresql image and make backups according to the parameters: `SCHEDULE`, `BACKUP_KEEP_DAYS`, `BACKUP_KEEP_WEEKS` and `BACKUP_KEEP_MONTHS`.
 
 ## Your bot
-
 There are several ways to do what we are trying to do, we choose this one:
 
 * Our trading bot source code is hosted in a private [Github](https://github.com/) project.
@@ -143,14 +133,12 @@ There are several ways to do what we are trying to do, we choose this one:
 The source of our script is [here](https://raw.githubusercontent.com/cassandre-tech/cassandre-trading-bot/development/trading-bot-server/deployment.yml) and this is what it does:
 
 ### Build the docker image
-
 ```yaml
 - name: Build with Maven and creates the docker image
   run: mvn spring-boot:build-image
 ```
 
 ### Push image to our private docker hub
-
 ```yaml
 - name: Push image to docker hub
   run: |
@@ -159,7 +147,6 @@ The source of our script is [here](https://raw.githubusercontent.com/cassandre-t
 ```
 
 ### Deploy to the production server
-
 The CI script does the following:
 
 * Connect to our production server with SSH.

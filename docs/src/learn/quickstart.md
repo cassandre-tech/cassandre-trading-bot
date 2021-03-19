@@ -5,9 +5,7 @@ If you are new to trading, you can read our tutorial [Trading basics](../ressour
 :::
 
 ## Create your project
-
 If you don't have an existing spring boot project, you can use our [maven archetype](https://search.maven.org/search?q=a:cassandre-trading-bot-spring-boot-starter-basic-archetype) to generate one :
-
 ```bash
 mvn archetype:generate \
 -DarchetypeGroupId=tech.cassandre.trading.bot \
@@ -58,17 +56,16 @@ my-app/
 ```
 
 ## Review configuration
-
 Your bot configuration is located in `src/main/resources/application.properties` : 
 
 ```properties
 #
 # Exchange configuration.
 cassandre.trading.bot.exchange.name=kucoin
-cassandre.trading.bot.exchange.username=cassandre.crypto.bot@gmail.com
+cassandre.trading.bot.exchange.username=kucoin.cassandre.test@gmail.com
 cassandre.trading.bot.exchange.passphrase=cassandre
-cassandre.trading.bot.exchange.key=5df8eea30092f40009cb3c6a
-cassandre.trading.bot.exchange.secret=5f6e91e0-796b-4947-b75e-eaa5c06b6bed
+cassandre.trading.bot.exchange.key=6054ad25365ac6000689a998
+cassandre.trading.bot.exchange.secret=af080d55-afe3-47c9-8ec1-4b479fbcc5e7
 #
 # Modes.
 cassandre.trading.bot.exchange.modes.sandbox=true
@@ -91,7 +88,6 @@ Please, create and configure your own Kucoin account. You can learn how to do it
 :::
 
 ## Explore sources
-
 The `src/main/java/com/mycompany/app/Application.java` file is a classical spring boot Application.
 
 ```java
@@ -206,7 +202,6 @@ This is how it works :
 * If there is a change in your position status, [onPositionStatusUpdate()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionStatusUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) will be called.
 
 ## Manage orders and positions
-
 You can create an order like this :
 
 ```java
@@ -217,15 +212,14 @@ public void onTickerUpdate(final TickerDTO ticker) {
 ```
 
 This is the list of available methods :
-
 * [createBuyMarketOrder()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createBuyMarketOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29).
 * [createSellMarketOrder()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createSellMarketOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29).
 * [createBuyLimitOrder()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createBuyLimitOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,java.math.BigDecimal%29).
 * [createSellLimitOrder()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createSellLimitOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,java.math.BigDecimal%29).
 
-{% hint style="info" %}
+::: tip
 Inside your strategy, you can call [canBuy()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canBuy%28tech.cassandre.trading.bot.dto.user.AccountDTO,tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29) and [canSell()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canSell%28tech.cassandre.trading.bot.dto.util.CurrencyDTO,java.math.BigDecimal%29) methods to see if your account has enough money to buy or sell assets.
-{% endhint %}
+:::
 
 Cassandre trading bot also provides positions to manage your trade automatically :
 

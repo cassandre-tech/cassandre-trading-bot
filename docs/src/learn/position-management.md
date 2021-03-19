@@ -2,7 +2,6 @@
 Cassandre provides a class to manage your positions automatically.
 
 ## Long position
-
 In your strategy, you can create a long position with the [createLongPosition()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createLongPosition%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO%29) method.
 
 It has three parameters : 
@@ -39,7 +38,6 @@ For example, if we receive a new price of 3000 USDT for 1 ETH, Cassandre will ca
 You can then know your exact gain on this position by calling the [getGain()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getGain%28%29) method. 
 
 ## Short position
-
 A short position works the same way but the opposite way. With a short position, you bet that the price will go down.
 
 Let's say you create a short position on 1 ETH with this command:
