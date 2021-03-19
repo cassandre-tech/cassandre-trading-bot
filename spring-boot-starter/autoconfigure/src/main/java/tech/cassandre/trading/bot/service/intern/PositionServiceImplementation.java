@@ -43,7 +43,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
  */
 public class PositionServiceImplementation extends BaseService implements PositionService {
 
-    /** Bigdecimal scale for division. */
+    /** Big decimal scale for division. */
     public static final int SCALE = 8;
 
     /** Position repository. */

@@ -77,9 +77,9 @@ public class ShortPositionFluxTest extends BaseTest {
     @Autowired
     private PositionRepository positionRepository;
 
-    final AtomicInteger positionUpdatesCount = new AtomicInteger(0);
+    private final AtomicInteger positionUpdatesCount = new AtomicInteger(0);
 
-    final AtomicInteger positionStatusUpdatesCount = new AtomicInteger(0);
+    private final AtomicInteger positionStatusUpdatesCount = new AtomicInteger(0);
 
     @Test
     @CaseId(91)

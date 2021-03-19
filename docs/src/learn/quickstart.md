@@ -10,7 +10,7 @@ If you don't have an existing spring boot project, you can use our [maven archet
 mvn archetype:generate \
 -DarchetypeGroupId=tech.cassandre.trading.bot \
 -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
--DarchetypeVersion=4.0.0
+-DarchetypeVersion=4.1.0
 ```
 
 [![Maven Central](https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-starter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.cassandre.trading.bot%22%20AND%20a:%22cassandre-trading-bot-spring-boot-starter%22)

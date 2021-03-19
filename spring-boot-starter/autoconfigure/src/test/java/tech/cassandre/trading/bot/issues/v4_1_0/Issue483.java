@@ -36,7 +36,7 @@ public class Issue483 extends BaseTest {
 
     @Test
     @DisplayName("Check onPositionStatusUpdate not called after restart")
-    public void checkGainsCalculation() throws InterruptedException {
+    public void checkGainsCalculation() {
         // In the bug, position short n°24 had no gain.
         final Optional<PositionDTO> position = strategy.getPositionByPositionId(24);
         assertTrue(position.isPresent());
