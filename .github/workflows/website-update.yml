@@ -21,9 +21,7 @@ jobs:
       - name: Install vuepress and build the documentation website
         run: |
           yarn global add vuepress
-          yarn global add @vuepress/plugin-google-analytics
-          yarn global add @vuepress/plugin-medium-zoom
-          yarn global add @vuepress/plugin-back-to-top
+          yarn --cwd docs install
           yarn --cwd docs build docs --debug
 
       # ================================================================================================================
