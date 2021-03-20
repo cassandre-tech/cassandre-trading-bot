@@ -24,7 +24,7 @@ jobs:
           yarn global add @vuepress/plugin-google-analytics
           yarn global add @vuepress/plugin-medium-zoom
           yarn global add @vuepress/plugin-back-to-top
-          yarn --cwd docs build
+          yarn --cwd docs build docs --debug
 
       # ================================================================================================================
       - name: Deploy the documentation website
