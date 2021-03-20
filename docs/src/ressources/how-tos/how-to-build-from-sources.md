@@ -21,8 +21,8 @@ mvn package
 
 ### Run local documentation
 ```bash
-cd docs/src/
-vuepress dev
+cd docs
+vuepress dev src
 ```
 Documentation web site is now running at [http://0.0.0.0:8080/](http://0.0.0.0:8080/).
 
