@@ -24,7 +24,7 @@ jobs:
           cd docs
           yarn install
           cd ..
-          yarn --cwd docs build docs --debug
+          yarn --cwd docs build docs
 
       # ================================================================================================================
       - name: Deploy the documentation website
