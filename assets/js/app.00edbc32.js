@@ -2444,7 +2444,7 @@ __webpack_require__.r(__webpack_exports__);
 
 window.__VUEPRESS__ = {
   version: "1.8.2",
-  hash: "67da45a"
+  hash: "bba583c"
 };
 Object(_app__WEBPACK_IMPORTED_MODULE_4__["createApp"])(false
 /* isServer */
@@ -28980,4 +28980,4 @@ module.exports = __webpack_require__(/*! /home/runner/work/cassandre-trading-bot
 /***/ })
 
 /******/ });
-//# sourceMappingURL=app.fc106b4c.js.map
+//# sourceMappingURL=app.00edbc32.js.map
