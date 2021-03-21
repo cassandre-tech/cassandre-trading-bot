@@ -20,7 +20,7 @@ jobs:
       # ================================================================================================================
       - name: Install vuepress and build the documentation website
         run: |
-          yarn global add vuepress
+          yarn add -D vuepress
           cd docs
           yarn install
           cd ..
