@@ -21,6 +21,9 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -54,6 +57,9 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     /** Position flux. */
     private final PositionFlux positionFlux;
+
+    /** List of position that should be closed no matter the rules. */
+    private Collection<Long> positionsToClose = Collections.synchronizedCollection(new ArrayList<>());
 
     /**
      * Constructor.
@@ -134,6 +140,11 @@ public class PositionServiceImplementation extends BaseService implements Positi
     }
 
     @Override
+    public final void closePosition(final long positionId) {
+        positionsToClose.add(positionId);
+    }
+
+    @Override
     public final Set<PositionDTO> getPositions() {
         logger.debug("PositionService - Retrieving all positions");
         return positionRepository.findByOrderById()
@@ -188,7 +199,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
                 .peek(p -> logger.debug("PositionService - Position {} updated with ticker {}", p.getPositionId(), ticker))
                 .forEach(p -> {
                     // We close the position if it triggers the rules.
-                    if (p.shouldBeClosed()) {
+                    // Or if the position was forced to close/
+                    if (p.shouldBeClosed() || positionsToClose.contains(p.getPositionId())) {
                         final OrderCreationResultDTO orderCreationResult;
                         if (p.getType() == LONG) {
                             // Long - We just sell.
@@ -207,6 +219,12 @@ public class PositionServiceImplementation extends BaseService implements Positi
                         if (orderCreationResult.isSuccessful()) {
                             p.closePositionWithOrderId(orderCreationResult.getOrder().getOrderId());
                             logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
+                        }
+
+                        // If the position was force to close, we write it in position.
+                        if (positionsToClose.contains(p.getPositionId())) {
+                            positionsToClose.remove(p.getPositionId());
+                            p.setForceClosing(true);
                         }
                     }
                     positionFlux.emitValue(p);

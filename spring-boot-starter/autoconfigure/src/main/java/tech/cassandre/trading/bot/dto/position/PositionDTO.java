@@ -69,6 +69,9 @@ public class PositionDTO {
     /** Position status. */
     private PositionStatusDTO status;
 
+    /** Indicates that the position must be closed no matter the rules. */
+    private boolean forceClosing;
+
     /** The order id created to open the position. */
     private final String openingOrderId;
 
@@ -129,6 +132,7 @@ public class PositionDTO {
         this.openingOrderId = newOpenOrderId;
         this.rules = newRules;
         this.status = OPENING;
+        this.forceClosing = false;
     }
 
     /**
@@ -367,11 +371,25 @@ public class PositionDTO {
     }
 
     /**
+     * Setter forceClosing.
+     *
+     * @param newForceClosing the forceClosing to set
+     */
+    public final void setForceClosing(final boolean newForceClosing) {
+        forceClosing = newForceClosing;
+    }
+
+    /**
      * Returns true if the position should be closed.
      *
      * @return true if the rules says the position should be closed.
      */
     public boolean shouldBeClosed() {
+        // If the position is set to "force closing", we return yes.
+        if (forceClosing) {
+            return true;
+        }
+
         final Optional<GainDTO> latestCalculatedGain = getLatestCalculatedGain();
         // Returns true if one of the rule is triggered.
         return latestCalculatedGain.filter(gainDTO -> rules.isStopGainPercentageSet() && gainDTO.getPercentage() >= rules.getStopGainPercentage()
