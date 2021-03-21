@@ -54,6 +54,14 @@ public interface PositionService {
                                                   PositionRulesDTO rules);
 
     /**
+     * Close position (no matter the rules).
+     * The closing will happened when the next ticker arrives.
+     *
+     * @param positionId position id
+     */
+    void closePosition(long positionId);
+
+    /**
      * Get positions.
      *
      * @return position list

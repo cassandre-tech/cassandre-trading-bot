@@ -79,6 +79,10 @@ public class Position extends BaseDomain {
     @Column(name = "STATUS")
     private PositionStatusDTO status;
 
+    /** Indicates that the position must be closed no matter the rules. */
+    @Column(name = "FORCE_CLOSING")
+    private boolean forceClosing;
+
     /** The order id created to open the position. */
     @Column(name = "OPENING_ORDER_ID")
     private String openingOrderId;
@@ -139,6 +143,7 @@ public class Position extends BaseDomain {
                 .append(this.stopGainPercentageRule, that.stopGainPercentageRule)
                 .append(this.stopLossPercentageRule, that.stopLossPercentageRule)
                 .append(this.status, that.status)
+                .append(this.forceClosing, that.forceClosing)
                 .append(this.openingOrderId, that.openingOrderId)
                 .append(this.openingOrder, that.openingOrder)
                 .append(this.closingOrderId, that.closingOrderId)
