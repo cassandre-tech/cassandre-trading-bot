@@ -2,7 +2,7 @@ name: Integration tests
 
 on:
   schedule:
-    - cron: '0 2 1 * *'
+    - cron: '0 19 * * FRI'
 
 jobs:
   build:
@@ -48,6 +48,12 @@ jobs:
           GEMINI_PASSPHRASE: ${{ secrets.GEMINI_PASSPHRASE }}
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
           GEMINI_SECRET: ${{ secrets.GEMINI_SECRET }}
+          # Coinbase pro credentials.
+          COINBASE_PRO_NAME: ${{ secrets.COINBASE_PRO_NAME }}
+          COINBASE_PRO_USERNAME: ${{ secrets.COINBASE_PRO_USERNAME }}
+          COINBASE_PRO_PASSPHRASE: ${{ secrets.COINBASE_PRO_PASSPHRASE }}
+          COINBASE_PRO_KEY: ${{ secrets.COINBASE_PRO_KEY }}
+          COINBASE_PRO_SECRET: ${{ secrets.COINBASE_PRO_SECRET }}
         run: |
           mvn -Pintegration package \
             -Dqase.enable=true \

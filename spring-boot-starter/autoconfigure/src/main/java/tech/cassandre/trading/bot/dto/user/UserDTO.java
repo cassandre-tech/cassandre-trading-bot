@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Objects;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -30,6 +31,15 @@ public class UserDTO {
 
     /** Information timestamp. */
     ZonedDateTime timestamp;
+
+    /**
+     * Getter timestamp.
+     *
+     * @return timestamp
+     */
+    public final ZonedDateTime getTimestamp() {
+        return Objects.requireNonNullElseGet(timestamp, ZonedDateTime::now);
+    }
 
     @Override
     public final boolean equals(final Object o) {
