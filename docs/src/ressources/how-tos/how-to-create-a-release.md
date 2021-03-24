@@ -4,6 +4,7 @@
 * Fix [Codacy](https://app.codacy.com/gh/cassandre-tech/cassandre-trading-bot/issues) & Intellij warnings.
 * Update [security.md](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/SECURITY.md).
 * Update documentation
+  * Change link to Javadocs in all pages.
   * Change release number in `learn/quickstart.md`.
   * Change release number in `learn/dry-mode-and-backtesting.md`.
   * Change release number in `learn/technical-analysis/create-the-project.md`.
