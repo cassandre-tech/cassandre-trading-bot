@@ -1,9 +1,6 @@
-name: Continuous integration
+name: Pull request
 
-on:
-  push:
-    branches:
-      - "development"
+on: pull_request
 
 jobs:
   build:
@@ -12,15 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ================================================================================================================
-      - name: GPG Setup
-        id: gpg
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-        run: |
-          echo "$GPG_PRIVATE_KEY" > private.asc
-          gpg --import --batch private.asc
-
       # ================================================================================================================
       - name: JDK 11 Setup
         id: jdk
@@ -37,38 +25,10 @@ jobs:
         uses: actions/checkout@v1
 
       # ================================================================================================================
-      - name: Retrieve the version
-        id: version
-        run: |
-          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
-
-      # ================================================================================================================
-      - name: Creates a Qase run
-        id: qase
-        run: |
-          echo "::set-output name=qase_run_id::$( \
-            curl -s "https://api.qase.io/v1/run/CTB" \
-            -X POST \
-            -H "Token: ${{ secrets.QASE_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"title": "${{ github.event.head_commit.message }}","description": "Test run for ${{ steps.version.outputs.version }}","environment_id": null,"cases": []}' \
-            | jq -r -c ".result.id")"
-
-      # ================================================================================================================
       - name: Build, run tests, package and deploy to Maven central - Also sends Qase tests reports
         id: package
-        env: # Environment variables.
-          # GPG.
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          # OSSRH credentials.
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
-          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE} \
-            -Dqase.enable=true \
-            -Dqase.project.code=CTB \
-            -Dqase.run.id=${{ steps.qase.outputs.qase_run_id }} \
-            -Dqase.api.token=${{ secrets.QASE_TOKEN }}
+          mvn package
 
       # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic strategy
