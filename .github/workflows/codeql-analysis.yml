@@ -34,13 +34,6 @@ jobs:
         java-version: 11.0.x
 
     - name: Build, run tests, package and deploy to Maven central
-      env: # Environment variables.
-        # Kucoin credentials.
-        KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}
-        KUCOIN_USERNAME: ${{ secrets.KUCOIN_USERNAME }}
-        KUCOIN_PASSPHRASE: ${{ secrets.KUCOIN_PASSPHRASE }}
-        KUCOIN_KEY: ${{ secrets.KUCOIN_KEY }}
-        KUCOIN_SECRET: ${{ secrets.KUCOIN_SECRET }}
       run: |
         mvn package
 
