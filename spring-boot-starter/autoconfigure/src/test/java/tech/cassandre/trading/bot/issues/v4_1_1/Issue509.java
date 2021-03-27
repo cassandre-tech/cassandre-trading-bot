@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import tech.cassandre.trading.bot.batch.PositionFlux;
-import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -36,12 +34,6 @@ public class Issue509 extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private TickerFlux tickerFlux;
-
-    @Autowired
-    private PositionFlux positionFlux;
 
     @Test
     @DisplayName("Fix empty openingOrder or closing order")

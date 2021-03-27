@@ -76,26 +76,26 @@ VALUES (1, 1, 'LONG', 'CLOSED', 'BTC/USDT', 10, 'BTC', null, null, 'OPEN_ORDER_0
 INSERT INTO TRADES (ID, TRADE_ID, ORDER_ID, FK_ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR,
                     PRICE_VALUE, PRICE_CURRENCY, TIMESTAMP, FEE_VALUE, FEE_CURRENCY)
 values -- For position 1.
-       (1, 'TRADE_11', 'OPEN_ORDER_01', 1, 'BID', 7, 'BTC', 'BTC/USDT', 11, 'USDT', DATE '2020-08-05', 1, 'USD'),
-       (2, 'TRADE_12', 'OPEN_ORDER_01', 1, 'BID', 3, 'BTC', 'BTC/USDT', 12, 'USDT', DATE '2020-08-06', 2, 'USD'),
-       (3, 'TRADE_13', 'CLOSE_ORDER_01', 2, 'ASK', 1, 'BTC', 'BTC/USDT', 13, 'USDT', DATE '2020-08-07', 3, 'USD'),
-       (4, 'TRADE_14', 'CLOSE_ORDER_01', 2, 'ASK', 2, 'BTC', 'BTC/USDT', 14, 'USDT', DATE '2020-08-08', 4, 'USD'),
-       (5, 'TRADE_15', 'CLOSE_ORDER_01', 2, 'ASK', 8, 'BTC', 'BTC/USDT', 15, 'USDT', DATE '2020-08-09', 5, 'USD'),
+       (1, 'TRADE_11', 'OPEN_ORDER_01', 1, 'BID', 7, 'BTC', 'BTC/USDT', 11, 'USDT', DATE '2020-08-05', 1, 'USDT'),
+       (2, 'TRADE_12', 'OPEN_ORDER_01', 1, 'BID', 3, 'BTC', 'BTC/USDT', 12, 'USDT', DATE '2020-08-06', 2, 'USDT'),
+       (3, 'TRADE_13', 'CLOSE_ORDER_01', 2, 'ASK', 1, 'BTC', 'BTC/USDT', 13, 'USDT', DATE '2020-08-07', 3, 'USDT'),
+       (4, 'TRADE_14', 'CLOSE_ORDER_01', 2, 'ASK', 2, 'BTC', 'BTC/USDT', 14, 'USDT', DATE '2020-08-08', 4, 'USDT'),
+       (5, 'TRADE_15', 'CLOSE_ORDER_01', 2, 'ASK', 8, 'BTC', 'BTC/USDT', 15, 'USDT', DATE '2020-08-09', 5, 'USDT'),
        -- For position 2.
-       (6, 'TRADE_21', 'OPEN_ORDER_02', 3, 'BID', 20, 'ETH', 'ETH/BTC', 100, 'USDT', DATE '2020-08-05', 5, 'USD'),
-       (7, 'TRADE_22', 'CLOSE_ORDER_02', 4, 'ASK', 20, 'ETH', 'ETH/BTC', 50, 'USDT', DATE '2020-08-06', 5, 'USD'),
+       (6, 'TRADE_21', 'OPEN_ORDER_02', 3, 'BID', 20, 'ETH', 'ETH/BTC', 100, 'USDT', DATE '2020-08-05', 5, 'BTC'),
+       (7, 'TRADE_22', 'CLOSE_ORDER_02', 4, 'ASK', 20, 'ETH', 'ETH/BTC', 50, 'USDT', DATE '2020-08-06', 5, 'BTC'),
        -- For position 3.
-       (8, 'TRADE_31', 'OPEN_ORDER_03', 5, 'BID', 30, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USD'),
-       (9, 'TRADE_32', 'CLOSE_ORDER_03', 6, 'ASK', 30, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USD'),
+       (8, 'TRADE_31', 'OPEN_ORDER_03', 5, 'BID', 30, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USDT'),
+       (9, 'TRADE_32', 'CLOSE_ORDER_03', 6, 'ASK', 30, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USDT'),
        -- For position 4.
-       (10, 'TRADE_41', 'OPEN_ORDER_04', 7, 'BID', 50, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USD'),
-       (11, 'TRADE_42', 'CLOSE_ORDER_04', 8, 'ASK', 50, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USD'),
+       (10, 'TRADE_41', 'OPEN_ORDER_04', 7, 'BID', 50, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USDT'),
+       (11, 'TRADE_42', 'CLOSE_ORDER_04', 8, 'ASK', 50, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USDT'),
        -- For position 5.
-       (12, 'TRADE_51', 'OPEN_ORDER_05', 9, 'BID', 50, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USD'),
-       (13, 'TRADE_52', 'CLOSE_ORDER_05', 10, 'ASK', 50, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USD'),
+       (12, 'TRADE_51', 'OPEN_ORDER_05', 9, 'BID', 50, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USDT'),
+       (13, 'TRADE_52', 'CLOSE_ORDER_05', 10, 'ASK', 50, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USDT'),
        -- For position 6.
-       (14, 'TRADE_61', 'OPEN_ORDER_06', 11, 'BID', 50, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USD'),
-       (15, 'TRADE_62', 'CLOSE_ORDER_06', 12, 'ASK', 50, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USD'),
+       (14, 'TRADE_61', 'OPEN_ORDER_06', 11, 'BID', 50, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USDT'),
+       (15, 'TRADE_62', 'CLOSE_ORDER_06', 12, 'ASK', 50, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USDT'),
        -- For position 7.
-       (16, 'TRADE_63', 'OPEN_ORDER_07', 13, 'ASK', 10, 'ETH', 'ETH/USDT', 5, 'USDT', DATE '2020-08-05', 1, 'USD'),
-       (17, 'TRADE_64', 'CLOSE_ORDER_07', 14, 'BID', 5, 'ETH', 'ETH/USDT', 10, 'USDT', DATE '2020-08-06', 3, 'USD');
+       (16, 'TRADE_63', 'OPEN_ORDER_07', 13, 'ASK', 10, 'ETH', 'ETH/USDT', 5, 'USDT', DATE '2020-08-05', 1, 'ETH'),
+       (17, 'TRADE_64', 'CLOSE_ORDER_07', 14, 'BID', 5, 'ETH', 'ETH/USDT', 10, 'USDT', DATE '2020-08-06', 3, 'ETH');

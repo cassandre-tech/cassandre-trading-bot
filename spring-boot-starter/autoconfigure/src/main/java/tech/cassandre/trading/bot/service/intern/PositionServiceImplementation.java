@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -235,7 +237,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     public final HashMap<CurrencyDTO, GainDTO> getGains() {
         HashMap<CurrencyDTO, BigDecimal> totalBefore = new LinkedHashMap<>();
         HashMap<CurrencyDTO, BigDecimal> totalAfter = new LinkedHashMap<>();
-        HashMap<CurrencyDTO, BigDecimal> totalFees = new LinkedHashMap<>();
+        List<CurrencyAmountDTO> totalFees = new LinkedList<>();
         HashMap<CurrencyDTO, GainDTO> gains = new LinkedHashMap<>();
 
         // We calculate, by currency, the amount bought & sold.
@@ -255,7 +257,6 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     gains.putIfAbsent(currency, null);
                     totalBefore.putIfAbsent(currency, ZERO);
                     totalAfter.putIfAbsent(currency, ZERO);
-                    totalFees.putIfAbsent(currency, ZERO);
 
                     // We calculate the amounts bought and amount sold.
                     if (p.getType() == LONG) {
@@ -278,12 +279,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
                                 .reduce(totalAfter.get(currency), BigDecimal::add));
                     }
 
-                    // And now the feeds.
-                    final BigDecimal fees = Stream.concat(p.getOpeningOrder().getTrades().stream(),
-                            p.getClosingOrder().getTrades().stream())
-                            .map(t -> t.getFee().getValue())
-                            .reduce(totalFees.get(currency), BigDecimal::add);
-                    totalFees.put(currency, fees);
+                    // And now the fees.
+                    Stream.concat(p.getOpeningOrder().getTrades().stream(), p.getClosingOrder().getTrades().stream()).forEach(t -> totalFees.add(t.getFee()));
                 });
 
         gains.keySet()
@@ -291,9 +288,14 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     // We make the calculation.
                     BigDecimal before = totalBefore.get(currency);
                     BigDecimal after = totalAfter.get(currency);
-                    BigDecimal fees = totalFees.get(currency);
                     BigDecimal gainAmount = after.subtract(before);
                     BigDecimal gainPercentage = ((after.subtract(before)).divide(before, HALF_UP)).multiply(new BigDecimal("100"));
+
+                    // We calculate the fees for the currency.
+                    final BigDecimal fees = totalFees.stream()
+                            .filter(amount -> amount.getCurrency().equals(currency))
+                            .map(CurrencyAmountDTO::getValue)
+                            .reduce(ZERO, BigDecimal::add);
 
                     GainDTO g = GainDTO.builder()
                             .percentage(gainPercentage.setScale(2, HALF_UP).doubleValue())
