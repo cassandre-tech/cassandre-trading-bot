@@ -185,8 +185,6 @@ public class TradeServiceTest extends BaseTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        tradeService.getOrders().forEach(orderDTO -> System.out.println("=> " + orderDTO));
-        System.out.println("=> " + result1.getOrderId());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades(Set.of(cp)).stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
         assertNotNull(result2.getOrder().getOrderId());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades(Set.of(cp)).stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));

@@ -263,11 +263,10 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         connectablePositionFlux.subscribe(strategy::positionUpdate);        // For strategy.
         connectablePositionFlux.connect();
 
-
         // If a position was stuck in OPENING or CLOSING, we fix the order set to null.
         positionRepository.findByStatus(OPENING).forEach(p -> {
             final Optional<Order> order = orderRepository.findByOrderId(p.getOpeningOrderId());
-            if (order.isPresent() && p.getOpeningOrder() == null) {
+            if (order.isPresent()) {
                 p.setOpeningOrder(order.get());
                 positionRepository.save(p);
                 order.get()
@@ -279,7 +278,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         });
         positionRepository.findByStatus(CLOSING).forEach(p -> {
             final Optional<Order> order = orderRepository.findByOrderId(p.getClosingOrderId());
-            if (order.isPresent() && p.getClosingOrder() == null) {
+            if (order.isPresent()) {
                 p.setClosingOrder(order.get());
                 positionRepository.save(p);
                 order.get()

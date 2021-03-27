@@ -136,7 +136,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
 
         // We will force closing of position 1.
         positionService.closePosition(position1Id);
-        System.out.println("ICI " + position1Id);
         tickerFlux.update();
         tickerFlux.update();
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);

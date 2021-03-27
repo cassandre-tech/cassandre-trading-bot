@@ -90,7 +90,6 @@ public class MarketServiceTest {
         assertNull(t.get().getAskSize());
         // timestamp.
         assertNotNull(t.get().getTimestamp());
-        System.out.println("=> " + t.get().getTimestamp());
     }
 
 }

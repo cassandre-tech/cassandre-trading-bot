@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -22,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 
 @SpringBootTest
 @DisplayName("Github issue 509")
@@ -35,10 +38,15 @@ public class Issue509 extends BaseTest {
     @Autowired
     private TestableCassandreStrategy strategy;
 
+    @Autowired
+    private PositionRepository positionRepository;
+
     @Test
     @DisplayName("Fix empty openingOrder or closing order")
     public void checkEmptyOrderFix() throws InterruptedException {
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        assertEquals(0, positionRepository.findByStatus(OPENING).size());
+        assertEquals(0, positionRepository.findByStatus(CLOSING).size());
 
         // Error occurs on loading position 41 (CLOSING status).
         // INSERT INTO positions (id, position_id, type, fk_strategy_id, currency_pair, amount_value, amount_currency, rules_stop_gain_percentage, rules_stop_loss_percentage, status, fk_opening_order_id, opening_order_id, fk_closing_order_id, closing_order_id, lowest_gain_price_value, lowest_gain_price_currency, highest_gain_price_value, highest_gain_price_currency, latest_gain_price_value, latest_gain_price_currency, created_on, updated_on, force_closing)
@@ -64,7 +72,9 @@ public class Issue509 extends BaseTest {
 
         // The problem is that the closing order is empty !
         assertNotNull(position.get().getClosingOrder());
-        assertEquals(CLOSED, position.get().getStatus());
+
+        // There should
+
     }
 
 }
