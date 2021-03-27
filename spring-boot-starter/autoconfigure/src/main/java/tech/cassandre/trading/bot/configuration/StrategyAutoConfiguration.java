@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.ExchangeAccount;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -43,6 +44,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
 
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J_STRATEGY;
 
@@ -150,6 +153,7 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
      * Search for the strategy and runs it.
      */
     @PostConstruct
+    @SuppressWarnings("checkstyle:MethodLength")
     public void configure() {
         // Retrieving all the beans have the annotation @Strategy.
         final Map<String, Object> strategyBeans = applicationContext.getBeansWithAnnotation(CassandreStrategy.class);
@@ -258,6 +262,33 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publish();
         connectablePositionFlux.subscribe(strategy::positionUpdate);        // For strategy.
         connectablePositionFlux.connect();
+
+
+        // If a position was stuck in OPENING or CLOSING, we fix the order set to null.
+        positionRepository.findByStatus(OPENING).forEach(p -> {
+            final Optional<Order> order = orderRepository.findByOrderId(p.getOpeningOrderId());
+            if (order.isPresent() && p.getOpeningOrder() == null) {
+                p.setOpeningOrder(order.get());
+                positionRepository.save(p);
+                order.get()
+                        .getTrades()
+                        .stream()
+                        .map(tradeMapper::mapToTradeDTO)
+                        .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO));
+            }
+        });
+        positionRepository.findByStatus(CLOSING).forEach(p -> {
+            final Optional<Order> order = orderRepository.findByOrderId(p.getClosingOrderId());
+            if (order.isPresent() && p.getClosingOrder() == null) {
+                p.setClosingOrder(order.get());
+                positionRepository.save(p);
+                order.get()
+                        .getTrades()
+                        .stream()
+                        .map(tradeMapper::mapToTradeDTO)
+                        .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO));
+            }
+        });
 
         // Order flux.
         final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
