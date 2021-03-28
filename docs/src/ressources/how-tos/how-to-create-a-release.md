@@ -3,7 +3,10 @@
 ## Prepare the release
 * Fix [Codacy](https://app.codacy.com/gh/cassandre-tech/cassandre-trading-bot/issues) & Intellij warnings.
 * Update [security.md](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/SECURITY.md).
-* Update documentation
+* Update libraries used by archetypes:
+  * `src/main/resources/archetype-resources/pom.xml`.
+  * `src/main/resources/archetype-resources/pom.xml`.
+* Update documentation:
   * Change link to Javadocs in all pages.
   * Change release number in `learn/quickstart.md`.
   * Change release number in `learn/dry-mode-and-backtesting.md`.
