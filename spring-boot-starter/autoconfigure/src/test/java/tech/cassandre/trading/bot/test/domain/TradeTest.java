@@ -76,7 +76,7 @@ public class TradeTest extends BaseTest {
     public void checkLoadTradeFromDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());  // TODO Why do i have only 1 update and not one for the opening position ?
+        assertEquals(1, strategy.getPositionsUpdateReceived().size());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
@@ -182,7 +182,7 @@ public class TradeTest extends BaseTest {
     public void checkSaveTradeInDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());  // TODO Why do i have only 1 update and not one for the opening position ?
+        assertEquals(1, strategy.getPositionsUpdateReceived().size());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 

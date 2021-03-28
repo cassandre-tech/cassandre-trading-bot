@@ -98,7 +98,7 @@ public class PositionTest extends BaseTest {
     public void checkLoadPositionFromDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());  // TODO Why do i have only 1 update and not one for the opening position ?
+        assertEquals(1, strategy.getPositionsUpdateReceived().size());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
@@ -279,7 +279,7 @@ public class PositionTest extends BaseTest {
     public void checkSavedNewPosition() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());  // TODO Why do i have only 1 update and not one for the opening position ?
+        assertEquals(1, strategy.getPositionsUpdateReceived().size());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
@@ -368,7 +368,7 @@ public class PositionTest extends BaseTest {
     public void checkSavedDataDuringPositionLifecycle() {
         // =============================================================================================================
         // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());  // TODO Why do i have only 1 update and not one for the opening position ?
+        assertEquals(1, strategy.getPositionsUpdateReceived().size());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 

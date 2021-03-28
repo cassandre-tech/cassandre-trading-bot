@@ -183,8 +183,8 @@ public class TickerFluxMock {
                                 .timestamp(ZonedDateTime.ofInstant(new Date(Long.parseLong(time) * MILLISECONDS).toInstant(), ZoneId.systemDefault()))
                                 .open(new BigDecimal(open))
                                 .last(new BigDecimal(close))
-                                .bid(new BigDecimal(high))
-                                .ask(new BigDecimal(low))
+                                .high(new BigDecimal(high))
+                                .low(new BigDecimal(low))
                                 .volume(new BigDecimal(volume))
                                 .quoteVolume(new BigDecimal(turnover))
                                 .build();
