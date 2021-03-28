@@ -95,7 +95,7 @@ values -- For position 1.
        (13, 'TRADE_52', 'CLOSE_ORDER_05', 10, 'ASK', 50, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USDT'),
        -- For position 6.
        (14, 'TRADE_61', 'OPEN_ORDER_06', 11, 'BID', 50, 'BTC', 'BTC/USDT', 20, 'USDT', DATE '2020-08-05', 6, 'USDT'),
-       (15, 'TRADE_62', 'CLOSE_ORDER_06', 12, 'ASK', 50, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USDT'),
+       (15, 'TRADE_62', 'CLOSE_ORDER_06', 12, 'ASK', 40, 'BTC', 'BTC/USDT', 25, 'USDT', DATE '2020-08-06', 5, 'USDT'),
        -- For position 7.
        (16, 'TRADE_63', 'OPEN_ORDER_07', 13, 'ASK', 10, 'ETH', 'ETH/USDT', 5, 'USDT', DATE '2020-08-05', 1, 'ETH'),
        (17, 'TRADE_64', 'CLOSE_ORDER_07', 14, 'BID', 5, 'ETH', 'ETH/USDT', 10, 'USDT', DATE '2020-08-06', 3, 'ETH');

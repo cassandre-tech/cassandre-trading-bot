@@ -68,7 +68,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals(BID, t.getType());
         assertEquals("BACKUP_OPENING_ORDER_03", t.getOrderId());
         assertEquals("BTC/USDT", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("30")));
+        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("20")));
         assertEquals("BTC", t.getAmount().getCurrency());
         assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("20")));
         assertEquals("USDT", t.getPrice().getCurrency());
@@ -110,7 +110,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals(ASK, t.getType());
         assertEquals("BACKUP_CLOSING_ORDER_01", t.getOrderId());
         assertEquals("BTC/USDT", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("40")));
+        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("20")));
         assertEquals("BTC", t.getAmount().getCurrency());
         assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("40")));
         assertEquals("USDT", t.getPrice().getCurrency());

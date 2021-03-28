@@ -84,7 +84,7 @@ VALUES -- note : No trade for order BACKUP_OPENING_ORDER_01 - This is why positi
         'USDT', 'Trade 01'),
 
        -- Order BACKUP_TRADE_02 - Trade from the order buying BACKUP_OPENING_ORDER_03.
-       (2, 'BACKUP_TRADE_02', 'BACKUP_OPENING_ORDER_03', 5, 'BID', 30, 'BTC', 'BTC/USDT', 20, 'USDT', '2020-08-02', 2,
+       (2, 'BACKUP_TRADE_02', 'BACKUP_OPENING_ORDER_03', 5, 'BID', 20, 'BTC', 'BTC/USDT', 20, 'USDT', '2020-08-02', 2,
         'USDT', 'Trade 02'),
 
        -- Order BACKUP_TRADE_03 - Trade from the order buying BACKUP_OPENING_ORDER_04.
@@ -92,7 +92,7 @@ VALUES -- note : No trade for order BACKUP_OPENING_ORDER_01 - This is why positi
         'USDT', 'Trade 03'),
 
        -- Order BACKUP_TRADE_04 - Trade from the order selling BACKUP_OPENING_ORDER_04.
-       (4, 'BACKUP_TRADE_04', 'BACKUP_CLOSING_ORDER_01', 6, 'ASK', 40, 'BTC', 'BTC/USDT', 40, 'USDT', '2020-08-04', 4,
+       (4, 'BACKUP_TRADE_04', 'BACKUP_CLOSING_ORDER_01', 6, 'ASK', 20, 'BTC', 'BTC/USDT', 40, 'USDT', '2020-08-04', 4,
         'USDT', 'Trade 04'),
 
        -- Order BACKUP_TRADE_05 - Trade from the order selling BACKUP_OPENING_ORDER_05.

@@ -267,8 +267,10 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         positionRepository.findByStatus(OPENING).forEach(p -> {
             final Optional<Order> order = orderRepository.findByOrderId(p.getOpeningOrderId());
             if (order.isPresent()) {
-                p.setOpeningOrder(order.get());
-                positionRepository.save(p);
+                if (p.getOpeningOrder() == null) {
+                    p.setOpeningOrder(order.get());
+                    positionRepository.save(p);
+                }
                 order.get()
                         .getTrades()
                         .stream()
@@ -279,8 +281,10 @@ public class StrategyAutoConfiguration extends BaseConfiguration {
         positionRepository.findByStatus(CLOSING).forEach(p -> {
             final Optional<Order> order = orderRepository.findByOrderId(p.getClosingOrderId());
             if (order.isPresent()) {
-                p.setClosingOrder(order.get());
-                positionRepository.save(p);
+                if (p.getClosingOrder() == null) {
+                    p.setClosingOrder(order.get());
+                    positionRepository.save(p);
+                }
                 order.get()
                         .getTrades()
                         .stream()
