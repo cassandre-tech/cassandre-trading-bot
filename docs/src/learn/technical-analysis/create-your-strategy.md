@@ -3,7 +3,7 @@
 Your strategy is in `src/main/java/com/example/SimpleTa4jStrategy.java`
 
 ## Choose the requested currency pair
-This is done by implementing [getRequestedCurrencyPair()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.1.0/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getRequestedCurrencyPair%28%29) this way : 
+This is done by implementing [getRequestedCurrencyPair()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getRequestedCurrencyPair%28%29) this way : 
 
 ```java
 @Override
@@ -25,7 +25,7 @@ public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
 ```
 
 ## Choose the number of bars
-This is done by implementing [getMaximumBarCount()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.1.0/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getMaximumBarCount%28%29) this way : 
+This is done by implementing [getMaximumBarCount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getMaximumBarCount%28%29) this way : 
 
 ```java
 @Override
@@ -35,7 +35,7 @@ public int getMaximumBarCount() {
 ```
 
 ## Choose the delay between two bars
-This is done by implementing [getDelayBetweenTwoBars()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.1.0/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getDelayBetweenTwoBars%28%29) this way : 
+This is done by implementing [getDelayBetweenTwoBars()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getDelayBetweenTwoBars%28%29) this way : 
 
 ```java
 @Override

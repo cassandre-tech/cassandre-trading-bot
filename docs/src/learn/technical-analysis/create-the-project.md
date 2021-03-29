@@ -10,7 +10,7 @@ Type this command :
 ```bash
 mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot \
 -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype \
--DarchetypeVersion=4.1.0 \
+-DarchetypeVersion=CASSANDRE_LATEST_RELEASE \
 -DgroupId=com.example \
 -DartifactId=ta4j-strategy \
 -Dversion=1.0-SNAPSHOT \

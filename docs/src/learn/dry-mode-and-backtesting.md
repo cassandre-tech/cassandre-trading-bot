@@ -41,7 +41,7 @@ Edit your `pom.xml` file and add this dependency :
 		<dependency>
 			<groupId>tech.cassandre.trading.bot</groupId>
 			<artifactId>cassandre-trading-bot-spring-boot-starter-test</artifactId>
-			<version>4.1.0</version>
+			<version>CASSANDRE_LATEST_RELEASE</version>
 			<scope>test</scope>
 		</dependency>
 		...
