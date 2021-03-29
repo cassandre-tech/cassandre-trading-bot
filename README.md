@@ -1,7 +1,7 @@
 <p align="center">
     <a href="https://trading-bot.cassandre.tech">
         <img    src="https://trading-bot.cassandre.tech/assets/images/logo/cassandre-trading-bot-full-medium.png"
-                alt="Cassandre trading bot"/>
+                alt="Cassandre trading bot logo"/>
     </a>
 </p>
 
