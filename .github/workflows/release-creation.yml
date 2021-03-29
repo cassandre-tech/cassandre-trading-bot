@@ -135,3 +135,26 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
           args: "Cassandre trading bot ${{ steps.package.outputs.version }} released - More information here : ${{ steps.create_release.outputs.html_url }}"
+
+      # ================================================================================================================
+      - name: Change release in website sources
+        id: sed
+        run: find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.getLatestRelease.outputs.release }}/g' {} \;
+
+      # ================================================================================================================
+      - name: Install vuepress and build the documentation website
+        run: |
+          yarn add -D vuepress
+          cd docs
+          yarn install
+          cd ..
+          yarn --cwd docs build docs
+
+      # ================================================================================================================
+      - name: Deploy the documentation website
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages
+          folder: docs/src/.vuepress/dist
+          commit-message: "Documentation website update"
+          clean: true
