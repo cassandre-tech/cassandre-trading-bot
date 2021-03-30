@@ -125,7 +125,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
         assertFalse(getPositionDTO(position2Id).isForceClosing());
 
         // We will force closing of position 2.
-        positionService.closePosition(position2Id);
+        strategy.closePosition(position2Id);
         tickerFlux.update();
         tickerFlux.update();
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
@@ -135,7 +135,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
         assertTrue(getPositionDTO(position2Id).isForceClosing());
 
         // We will force closing of position 1.
-        positionService.closePosition(position1Id);
+        strategy.closePosition(position1Id);
         tickerFlux.update();
         tickerFlux.update();
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);

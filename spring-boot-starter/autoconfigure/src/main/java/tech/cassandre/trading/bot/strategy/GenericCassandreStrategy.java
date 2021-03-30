@@ -451,6 +451,16 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return positionService.createShortPosition(strategyDTO, currencyPair, amount, rules);
     }
 
+    /**
+     * Close position (no matter the rules).
+     * The closing will happened when the next ticker arrives.
+     *
+     * @param positionId position id
+     */
+    public void closePosition(final long positionId) {
+        positionService.closePosition(positionId);
+    }
+
     // =================================================================================================================
     // Methods that can be implemented by strategies.
 
