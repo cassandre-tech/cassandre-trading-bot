@@ -86,7 +86,8 @@ module.exports = {
                     {text: 'Database structure', link: '/learn/database-structure'},
                     {
                         text: 'Deploy & run', items: [
-                            {text: 'Using docker', link: '/learn/deploy-and-run/docker'}
+                            {text: 'Using docker', link: '/learn/deploy-and-run/docker'},
+                            {text: 'Using qovery', link: '/learn/deploy-and-run/qovery'}
                         ]
                     },
                     {
