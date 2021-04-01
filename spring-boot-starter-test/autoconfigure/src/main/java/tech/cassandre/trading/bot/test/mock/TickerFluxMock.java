@@ -175,7 +175,12 @@ public class TickerFluxMock {
                         final String high = rowScanner.next().replaceAll("\"", "");
                         final String low = rowScanner.next().replaceAll("\"", "");
                         final String volume = rowScanner.next().replaceAll("\"", "");
-                        final String turnover = rowScanner.next().replaceAll("\"", "");
+                        String turnover = null;
+                        if (rowScanner.hasNext()) {
+                            turnover = rowScanner.next().replaceAll("\"", "");
+                        } else {
+                            turnover = "0";
+                        }
 
                         // Creating the ticker.
                         TickerDTO t = TickerDTO.builder()
