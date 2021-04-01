@@ -184,7 +184,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                             .value(amount)
                             .currency(currencyPair.getBaseCurrency())
                             .build())
-                    .timestamp(ZonedDateTime.now())
+                    .timestamp(t.getTimestamp())
                     .build();
 
             // We create and send the trade.
@@ -203,7 +203,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
                             .currency(currencyPair.getQuoteCurrency())
                             .build())
                     .fee(CurrencyAmountDTO.ZERO)
-                    .timestamp(ZonedDateTime.now())
+                    .timestamp(t.getTimestamp())
                     .build();
 
             // Sending the results after the method returns the result.
