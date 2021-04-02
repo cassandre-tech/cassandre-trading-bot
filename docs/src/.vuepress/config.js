@@ -51,7 +51,8 @@ module.exports = {
         ['meta', {property: 'og:site_name', content: 'Cassandre'}],
         ['meta', {name: 'twitter:title', content: 'Cassandre trading bot framework'}],
         ['meta', {name: 'twitter:card', content: 'summary_large_image'}],
-        ['meta', {name: 'twitter:site', content: '@cassandretech'}]
+        ['meta', {name: 'twitter:site', content: '@cassandretech'}],
+        ['meta', {name: 'twitter:image:alt', content: 'Cassandre'}]
     ],
 
     /**
