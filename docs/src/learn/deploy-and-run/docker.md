@@ -11,7 +11,7 @@ This is how it works:
 * Our trading bot is built as a Docker image and deployed to the server by our continuous integration server.
 
 ::: tip
-We chose PostgreSQL as our database but you can choose the one you want, just add the corresponding JDBC driver to your `pom.xml`.
+We chose PostgreSQL as our database, but you can choose the one you want, just add the corresponding JDBC driver to your `pom.xml`.
 :::
 
 ### Install useful & required tools
@@ -203,4 +203,3 @@ These are the parameters for the Postgresql connection:
 ::: tip
 On the server, thanks to the docker label, you can view the bot logs with the command : `docker logs $(docker ps -aq --filter "label=trading-bot") --follow`
 :::
-

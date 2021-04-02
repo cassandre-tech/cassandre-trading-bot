@@ -51,8 +51,7 @@ module.exports = {
         ['meta', {property: 'og:site_name', content: 'Cassandre'}],
         ['meta', {name: 'twitter:title', content: 'Cassandre trading bot framework'}],
         ['meta', {name: 'twitter:card', content: 'summary_large_image'}],
-        ['meta', {name: 'twitter:site', content: '@cassandretech'}],
-        ['meta', {name: 'twitter:image:alt', content: 'Cassandre'}]
+        ['meta', {name: 'twitter:site', content: '@cassandretech'}]
     ],
 
     /**
@@ -136,6 +135,10 @@ module.exports = {
                     {text: 'Discord', link: 'https://discord.gg/sv3VXuTgFS'},
                     {text: 'Newsletter', link: 'https://cassandre.substack.com/'},
                 ],
+            },
+            {
+                text: 'Support us',
+                link: 'https://opencollective.com/cassandre-tech'
             },
             {
                 text: 'Github',

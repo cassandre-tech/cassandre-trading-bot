@@ -26,7 +26,7 @@ Create a simple trading bot using one of Cassandre archetypes:
 ```bash
 mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot \
 -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
--DarchetypeVersion=4.1.0 \
+-DarchetypeVersion=CASSANDRE_LATEST_RELEASE \
 -DgroupId=com.example \
 -DartifactId=qovery-test \
 -Dversion=1.0-SNAPSHOT \

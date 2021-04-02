@@ -1,7 +1,7 @@
 ---
 home: true
 heroImage: assets/images/logo/cassandre-trading-bot-without-text.png
-tagline: An open-source framework that makes it easy to create your Java crypto trading bot
+tagline: An open-source framework that makes it easy to create your crypto trading bot in Java
 actionText: Quick Start
 actionLink: /learn/quickstart
 features:

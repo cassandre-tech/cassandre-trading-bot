@@ -61,7 +61,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     private final PositionFlux positionFlux;
 
     /** List of position that should be closed no matter the rules. */
-    private Collection<Long> positionsToClose = Collections.synchronizedCollection(new ArrayList<>());
+    private final Collection<Long> positionsToClose = Collections.synchronizedCollection(new ArrayList<>());
 
     /**
      * Constructor.
