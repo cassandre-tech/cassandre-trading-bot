@@ -206,4 +206,31 @@ public class PositionRepositoryTest {
         assertEquals(5, notClosingPositions.get(3).getId());
     }
 
+    @Test
+    @CaseId(109)
+    @DisplayName("Check update rules on position")
+    public void checkUpdateRulesOnPosition() {
+        // We retrieve .
+        Optional<Position> p = positionRepository.findById(5L);
+        assertTrue(p.isPresent());
+        assertEquals(30, p.get().getStopGainPercentageRule());
+        assertEquals(40, p.get().getStopLossPercentageRule());
+
+        // We update the rules with new values.
+        positionRepository.updateStopGainRule(5L, 10f);
+        positionRepository.updateStopLossRule(5L, 20f);
+        p = positionRepository.findById(5L);
+        assertTrue(p.isPresent());
+        assertEquals(10, p.get().getStopGainPercentageRule());
+        assertEquals(20, p.get().getStopLossPercentageRule());
+
+        // We update the rules with null.
+        positionRepository.updateStopGainRule(5L, null);
+        positionRepository.updateStopLossRule(5L, null);
+        p = positionRepository.findById(5L);
+        assertTrue(p.isPresent());
+        assertNull(p.get().getStopGainPercentageRule());
+        assertNull(p.get().getStopLossPercentageRule());
+    }
+
 }

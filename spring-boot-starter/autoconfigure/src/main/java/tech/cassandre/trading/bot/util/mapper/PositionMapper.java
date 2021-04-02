@@ -26,8 +26,8 @@ public interface PositionMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "positionId", ignore = true)
-    @Mapping(source = "rules.stopGainPercentage", target = "stopGainPercentageRule")
-    @Mapping(source = "rules.stopLossPercentage", target = "stopLossPercentageRule")
+    @Mapping(target = "stopGainPercentageRule", ignore = true)
+    @Mapping(target = "stopLossPercentageRule", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
     @Mapping(target = "strategy", ignore = true)

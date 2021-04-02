@@ -142,8 +142,28 @@ public class PositionServiceImplementation extends BaseService implements Positi
     }
 
     @Override
-    public final void closePosition(final long positionId) {
-        positionsToClose.add(positionId);
+    public final void updatePositionRules(final long id, final PositionRulesDTO newRules) {
+        final Optional<Position> p = positionRepository.findById(id);
+        // If position exists and position is not closed.
+        if (p.isPresent() && p.get().getStatus() != CLOSED) {
+            // Stop gain.
+            if (newRules.isStopGainPercentageSet()) {
+                positionRepository.updateStopGainRule(id, newRules.getStopGainPercentage());
+            } else {
+                positionRepository.updateStopGainRule(id, null);
+            }
+            // Stop loss.
+            if (newRules.isStopLossPercentageSet()) {
+                positionRepository.updateStopLossRule(id, newRules.getStopLossPercentage());
+            } else {
+                positionRepository.updateStopLossRule(id, null);
+            }
+        }
+    }
+
+    @Override
+    public final void closePosition(final long id) {
+        positionsToClose.add(id);
     }
 
     @Override

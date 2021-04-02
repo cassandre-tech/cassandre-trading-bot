@@ -452,13 +452,23 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     /**
+     * Update position rules.
+     *
+     * @param id position id
+     * @param newRules new rules
+     */
+    public void updatePositionRules(final long id, final PositionRulesDTO newRules) {
+        positionService.updatePositionRules(id, newRules);
+    }
+
+    /**
      * Close position (no matter the rules).
      * The closing will happened when the next ticker arrives.
      *
-     * @param positionId position id
+     * @param id position id
      */
-    public void closePosition(final long positionId) {
-        positionService.closePosition(positionId);
+    public void closePosition(final long id) {
+        positionService.closePosition(id);
     }
 
     // =================================================================================================================
