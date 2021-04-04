@@ -137,6 +137,12 @@ jobs:
           args: "Cassandre trading bot ${{ steps.package.outputs.version }} released - More information here : ${{ steps.create_release.outputs.html_url }}"
 
       # ================================================================================================================
+      - uses: pozetroninc/github-action-get-latest-release@master
+        id: getLatestRelease
+        with:
+          repository: ${{ github.repository }}
+
+      # ================================================================================================================
       - name: Change release in website sources
         id: sed
         run: find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.getLatestRelease.outputs.release }}/g' {} \;
