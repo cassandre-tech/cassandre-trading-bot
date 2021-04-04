@@ -175,7 +175,12 @@ public class TickerFluxMock {
                         final String high = rowScanner.next().replaceAll("\"", "");
                         final String low = rowScanner.next().replaceAll("\"", "");
                         final String volume = rowScanner.next().replaceAll("\"", "");
-                        final String turnover = rowScanner.next().replaceAll("\"", "");
+                        String turnover = null;
+                        if (rowScanner.hasNext()) {
+                            turnover = rowScanner.next().replaceAll("\"", "");
+                        } else {
+                            turnover = "0";
+                        }
 
                         // Creating the ticker.
                         TickerDTO t = TickerDTO.builder()
@@ -183,8 +188,8 @@ public class TickerFluxMock {
                                 .timestamp(ZonedDateTime.ofInstant(new Date(Long.parseLong(time) * MILLISECONDS).toInstant(), ZoneId.systemDefault()))
                                 .open(new BigDecimal(open))
                                 .last(new BigDecimal(close))
-                                .bid(new BigDecimal(high))
-                                .ask(new BigDecimal(low))
+                                .high(new BigDecimal(high))
+                                .low(new BigDecimal(low))
                                 .volume(new BigDecimal(volume))
                                 .quoteVolume(new BigDecimal(turnover))
                                 .build();

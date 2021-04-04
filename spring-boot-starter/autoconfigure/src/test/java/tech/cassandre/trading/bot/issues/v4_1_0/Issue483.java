@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -30,9 +29,6 @@ public class Issue483 extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private TickerFlux tickerFlux;
 
     @Test
     @DisplayName("Check onPositionStatusUpdate not called after restart")

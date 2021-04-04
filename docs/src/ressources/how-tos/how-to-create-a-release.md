@@ -3,12 +3,10 @@
 ## Prepare the release
 * Fix [Codacy](https://app.codacy.com/gh/cassandre-tech/cassandre-trading-bot/issues) & Intellij warnings.
 * Update [security.md](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/SECURITY.md).
-* Update documentation
-  * Change release number in `learn/quickstart.md`.
-  * Change release number in `learn/dry-mode-and-backtesting.md`.
-  * Change release number in `learn/technical-analysis/create-the-project.md`.
-  * Change release number in `learn/technical-analysis/backtest-your-trading-strategy.md`.
-  * Change roadmap content in `why-cassandre/features-and-roadmap.md`.
+* Update libraries used by archetypes:
+  * [trading-bot-archetypes/basic-archetype/src/main/resources/archetype-resources/pom.xml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-archetypes/basic-archetype/src/main/resources/archetype-resources/pom.xml).
+  * [trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources/pom.xml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources/pom.xml).
+* Change roadmap content in `why-cassandre/features-and-roadmap.md`.
 
 ## Create the release with Maven
 You must be using `ssh` and not `https`, to switch to `ssh`, type : 
@@ -28,4 +26,4 @@ mvn gitflow:release-finish
 
 ## Update
 * Close the corresponding [milestone in Github](https://github.com/cassandre-tech/cassandre-trading-bot/milestones).
-* Write and post a [substack post](https://cassandre.substack.com/publish?utm_source=menu).
+* Write and send a [substack post](https://cassandre.substack.com/publish?utm_source=menu).

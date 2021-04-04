@@ -3,8 +3,9 @@ updates:
   - package-ecosystem: maven
     directory: "/"
     schedule:
-      interval: daily
-      time: "03:00"
+      interval: "weekly"
+      day: "friday"
+      time: "20:00"
       timezone: Europe/Paris
     open-pull-requests-limit: 10
     target-branch: development

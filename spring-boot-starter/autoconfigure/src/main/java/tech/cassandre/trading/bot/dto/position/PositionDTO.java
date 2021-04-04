@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.util.exception.PositionException;
@@ -42,7 +43,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 @Builder
 @ToString
 @AllArgsConstructor(access = PRIVATE)
-@SuppressWarnings("checkstyle:VisibilityModifier")
+@SuppressWarnings({"checkstyle:VisibilityModifier", "DuplicatedCode"})
 public class PositionDTO {
 
     /** Technical ID. */
@@ -68,6 +69,9 @@ public class PositionDTO {
 
     /** Position status. */
     private PositionStatusDTO status;
+
+    /** Indicates that the position must be closed no matter the rules. */
+    private boolean forceClosing;
 
     /** The order id created to open the position. */
     private final String openingOrderId;
@@ -129,6 +133,7 @@ public class PositionDTO {
         this.openingOrderId = newOpenOrderId;
         this.rules = newRules;
         this.status = OPENING;
+        this.forceClosing = false;
     }
 
     /**
@@ -367,11 +372,25 @@ public class PositionDTO {
     }
 
     /**
+     * Setter forceClosing.
+     *
+     * @param newForceClosing the forceClosing to set
+     */
+    public final void setForceClosing(final boolean newForceClosing) {
+        forceClosing = newForceClosing;
+    }
+
+    /**
      * Returns true if the position should be closed.
      *
      * @return true if the rules says the position should be closed.
      */
     public boolean shouldBeClosed() {
+        // If the position is set to "force closing", we return yes.
+        if (forceClosing) {
+            return true;
+        }
+
         final Optional<GainDTO> latestCalculatedGain = getLatestCalculatedGain();
         // Returns true if one of the rule is triggered.
         return latestCalculatedGain.filter(gainDTO -> rules.isStopGainPercentageSet() && gainDTO.getPercentage() >= rules.getStopGainPercentage()
@@ -475,6 +494,13 @@ public class PositionDTO {
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
                         .map(t -> t.getFee().getValue())
                         .reduce(ZERO, BigDecimal::add);
+                CurrencyDTO feeCurrency;
+                final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
+                if (firstTrade.isPresent()) {
+                    feeCurrency = firstTrade.get().getFee().getCurrency();
+                } else {
+                    feeCurrency = currencyPair.getQuoteCurrency();
+                }
 
                 // Return position gain.
                 return GainDTO.builder()
@@ -485,7 +511,7 @@ public class PositionDTO {
                                 .build())
                         .fees(CurrencyAmountDTO.builder()
                                 .value(fees)
-                                .currency(currencyPair.getQuoteCurrency())
+                                .currency(feeCurrency)
                                 .build())
                         .build();
             }
@@ -509,6 +535,13 @@ public class PositionDTO {
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
                         .map(t -> t.getFee().getValue())
                         .reduce(ZERO, BigDecimal::add);
+                CurrencyDTO feeCurrency;
+                final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
+                if (firstTrade.isPresent()) {
+                    feeCurrency = firstTrade.get().getFee().getCurrency();
+                } else {
+                    feeCurrency = currencyPair.getQuoteCurrency();
+                }
 
                 // Return position gain.
                 return GainDTO.builder()
@@ -519,7 +552,7 @@ public class PositionDTO {
                                 .build())
                         .fees(CurrencyAmountDTO.builder()
                                 .value(fees)
-                                .currency(currencyPair.getBaseCurrency())
+                                .currency(feeCurrency)
                                 .build())
                         .build();
             }

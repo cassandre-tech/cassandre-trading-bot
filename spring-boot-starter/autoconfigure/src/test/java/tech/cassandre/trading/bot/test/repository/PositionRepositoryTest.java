@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,6 +33,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 @Configuration({
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
 })
+@ActiveProfiles("schedule-disabled")
 public class PositionRepositoryTest {
 
     @Autowired
@@ -58,6 +61,7 @@ public class PositionRepositoryTest {
         assertNull(p.getStopGainPercentageRule());
         assertNull(p.getStopLossPercentageRule());
         assertEquals(OPENING, p.getStatus());
+        assertFalse(p.isForceClosing());
         assertEquals("BACKUP_OPENING_ORDER_01", p.getOpeningOrder().getOrderId());
         assertTrue(p.getOpeningOrder().getTrades().isEmpty());
         assertNull(p.getClosingOrder());
@@ -84,6 +88,7 @@ public class PositionRepositoryTest {
         assertEquals(10, p.getStopGainPercentageRule());
         assertNull(p.getStopLossPercentageRule());
         assertEquals(OPENED, p.getStatus());
+        assertFalse(p.isForceClosing());
         assertEquals("BACKUP_OPENING_ORDER_02", p.getOpeningOrder().getOrderId());
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_01".equals(trade.getTradeId())));
         assertNull(p.getClosingOrder());
@@ -113,6 +118,7 @@ public class PositionRepositoryTest {
         assertNull(p.getStopGainPercentageRule());
         assertEquals(20, p.getStopLossPercentageRule());
         assertEquals(CLOSING, p.getStatus());
+        assertFalse(p.isForceClosing());
         assertEquals("BACKUP_OPENING_ORDER_03", p.getOpeningOrder().getOrderId());
         assertEquals(1, p.getOpeningOrder().getTrades().size());
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_02".equals(trade.getTradeId())));
@@ -145,6 +151,7 @@ public class PositionRepositoryTest {
         assertEquals(30, p.getStopGainPercentageRule());
         assertEquals(40, p.getStopLossPercentageRule());
         assertEquals(CLOSED, p.getStatus());
+        assertFalse(p.isForceClosing());
         assertEquals("BACKUP_OPENING_ORDER_04", p.getOpeningOrder().getOrderId());
         assertEquals(1, p.getOpeningOrder().getTrades().size());
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(trade -> "BACKUP_TRADE_03".equals(trade.getTradeId())));
@@ -197,6 +204,33 @@ public class PositionRepositoryTest {
         assertEquals(2, notClosingPositions.get(1).getId());
         assertEquals(4, notClosingPositions.get(2).getId());
         assertEquals(5, notClosingPositions.get(3).getId());
+    }
+
+    @Test
+    @CaseId(109)
+    @DisplayName("Check update rules on position")
+    public void checkUpdateRulesOnPosition() {
+        // We retrieve .
+        Optional<Position> p = positionRepository.findById(5L);
+        assertTrue(p.isPresent());
+        assertEquals(30, p.get().getStopGainPercentageRule());
+        assertEquals(40, p.get().getStopLossPercentageRule());
+
+        // We update the rules with new values.
+        positionRepository.updateStopGainRule(5L, 10f);
+        positionRepository.updateStopLossRule(5L, 20f);
+        p = positionRepository.findById(5L);
+        assertTrue(p.isPresent());
+        assertEquals(10, p.get().getStopGainPercentageRule());
+        assertEquals(20, p.get().getStopLossPercentageRule());
+
+        // We update the rules with null.
+        positionRepository.updateStopGainRule(5L, null);
+        positionRepository.updateStopLossRule(5L, null);
+        p = positionRepository.findById(5L);
+        assertTrue(p.isPresent());
+        assertNull(p.get().getStopGainPercentageRule());
+        assertNull(p.get().getStopLossPercentageRule());
     }
 
 }

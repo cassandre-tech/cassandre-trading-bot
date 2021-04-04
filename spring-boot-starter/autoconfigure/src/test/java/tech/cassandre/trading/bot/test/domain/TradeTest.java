@@ -76,7 +76,7 @@ public class TradeTest extends BaseTest {
     public void checkLoadTradeFromDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
+        assertEquals(1, strategy.getPositionsUpdateReceived().size());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
@@ -112,7 +112,7 @@ public class TradeTest extends BaseTest {
         assertEquals(BID, t.get().getType());
         assertEquals("BACKUP_OPENING_ORDER_03", t.get().getOrderId());
         assertEquals(new CurrencyPairDTO(BTC, USDT), t.get().getCurrencyPair());
-        assertEquals(0, new BigDecimal("30").compareTo(t.get().getAmount().getValue()));
+        assertEquals(0, new BigDecimal("20").compareTo(t.get().getAmount().getValue()));
         assertEquals(BTC, t.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("20").compareTo(t.get().getPrice().getValue()));
         assertEquals(USDT, t.get().getPrice().getCurrency());
@@ -148,7 +148,7 @@ public class TradeTest extends BaseTest {
         assertEquals(ASK, t.get().getType());
         assertEquals("BACKUP_CLOSING_ORDER_01", t.get().getOrderId());
         assertEquals(new CurrencyPairDTO(BTC, USDT), t.get().getCurrencyPair());
-        assertEquals(0, new BigDecimal("40").compareTo(t.get().getAmount().getValue()));
+        assertEquals(0, new BigDecimal("20").compareTo(t.get().getAmount().getValue()));
         assertEquals(BTC, t.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("40").compareTo(t.get().getPrice().getValue()));
         assertEquals(USDT, t.get().getPrice().getCurrency());
@@ -182,7 +182,7 @@ public class TradeTest extends BaseTest {
     public void checkSaveTradeInDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertTrue(strategy.getPositionsUpdateReceived().isEmpty());
+        assertEquals(1, strategy.getPositionsUpdateReceived().size());
         assertTrue(strategy.getTradesUpdateReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 

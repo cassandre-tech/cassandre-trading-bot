@@ -13,7 +13,6 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -39,9 +38,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SuppressWarnings("unchecked")
 @TestConfiguration
 public class Issue426Mock extends BaseTest {
-
-    @Autowired
-    private PositionRepository positionRepository;
 
     @Autowired
     private OrderRepository orderRepository;

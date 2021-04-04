@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
@@ -25,6 +26,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 @Configuration({
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
 })
+@ActiveProfiles("schedule-disabled")
 public class TradeRepositoryTest extends BaseTest {
 
     @Autowired
@@ -66,7 +68,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals(BID, t.getType());
         assertEquals("BACKUP_OPENING_ORDER_03", t.getOrderId());
         assertEquals("BTC/USDT", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("30")));
+        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("20")));
         assertEquals("BTC", t.getAmount().getCurrency());
         assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("20")));
         assertEquals("USDT", t.getPrice().getCurrency());
@@ -108,7 +110,7 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals(ASK, t.getType());
         assertEquals("BACKUP_CLOSING_ORDER_01", t.getOrderId());
         assertEquals("BTC/USDT", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("40")));
+        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("20")));
         assertEquals("BTC", t.getAmount().getCurrency());
         assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("40")));
         assertEquals("USDT", t.getPrice().getCurrency());

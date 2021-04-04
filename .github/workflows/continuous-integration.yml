@@ -2,8 +2,8 @@ name: Continuous integration
 
 on:
   push:
-    branches-ignore:
-      - 'master'
+    branches:
+      - "development"
 
 jobs:
   build:

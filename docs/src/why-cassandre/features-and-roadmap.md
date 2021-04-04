@@ -11,8 +11,6 @@
 * Extensively [tested](https://app.qase.io/public/report/5cf352e57e1683384446a8b54bd725acc13b87aa) and [documented](../learn/quickstart.md).
 
 ## Roadmap
-* [4.1.1](https://github.com/cassandre-tech/cassandre-trading-bot/milestone/15).
-  * [Close open position](https://github.com/cassandre-tech/cassandre-trading-bot/issues/490)
 * [4.2.0](https://github.com/cassandre-tech/cassandre-trading-bot/milestone/16)
   * [Add multi strategies support](https://github.com/cassandre-tech/cassandre-trading-bot/issues/338)
 * [4.2.1](https://github.com/cassandre-tech/cassandre-trading-bot/milestone/17)

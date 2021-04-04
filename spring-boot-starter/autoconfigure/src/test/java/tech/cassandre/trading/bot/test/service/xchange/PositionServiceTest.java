@@ -20,7 +20,6 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
-import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -68,9 +67,6 @@ public class PositionServiceTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private PositionService positionService;
@@ -726,6 +722,69 @@ public class PositionServiceTest extends BaseTest {
         assertTrue(position1.getLatestCalculatedGain().isPresent());
         assertEquals(-50, position1.getLowestCalculatedGain().get().getPercentage());
         assertEquals(600, position1.getHighestCalculatedGain().get().getPercentage());
+    }
+
+    @Test
+    @CaseId(110)
+    @DisplayName("Check update rules on position")
+    public void checkUpdateRulesOnPosition() throws InterruptedException {
+        // =============================================================================================================
+        // Creates position 1 (ETH/BTC, 0.0001, 100% stop gain).
+        final PositionCreationResultDTO creationResult1 = strategy.createLongPosition(cp1,
+                new BigDecimal("0.0001"),
+                PositionRulesDTO.builder().stopLossPercentage(90f).stopGainPercentage(100f).build());
+        final long position1Id = creationResult1.getPosition().getId();
+        assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrderId());
+
+        // The opening trade arrives, change the status to OPENED and set the price.
+        // We retrieve the order from the service and we wait for the order to update the position.
+        orderFlux.update();
+        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+
+        tradeFlux.emitValue(TradeDTO.builder()
+                .tradeId("000002")
+                .type(BID)
+                .orderId("ORDER00010")
+                .currencyPair(cp1)
+                .amount(new CurrencyAmountDTO("0.0001", cp1.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.2", cp1.getQuoteCurrency()))
+                .build());
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
+
+        final Optional<PositionDTO> pBefore = strategy.getPositionByPositionId(creationResult1.getPosition().getPositionId());
+        assertTrue(pBefore.isPresent());
+
+        // We update the rules.
+        final PositionRulesDTO newRules = PositionRulesDTO.builder().stopGainPercentage(40f).stopLossPercentage(20f).build();
+        strategy.updatePositionRules(position1Id, newRules);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        Optional<PositionDTO> pAfter = strategy.getPositionByPositionId(creationResult1.getPosition().getPositionId());
+        assertTrue(pAfter.isPresent());
+        assertTrue(pAfter.get().getRules().isStopGainPercentageSet());
+        assertEquals(40f, pAfter.get().getRules().getStopGainPercentage());
+        assertTrue(pAfter.get().getRules().isStopLossPercentageSet());
+        assertEquals(20f, pAfter.get().getRules().getStopLossPercentage());
+
+        // We send again the value of the position before rules are updated.
+        positionFlux.emitValue(pBefore.get());
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+
+        // We check that the rules have been updated.
+        pAfter = strategy.getPositionByPositionId(creationResult1.getPosition().getPositionId());
+        assertTrue(pAfter.isPresent());
+        assertTrue(pAfter.get().getRules().isStopGainPercentageSet());
+        assertEquals(40f, pAfter.get().getRules().getStopGainPercentage());
+        assertTrue(pAfter.get().getRules().isStopLossPercentageSet());
+        assertEquals(20f, pAfter.get().getRules().getStopLossPercentage());
+
+        // We set it to null
+        strategy.updatePositionRules(position1Id, PositionRulesDTO.builder().build());
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        pAfter = strategy.getPositionByPositionId(creationResult1.getPosition().getPositionId());
+        assertTrue(pAfter.isPresent());
+        assertFalse(pAfter.get().getRules().isStopGainPercentageSet());
+        assertFalse(pAfter.get().getRules().isStopLossPercentageSet());
     }
 
     /**

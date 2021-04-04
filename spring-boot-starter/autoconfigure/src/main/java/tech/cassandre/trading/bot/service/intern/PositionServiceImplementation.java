@@ -21,9 +21,14 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -54,6 +59,9 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     /** Position flux. */
     private final PositionFlux positionFlux;
+
+    /** List of position that should be closed no matter the rules. */
+    private final Collection<Long> positionsToClose = Collections.synchronizedCollection(new ArrayList<>());
 
     /**
      * Constructor.
@@ -134,6 +142,31 @@ public class PositionServiceImplementation extends BaseService implements Positi
     }
 
     @Override
+    public final void updatePositionRules(final long id, final PositionRulesDTO newRules) {
+        final Optional<Position> p = positionRepository.findById(id);
+        // If position exists and position is not closed.
+        if (p.isPresent() && p.get().getStatus() != CLOSED) {
+            // Stop gain.
+            if (newRules.isStopGainPercentageSet()) {
+                positionRepository.updateStopGainRule(id, newRules.getStopGainPercentage());
+            } else {
+                positionRepository.updateStopGainRule(id, null);
+            }
+            // Stop loss.
+            if (newRules.isStopLossPercentageSet()) {
+                positionRepository.updateStopLossRule(id, newRules.getStopLossPercentage());
+            } else {
+                positionRepository.updateStopLossRule(id, null);
+            }
+        }
+    }
+
+    @Override
+    public final void closePosition(final long id) {
+        positionsToClose.add(id);
+    }
+
+    @Override
     public final Set<PositionDTO> getPositions() {
         logger.debug("PositionService - Retrieving all positions");
         return positionRepository.findByOrderById()
@@ -188,7 +221,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
                 .peek(p -> logger.debug("PositionService - Position {} updated with ticker {}", p.getPositionId(), ticker))
                 .forEach(p -> {
                     // We close the position if it triggers the rules.
-                    if (p.shouldBeClosed()) {
+                    // Or if the position was forced to close/
+                    if (p.shouldBeClosed() || positionsToClose.contains(p.getPositionId())) {
                         final OrderCreationResultDTO orderCreationResult;
                         if (p.getType() == LONG) {
                             // Long - We just sell.
@@ -208,6 +242,12 @@ public class PositionServiceImplementation extends BaseService implements Positi
                             p.closePositionWithOrderId(orderCreationResult.getOrder().getOrderId());
                             logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
                         }
+
+                        // If the position was force to close, we write it in position.
+                        if (positionsToClose.contains(p.getPositionId())) {
+                            positionsToClose.remove(p.getPositionId());
+                            p.setForceClosing(true);
+                        }
                     }
                     positionFlux.emitValue(p);
                 });
@@ -217,7 +257,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
     public final HashMap<CurrencyDTO, GainDTO> getGains() {
         HashMap<CurrencyDTO, BigDecimal> totalBefore = new LinkedHashMap<>();
         HashMap<CurrencyDTO, BigDecimal> totalAfter = new LinkedHashMap<>();
-        HashMap<CurrencyDTO, BigDecimal> totalFees = new LinkedHashMap<>();
+        List<CurrencyAmountDTO> totalFees = new LinkedList<>();
         HashMap<CurrencyDTO, GainDTO> gains = new LinkedHashMap<>();
 
         // We calculate, by currency, the amount bought & sold.
@@ -237,7 +277,6 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     gains.putIfAbsent(currency, null);
                     totalBefore.putIfAbsent(currency, ZERO);
                     totalAfter.putIfAbsent(currency, ZERO);
-                    totalFees.putIfAbsent(currency, ZERO);
 
                     // We calculate the amounts bought and amount sold.
                     if (p.getType() == LONG) {
@@ -260,12 +299,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
                                 .reduce(totalAfter.get(currency), BigDecimal::add));
                     }
 
-                    // And now the feeds.
-                    final BigDecimal fees = Stream.concat(p.getOpeningOrder().getTrades().stream(),
-                            p.getClosingOrder().getTrades().stream())
-                            .map(t -> t.getFee().getValue())
-                            .reduce(totalFees.get(currency), BigDecimal::add);
-                    totalFees.put(currency, fees);
+                    // And now the fees.
+                    Stream.concat(p.getOpeningOrder().getTrades().stream(), p.getClosingOrder().getTrades().stream()).forEach(t -> totalFees.add(t.getFee()));
                 });
 
         gains.keySet()
@@ -273,9 +308,14 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     // We make the calculation.
                     BigDecimal before = totalBefore.get(currency);
                     BigDecimal after = totalAfter.get(currency);
-                    BigDecimal fees = totalFees.get(currency);
                     BigDecimal gainAmount = after.subtract(before);
                     BigDecimal gainPercentage = ((after.subtract(before)).divide(before, HALF_UP)).multiply(new BigDecimal("100"));
+
+                    // We calculate the fees for the currency.
+                    final BigDecimal fees = totalFees.stream()
+                            .filter(amount -> amount.getCurrency().equals(currency))
+                            .map(CurrencyAmountDTO::getValue)
+                            .reduce(ZERO, BigDecimal::add);
 
                     GainDTO g = GainDTO.builder()
                             .percentage(gainPercentage.setScale(2, HALF_UP).doubleValue())

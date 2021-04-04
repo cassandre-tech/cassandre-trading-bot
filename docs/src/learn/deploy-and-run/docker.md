@@ -1,4 +1,4 @@
-# Deploy & run
+# Deploy & run with Docker
 
 ## Server installation
 We are starting with a fresh [Ubuntu 20.04.2 LTS (Focal Fossa)](https://releases.ubuntu.com/20.04/) installation on a dedicated server, and we will use [Docker](https://www.docker.com/) to run our trading bot and the other components.
@@ -11,7 +11,7 @@ This is how it works:
 * Our trading bot is built as a Docker image and deployed to the server by our continuous integration server.
 
 ::: tip
-We chose PostgreSQL as our database but you can choose the one you want, just add the corresponding JDBC driver to your `pom.xml`.
+We chose PostgreSQL as our database, but you can choose the one you want, just add the corresponding JDBC driver to your `pom.xml`.
 :::
 
 ### Install useful & required tools
@@ -42,14 +42,14 @@ sudo usermod --shell /bin/bash sma-trading-bot
 ```
 
 ## Docker images on the server
-Download the [docker-compose.yml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-server/docker-compose.yml) file on your server, edit your preferences (password, timezone, backup settings...) and run it with the command:
+Download the [docker-compose.yml](/assets/src/docker-compose.yml) file on your server, edit your preferences (password, timezone, backup settings...) and run it with the command:
 
 ```bash
 sudo docker-compose up -d
 ```
 
 ::: tip
-You can download it directly with the command : `curl -o docker-compose.yml https://raw.githubusercontent.com/cassandre-tech/cassandre-trading-bot/development/trading-bot-server/docker-compose.yml`
+You can download it directly with the command : `curl -o docker-compose.yml https://trading-bot.cassandre.tech/assets/src/docker-compose.yml`
 :::
 
 ### Network
@@ -130,7 +130,7 @@ There are several ways to do what we are trying to do, we choose this one:
   * Connect to our private server via ssh.
   * Stop the previous running image of our bot and download/run the new image.
 
-The source of our script is [here](https://raw.githubusercontent.com/cassandre-tech/cassandre-trading-bot/development/trading-bot-server/deployment.yml) and this is what it does:
+The source of our script is [here](/assets/src/deployment.yml) and this is what it does:
 
 ### Build the docker image
 ```yaml
@@ -203,4 +203,3 @@ These are the parameters for the Postgresql connection:
 ::: tip
 On the server, thanks to the docker label, you can view the bot logs with the command : `docker logs $(docker ps -aq --filter "label=trading-bot") --follow`
 :::
-

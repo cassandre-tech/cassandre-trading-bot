@@ -15,10 +15,8 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
@@ -46,12 +44,6 @@ public class BaseMock extends BaseTest {
 
     /** Service rate. */
     public static final int SERVICE_RATE = 900;
-
-    @Autowired
-    private ExchangeAccountRepository exchangeAccountRepository;
-
-    @Autowired
-    private StrategyRepository strategyRepository;
 
     @Autowired
     protected OrderRepository orderRepository;

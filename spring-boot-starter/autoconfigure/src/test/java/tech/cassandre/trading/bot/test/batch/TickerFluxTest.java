@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -39,9 +38,6 @@ public class TickerFluxTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private MarketService marketService;
 
     @Autowired
     private MarketDataService marketDataService;

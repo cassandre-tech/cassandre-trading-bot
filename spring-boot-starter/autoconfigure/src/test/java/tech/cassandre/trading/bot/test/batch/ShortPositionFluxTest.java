@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Order;
@@ -61,9 +60,6 @@ public class ShortPositionFluxTest extends BaseTest {
 
     @Autowired
     private TickerFlux tickerFlux;
-
-    @Autowired
-    private OrderFlux orderFlux;
 
     @Autowired
     private TradeFlux tradeFlux;

@@ -20,39 +20,47 @@ For a [BasicCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading
 ## BasicTa4jCassandreStrategy
 For a [BasicTa4jCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html), you have to implement :
 
-* [getRequestedCurrencyPair()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getRequestedCurrencyPair%28%29) to indicate the currency pair tickers you want to receive.
+* [getRequestedCurrencyPair()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getRequestedCurrencyPair%28%29) to indicate the currency pair tickers you want to receive.
 * [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#getTradeAccount%28%29) to indicate which account is your trading account.
-* [getMaximumBarCount()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getMaximumBarCount%28%29) to indicate how many bars you want to keep.
-* [getDelayBetweenTwoBars()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getDelayBetweenTwoBars%28%29) to indicate the delay between two bars.
-* [getStrategy()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getStrategy%28%29) to implement your own strategy.
-* [shouldEnter()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#shouldEnter%28%29) to indicate what you want to do when it's time to buy.
-* [shouldExit()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#shouldExit%28%29) to indicate what you want to do when it's time to sell.
+* [getMaximumBarCount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getMaximumBarCount%28%29) to indicate how many bars you want to keep.
+* [getDelayBetweenTwoBars()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getDelayBetweenTwoBars%28%29) to indicate the delay between two bars.
+* [getStrategy()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#getStrategy%28%29) to implement your own strategy.
+* [shouldEnter()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#shouldEnter%28%29) to indicate what you want to do when it's time to buy.
+* [shouldExit()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#shouldExit%28%29) to indicate what you want to do when it's time to sell.
 
 ## Data updates
 To be notified of new data, you can override the following methods : 
 
-* [onAccountUpdate()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onAccountUpdate%28tech.cassandre.trading.bot.dto.user.AccountDTO%29) to receive updates about your account.
-* [onTickerUpdate()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickerUpdate%28tech.cassandre.trading.bot.dto.market.TickerDTO%29) to receive new tickers.
-* [onOrderUpdate()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onOrderUpdate%28tech.cassandre.trading.bot.dto.trade.OrderDTO%29) to receive updates about your orders.
-* [onTradeUpdate()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTradeUpdate%28tech.cassandre.trading.bot.dto.trade.TradeDTO%29) to receive updates about your trades.
-* [onPositionUpdate()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) to receive updates about your positions.
-* [onPositionStatusUpdate()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionStatusUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) to receive updates about position status change.
+* [onAccountUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onAccountUpdate%28tech.cassandre.trading.bot.dto.user.AccountDTO%29) to receive updates about your account.
+* [onTickerUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickerUpdate%28tech.cassandre.trading.bot.dto.market.TickerDTO%29) to receive new tickers.
+* [onOrderUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onOrderUpdate%28tech.cassandre.trading.bot.dto.trade.OrderDTO%29) to receive updates about your orders.
+* [onTradeUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTradeUpdate%28tech.cassandre.trading.bot.dto.trade.TradeDTO%29) to receive updates about your trades.
+* [onPositionUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) to receive updates about your positions.
+* [onPositionStatusUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionStatusUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) to receive updates about position status change.
 
 ## Buying/selling
 Inside your strategy, you can create market orders with the methods :
 
-* [createBuyMarketOrder()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createBuyMarketOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29).
-* [createSellMarketOrder()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createSellMarketOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29).
+* [createBuyMarketOrder()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createBuyMarketOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29)
+* [createSellMarketOrder()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createSellMarketOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29)
 
 And limit orders with :
 
-* [createBuyLimitOrder()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createBuyLimitOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,java.math.BigDecimal%29).
-* [createSellLimitOrder()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createSellLimitOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,java.math.BigDecimal%29).
+* [createBuyLimitOrder()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createBuyLimitOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,java.math.BigDecimal%29)
+* [createSellLimitOrder()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createSellLimitOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,java.math.BigDecimal%29)
 
+## Positions
 You can also create positions with :
 
-* [createLongPosition()](https://www.javadoc.io/static/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/4.0.1/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createLongPosition%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO%29).
-* [createShortPosition()](https://github.com/cassandre-tech/cassandre-trading-bot/issues/423).
+* [createLongPosition()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createLongPosition%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO%29)
+* [createShortPosition()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createShortPosition(tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO))
+
+On a non-closed positions, you can get the:
+* The lowest calculated gain with [getLowestPrice()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLowestCalculatedGain())
+* The highest calculated gain with [getHighestGainPrice()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getHighestGainPrice())
+* The latest calculated gain with [getLatestGainPrice](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLatestGainPrice())
+
+On a closed position, you can get the gain & fees with [getGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getGain())
 
 ::: tip
 If you don't know what a position is, [read this position system explanation](../learn/position-management.md).

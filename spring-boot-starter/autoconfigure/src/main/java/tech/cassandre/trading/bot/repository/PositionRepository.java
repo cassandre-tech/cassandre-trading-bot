@@ -1,7 +1,11 @@
 package tech.cassandre.trading.bot.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 
@@ -53,5 +57,25 @@ public interface PositionRepository extends CrudRepository<Position, Long> {
      * @return list of positions
      */
     List<Position> findByStatusIn(Set<PositionStatusDTO> status);
+
+    /**
+     * Update stop gain rule.
+     * @param id position id
+     * @param value new value
+     */
+    @Transactional
+    @Modifying
+    @Query("update Position p set p.stopGainPercentageRule = :value where p.id = :id")
+    void updateStopGainRule(@Param("id") Long id, @Param("value") Float value);
+
+    /**
+     * Update stop gain rule.
+     * @param id position id
+     * @param value new value
+     */
+    @Transactional
+    @Modifying
+    @Query("update Position p set p.stopLossPercentageRule = :value where p.id = :id")
+    void updateStopLossRule(@Param("id") Long id, @Param("value") Float value);
 
 }

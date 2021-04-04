@@ -18,10 +18,24 @@ jobs:
         uses: actions/checkout@v1
 
       # ================================================================================================================
+      - uses: pozetroninc/github-action-get-latest-release@master
+        id: getLatestRelease
+        with:
+          repository: ${{ github.repository }}
+
+      # ================================================================================================================
+      - name: Change release in website sources
+        id: sed
+        run: find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.getLatestRelease.outputs.release }}/g' {} \;
+
+      # ================================================================================================================
       - name: Install vuepress and build the documentation website
         run: |
-          yarn global add vuepress
-          yarn --cwd docs build
+          yarn add -D vuepress
+          cd docs
+          yarn install
+          cd ..
+          yarn --cwd docs build docs
 
       # ================================================================================================================
       - name: Deploy the documentation website
