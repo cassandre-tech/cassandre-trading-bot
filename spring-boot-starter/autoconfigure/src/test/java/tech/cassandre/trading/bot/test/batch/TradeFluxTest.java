@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -48,9 +47,6 @@ public class TradeFluxTest extends BaseTest {
 
     @Autowired
     private TradeRepository tradeRepository;
-
-    @Autowired
-    private TradeService tradeService;
 
     @Autowired
     private org.knowm.xchange.service.trade.TradeService xChangeTradeService;

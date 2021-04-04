@@ -127,8 +127,6 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(cp, order1.get().getCurrencyPair());
         assertEquals(0, order1.get().getAmount().getValue().compareTo(new BigDecimal("0.01")));
         assertEquals(cp.getBaseCurrency(), order1.get().getAmount().getCurrency());
-        //assertTrue(order1.get().getAveragePrice().getValue().compareTo(ZERO) > 0);
-        //assertEquals(cp.getQuoteCurrency(), order1.get().getAveragePrice().getCurrency());
         assertEquals(0, order1.get().getLimitPrice().getValue().compareTo(new BigDecimal("0.0001")));
         assertEquals(cp.getQuoteCurrency(), order1.get().getLimitPrice().getCurrency());
         assertNull(order1.get().getLeverage());

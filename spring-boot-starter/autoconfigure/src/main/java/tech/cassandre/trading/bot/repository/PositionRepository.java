@@ -62,22 +62,20 @@ public interface PositionRepository extends CrudRepository<Position, Long> {
      * Update stop gain rule.
      * @param id position id
      * @param value new value
-     * @return number of column affected.
      */
     @Transactional
     @Modifying
     @Query("update Position p set p.stopGainPercentageRule = :value where p.id = :id")
-    int updateStopGainRule(@Param("id") Long id, @Param("value") Float value);
+    void updateStopGainRule(@Param("id") Long id, @Param("value") Float value);
 
     /**
      * Update stop gain rule.
      * @param id position id
      * @param value new value
-     * @return number of column affected.
      */
     @Transactional
     @Modifying
     @Query("update Position p set p.stopLossPercentageRule = :value where p.id = :id")
-    int updateStopLossRule(@Param("id") Long id, @Param("value") Float value);
+    void updateStopLossRule(@Param("id") Long id, @Param("value") Float value);
 
 }

@@ -29,7 +29,7 @@ public class DatabaseParameters {
     @Setter
     @ToString
     @ConfigurationProperties(prefix = "cassandre.trading.bot.database.datasource")
-    public class Datasource {
+    public static class Datasource {
 
         /** Backup enabled parameter. */
         public static final String PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME = "cassandre.trading.bot.database.datasource.driver-class-name";

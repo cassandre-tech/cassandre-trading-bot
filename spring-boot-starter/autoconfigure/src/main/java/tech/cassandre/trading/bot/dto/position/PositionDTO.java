@@ -43,7 +43,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 @Builder
 @ToString
 @AllArgsConstructor(access = PRIVATE)
-@SuppressWarnings("checkstyle:VisibilityModifier")
+@SuppressWarnings({"checkstyle:VisibilityModifier", "DuplicatedCode"})
 public class PositionDTO {
 
     /** Technical ID. */

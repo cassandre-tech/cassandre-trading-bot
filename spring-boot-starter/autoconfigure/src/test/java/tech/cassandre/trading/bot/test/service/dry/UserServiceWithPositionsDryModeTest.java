@@ -18,7 +18,6 @@ import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -56,9 +55,6 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private TradeService tradeService;
 
     @Autowired
     private PositionService positionService;

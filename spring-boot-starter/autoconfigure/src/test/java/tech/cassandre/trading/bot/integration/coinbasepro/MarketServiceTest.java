@@ -12,7 +12,6 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;

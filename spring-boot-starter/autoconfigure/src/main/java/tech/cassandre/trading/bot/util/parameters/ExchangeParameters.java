@@ -73,7 +73,7 @@ public class ExchangeParameters {
     @Setter
     @ToString
     @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange.modes")
-    public class Modes {
+    public static class Modes {
 
         /** Set it to true to use the sandbox. */
         @NotNull(message = "Sandbox parameter required, set it to true to use the sandbox")
