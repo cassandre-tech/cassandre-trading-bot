@@ -16,7 +16,7 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -72,7 +72,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(0, tradeService.getTrades(Collections.emptySet()).size());
 
         // We create a buy order.
-        final OrderCreationResultDTO buyMarketOrder01 = strategy.createBuyMarketOrder(cp1, new BigDecimal("0.001"));
+        final OrderCreationResultDTO buyMarketOrder01 = strategy.createBuyMarketOrder(ETH_BTC, new BigDecimal("0.001"));
         assertTrue(buyMarketOrder01.isSuccessful());
         assertEquals(orderId01, buyMarketOrder01.getOrder().getOrderId());
 
@@ -86,16 +86,16 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertNotNull(order01.get().getStrategy());
         assertEquals(1, order01.get().getStrategy().getId());
         assertEquals("01", order01.get().getStrategy().getStrategyId());
-        assertEquals(cp1, order01.get().getCurrencyPair());
+        assertEquals(ETH_BTC, order01.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.001").compareTo(order01.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), order01.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), order01.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.2").compareTo(order01.get().getAveragePrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), order01.get().getAveragePrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), order01.get().getAveragePrice().getCurrency());
         assertNull(order01.get().getLimitPrice());
         assertNull(order01.get().getLeverage());
         assertEquals(FILLED, order01.get().getStatus());
         assertEquals(0, new BigDecimal("0.001").compareTo(order01.get().getCumulativeAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), order01.get().getCumulativeAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), order01.get().getCumulativeAmount().getCurrency());
         assertNull(order01.get().getUserReference());
         assertNotNull(order01.get().getTimestamp());
 
@@ -107,17 +107,17 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(tradeId01, trade01.get().getTradeId());
         assertEquals(BID, trade01.get().getType());
         assertEquals(orderId01, trade01.get().getOrderId());
-        assertEquals(cp1, trade01.get().getCurrencyPair());
+        assertEquals(ETH_BTC, trade01.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.001").compareTo(trade01.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), trade01.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), trade01.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.2").compareTo(trade01.get().getPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), trade01.get().getPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), trade01.get().getPrice().getCurrency());
         assertEquals(ZERO, trade01.get().getFee());
         assertNull(trade01.get().getUserReference());
         assertNotNull(trade01.get().getTimestamp());
 
         // We create a sell order to check order numbers and type.
-        final OrderCreationResultDTO buyMarketOrder02 = strategy.createSellMarketOrder(cp1, new BigDecimal("0.002"));
+        final OrderCreationResultDTO buyMarketOrder02 = strategy.createSellMarketOrder(ETH_BTC, new BigDecimal("0.002"));
         assertTrue(buyMarketOrder02.isSuccessful());
         assertEquals(orderId02, buyMarketOrder02.getOrder().getOrderId());
 
@@ -131,16 +131,16 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertNotNull(order02.get().getStrategy());
         assertEquals(1, order02.get().getStrategy().getId());
         assertEquals("01", order02.get().getStrategy().getStrategyId());
-        assertEquals(cp1, order02.get().getCurrencyPair());
+        assertEquals(ETH_BTC, order02.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.002").compareTo(order02.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), order02.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), order02.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.2").compareTo(order02.get().getAveragePrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), order02.get().getAveragePrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), order02.get().getAveragePrice().getCurrency());
         assertNull(order02.get().getLimitPrice());
         assertNull(order02.get().getLeverage());
         assertEquals(FILLED, order02.get().getStatus());
         assertEquals(0, new BigDecimal("0.002").compareTo(order02.get().getCumulativeAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), order02.get().getCumulativeAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), order02.get().getCumulativeAmount().getCurrency());
         assertNull(order02.get().getUserReference());
         assertNotNull(order02.get().getTimestamp());
 
@@ -152,11 +152,11 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(tradeId02, trade02.get().getTradeId());
         assertEquals(ASK, trade02.get().getType());
         assertEquals(orderId02, trade02.get().getOrderId());
-        assertEquals(cp1, trade02.get().getCurrencyPair());
+        assertEquals(ETH_BTC, trade02.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.002").compareTo(trade02.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), trade02.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), trade02.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.2").compareTo(trade02.get().getPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), trade02.get().getPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), trade02.get().getPrice().getCurrency());
         assertEquals(ZERO, trade02.get().getFee());
         assertNull(trade02.get().getUserReference());
         assertNotNull(trade02.get().getTimestamp());

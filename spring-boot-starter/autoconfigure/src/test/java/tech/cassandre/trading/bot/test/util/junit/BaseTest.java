@@ -80,35 +80,35 @@ public class BaseTest {
     /** Position mapper. */
     protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
 
-    /** cp1 for tests. */
-    protected final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+    /** ETH/BTC. */
+    public static final CurrencyPairDTO ETH_BTC = new CurrencyPairDTO(ETH, BTC);
 
-    /** XChange cp1 for tests. */
-    protected final CurrencyPair xChangeCP1 = new CurrencyPair(Currency.ETH, Currency.BTC);
+    /** XChange ETH/BTC. */
+    public static final CurrencyPair XCHANGE_ETH_BTC = new CurrencyPair(Currency.ETH, Currency.BTC);
 
-    /** cp2 for tests. */
-    protected final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
+    /** ETH/USDT. */
+    public static final CurrencyPairDTO ETH_USDT = new CurrencyPairDTO(ETH, USDT);
 
-    /** XChange cp2 for tests. */
-    protected final CurrencyPair xChangeCP2 = new CurrencyPair(Currency.ETH, Currency.USDT);
+    /** XChange ETH/USDT. */
+    public static final CurrencyPair XCHANGE_ETH_USDT = new CurrencyPair(Currency.ETH, Currency.USDT);
 
-    /** cp3 for tests. */
-    protected final CurrencyPairDTO cp3 = new CurrencyPairDTO(BTC, USDT);
+    /** BTC/USDT. */
+    public static final CurrencyPairDTO BTC_USDT = new CurrencyPairDTO(BTC, USDT);
 
-    /** XChange cp2 for tests. */
-    protected final CurrencyPair xChangeCP3 = new CurrencyPair(Currency.BTC, Currency.USDT);
+    /** XChange BTC/USDT. */
+    public static final CurrencyPair XCHANGE_BTC_USDT = new CurrencyPair(Currency.BTC, Currency.USDT);
 
-    /** cp4 for tests. */
-    protected final CurrencyPairDTO cp4 = new CurrencyPairDTO(KCS, USDT);
+    /** KCS/USDT. */
+    public static final CurrencyPairDTO KCS_USDT = new CurrencyPairDTO(KCS, USDT);
 
-    /** XChange cp4 for tests. */
-    protected final CurrencyPair xChangeCP4 = new CurrencyPair(Currency.KCS, Currency.USDT);
+    /** XChange KCS/USDT. */
+    public static final CurrencyPair XCHANGE_KCS_USDT = new CurrencyPair(Currency.KCS, Currency.USDT);
 
-    /** cp5 for tests. */
-    protected final CurrencyPairDTO cp5 = new CurrencyPairDTO(BTC, ETH);
+    /** BTC/ETH. */
+    public static final CurrencyPairDTO BTC_ETH = new CurrencyPairDTO(BTC, ETH);
 
-    /** XChange cp5 for tests. */
-    protected final CurrencyPair xChangeCP5 = new CurrencyPair(Currency.BTC, Currency.ETH);
+    /** XChange BTC/ETH. */
+    public static final CurrencyPair XCHANGE_BTC_ETH = new CurrencyPair(Currency.BTC, Currency.ETH);
 
     /** Ten seconds wait. */
     protected static final long WAITING_TIME_IN_SECONDS = 5L;

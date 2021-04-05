@@ -17,7 +17,7 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 
@@ -64,8 +64,8 @@ public class Issue421 extends BaseTest {
                 .orderId("DRY_ORDER_000000001")
                 .type(BID)
                 .strategy(strategy.getStrategyDTO())
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO(new BigDecimal("0.0001"), cp1.getBaseCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO(new BigDecimal("0.0001"), ETH_BTC.getBaseCurrency()))
                 .status(NEW)
                 .build());
 
@@ -73,15 +73,15 @@ public class Issue421 extends BaseTest {
                 .orderId("DRY_ORDER_000000001")
                 .type(BID)
                 .strategy(strategy.getStrategyDTO())
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO(new BigDecimal("0.0001"), cp1.getBaseCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO(new BigDecimal("0.0001"), ETH_BTC.getBaseCurrency()))
                 .status(NEW)
                 .build());
 
         // =============================================================================================================
         // Creates position 1 (ETH/BTC, 0.0001, 100% stop gain, price of 0.2).
         // As the order is validated and the trade arrives, the position should be opened.
-        final PositionCreationResultDTO position1Result = strategy.createLongPosition(cp1,
+        final PositionCreationResultDTO position1Result = strategy.createLongPosition(ETH_BTC,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());

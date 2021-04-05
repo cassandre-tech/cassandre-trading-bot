@@ -9,9 +9,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
 
+import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy1.PARAMETER_STRATEGY_1_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy3.PARAMETER_STRATEGY_3_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_PASSWORD;
 import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_URL;
@@ -37,24 +40,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
 
     /** Secret parameter. */
     public static final String PARAMETER_EXCHANGE_SECRET = "cassandre.trading.bot.exchange.secret";
-
-    /** Proxy host. */
-    public static final String PARAMETER_EXCHANGE_PROXY_HOST = "cassandre.trading.bot.exchange.proxyHost";
-
-    /** Proxy port. */
-    public static final String PARAMETER_EXCHANGE_PROXY_PORT = "cassandre.trading.bot.exchange.proxyPort";
-
-    /** secure API endpoint parameter. */
-    public static final String PARAMETER_EXCHANGE_SSL_URI = "cassandre.trading.bot.exchange.sslUri";
-
-    /** plain text API endpoint parameter. */
-    public static final String PARAMETER_EXCHANGE_PLAIN_TEXT_URI = "cassandre.trading.bot.exchange.plainTextUri";
-
-    /** exchange port parameter. */
-    public static final String PARAMETER_EXCHANGE_HOST = "cassandre.trading.bot.exchange.host";
-
-    /** exchange port parameter. */
-    public static final String PARAMETER_EXCHANGE_PORT = "cassandre.trading.bot.exchange.port";
 
     /** Sandbox parameter. */
     public static final String PARAMETER_EXCHANGE_SANDBOX = "cassandre.trading.bot.exchange.modes.sandbox";
@@ -82,6 +67,15 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
 
     /** Strategy without existing account enabled parameter default value. */
     public static final String PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE = "false";
+
+    /** Strategy 1 enabled parameter default value. */
+    public static final String PARAMETER_STRATEGY_1_ENABLED_DEFAULT_VALUE = "false";
+
+    /** Strategy 2 enabled parameter default value. */
+    public static final String PARAMETER_STRATEGY_2_ENABLED_DEFAULT_VALUE = "false";
+
+    /** Strategy 3 enabled parameter default value. */
+    public static final String PARAMETER_STRATEGY_3_ENABLED_DEFAULT_VALUE = "false";
 
     /** Exchange name parameter. */
     public static final String PARAMETER_NAME_DEFAULT_VALUE = "org.knowm.xchange.simulated.SimulatedExchange";
@@ -150,6 +144,9 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE);             // false
         System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE);                                 // true
         System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE, PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE);                 // false
+        System.setProperty(PARAMETER_STRATEGY_1_ENABLED, PARAMETER_STRATEGY_1_ENABLED_DEFAULT_VALUE);
+        System.setProperty(PARAMETER_STRATEGY_2_ENABLED, PARAMETER_STRATEGY_2_ENABLED_DEFAULT_VALUE);
+        System.setProperty(PARAMETER_STRATEGY_3_ENABLED, PARAMETER_STRATEGY_3_ENABLED_DEFAULT_VALUE);
         // Spring parameters.
         System.setProperty("spring.jpa.hibernate.ddl-auto", "validate");
 

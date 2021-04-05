@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.strategy;
+package tech.cassandre.trading.bot.test.strategy.ta4j;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,6 @@ import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -27,8 +26,8 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J_STRATEGY;
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.ta4j.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Strategy - Basic ta4j cassandre strategy")
@@ -63,7 +62,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));
         await().untilAsserted(() -> assertEquals(15, strategy.getTickersUpdateReceived().size()));
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
-        await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTickers().get(cp3).getLast())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("130").compareTo(strategy.getLastTickers().get(BTC_USDT).getLast())));
 
         // Check ta4j results.
         await().untilAsserted(() -> assertEquals(5, strategy.getEnterCount()));
@@ -71,8 +70,8 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(8, strategy.getSeries().getBarCount()));
 
         // Check getEstimatedBuyingCost()
-        assertTrue(strategy.getEstimatedBuyingCost(cp3, new BigDecimal(3)).isPresent());
-        assertEquals(0, new BigDecimal("390").compareTo(strategy.getEstimatedBuyingCost(cp3, new BigDecimal(3)).get().getValue()));
+        assertTrue(strategy.getEstimatedBuyingCost(BTC_USDT, new BigDecimal(3)).isPresent());
+        assertEquals(0, new BigDecimal("390").compareTo(strategy.getEstimatedBuyingCost(BTC_USDT, new BigDecimal(3)).get().getValue()));
 
         // Test for simplified canBuy() & canSell().
         // 1 BTC / 150 in my account.

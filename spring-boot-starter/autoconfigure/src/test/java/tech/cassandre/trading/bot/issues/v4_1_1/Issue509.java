@@ -13,7 +13,7 @@ import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;

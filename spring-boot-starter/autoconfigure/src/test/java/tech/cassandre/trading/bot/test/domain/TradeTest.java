@@ -23,7 +23,7 @@ import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -197,9 +197,9 @@ public class TradeTest extends BaseTest {
                 .tradeId("BACKUP_TRADE_11")
                 .orderId("BACKUP_ORDER_01")
                 .type(BID)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1.100001", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("2.200002", ETH_BTC.getQuoteCurrency()))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .userReference("My reference !")
                 .timestamp(createZonedDateTime("01-09-2020"))
@@ -238,12 +238,12 @@ public class TradeTest extends BaseTest {
         assertEquals("BACKUP_TRADE_11", tradeDTO.getTradeId());
         assertEquals(BID, tradeDTO.getType());
         assertEquals("BACKUP_ORDER_01", tradeDTO.getOrderId());
-        assertEquals(cp1, tradeDTO.getCurrencyPair());
-        assertEquals(cp1.getBaseCurrency(), tradeDTO.getAmount().getCurrency());
+        assertEquals(ETH_BTC, tradeDTO.getCurrencyPair());
+        assertEquals(ETH_BTC.getBaseCurrency(), tradeDTO.getAmount().getCurrency());
         assertEquals(0, tradeDTO.getAmount().getValue().compareTo(new BigDecimal("1.100001")));
-        assertEquals(cp1.getBaseCurrency(), tradeDTO.getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), tradeDTO.getAmount().getCurrency());
         assertEquals(0, tradeDTO.getPrice().getValue().compareTo(new BigDecimal("2.200002")));
-        assertEquals(cp1.getQuoteCurrency(), tradeDTO.getPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), tradeDTO.getPrice().getCurrency());
         assertEquals(0, tradeDTO.getFee().getValue().compareTo(new BigDecimal("3.300003")));
         assertEquals(BTC, tradeDTO.getFee().getCurrency());
         assertEquals("My reference !", tradeDTO.getUserReference());
@@ -255,9 +255,9 @@ public class TradeTest extends BaseTest {
                 .tradeId("BACKUP_TRADE_11")
                 .type(BID)
                 .orderId("BACKUP_ORDER_01")
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1.100002", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1.100002", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("2.200002", ETH_BTC.getQuoteCurrency()))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .userReference("Updated reference")
                 .timestamp(createZonedDateTime("01-09-2020"))
@@ -273,9 +273,9 @@ public class TradeTest extends BaseTest {
                 .tradeId("BACKUP_TRADE_11")
                 .orderId("BACKUP_ORDER_01")
                 .type(BID)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1.100003", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1.100003", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("2.200002", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
@@ -300,15 +300,15 @@ public class TradeTest extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("NEW_ORDER")
                 .type(ASK)
-                .amount(new CurrencyAmountDTO("1.00001", cp1.getBaseCurrency()))
-                .currencyPair(cp1)
+                .amount(new CurrencyAmountDTO("1.00001", ETH_BTC.getBaseCurrency()))
+                .currencyPair(ETH_BTC)
                 .userReference("MY_REF_3")
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .status(NEW)
-                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
-                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", ETH_BTC.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", ETH_BTC.getQuoteCurrency()))
                 .leverage("leverage3")
-                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("1.00005", ETH_BTC.getQuoteCurrency()))
                 .strategy(strategyDTO)
                 .build());
         await().untilAsserted(() -> assertEquals(orderCount + 1, orderRepository.count()));
@@ -320,9 +320,9 @@ public class TradeTest extends BaseTest {
                 .tradeId("NEW_TRADE")
                 .orderId("NEW_ORDER")
                 .type(BID)
-                .amount(new CurrencyAmountDTO("1.100003", cp1.getBaseCurrency()))
-                .currencyPair(cp1)
-                .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("1.100003", ETH_BTC.getBaseCurrency()))
+                .currencyPair(ETH_BTC)
+                .price(new CurrencyAmountDTO("2.200002", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());

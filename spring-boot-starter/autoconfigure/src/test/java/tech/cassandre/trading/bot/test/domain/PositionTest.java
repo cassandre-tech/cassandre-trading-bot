@@ -27,7 +27,7 @@ import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -284,14 +284,14 @@ public class PositionTest extends BaseTest {
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.2")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.2")).build());
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
         // =============================================================================================================
         // Creates a position with ID 6 - waiting for order DRY_ORDER_000000001.
         long positionCount = positionRepository.count();
         PositionRulesDTO rules = PositionRulesDTO.builder().stopGainPercentage(1f).stopLossPercentage(2f).build();
-        PositionCreationResultDTO creationResult1 = strategy.createLongPosition(cp1, new BigDecimal("0.0001"), rules);
+        PositionCreationResultDTO creationResult1 = strategy.createLongPosition(ETH_BTC, new BigDecimal("0.0001"), rules);
         assertTrue(creationResult1.isSuccessful());
         assertEquals(6, creationResult1.getPosition().getId());
         assertEquals("DRY_ORDER_000000001", creationResult1.getPosition().getOpeningOrderId());
@@ -307,9 +307,9 @@ public class PositionTest extends BaseTest {
         assertNotNull(p6.getStrategy());
         assertEquals(1, p6.getStrategy().getId());
         assertEquals("01", p6.getStrategy().getStrategyId());
-        assertEquals(cp1.toString(), p6.getCurrencyPair());
+        assertEquals(ETH_BTC.toString(), p6.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0001").compareTo(p6.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency().toString(), p6.getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), p6.getAmount().getCurrency());
         assertEquals(1, p6.getStopGainPercentageRule());
         assertEquals(2, p6.getStopLossPercentageRule());
         assertEquals(OPENING, p6.getStatus());
@@ -327,9 +327,9 @@ public class PositionTest extends BaseTest {
         assertNotNull(p6.getStrategy());
         assertEquals(1, p6.getStrategy().getId());
         assertEquals("01", p6.getStrategy().getStrategyId());
-        assertEquals(cp1.toString(), p6.getCurrencyPair());
+        assertEquals(ETH_BTC.toString(), p6.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0001").compareTo(p6.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency().toString(), p6.getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), p6.getAmount().getCurrency());
         assertEquals(1, p6.getStopGainPercentageRule());
         assertEquals(2, p6.getStopLossPercentageRule());
         assertEquals(OPENED, p6.getStatus());
@@ -339,7 +339,7 @@ public class PositionTest extends BaseTest {
 
         // =============================================================================================================
         // Creates a position with ID to 7.
-        PositionCreationResultDTO creationResult2 = strategy.createLongPosition(cp1, new BigDecimal("0.0002"), PositionRulesDTO.builder().build());
+        PositionCreationResultDTO creationResult2 = strategy.createLongPosition(ETH_BTC, new BigDecimal("0.0002"), PositionRulesDTO.builder().build());
         assertTrue(creationResult2.isSuccessful());
         assertEquals("DRY_ORDER_000000002", creationResult2.getPosition().getOpeningOrderId());
 
@@ -352,9 +352,9 @@ public class PositionTest extends BaseTest {
         assertNotNull(p7.getStrategy());
         assertEquals(1, p7.getStrategy().getId());
         assertEquals("01", p7.getStrategy().getStrategyId());
-        assertEquals(cp1.toString(), p7.getCurrencyPair());
+        assertEquals(ETH_BTC.toString(), p7.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0002").compareTo(p7.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency().toString(), p7.getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), p7.getAmount().getCurrency());
         assertNull(p7.getStopGainPercentageRule());
         assertNull(p7.getStopLossPercentageRule());
         assertEquals(OPENING, p7.getStatus());
@@ -373,14 +373,14 @@ public class PositionTest extends BaseTest {
         assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.01")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.01")).build());
         await().untilAsserted(() -> assertEquals(1, strategy.getTickersUpdateReceived().size()));
 
         // =============================================================================================================
         // A position is created on ETH/BTC - ID 6.
         // We buy 1 ETH for 0.01 BTC.
         // Waiting for order DRY_ORDER_000000001.
-        final PositionCreationResultDTO positionResult = strategy.createLongPosition(cp1,
+        final PositionCreationResultDTO positionResult = strategy.createLongPosition(ETH_BTC,
                 new BigDecimal("1"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000f)   // 1 000% max gain.
@@ -403,9 +403,9 @@ public class PositionTest extends BaseTest {
         assertEquals(LONG, p.getType());
         assertEquals(1, p.getStrategy().getId());
         assertEquals("01", p.getStrategy().getStrategyId());
-        assertEquals(cp1.toString(), p.getCurrencyPair());
+        assertEquals(ETH_BTC.toString(), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(p.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency().toString(), p.getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), p.getAmount().getCurrency());
         assertEquals(1000, p.getStopGainPercentageRule());
         assertEquals(100, p.getStopLossPercentageRule());
         assertEquals(OPENING, p.getStatus());
@@ -436,9 +436,9 @@ public class PositionTest extends BaseTest {
         assertEquals(LONG, p.getType());
         assertEquals(1, p.getStrategy().getId());
         assertEquals("01", p.getStrategy().getStrategyId());
-        assertEquals(cp1.toString(), p.getCurrencyPair());
+        assertEquals(ETH_BTC.toString(), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(p.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency().toString(), p.getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), p.getAmount().getCurrency());
         assertEquals(1000, p.getStopGainPercentageRule());
         assertEquals(100, p.getStopLossPercentageRule());
         assertEquals(OPENED, p.getStatus());
@@ -456,24 +456,24 @@ public class PositionTest extends BaseTest {
         await().untilAsserted(() -> assertNull(getPosition(positionId).getLatestGainPrice()));
 
         // First ticker arrives (500% gain) - min and max gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.06")).build());
         await().untilAsserted(() -> assertNotNull(getPosition(positionId).getLatestGainPrice()));
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.06").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Second ticker arrives (100% gain) - min gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.02")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.02")).build());
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.02").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Third ticker arrives (200% gain) - nothing should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.03")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.03")).build());
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.03").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Fourth ticker arrives (50% loss) - min gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.005")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.005")).build());
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.005").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Fifth ticker arrives (600% gain) - max gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.07")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.07")).build());
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.07").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Check lowest & highest in database.
@@ -481,9 +481,9 @@ public class PositionTest extends BaseTest {
         assertTrue(getPositionDTO(positionId).getLowestCalculatedGain().isPresent());
         assertTrue(getPositionDTO(positionId).getHighestCalculatedGain().isPresent());
         assertEquals(0, new BigDecimal("0.005").compareTo(getPositionDTO(positionId).getLowestGainPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), getPositionDTO(positionId).getLowestGainPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), getPositionDTO(positionId).getLowestGainPrice().getCurrency());
         assertEquals(0, new BigDecimal("0.07").compareTo(getPositionDTO(positionId).getHighestGainPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), getPositionDTO(positionId).getHighestGainPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), getPositionDTO(positionId).getHighestGainPrice().getCurrency());
         assertEquals(-50, getPositionDTO(positionId).getLowestCalculatedGain().get().getPercentage());
         assertEquals(600, getPositionDTO(positionId).getHighestCalculatedGain().get().getPercentage());
 
@@ -503,13 +503,13 @@ public class PositionTest extends BaseTest {
                 .orderId("DRY_ORDER_000000002")
                 .type(ASK)
                 .strategy(strategyDTO)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
-                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", ETH_BTC.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("1.00005", ETH_BTC.getQuoteCurrency()))
                 .leverage("leverage3")
                 .status(NEW)
-                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", ETH_BTC.getBaseCurrency()))
                 .userReference("MY_REF_3")
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
@@ -521,9 +521,9 @@ public class PositionTest extends BaseTest {
                 .tradeId("000002")
                 .type(ASK)
                 .orderId("DRY_ORDER_000000002")
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("0.5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("0.5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .build());
         await().untilAsserted(() -> assertEquals(1, getPositionDTO(positionId).getClosingOrder().getTrades().size()));
         await().untilAsserted(() -> assertEquals(12, tradeRepository.count()));
@@ -534,9 +534,9 @@ public class PositionTest extends BaseTest {
                 .tradeId("000003")
                 .type(ASK)
                 .orderId("DRY_ORDER_000000002")
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("0.5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("0.5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .build());
         await().untilAsserted(() -> assertEquals(2, getPositionDTO(positionId).getClosingOrder().getTrades().size()));
         await().untilAsserted(() -> assertEquals(13, tradeRepository.count()));
@@ -552,9 +552,9 @@ public class PositionTest extends BaseTest {
         assertEquals(LONG, p.getType());
         assertEquals(1, p.getStrategy().getId());
         assertEquals("01", p.getStrategy().getStrategyId());
-        assertEquals(cp1.toString(), p.getCurrencyPair());
+        assertEquals(ETH_BTC.toString(), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(p.getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency().toString(), p.getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), p.getAmount().getCurrency());
         assertEquals(1000, p.getStopGainPercentageRule());
         assertEquals(100, p.getStopLossPercentageRule());
         assertEquals(CLOSED, p.getStatus());

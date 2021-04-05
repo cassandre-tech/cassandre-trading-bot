@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.strategy;
+package tech.cassandre.trading.bot.test.strategy.basic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
