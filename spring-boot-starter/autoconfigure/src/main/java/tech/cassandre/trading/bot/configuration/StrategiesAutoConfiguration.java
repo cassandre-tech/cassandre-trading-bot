@@ -255,7 +255,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         // Update.
                         existingStrategy.setName(annotation.strategyName());
                         strategyRepository.save(existingStrategy);
-                        strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(existingStrategy));
+                        strategy.setStrategy(strategyMapper.mapToStrategyDTO(existingStrategy));
                         logger.debug("StrategyConfiguration - Strategy updated in database {}", existingStrategy);
                     }, () -> {
                         // Creation.
@@ -274,7 +274,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         }
                         strategyRepository.save(newStrategy);
                         logger.debug("StrategyConfiguration - Strategy saved in database {}", newStrategy);
-                        strategy.setStrategyDTO(strategyMapper.mapToStrategyDTO(newStrategy));
+                        strategy.setStrategy(strategyMapper.mapToStrategyDTO(newStrategy));
                     });
 
                     // Setting services & repositories.

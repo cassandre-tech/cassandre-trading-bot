@@ -10,13 +10,18 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
+import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
+import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -28,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -68,6 +74,9 @@ public class MultipleStrategiesTest extends BaseTest {
 
     @Autowired
     private ExchangeService exchangeService;
+
+    @Autowired
+    private PositionService positionService;
 
     @Autowired
     private Strategy1 strategy1;
@@ -172,7 +181,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(0, new BigDecimal("10").compareTo(strategyTradeAccount.get().getBalance(ETH).get().getAvailable()));
 
         //==============================================================================================================
-        // Checking received tickers by each tickers.
+        // Checking received tickers by strategies.
         // Sending BTC/USDT - BTC/ETH - ETH/USDT.
         // Strategy 1 - Requesting BTC/USDT should receive one ticker.
         // Strategy 2 - Requesting BTC/ETH should receive one ticker.
@@ -205,18 +214,58 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(0, new BigDecimal("2000").compareTo(strategy3Ticker2.getLast()));
 
         //==============================================================================================================
-        // Strategy 1 - Creating 2 positions and see if they are opened.
-        // Check positionId.
+        // Strategy 1 - BTC/USDT - Creating 1 position.
+        // The price of 1 BTC is 50 000 USDT and we buy 0.001 BTC for 50 USDT.
+        // We stop at 100% gain.
+        final PositionCreationResultDTO position1Result = strategy1.createLongPosition(BTC_USDT,
+                new BigDecimal("0.001"),
+                PositionRulesDTO.builder().stopGainPercentage(100f).build());
+        assertTrue(position1Result.isSuccessful());
+        final long position1Id = position1Result.getPosition().getId();
+        final long position1PositionId = position1Result.getPosition().getPositionId();
+
+        assertEquals("DRY_ORDER_000000001", position1Result.getPosition().getOpeningOrderId());
+
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
+
+        // Check positionId & position1PositionId.
+        assertEquals(1, position1Id);
+        assertEquals(1, position1PositionId);
+
         // Check onPositionUpdate() & onPositionStatusUpdate().
         // Check onOrderUpdate().
+        assertEquals(1, strategy1.getOrdersUpdateReceived().size());
+        assertEquals(0, strategy2.getOrdersUpdateReceived().size());
+        assertEquals(0, strategy3.getOrdersUpdateReceived().size());
+
         // Check onTradeUpdate().
+        assertEquals(1, strategy1.getTradesUpdateReceived().size());
+        assertEquals(0, strategy2.getTradesUpdateReceived().size());
+        assertEquals(0, strategy3.getTradesUpdateReceived().size());
+
         // Check getOrders() & getOrderByOrderId().
+        assertEquals(1, strategy1.getOrders().size());
+        assertTrue(strategy1.getOrderByOrderId("DRY_ORDER_000000001").isPresent());
+        assertEquals(0, strategy2.getOrders().size());
+        assertEquals(0, strategy3.getOrders().size());
+
         // Check getTrades() & getTradeByTradeId().
+        assertEquals(1, strategy1.getTrades().size());
+        assertTrue(strategy1.getTradeByTradeId("DRY_TRADE_000000001").isPresent());
+        assertEquals(0, strategy2.getTrades().size());
+        assertEquals(0, strategy3.getTrades().size());
+
         // Check getAmountsLockedByPosition().
+        BigDecimal amountLockedForBTC = strategy1.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.001").compareTo(amountLockedForBTC));
+        amountLockedForBTC = strategy2.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.001").compareTo(amountLockedForBTC));
+        amountLockedForBTC = strategy3.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.001").compareTo(amountLockedForBTC));
 
         //==============================================================================================================
         // Strategy 2 - Creating 1 position and see if it's opened.
-        // Check positionId.
+        // Check positionId & position1PositionId.
         // Check onPositionUpdate() & onPositionStatusUpdate().
         // Check onOrderUpdate().
         // Check onTradeUpdate().
@@ -224,7 +273,7 @@ public class MultipleStrategiesTest extends BaseTest {
 
         //==============================================================================================================
         // Strategy 3 - Creating 3 positions and see if they are opened.
-        // Check positionId.
+        // Check positionId & position1PositionId.
         // Check onPositionUpdate() & onPositionStatusUpdate().
         // Check onOrderUpdate().
         // Check onTradeUpdate().
@@ -250,6 +299,21 @@ public class MultipleStrategiesTest extends BaseTest {
 
         //==============================================================================================================
         // Check getLastTickers().
+    }
+
+    /**
+     * Retrieve position from database.
+     *
+     * @param id position id
+     * @return position
+     */
+    private PositionDTO getPositionDTO(final long id) {
+        final Optional<PositionDTO> p = positionService.getPositionById(id);
+        if (p.isPresent()) {
+            return p.get();
+        } else {
+            throw new PositionException("Position not found : " + id);
+        }
     }
 
 }
