@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class Strategy extends BasicCassandreStrategy {
 
     /** Waiting time during each method. */
-    public static final int WAITING_TIME_IN_SECONDS = 1;
+    public static final int WAITING_TIME_IN_MILLISECONDS = 100;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -60,9 +60,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
     @Override
     public final void onAccountUpdate(final AccountDTO account) {
         accountsUpdateReceived.add(account);
-        logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account + "\n");
+        logger.info(getClass().getSimpleName() + "-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account + "\n");
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -71,9 +71,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
     @Override
     public final void onTickerUpdate(final TickerDTO ticker) {
         tickersUpdateReceived.add(ticker);
-        logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n");
+        logger.info(getClass().getSimpleName() + "-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n");
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -82,9 +82,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
     @Override
     public final void onOrderUpdate(final OrderDTO order) {
         ordersUpdateReceived.add(order);
-        logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order + "\n");
+        logger.info(getClass().getSimpleName() + "-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order + "\n");
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -93,9 +93,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
     @Override
     public void onTradeUpdate(TradeDTO trade) {
         tradesUpdateReceived.add(trade);
-        logger.info("TestableStrategy-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade + "\n");
+        logger.info(getClass().getSimpleName() + "-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade + "\n");
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -104,9 +104,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
     @Override
     public void onPositionUpdate(PositionDTO position) {
         positionsUpdateReceived.add(position);
-        logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position + "\n");
+        logger.info(getClass().getSimpleName() + "-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position + "\n");
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -115,10 +115,10 @@ public abstract class Strategy extends BasicCassandreStrategy {
     @Override
     public void onPositionStatusUpdate(PositionDTO position) {
         positionsStatusUpdateReceived.add(position);
-        logger.info("TestableStrategy-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position + "\n");
+        logger.info(getClass().getSimpleName() + "-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position + "\n");
 
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

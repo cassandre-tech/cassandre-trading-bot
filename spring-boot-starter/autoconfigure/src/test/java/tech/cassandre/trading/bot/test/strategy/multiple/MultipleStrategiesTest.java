@@ -4,10 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.domain.Strategy;
+import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
@@ -15,12 +16,18 @@ import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
+import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy1.PARAMETER_STRATEGY_1_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
@@ -44,15 +51,26 @@ import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountSt
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @ActiveProfiles("schedule-disabled")
-@Import(MultipleStrategiesTestMock.class)
 @DirtiesContext(classMode = AFTER_CLASS)
 public class MultipleStrategiesTest extends BaseTest {
+
+    @Autowired
+    private AccountFlux accountFlux;
 
     @Autowired
     private StrategyRepository strategyRepository;
 
     @Autowired
     private ExchangeService exchangeService;
+
+    @Autowired
+    private Strategy1 strategy1;
+
+    @Autowired
+    private Strategy2 strategy2;
+
+    @Autowired
+    private Strategy3 strategy3;
 
     @Test
     //@CaseId(82) TODO Create the test case in Qase
@@ -93,6 +111,59 @@ public class MultipleStrategiesTest extends BaseTest {
 
         //==============================================================================================================
         // Check balances on each strategy & onAccountUpdate().
+        accountFlux.update();
+        await().untilAsserted(() -> assertEquals(3, strategy3.getAccountsUpdatesReceived().size()));
+
+        // Strategy 1 test.
+        Map<String, AccountDTO> strategyAccounts = strategy1.getAccounts();
+        Optional<AccountDTO> strategyTradeAccount = strategy1.getTradeAccount();
+        assertEquals(3, strategyAccounts.size());
+        assertTrue(strategyAccounts.containsKey("main"));
+        assertTrue(strategyAccounts.containsKey("trade"));
+        assertTrue(strategyAccounts.containsKey("savings"));
+        assertTrue(strategyTradeAccount.isPresent());
+        assertEquals("trade", strategyTradeAccount.get().getName());
+        assertEquals(3, strategyTradeAccount.get().getBalances().size());
+        assertTrue(strategyTradeAccount.get().getBalance(BTC).isPresent());
+        assertEquals(0, new BigDecimal("0.99962937").compareTo(strategyTradeAccount.get().getBalance(BTC).get().getAvailable()));
+        assertTrue(strategyTradeAccount.get().getBalance(USDT).isPresent());
+        assertEquals(0, new BigDecimal("1000").compareTo(strategyTradeAccount.get().getBalance(USDT).get().getAvailable()));
+        assertTrue(strategyTradeAccount.get().getBalance(ETH).isPresent());
+        assertEquals(0, new BigDecimal("10").compareTo(strategyTradeAccount.get().getBalance(ETH).get().getAvailable()));
+
+        // Strategy 2 test.
+        strategyAccounts = strategy2.getAccounts();
+        strategyTradeAccount = strategy2.getTradeAccount();
+        assertEquals(3, strategyAccounts.size());
+        assertTrue(strategyAccounts.containsKey("main"));
+        assertTrue(strategyAccounts.containsKey("trade"));
+        assertTrue(strategyAccounts.containsKey("savings"));
+        assertTrue(strategyTradeAccount.isPresent());
+        assertEquals("trade", strategyTradeAccount.get().getName());
+        assertEquals(3, strategyTradeAccount.get().getBalances().size());
+        assertTrue(strategyTradeAccount.get().getBalance(BTC).isPresent());
+        assertEquals(0, new BigDecimal("0.99962937").compareTo(strategyTradeAccount.get().getBalance(BTC).get().getAvailable()));
+        assertTrue(strategyTradeAccount.get().getBalance(USDT).isPresent());
+        assertEquals(0, new BigDecimal("1000").compareTo(strategyTradeAccount.get().getBalance(USDT).get().getAvailable()));
+        assertTrue(strategyTradeAccount.get().getBalance(ETH).isPresent());
+        assertEquals(0, new BigDecimal("10").compareTo(strategyTradeAccount.get().getBalance(ETH).get().getAvailable()));
+
+        // Strategy 3 test.
+        strategyAccounts = strategy3.getAccounts();
+        strategyTradeAccount = strategy3.getTradeAccount();
+        assertEquals(3, strategyAccounts.size());
+        assertTrue(strategyAccounts.containsKey("main"));
+        assertTrue(strategyAccounts.containsKey("trade"));
+        assertTrue(strategyAccounts.containsKey("savings"));
+        assertTrue(strategyTradeAccount.isPresent());
+        assertEquals("trade", strategyTradeAccount.get().getName());
+        assertEquals(3, strategyTradeAccount.get().getBalances().size());
+        assertTrue(strategyTradeAccount.get().getBalance(BTC).isPresent());
+        assertEquals(0, new BigDecimal("0.99962937").compareTo(strategyTradeAccount.get().getBalance(BTC).get().getAvailable()));
+        assertTrue(strategyTradeAccount.get().getBalance(USDT).isPresent());
+        assertEquals(0, new BigDecimal("1000").compareTo(strategyTradeAccount.get().getBalance(USDT).get().getAvailable()));
+        assertTrue(strategyTradeAccount.get().getBalance(ETH).isPresent());
+        assertEquals(0, new BigDecimal("10").compareTo(strategyTradeAccount.get().getBalance(ETH).get().getAvailable()));
 
         //==============================================================================================================
         // Checking received tickers by each tickers & getLastTickers().
