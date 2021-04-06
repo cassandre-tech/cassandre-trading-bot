@@ -7,7 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.AccountFlux;
+import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.domain.Strategy;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
@@ -23,6 +25,7 @@ import java.util.Set;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -56,6 +59,9 @@ public class MultipleStrategiesTest extends BaseTest {
 
     @Autowired
     private AccountFlux accountFlux;
+
+    @Autowired
+    private TickerFlux tickerFlux;
 
     @Autowired
     private StrategyRepository strategyRepository;
@@ -166,7 +172,37 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(0, new BigDecimal("10").compareTo(strategyTradeAccount.get().getBalance(ETH).get().getAvailable()));
 
         //==============================================================================================================
-        // Checking received tickers by each tickers & getLastTickers().
+        // Checking received tickers by each tickers.
+        // Sending BTC/USDT - BTC/ETH - ETH/USDT.
+        // Strategy 1 - Requesting BTC/USDT should receive one ticker.
+        // Strategy 2 - Requesting BTC/ETH should receive one ticker.
+        // Strategy 3 - Requesting BTC/USDT & ETH/USDT should receive two tickers.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_USDT).last(new BigDecimal("50000")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_ETH).last(new BigDecimal("25")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("2000")).build());
+        await().untilAsserted(() -> assertEquals(2, strategy3.getTickersUpdateReceived().size()));
+        // Strategy 1.
+        assertEquals(1, strategy1.getTickersUpdateReceived().size());
+        final TickerDTO strategy1Ticker1 = strategy1.getTickersUpdateReceived().get(0);
+        assertNotNull(strategy1Ticker1);
+        assertEquals(BTC_USDT, strategy1Ticker1.getCurrencyPair());
+        assertEquals(0, new BigDecimal("50000").compareTo(strategy1Ticker1.getLast()));
+        // Strategy 2.
+        assertEquals(1, strategy2.getTickersUpdateReceived().size());
+        final TickerDTO strategy2Ticker1 = strategy2.getTickersUpdateReceived().get(0);
+        assertNotNull(strategy2Ticker1);
+        assertEquals(BTC_ETH, strategy2Ticker1.getCurrencyPair());
+        assertEquals(0, new BigDecimal("25").compareTo(strategy2Ticker1.getLast()));
+        // Strategy 3.
+        assertEquals(2, strategy3.getTickersUpdateReceived().size());
+        final TickerDTO strategy3Ticker1 = strategy3.getTickersUpdateReceived().get(0);
+        assertNotNull(strategy3Ticker1);
+        assertEquals(BTC_USDT, strategy3Ticker1.getCurrencyPair());
+        assertEquals(0, new BigDecimal("50000").compareTo(strategy3Ticker1.getLast()));
+        final TickerDTO strategy3Ticker2 = strategy3.getTickersUpdateReceived().get(1);
+        assertNotNull(strategy3Ticker2);
+        assertEquals(ETH_USDT, strategy3Ticker2.getCurrencyPair());
+        assertEquals(0, new BigDecimal("2000").compareTo(strategy3Ticker2.getLast()));
 
         //==============================================================================================================
         // Strategy 1 - Creating 2 positions and see if they are opened.
@@ -212,6 +248,8 @@ public class MultipleStrategiesTest extends BaseTest {
         //==============================================================================================================
         // Check balances, canBuy() & canSell().
 
+        //==============================================================================================================
+        // Check getLastTickers().
     }
 
 }

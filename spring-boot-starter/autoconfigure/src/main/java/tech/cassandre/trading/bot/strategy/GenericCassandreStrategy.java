@@ -150,8 +150,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     @Override
     public void tickerUpdate(final TickerDTO ticker) {
-        lastTickers.put(ticker.getCurrencyPair(), ticker);
-        onTickerUpdate(ticker);
+        // In multi strategies, all tickers are delivered to all strategies, so we filter in here.
+        if (getRequestedCurrencyPairs().contains(ticker.getCurrencyPair())) {
+            lastTickers.put(ticker.getCurrencyPair(), ticker);
+            onTickerUpdate(ticker);
+        }
     }
 
     @Override
