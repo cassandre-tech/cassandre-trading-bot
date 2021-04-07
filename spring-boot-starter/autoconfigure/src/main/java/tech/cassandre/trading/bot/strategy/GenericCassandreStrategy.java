@@ -188,16 +188,18 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         }
 
         // For every position update.
-        onPositionUpdate(position);
+        if (position.getStrategy().getId().equals(strategy.getId())) {
+            onPositionUpdate(position);
 
-        // From positionUpdate(), we see if it's also a onPositionStatusUpdate().
-        if (previousPositionsStatus.get(position.getId()) != position.getStatus()) {
-            previousPositionsStatus.put(position.getId(), position.getStatus());
-            if (position.getStatus() == CLOSED) {
-                // As CLOSED positions cannot change anymore, we don't need to store their previous positions.
-                previousPositionsStatus.remove(position.getId());
+            // From positionUpdate(), we see if it's also a onPositionStatusUpdate().
+            if (previousPositionsStatus.get(position.getId()) != position.getStatus()) {
+                previousPositionsStatus.put(position.getId(), position.getStatus());
+                if (position.getStatus() == CLOSED) {
+                    // As CLOSED positions cannot change anymore, we don't need to store their previous positions.
+                    previousPositionsStatus.remove(position.getId());
+                }
+                onPositionStatusUpdate(position);
             }
-            onPositionStatusUpdate(position);
         }
     }
 
@@ -348,7 +350,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return trade
      */
     public final Optional<TradeDTO> getTradeByTradeId(final String tradeId) {
-        return tradeRepository.findByTradeId(tradeId).map(tradeMapper::mapToTradeDTO);
+        return getTrades().values()
+                .stream()
+                .filter(trade -> trade.getTradeId().equals(tradeId))
+                .findFirst();
     }
 
     // =================================================================================================================

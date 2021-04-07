@@ -169,6 +169,10 @@ public class PositionRepositoryTest {
         pBis = positionRepository.findByPositionId(4L);
         assertTrue(pBis.isPresent());
         assertEquals(p, pBis.get());
+
+        // Test last position id retrieval.
+        assertEquals(5, positionRepository.getLastPositionIdUsedByStrategy(1L));
+        assertEquals(0, positionRepository.getLastPositionIdUsedByStrategy(9L));
     }
 
     @Test

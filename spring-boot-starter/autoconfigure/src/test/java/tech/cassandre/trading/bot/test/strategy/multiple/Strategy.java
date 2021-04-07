@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class Strategy extends BasicCassandreStrategy {
 
     /** Waiting time during each method. */
-    public static final int WAITING_TIME_IN_MILLISECONDS = 100;
+    public static final int WAITING_TIME_IN_MILLISECONDS = 10;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());

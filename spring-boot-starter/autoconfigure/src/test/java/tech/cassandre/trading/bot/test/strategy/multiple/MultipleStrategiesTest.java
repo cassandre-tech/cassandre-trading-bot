@@ -27,12 +27,14 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -183,9 +185,9 @@ public class MultipleStrategiesTest extends BaseTest {
         //==============================================================================================================
         // Checking received tickers by strategies.
         // Sending BTC/USDT - BTC/ETH - ETH/USDT.
-        // Strategy 1 - Requesting BTC/USDT should receive one ticker.
-        // Strategy 2 - Requesting BTC/ETH should receive one ticker.
-        // Strategy 3 - Requesting BTC/USDT & ETH/USDT should receive two tickers.
+        // Strategy 1 - Requesting BTC/USDT should receive one ticker - 1 BTC costs 50 000 USDT.
+        // Strategy 2 - Requesting BTC/ETH should receive one ticker - 1 BTC costs 25 ETH.
+        // Strategy 3 - Requesting BTC/USDT & ETH/USDT should receive two tickers - 1 ETH costs 2000 USDT.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_USDT).last(new BigDecimal("50000")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_ETH).last(new BigDecimal("25")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("2000")).build());
@@ -214,7 +216,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(0, new BigDecimal("2000").compareTo(strategy3Ticker2.getLast()));
 
         //==============================================================================================================
-        // Strategy 1 - BTC/USDT - Creating 1 position.
+        // Strategy 1 - Creating 1 position on BTC/USDT (0.001 BTC for 50 USDT).
         // The price of 1 BTC is 50 000 USDT and we buy 0.001 BTC for 50 USDT.
         // We stop at 100% gain.
         final PositionCreationResultDTO position1Result = strategy1.createLongPosition(BTC_USDT,
@@ -223,16 +225,20 @@ public class MultipleStrategiesTest extends BaseTest {
         assertTrue(position1Result.isSuccessful());
         final long position1Id = position1Result.getPosition().getId();
         final long position1PositionId = position1Result.getPosition().getPositionId();
-
-        assertEquals("DRY_ORDER_000000001", position1Result.getPosition().getOpeningOrderId());
-
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
 
-        // Check positionId & position1PositionId.
+        // Check positionId & positionId.
         assertEquals(1, position1Id);
         assertEquals(1, position1PositionId);
 
         // Check onPositionUpdate() & onPositionStatusUpdate().
+        assertEquals(3, strategy1.getPositionsUpdateReceived().size());
+        assertEquals(2, strategy1.getPositionsStatusUpdateReceived().size());
+        assertEquals(0, strategy2.getPositionsUpdateReceived().size());
+        assertEquals(0, strategy2.getPositionsStatusUpdateReceived().size());
+        assertEquals(0, strategy3.getPositionsStatusUpdateReceived().size());
+        assertEquals(0, strategy3.getPositionsUpdateReceived().size());
+
         // Check onOrderUpdate().
         assertEquals(1, strategy1.getOrdersUpdateReceived().size());
         assertEquals(0, strategy2.getOrdersUpdateReceived().size());
@@ -247,13 +253,17 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(1, strategy1.getOrders().size());
         assertTrue(strategy1.getOrderByOrderId("DRY_ORDER_000000001").isPresent());
         assertEquals(0, strategy2.getOrders().size());
+        assertTrue(strategy2.getOrderByOrderId("DRY_ORDER_000000001").isEmpty());
         assertEquals(0, strategy3.getOrders().size());
+        assertTrue(strategy3.getOrderByOrderId("DRY_ORDER_000000001").isEmpty());
 
         // Check getTrades() & getTradeByTradeId().
         assertEquals(1, strategy1.getTrades().size());
         assertTrue(strategy1.getTradeByTradeId("DRY_TRADE_000000001").isPresent());
         assertEquals(0, strategy2.getTrades().size());
+        assertTrue(strategy2.getTradeByTradeId("DRY_TRADE_000000001").isEmpty());
         assertEquals(0, strategy3.getTrades().size());
+        assertTrue(strategy3.getTradeByTradeId("DRY_TRADE_000000001").isEmpty());
 
         // Check getAmountsLockedByPosition().
         BigDecimal amountLockedForBTC = strategy1.getAmountsLockedByCurrency(BTC);
@@ -264,41 +274,284 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.001").compareTo(amountLockedForBTC));
 
         //==============================================================================================================
-        // Strategy 2 - Creating 1 position and see if it's opened.
-        // Check positionId & position1PositionId.
-        // Check onPositionUpdate() & onPositionStatusUpdate().
-        // Check onOrderUpdate().
-        // Check onTradeUpdate().
-        // Check getAmountsLockedByPosition().
+        // Strategy 2 - Creating 1 position on BTC/ETH (0.2 BTC for 0.5 ETH).
+        // The price of 1 BTC is 25 ETH and we buy 0.02 BTC for 0.5 ETH.
+        // We stop at 100% gain.
+        final PositionCreationResultDTO position2Result = strategy2.createLongPosition(BTC_ETH,
+                new BigDecimal("0.02"),
+                PositionRulesDTO.builder().stopGainPercentage(100f).build());
+        assertTrue(position2Result.isSuccessful());
+        final long position2Id = position2Result.getPosition().getId();
+        final long position2PositionId = position2Result.getPosition().getPositionId();
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
 
-        //==============================================================================================================
-        // Strategy 3 - Creating 3 positions and see if they are opened.
-        // Check positionId & position1PositionId.
+        // Check positionId & positionId.
+        assertEquals(2, position2Id);
+        assertEquals(1, position2PositionId);
+
         // Check onPositionUpdate() & onPositionStatusUpdate().
+        assertEquals(3, strategy1.getPositionsUpdateReceived().size());
+        assertEquals(2, strategy1.getPositionsStatusUpdateReceived().size());
+        assertEquals(3, strategy2.getPositionsUpdateReceived().size());
+        assertEquals(2, strategy2.getPositionsStatusUpdateReceived().size());
+        assertEquals(0, strategy3.getPositionsStatusUpdateReceived().size());
+        assertEquals(0, strategy3.getPositionsUpdateReceived().size());
+
         // Check onOrderUpdate().
+        assertEquals(1, strategy1.getOrdersUpdateReceived().size());
+        assertEquals(1, strategy2.getOrdersUpdateReceived().size());
+        assertEquals(0, strategy3.getOrdersUpdateReceived().size());
+
         // Check onTradeUpdate().
+        assertEquals(1, strategy1.getTradesUpdateReceived().size());
+        assertEquals(1, strategy2.getTradesUpdateReceived().size());
+        assertEquals(0, strategy3.getTradesUpdateReceived().size());
+
+        // Check getOrders() & getOrderByOrderId().
+        assertEquals(1, strategy1.getOrders().size());
+        assertTrue(strategy1.getOrderByOrderId("DRY_ORDER_000000001").isPresent());
+        assertEquals(1, strategy2.getOrders().size());
+        assertTrue(strategy2.getOrderByOrderId("DRY_ORDER_000000002").isPresent());
+        assertEquals(0, strategy3.getOrders().size());
+        assertTrue(strategy3.getOrderByOrderId("DRY_ORDER_000000001").isEmpty());
+
+        // Check getTrades() & getTradeByTradeId().
+        assertEquals(1, strategy1.getTrades().size());
+        assertTrue(strategy1.getTradeByTradeId("DRY_TRADE_000000001").isPresent());
+        assertEquals(1, strategy2.getTrades().size());
+        assertTrue(strategy2.getTradeByTradeId("DRY_TRADE_000000002").isPresent());
+        assertEquals(0, strategy3.getTrades().size());
+        assertTrue(strategy3.getTradeByTradeId("DRY_TRADE_000000001").isEmpty());
+
         // Check getAmountsLockedByPosition().
+        amountLockedForBTC = strategy1.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.021").compareTo(amountLockedForBTC));
+        amountLockedForBTC = strategy2.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.021").compareTo(amountLockedForBTC));
+        amountLockedForBTC = strategy3.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.021").compareTo(amountLockedForBTC));
+
+        // =============================================================================================================
+        // Changing the price for BTC/USDT.
+        // A bitcoin now costs 10000 USDT and the price of position should have change.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_USDT).last(new BigDecimal("10000")).build());
+        await().untilAsserted(() -> assertEquals(3, strategy3.getTickersUpdateReceived().size()));
+        assertEquals(2, strategy1.getTickersUpdateReceived().size());
+        assertEquals(1, strategy2.getTickersUpdateReceived().size());
+        assertEquals(3, strategy3.getTickersUpdateReceived().size());
+
+        // =============================================================================================================
+        // Strategy 3
+        // - Creating one position on BTC/USDT (0.01 BTC for 100 USDT).
+        final PositionCreationResultDTO position3Result = strategy3.createLongPosition(BTC_USDT,
+                new BigDecimal("0.01"),
+                PositionRulesDTO.builder().stopGainPercentage(100f).build());
+        assertTrue(position3Result.isSuccessful());
+        final long position3Id = position3Result.getPosition().getId();
+        final long position3PositionId = position3Result.getPosition().getPositionId();
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
+        // - Creating one position on ETH/USDT (0.1 ETH for 200 USDT).
+        final PositionCreationResultDTO position4Result = strategy3.createLongPosition(ETH_USDT,
+                new BigDecimal("0.1"),
+                PositionRulesDTO.builder().stopGainPercentage(100f).build());
+        assertTrue(position4Result.isSuccessful());
+        final long position4Id = position4Result.getPosition().getId();
+        final long position4PositionId = position4Result.getPosition().getPositionId();
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position4Id).getStatus()));
+
+        // Check positionId & positionId.
+        assertEquals(3, position3Id);
+        assertEquals(1, position3PositionId);
+        assertEquals(4, position4Id);
+        assertEquals(2, position4PositionId);
+
+        // Check onPositionUpdate() & onPositionStatusUpdate().
+        assertEquals(4, strategy1.getPositionsUpdateReceived().size());         // 4 because of new ticker.
+        assertEquals(2, strategy1.getPositionsStatusUpdateReceived().size());
+        assertEquals(3, strategy2.getPositionsUpdateReceived().size());
+        assertEquals(2, strategy2.getPositionsStatusUpdateReceived().size());
+        assertEquals(6, strategy3.getPositionsUpdateReceived().size());
+        assertEquals(4, strategy3.getPositionsStatusUpdateReceived().size());
+
+        // Check onOrderUpdate().
+        assertEquals(1, strategy1.getOrdersUpdateReceived().size());
+        assertEquals(1, strategy2.getOrdersUpdateReceived().size());
+        assertEquals(2, strategy3.getOrdersUpdateReceived().size());
+
+        // Check onTradeUpdate().
+        assertEquals(1, strategy1.getTradesUpdateReceived().size());
+        assertEquals(1, strategy2.getTradesUpdateReceived().size());
+        assertEquals(2, strategy3.getTradesUpdateReceived().size());
+
+        // Check getOrders() & getOrderByOrderId().
+        assertEquals(1, strategy1.getOrders().size());
+        assertTrue(strategy1.getOrderByOrderId("DRY_ORDER_000000001").isPresent());
+        assertEquals(1, strategy2.getOrders().size());
+        assertTrue(strategy2.getOrderByOrderId("DRY_ORDER_000000002").isPresent());
+        assertEquals(2, strategy3.getOrders().size());
+        assertTrue(strategy3.getOrderByOrderId("DRY_ORDER_000000003").isPresent());
+        assertTrue(strategy3.getOrderByOrderId("DRY_ORDER_000000004").isPresent());
+
+        // Check getTrades() & getTradeByTradeId().
+        assertEquals(1, strategy1.getTrades().size());
+        assertTrue(strategy1.getTradeByTradeId("DRY_TRADE_000000001").isPresent());
+        assertEquals(1, strategy2.getTrades().size());
+        assertTrue(strategy2.getTradeByTradeId("DRY_TRADE_000000002").isPresent());
+        assertEquals(2, strategy3.getTrades().size());
+        assertTrue(strategy3.getTradeByTradeId("DRY_TRADE_000000003").isPresent());
+        assertTrue(strategy3.getTradeByTradeId("DRY_TRADE_000000004").isPresent());
+
+        // Check getAmountsLockedByPosition().
+        amountLockedForBTC = strategy1.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.031").compareTo(amountLockedForBTC));
+        amountLockedForBTC = strategy2.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.031").compareTo(amountLockedForBTC));
+        amountLockedForBTC = strategy3.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.031").compareTo(amountLockedForBTC));
+        BigDecimal amountLockedForETH = strategy1.getAmountsLockedByCurrency(ETH);
+        assertEquals(0, new BigDecimal("0.1").compareTo(amountLockedForETH));
+        amountLockedForETH = strategy2.getAmountsLockedByCurrency(ETH);
+        assertEquals(0, new BigDecimal("0.1").compareTo(amountLockedForETH));
+        amountLockedForETH = strategy3.getAmountsLockedByCurrency(ETH);
+        assertEquals(0, new BigDecimal("0.1").compareTo(amountLockedForETH));
 
         //==============================================================================================================
         // Check balances, canBuy() & canSell().
+        // At the beginning my balances was:
+        // - 0.99962937 BTC.
+        // - 1 000 USDT.
+        // - 10 ETH.
+        // ---
+        // Position 1 - Bought 0.001 BTC for 50 USDT - BTC/USDT : 50000.
+        // Position 2 - Bought 0.2 BTC for 0.5 ETH - BTC/ETH : 25.
+        // Position 3 - Bought 0.01 BTC for 100 USDT - BTC/USDT : 10000
+        // Position 4 - Bought 0.1 ETH for 200 USDT - ETH/USDT : 2000.
+        // --
+        // BTC : 0.99962937 + 0.001 (P1) + 0.02 (P2) + 0.01 (P2) = 1.03062937 BTC
+        // USDT : 1000 - 50 (P1) - 100 (P3) - 200 (P4) = 650 USDT
+        // ETH : 10 - 0.5 (P2) + 0.1 (P4) = 5.1 ETH
+        accountFlux.update();
+        await().untilAsserted(() -> assertEquals(4, strategy3.getAccountsUpdatesReceived().size()));
+        // Strategy 1.
+        assertEquals(0, new BigDecimal("1.03062937").compareTo(strategy1.getTradeAccount().get().getBalance(BTC).get().getAvailable()));
+        assertEquals(0, new BigDecimal("650").compareTo(strategy1.getTradeAccount().get().getBalance(USDT).get().getAvailable()));
+        assertEquals(0, new BigDecimal("9.6").compareTo(strategy1.getTradeAccount().get().getBalance(ETH).get().getAvailable()));
+        // Strategy 2.
+        assertEquals(0, new BigDecimal("1.03062937").compareTo(strategy2.getTradeAccount().get().getBalance(BTC).get().getAvailable()));
+        assertEquals(0, new BigDecimal("650").compareTo(strategy2.getTradeAccount().get().getBalance(USDT).get().getAvailable()));
+        assertEquals(0, new BigDecimal("9.6").compareTo(strategy2.getTradeAccount().get().getBalance(ETH).get().getAvailable()));
+        // Strategy 3.
+        assertEquals(0, new BigDecimal("1.03062937").compareTo(strategy3.getTradeAccount().get().getBalance(BTC).get().getAvailable()));
+        assertEquals(0, new BigDecimal("650").compareTo(strategy3.getTradeAccount().get().getBalance(USDT).get().getAvailable()));
+        assertEquals(0, new BigDecimal("9.6").compareTo(strategy3.getTradeAccount().get().getBalance(ETH).get().getAvailable()));
 
         //==============================================================================================================
-        // New tickers - Check latestCalculatedGain on all positions.
+        // New ticker on BTC USDT to close a position.
+        // Before : BTC/USDT - 10 000
+        // New : BTC/USDT - 20 000 => Should trigger closing Position 3 (Position 1 of strategy 3).
+        // Position 1 - Bought 0.001 BTC for 50 USDT - BTC/USDT : 50000.
+        // Position 2 - Bought 0.2 BTC for 0.5 ETH - BTC/ETH : 25.
+        // Position 3 - Bought 0.01 BTC for 100 USDT - BTC/USDT : 20000 => Now close, sold 0.01 BTC for 200 USDT.
+        // Position 4 - Bought 0.1 ETH for 200 USDT - ETH/USDT : 2000.
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_USDT).last(new BigDecimal("20000")).build());
+        try {
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position3Id).getStatus()));
 
-        //==============================================================================================================
-        // Strategy 1 - close 1 position.
-        // Strategy 2 - close 2 positions.
-        // Strategy 3 - close 2 positions.
-        // Check internal methods.
-        // Check getPositions() & getPositionByPositionId().
-        // Check getGains().
+        // Check position status.
+        assertEquals(OPENED, getPositionDTO(position1Id).getStatus());
+        assertEquals(OPENED, getPositionDTO(position2Id).getStatus());
+        assertEquals(CLOSED, getPositionDTO(position3Id).getStatus());
+        assertEquals(OPENED, getPositionDTO(position4Id).getStatus());
+
+        // Check onPositionUpdate() & onPositionStatusUpdate().
+        assertEquals(5, strategy1.getPositionsUpdateReceived().size());         // 5 because of new ticker.
+        assertEquals(2, strategy1.getPositionsStatusUpdateReceived().size());
+        assertEquals(3, strategy2.getPositionsUpdateReceived().size());
+        assertEquals(2, strategy2.getPositionsStatusUpdateReceived().size());
+        assertEquals(9, strategy3.getPositionsUpdateReceived().size());         // 9 because of ticker.
+        assertEquals(6, strategy3.getPositionsStatusUpdateReceived().size());
+
+        // Check onOrderUpdate().
+        assertEquals(1, strategy1.getOrdersUpdateReceived().size());
+        assertEquals(1, strategy2.getOrdersUpdateReceived().size());
+        assertEquals(3, strategy3.getOrdersUpdateReceived().size());
+
+        // Check onTradeUpdate().
+        assertEquals(1, strategy1.getTradesUpdateReceived().size());
+        assertEquals(1, strategy2.getTradesUpdateReceived().size());
+        assertEquals(3, strategy3.getTradesUpdateReceived().size());
+
+        // Check getOrders() & getOrderByOrderId().
+        assertEquals(1, strategy1.getOrders().size());
+        assertTrue(strategy1.getOrderByOrderId("DRY_ORDER_000000001").isPresent());
+        assertEquals(1, strategy2.getOrders().size());
+        assertTrue(strategy2.getOrderByOrderId("DRY_ORDER_000000002").isPresent());
+        assertEquals(3, strategy3.getOrders().size());
+        assertTrue(strategy3.getOrderByOrderId("DRY_ORDER_000000003").isPresent());
+        assertTrue(strategy3.getOrderByOrderId("DRY_ORDER_000000004").isPresent());
+        assertTrue(strategy3.getOrderByOrderId("DRY_ORDER_000000005").isPresent());
+
+        // Check getTrades() & getTradeByTradeId().
+        assertEquals(1, strategy1.getTrades().size());
+        assertTrue(strategy1.getTradeByTradeId("DRY_TRADE_000000001").isPresent());
+        assertEquals(1, strategy2.getTrades().size());
+        assertTrue(strategy2.getTradeByTradeId("DRY_TRADE_000000002").isPresent());
+        assertEquals(3, strategy3.getTrades().size());
+        assertTrue(strategy3.getTradeByTradeId("DRY_TRADE_000000003").isPresent());
+        assertTrue(strategy3.getTradeByTradeId("DRY_TRADE_000000004").isPresent());
+        assertTrue(strategy3.getTradeByTradeId("DRY_TRADE_000000005").isPresent());
+
         // Check getAmountsLockedByPosition().
+        // Position 3 - Bought 0.01 BTC for 100 USDT - BTC/USDT : 20000 => Now close, sold 0.01 BTC for 200 USDT.
+        amountLockedForBTC = strategy1.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.021").compareTo(amountLockedForBTC));
+        amountLockedForBTC = strategy2.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.021").compareTo(amountLockedForBTC));
+        amountLockedForBTC = strategy3.getAmountsLockedByCurrency(BTC);
+        assertEquals(0, new BigDecimal("0.021").compareTo(amountLockedForBTC));
+        amountLockedForETH = strategy1.getAmountsLockedByCurrency(ETH);
+        assertEquals(0, new BigDecimal("0.1").compareTo(amountLockedForETH));
+        amountLockedForETH = strategy2.getAmountsLockedByCurrency(ETH);
+        assertEquals(0, new BigDecimal("0.1").compareTo(amountLockedForETH));
+        amountLockedForETH = strategy3.getAmountsLockedByCurrency(ETH);
+        assertEquals(0, new BigDecimal("0.1").compareTo(amountLockedForETH));
 
         //==============================================================================================================
         // Check balances, canBuy() & canSell().
-
-        //==============================================================================================================
-        // Check getLastTickers().
+        // At the beginning my balances was:
+        // - 0.99962937 BTC.
+        // - 1 000 USDT.
+        // - 10 ETH.
+        // ---
+        // Position 1 - Bought 0.001 BTC for 50 USDT - BTC/USDT : 50000.
+        // Position 2 - Bought 0.2 BTC for 0.5 ETH - BTC/ETH : 25.
+        // Position 3 - Bought 0.01 BTC for 100 USDT - BTC/USDT : 10000
+        // Position 4 - Bought 0.1 ETH for 200 USDT - ETH/USDT : 2000.
+        // New event.
+        // Position 3 - Bought 0.01 BTC for 100 USDT - BTC/USDT : 20000 => Now close, sold 0.01 BTC for 200 USDT.
+        // --
+        // BTC : 0.99962937 + 0.001 (P1) + 0.02 (P2) + 0.01 (P2) - 0.01 (P3 close) = 1.02062937 BTC
+        // USDT : 1000 - 50 (P1) - 100 (P3) - 200 (P4) + 200 (P3) = 850 USDT
+        // ETH : 10 - 0.5 (P2) + 0.1 (P4) = 5.1 ETH
+        accountFlux.update();
+        await().untilAsserted(() -> assertEquals(5, strategy3.getAccountsUpdatesReceived().size()));
+        // Strategy 1.
+        assertEquals(0, new BigDecimal("1.02062937").compareTo(strategy1.getTradeAccount().get().getBalance(BTC).get().getAvailable()));
+        assertEquals(0, new BigDecimal("850").compareTo(strategy1.getTradeAccount().get().getBalance(USDT).get().getAvailable()));
+        assertEquals(0, new BigDecimal("9.6").compareTo(strategy1.getTradeAccount().get().getBalance(ETH).get().getAvailable()));
+        // Strategy 2.
+        assertEquals(0, new BigDecimal("1.02062937").compareTo(strategy2.getTradeAccount().get().getBalance(BTC).get().getAvailable()));
+        assertEquals(0, new BigDecimal("850").compareTo(strategy2.getTradeAccount().get().getBalance(USDT).get().getAvailable()));
+        assertEquals(0, new BigDecimal("9.6").compareTo(strategy2.getTradeAccount().get().getBalance(ETH).get().getAvailable()));
+        // Strategy 3.
+        assertEquals(0, new BigDecimal("1.02062937").compareTo(strategy3.getTradeAccount().get().getBalance(BTC).get().getAvailable()));
+        assertEquals(0, new BigDecimal("850").compareTo(strategy3.getTradeAccount().get().getBalance(USDT).get().getAvailable()));
+        assertEquals(0, new BigDecimal("9.6").compareTo(strategy3.getTradeAccount().get().getBalance(ETH).get().getAvailable()));
     }
 
     /**

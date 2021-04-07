@@ -13,6 +13,7 @@ import tech.cassandre.trading.bot.domain.ExchangeAccount;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -226,13 +227,13 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
         // =============================================================================================================
         // Connecting flux.
-        connectableOrderFlux.subscribe(positionService::orderUpdate);
-        connectableTradeFlux.subscribe(positionService::tradeUpdate);
-        connectableTickerFlux.subscribe(positionService::tickerUpdate);
         // if in dry mode, we also send the ticker to the trade service in dry mode.
         if (tradeService instanceof TradeServiceDryModeImplementation) {
             connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickerUpdate);
         }
+        connectableOrderFlux.subscribe(positionService::orderUpdate);
+        connectableTradeFlux.subscribe(positionService::tradeUpdate);
+        connectableTickerFlux.subscribe(positionService::tickerUpdate);
 
         // =============================================================================================================
         // Configuring strategies.
@@ -241,7 +242,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     CassandreStrategyInterface strategy = ((CassandreStrategyInterface) s);
                     CassandreStrategy annotation = s.getClass().getAnnotation(CassandreStrategy.class);
 
-                    // Displaying informations about strategy.
+                    // Displaying information about strategy.
                     logger.info("StrategyConfiguration - Running strategy '{}/{}' (requires {}).",
                             annotation.strategyId(),
                             annotation.strategyName(),
@@ -272,9 +273,10 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         if (strategy instanceof BasicTa4jCassandreStrategy) {
                             newStrategy.setType(BASIC_TA4J_STRATEGY);
                         }
-                        strategyRepository.save(newStrategy);
                         logger.debug("StrategyConfiguration - Strategy saved in database {}", newStrategy);
-                        strategy.setStrategy(strategyMapper.mapToStrategyDTO(newStrategy));
+                        StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(strategyRepository.save(newStrategy));
+                        strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
+                        strategy.setStrategy(strategyDTO);
                     });
 
                     // Setting services & repositories.
