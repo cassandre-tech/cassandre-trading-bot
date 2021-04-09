@@ -84,12 +84,12 @@ public class RatesTest extends BaseTest {
 		ExecutorService executor = Executors.newFixedThreadPool(2);
 		// Call number 1.
 		executor.submit(() -> {
-			marketService.getTicker(cp1);
+			marketService.getTicker(ETH_BTC);
 			numberOfCalls.incrementAndGet();
 		});
 		// Call number 2.
 		executor.submit(() -> {
-			marketService.getTicker(cp1);
+			marketService.getTicker(ETH_BTC);
 			numberOfCalls.incrementAndGet();
 		});
 

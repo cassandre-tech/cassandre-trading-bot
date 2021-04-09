@@ -78,4 +78,12 @@ public interface PositionRepository extends CrudRepository<Position, Long> {
     @Query("update Position p set p.stopLossPercentageRule = :value where p.id = :id")
     void updateStopLossRule(@Param("id") Long id, @Param("value") Float value);
 
+    /**
+     * Returns the last position id for a strategy.
+     * @param strategyId strategy id
+     * @return last position
+     */
+    @Query("SELECT coalesce(max(p.positionId), 0) FROM Position p where p.strategy.id = :strategyId")
+    Long getLastPositionIdUsedByStrategy(@Param("strategyId") Long strategyId);
+
 }

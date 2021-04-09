@@ -13,10 +13,13 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy1.PARAMETER_STRATEGY_1_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy3.PARAMETER_STRATEGY_3_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.ta4j.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @DisplayName("Configuration - Strategy - Autoconfiguration")
 @Configuration({
@@ -26,7 +29,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
         @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false"),
 })
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-class CassandreStrategyAutoConfigurationTest {
+class CassandreStrategiesAutoConfigurationTest {
 
     @Test
     @CaseId(20)
@@ -37,6 +40,9 @@ class CassandreStrategyAutoConfigurationTest {
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
             System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_STRATEGY_1_ENABLED, "true");
+            System.setProperty(PARAMETER_STRATEGY_2_ENABLED, "true");
+            System.setProperty(PARAMETER_STRATEGY_3_ENABLED, "true");
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
         } catch (Exception e) {
@@ -53,30 +59,15 @@ class CassandreStrategyAutoConfigurationTest {
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_STRATEGY_1_ENABLED, "false");
+            System.setProperty(PARAMETER_STRATEGY_2_ENABLED, "false");
+            System.setProperty(PARAMETER_STRATEGY_3_ENABLED, "false");
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
             assertTrue(e.getCause() instanceof ConfigurationException);
             assertTrue(e.getCause().getMessage().contains("No strategy found"));
-        }
-    }
-
-    @Test
-    @CaseId(23)
-    @DisplayName("Check error messages when two strategies are found")
-    public void checkTwoStrategiesFound() {
-        try {
-            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
-            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
-            System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "true");
-            System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "false");
-            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
-            application.run();
-            fail("Exception not raised");
-        } catch (Exception e) {
-            assertTrue(e.getCause() instanceof ConfigurationException);
-            assertTrue(e.getCause().getMessage().contains("Several strategies found"));
         }
     }
 
@@ -89,12 +80,15 @@ class CassandreStrategyAutoConfigurationTest {
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_STRATEGY_1_ENABLED, "false");
+            System.setProperty(PARAMETER_STRATEGY_2_ENABLED, "false");
+            System.setProperty(PARAMETER_STRATEGY_3_ENABLED, "false");
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
             assertTrue(e.getCause() instanceof ConfigurationException);
-            assertTrue(e.getCause().getMessage().contains("Your strategy doesn't extend BasicCassandreStrategy"));
+            assertTrue(e.getCause().getMessage().contains("doesn't extend BasicCassandreStrategy"));
         }
     }
 
@@ -107,12 +101,35 @@ class CassandreStrategyAutoConfigurationTest {
             System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
             System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, "true");
+            System.setProperty(PARAMETER_STRATEGY_1_ENABLED, "true");
+            System.setProperty(PARAMETER_STRATEGY_2_ENABLED, "true");
+            System.setProperty(PARAMETER_STRATEGY_3_ENABLED, "true");
             SpringApplication application = new SpringApplication(CassandreTradingBot.class);
             application.run();
             fail("Exception not raised");
         } catch (Exception e) {
             assertTrue(e.getCause() instanceof ConfigurationException);
-            assertTrue(e.getCause().getMessage().contains("Your strategy specifies a trading account that doesn't exist"));
+            assertTrue(e.getCause().getMessage().contains("Your strategies specifies a trading account that doesn't exist"));
+        }
+    }
+
+    @Test
+    @CaseId(112)
+    @DisplayName("Check error messages if two strategies have the same id")
+    public void checkStrategiesWithDuplicatedIds() {
+        try {
+            System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, "true");
+            System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, "false");
+            System.setProperty(PARAMETER_STRATEGY_1_ENABLED, "true");
+            System.setProperty(PARAMETER_STRATEGY_2_ENABLED, "true");
+            System.setProperty(PARAMETER_STRATEGY_3_ENABLED, "true");
+            SpringApplication application = new SpringApplication(CassandreTradingBot.class);
+            application.run();
+            fail("Exception not raised");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+            assertTrue(e.getCause().getMessage().contains("Your strategies specifies a trading account that doesn't exist"));
         }
     }
 

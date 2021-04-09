@@ -15,7 +15,7 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -70,17 +70,17 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(0, orderRepository.count());
 
         // ORDER_000001.
-        final OrderCreationResultDTO order000001 = tradeService.createSellMarketOrder(strategyDTO, cp1, new BigDecimal("1"));
+        final OrderCreationResultDTO order000001 = tradeService.createSellMarketOrder(strategyDTO, ETH_BTC, new BigDecimal("1"));
         assertTrue(order000001.isSuccessful());
         assertEquals("ORDER_000001", order000001.getOrderId());
 
         // ORDER_000002.
-        final OrderCreationResultDTO order000002 = tradeService.createBuyMarketOrder(strategyDTO, cp2, new BigDecimal("2"));
+        final OrderCreationResultDTO order000002 = tradeService.createBuyMarketOrder(strategyDTO, ETH_USDT, new BigDecimal("2"));
         assertTrue(order000002.isSuccessful());
         assertEquals("ORDER_000002", order000002.getOrderId());
 
         // ORDER_000003.
-        final OrderCreationResultDTO order000003 = tradeService.createSellMarketOrder(strategyDTO, cp1, new BigDecimal("3"));
+        final OrderCreationResultDTO order000003 = tradeService.createSellMarketOrder(strategyDTO, ETH_BTC, new BigDecimal("3"));
         assertTrue(order000003.isSuccessful());
         assertEquals("ORDER_000003", order000003.getOrderId());
 
@@ -118,8 +118,8 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
         assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals(cp1, o.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("1", cp1.getBaseCurrency()), o.getAmount());
+        assertEquals(ETH_BTC, o.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()), o.getAmount());
         assertNull(o.getAveragePrice());
         assertNull(o.getLimitPrice());
         assertNull(o.getLeverage());
@@ -135,8 +135,8 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(BID, o.getType());
         assertEquals(1, o.getStrategy().getId());
         assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals(cp2, o.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("2", cp2.getBaseCurrency()), o.getAmount());
+        assertEquals(ETH_USDT, o.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("2", ETH_USDT.getBaseCurrency()), o.getAmount());
         assertNull(o.getAveragePrice());
         assertNull(o.getLimitPrice());
         assertNull(o.getLeverage());
@@ -152,8 +152,8 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
         assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals(cp1, o.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("3", cp1.getBaseCurrency()), o.getAmount());
+        assertEquals(ETH_BTC, o.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("3", ETH_BTC.getBaseCurrency()), o.getAmount());
         assertNull(o.getAveragePrice());
         assertNull(o.getLimitPrice());
         assertNull(o.getLeverage());
@@ -174,13 +174,13 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
         assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals(cp1, o.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("11", cp1.getBaseCurrency()), o.getAmount());
-        assertEquals(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()), o.getAveragePrice());
-        assertEquals(new CurrencyAmountDTO("0", cp1.getQuoteCurrency()), o.getLimitPrice());
+        assertEquals(ETH_BTC, o.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("11", ETH_BTC.getBaseCurrency()), o.getAmount());
+        assertEquals(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()), o.getAveragePrice());
+        assertEquals(new CurrencyAmountDTO("0", ETH_BTC.getQuoteCurrency()), o.getLimitPrice());
         assertNull(o.getLeverage());
         assertEquals(FILLED, o.getStatus());
-        assertEquals(new CurrencyAmountDTO("111", cp1.getBaseCurrency()), o.getCumulativeAmount());
+        assertEquals(new CurrencyAmountDTO("111", ETH_BTC.getBaseCurrency()), o.getCumulativeAmount());
         assertNotNull(o.getTimestamp());
 
         // Check update 5 - Received ORDER_000002 from server for the first time.
@@ -190,13 +190,13 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(BID, o.getType());
         assertEquals(1, o.getStrategy().getId());
         assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals(cp2, o.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("22", cp2.getBaseCurrency()), o.getAmount());
-        assertEquals(new CurrencyAmountDTO("1", cp2.getQuoteCurrency()), o.getAveragePrice());
-        assertEquals(new CurrencyAmountDTO("0", cp2.getQuoteCurrency()), o.getLimitPrice());
+        assertEquals(ETH_USDT, o.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("22", ETH_USDT.getBaseCurrency()), o.getAmount());
+        assertEquals(new CurrencyAmountDTO("1", ETH_USDT.getQuoteCurrency()), o.getAveragePrice());
+        assertEquals(new CurrencyAmountDTO("0", ETH_USDT.getQuoteCurrency()), o.getLimitPrice());
         assertNull(o.getLeverage());
         assertEquals(FILLED, o.getStatus());
-        assertEquals(new CurrencyAmountDTO("222", cp1.getBaseCurrency()), o.getCumulativeAmount());
+        assertEquals(new CurrencyAmountDTO("222", ETH_BTC.getBaseCurrency()), o.getCumulativeAmount());
         assertNotNull(o.getTimestamp());
 
         // Check update 6 - Received ORDER_000003 from server for the first time.
@@ -206,13 +206,13 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
         assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals(cp1, o.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("33", cp1.getBaseCurrency()), o.getAmount());
-        assertEquals(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()), o.getAveragePrice());
-        assertEquals(new CurrencyAmountDTO("0", cp1.getQuoteCurrency()), o.getLimitPrice());
+        assertEquals(ETH_BTC, o.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("33", ETH_BTC.getBaseCurrency()), o.getAmount());
+        assertEquals(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()), o.getAveragePrice());
+        assertEquals(new CurrencyAmountDTO("0", ETH_BTC.getQuoteCurrency()), o.getLimitPrice());
         assertNull(o.getLeverage());
         assertEquals(FILLED, o.getStatus());
-        assertEquals(new CurrencyAmountDTO("333", cp1.getBaseCurrency()), o.getCumulativeAmount());
+        assertEquals(new CurrencyAmountDTO("333", ETH_BTC.getBaseCurrency()), o.getCumulativeAmount());
         assertNotNull(o.getTimestamp());
 
         // Third call : 4 orders.
@@ -228,13 +228,13 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(ASK, o.getType());
         assertEquals(1, o.getStrategy().getId());
         assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals(cp1, o.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("3333", cp1.getBaseCurrency()), o.getAmount());
-        assertEquals(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()), o.getAveragePrice());
-        assertEquals(new CurrencyAmountDTO("0", cp1.getQuoteCurrency()), o.getLimitPrice());
+        assertEquals(ETH_BTC, o.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("3333", ETH_BTC.getBaseCurrency()), o.getAmount());
+        assertEquals(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()), o.getAveragePrice());
+        assertEquals(new CurrencyAmountDTO("0", ETH_BTC.getQuoteCurrency()), o.getLimitPrice());
         assertNull(o.getLeverage());
         assertEquals(FILLED, o.getStatus());
-        assertEquals(new CurrencyAmountDTO("33333", cp1.getBaseCurrency()), o.getCumulativeAmount());
+        assertEquals(new CurrencyAmountDTO("33333", ETH_BTC.getBaseCurrency()), o.getCumulativeAmount());
         assertNotNull(o.getTimestamp());
 
         // Fourth call : 4 orders
@@ -250,13 +250,13 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(BID, o.getType());
         assertEquals(1, o.getStrategy().getId());
         assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals(cp2, o.getCurrencyPair());
-        assertEquals(new CurrencyAmountDTO("22", cp2.getBaseCurrency()), o.getAmount());
-        assertEquals(new CurrencyAmountDTO("2", cp2.getQuoteCurrency()), o.getAveragePrice());
-        assertEquals(new CurrencyAmountDTO("0", cp2.getQuoteCurrency()), o.getLimitPrice());
+        assertEquals(ETH_USDT, o.getCurrencyPair());
+        assertEquals(new CurrencyAmountDTO("22", ETH_USDT.getBaseCurrency()), o.getAmount());
+        assertEquals(new CurrencyAmountDTO("2", ETH_USDT.getQuoteCurrency()), o.getAveragePrice());
+        assertEquals(new CurrencyAmountDTO("0", ETH_USDT.getQuoteCurrency()), o.getLimitPrice());
         assertNull(o.getLeverage());
         assertEquals(FILLED, o.getStatus());
-        assertEquals(new CurrencyAmountDTO("222", cp1.getBaseCurrency()), o.getCumulativeAmount());
+        assertEquals(new CurrencyAmountDTO("222", ETH_BTC.getBaseCurrency()), o.getCumulativeAmount());
         assertNotNull(o.getTimestamp());
 
         // =============================================================================================================
@@ -277,17 +277,17 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(ASK, o1.get().getType());
         assertEquals(1, o1.get().getStrategy().getId());
         assertEquals("01", o1.get().getStrategy().getStrategyId());
-        assertEquals(cp1, o1.get().getCurrencyPair());
+        assertEquals(ETH_BTC, o1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("11").compareTo(o1.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), o1.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), o1.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("1").compareTo(o1.get().getAveragePrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), o1.get().getAveragePrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), o1.get().getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("0").compareTo(o1.get().getLimitPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), o1.get().getLimitPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), o1.get().getLimitPrice().getCurrency());
         assertNull(o1.get().getLeverage());
         assertEquals(FILLED, o1.get().getStatus());
         assertEquals(0, new BigDecimal("111").compareTo(o1.get().getCumulativeAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), o1.get().getCumulativeAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), o1.get().getCumulativeAmount().getCurrency());
         assertEquals("My reference", o1.get().getUserReference());
         assertNotNull(o1.get().getTimestamp());
 
@@ -299,17 +299,17 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(BID, o2.get().getType());
         assertEquals(1, o2.get().getStrategy().getId());
         assertEquals("01", o2.get().getStrategy().getStrategyId());
-        assertEquals(cp2, o2.get().getCurrencyPair());
+        assertEquals(ETH_USDT, o2.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("22").compareTo(o2.get().getAmount().getValue()));
-        assertEquals(cp2.getBaseCurrency(), o2.get().getAmount().getCurrency());
+        assertEquals(ETH_USDT.getBaseCurrency(), o2.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("2").compareTo(o2.get().getAveragePrice().getValue()));
-        assertEquals(cp2.getQuoteCurrency(), o2.get().getAveragePrice().getCurrency());
+        assertEquals(ETH_USDT.getQuoteCurrency(), o2.get().getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("0").compareTo(o2.get().getLimitPrice().getValue()));
-        assertEquals(cp2.getQuoteCurrency(), o2.get().getLimitPrice().getCurrency());
+        assertEquals(ETH_USDT.getQuoteCurrency(), o2.get().getLimitPrice().getCurrency());
         assertNull(o1.get().getLeverage());
         assertEquals(FILLED, o2.get().getStatus());
         assertEquals(0, new BigDecimal("222").compareTo(o2.get().getCumulativeAmount().getValue()));
-        assertEquals(cp2.getBaseCurrency(), o2.get().getCumulativeAmount().getCurrency());
+        assertEquals(ETH_USDT.getBaseCurrency(), o2.get().getCumulativeAmount().getCurrency());
         assertEquals("My reference", o2.get().getUserReference());
         assertNotNull(o2.get().getTimestamp());
 
@@ -321,17 +321,17 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(ASK, o3.get().getType());
         assertEquals(1, o3.get().getStrategy().getId());
         assertEquals("01", o3.get().getStrategy().getStrategyId());
-        assertEquals(cp1, o3.get().getCurrencyPair());
+        assertEquals(ETH_BTC, o3.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("3333").compareTo(o3.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), o3.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), o3.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("1").compareTo(o3.get().getAveragePrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), o3.get().getAveragePrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), o3.get().getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("0").compareTo(o3.get().getLimitPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), o3.get().getLimitPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), o3.get().getLimitPrice().getCurrency());
         assertNull(o1.get().getLeverage());
         assertEquals(FILLED, o3.get().getStatus());
         assertEquals(0, new BigDecimal("33333").compareTo(o3.get().getCumulativeAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), o3.get().getCumulativeAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), o3.get().getCumulativeAmount().getCurrency());
         assertEquals("My reference", o3.get().getUserReference());
         assertNotNull(o3.get().getTimestamp());
     }

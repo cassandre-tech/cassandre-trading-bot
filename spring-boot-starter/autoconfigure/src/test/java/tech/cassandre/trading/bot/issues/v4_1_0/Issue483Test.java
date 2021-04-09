@@ -10,7 +10,7 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.util.Optional;
 
@@ -24,8 +24,8 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
         @Property(key = "spring.datasource.data", value = "classpath:/issue483.sql")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Import(Issue483Mock.class)
-public class Issue483 extends BaseTest {
+@Import(Issue483TestMock.class)
+public class Issue483Test extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;

@@ -16,7 +16,7 @@ import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -64,7 +64,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // =============================================================================================================
         // Step 1 - Creates position 1 (ETH/BTC, 0.0001, 100% stop gain, price of 0.2).
         // As the order is validated and the trade arrives, the position should be opened.
-        final PositionCreationResultDTO position1Result = strategy.createLongPosition(cp1,
+        final PositionCreationResultDTO position1Result = strategy.createLongPosition(ETH_BTC,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());
@@ -83,7 +83,7 @@ public class PositionServiceDryModeTest extends BaseTest {
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH/BTC, 0.0002, 20% stop loss, price of 0.2).
         // As the order is validated and the trade arrives, the position should be opened.
-        final PositionCreationResultDTO position2Result = strategy.createLongPosition(cp2,
+        final PositionCreationResultDTO position2Result = strategy.createLongPosition(ETH_USDT,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(position2Result.isSuccessful());

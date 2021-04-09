@@ -39,8 +39,8 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Import(Issue427Mock.class)
-public class Issue427 extends BaseTest {
+@Import(Issue427TestMock.class)
+public class Issue427Test extends BaseTest {
 
     @Autowired
     private OrderRepository orderRepository;
@@ -64,13 +64,13 @@ public class Issue427 extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("ORDER_000001")
                 .type(ASK)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
                 .leverage("leverage2")
                 .status(NEW)
-                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .build());

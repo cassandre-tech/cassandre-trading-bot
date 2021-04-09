@@ -12,7 +12,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -74,81 +74,81 @@ public class TickerFluxTest extends BaseTest {
 
         // First value cp1 - 1.
         TickerDTO t = iterator.next();
-        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(t.getLast()));
 
         // Second value cp2 - 10.
         t = iterator.next();
-        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(t.getLast()));
 
         // Third value cp1 - 2.
         t = iterator.next();
-        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("2").compareTo(t.getLast()));
 
         // Fourth value cp2 - 20.
         t = iterator.next();
-        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("20").compareTo(t.getLast()));
 
         // Fifth value cp1 - 3.
         t = iterator.next();
-        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("3").compareTo(t.getLast()));
 
         // Sixth value cp2 - 30.
         t = iterator.next();
-        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("30").compareTo(t.getLast()));
 
         // Seventh value cp2 - 40.
         t = iterator.next();
-        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("40").compareTo(t.getLast()));
 
         // Eighth value cp1 - 4.
         t = iterator.next();
-        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("4").compareTo(t.getLast()));
 
         // Ninth value cp2 - 50.
         t = iterator.next();
-        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("50").compareTo(t.getLast()));
 
         // Tenth value cp1 - 5.
         t = iterator.next();
-        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("5").compareTo(t.getLast()));
 
         // Eleventh value cp2 - 60.
         t = iterator.next();
-        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("60").compareTo(t.getLast()));
 
         // Twelfth value cp1 - 6.
         t = iterator.next();
-        assertEquals(cp1, t.getCurrencyPair());
+        assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("6").compareTo(t.getLast()));
 
         // Thirteenth value cp2 - 70.
         t = iterator.next();
-        assertEquals(cp2, t.getCurrencyPair());
+        assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("70").compareTo(t.getLast()));
 
         // =============================================================================================================
         // Check data we have in the strategy.
         assertEquals(2, strategy.getLastTickers().size());
         // For CP1.
-        final Optional<TickerDTO> lastTickerForCP1 = strategy.getLastTickerByCurrencyPair(cp1);
+        final Optional<TickerDTO> lastTickerForCP1 = strategy.getLastTickerByCurrencyPair(ETH_BTC);
         assertTrue(lastTickerForCP1.isPresent());
-        assertEquals(cp1, lastTickerForCP1.get().getCurrencyPair());
+        assertEquals(ETH_BTC, lastTickerForCP1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("6").compareTo(lastTickerForCP1.get().getLast()));
         // For CP2.
-        final Optional<TickerDTO> lastTickerForCP2 = strategy.getLastTickerByCurrencyPair(cp2);
+        final Optional<TickerDTO> lastTickerForCP2 = strategy.getLastTickerByCurrencyPair(ETH_USDT);
         assertTrue(lastTickerForCP2.isPresent());
-        assertEquals(cp2, lastTickerForCP2.get().getCurrencyPair());
+        assertEquals(ETH_USDT, lastTickerForCP2.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("70").compareTo(lastTickerForCP2.get().getLast()));
     }
 

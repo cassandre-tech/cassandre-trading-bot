@@ -20,7 +20,7 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -83,7 +83,7 @@ public class OrderTest extends BaseTest {
         assertNotNull(o.get().getStrategy());
         assertEquals(1, o.get().getStrategy().getId());
         assertEquals("01", o.get().getStrategy().getStrategyId());
-        assertEquals(cp1, o.get().getCurrencyPair());
+        assertEquals(ETH_BTC, o.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.000005").compareTo(o.get().getAmount().getValue()));
         assertEquals(ETH, o.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.000003").compareTo(o.get().getAveragePrice().getValue()));
@@ -166,13 +166,13 @@ public class OrderTest extends BaseTest {
                 .orderId("BACKUP_ORDER_03")
                 .type(ASK)
                 .strategy(strategyDTO)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1.00001", cp1.getBaseCurrency()))
-                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
-                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1.00001", ETH_BTC.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", ETH_BTC.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("1.00005", ETH_BTC.getQuoteCurrency()))
                 .leverage("leverage3")
                 .status(NEW)
-                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", ETH_BTC.getBaseCurrency()))
                 .userReference("MY_REF_3")
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build();
@@ -188,17 +188,17 @@ public class OrderTest extends BaseTest {
         assertEquals(ASK, orderInDatabase.get().getType());
         assertEquals(1, orderInDatabase.get().getStrategy().getId());
         assertEquals("01", orderInDatabase.get().getStrategy().getStrategyId());
-        assertEquals(cp1.toString(), orderInDatabase.get().getCurrencyPair());
+        assertEquals(ETH_BTC.toString(), orderInDatabase.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("1.00001").compareTo(orderInDatabase.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency().toString(), orderInDatabase.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), orderInDatabase.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("1.00003").compareTo(orderInDatabase.get().getAveragePrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency().toString(), orderInDatabase.get().getAveragePrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency().toString(), orderInDatabase.get().getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("1.00005").compareTo(orderInDatabase.get().getLimitPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency().toString(), orderInDatabase.get().getLimitPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency().toString(), orderInDatabase.get().getLimitPrice().getCurrency());
         assertEquals("leverage3", orderInDatabase.get().getLeverage());
         assertEquals(NEW, orderInDatabase.get().getStatus());
         assertEquals(0, new BigDecimal("1.00002").compareTo(orderInDatabase.get().getCumulativeAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency().toString(), orderInDatabase.get().getCumulativeAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), orderInDatabase.get().getCumulativeAmount().getCurrency());
         assertEquals("MY_REF_3", orderInDatabase.get().getUserReference());
         assertEquals(createZonedDateTime("01-01-2020"), orderInDatabase.get().getTimestamp());
         // Tests for created on and updated on fields.
@@ -215,17 +215,17 @@ public class OrderTest extends BaseTest {
         assertEquals(ASK, order.get().getType());
         assertEquals(1, order.get().getStrategy().getId());
         assertEquals("01", order.get().getStrategy().getStrategyId());
-        assertEquals(cp1, order.get().getCurrencyPair());
+        assertEquals(ETH_BTC, order.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("1.00001").compareTo(order.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), order.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), order.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("1.00003").compareTo(order.get().getAveragePrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), order.get().getAveragePrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), order.get().getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("1.00005").compareTo(order.get().getLimitPrice().getValue()));
-        assertEquals(cp1.getQuoteCurrency(), order.get().getLimitPrice().getCurrency());
+        assertEquals(ETH_BTC.getQuoteCurrency(), order.get().getLimitPrice().getCurrency());
         assertEquals("leverage3", order.get().getLeverage());
         assertEquals(NEW, order.get().getStatus());
         assertEquals(0, new BigDecimal("1.00002").compareTo(order.get().getCumulativeAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), order.get().getCumulativeAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), order.get().getCumulativeAmount().getCurrency());
         assertEquals("MY_REF_3", order.get().getUserReference());
         assertEquals(createZonedDateTime("01-01-2020"), order.get().getTimestamp());
 
@@ -235,13 +235,13 @@ public class OrderTest extends BaseTest {
                 .orderId("BACKUP_ORDER_03")
                 .type(ASK)
                 .strategy(strategyDTO)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
-                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
-                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1.00002", ETH_BTC.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", ETH_BTC.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("1.00005", ETH_BTC.getQuoteCurrency()))
                 .leverage("leverage3")
                 .status(NEW)
-                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", ETH_BTC.getBaseCurrency()))
                 .userReference("MY_REF_3")
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
@@ -253,9 +253,9 @@ public class OrderTest extends BaseTest {
                 .tradeId("BACKUP_TRADE_11")
                 .type(BID)
                 .orderId("BACKUP_ORDER_03")
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1.100001", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("2.200002", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1.100001", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("2.200002", ETH_BTC.getQuoteCurrency()))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .userReference("TRADE MY_REF_3")
@@ -273,13 +273,13 @@ public class OrderTest extends BaseTest {
                 .orderId("BACKUP_ORDER_03")
                 .type(ASK)
                 .strategy(strategyDTO)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1.00003", cp1.getBaseCurrency()))
-                .averagePrice(new CurrencyAmountDTO("1.00003", cp1.getQuoteCurrency()))
-                .limitPrice(new CurrencyAmountDTO("1.00005", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1.00003", ETH_BTC.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("1.00003", ETH_BTC.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("1.00005", ETH_BTC.getQuoteCurrency()))
                 .leverage("leverage3")
                 .status(NEW)
-                .cumulativeAmount(new CurrencyAmountDTO("1.00002", cp1.getBaseCurrency()))
+                .cumulativeAmount(new CurrencyAmountDTO("1.00002", ETH_BTC.getBaseCurrency()))
                 .userReference("MY_REF_3")
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());

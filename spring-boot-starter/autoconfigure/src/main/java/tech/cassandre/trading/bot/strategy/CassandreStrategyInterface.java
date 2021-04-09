@@ -28,7 +28,7 @@ public interface CassandreStrategyInterface {
      *
      * @param newStrategyDTO strategy DTO.
      */
-    void setStrategyDTO(StrategyDTO newStrategyDTO);
+    void setStrategy(StrategyDTO newStrategyDTO);
 
     /**
      * Setter order repository.

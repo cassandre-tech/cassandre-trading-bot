@@ -123,7 +123,7 @@ public class PositionDTO {
                        final PositionRulesDTO newRules) {
         this.id = newId;
         this.type = newType;
-        this.positionId = newId;
+        this.positionId = newStrategy.getNextPositionId();
         this.strategy = newStrategy;
         this.currencyPair = newCurrencyPair;
         this.amount = CurrencyAmountDTO.builder()

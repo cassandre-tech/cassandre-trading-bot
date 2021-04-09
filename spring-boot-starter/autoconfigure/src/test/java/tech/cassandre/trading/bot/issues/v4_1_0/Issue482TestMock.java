@@ -14,7 +14,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
-public class Issue482Mock extends BaseMock {
+public class Issue482TestMock extends BaseMock {
 
     @Override
     public MarketDataService getXChangeMarketDataServiceMock() throws IOException {
@@ -28,7 +28,7 @@ public class Issue482Mock extends BaseMock {
                 .willReturn(
                         // Ticker 1.
                         new Ticker.Builder()
-                                .instrument(xChangeCP1) // currency pair.
+                                .instrument(XCHANGE_ETH_BTC) // currency pair.
                                 .open(value)            // open.
                                 .last(value)            // last.
                                 .bid(value)             // bid.
@@ -44,7 +44,7 @@ public class Issue482Mock extends BaseMock {
                                 .build(),
                         // Ticker 2.
                         new Ticker.Builder()
-                                .instrument(xChangeCP1) // currency pair.
+                                .instrument(XCHANGE_ETH_BTC) // currency pair.
                                 .open(value)            // open.
                                 .last(value)            // last.
                                 .bid(value)             // bid.
@@ -60,7 +60,7 @@ public class Issue482Mock extends BaseMock {
                                 .build(),
                         // Ticker 3.
                         new Ticker.Builder()
-                                .instrument(xChangeCP1) // currency pair.
+                                .instrument(XCHANGE_ETH_BTC) // currency pair.
                                 .open(value)            // open.
                                 .last(value)            // last.
                                 .bid(value)             // bid.

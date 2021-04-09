@@ -13,7 +13,7 @@ import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -33,7 +33,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-public class Issue510 extends BaseTest {
+public class Issue510Test extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;

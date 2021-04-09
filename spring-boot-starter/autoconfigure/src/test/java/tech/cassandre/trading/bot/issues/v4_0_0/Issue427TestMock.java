@@ -33,7 +33,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
 @TestConfiguration
-public class Issue427Mock extends BaseTest {
+public class Issue427TestMock extends BaseTest {
 
     @Autowired
     private OrderRepository orderRepository;
@@ -97,13 +97,13 @@ public class Issue427Mock extends BaseTest {
         orders.add(OrderDTO.builder()
                 .orderId("ORDER_000001")
                 .type(ASK)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
                 .leverage("leverage1")
                 .status(NEW)
-                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .build());
@@ -111,13 +111,13 @@ public class Issue427Mock extends BaseTest {
         orders.add(OrderDTO.builder()
                 .orderId("ORDER_000002")
                 .type(ASK)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-                .averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-                .limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+                .averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+                .limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
                 .leverage("leverage1")
                 .status(NEW)
-                .cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+                .cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .build());

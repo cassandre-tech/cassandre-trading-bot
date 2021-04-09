@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.strategy;
+package tech.cassandre.trading.bot.test.strategy.basic;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +14,6 @@ import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -29,11 +28,10 @@ import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRA
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.strategy.ta4j.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Strategy - Basic cassandre strategy")
@@ -73,7 +71,7 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertFalse(strategy.getTickersUpdateReceived().isEmpty());
         assertFalse(strategy.getTradesUpdateReceived().isEmpty());
         assertEquals(2, strategy.getLastTickers().size());
-        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTickers().get(new CurrencyPairDTO(ETH, BTC)).getLast()));
+        assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTickers().get(ETH_BTC).getLast()));
 
         // Trading account test.
         with().await().untilAsserted(() -> assertEquals(3, strategy.getAccountsUpdatesReceived().size()));
@@ -82,15 +80,15 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertEquals("03", tradeAccount.get().getAccountId());
 
         // Check getEstimatedBuyingCost().
-        assertTrue(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).isPresent());
-        assertEquals(0, new BigDecimal("12").compareTo(strategy.getEstimatedBuyingCost(new CurrencyPairDTO(ETH, BTC), new BigDecimal(2)).get().getValue()));
+        assertTrue(strategy.getEstimatedBuyingCost(ETH_BTC, new BigDecimal(2)).isPresent());
+        assertEquals(0, new BigDecimal("12").compareTo(strategy.getEstimatedBuyingCost(ETH_BTC, new BigDecimal(2)).get().getValue()));
 
         // Check canBuy() & canSell().
         final AccountDTO account = strategy.getAccounts().get("03");
         assertNotNull(account);
         assertEquals(3, account.getBalances().size());
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(BTC, ETH);
-        final CurrencyPairDTO cp2 = new CurrencyPairDTO(BTC, USDT);
+        final CurrencyPairDTO cp2 = ETH_USDT;
 
         // canBuy().
         // Buying something for an asset we don't have.

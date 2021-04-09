@@ -13,7 +13,7 @@ import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +32,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-public class Issue509 extends BaseTest {
+public class Issue509Test extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
@@ -71,9 +71,6 @@ public class Issue509 extends BaseTest {
 
         // The problem is that the closing order is empty !
         assertNotNull(position.get().getClosingOrder());
-
-        // There should
-
     }
 
 }
