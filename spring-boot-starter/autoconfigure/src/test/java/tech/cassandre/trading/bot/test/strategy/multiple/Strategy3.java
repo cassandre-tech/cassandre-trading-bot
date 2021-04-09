@@ -7,9 +7,6 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.test.strategy.multiple.MultipleStrategiesTest.BTC_USDT;
 import static tech.cassandre.trading.bot.test.strategy.multiple.MultipleStrategiesTest.ETH_USDT;
 import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy3.PARAMETER_STRATEGY_3_ENABLED;

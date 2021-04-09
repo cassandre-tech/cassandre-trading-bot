@@ -338,7 +338,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         final Set<String> orders = getOrders().keySet();
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
-                .filter(trade -> orders.contains(trade.getOrderId()))   // TODO Optimise.
+                .filter(trade -> orders.contains(trade.getOrderId()))   // TODO Optimise this by adding a link to orderDTO in trade.
                 .map(tradeMapper::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getTradeId, tradeDTO -> tradeDTO));
     }

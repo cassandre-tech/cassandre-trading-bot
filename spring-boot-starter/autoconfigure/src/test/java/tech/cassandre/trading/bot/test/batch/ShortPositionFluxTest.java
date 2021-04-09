@@ -20,10 +20,10 @@ import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -445,9 +445,9 @@ public class ShortPositionFluxTest extends BaseTest {
         openingTradesIterator = p2.get().getOpeningOrder().getTrades().iterator();
         assertEquals("000002", openingTradesIterator.next().getTradeId());
         assertNull(p2.get().getClosingOrder());
-        assertNull(p2.get().getLowestGainPrice());
-        assertNull(p2.get().getHighestGainPrice());
-        assertNull(p2.get().getLatestGainPrice());
+        assertEquals(0, new BigDecimal("100").compareTo(p2.get().getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("100").compareTo(p2.get().getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("100").compareTo(p2.get().getLatestGainPrice().getValue()));
 
         // =============================================================================================================
         // A ticker arrives that triggers max gain rules of position 1 - should now be CLOSING.
@@ -561,6 +561,7 @@ public class ShortPositionFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020").plusDays(1))
                 .build());
+        positionUpdatesCount.incrementAndGet();
 
         // onPositionStatusUpdate - Position should be closed.
         await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
@@ -570,7 +571,6 @@ public class ShortPositionFluxTest extends BaseTest {
         assertEquals(CLOSED, p.getStatus());
 
         // onPosition for second trade arrival.
-        // 16 and not 17 because as the position is closed with the third trade, the position will not accept new trade !
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);

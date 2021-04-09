@@ -40,7 +40,6 @@ public class StrategyDTO {
      * @param value initial value
      */
     public void initializeLastPositionIdUsed(final Long value) {
-        // TODO Test how it works when cassandre restarts.
         lastPositionIdUsed.set(value);
     }
 

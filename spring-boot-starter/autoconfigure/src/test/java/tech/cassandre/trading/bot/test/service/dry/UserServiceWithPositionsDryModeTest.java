@@ -22,7 +22,7 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -42,13 +42,17 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Service - Dry - User service with positions")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true"),
+        @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
+        @Property(key = PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED, value = "true"),
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class UserServiceWithPositionsDryModeTest extends BaseTest {
@@ -66,7 +70,7 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
     private AccountFlux accountFlux;
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private LargeTestableCassandreStrategy strategy;
 
     @Test
     @CaseId(100)
@@ -291,6 +295,7 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // 80 USDT              =>  80 + 1 000 (position 2 sell) - 10 (position 4 buy)
         // 19.5 ETH             =>  19.5 - 10 (position 2 sell) + 5 (position 4 buy)
         // 0 KCS                =>  20 KCS (20 lock in positions).
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         balances = getBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));

@@ -14,7 +14,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
-public class Issue482Mock extends BaseMock {
+public class Issue482TestMock extends BaseMock {
 
     @Override
     public MarketDataService getXChangeMarketDataServiceMock() throws IOException {

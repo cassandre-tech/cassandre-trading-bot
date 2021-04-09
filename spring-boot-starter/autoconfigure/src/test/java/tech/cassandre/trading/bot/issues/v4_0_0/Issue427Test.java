@@ -39,8 +39,8 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Import(Issue427Mock.class)
-public class Issue427 extends BaseTest {
+@Import(Issue427TestMock.class)
+public class Issue427Test extends BaseTest {
 
     @Autowired
     private OrderRepository orderRepository;

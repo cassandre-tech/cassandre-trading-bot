@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.issues.v4_0_1;
+package tech.cassandre.trading.bot.issues.v4_1_0;
 
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -13,7 +13,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
-public class Issue470Mock extends BaseMock {
+public class Issue483TestMock extends BaseMock {
 
     @Override
     public MarketDataService getXChangeMarketDataServiceMock() throws IOException {

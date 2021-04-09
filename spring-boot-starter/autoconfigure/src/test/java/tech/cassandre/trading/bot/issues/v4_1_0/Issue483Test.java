@@ -24,8 +24,8 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
         @Property(key = "spring.datasource.data", value = "classpath:/issue483.sql")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Import(Issue483Mock.class)
-public class Issue483 extends BaseTest {
+@Import(Issue483TestMock.class)
+public class Issue483Test extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;

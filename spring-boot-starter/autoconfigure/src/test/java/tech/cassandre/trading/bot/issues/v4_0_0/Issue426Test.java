@@ -40,8 +40,8 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Import(Issue426Mock.class)
-public class Issue426 extends BaseTest {
+@Import(Issue426TestMock.class)
+public class Issue426Test extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;

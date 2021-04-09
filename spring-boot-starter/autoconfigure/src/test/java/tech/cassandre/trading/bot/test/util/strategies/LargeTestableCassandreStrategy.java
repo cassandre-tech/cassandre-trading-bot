@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.strategy.basic;
+package tech.cassandre.trading.bot.test.util.strategies;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,24 +19,29 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.BTC_ETH;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.BTC_USDT;
 import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
 import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_USDT;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.KCS_USDT;
+import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 
 /**
  * Testable strategy (used for tests).
  */
 @SuppressWarnings("unused")
 @CassandreStrategy(
-        strategyId = "01",
-        strategyName = "Testable strategy")
+        strategyId = "09",
+        strategyName = "Large testable strategy")
 @ConditionalOnProperty(
-        value = PARAMETER_TESTABLE_STRATEGY_ENABLED,
+        value = PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED,
         havingValue = "true")
-public class TestableCassandreStrategy extends BasicCassandreStrategy {
+public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
 
     /** Testable strategy enabled parameter. */
-    public static final String PARAMETER_TESTABLE_STRATEGY_ENABLED = "testableStrategy.enabled";
+    public static final String PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED = "largeTestableStrategy.enabled";
 
     /** Waiting time during each method. */
     public static final int WAITING_TIME_IN_SECONDS = 1;
@@ -67,6 +72,10 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
         Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
         requestedTickers.add(ETH_BTC);
         requestedTickers.add(ETH_USDT);
+        requestedTickers.add(BTC_USDT);
+        requestedTickers.add(KCS_USDT);
+        requestedTickers.add(BTC_ETH);
+        requestedTickers.add(new CurrencyPairDTO(ETH, EUR));
         return requestedTickers;
     }
 

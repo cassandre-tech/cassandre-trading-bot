@@ -22,7 +22,7 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -41,13 +41,17 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Service - Dry - User service")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true"),
+        @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
+        @Property(key = PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED, value = "true"),
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(TradeServiceDryModeTestMock.class)
@@ -66,7 +70,7 @@ public class UserServiceDryModeTest extends BaseTest {
     private AccountFlux accountFlux;
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private LargeTestableCassandreStrategy strategy;
 
     @Test
     @CaseId(66)

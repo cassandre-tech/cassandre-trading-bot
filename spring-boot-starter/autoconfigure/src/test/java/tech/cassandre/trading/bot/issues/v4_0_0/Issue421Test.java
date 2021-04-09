@@ -35,7 +35,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(PositionServiceDryModeTestMock.class)
-public class Issue421 extends BaseTest {
+public class Issue421Test extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;

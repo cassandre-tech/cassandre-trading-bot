@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.strategy.multiple;
 
+import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,7 @@ public class MultipleStrategiesTest extends BaseTest {
     private Strategy3 strategy3;
 
     @Test
-    //@CaseId(82) TODO Create the test case in Qase
+    @CaseId(113)
     @DisplayName("Check multiple strategies behavior")
     public void checkMultipleStrategyBehavior() {
         //==============================================================================================================
@@ -108,7 +109,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertTrue(availableCurrencyPairs.contains(ETH_USDT));
 
         //==============================================================================================================
-        // Checking the three strategies are stored in database.
+        // Checking the three strategies is stored in the database.
         assertEquals(3, strategyRepository.count());
         final Optional<Strategy> s1 = strategyRepository.findByStrategyId("01");
         assertTrue(s1.isPresent());
