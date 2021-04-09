@@ -34,7 +34,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -63,7 +63,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountSt
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @ActiveProfiles("schedule-disabled")
-@DirtiesContext(classMode = AFTER_CLASS)
+@DirtiesContext(classMode = BEFORE_CLASS)
 public class MultipleStrategiesTest extends BaseTest {
 
     @Autowired
@@ -93,7 +93,7 @@ public class MultipleStrategiesTest extends BaseTest {
     @Test
     @CaseId(113)
     @DisplayName("Check multiple strategies behavior")
-    public void checkMultipleStrategyBehavior() {
+    public void checkMultipleStrategyBehavior() throws InterruptedException {
         //==============================================================================================================
         // Strategies tested.
         // Strategy 1 - Requesting BTC/USDT.
@@ -233,6 +233,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(1, position1PositionId);
 
         // Check onPositionUpdate() & onPositionStatusUpdate().
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(3, strategy1.getPositionsUpdateReceived().size());
         assertEquals(2, strategy1.getPositionsStatusUpdateReceived().size());
         assertEquals(0, strategy2.getPositionsUpdateReceived().size());
