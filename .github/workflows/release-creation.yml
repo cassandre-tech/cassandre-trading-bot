@@ -55,6 +55,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commitMode: true
+          fromTag: ${{ steps.package.outputs.version }}
+          toTag: ${{ steps.package.outputs.version }}
 
       # ================================================================================================================
       - name: Create the release
