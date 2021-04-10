@@ -6,7 +6,7 @@ curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash -
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 sudo apt update
-sudo apt-get -y bash curl file libglu1-mesa unzip xz-utils zip nodejs npm yarn
+sudo apt-get -y install bash curl file libglu1-mesa unzip xz-utils zip nodejs npm yarn
 ```
 
 ## [Vuepress](https://vuepress.vuejs.org/) (Documentation)
