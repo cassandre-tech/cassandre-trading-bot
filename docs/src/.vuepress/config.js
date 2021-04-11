@@ -73,7 +73,8 @@ module.exports = {
                 items: [
                     {text: 'Overview', link: '/why-cassandre/overview'},
                     {text: 'Architecture', link: '/why-cassandre/architecture'},
-                    {text: 'Features & roadmap', link: '/why-cassandre/features-and-roadmap'}
+                    {text: 'Features & roadmap', link: '/why-cassandre/features-and-roadmap'},
+                    {text: 'Supported exchanges', link: '/why-cassandre/supported-cryptocurrency-exchanges'}
                 ]
             },
             {
