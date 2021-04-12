@@ -27,9 +27,6 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /** Await termination in seconds. */
     private static final int AWAIT_TERMINATION_SECONDS = 120;
 
-    /** Scheduler pool size. */
-    private static final int SCHEDULER_POOL_SIZE = 3;
-
     /** Indicate that the batch should be running. */
     private final AtomicBoolean enabled = new AtomicBoolean(true);
 
@@ -73,7 +70,8 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setAwaitTerminationSeconds(AWAIT_TERMINATION_SECONDS);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
-        scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
+        // TODO Setting a pool size breaks OrderFluxTest.
+        // scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
         scheduler.setErrorHandler(throwable -> {
             try {
                 logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());

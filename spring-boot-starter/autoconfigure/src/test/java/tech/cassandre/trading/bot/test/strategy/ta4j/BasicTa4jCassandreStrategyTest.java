@@ -78,6 +78,8 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         // 1 BTC = 390 UST.
         final AccountDTO account = strategy.getAccounts().get("03");
         assertNotNull(account);
+        // strategy.getAccounts().forEach((s, accountDTO) -> System.out.println(s + " : " + accountDTO));
+        strategy.getAccounts().remove("01");
 
         // Check canBuy().
         // Trying to buy 1 bitcoin for 390 USDT per bitcoin - should work.

@@ -111,6 +111,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     @Override
+    public void initializeAccounts(final Map<String, AccountDTO> newAccounts) {
+        accounts.putAll(newAccounts);
+    }
+
+    @Override
     public final void setPositionRepository(final PositionRepository newPositionRepository) {
         this.positionRepository = newPositionRepository;
     }

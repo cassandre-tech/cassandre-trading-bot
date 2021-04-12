@@ -7,13 +7,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
@@ -41,7 +41,7 @@ public class Issue482Test extends BaseTest {
         tickerFlux.update();
 
         // We should received three tickers.
-        await().untilAsserted(() -> assertEquals(3, strategy.getTickersUpdateReceived().size()));
+        await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() > 3));
     }
 
 }

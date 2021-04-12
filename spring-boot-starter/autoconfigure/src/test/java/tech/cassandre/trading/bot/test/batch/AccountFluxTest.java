@@ -251,7 +251,8 @@ public class AccountFluxTest extends BaseTest {
         // =============================================================================================================
         // Check data we have in strategy.
         final Map<String, AccountDTO> strategyAccounts = strategy.getAccounts();
-        assertEquals(3, strategyAccounts.size());
+        assertEquals(4, strategyAccounts.size());
+        assertNotNull(strategyAccounts.get("trade"));   // First reply of the mock when Cassandre starts.
         assertNotNull(strategyAccounts.get("01"));
         assertNotNull(strategyAccounts.get("02"));
         assertNotNull(strategyAccounts.get("03"));

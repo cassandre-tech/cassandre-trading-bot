@@ -315,6 +315,8 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.setTradeService(tradeService);
                     strategy.setPositionService(positionService);
                     strategy.setPositionRepository(positionRepository);
+                    // Initialize accounts.
+                    // strategy.initializeAccounts(user.get().getAccounts());
 
                     // Setting flux.
                     connectableAccountFlux.subscribe(strategy::accountUpdate);

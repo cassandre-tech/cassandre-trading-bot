@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -30,6 +31,13 @@ public interface CassandreStrategyInterface {
      * @param newStrategyDTO strategy DTO.
      */
     void setStrategy(StrategyDTO newStrategyDTO);
+
+    /**
+     * Initialize accounts with accounts.
+     *
+     * @param accounts accounts
+     */
+    void initializeAccounts(Map<String, AccountDTO> accounts);
 
     /**
      * Setter order repository.

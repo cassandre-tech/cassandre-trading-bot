@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.batch.TickerFlux;
+import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -17,22 +17,21 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@DisplayName("Github issue 543")
+@DisplayName("Github issue 528")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
+@ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-public class Issue543Test {
+public class Issue528Test {
 
     @Autowired
     private TestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("Check getter for exchange service in strategies")
-    public void checkExchangeServiceGetter() {
-        final ExchangeService exchangeService = strategy.getExchangeService();
-        assertNotNull(exchangeService);
-        assertEquals(1, exchangeService.getAvailableCurrencyPairs().size());
+    @DisplayName("Check accounts are in strategy before flux")
+    public void checkAccountsInStrategyBeforeFlux() {
+        assertEquals(3, strategy.getAccounts().size());
     }
 
 }
