@@ -25,6 +25,7 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
@@ -84,6 +85,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     /** Order flux. */
     private final OrderFlux orderFlux;
 
+    /** Exchange service. */
+    private ExchangeService exchangeService;
+
     /** Exchange account repository. */
     private final ExchangeAccountRepository exchangeAccountRepository;
 
@@ -109,6 +113,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
      * Constructor.
      *
      * @param newApplicationContext        application context
+     * @param newExchangeService           exchange service
      * @param newExchangeParameters        exchange parameters
      * @param newUserService               user service
      * @param newTradeService              trade service
@@ -125,6 +130,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public StrategiesAutoConfiguration(final ApplicationContext newApplicationContext,
+                                       final ExchangeService newExchangeService,
                                        final ExchangeParameters newExchangeParameters,
                                        final UserService newUserService,
                                        final TradeService newTradeService,
@@ -139,6 +145,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                                        final PositionRepository newPositionRepository,
                                        final PositionFlux newPositionFlux) {
         this.applicationContext = newApplicationContext;
+        this.exchangeService = newExchangeService;
         this.exchangeParameters = newExchangeParameters;
         this.userService = newUserService;
         this.tradeService = newTradeService;
@@ -304,6 +311,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     // Setting services & repositories.
                     strategy.setOrderRepository(orderRepository);
                     strategy.setTradeRepository(tradeRepository);
+                    strategy.setExchangeService(exchangeService);
                     strategy.setTradeService(tradeService);
                     strategy.setPositionService(positionService);
                     strategy.setPositionRepository(positionRepository);

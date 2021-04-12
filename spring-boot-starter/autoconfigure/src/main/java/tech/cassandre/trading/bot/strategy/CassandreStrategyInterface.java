@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 
@@ -50,6 +51,13 @@ public interface CassandreStrategyInterface {
      * @param newPositionRepository the positionRepository to set
      */
     void setPositionRepository(PositionRepository newPositionRepository);
+
+    /**
+     * Setter for exchangeService.
+     *
+     * @param newExchangeService exchange service
+     */
+    void setExchangeService(ExchangeService newExchangeService);
 
     /**
      * Setter for tradeService.

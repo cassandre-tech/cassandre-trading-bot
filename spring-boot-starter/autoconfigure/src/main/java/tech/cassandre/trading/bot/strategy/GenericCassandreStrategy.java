@@ -21,6 +21,7 @@ import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
@@ -71,6 +72,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Position repository. */
     private PositionRepository positionRepository;
 
+    /** Exchange service. */
+    private ExchangeService exchangeService;
+
     /** Trade service. */
     private TradeService tradeService;
 
@@ -114,6 +118,20 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setOrderRepository(final OrderRepository newOrderRepository) {
         this.orderRepository = newOrderRepository;
+    }
+
+    /**
+     * Getter exchangeService.
+     *
+     * @return exchangeService
+     */
+    public final ExchangeService getExchangeService() {
+        return exchangeService;
+    }
+
+    @Override
+    public void setExchangeService(final ExchangeService newExchangeService) {
+        this.exchangeService = newExchangeService;
     }
 
     @Override
