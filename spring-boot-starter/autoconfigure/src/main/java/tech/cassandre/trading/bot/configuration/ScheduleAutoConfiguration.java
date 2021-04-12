@@ -1,13 +1,17 @@
 package tech.cassandre.trading.bot.configuration;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 
 import javax.annotation.PreDestroy;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,7 +22,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Configuration
 @Profile("!schedule-disabled")
 @EnableScheduling
-public class ScheduleAutoConfiguration {
+public class ScheduleAutoConfiguration extends BaseConfiguration {
+
+    /** Await termination in seconds. */
+    private static final int AWAIT_TERMINATION_SECONDS = 120;
+
+    /** Scheduler pool size. */
+    private static final int SCHEDULER_POOL_SIZE = 3;
 
     /** Indicate that the batch should be running. */
     private final AtomicBoolean enabled = new AtomicBoolean(true);
@@ -51,6 +61,27 @@ public class ScheduleAutoConfiguration {
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
         this.tradeFlux = newTradeFlux;
+    }
+
+    /**
+     * Configure the task scheduler.
+     *
+     * @return task scheduler
+     */
+    @Bean
+    public TaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setAwaitTerminationSeconds(AWAIT_TERMINATION_SECONDS);
+        scheduler.setWaitForTasksToCompleteOnShutdown(true);
+        scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
+        scheduler.setErrorHandler(throwable -> {
+            try {
+                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());
+            } catch (Exception e) {
+                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());
+            }
+        });
+        return scheduler;
     }
 
     /**

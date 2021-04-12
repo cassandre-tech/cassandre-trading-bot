@@ -20,7 +20,11 @@ public abstract class BaseExternalFlux<T> extends BaseFlux<T> {
      * Method executed when values must be updated (usually called by schedulers).
      */
     public final void update() {
-        getNewValues().forEach(this::emitValue);
+        try {
+            getNewValues().forEach(this::emitValue);
+        } catch (RuntimeException e) {
+            logger.error("BaseExternalFlux - Error getting new values : " + e.getMessage());
+        }
     }
 
 }
