@@ -85,7 +85,7 @@ public class UserServiceTest {
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());
         assertTrue(tradeWallet.getBalance(ANC).isEmpty());
         // Values.
-        assertEquals(0, tradeWallet.getBalance("BTC").get().getTotal().compareTo(new BigDecimal("1000")));
+        assertEquals(0, tradeWallet.getBalance("BTC").get().getTotal().compareTo(new BigDecimal("2000")));
     }
 
 }

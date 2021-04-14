@@ -48,7 +48,7 @@ public class ExchangeServiceTest {
 	@DisplayName("Check get available currency pairs")
 	public void checkGetAvailableCurrencyPairs() {
 		// Expected values.
-		final int expectedMinimumNumberOfAvailableCurrencyPairs = 6;
+		final int expectedMinimumNumberOfAvailableCurrencyPairs = 7;
 
 		// =============================================================================================================
 		// Retrieve the available currency pairs.

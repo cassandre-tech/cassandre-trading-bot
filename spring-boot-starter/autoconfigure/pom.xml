@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
-            <version>5.0.6</version>
+            <version>5.0.7</version>
         </dependency>
 
         <!-- Ta4j -->
@@ -123,34 +123,34 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-simulated</artifactId>
-            <version>5.0.6</version>
+            <version>5.0.7</version>
             <scope>test</scope>
         </dependency>
         <!-- For Kucoin integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>5.0.6</version>
+            <version>5.0.7</version>
             <scope>test</scope>
         </dependency>
         <!-- For Coinbase integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbase</artifactId>
-            <version>5.0.6</version>
+            <version>5.0.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbasepro</artifactId>
-            <version>5.0.6</version>
+            <version>5.0.7</version>
             <scope>test</scope>
         </dependency>
         <!-- For Gemini integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-gemini</artifactId>
-            <version>5.0.6</version>
+            <version>5.0.7</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -338,22 +338,22 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <excludes>
-                                        <exclude>none</exclude>
-                                    </excludes>
-                                    <includes>
-                                        <include>**/integration/**</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <configuration>
+                            <properties>
+                                <configurationParameters>
+                                    junit.jupiter.extensions.autodetection.enabled = true
+                                </configurationParameters>
+                            </properties>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                            <includes>
+                                <includes>**/integration/**</includes>
+                            </includes>
+                            <excludes>
+                                <exclude>**/issues/**</exclude>
+                                <exclude>**/test/**</exclude>
+                            </excludes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

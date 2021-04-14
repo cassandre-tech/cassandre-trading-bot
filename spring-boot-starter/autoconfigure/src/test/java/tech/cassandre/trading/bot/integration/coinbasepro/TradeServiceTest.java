@@ -55,7 +55,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
         "testableStrategy.enabled=true",
         "invalidStrategy.enabled=false"
 })
-@DisplayName("Kucoin - Trade service")
+@DisplayName("Coinbase pro - Trade service")
 public class TradeServiceTest extends BaseTest {
 
     @Autowired

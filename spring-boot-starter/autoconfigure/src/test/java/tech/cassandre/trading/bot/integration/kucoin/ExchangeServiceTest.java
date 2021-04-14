@@ -60,7 +60,7 @@ public class ExchangeServiceTest {
 
 		// ====================================symbols=========================================================================
 		// Tests results.
-		assertEquals(expectedMinimumNumberOfAvailableCurrencyPairs, currencyPairs.size());
+		assertTrue(expectedMinimumNumberOfAvailableCurrencyPairs < currencyPairs.size());
 
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("KCS", "USDT")));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO(KCS, USDT)));
