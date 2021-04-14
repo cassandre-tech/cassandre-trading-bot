@@ -26,6 +26,7 @@ import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.TRADING;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ANC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
@@ -60,8 +61,7 @@ public class UserServiceTest {
     public void checkGetUser() {
         // Expected values.
         final int expectedAccounts = 2;
-        final int expectedWalletsInTradingAccount = 2;
-        final BigDecimal expectedAmountInKCS = BigDecimal.valueOf(1000);
+        final int expectedWalletsInTradingAccount = 3;
 
         // =============================================================================================================
         // Retrieve the account.
@@ -101,15 +101,15 @@ public class UserServiceTest {
         assertTrue(tradeWallet.getBalance(BTC).isPresent());
         assertTrue(tradeWallet.getBalance("ETH").isPresent());
         assertTrue(tradeWallet.getBalance(ETH).isPresent());
-        assertTrue(mainWallet.getBalance("KCS").isPresent());
+        assertTrue(mainWallet.getBalance("USDT").isPresent());
+        assertTrue(tradeWallet.getBalance(USDT).isPresent());
         // Non existing balances.
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());
         assertTrue(tradeWallet.getBalance(ANC).isEmpty());
         // Values.
         assertEquals(1, tradeWallet.getBalance("BTC").get().getTotal().compareTo(ZERO));
         assertEquals(1, tradeWallet.getBalance("ETH").get().getTotal().compareTo(ZERO));
-        assertEquals(0, mainWallet.getBalance("KCS").get().getTotal().compareTo(expectedAmountInKCS));
-        assertEquals(0, mainWallet.getBalance("KCS").get().getAvailable().compareTo(expectedAmountInKCS));
+        assertEquals(1, tradeWallet.getBalance("USDT").get().getTotal().compareTo(ZERO));
     }
 
 }
