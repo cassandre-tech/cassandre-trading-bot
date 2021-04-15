@@ -348,11 +348,9 @@
                             <forkCount>1</forkCount>
                             <includes>
                                 <includes>**/integration/**</includes>
-                            </includes>
-                            <excludes>
-                                <exclude>**/issues/**</exclude>
+                                <includes>**/issues/**</includes>
                                 <exclude>**/test/**</exclude>
-                            </excludes>
+                            </includes>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -251,7 +251,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
         tradeFlux.addCurrencyPairs(currencyPairs);
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
-
         // =============================================================================================================
         // Connecting flux.
         // if in dry mode, we also send the ticker to the trade service in dry mode.
@@ -260,7 +259,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         }
         connectableOrderFlux.subscribe(positionService::orderUpdate);
         connectableTradeFlux.subscribe(positionService::tradeUpdate);
-        connectableTickerFlux.subscribe(positionService::tickerUpdate);
 
         // =============================================================================================================
         // Configuring strategies.
@@ -329,7 +327,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         ((UserServiceDryModeImplementation) userService).setDependencies((GenericCassandreStrategy) strategy);
                     }
                 });
-
+        connectableTickerFlux.subscribe(positionService::tickerUpdate);
         // Start flux.
         connectableAccountFlux.connect();
         connectablePositionFlux.connect();

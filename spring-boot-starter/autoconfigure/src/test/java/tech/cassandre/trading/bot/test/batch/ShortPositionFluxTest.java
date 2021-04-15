@@ -561,7 +561,6 @@ public class ShortPositionFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020").plusDays(1))
                 .build());
-        positionUpdatesCount.incrementAndGet();
 
         // onPositionStatusUpdate - Position should be closed.
         await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
@@ -571,7 +570,6 @@ public class ShortPositionFluxTest extends BaseTest {
         assertEquals(CLOSED, p.getStatus());
 
         // onPosition for second trade arrival.
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());

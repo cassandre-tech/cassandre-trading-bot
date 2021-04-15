@@ -31,7 +31,7 @@ jobs:
     - name: JDK 11 Setup
       uses: actions/setup-java@v1
       with:
-        java-version: 11.0.x
+        java-version: '11'
 
     - name: Build, run tests, package and deploy to Maven central
       run: |

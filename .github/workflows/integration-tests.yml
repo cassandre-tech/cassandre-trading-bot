@@ -19,7 +19,7 @@ jobs:
       - name: JDK 11 Setup
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.x
+          java-version: '11'
 
       # ================================================================================================================
       - name: Creates a Qase run
@@ -34,7 +34,7 @@ jobs:
             | jq -r -c ".result.id")"
 
       # ================================================================================================================
-      - name: Build, run tests, package and deploy to Maven central
+      - name: Build, run tests, package and deploy to Maven central - Also sends Qase tests reports
         env: # Environment variables.
           # Kucoin credentials.
           KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}

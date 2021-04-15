@@ -44,7 +44,6 @@ public abstract class Strategy extends BasicCassandreStrategy {
     /** Positions status update received. */
     private final List<PositionDTO> positionsStatusUpdateReceived = new LinkedList<>();
 
-
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
         if (accounts.size() == 1) {

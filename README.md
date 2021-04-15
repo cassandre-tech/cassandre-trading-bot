@@ -24,12 +24,12 @@
     </a>
 </p>
 
-<h3 align="center">
+<h4 align="center">
     <a href="https://trading-bot.cassandre.tech/">Web site</a> |
     <a href="https://trading-bot.cassandre.tech/learn/quickstart">Quick Start</a> | 
     <a href="https://twitter.com/cassandretech">Twitter</a> | 
     <a href="mailto:contact@cassandre.tech">Contact us</a>
-</h3>
+</h4>
 <br>
 <p align="center">
     <a href="https://github.com/cassandre-tech/cassandre-trading-bot/actions">

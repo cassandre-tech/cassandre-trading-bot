@@ -602,7 +602,7 @@ public class PositionDTO {
     @SuppressWarnings("unused")
     public final String getDescription() {
         try {
-            String value = type.toString().toLowerCase(Locale.ROOT) + " position n°" + id + " (rules : ";
+            String value = type.toString().toLowerCase(Locale.ROOT) + " position n°" + positionId + " (rules : ";
             // Rules.
             if (!rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
                 value += "no rules";
