@@ -22,9 +22,8 @@ public class Issue482TestMock extends BaseMock {
 
         final BigDecimal value = new BigDecimal("1");
         // Replies for BTC/USDT.
-        CurrencyPair cp = new CurrencyPair(Currency.ETH, Currency.BTC);
         given(marketService
-                .getTicker(cp))
+                .getTicker(XCHANGE_ETH_BTC))
                 .willReturn(
                         // Ticker 1.
                         new Ticker.Builder()
@@ -74,7 +73,7 @@ public class Issue482TestMock extends BaseMock {
                                 .bidSize(value)         // bid size.
                                 .askSize(value)         // ask size.
                                 .build()
-                        );
+                );
         return marketService;
     }
 

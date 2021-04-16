@@ -153,6 +153,13 @@
             <version>5.0.7</version>
             <scope>test</scope>
         </dependency>
+        <!-- For Binance integration tests -->
+        <dependency>
+            <groupId>org.knowm.xchange</groupId>
+            <artifactId>xchange-binance</artifactId>
+            <version>5.0.7</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->
 

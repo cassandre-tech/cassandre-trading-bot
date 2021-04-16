@@ -54,6 +54,12 @@ jobs:
           COINBASE_PRO_PASSPHRASE: ${{ secrets.COINBASE_PRO_PASSPHRASE }}
           COINBASE_PRO_KEY: ${{ secrets.COINBASE_PRO_KEY }}
           COINBASE_PRO_SECRET: ${{ secrets.COINBASE_PRO_SECRET }}
+          # Binance credentials.
+          BINANCE_NAME: ${{ secrets.BINANCE_NAME }}
+          BINANCE_USERNAME: ${{ secrets.BINANCE_USERNAME }}
+          BINANCE_PASSPHRASE: ${{ secrets.BINANCE_PASSPHRASE }}
+          BINANCE_KEY: ${{ secrets.BINANCE_KEY }}
+          BINANCE_SECRET: ${{ secrets.BINANCE_SECRET }}
         run: |
           mvn -Pintegration package \
             -Dqase.enable=true \
