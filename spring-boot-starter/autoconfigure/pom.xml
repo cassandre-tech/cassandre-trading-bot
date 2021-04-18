@@ -170,7 +170,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Dysprosium-SR18</version>
+                <version>Dysprosium-SR19</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
