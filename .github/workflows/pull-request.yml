@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v1
 
       # ================================================================================================================
-      - name: Build, run tests, package and deploy to Maven central - Also sends Qase tests reports
+      - name: Build, run tests, package and deploy to Maven central
         id: package
         run: |
           mvn package

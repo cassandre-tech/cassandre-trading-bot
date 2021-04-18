@@ -14,24 +14,20 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import static java.math.BigDecimal.ZERO;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -129,8 +125,6 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(cp, order1.get().getCurrencyPair());
         assertEquals(0, order1.get().getAmount().getValue().compareTo(new BigDecimal("0.0001")));
         assertEquals(cp.getBaseCurrency(), order1.get().getAmount().getCurrency());
-        //assertTrue(order1.get().getAveragePrice().getValue().compareTo(ZERO) > 0);
-        //assertEquals(cp.getQuoteCurrency(), order1.get().getAveragePrice().getCurrency());
         assertEquals(0, order1.get().getLimitPrice().getValue().compareTo(new BigDecimal("0.000001")));
         assertEquals(cp.getQuoteCurrency(), order1.get().getLimitPrice().getCurrency());
         assertNull(order1.get().getLeverage());

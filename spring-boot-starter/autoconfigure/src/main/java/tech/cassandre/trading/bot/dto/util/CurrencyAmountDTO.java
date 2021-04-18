@@ -86,7 +86,7 @@ public class CurrencyAmountDTO {
 
     @Override
     public final String toString() {
-        return value.toString() + " " + currency;
+        return value + " " + currency;
     }
 
 }

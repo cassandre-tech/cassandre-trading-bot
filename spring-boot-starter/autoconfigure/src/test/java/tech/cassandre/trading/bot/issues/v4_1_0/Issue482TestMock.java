@@ -1,7 +1,5 @@
 package tech.cassandre.trading.bot.issues.v4_1_0;
 
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.test.context.TestConfiguration;

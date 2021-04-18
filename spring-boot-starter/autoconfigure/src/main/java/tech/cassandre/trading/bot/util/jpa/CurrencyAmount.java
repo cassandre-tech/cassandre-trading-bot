@@ -52,7 +52,7 @@ public class CurrencyAmount {
     @Override
     public final String toString() {
         if (value != null) {
-            return value.toString() + " " + currency;
+            return value + " " + currency;
         } else {
             return "Not provided";
         }

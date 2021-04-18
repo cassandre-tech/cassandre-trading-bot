@@ -86,7 +86,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     private final OrderFlux orderFlux;
 
     /** Exchange service. */
-    private ExchangeService exchangeService;
+    private final ExchangeService exchangeService;
 
     /** Exchange account repository. */
     private final ExchangeAccountRepository exchangeAccountRepository;

@@ -147,8 +147,8 @@ public class PositionDTO {
             // How gain calculation works for long positions ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50 USDT.
             //  - Sold 10 ETH with a price of 6 -> Amount of 60 USDT.
-            // Gain en valeur : 10 USDT
-            // Gain en pourcentage= ((60 - 50) / 50) * 100 = 20 %
+            // Gain value: 10 USDT
+            // Gain percentage: ((60 - 50) / 50) * 100 = 20 %
             if (this.type == LONG) {
                 // Amounts.
                 final BigDecimal valueIBought = openingOrder.getTrades()
