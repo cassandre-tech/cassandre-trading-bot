@@ -19,7 +19,7 @@ jobs:
       - name: JDK 11 Setup
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.x
+          java-version: '11'
 
       # ================================================================================================================
       - name: Creates a Qase run
@@ -34,7 +34,7 @@ jobs:
             | jq -r -c ".result.id")"
 
       # ================================================================================================================
-      - name: Build, run tests, package and deploy to Maven central
+      - name: Build, run tests, package and deploy to Maven central - Also sends Qase tests reports
         env: # Environment variables.
           # Kucoin credentials.
           KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}
@@ -54,6 +54,12 @@ jobs:
           COINBASE_PRO_PASSPHRASE: ${{ secrets.COINBASE_PRO_PASSPHRASE }}
           COINBASE_PRO_KEY: ${{ secrets.COINBASE_PRO_KEY }}
           COINBASE_PRO_SECRET: ${{ secrets.COINBASE_PRO_SECRET }}
+          # Binance credentials.
+          BINANCE_NAME: ${{ secrets.BINANCE_NAME }}
+          BINANCE_USERNAME: ${{ secrets.BINANCE_USERNAME }}
+          BINANCE_PASSPHRASE: ${{ secrets.BINANCE_PASSPHRASE }}
+          BINANCE_KEY: ${{ secrets.BINANCE_KEY }}
+          BINANCE_SECRET: ${{ secrets.BINANCE_SECRET }}
         run: |
           mvn -Pintegration package \
             -Dqase.enable=true \

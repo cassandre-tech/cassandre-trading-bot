@@ -71,12 +71,6 @@ public class MarketServiceTest {
         // ask.
         assertNotNull(t.get().getAsk());
         assertTrue(t.get().getAsk().compareTo(ZERO) > 0);
-        // volume.
-        assertNotNull(t.get().getVolume());
-        assertTrue(t.get().getVolume().compareTo(ZERO) > 0);
-        // quote volume.
-        assertNotNull(t.get().getQuoteVolume());
-        assertTrue(t.get().getQuoteVolume().compareTo(ZERO) > 0);
         // bidSize.
         assertNull(t.get().getBidSize());
         // askSize.

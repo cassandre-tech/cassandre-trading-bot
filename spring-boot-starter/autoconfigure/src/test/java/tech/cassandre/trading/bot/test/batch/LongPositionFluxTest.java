@@ -23,7 +23,7 @@ import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -83,7 +83,7 @@ public class LongPositionFluxTest extends BaseTest {
     public void checkReceivedData() {
         // =============================================================================================================
         // Creates position 1 - should be OPENING.
-        final PositionCreationResultDTO position1Result = strategy.createLongPosition(cp1,
+        final PositionCreationResultDTO position1Result = strategy.createLongPosition(ETH_BTC,
                 new BigDecimal("10"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000f)   // 1 000% max gain.
@@ -124,9 +124,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
-        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(ETH_BTC, p1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), p1.get().getAmount().getCurrency());
         assertTrue(p1.get().getRules().isStopGainPercentageSet());
         assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
         assertTrue(p1.get().getRules().isStopLossPercentageSet());
@@ -143,7 +143,7 @@ public class LongPositionFluxTest extends BaseTest {
 
         // =============================================================================================================
         // Creates positions 2 - should be OPENING.
-        final PositionCreationResultDTO position2Result = strategy.createLongPosition(cp2,
+        final PositionCreationResultDTO position2Result = strategy.createLongPosition(ETH_USDT,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(10000000f)
@@ -184,9 +184,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertNotNull(p2.get().getStrategy());
         assertEquals(1, p2.get().getStrategy().getId());
         assertEquals("01", p2.get().getStrategy().getStrategyId());
-        assertEquals(cp2, p2.get().getCurrencyPair());
+        assertEquals(ETH_USDT, p2.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0002").compareTo(p2.get().getAmount().getValue()));
-        assertEquals(cp2.getBaseCurrency(), p2.get().getAmount().getCurrency());
+        assertEquals(ETH_USDT.getBaseCurrency(), p2.get().getAmount().getCurrency());
         assertTrue(p2.get().getRules().isStopGainPercentageSet());
         assertEquals(10000000f, p2.get().getRules().getStopGainPercentage());
         assertTrue(p2.get().getRules().isStopLossPercentageSet());
@@ -208,9 +208,9 @@ public class LongPositionFluxTest extends BaseTest {
                 .tradeId("000011")
                 .type(BID)
                 .orderId("ORDER00010")
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.02", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.02", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-02-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -219,9 +219,9 @@ public class LongPositionFluxTest extends BaseTest {
                 .tradeId("000011")
                 .orderId("ORDER00010")
                 .type(BID)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.02", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.02", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("03-02-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -231,9 +231,9 @@ public class LongPositionFluxTest extends BaseTest {
                 .tradeId("000001")
                 .orderId("ORDER00010")
                 .type(BID)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.04", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.04", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -242,9 +242,9 @@ public class LongPositionFluxTest extends BaseTest {
                 .tradeId("000001")
                 .orderId("ORDER00010")
                 .type(BID)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.04", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.04", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -276,9 +276,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
-        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(ETH_BTC, p1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), p1.get().getAmount().getCurrency());
         assertTrue(p1.get().getRules().isStopGainPercentageSet());
         assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
         assertTrue(p1.get().getRules().isStopLossPercentageSet());
@@ -303,7 +303,7 @@ public class LongPositionFluxTest extends BaseTest {
         // Test of tickers updating the position 1.
 
         // First ticker arrives (500% gain) - min, max and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.18")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.18")).build());
         positionUpdatesCount.incrementAndGet();
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
@@ -320,7 +320,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals(BTC, latestCalculatedGain.get().getAmount().getCurrency());
 
         // Second ticker arrives (100% gain) - min and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.06")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.06")).build());
         positionUpdatesCount.incrementAndGet();
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
@@ -330,7 +330,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.06").compareTo(p.getLatestGainPrice().getValue()));
 
         // Third ticker arrives (200% gain) - only last should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.09")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.09")).build());
         positionUpdatesCount.incrementAndGet();
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
@@ -340,7 +340,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.09").compareTo(p.getLatestGainPrice().getValue()));
 
         // Fourth ticker arrives (50% loss) - min and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.015")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.015")).build());
         positionUpdatesCount.incrementAndGet();
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
@@ -350,10 +350,10 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.015").compareTo(p.getLatestGainPrice().getValue()));
 
         // A ticker arrive for another cp. Nothing should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("100")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("100")).build());
 
         // Firth ticker arrives (600% gain) - max and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.21")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.21")).build());
         positionUpdatesCount.incrementAndGet();
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
@@ -372,9 +372,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
-        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(ETH_BTC, p1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), p1.get().getAmount().getCurrency());
         assertTrue(p1.get().getRules().isStopGainPercentageSet());
         assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
         assertTrue(p1.get().getRules().isStopLossPercentageSet());
@@ -395,9 +395,9 @@ public class LongPositionFluxTest extends BaseTest {
                 .tradeId("000002")
                 .type(BID)
                 .orderId("ORDER00020")
-                .currencyPair(cp2)
-                .amount(new CurrencyAmountDTO("0.0002", cp2.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("0.03", cp2.getQuoteCurrency()))
+                .currencyPair(ETH_USDT)
+                .amount(new CurrencyAmountDTO("0.0002", ETH_USDT.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("0.03", ETH_USDT.getQuoteCurrency()))
                 .build());
         positionStatusUpdatesCount.incrementAndGet();
         positionUpdatesCount.incrementAndGet();
@@ -426,9 +426,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertNotNull(p2.get().getStrategy());
         assertEquals(1, p2.get().getStrategy().getId());
         assertEquals("01", p2.get().getStrategy().getStrategyId());
-        assertEquals(cp2, p2.get().getCurrencyPair());
+        assertEquals(ETH_USDT, p2.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0002").compareTo(p2.get().getAmount().getValue()));
-        assertEquals(cp2.getBaseCurrency(), p2.get().getAmount().getCurrency());
+        assertEquals(ETH_USDT.getBaseCurrency(), p2.get().getAmount().getCurrency());
         assertTrue(p2.get().getRules().isStopGainPercentageSet());
         assertEquals(10000000f, p2.get().getRules().getStopGainPercentage());
         assertTrue(p2.get().getRules().isStopLossPercentageSet());
@@ -444,7 +444,7 @@ public class LongPositionFluxTest extends BaseTest {
 
         // =============================================================================================================
         // A ticker arrives that triggers max gain rules of position 1 - should now be CLOSING.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("100")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("100")).build());
         positionStatusUpdatesCount.incrementAndGet();
         // 2 updates of position (closeOrderId set & then closerOrder set).
         positionUpdatesCount.incrementAndGet();
@@ -474,9 +474,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
-        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(ETH_BTC, p1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), p1.get().getAmount().getCurrency());
         assertTrue(p1.get().getRules().isStopGainPercentageSet());
         assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
         assertTrue(p1.get().getRules().isStopLossPercentageSet());
@@ -498,9 +498,9 @@ public class LongPositionFluxTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().tradeId("000003")
                 .orderId("ORDER00011")
                 .type(ASK)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
         positionStatusUpdatesCount.incrementAndGet();
@@ -509,9 +509,9 @@ public class LongPositionFluxTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().tradeId("000003")
                 .orderId("ORDER00011")
                 .type(ASK)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
         // 2 updates of position (closeOrderId set & then closerOrder set).
@@ -529,9 +529,9 @@ public class LongPositionFluxTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().tradeId("000004")
                 .orderId("ORDER00011")
                 .type(ASK)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("1", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
         positionUpdatesCount.incrementAndGet();
@@ -539,9 +539,9 @@ public class LongPositionFluxTest extends BaseTest {
         tradeFlux.emitValue(TradeDTO.builder().tradeId("000004")
                 .orderId("ORDER00011")
                 .type(ASK)
-                .currencyPair(cp1)
-                .amount(new CurrencyAmountDTO("5", cp1.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("2", cp1.getQuoteCurrency()))
+                .currencyPair(ETH_BTC)
+                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("2", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020").plusDays(1))
                 .build());
 
@@ -570,9 +570,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
-        assertEquals(cp1, p1.get().getCurrencyPair());
+        assertEquals(ETH_BTC, p1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(p1.get().getAmount().getValue()));
-        assertEquals(cp1.getBaseCurrency(), p1.get().getAmount().getCurrency());
+        assertEquals(ETH_BTC.getBaseCurrency(), p1.get().getAmount().getCurrency());
         assertTrue(p1.get().getRules().isStopGainPercentageSet());
         assertEquals(1000f, p1.get().getRules().getStopGainPercentage());
         assertTrue(p1.get().getRules().isStopLossPercentageSet());

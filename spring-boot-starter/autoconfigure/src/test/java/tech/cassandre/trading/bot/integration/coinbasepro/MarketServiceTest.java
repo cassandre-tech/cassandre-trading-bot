@@ -42,7 +42,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
         "testableStrategy.enabled=true",
         "invalidStrategy.enabled=false"
 })
-@DisplayName("Coinbase - Market service")
+@DisplayName("Coinbase pro - Market service")
 public class MarketServiceTest {
 
     @Autowired

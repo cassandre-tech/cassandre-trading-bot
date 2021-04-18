@@ -10,9 +10,11 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,7 +30,14 @@ public interface CassandreStrategyInterface {
      *
      * @param newStrategyDTO strategy DTO.
      */
-    void setStrategyDTO(StrategyDTO newStrategyDTO);
+    void setStrategy(StrategyDTO newStrategyDTO);
+
+    /**
+     * Initialize accounts with accounts.
+     *
+     * @param accounts accounts
+     */
+    void initializeAccounts(Map<String, AccountDTO> accounts);
 
     /**
      * Setter order repository.
@@ -50,6 +59,13 @@ public interface CassandreStrategyInterface {
      * @param newPositionRepository the positionRepository to set
      */
     void setPositionRepository(PositionRepository newPositionRepository);
+
+    /**
+     * Setter for exchangeService.
+     *
+     * @param newExchangeService exchange service
+     */
+    void setExchangeService(ExchangeService newExchangeService);
 
     /**
      * Setter for tradeService.

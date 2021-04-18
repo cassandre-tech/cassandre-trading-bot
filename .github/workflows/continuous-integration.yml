@@ -26,7 +26,7 @@ jobs:
         id: jdk
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.x
+          java-version: '11'
           server-id: ossrh
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
@@ -43,19 +43,7 @@ jobs:
           echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
 
       # ================================================================================================================
-      - name: Creates a Qase run
-        id: qase
-        run: |
-          echo "::set-output name=qase_run_id::$( \
-            curl -s "https://api.qase.io/v1/run/CTB" \
-            -X POST \
-            -H "Token: ${{ secrets.QASE_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"title": "${{ github.event.head_commit.message }}","description": "Test run for ${{ steps.version.outputs.version }}","environment_id": null,"cases": []}' \
-            | jq -r -c ".result.id")"
-
-      # ================================================================================================================
-      - name: Build, run tests, package and deploy to Maven central - Also sends Qase tests reports
+      - name: Build, run tests, package and deploy to Maven central
         id: package
         env: # Environment variables.
           # GPG.
@@ -64,11 +52,7 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
-          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE} \
-            -Dqase.enable=true \
-            -Dqase.project.code=CTB \
-            -Dqase.run.id=${{ steps.qase.outputs.qase_run_id }} \
-            -Dqase.api.token=${{ secrets.QASE_TOKEN }}
+          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
 
       # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic strategy

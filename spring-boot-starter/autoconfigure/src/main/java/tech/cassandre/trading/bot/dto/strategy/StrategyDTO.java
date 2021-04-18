@@ -6,6 +6,8 @@ import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import static lombok.AccessLevel.PRIVATE;
 
 /**
@@ -28,6 +30,27 @@ public class StrategyDTO {
 
     /** Strategy name. */
     String name;
+
+    /** Last position id used. */
+    AtomicLong lastPositionIdUsed = new AtomicLong();
+
+    /**
+     * This method is used during initialization to set the last position used for this time of strategy.
+     *
+     * @param value initial value
+     */
+    public void initializeLastPositionIdUsed(final Long value) {
+        lastPositionIdUsed.set(value);
+    }
+
+    /**
+     * This method returns the next position id to use.
+     *
+     * @return next position
+     */
+    public long getNextPositionId() {
+        return lastPositionIdUsed.incrementAndGet();
+    }
 
     @Override
     public final boolean equals(final Object o) {

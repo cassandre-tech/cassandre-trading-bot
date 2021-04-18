@@ -22,7 +22,7 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -42,13 +42,17 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Service - Dry - User service with positions")
 @ActiveProfiles("schedule-disabled")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true"),
+        @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
+        @Property(key = PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED, value = "true"),
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class UserServiceWithPositionsDryModeTest extends BaseTest {
@@ -66,7 +70,7 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
     private AccountFlux accountFlux;
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private LargeTestableCassandreStrategy strategy;
 
     @Test
     @CaseId(100)
@@ -95,30 +99,30 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // CP3 : BTC/USDT   - Price is 50 000 meaning 1 BTC costs 50000 USDT.
         // CP4 : KCS/USDT   - Price is 4 meaning 1 KCS costs 4 USDT.
         // CP5 : BTC/ETH    - Price is 50 meaning 1 BTC costs 50 ETH.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp1).last(new BigDecimal("0.03")).build());
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("1500")).build());
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp3).last(new BigDecimal("50000")).build());
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp4).last(new BigDecimal("4")).build());
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp5).last(new BigDecimal("50")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.03")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("1500")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_USDT).last(new BigDecimal("50000")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(KCS_USDT).last(new BigDecimal("4")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_ETH).last(new BigDecimal("50")).build());
         await().untilAsserted(() -> assertEquals(5, strategy.getTickersUpdateReceived().size()));
 
         // =============================================================================================================
         // We check what we can do thx to canBuy() methods.
         // With our BTC, we should be able to buy 10 ETH but not 100 ETH.
-        assertTrue(strategy.canBuy(cp1, new BigDecimal("10")));
-        assertFalse(strategy.canBuy(cp1, new BigDecimal("100")));
+        assertTrue(strategy.canBuy(ETH_BTC, new BigDecimal("10")));
+        assertFalse(strategy.canBuy(ETH_BTC, new BigDecimal("100")));
         // With our USDT, we should be able to buy 0.5 ETH but not 1 ETH.
-        assertTrue(strategy.canBuy(cp2, new BigDecimal("0.5")));
-        assertFalse(strategy.canBuy(cp2, new BigDecimal("1")));
+        assertTrue(strategy.canBuy(ETH_USDT, new BigDecimal("0.5")));
+        assertFalse(strategy.canBuy(ETH_USDT, new BigDecimal("1")));
         // With our USDT, we should be able to buy 0.01 BTC but not 0.1 BTC.
-        assertTrue(strategy.canBuy(cp3, new BigDecimal("0.01")));
-        assertFalse(strategy.canBuy(cp3, new BigDecimal("0.1")));
+        assertTrue(strategy.canBuy(BTC_USDT, new BigDecimal("0.01")));
+        assertFalse(strategy.canBuy(BTC_USDT, new BigDecimal("0.1")));
         // With our USDT, we should be able to buy 200 KCS but not 300 KCS.
-        assertTrue(strategy.canBuy(cp4, new BigDecimal("200")));
-        assertFalse(strategy.canBuy(cp4, new BigDecimal("300")));
+        assertTrue(strategy.canBuy(KCS_USDT, new BigDecimal("200")));
+        assertFalse(strategy.canBuy(KCS_USDT, new BigDecimal("300")));
         // With our ETH, we should be able to buy 0.2 BTC but not 0.25 BTC.
-        assertTrue(strategy.canBuy(cp5, new BigDecimal("0.2")));
-        assertFalse(strategy.canBuy(cp5, new BigDecimal("0.25")));
+        assertTrue(strategy.canBuy(BTC_ETH, new BigDecimal("0.2")));
+        assertFalse(strategy.canBuy(BTC_ETH, new BigDecimal("0.25")));
 
         // =============================================================================================================
         // We check what we can do thx to canSell() methods.
@@ -139,7 +143,7 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // 0.99962937 BTC   =>  0.99962937 BTC.
         // 1000 USDT        =>  250 USDT.
         // 10 ETH           =>  10.5 ETH (0.5 locked in positions).
-        final PositionCreationResultDTO position1 = strategy.createLongPosition(cp2, new BigDecimal("0.5"), rules);
+        final PositionCreationResultDTO position1 = strategy.createLongPosition(ETH_USDT, new BigDecimal("0.5"), rules);
         long position1Id = position1.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
@@ -162,12 +166,12 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         assertFalse(strategy.canSell(ETH, new BigDecimal("10.5")));
 
         // As we now have 10.5 ETH and 0.5 locked in positions, we should still be able to buy 0.2 but not more.
-        assertTrue(strategy.canBuy(cp5, new BigDecimal("0.2")));
-        assertFalse(strategy.canBuy(cp5, new BigDecimal("0.20001")));
+        assertTrue(strategy.canBuy(BTC_ETH, new BigDecimal("0.2")));
+        assertFalse(strategy.canBuy(BTC_ETH, new BigDecimal("0.20001")));
 
         // Price update for CP2.
         // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We buy 10 ETH and it will cost 100 USDT.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("10")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("10")).build());
         await().untilAsserted(() -> assertEquals(6, strategy.getTickersUpdateReceived().size()));
 
         // =============================================================================================================
@@ -177,7 +181,7 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // 0.99962937 BTC   =>  0.99962937 BTC.
         // 250 USDT         =>  150 USDT.
         // 10.5 ETH         =>  20.5 ETH (10.5 locked in positions).
-        final PositionCreationResultDTO position2 = strategy.createLongPosition(cp2, new BigDecimal("10"), rules);
+        final PositionCreationResultDTO position2 = strategy.createLongPosition(ETH_USDT, new BigDecimal("10"), rules);
         long position2Id = position2.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
@@ -201,8 +205,8 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         assertFalse(strategy.canSell(ETH, new BigDecimal("20.5")));
 
         // As we now have 20.5 ETH and 10.5 locked in positions, we should still be able to buy 0.2 but not more.
-        assertTrue(strategy.canBuy(cp5, new BigDecimal("0.2")));
-        assertFalse(strategy.canBuy(cp5, new BigDecimal("0.20001")));
+        assertTrue(strategy.canBuy(BTC_ETH, new BigDecimal("0.2")));
+        assertFalse(strategy.canBuy(BTC_ETH, new BigDecimal("0.20001")));
 
         // =============================================================================================================
         // We create a third long position on KCS/USDT.
@@ -212,7 +216,7 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // 150 USDT         =>  70 USDT.
         // 20.5 ETH ETH     =>  20.5 ETH (10.5 locked in positions).
         // 0 KCS            =>  20 KCS (20 lock in positions).
-        final PositionCreationResultDTO position3 = strategy.createLongPosition(cp4, new BigDecimal("20"), rules);
+        final PositionCreationResultDTO position3 = strategy.createLongPosition(KCS_USDT, new BigDecimal("20"), rules);
         long position3Id = position3.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
@@ -243,7 +247,7 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // 70 USDT          =>  80 USDT (10 locked in positions).
         // 20.5 ETH         =>  19.5 (10.5 locked in positions).
         // 0 KCS            =>  20 KCS (20 lock in positions).
-        final PositionCreationResultDTO position4 = strategy.createShortPosition(cp2, new BigDecimal("1"), rules);
+        final PositionCreationResultDTO position4 = strategy.createShortPosition(ETH_USDT, new BigDecimal("1"), rules);
         long position4Id = position4.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position4Id).getStatus()));
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
@@ -275,14 +279,14 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
 
         // For the position long 2, we send :
         // CP2 : ETH/USDT - 1 ETH costs 100 USDT - We sell 10 ETH and it will give us 1000 USDT.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("100")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("100")).build());
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position2Id).getStatus()));
 
         // For the position short 4, we started at :
         // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sell 1 ETH and it will give us 10 USDT.
         // And now we are at :
         // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(cp2).last(new BigDecimal("2")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("2")).build());
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position4Id).getStatus()));
 
         // We should now have the following amounts
@@ -291,6 +295,7 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // 80 USDT              =>  80 + 1 000 (position 2 sell) - 10 (position 4 buy)
         // 19.5 ETH             =>  19.5 - 10 (position 2 sell) + 5 (position 4 buy)
         // 0 KCS                =>  20 KCS (20 lock in positions).
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         balances = getBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
@@ -306,8 +311,8 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         assertEquals(0, new BigDecimal("20").compareTo(strategy.getAmountsLockedByCurrency(KCS)));
 
         // As we now have 1070 ETH and 10.5 locked in positions, we should be able to buy 0.02 BTC but not 0.03 BTC.
-        assertTrue(strategy.canBuy(cp3, new BigDecimal("0.02")));
-        assertFalse(strategy.canBuy(cp3, new BigDecimal("0.03")));
+        assertTrue(strategy.canBuy(BTC_USDT, new BigDecimal("0.02")));
+        assertFalse(strategy.canBuy(BTC_USDT, new BigDecimal("0.03")));
     }
 
     /**

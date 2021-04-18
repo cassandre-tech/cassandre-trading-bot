@@ -13,7 +13,7 @@ import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -251,7 +251,8 @@ public class AccountFluxTest extends BaseTest {
         // =============================================================================================================
         // Check data we have in strategy.
         final Map<String, AccountDTO> strategyAccounts = strategy.getAccounts();
-        assertEquals(3, strategyAccounts.size());
+        assertEquals(4, strategyAccounts.size());
+        assertNotNull(strategyAccounts.get("trade"));   // First reply of the mock when Cassandre starts.
         assertNotNull(strategyAccounts.get("01"));
         assertNotNull(strategyAccounts.get("02"));
         assertNotNull(strategyAccounts.get("03"));

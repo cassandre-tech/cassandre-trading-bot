@@ -17,7 +17,7 @@ INSERT INTO public.exchange_accounts (id, exchange, account, created_on, updated
 -- Data for Name: strategies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.strategies (id, strategy_id, type, fk_exchange_account_id, name, created_on, updated_on) VALUES (1, '001', 'BASIC_TA4J_STRATEGY', 1, 'SMA strategy', '2021-03-10 11:27:16.649178', NULL);
+INSERT INTO public.strategies (id, strategy_id, type, fk_exchange_account_id, name, created_on, updated_on) VALUES (1, '01', 'BASIC_TA4J_STRATEGY', 1, 'SMA strategy', '2021-03-10 11:27:16.649178', NULL);
 
 
 --

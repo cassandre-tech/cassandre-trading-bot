@@ -29,18 +29,18 @@ public class ShortPositionFluxTestMock extends BaseMock {
 
         // Position 1.
         // Opening order creation result.
-        MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), xChangeCP1);
+        MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), XCHANGE_ETH_BTC);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00010");
         // Closing order creation result.
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("1000"), xChangeCP1);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("1000"), XCHANGE_ETH_BTC);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00011");
 
         // Position 2.
         // Opening order creation result.
-        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("0.0002"), xChangeCP2);
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("0.0002"), XCHANGE_ETH_USDT);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00020");
         // Closing order creation result.
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), xChangeCP2);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), XCHANGE_ETH_USDT);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00021");
 
         return mock;

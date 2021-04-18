@@ -28,7 +28,7 @@ jobs:
       - name: JDK 11 Setup
         uses: actions/setup-java@v1
         with:
-          java-version: 11.0.x
+          java-version: '11'
           server-id: ossrh
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
@@ -55,6 +55,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commitMode: true
+          fromTag: ${{ steps.package.outputs.version }}
+          toTag: ${{ steps.package.outputs.version }}
 
       # ================================================================================================================
       - name: Create the release
@@ -135,6 +137,12 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
           args: "Cassandre trading bot ${{ steps.package.outputs.version }} released - More information here : ${{ steps.create_release.outputs.html_url }}"
+
+      # ================================================================================================================
+      - uses: pozetroninc/github-action-get-latest-release@master
+        id: getLatestRelease
+        with:
+          repository: ${{ github.repository }}
 
       # ================================================================================================================
       - name: Change release in website sources

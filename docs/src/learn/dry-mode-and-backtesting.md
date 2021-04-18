@@ -70,5 +70,5 @@ Place this file in the `src/test/resources` folder of your project and add this 
 
 Now, during the tests, instead of receiving tickers from the exchange, you will receive tickers imported from the `tsv/csv` files you put in `src/test/resources`.
 
-You can see an example of dry mode and backtesting in the [Technical analysis chapter](./technical-analysis/overview.md).
+You can see an example of dry mode and backtesting in the [Technical analysis chapter](src/learn/technical-analysis-backup/overview.md).
 

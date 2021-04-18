@@ -13,7 +13,6 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -59,7 +58,7 @@ public class ExchangeServiceTest {
 
 		// ====================================symbols=========================================================================
 		// Tests results.
-		assertEquals(expectedMinimumNumberOfAvailableCurrencyPairs, currencyPairs.size());
+		assertTrue(expectedMinimumNumberOfAvailableCurrencyPairs <= currencyPairs.size());
 
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO("ETH", "USD")));
 		assertTrue(currencyPairs.contains(new CurrencyPairDTO(ETH, USD)));

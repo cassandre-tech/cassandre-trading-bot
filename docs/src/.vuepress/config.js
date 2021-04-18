@@ -73,7 +73,8 @@ module.exports = {
                 items: [
                     {text: 'Overview', link: '/why-cassandre/overview'},
                     {text: 'Architecture', link: '/why-cassandre/architecture'},
-                    {text: 'Features & roadmap', link: '/why-cassandre/features-and-roadmap'}
+                    {text: 'Features & roadmap', link: '/why-cassandre/features-and-roadmap'},
+                    {text: 'Supported exchanges', link: '/why-cassandre/supported-cryptocurrency-exchanges'}
                 ]
             },
             {
@@ -91,15 +92,8 @@ module.exports = {
                         ]
                     },
                     {
-                        text: 'Technical analysis', items: [
-                            {text: 'Overview', link: '/learn/technical-analysis/overview'},
-                            {text: 'Create the project', link: '/learn/technical-analysis/create-the-project'},
-                            {text: 'Create your strategy', link: '/learn/technical-analysis/create-your-strategy'},
-                            {text: 'React to signals', link: '/learn/technical-analysis/react-to-signals'},
-                            {
-                                text: 'Backtest your strategy',
-                                link: '/learn/technical-analysis/backtest-your-trading-strategy'
-                            },
+                        text: 'Advanced', items: [
+                            {text: 'Technical analysis', link: '/learn/technical-analysis'},
                         ]
                     }
                 ]
