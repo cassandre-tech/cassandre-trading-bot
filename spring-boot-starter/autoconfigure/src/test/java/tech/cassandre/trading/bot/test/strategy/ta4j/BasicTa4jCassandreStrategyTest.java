@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J_STRATEGY;
-import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.ta4j.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Strategy - Basic ta4j cassandre strategy")
@@ -56,8 +56,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         assertTrue(strategyInDatabase.isPresent());
         assertEquals(BASIC_TA4J_STRATEGY, strategyInDatabase.get().getType());
 
-        // Check received data.
-        await().untilAsserted(() -> assertEquals(2, strategy.getAccounts().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy.getAccounts().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getOrders().size()));
         await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));
         await().untilAsserted(() -> assertEquals(15, strategy.getTickersUpdateReceived().size()));
@@ -78,7 +77,6 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         // 1 BTC = 390 UST.
         final AccountDTO account = strategy.getAccounts().get("03");
         assertNotNull(account);
-        // strategy.getAccounts().forEach((s, accountDTO) -> System.out.println(s + " : " + accountDTO));
         strategy.getAccounts().remove("01");
 
         // Check canBuy().

@@ -86,8 +86,8 @@ public class OrderFluxTestMock extends BaseMock {
         LimitOrder order000001 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("11"),   // OriginalAmount.
-                XCHANGE_ETH_BTC,                 // Instrument.
-                "ORDER_000001",             // ID.
+                XCHANGE_ETH_BTC,            // Instrument.
+                "ORDER_000001",         // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
@@ -100,7 +100,7 @@ public class OrderFluxTestMock extends BaseMock {
         LimitOrder order000002 = new LimitOrder(
                 Order.OrderType.BID,        // Type.
                 new BigDecimal("22"),   // OriginalAmount.
-                XCHANGE_ETH_USDT,                 // Instrument.
+                XCHANGE_ETH_USDT,           // Instrument.
                 "ORDER_000002",          // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
@@ -114,7 +114,7 @@ public class OrderFluxTestMock extends BaseMock {
         LimitOrder order000003 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("33"),   // OriginalAmount.
-                XCHANGE_ETH_BTC,                 // Instrument.
+                XCHANGE_ETH_BTC,            // Instrument.
                 "ORDER_000003",          // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
