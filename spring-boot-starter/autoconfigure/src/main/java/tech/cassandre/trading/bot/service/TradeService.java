@@ -93,9 +93,8 @@ public interface TradeService {
     /**
      * Get trades from exchange.
      *
-     * @param currencyPairs currency pairs
      * @return list of orders
      */
-    Set<TradeDTO> getTrades(Set<CurrencyPairDTO> currencyPairs);
+    Set<TradeDTO> getTrades();
 
 }

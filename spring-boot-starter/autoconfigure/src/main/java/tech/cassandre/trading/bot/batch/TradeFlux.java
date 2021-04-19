@@ -61,7 +61,7 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
         Set<TradeDTO> newValues = new LinkedHashSet<>();
 
         // Finding which trades has been updated.
-        tradeService.getTrades(currencyPairs)
+        tradeService.getTrades()
                 .stream().filter(t -> orderRepository.findByOrderId(t.getOrderId()).isPresent())    // We only accept trades with order present in database
                 .forEach(trade -> {
                     logger.debug("TradeFlux - Treating trade : {}", trade.getTradeId());

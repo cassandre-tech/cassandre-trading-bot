@@ -172,7 +172,7 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         replyGetTrades.add(TradeDTO.builder().tradeId("0000001").orderId("000001").type(BID).currencyPair(ETH_BTC).timestamp(createZonedDateTime("01-01-2020")).build());      // Trade 01.
         replyGetTrades.add(TradeDTO.builder().tradeId("0000002").orderId("000001").type(BID).currencyPair(ETH_BTC).timestamp(createZonedDateTime("01-02-2020")).build());      // Trade 02.
         replyGetTrades.add(TradeDTO.builder().tradeId("0000003").orderId("000001").type(BID).currencyPair(ETH_BTC).timestamp(createZonedDateTime("01-03-2020")).build());      // Trade 03.
-        given(service.getTrades(any())).willReturn(replyGetTrades);
+        given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;
     }

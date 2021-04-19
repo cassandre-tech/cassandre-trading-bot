@@ -282,7 +282,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<TradeDTO> getTrades(final Set<CurrencyPairDTO> currencyPairs) {
+    public final Set<TradeDTO> getTrades() {
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(tradeMapper::mapToTradeDTO)

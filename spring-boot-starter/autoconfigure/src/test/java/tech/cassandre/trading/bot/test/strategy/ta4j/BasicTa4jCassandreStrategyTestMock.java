@@ -281,7 +281,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         replyGetTrades.add(TradeDTO.builder().tradeId("0000001").orderId("000001").type(BID).currencyPair(BTC_USDT).build());      // Trade 01.
         replyGetTrades.add(TradeDTO.builder().tradeId("0000002").orderId("000002").type(BID).currencyPair(BTC_USDT).build());      // Trade 02.
         replyGetTrades.add(TradeDTO.builder().tradeId("0000003").orderId("000003").type(BID).currencyPair(BTC_USDT).build());      // Trade 03.
-        given(service.getTrades(any())).willReturn(replyGetTrades);
+        given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;
     }

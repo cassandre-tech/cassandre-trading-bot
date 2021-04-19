@@ -173,13 +173,13 @@ public class TradeServiceTest extends BaseTest {
         // Check that the two orders appears in the trade history.
         assertTrue(result1.isSuccessful());
         assertNotNull(result1.getOrder().getOrderId());
-        await().untilAsserted(() -> assertTrue(tradeService.getTrades(Collections.singleton(cp)).stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
         assertTrue(result2.isSuccessful());
         assertNotNull(result2.getOrder().getOrderId());
-        await().untilAsserted(() -> assertTrue(tradeService.getTrades(Collections.singleton(cp)).stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
 
         // Retrieve trade & test values.
-        final Optional<TradeDTO> t = tradeService.getTrades(Collections.singleton(cp))
+        final Optional<TradeDTO> t = tradeService.getTrades()
                 .stream()
                 .filter(trade -> trade.getOrderId().equals(result1.getOrder().getOrderId()))
                 .findFirst();

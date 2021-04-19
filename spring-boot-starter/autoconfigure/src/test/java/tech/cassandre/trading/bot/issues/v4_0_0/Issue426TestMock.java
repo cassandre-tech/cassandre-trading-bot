@@ -92,7 +92,7 @@ public class Issue426TestMock extends BaseTest {
         TradeService service = mock(TradeService.class);
 
         // getTrades() replies.
-        given(service.getTrades(any())).willReturn(
+        given(service.getTrades()).willReturn(
                 Set.of(TradeDTO.builder()
                                 .tradeId("TRADE_000001")
                                 .type(ASK)

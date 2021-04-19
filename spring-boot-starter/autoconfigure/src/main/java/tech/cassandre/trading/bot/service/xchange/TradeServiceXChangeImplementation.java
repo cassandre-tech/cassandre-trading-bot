@@ -4,6 +4,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -244,7 +245,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<TradeDTO> getTrades(final Set<CurrencyPairDTO> currencyPairs) {
+    public final Set<TradeDTO> getTrades() {
         logger.debug("TradeService - Getting trades from exchange");
         // Query trades from the last 24 jours (24 hours because of Binance).
         TradeHistoryParamsAll params = new TradeHistoryParamsAll();
@@ -252,6 +253,14 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         Date startDate = DateUtils.addDays(now, -1);
         params.setStartTime(startDate);
         params.setEndTime(now);
+
+        // We only ask for trades about currency pairs that was used in orders.
+        final LinkedHashSet<CurrencyPairDTO> currencyPairs = orderRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(Order::getCurrencyPair)
+                .distinct()
+                .map(currencyMapper::mapToCurrencyPairDTO)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         Set<TradeDTO> results = new LinkedHashSet<>();
         // Set currency pairs (required for exchanges like Gemini or Binance).

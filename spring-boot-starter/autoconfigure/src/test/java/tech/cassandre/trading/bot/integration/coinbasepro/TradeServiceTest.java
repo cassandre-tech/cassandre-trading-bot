@@ -183,12 +183,12 @@ public class TradeServiceTest extends BaseTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        await().untilAsserted(() -> assertTrue(tradeService.getTrades(Set.of(cp)).stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
         assertNotNull(result2.getOrder().getOrderId());
-        await().untilAsserted(() -> assertTrue(tradeService.getTrades(Set.of(cp)).stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
 
         // Retrieve trade & test values.
-        final Optional<TradeDTO> t = tradeService.getTrades(Set.of(cp))
+        final Optional<TradeDTO> t = tradeService.getTrades()
                 .stream()
                 .filter(trade -> trade.getOrderId().equals(result1.getOrder().getOrderId()))
                 .findFirst();
