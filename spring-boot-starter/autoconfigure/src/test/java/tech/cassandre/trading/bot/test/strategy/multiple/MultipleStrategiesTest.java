@@ -286,6 +286,7 @@ public class MultipleStrategiesTest extends BaseTest {
         final long position2Id = position2Result.getPosition().getId();
         final long position2PositionId = position2Result.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
 
         // Check positionId & positionId.
         assertEquals(2, position2Id);
