@@ -84,14 +84,14 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
                     // Update trade.
                     tradeMapper.updateTrade(newValue, trade);
                     orderRepository.findByOrderId(newValue.getOrderId())
-                            .ifPresent(order -> trade.setOrder(order.getId()));
+                            .ifPresent(trade::setOrder);
                     valueToSave.set(trade);
                     logger.debug("TradeFlux - Updating trade in database {}", trade);
                 }, () -> {
                     // Create trade.
                     final Trade newTrade = tradeMapper.mapToTrade(newValue);
                     orderRepository.findByOrderId(newValue.getOrderId())
-                            .ifPresent(order -> newTrade.setOrder(order.getId()));
+                            .ifPresent(newTrade::setOrder);
                     valueToSave.set(newTrade);
                     logger.debug("TradeFlux - Creating trade in database {}", newTrade);
                 });

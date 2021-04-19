@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -51,6 +52,9 @@ public class TradeDTO {
 
     /** The id of the order responsible for execution of this trade. */
     String orderId;
+
+    /** Order. */
+    Order order;
 
     /** Currency pair. */
     CurrencyPairDTO currencyPair;

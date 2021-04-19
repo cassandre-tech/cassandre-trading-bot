@@ -111,9 +111,9 @@ public class Order extends BaseDomain {
     private ZonedDateTime timestamp;
 
     /** All trades related to order. */
-    @OneToMany(fetch = EAGER)
+    @OneToMany(mappedBy = "order", fetch = EAGER)
     @OrderBy("timestamp")
-    @JoinColumn(name = "FK_ORDER_ID", updatable = false)
+    // @JoinColumn(name = "FK_ORDER_ID", updatable = false)
     private Set<Trade> trades = new LinkedHashSet<>();
 
     @Override
