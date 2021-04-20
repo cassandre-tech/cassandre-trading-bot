@@ -249,7 +249,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         tickerFlux.updateRequestedCurrencyPairs(currencyPairs);
         final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
-        tradeFlux.addCurrencyPairs(currencyPairs);
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
         // =============================================================================================================
         // Connecting flux.
