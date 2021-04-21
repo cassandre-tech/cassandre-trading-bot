@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.strategy.ta4j;
 
+import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -141,6 +142,10 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     @Primary
     public MarketService marketService() {
         MarketService service = mock(MarketService.class);
+
+        // We don't use the getTickers method.
+        given(service.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
+
         // Returns three values.
         given(service.getTicker(BTC_USDT)).willReturn(
                 Optional.of(TickerDTO.builder().currencyPair(BTC_USDT)

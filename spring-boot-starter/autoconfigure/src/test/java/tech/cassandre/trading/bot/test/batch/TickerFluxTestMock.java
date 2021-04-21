@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.batch;
 
+import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.test.context.TestConfiguration;
 import tech.cassandre.trading.bot.test.util.junit.BaseMock;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -17,6 +19,9 @@ public class TickerFluxTestMock extends BaseMock {
     @Override
     public MarketDataService getXChangeMarketDataServiceMock() throws IOException {
         MarketDataService marketService = mock(MarketDataService.class);
+
+        // We don't use the getTickers method.
+        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
 
         // Replies for ETH / BTC.
         final Date date = new Date();

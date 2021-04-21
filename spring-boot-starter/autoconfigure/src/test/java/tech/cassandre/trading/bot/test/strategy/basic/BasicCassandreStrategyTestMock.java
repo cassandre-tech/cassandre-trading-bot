@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.strategy.basic;
 
+import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -140,6 +141,10 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
     @Primary
     public MarketService marketService() {
         MarketService service = mock(MarketService.class);
+
+        // We don't use the getTickers method.
+        given(service.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
+
         // Returns three values.
         given(service.getTicker(ETH_BTC)).willReturn(
                 BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("1")),

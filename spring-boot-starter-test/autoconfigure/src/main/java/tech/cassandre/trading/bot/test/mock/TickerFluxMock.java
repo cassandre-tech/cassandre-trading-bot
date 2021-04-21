@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.mock;
 
+import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
@@ -32,6 +33,8 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -80,6 +83,9 @@ public class TickerFluxMock {
     public MarketService marketService() {
         // Creates the mock.
         MarketService marketService = mock(MarketService.class);
+
+        // We don't use the getTickers method.
+        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in this mode"));
 
         // For every files.
         getFilesToLoad()

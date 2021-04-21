@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.service.dry;
 
+import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -30,6 +32,9 @@ public class TradeServiceDryModeTestMock {
     public MarketService marketService() {
         // Creates the mock.
         MarketService marketService = mock(MarketService.class);
+
+        // We don't use the getTickers method.
+        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
 
         // Replies for ETH / BTC.
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);

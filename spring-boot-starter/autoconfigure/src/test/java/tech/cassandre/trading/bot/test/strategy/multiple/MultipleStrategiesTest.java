@@ -361,6 +361,7 @@ public class MultipleStrategiesTest extends BaseTest {
         final long position4Id = position4Result.getPosition().getId();
         final long position4PositionId = position4Result.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position4Id).getStatus()));
+        TimeUnit.SECONDS.sleep(10);
 
         // Check positionId & positionId.
         assertEquals(3, position3Id);
@@ -458,11 +459,7 @@ public class MultipleStrategiesTest extends BaseTest {
         // Position 4 - Bought 0.1 ETH for 200 USDT - ETH/USDT : 2000.
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_USDT).last(new BigDecimal("20000")).build());
-        try {
-            TimeUnit.SECONDS.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        TimeUnit.SECONDS.sleep(10);
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position3Id).getStatus()));
 
         // Check position status.
