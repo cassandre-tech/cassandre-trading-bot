@@ -14,21 +14,17 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Ticker flux - push {@link TickerDTO}.
  */
 public class TickerFlux extends BaseExternalFlux<TickerDTO> {
 
-    /** Indicates that the getTickers method from market service is available for the exchange. */
-    private AtomicBoolean getTickersAvailable = new AtomicBoolean(true);
-
     /** Market service. */
     private final MarketService marketService;
 
     /** Cycle iterator over requested currency pairs. */
-    private Set<CurrencyPairDTO> currencyPairs = new LinkedHashSet<>();
+    private final Set<CurrencyPairDTO> currencyPairs = new LinkedHashSet<>();
 
     /** Cycle iterator over requested currency pairs. */
     private Iterator<CurrencyPairDTO> currencyPairsIterator;

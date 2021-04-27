@@ -19,7 +19,6 @@ import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;

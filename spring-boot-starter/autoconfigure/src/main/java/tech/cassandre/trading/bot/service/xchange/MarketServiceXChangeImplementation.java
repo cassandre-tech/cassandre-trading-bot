@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.service.xchange;
 
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.marketdata.params.CurrencyPairsParam;
@@ -10,7 +9,6 @@ import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -62,15 +60,10 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
     public final Set<TickerDTO> getTickers(final Set<CurrencyPairDTO> currencyPairs) {
         try {
             // We create the currency pairs parameters.
-            CurrencyPairsParam params = new CurrencyPairsParam() {
-                @Override
-                public Collection<CurrencyPair> getCurrencyPairs() {
-                    return currencyPairs
-                            .stream()
-                            .map(currencyMapper::mapToCurrencyPair)
-                            .collect(Collectors.toCollection(LinkedList::new));
-                }
-            };
+            CurrencyPairsParam params = () -> currencyPairs
+                    .stream()
+                    .map(currencyMapper::mapToCurrencyPair)
+                    .collect(Collectors.toCollection(LinkedList::new));
 
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
