@@ -38,9 +38,14 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	@Override
 	public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
 		// From all the accounts retrieved by the server, we return the one we used for trading.
-		return accounts.stream()
-				.filter(a -> "trade".equals(a.getName()))
-				.findFirst();
+		if (accounts.size() == 1) {
+			// Used for Gemini integration tests.
+			return accounts.stream().findAny();
+		} else {
+			return accounts.stream()
+					.filter(a -> "trade".equals(a.getName()))
+					.findFirst();
+		}
 	}
 
 	@Override

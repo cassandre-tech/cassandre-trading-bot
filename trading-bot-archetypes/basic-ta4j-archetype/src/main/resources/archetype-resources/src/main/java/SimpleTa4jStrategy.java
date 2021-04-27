@@ -42,9 +42,14 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
         // From all the accounts retrieved by the server, we return the one we used for trading.
-        return accounts.stream()
-                .filter(a -> "trade".equals(a.getName()))
-                .findFirst();
+        if (accounts.size() == 1) {
+            // Used for Gemini integration tests.
+            return accounts.stream().findAny();
+        } else {
+            return accounts.stream()
+                    .filter(a -> "trade".equals(a.getName()))
+                    .findFirst();
+        }
     }
 
     @Override
