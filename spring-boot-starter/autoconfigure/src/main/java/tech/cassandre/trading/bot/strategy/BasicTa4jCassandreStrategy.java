@@ -1,13 +1,16 @@
 package tech.cassandre.trading.bot.strategy;
 
-import com.google.common.base.MoreObjects;
+import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeriesBuilder;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.num.DoubleNum;
+import reactor.core.publisher.BaseSubscriber;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.ta4j.BarAggregator;
+import tech.cassandre.trading.bot.ta4j.DurationBarAggregator;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -15,6 +18,7 @@ import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Basic ta4j strategy.
@@ -31,6 +35,8 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     /** Ta4j Strategy. */
     private final Strategy strategy;
 
+    private final BarAggregator barAggregator = new DurationBarAggregator(getDelayBetweenTwoBars());
+
     /**
      * Constructor.
      */
@@ -44,6 +50,11 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
         // Build the strategy.
         strategy = getStrategy();
+
+        final AggregatedBarSubscriber barSubscriber = new AggregatedBarSubscriber(this::addBarAndCallStrategy);
+
+        barAggregator.getBarFlux().subscribe(barSubscriber);
+        barSubscriber.request(1);
     }
 
     /**
@@ -83,35 +94,25 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
     @Override
     public final void tickerUpdate(final TickerDTO ticker) {
-        // In multi strategies, all tickers are delivered to all strategies, so we filter in here.
-        if (getRequestedCurrencyPairs().contains(ticker.getCurrencyPair())) {
-            getLastTickers().put(ticker.getCurrencyPair(), ticker);
-            // If there is no bar or if the duration between the last bar and the ticker is enough.
-            if (lastAddedBarTimestamp == null
-                    || ticker.getTimestamp().isEqual(lastAddedBarTimestamp.plus(getDelayBetweenTwoBars()))
-                    || ticker.getTimestamp().isAfter(lastAddedBarTimestamp.plus(getDelayBetweenTwoBars()))) {
+        getLastTickers().put(ticker.getCurrencyPair(), ticker);
 
-                // Add the ticker to the series.
-                Number openPrice = MoreObjects.firstNonNull(ticker.getOpen(), 0);
-                Number highPrice = MoreObjects.firstNonNull(ticker.getHigh(), 0);
-                Number lowPrice = MoreObjects.firstNonNull(ticker.getLow(), 0);
-                Number closePrice = MoreObjects.firstNonNull(ticker.getLast(), 0);
-                Number volume = MoreObjects.firstNonNull(ticker.getVolume(), 0);
-                series.addBar(ticker.getTimestamp(), openPrice, highPrice, lowPrice, closePrice, volume);
-                lastAddedBarTimestamp = ticker.getTimestamp();
+        barAggregator.update(ticker.getTimestamp(), ticker.getLast(), ticker.getHigh(), ticker.getLow(), ticker.getVolume());
 
-                // Ask what to do to the strategy.
-                int endIndex = series.getEndIndex();
-                if (strategy.shouldEnter(endIndex)) {
-                    // Our strategy should enter.
-                    shouldEnter();
-                } else if (strategy.shouldExit(endIndex)) {
-                    // Our strategy should exit.
-                    shouldExit();
-                }
-            }
-            onTickerUpdate(ticker);
+        onTickerUpdate(ticker);
+    }
+
+    private Bar addBarAndCallStrategy(Bar bar) {
+        series.addBar(bar);
+
+        int endIndex = series.getEndIndex();
+        if (strategy.shouldEnter(endIndex)) {
+            // Our strategy should enter.
+            shouldEnter();
+        } else if (strategy.shouldExit(endIndex)) {
+            // Our strategy should exit.
+            shouldExit();
         }
+        return bar;
     }
 
     /**
@@ -231,6 +232,22 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      */
     public final BarSeries getSeries() {
         return series;
+    }
+
+    private class AggregatedBarSubscriber extends BaseSubscriber<Bar> {
+
+        private final Function<Bar, Bar> onNextFunction;
+
+        public AggregatedBarSubscriber(Function<Bar, Bar> onNextFunction) {
+            this.onNextFunction = onNextFunction;
+        }
+
+        @Override
+        protected void hookOnNext(Bar value) {
+            super.hookOnNext(value);
+            onNextFunction.apply(value);
+            request(1);
+        }
     }
 
 }
