@@ -21,11 +21,11 @@ import java.util.concurrent.TimeUnit;
 
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.BTC_ETH;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.BTC_USDT;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_USDT;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.KCS_USDT;
+import static tech.cassandre.trading.bot.test.util.junit.BaseDbTest.BTC_ETH;
+import static tech.cassandre.trading.bot.test.util.junit.BaseDbTest.BTC_USDT;
+import static tech.cassandre.trading.bot.test.util.junit.BaseDbTest.ETH_BTC;
+import static tech.cassandre.trading.bot.test.util.junit.BaseDbTest.ETH_USDT;
+import static tech.cassandre.trading.bot.test.util.junit.BaseDbTest.KCS_USDT;
 import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 
 /**

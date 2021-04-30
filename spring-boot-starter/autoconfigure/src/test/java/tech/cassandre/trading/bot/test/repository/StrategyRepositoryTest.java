@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
 })
 @ActiveProfiles("schedule-disabled")
+@Testcontainers
 public class StrategyRepositoryTest {
 
     @Autowired

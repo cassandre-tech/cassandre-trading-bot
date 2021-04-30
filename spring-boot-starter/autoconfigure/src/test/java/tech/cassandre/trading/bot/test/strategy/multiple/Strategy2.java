@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static tech.cassandre.trading.bot.test.strategy.multiple.MultipleStrategiesTest.BTC_ETH;
+import static tech.cassandre.trading.bot.test.strategy.multiple.MultipleStrategiesDbTest.BTC_ETH;
 import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
 
 /**

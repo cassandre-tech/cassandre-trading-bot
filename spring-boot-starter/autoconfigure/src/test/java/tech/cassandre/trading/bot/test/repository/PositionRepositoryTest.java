@@ -7,8 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.test.util.junit.BaseDbTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
@@ -30,11 +33,13 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 
 @SpringBootTest
 @DisplayName("Repository - Position")
-@Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
-})
+//@Configuration({
+//        @Property(key = "spring.datasource.data")
+//})
 @ActiveProfiles("schedule-disabled")
-public class PositionRepositoryTest {
+@Sql(scripts = "classpath:/backup.sql")
+@Testcontainers
+public class PositionRepositoryTest extends BaseDbTest {
 
     @Autowired
     private PositionRepository positionRepository;

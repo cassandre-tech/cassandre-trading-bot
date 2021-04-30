@@ -1,12 +1,12 @@
--- =====================================================================================================================
--- Insert exchange accounts.
-INSERT INTO EXCHANGE_ACCOUNTS (ID, EXCHANGE, ACCOUNT)
-VALUES (1, 'org.knowm.xchange.simulated.SimulatedExchange', 'cassandre.crypto.bot@gmail.com');
-
--- =====================================================================================================================
--- Insert strategies.
-INSERT INTO STRATEGIES (ID, STRATEGY_ID, TYPE, NAME, FK_EXCHANGE_ACCOUNT_ID)
-VALUES (1, '01', 'BASIC_STRATEGY', 'My strategy', 1);
+-- -- =====================================================================================================================
+-- -- Insert exchange accounts.
+-- INSERT INTO EXCHANGE_ACCOUNTS (ID, EXCHANGE, ACCOUNT)
+-- VALUES (1, 'org.knowm.xchange.simulated.SimulatedExchange', 'cassandre.crypto.bot@gmail.com');
+--
+-- -- =====================================================================================================================
+-- -- Insert strategies.
+-- INSERT INTO STRATEGIES (ID, STRATEGY_ID, TYPE, NAME, FK_EXCHANGE_ACCOUNT_ID)
+-- VALUES (1, '01', 'BASIC_STRATEGY', 'My strategy', 1);
 
 -- =====================================================================================================================
 -- Insert orders.

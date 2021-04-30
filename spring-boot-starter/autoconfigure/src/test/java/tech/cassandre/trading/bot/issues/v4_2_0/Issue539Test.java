@@ -21,7 +21,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
-@Import(Issue539TestMock.class)
+@Import(Issue539DbTestMock.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class Issue539Test {
 

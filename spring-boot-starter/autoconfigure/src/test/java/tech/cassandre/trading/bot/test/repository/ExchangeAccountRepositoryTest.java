@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import tech.cassandre.trading.bot.domain.ExchangeAccount;
 import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -23,6 +24,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
 })
 @ActiveProfiles("schedule-disabled")
+@Testcontainers
 public class ExchangeAccountRepositoryTest {
 
     @Autowired

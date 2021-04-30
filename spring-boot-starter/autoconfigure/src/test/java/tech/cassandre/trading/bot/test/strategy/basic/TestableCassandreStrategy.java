@@ -20,8 +20,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_USDT;
+import static tech.cassandre.trading.bot.test.util.junit.BaseDbTest.ETH_BTC;
+import static tech.cassandre.trading.bot.test.util.junit.BaseDbTest.ETH_USDT;
 
 /**
  * Testable strategy (used for tests).
