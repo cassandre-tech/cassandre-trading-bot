@@ -29,7 +29,7 @@
 			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
-			<version>2.4.4</version>
+			<version>2.4.5</version>
 		</dependency>
 		<dependency>
 			<!-- https://mvnrepository.com/artifact/org.hsqldb/hsqldb -->
@@ -57,7 +57,7 @@
 			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<version>2.4.4</version>
+			<version>2.4.5</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -92,7 +92,7 @@
 				<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.4.4</version>
+				<version>2.4.5</version>
 			</plugin>
 			<!-- Surefire -->
 			<plugin>

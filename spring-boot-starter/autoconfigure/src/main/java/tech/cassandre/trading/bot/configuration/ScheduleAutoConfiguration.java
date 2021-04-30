@@ -25,7 +25,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ScheduleAutoConfiguration extends BaseConfiguration {
 
     /** Await termination in seconds. */
-    private static final int AWAIT_TERMINATION_SECONDS = 120;
+    private static final int AWAIT_TERMINATION_SECONDS = 30;
+
+    /** Scheduler pool size. */
+    private static final int SCHEDULER_POOL_SIZE = 3;
+
+    /** Initial delay before starting threads. */
+    public static final int INITIAL_DELAY = 1000;
 
     /** Indicate that the batch should be running. */
     private final AtomicBoolean enabled = new AtomicBoolean(true);
@@ -70,8 +76,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setAwaitTerminationSeconds(AWAIT_TERMINATION_SECONDS);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
-        // TODO Setting a pool size breaks OrderFluxTest.
-        // scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
+        scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
         scheduler.setErrorHandler(throwable -> {
             try {
                 logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());
@@ -85,7 +90,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /**
      * Recurrent calls the account flux.
      */
-    @Scheduled(fixedDelay = 1)
+    @Scheduled(initialDelay = INITIAL_DELAY, fixedDelay = 1)
     public void accountFluxUpdate() {
         if (enabled.get()) {
             accountFlux.update();
@@ -95,7 +100,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /**
      * Recurrent calls the ticker flux.
      */
-    @Scheduled(fixedDelay = 1)
+    @Scheduled(initialDelay = INITIAL_DELAY, fixedDelay = 1)
     public void tickerFluxUpdate() {
         if (enabled.get()) {
             tickerFlux.update();
@@ -105,7 +110,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /**
      * Recurrent calls the trade flux.
      */
-    @Scheduled(fixedDelay = 1)
+    @Scheduled(initialDelay = INITIAL_DELAY, fixedDelay = 1)
     public void tradeFluxUpdate() {
         if (enabled.get()) {
             orderFlux.update();

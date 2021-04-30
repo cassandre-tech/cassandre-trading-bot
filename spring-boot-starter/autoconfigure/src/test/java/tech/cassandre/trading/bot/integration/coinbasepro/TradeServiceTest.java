@@ -15,13 +15,12 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -183,12 +182,12 @@ public class TradeServiceTest extends BaseTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        await().untilAsserted(() -> assertTrue(tradeService.getTrades(Set.of(cp)).stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
         assertNotNull(result2.getOrder().getOrderId());
-        await().untilAsserted(() -> assertTrue(tradeService.getTrades(Set.of(cp)).stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
+        await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
 
         // Retrieve trade & test values.
-        final Optional<TradeDTO> t = tradeService.getTrades(Set.of(cp))
+        final Optional<TradeDTO> t = tradeService.getTrades()
                 .stream()
                 .filter(trade -> trade.getOrderId().equals(result1.getOrder().getOrderId()))
                 .findFirst();

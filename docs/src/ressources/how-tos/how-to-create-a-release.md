@@ -25,5 +25,5 @@ mvn gitflow:release-finish
 ```
 
 ## Update
-* Close the corresponding [milestone in Github](https://github.com/cassandre-tech/cassandre-trading-bot/milestones).
+* Close the corresponding [milestone in Github](https://github.com/cassandre-tech/cassandre-trading-bot/milestones?direction=asc&sort=due_date&state=open).
 * Write and send a [substack post](https://cassandre.substack.com/publish?utm_source=menu).

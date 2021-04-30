@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.3.3</version>
+            <version>4.3.4</version>
         </dependency>
 
         <!-- XChange -->
@@ -170,7 +170,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Dysprosium-SR18</version>
+                <version>Dysprosium-SR19</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -371,7 +371,7 @@
     <parent>
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
-        <version>4.2.0</version>
+        <version>4.2.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->

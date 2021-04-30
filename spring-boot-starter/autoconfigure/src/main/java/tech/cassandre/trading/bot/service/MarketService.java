@@ -4,6 +4,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service getting information about market price.
@@ -17,5 +18,13 @@ public interface MarketService {
      * @return ticker
      */
     Optional<TickerDTO> getTicker(CurrencyPairDTO currencyPair);
+
+    /**
+     * Returns tickers for currency pairs.
+     *
+     * @param currencyPairs currency pairs
+     * @return tickers
+     */
+    Set<TickerDTO> getTickers(Set<CurrencyPairDTO> currencyPairs);
 
 }

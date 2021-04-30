@@ -15,6 +15,8 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.ZonedDateTime;
 
@@ -45,8 +47,9 @@ public class Trade extends BaseDomain {
     private OrderTypeDTO type;
 
     /** The id of the order responsible for execution of this trade. */
-    @Column(name = "FK_ORDER_ID", updatable = false)
-    private Long order;
+    @ManyToOne
+    @JoinColumn(name = "FK_ORDER_ID", nullable = false)
+    private Order order;
 
     /** The id of the order responsible for execution of this trade. */
     @Column(name = "ORDER_ID")

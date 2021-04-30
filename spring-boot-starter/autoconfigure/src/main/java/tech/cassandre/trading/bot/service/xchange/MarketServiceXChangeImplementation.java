@@ -1,13 +1,21 @@
 package tech.cassandre.trading.bot.service.xchange;
 
+import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.service.marketdata.MarketDataService;
+import org.knowm.xchange.service.marketdata.params.CurrencyPairsParam;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Market service - XChange implementation.
@@ -45,6 +53,34 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
         } catch (InterruptedException e) {
             logger.error("MarketService - InterruptedException {} : {}", currencyPair, e.getMessage());
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public final Set<TickerDTO> getTickers(final Set<CurrencyPairDTO> currencyPairs) {
+        try {
+            // We create the currency pairs parameters.
+            CurrencyPairsParam params = () -> currencyPairs
+                    .stream()
+                    .map(currencyMapper::mapToCurrencyPair)
+                    .collect(Collectors.toCollection(LinkedList::new));
+
+            // Consume a token from the token bucket.
+            // If a token is not available this method will block until the refill adds one to the bucket.
+            getBucket().asScheduler().consume(1);
+
+            logger.debug("MarketService - Getting tickers for {} currency pairs", currencyPairs.size());
+            final List<Ticker> tickers = marketDataService.getTickers(params);
+            return tickers.stream()
+                    .map(tickerMapper::mapToTickerDTO)
+                    .peek(t -> logger.debug("MarketService - Retrieved value : {}", t))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        } catch (IOException e) {
+            logger.error("MarketService - Error retrieving tickers : {}", e.getMessage());
+            return Collections.emptySet();
+        } catch (InterruptedException e) {
+            logger.error("MarketService - InterruptedException : {}", e.getMessage());
+            return Collections.emptySet();
         }
     }
 

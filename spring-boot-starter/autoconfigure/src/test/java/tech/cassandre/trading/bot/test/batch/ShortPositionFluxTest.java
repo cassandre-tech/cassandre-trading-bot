@@ -28,6 +28,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.awaitility.Awaitility.await;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -51,7 +52,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = BEFORE_CLASS)
 @Import(ShortPositionFluxTestMock.class)
 public class ShortPositionFluxTest extends BaseTest {
 
@@ -80,7 +81,7 @@ public class ShortPositionFluxTest extends BaseTest {
     @Test
     @CaseId(91)
     @DisplayName("Check received data")
-    public void checkReceivedData() {
+    public void checkReceivedData() throws InterruptedException {
         // =============================================================================================================
         // Creates short position 1 of 10 ETH (for BTC) - should be OPENING.
         final PositionCreationResultDTO position1Result = strategy.createShortPosition(ETH_BTC,
@@ -481,6 +482,7 @@ public class ShortPositionFluxTest extends BaseTest {
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSING, p.getStatus());
 
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
         p1 = strategy.getPositionByPositionId(position1Id);

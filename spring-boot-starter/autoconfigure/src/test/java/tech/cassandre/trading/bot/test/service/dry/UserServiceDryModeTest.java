@@ -25,7 +25,6 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
@@ -201,8 +200,8 @@ public class UserServiceDryModeTest extends BaseTest {
         // Testing the trade.
         // Amount => 0.02
         // Price => 0.032666
-        with().await().until(() -> tradeService.getTrades(Collections.emptySet()).stream().anyMatch(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())));
-        final Optional<TradeDTO> buyingTrade = tradeService.getTrades(Collections.emptySet())
+        with().await().until(() -> tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())));
+        final Optional<TradeDTO> buyingTrade = tradeService.getTrades()
                 .stream()
                 .filter(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())).findFirst();
         assertTrue(buyingTrade.isPresent());
@@ -254,8 +253,8 @@ public class UserServiceDryModeTest extends BaseTest {
         // Testing the trade.
         // Amount => 0.02
         // Price => 0.032466
-        with().await().until(() -> tradeService.getTrades(Collections.emptySet()).stream().anyMatch(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())));
-        final Optional<TradeDTO> sellingTrade = tradeService.getTrades(Collections.emptySet())
+        with().await().until(() -> tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())));
+        final Optional<TradeDTO> sellingTrade = tradeService.getTrades()
                 .stream()
                 .filter(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())).findFirst();
         assertTrue(sellingTrade.isPresent());

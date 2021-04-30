@@ -1,8 +1,6 @@
 package tech.cassandre.trading.bot.strategy;
 
 import org.mapstruct.factory.Mappers;
-import tech.cassandre.trading.bot.domain.Order;
-import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -35,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -158,7 +155,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
                 .filter(p -> p.getStatus() != CLOSED)
                 .forEach(p -> previousPositionsStatus.put(p.getId(), p.getStatus()));
         // We set the locked amount from database.
-        // TODO Add a test on this.
         this.positionService.getPositions()
                 .stream()
                 .filter(p -> p.getStatus() != CLOSED)
@@ -192,13 +188,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     @Override
     public void tradeUpdate(final TradeDTO trade) {
-        // TODO Optimise this by adding a link to orderDTO in trade.
-        final Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(trade.getTradeId());
-        if (tradeInDatabase.isPresent()) {
-            final Optional<Order> order = orderRepository.findByOrderId(tradeInDatabase.get().getOrderId());
-            if (order.isPresent() && order.get().getStrategy().getStrategyId().equals(strategy.getStrategyId())) {
-                onTradeUpdate(trade);
-            }
+        if (trade.getOrder().getStrategy().getStrategyId().equals(strategy.getStrategyId())) {
+            onTradeUpdate(trade);
         }
     }
 
@@ -358,10 +349,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return trades
      */
     public final Map<String, TradeDTO> getTrades() {
-        final Set<String> orders = getOrders().keySet();
         return tradeRepository.findByOrderByTimestampAsc()
                 .stream()
-                .filter(trade -> orders.contains(trade.getOrderId()))   // TODO Optimise this by adding a link to orderDTO in trade.
+                .filter(trade -> trade.getOrder().getStrategy().getStrategyId().equals(strategy.getStrategyId()))
                 .map(tradeMapper::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getTradeId, tradeDTO -> tradeDTO));
     }

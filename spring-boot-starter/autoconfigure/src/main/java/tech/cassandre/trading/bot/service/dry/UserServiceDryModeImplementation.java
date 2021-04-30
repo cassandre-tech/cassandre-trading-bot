@@ -25,7 +25,6 @@ import java.util.Scanner;
 /**
  * User service (dry mode implementation).
  */
-@SuppressWarnings("DuplicatedCode")
 public class UserServiceDryModeImplementation extends BaseService implements UserService {
 
     /** User file prefix. */
