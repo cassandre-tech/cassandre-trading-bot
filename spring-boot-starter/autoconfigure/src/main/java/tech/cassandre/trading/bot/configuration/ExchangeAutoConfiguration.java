@@ -209,7 +209,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(userService);
-            tickerFlux = new TickerFlux(marketService);
+            tickerFlux = new TickerFlux(applicationContext, marketService);
             orderFlux = new OrderFlux(tradeService, orderRepository);
             tradeFlux = new TradeFlux(tradeService, orderRepository, tradeRepository);
             positionFlux = new PositionFlux(positionRepository, orderRepository);

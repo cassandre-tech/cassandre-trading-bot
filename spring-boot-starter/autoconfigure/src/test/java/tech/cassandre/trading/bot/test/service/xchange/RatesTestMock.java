@@ -10,6 +10,7 @@ import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
@@ -42,6 +43,9 @@ import static org.mockito.Mockito.mock;
 public class RatesTestMock {
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     protected OrderRepository orderRepository;
 
     @Autowired
@@ -59,7 +63,7 @@ public class RatesTestMock {
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
+        return new TickerFlux(applicationContext, marketService());
     }
 
     @Bean

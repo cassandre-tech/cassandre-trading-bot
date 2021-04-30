@@ -1,7 +1,9 @@
 package tech.cassandre.trading.bot.test.service.dry;
 
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.TickerFlux;
@@ -24,10 +26,13 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @TestConfiguration
 public class PositionServiceDryModeTestMock extends BaseTest {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
+        return new TickerFlux(applicationContext, marketService());
     }
 
     @Bean

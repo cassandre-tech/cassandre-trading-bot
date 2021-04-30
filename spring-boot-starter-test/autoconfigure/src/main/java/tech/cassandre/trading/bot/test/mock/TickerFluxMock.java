@@ -5,7 +5,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
@@ -57,6 +59,10 @@ import static org.mockito.Mockito.when;
 @TestConfiguration
 public class TickerFluxMock {
 
+    /** Application context. */
+    @Autowired
+    private ApplicationContext applicationContext;
+
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -75,7 +81,7 @@ public class TickerFluxMock {
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
+        return new TickerFlux(applicationContext, marketService());
     }
 
     @Bean
