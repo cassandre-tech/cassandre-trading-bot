@@ -53,7 +53,6 @@ class DurationBarAggregatorTest {
         assertEquals(15d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
         assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
         assertEquals(3400d, testSubscriber.bars.get(0).getVolume().doubleValue());
-
     }
 
     @DisplayName("Check that aggregation does not happen, when time between bars is equal to last timestamp + distance")
@@ -75,9 +74,7 @@ class DurationBarAggregatorTest {
         assertEquals(10d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
         assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
         assertEquals(100d, testSubscriber.bars.get(0).getVolume().doubleValue());
-
     }
-
 
     ZonedDateTime getTime(String value){
         return LocalDateTime.parse(value, dateTimeFormatter).atZone(ZoneId.systemDefault());

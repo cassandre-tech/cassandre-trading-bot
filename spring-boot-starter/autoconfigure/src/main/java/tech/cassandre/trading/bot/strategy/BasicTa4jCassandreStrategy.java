@@ -35,6 +35,9 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     /** Ta4j Strategy. */
     private final Strategy strategy;
 
+    /**
+     * The bar aggregator.
+     */
     private final BarAggregator barAggregator = new DurationBarAggregator(getDelayBetweenTwoBars());
 
     /**
@@ -101,7 +104,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
         onTickerUpdate(ticker);
     }
 
-    private Bar addBarAndCallStrategy(Bar bar) {
+    private Bar addBarAndCallStrategy(final Bar bar) {
         series.addBar(bar);
 
         int endIndex = series.getEndIndex();
@@ -234,18 +237,28 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
         return series;
     }
 
-    private class AggregatedBarSubscriber extends BaseSubscriber<Bar> {
+    /**
+     * Subscriber to the Bar series.
+     */
+    private static class AggregatedBarSubscriber extends BaseSubscriber<Bar> {
 
-        private final Function<Bar, Bar> onNextFunction;
+        /**
+         * The function to be called when the next bar arrives.
+         */
+        private final Function<Bar, Bar> theNextFunction;
 
-        public AggregatedBarSubscriber(Function<Bar, Bar> onNextFunction) {
-            this.onNextFunction = onNextFunction;
+        AggregatedBarSubscriber(final Function<Bar, Bar> onNextFunction) {
+            this.theNextFunction = onNextFunction;
         }
 
+        /**
+         * Invoke the given function and ask for next bar.
+         * @param value the bar value
+         */
         @Override
-        protected void hookOnNext(Bar value) {
+        protected void hookOnNext(final Bar value) {
             super.hookOnNext(value);
-            onNextFunction.apply(value);
+            theNextFunction.apply(value);
             request(1);
         }
     }
