@@ -25,7 +25,7 @@ jobs:
       - name: Build, run tests, package and deploy to Maven central
         id: package
         run: |
-          mvn package -Dgpg.skip
+          mvn install -Dgpg.skip
 
       # ================================================================================================================
       - name: Retrieve the version
