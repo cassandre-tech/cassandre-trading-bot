@@ -465,7 +465,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param id id
      * @return true if cancelled
      */
-    boolean cancelOrder(long id) {
+    boolean cancelOrder(final long id) {
         final Optional<Order> order = orderRepository.findById(id);
         return order.filter(value -> cancelOrder(value.getOrderId())).isPresent();
     }
@@ -476,7 +476,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param orderId order id
      * @return true if cancelled
      */
-    boolean cancelOrder(String orderId) {
+    boolean cancelOrder(final String orderId) {
         return tradeService.cancelOrder(orderId);
     }
 
