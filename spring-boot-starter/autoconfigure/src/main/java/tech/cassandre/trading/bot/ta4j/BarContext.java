@@ -86,10 +86,18 @@ class BarContext {
         this.low = newLow != null ? newLow.doubleValue() : close;
         this.high = newHigh != null ? newHigh.doubleValue() : close;
         this.open = newOpen != null ? newOpen.doubleValue() : close;
+
+        calculateInitialVolume(newVolume);
+    }
+
+    private void calculateInitialVolume(Number newVolume) {
+        if (newVolume == null) {
+            return;
+        }
         if (isDurationMoreThanDay()) {
             this.volume = newVolume.doubleValue();
         } else {
-            this.initialDayVolume = newVolume != null ? newVolume.doubleValue() : 0;
+            this.initialDayVolume = newVolume.doubleValue();
         }
     }
 
@@ -115,14 +123,19 @@ class BarContext {
         low = Math.min(low, newLow == null ? close : newLow.doubleValue());
         high = Math.max(high, newHigh == null ? close : newHigh.doubleValue());
 
-        if (newVolume != null) {
-            if (!isDurationMoreThanDay() && initialDayVolume > 0) {
-                volume = newVolume.doubleValue() - initialDayVolume;
-            } else {
-                volume = volume + newVolume.doubleValue();
-            }
-        }
+        calculateVolume(newVolume);
         updatesReceived++;
+    }
+
+    private void calculateVolume(Number newVolume) {
+        if (newVolume == null) {
+            return;
+        }
+        if (!isDurationMoreThanDay() && initialDayVolume >= 0) {
+            volume = newVolume.doubleValue() - initialDayVolume;
+        } else {
+            volume = volume + newVolume.doubleValue();
+        }
     }
 
     /**
