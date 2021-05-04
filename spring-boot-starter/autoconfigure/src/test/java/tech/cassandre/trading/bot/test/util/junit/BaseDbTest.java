@@ -52,7 +52,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 /**
  * Base for tests.
  */
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(initializers = BaseDbTest.DockerPostgreDataSourceInitializer.class)
 public class BaseDbTest {
 
