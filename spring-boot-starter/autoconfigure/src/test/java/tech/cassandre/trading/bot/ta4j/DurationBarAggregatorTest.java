@@ -38,30 +38,30 @@ class DurationBarAggregatorTest {
     @DisplayName("Check intra bar aggregation")
     @Test
     public void shouldAggregateBars() {
-        aggregator.update(getTime("2021-01-01 10:00:00"), 10, 15, 9, 100);
-        aggregator.update(getTime("2021-01-01 10:01:00"), 3, 10, 2, 300);
-        aggregator.update(getTime("2021-01-01 10:02:00"), 15, 16, 10, 3000);
-        aggregator.update(getTime("2021-01-01 10:05:00"), 20, 30, 16, 300);
+        aggregator.update(getTime("2021-01-01 10:00:00"), 10,  100);
+        aggregator.update(getTime("2021-01-01 10:01:00"), 3,  300);
+        aggregator.update(getTime("2021-01-01 10:02:00"), 15,  3000);
+        aggregator.update(getTime("2021-01-01 10:05:00"), 20,  3300);
 
 
         assertTrue(testSubscriber.subscribed);
         testSubscriber.request(1);
 
         assertEquals(1, testSubscriber.bars.size());
-        assertEquals(16d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
-        assertEquals(2d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
+        assertEquals(3d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
         assertEquals(15d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
         assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
-        assertEquals(3400d, testSubscriber.bars.get(0).getVolume().doubleValue());
+        assertEquals(2900d, testSubscriber.bars.get(0).getVolume().doubleValue());
     }
 
     @DisplayName("Check that aggregation does not happen, when time between bars is equal to last timestamp + distance")
     @Test
     public void shouldNotAggregateBars() {
-        aggregator.update(getTime("2021-01-01 00:00:00"), 10, 15, 9, 100);
-        aggregator.update(getTime("2021-01-01 00:05:00"), 3, 10, 2, 300);
-        aggregator.update(getTime("2021-01-01 00:10:00"), 15, 16, 10, 3000);
-        aggregator.update(getTime("2021-01-01 00:15:00"), 20, 30, 16, 300);
+        aggregator.update(getTime("2021-01-01 00:00:00"), 10,100);
+        aggregator.update(getTime("2021-01-01 00:05:00"), 3,300);
+        aggregator.update(getTime("2021-01-01 00:10:00"), 15,1000);
+        aggregator.update(getTime("2021-01-01 00:15:00"), 20,300);
 
 
         assertTrue(testSubscriber.subscribed);
@@ -69,8 +69,8 @@ class DurationBarAggregatorTest {
 
         assertEquals(3, testSubscriber.bars.size());
 
-        assertEquals(15d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
-        assertEquals(9d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
         assertEquals(10d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
         assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
         assertEquals(100d, testSubscriber.bars.get(0).getVolume().doubleValue());

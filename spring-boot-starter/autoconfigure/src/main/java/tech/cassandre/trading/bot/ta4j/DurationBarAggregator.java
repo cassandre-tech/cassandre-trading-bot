@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.ta4j;
 
+import lombok.extern.log4j.Log4j2;
 import org.ta4j.core.Bar;
-import org.ta4j.core.BaseBar;
 import reactor.core.publisher.DirectProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
 /**
  * Implementation of the {@link BarAggregator} based on {@link Duration}.
  */
+@Log4j2
 public class DurationBarAggregator implements BarAggregator {
 
     /**
@@ -46,23 +47,21 @@ public class DurationBarAggregator implements BarAggregator {
      * Updates the bar data.
      * @param timestamp time of the tick
      * @param close close price
-     * @param high high price
-     * @param low low price
      * @param volume volume
      */
     @Override
-    public void update(final ZonedDateTime timestamp, final Number close, final Number high, final Number low,
-                       final Number volume) {
+    public void update(final ZonedDateTime timestamp, final Number close, final Number volume) {
         if (ctx == null) {
-            ctx = new BarContext(duration, timestamp, low, high, 0, close, volume);
+            ctx = new BarContext(duration, timestamp, null, null, 0, close, volume);
         } else if (ctx.isAfter(timestamp)) {
             // we have new bar starting - emit current ctx
-            sink.next(new BaseBar(duration, ctx.getEndTime(), ctx.getOpen(), ctx.getHigh(),
-                    ctx.getLow(), ctx.getClose(), ctx.getVolume()));
+            final Bar newBar = ctx.toBar();
+            log.debug("Emitting new bar {}", newBar);
+            sink.next(newBar);
             // take the close and start counting new context
-            ctx = new BarContext(duration, timestamp, low, high, ctx.getClose(), close, volume);
+            ctx = new BarContext(duration, timestamp, null, null, ctx.getClose(), close, volume);
         } else {
-            ctx.update(low, high, close, volume);
+            ctx.update(null, null, close, volume);
         }
     }
 

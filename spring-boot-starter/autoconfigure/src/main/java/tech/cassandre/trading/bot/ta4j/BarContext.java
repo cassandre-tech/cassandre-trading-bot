@@ -3,6 +3,8 @@ package tech.cassandre.trading.bot.ta4j;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import org.ta4j.core.Bar;
+import org.ta4j.core.BaseBar;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -15,6 +17,11 @@ import java.time.ZonedDateTime;
 @EqualsAndHashCode
 @Log4j2
 class BarContext {
+
+    /**
+     * The number of updates received in the context.
+     */
+    private int updatesReceived = 0;
     /**
      * The duration.
      */
@@ -44,9 +51,14 @@ class BarContext {
      */
     private double close;
     /**
-     * Volume.
+     * Running Volume.
      */
-    private double volume;
+    private double volume = 0;
+
+    /**
+     * Initial volume received at bar open. Only used, when bar duration is < 24h
+     */
+    private double initialDayVolume;
 
 
     /**
@@ -74,13 +86,26 @@ class BarContext {
         this.low = newLow != null ? newLow.doubleValue() : close;
         this.high = newHigh != null ? newHigh.doubleValue() : close;
         this.open = newOpen != null ? newOpen.doubleValue() : close;
-        this.volume = newVolume != null ? newVolume.doubleValue() : 0;
+        if (isDurationMoreThanDay()) {
+            this.volume = newVolume.doubleValue();
+        } else {
+            this.initialDayVolume = newVolume != null ? newVolume.doubleValue() : 0;
+        }
     }
 
     public boolean isAfter(final ZonedDateTime timestamp) {
         return timestamp.isAfter(endTime.minus(Duration.ofSeconds(1)));
     }
 
+    /**
+     * The contract of the update call is that it is called without timestamp
+     * and is always within bounds of one bar duration.
+     *
+     * @param newLow    new low to be updated (might be null)
+     * @param newHigh   new high to be updated (might be null)
+     * @param newClose  new close - mandatory
+     * @param newVolume new volume to be updated (might be null)
+     */
     @SuppressWarnings("checkstyle:AvoidInlineConditionals")
     public void update(final Number newLow, final Number newHigh, final Number newClose, final Number newVolume) {
         if (newClose == null) {
@@ -90,7 +115,28 @@ class BarContext {
         low = Math.min(low, newLow == null ? close : newLow.doubleValue());
         high = Math.max(high, newHigh == null ? close : newHigh.doubleValue());
 
-        volume = volume + (newVolume == null ? 0 : newVolume.doubleValue());
+        if (newVolume != null) {
+            if (!isDurationMoreThanDay() && initialDayVolume > 0) {
+                volume = newVolume.doubleValue() - initialDayVolume;
+            } else {
+                volume = volume + newVolume.doubleValue();
+            }
+        }
+        updatesReceived++;
+    }
+
+    /**
+     * Gets the {@link Bar} object from the context.
+     * @return the {@link Bar}
+     */
+    @SuppressWarnings("checkstyle:AvoidInlineConditionals")
+    public Bar toBar() {
+        return new BaseBar(duration, endTime, open, high, low, close,
+                volume == 0 && updatesReceived == 0 ? initialDayVolume : volume);
+    }
+
+    boolean isDurationMoreThanDay() {
+        return duration.compareTo(Duration.ofDays(1)) > 0;
     }
 
 }
