@@ -90,7 +90,7 @@ class BarContext {
         calculateInitialVolume(newVolume);
     }
 
-    private void calculateInitialVolume(Number newVolume) {
+    private void calculateInitialVolume(final Number newVolume) {
         if (newVolume == null) {
             return;
         }
@@ -127,7 +127,7 @@ class BarContext {
         updatesReceived++;
     }
 
-    private void calculateVolume(Number newVolume) {
+    private void calculateVolume(final Number newVolume) {
         if (newVolume == null) {
             return;
         }
