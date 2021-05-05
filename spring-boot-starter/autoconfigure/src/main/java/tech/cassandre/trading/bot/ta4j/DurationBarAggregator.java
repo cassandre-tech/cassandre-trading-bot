@@ -61,7 +61,7 @@ public class DurationBarAggregator implements BarAggregator {
             // take the close and start counting new context
             ctx = new BarContext(duration, timestamp, ctx.getClose(), close, volume);
         } else {
-            ctx.update( close, volume);
+            ctx.update(close, volume);
         }
     }
 
