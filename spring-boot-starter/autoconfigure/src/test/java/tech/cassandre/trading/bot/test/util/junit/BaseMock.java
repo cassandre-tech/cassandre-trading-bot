@@ -9,6 +9,7 @@ import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
@@ -42,6 +43,9 @@ import static org.mockito.Mockito.mock;
  */
 public class BaseMock extends BaseTest {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     /** Service rate. */
     public static final int SERVICE_RATE = 900;
 
@@ -63,7 +67,7 @@ public class BaseMock extends BaseTest {
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
+        return new TickerFlux(applicationContext, marketService());
     }
 
     @Bean

@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.issues.v4_0_0;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.OrderFlux;
@@ -36,6 +37,9 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 public class Issue427TestMock extends BaseTest {
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
@@ -44,7 +48,7 @@ public class Issue427TestMock extends BaseTest {
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
+        return new TickerFlux(applicationContext, marketService());
     }
 
     @Bean
