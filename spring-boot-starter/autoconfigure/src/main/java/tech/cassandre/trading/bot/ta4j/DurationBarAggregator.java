@@ -52,16 +52,16 @@ public class DurationBarAggregator implements BarAggregator {
     @Override
     public void update(final ZonedDateTime timestamp, final Number close, final Number volume) {
         if (ctx == null) {
-            ctx = new BarContext(duration, timestamp, null, null, 0, close, volume);
+            ctx = new BarContext(duration, timestamp, close, close, volume);
         } else if (ctx.isAfter(timestamp)) {
             // we have new bar starting - emit current ctx
             final Bar newBar = ctx.toBar();
             log.debug("Emitting new bar {}", newBar);
             sink.next(newBar);
             // take the close and start counting new context
-            ctx = new BarContext(duration, timestamp, null, null, ctx.getClose(), close, volume);
+            ctx = new BarContext(duration, timestamp, ctx.getClose(), close, volume);
         } else {
-            ctx.update(null, null, close, volume);
+            ctx.update( close, volume);
         }
     }
 

@@ -66,14 +66,12 @@ class BarContext {
      *
      * @param newDuration  the duration
      * @param newStartTime start time of the bar
-     * @param newLow       low price
-     * @param newHigh      high price
      * @param newOpen      open price
      * @param newClose     close price
      * @param newVolume    volume
      */
     @SuppressWarnings("checkstyle:AvoidInlineConditionals")
-    BarContext(final Duration newDuration, final ZonedDateTime newStartTime, final Number newLow, final Number newHigh,
+    BarContext(final Duration newDuration, final ZonedDateTime newStartTime,
                final Number newOpen, final Number newClose, final Number newVolume) {
         if (newDuration == null || newStartTime == null) {
             throw new IllegalArgumentException("Cannot construct bar context without duration and timestamp specified");
@@ -82,10 +80,11 @@ class BarContext {
         this.startTime = newStartTime;
         this.endTime = startTime.plus(duration);
         this.close = newClose != null ? newClose.doubleValue() : 0;
-
-        this.low = newLow != null ? newLow.doubleValue() : close;
-        this.high = newHigh != null ? newHigh.doubleValue() : close;
         this.open = newOpen != null ? newOpen.doubleValue() : close;
+
+        this.low = Math.min(close, open);
+        this.high = Math.max(close, open);
+
 
         calculateInitialVolume(newVolume);
     }
@@ -109,19 +108,17 @@ class BarContext {
      * The contract of the update call is that it is called without timestamp
      * and is always within bounds of one bar duration.
      *
-     * @param newLow    new low to be updated (might be null)
-     * @param newHigh   new high to be updated (might be null)
      * @param newClose  new close - mandatory
      * @param newVolume new volume to be updated (might be null)
      */
     @SuppressWarnings("checkstyle:AvoidInlineConditionals")
-    public void update(final Number newLow, final Number newHigh, final Number newClose, final Number newVolume) {
+    public void update(final Number newClose, final Number newVolume) {
         if (newClose == null) {
             throw new IllegalArgumentException("Cannot update bar context without at least specifying close price");
         }
         close = newClose.doubleValue();
-        low = Math.min(low, newLow == null ? close : newLow.doubleValue());
-        high = Math.max(high, newHigh == null ? close : newHigh.doubleValue());
+        low = Math.min(low, close);
+        high = Math.max(high, close);
 
         calculateVolume(newVolume);
         updatesReceived++;

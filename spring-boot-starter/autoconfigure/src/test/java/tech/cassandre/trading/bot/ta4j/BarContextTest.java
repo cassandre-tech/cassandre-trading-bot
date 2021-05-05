@@ -25,10 +25,10 @@ class BarContextTest {
     @Test
     public void testContextCreation() {
         BarContext ctx = new BarContext(Duration.ofMinutes(1), getTime("2021-10-11 10:00:00"),
-                1, 3, 1, 2, 100);
+                1,  2, 100);
 
         assertEquals(1d, ctx.getLow());
-        assertEquals(3d, ctx.getHigh());
+        assertEquals(2d, ctx.getHigh());
         assertEquals(2d, ctx.getClose());
         assertEquals(0d, ctx.getVolume());
         assertEquals(getTime("2021-10-11 10:00:00").plusMinutes(1), ctx.getEndTime());
@@ -38,7 +38,7 @@ class BarContextTest {
     @Test
     public void testContextCreationWithNullsAndDefaultCloseValue() {
         BarContext ctx = new BarContext(Duration.ofMinutes(1), getTime("2021-10-11 10:00:00"),
-                null, null, null, 2, null);
+                 null, 2, null);
 
         assertEquals(2d, ctx.getLow());
         assertEquals(2d, ctx.getHigh());
@@ -51,7 +51,7 @@ class BarContextTest {
     @Test
     public void testToBar() {
         BarContext ctx = new BarContext(Duration.ofMinutes(1), getTime("2021-10-11 10:00:00"),
-                null, null, null, 2, 100);
+                 null, 2, 100);
 
         Bar bar = ctx.toBar();
 
@@ -66,16 +66,17 @@ class BarContextTest {
     @Test
     public void testContextCreationWithNulls() {
         assertThrows(IllegalArgumentException.class, ()-> new BarContext(null, null,
-                null, null, null, null, null));
+                 null, null, null));
     }
 
     @DisplayName("Check bar context is updated correctly")
     @Test
     public void testUpdate() {
         BarContext ctx = new BarContext(Duration.ofMinutes(1), getTime("2021-10-11 10:00:00"),
-                1, 3, 1, 2, 100);
+                1,  2, 100);
 
-        ctx.update(2, 5, 4, 200);
+        ctx.update( 5, 200);
+        ctx.update( 4, 200);
 
         assertEquals(1d, ctx.getLow());
         assertEquals(5d, ctx.getHigh());
@@ -88,9 +89,9 @@ class BarContextTest {
     @Test
     public void testUpdateWithCloseAndVolumeOnly() {
         BarContext ctx = new BarContext(Duration.ofMinutes(1), getTime("2021-10-11 10:00:00"),
-                1, 3, 1, 2, 100);
+                1,  10, 100);
 
-        ctx.update(null, null, 10, 200);
+        ctx.update(10, 200);
 
         assertEquals(1d, ctx.getLow());
         assertEquals(10d, ctx.getHigh());
@@ -102,11 +103,11 @@ class BarContextTest {
     @Test
     public void testVolumeAggregation24HDuration() {
         BarContext ctx = new BarContext(Duration.ofHours(24), getTime("2021-10-11 10:00:00"),
-                1, 3, 1, 2, 100);
+                1,  2, 100);
 
-        ctx.update(null, null, 10, 200);
-        ctx.update(null, null, 10, 210);
-        ctx.update(null, null, 10, 250);
+        ctx.update(10, 200);
+        ctx.update(10, 210);
+        ctx.update(10, 250);
 
         assertEquals(1d, ctx.getLow());
         assertEquals(10d, ctx.getHigh());
@@ -118,10 +119,10 @@ class BarContextTest {
     @Test
     public void testVolumeAggregationIntraDayDuration() {
         BarContext ctx = new BarContext(Duration.ofHours(1), getTime("2021-10-11 10:00:00"),
-                1, 3, 1, 2, 100);
+                1,  2, 100);
 
-        ctx.update(null, null, 10, 110);
-        ctx.update(null, null, 11, 115);
+        ctx.update(10, 110);
+        ctx.update(11, 115);
 
         assertEquals(1d, ctx.getLow());
         assertEquals(11d, ctx.getHigh());
@@ -133,7 +134,7 @@ class BarContextTest {
     @Test
     public void testDurationLt1Day() {
         BarContext ctx = new BarContext(Duration.ofHours(1), getTime("2021-10-11 10:00:00"),
-                1, 3, 1, 2, 100);
+                1,  2, 100);
 
         assertFalse(ctx.isDurationMoreThanDay());
     }
@@ -142,7 +143,7 @@ class BarContextTest {
     @Test
     public void testDurationGt1Day() {
         BarContext ctx = new BarContext(Duration.ofDays(7), getTime("2021-10-11 10:00:00"),
-                1, 3, 1, 2, 100);
+                1,  2, 100);
 
         assertTrue(ctx.isDurationMoreThanDay());
     }
@@ -151,9 +152,9 @@ class BarContextTest {
     @Test
     public void testUpdateWithoutClosePrice() {
         BarContext ctx = new BarContext(Duration.ofMinutes(1), getTime("2021-10-11 10:00:00"),
-                1, 3, 1, 2, 100);
+                1,  2, 100);
 
-        assertThrows(IllegalArgumentException.class, ()-> ctx.update(null, null, null, 200));
+        assertThrows(IllegalArgumentException.class, ()-> ctx.update( null, 200));
     }
 
     ZonedDateTime getTime(String value) {

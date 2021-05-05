@@ -51,7 +51,7 @@ class DurationBarAggregatorTest {
         assertEquals(15d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
         assertEquals(3d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
         assertEquals(15d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
-        assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
+        assertEquals(10, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
         assertEquals(2900d, testSubscriber.bars.get(0).getVolume().doubleValue());
     }
 
@@ -69,11 +69,27 @@ class DurationBarAggregatorTest {
 
         assertEquals(3, testSubscriber.bars.size());
 
-        assertEquals(10d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
-        assertEquals(10d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
-        assertEquals(10d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
-        assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
-        assertEquals(100d, testSubscriber.bars.get(0).getVolume().doubleValue());
+        Bar firstBar = testSubscriber.bars.get(0);
+        Bar secondBar = testSubscriber.bars.get(1);
+        Bar thirdBar = testSubscriber.bars.get(2);
+        
+        assertEquals(10d, firstBar.getHighPrice().doubleValue());
+        assertEquals(10d, firstBar.getLowPrice().doubleValue());
+        assertEquals(10d, firstBar.getClosePrice().doubleValue());
+        assertEquals(10d, firstBar.getOpenPrice().doubleValue());
+        assertEquals(100d, firstBar.getVolume().doubleValue());
+
+        assertEquals(10d, secondBar.getHighPrice().doubleValue());
+        assertEquals(3d, secondBar.getLowPrice().doubleValue());
+        assertEquals(3d, secondBar.getClosePrice().doubleValue());
+        assertEquals(10d, secondBar.getOpenPrice().doubleValue());
+        assertEquals(300d, secondBar.getVolume().doubleValue());
+
+        assertEquals(15d, thirdBar.getHighPrice().doubleValue());
+        assertEquals(3d, thirdBar.getLowPrice().doubleValue());
+        assertEquals(15d, thirdBar.getClosePrice().doubleValue());
+        assertEquals(3d, thirdBar.getOpenPrice().doubleValue());
+        assertEquals(1000d, thirdBar.getVolume().doubleValue());
     }
 
     ZonedDateTime getTime(String value){
