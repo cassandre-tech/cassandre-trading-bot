@@ -1,8 +1,10 @@
 package tech.cassandre.trading.bot.service.xchange;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.service.trade.params.DefaultCancelOrderByCurrencyPairAndIdParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
@@ -38,13 +40,19 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
 
-    /** Order repository. */
+    /**
+     * Order repository.
+     */
     private final OrderRepository orderRepository;
 
-    /** XChange service. */
+    /**
+     * XChange service.
+     */
     private final org.knowm.xchange.service.trade.TradeService tradeService;
 
-    /** Hashmap used to store orders created locally. */
+    /**
+     * Hashmap used to store orders created locally.
+     */
     private final Map<String, OrderDTO> localOrders = new ConcurrentHashMap<>();
 
     /**
@@ -184,12 +192,13 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final boolean cancelOrder(final String orderId) {
+    public final boolean cancelOrder(final String orderId, final CurrencyPairDTO currencyPair) {
         logger.debug("TradeService - Canceling order {}", orderId);
         if (orderId != null) {
             try {
                 logger.debug("TradeService - Successfully canceled order {}", orderId);
-                return tradeService.cancelOrder(orderId);
+                var params = new DefaultCancelOrderByCurrencyPairAndIdParams(dto2xchange(currencyPair), orderId);
+                return tradeService.cancelOrder(params);
             } catch (Exception e) {
                 logger.error("TradeService - Error canceling order {} : {}", orderId, e.getMessage());
                 return false;
@@ -290,4 +299,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         return results;
     }
 
+    private CurrencyPair dto2xchange(final CurrencyPairDTO source) {
+        return new CurrencyPair(source.getBaseCurrency().getCurrencyCode(), source.getQuoteCurrency().getCurrencyCode());
+    }
 }

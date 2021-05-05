@@ -70,9 +70,10 @@ public interface TradeService {
      * Cancel order.
      *
      * @param orderId order id
+     * @param currencyPair currency pair
      * @return true if cancelled
      */
-    boolean cancelOrder(String orderId);
+    boolean cancelOrder(String orderId, CurrencyPairDTO currencyPair);
 
     /**
      * Get open orders.

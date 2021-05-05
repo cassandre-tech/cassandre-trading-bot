@@ -46,49 +46,79 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 @SuppressWarnings("checkstyle:DesignForExtension")
 public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
 
-    /** Currency mapper. */
+    /**
+     * Currency mapper.
+     */
     protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);
 
-    /** Order mapper. */
+    /**
+     * Order mapper.
+     */
     protected final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
 
-    /** Trade mapper. */
+    /**
+     * Trade mapper.
+     */
     protected final TradeMapper tradeMapper = Mappers.getMapper(TradeMapper.class);
 
-    /** Position mapper. */
+    /**
+     * Position mapper.
+     */
     protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
 
-    /** Strategy. */
+    /**
+     * Strategy.
+     */
     private StrategyDTO strategy;
 
-    /** Order repository. */
+    /**
+     * Order repository.
+     */
     private OrderRepository orderRepository;
 
-    /** Trade repository. */
+    /**
+     * Trade repository.
+     */
     private TradeRepository tradeRepository;
 
-    /** Position repository. */
+    /**
+     * Position repository.
+     */
     private PositionRepository positionRepository;
 
-    /** Exchange service. */
+    /**
+     * Exchange service.
+     */
     private ExchangeService exchangeService;
 
-    /** Trade service. */
+    /**
+     * Trade service.
+     */
     private TradeService tradeService;
 
-    /** Position service. */
+    /**
+     * Position service.
+     */
     private PositionService positionService;
 
-    /** The accounts owned by the user. */
+    /**
+     * The accounts owned by the user.
+     */
     private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
-    /** Positions previous status. */
+    /**
+     * Positions previous status.
+     */
     private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
-    /** Amounts locked by positions. */
+    /**
+     * Amounts locked by positions.
+     */
     private final Map<Long, CurrencyAmountDTO> amountsLockedByPosition = new ConcurrentHashMap<>();
 
-    /** Last ticker received. */
+    /**
+     * Last ticker received.
+     */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
 
     // =================================================================================================================
@@ -462,22 +492,24 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /**
      * Cancel order.
      *
-     * @param id id
+     * @param id           id
+     * @param currencyPair currencyPair
      * @return true if cancelled
      */
-    boolean cancelOrder(final long id) {
+    boolean cancelOrder(final long id, final CurrencyPairDTO currencyPair) {
         final Optional<Order> order = orderRepository.findById(id);
-        return order.filter(value -> cancelOrder(value.getOrderId())).isPresent();
+        return order.filter(value -> cancelOrder(value.getOrderId(), currencyPair)).isPresent();
     }
 
     /**
      * Cancel order.
      *
-     * @param orderId order id
+     * @param orderId      order id
+     * @param currencyPair currency pair
      * @return true if cancelled
      */
-    boolean cancelOrder(final String orderId) {
-        return tradeService.cancelOrder(orderId);
+    boolean cancelOrder(final String orderId, final CurrencyPairDTO currencyPair) {
+        return tradeService.cancelOrder(orderId, currencyPair);
     }
 
     /**
@@ -515,7 +547,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /**
      * Update position rules.
      *
-     * @param id position id
+     * @param id       position id
      * @param newRules new rules
      */
     public void updatePositionRules(final long id, final PositionRulesDTO newRules) {

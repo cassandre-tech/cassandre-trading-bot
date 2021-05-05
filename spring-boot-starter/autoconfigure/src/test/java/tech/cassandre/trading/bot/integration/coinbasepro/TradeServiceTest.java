@@ -65,7 +65,7 @@ public class TradeServiceTest extends BaseTest {
 
     @BeforeEach
     public void setUp() {
-        tradeService.getOrders().forEach(order -> tradeService.cancelOrder(order.getOrderId()));
+        tradeService.getOrders().forEach(order -> tradeService.cancelOrder(order.getOrderId(), null));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class TradeServiceTest extends BaseTest {
         assertTrue(order1.get().getTimestamp().isBefore(ZonedDateTime.now().plusMinutes(1)));
 
         // Cancel the order.
-        tradeService.cancelOrder(result1.getOrder().getOrderId());
+        tradeService.cancelOrder(result1.getOrder().getOrderId(), cp);
     }
 
     @Test
@@ -155,13 +155,13 @@ public class TradeServiceTest extends BaseTest {
         await().untilAsserted(() -> assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals(result1.getOrder().getOrderId()))));
 
         // Cancel the order.
-        assertTrue(tradeService.cancelOrder(result1.getOrder().getOrderId()));
+        assertTrue(tradeService.cancelOrder(result1.getOrder().getOrderId(), cp));
 
         // The order must have disappeared.
         await().untilAsserted(() -> assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals(result1.getOrder().getOrderId()))));
 
         // Cancel the order again and check it gives false.
-        assertFalse(tradeService.cancelOrder(result1.getOrder().getOrderId()));
+        assertFalse(tradeService.cancelOrder(result1.getOrder().getOrderId(), cp));
     }
 
     @Test

@@ -263,7 +263,7 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final boolean cancelOrder(final String orderId) {
+    public final boolean cancelOrder(final String orderId, final CurrencyPairDTO currencyPairDTO) {
         final Optional<Order> order = orderRepository.findByOrderId(orderId);
         if (order.isPresent()) {
             orderRepository.delete(order.get());
