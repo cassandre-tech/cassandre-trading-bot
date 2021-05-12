@@ -16,8 +16,6 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.domain.ExchangeAccount;
-import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -38,7 +36,6 @@ import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
-import java.util.Optional;
 import java.util.StringJoiner;
 
 /**
@@ -102,9 +99,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Position flux. */
     private PositionFlux positionFlux;
 
-    /** Exchange account repository. */
-    private final ExchangeAccountRepository exchangeAccountRepository;
-
     /** Order repository. */
     private final OrderRepository orderRepository;
 
@@ -119,20 +113,17 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      *
      * @param newApplicationContext        application context
      * @param newExchangeParameters        exchange parameters
-     * @param newExchangeAccountRepository exchange account repository
      * @param newOrderRepository           order repository
      * @param newTradeRepository           trade repository
      * @param newPositionRepository        position repository
      */
     public ExchangeAutoConfiguration(final ApplicationContext newApplicationContext,
                                      final ExchangeParameters newExchangeParameters,
-                                     final ExchangeAccountRepository newExchangeAccountRepository,
                                      final OrderRepository newOrderRepository,
                                      final TradeRepository newTradeRepository,
                                      final PositionRepository newPositionRepository) {
         this.applicationContext = newApplicationContext;
         this.exchangeParameters = newExchangeParameters;
-        this.exchangeAccountRepository = newExchangeAccountRepository;
         this.orderRepository = newOrderRepository;
         this.tradeRepository = newTradeRepository;
         this.positionRepository = newPositionRepository;
@@ -229,15 +220,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 tradeServiceDryMode.setDependencies(orderFlux, tradeFlux);
             }
 
-            // Save the exchange account in database.
-            Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
-            if (exchangeAccount.isEmpty()) {
-                ExchangeAccount ea = new ExchangeAccount();
-                ea.setExchange(exchangeParameters.getName());
-                ea.setAccount(exchangeParameters.getUsername());
-                ea = exchangeAccountRepository.save(ea);
-                logger.info("ExchangeConfiguration - Exchange configuration saved in database {}", ea);
-            }
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.
             throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getName(),

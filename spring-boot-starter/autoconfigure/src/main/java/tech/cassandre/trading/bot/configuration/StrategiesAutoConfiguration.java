@@ -9,7 +9,6 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.domain.ExchangeAccount;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -20,7 +19,6 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
@@ -88,9 +86,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     /** Exchange service. */
     private final ExchangeService exchangeService;
 
-    /** Exchange account repository. */
-    private final ExchangeAccountRepository exchangeAccountRepository;
-
     /** Strategy repository. */
     private final StrategyRepository strategyRepository;
 
@@ -121,7 +116,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
      * @param newTickerFlux                ticker flux
      * @param newOrderFlux                 order flux
      * @param newTradeFlux                 trade flux
-     * @param newExchangeAccountRepository exchange account repository
      * @param newStrategyRepository        strategy repository
      * @param newOrderRepository           order repository
      * @param newTradeRepository           trade repository
@@ -138,7 +132,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                                        final TickerFlux newTickerFlux,
                                        final OrderFlux newOrderFlux,
                                        final TradeFlux newTradeFlux,
-                                       final ExchangeAccountRepository newExchangeAccountRepository,
                                        final StrategyRepository newStrategyRepository,
                                        final OrderRepository newOrderRepository,
                                        final TradeRepository newTradeRepository,
@@ -153,7 +146,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
         this.tradeFlux = newTradeFlux;
-        this.exchangeAccountRepository = newExchangeAccountRepository;
         this.strategyRepository = newStrategyRepository;
         this.orderRepository = newOrderRepository;
         this.tradeRepository = newTradeRepository;
@@ -289,9 +281,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         Strategy newStrategy = new Strategy();
                         newStrategy.setStrategyId(annotation.strategyId());
                         newStrategy.setName(annotation.strategyName());
-                        // Set exchange account.
-                        Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
-                        exchangeAccount.ifPresent(newStrategy::setExchangeAccount);
                         // Set type.
                         if (strategy instanceof BasicCassandreStrategy) {
                             newStrategy.setType(BASIC_STRATEGY);

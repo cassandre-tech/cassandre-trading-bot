@@ -43,8 +43,6 @@ public class StrategyTest {
         assertEquals(1, s.get().getId());
         assertEquals("01", s.get().getStrategyId());
         assertEquals("Testable strategy", s.get().getName());
-        assertEquals(PARAMETER_NAME_DEFAULT_VALUE, s.get().getExchangeAccount().getExchange());
-        assertEquals("cassandre.crypto.bot@gmail.com", s.get().getExchangeAccount().getAccount());
 
         // Test equals.
         final Optional<Strategy> sBis = strategyRepository.findByStrategyId("01");
