@@ -171,10 +171,11 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
             throw new ConfigurationException("Impossible to retrieve your user information.",
                     "Impossible to retrieve your user information. Check logs");
         } else {
+            logger.info("Accounts available on the exchange:");
             user.get()
                     .getAccounts()
                     .values()
-                    .forEach(account -> logger.info("StrategyConfiguration - Accounts available : '{}/{}'.",
+                    .forEach(account -> logger.info("- Account id / Account name: {} / {}.",
                             account.getAccountId(),
                             account.getName()));
         }
@@ -221,7 +222,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .collect(Collectors.toSet());
         if (!duplicatedStrategyId.isEmpty()) {
             throw new ConfigurationException("You have duplicated strategy ids",
-                    "You have duplicated strategy ids : " + String.join(",", duplicatedStrategyId));
+                    "You have duplicated strategy ids : " + String.join(", ", duplicatedStrategyId));
         }
 
         // =============================================================================================================
@@ -253,13 +254,14 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
         // =============================================================================================================
         // Configuring strategies.
+        logger.info("Running the following strategies:");
         strategies.values()
                 .forEach(s -> {
                     CassandreStrategyInterface strategy = ((CassandreStrategyInterface) s);
                     CassandreStrategy annotation = s.getClass().getAnnotation(CassandreStrategy.class);
 
                     // Displaying information about strategy.
-                    logger.info("StrategyConfiguration - Running strategy '{}/{}' (requires {}).",
+                    logger.info("- Strategy '{}/{}' (requires {}).",
                             annotation.strategyId(),
                             annotation.strategyName(),
                             strategy.getRequestedCurrencyPairs().stream()

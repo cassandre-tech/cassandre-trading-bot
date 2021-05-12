@@ -16,6 +16,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -36,7 +37,7 @@ import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * ExchangeConfiguration configures the exchange connection.
@@ -111,11 +112,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /**
      * Constructor.
      *
-     * @param newApplicationContext        application context
-     * @param newExchangeParameters        exchange parameters
-     * @param newOrderRepository           order repository
-     * @param newTradeRepository           trade repository
-     * @param newPositionRepository        position repository
+     * @param newApplicationContext application context
+     * @param newExchangeParameters exchange parameters
+     * @param newOrderRepository    order repository
+     * @param newTradeRepository    trade repository
+     * @param newPositionRepository position repository
      */
     public ExchangeAutoConfiguration(final ApplicationContext newApplicationContext,
                                      final ExchangeParameters newExchangeParameters,
@@ -182,14 +183,12 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             TradeServiceDryModeImplementation tradeServiceDryMode = null;
             if (!exchangeParameters.getModes().getDry()) {
                 // Normal mode.
-                logger.info("ExchangeConfiguration - Dry mode is OFF");
                 this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
                 this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
                 this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
                 this.tradeService = new TradeServiceXChangeImplementation(tradeRate, orderRepository, xChangeTradeService);
             } else {
                 // Dry mode.
-                logger.info("ExchangeConfiguration - Dry mode is ON");
                 this.exchangeService = new ExchangeServiceDryModeImplementation(applicationContext);
                 userServiceDryMode = new UserServiceDryModeImplementation();
                 this.userService = userServiceDryMode;
@@ -207,12 +206,16 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();
-            logger.info("ExchangeConfiguration - Connection to {} successful", exchangeParameters.getDriverClassName());
+            logger.info("Exchange connection with username {} successful (Dry mode : {} / Sandbox : {})",
+                    exchangeParameters.getUsername(),
+                    exchangeParameters.getModes().getDry(),
+                    exchangeParameters.getModes().getSandbox());
 
             // Prints all the supported currency pairs.
-            StringJoiner currencyPairList = new StringJoiner(", ");
-            exchangeService.getAvailableCurrencyPairs().forEach(currencyPairDTO -> currencyPairList.add(currencyPairDTO.toString()));
-            logger.info("ExchangeConfiguration - Supported currency pairs : {} ", currencyPairList);
+            logger.info("Supported currency pairs by the exchange : {}.", exchangeService.getAvailableCurrencyPairs()
+                    .stream()
+                    .map(CurrencyPairDTO::toString)
+                    .collect(Collectors.joining(", ")));
 
             // if in dry mode, we set dependencies.
             if (tradeService instanceof TradeServiceDryModeImplementation) {
