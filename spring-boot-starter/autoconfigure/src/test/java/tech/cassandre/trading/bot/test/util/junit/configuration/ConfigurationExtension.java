@@ -16,10 +16,6 @@ import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PA
 import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_PASSWORD;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_URL;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_USERNAME;
 
 /**
  * Configuration extension - set and clear system properties.
@@ -111,18 +107,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
     /** Rate for trade parameter. */
     public static final String PARAMETER_RATE_TRADE_DEFAULT_VALUE = "102";
 
-    /** Database datasource driver. */
-    public static final String PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME_DEFAULT_VALUE = "org.hsqldb.jdbc.JDBCDriver";
-
-    /** Database datasource url. */
-    public static final String PARAMETER_DATABASE_DATASOURCE_URL_DEFAULT_VALUE = "jdbc:hsqldb:mem:cassandre-database;shutdown=true";
-
-    /** Database datasource username. */
-    public static final String PARAMETER_DATABASE_DATASOURCE_USERNAME_DEFAULT_VALUE = "sa";
-
-    /** Database datasource password. */
-    public static final String PARAMETER_DATABASE_DATASOURCE_PASSWORD_DEFAULT_VALUE = "";
-
     @Override
     public void beforeAll(ExtensionContext context) {
         // Set default values.
@@ -138,11 +122,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.setProperty(PARAMETER_EXCHANGE_RATE_ACCOUNT, PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE);                                          // 100
         System.setProperty(PARAMETER_EXCHANGE_RATE_TICKER, PARAMETER_RATE_TICKER_DEFAULT_VALUE);                                            // 101
         System.setProperty(PARAMETER_EXCHANGE_RATE_TRADE, PARAMETER_RATE_TRADE_DEFAULT_VALUE);                                              // 102
-        // Database parameters.
-        System.setProperty(PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME, PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME_DEFAULT_VALUE); // org.hsqldb.jdbc.JDBCDriver
-        System.setProperty(PARAMETER_DATABASE_DATASOURCE_URL, PARAMETER_DATABASE_DATASOURCE_URL_DEFAULT_VALUE);                             // jdbc:hsqldb:mem:cassandre-database;shutdown=true
-        System.setProperty(PARAMETER_DATABASE_DATASOURCE_USERNAME, PARAMETER_DATABASE_DATASOURCE_USERNAME_DEFAULT_VALUE);                   // sa
-        System.setProperty(PARAMETER_DATABASE_DATASOURCE_PASSWORD, PARAMETER_DATABASE_DATASOURCE_PASSWORD_DEFAULT_VALUE);                   // empty
         // Strategies configuration.
         System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE);                                   // false
         System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE);             // false
@@ -185,11 +164,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.clearProperty(PARAMETER_EXCHANGE_RATE_ACCOUNT);
         System.clearProperty(PARAMETER_EXCHANGE_RATE_TICKER);
         System.clearProperty(PARAMETER_EXCHANGE_RATE_TRADE);
-        // Database parameters.
-        System.clearProperty(PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME);
-        System.clearProperty(PARAMETER_DATABASE_DATASOURCE_URL);
-        System.clearProperty(PARAMETER_DATABASE_DATASOURCE_USERNAME);
-        System.clearProperty(PARAMETER_DATABASE_DATASOURCE_PASSWORD);
         // Strategies configuration.
         System.clearProperty(PARAMETER_INVALID_STRATEGY_ENABLED);
         System.clearProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED);
