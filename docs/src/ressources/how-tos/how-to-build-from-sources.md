@@ -23,7 +23,7 @@ mvn package
 ```bash
 vuepress dev docs/src
 ```
-Documentation web site is now running at [http://0.0.0.0:8080/](http://0.0.0.0:8080/).
+Documentation website will be accessible at [http://0.0.0.0:8080/](http://0.0.0.0:8080/).
 
 ### Build static website
 ```bash

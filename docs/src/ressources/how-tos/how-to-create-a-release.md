@@ -6,7 +6,6 @@
 * Update libraries used by archetypes:
   * [trading-bot-archetypes/basic-archetype/src/main/resources/archetype-resources/pom.xml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-archetypes/basic-archetype/src/main/resources/archetype-resources/pom.xml).
   * [trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources/pom.xml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources/pom.xml).
-* Change roadmap content in `why-cassandre/features-and-roadmap.md`.
 
 ## Create the release with Maven
 You must be using `ssh` and not `https`, to switch to `ssh`, type : 
