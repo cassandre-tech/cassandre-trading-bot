@@ -37,7 +37,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${GEMINI_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${GEMINI_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${GEMINI_USERNAME}",

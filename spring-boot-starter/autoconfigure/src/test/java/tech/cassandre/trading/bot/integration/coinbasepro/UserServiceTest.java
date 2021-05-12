@@ -27,7 +27,7 @@ import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.TRADING;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${COINBASE_PRO_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${COINBASE_PRO_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${COINBASE_PRO_USERNAME}",

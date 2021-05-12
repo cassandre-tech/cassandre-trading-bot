@@ -29,7 +29,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${BINANCE_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${BINANCE_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=false",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${BINANCE_USERNAME}",

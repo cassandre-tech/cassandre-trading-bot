@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_NAME;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRIVER_CLASS_NAME;
 
-@DisplayName("Configuration - Exchange - Name parameter is missing")
+@DisplayName("Configuration - Exchange - Driver class name parameter is missing")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_NAME)
+        @Property(key = PARAMETER_EXCHANGE_DRIVER_CLASS_NAME)
 })
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-public class ExchangeNameMissingTest extends BaseTest {
+public class ExchangeDriverClassNameMissingTest extends BaseTest {
 
     @Test
     @CaseId(11)
@@ -34,8 +34,8 @@ public class ExchangeNameMissingTest extends BaseTest {
             fail("Exception not raised");
         } catch (Exception e) {
             final String message = ExceptionUtils.getRootCause(e).getMessage();
-            assertTrue(message.contains("'name'"));
-            assertFalse(message.contains("'sandbox'"));
+            System.out.println("=> " + message);
+            assertTrue(message.contains("'driverClassName'"));
             assertFalse(message.contains("'sandbox'"));
             assertFalse(message.contains("'username'"));
             assertFalse(message.contains("'passphrase'"));

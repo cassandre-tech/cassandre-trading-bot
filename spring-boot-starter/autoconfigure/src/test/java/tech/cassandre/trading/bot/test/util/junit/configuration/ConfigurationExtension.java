@@ -23,8 +23,8 @@ import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreSt
 @NotThreadSafe // System properties are JVM-global, so don't run tests in parallel with this rule.
 public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallback {
 
-    /** Exchange name parameter. */
-    public static final String PARAMETER_EXCHANGE_NAME = "cassandre.trading.bot.exchange.name";
+    /** Driver class name parameter. */
+    public static final String PARAMETER_EXCHANGE_DRIVER_CLASS_NAME = "cassandre.trading.bot.exchange.driver-class-name";
 
     /** Username parameter. */
     public static final String PARAMETER_EXCHANGE_USERNAME = "cassandre.trading.bot.exchange.username";
@@ -112,7 +112,7 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         // Set default values.
 
         // Exchange parameters.
-        System.setProperty(PARAMETER_EXCHANGE_NAME, PARAMETER_NAME_DEFAULT_VALUE);                                                          // Kucoin
+        System.setProperty(PARAMETER_EXCHANGE_DRIVER_CLASS_NAME, PARAMETER_NAME_DEFAULT_VALUE);                                                          // Kucoin
         System.setProperty(PARAMETER_EXCHANGE_SANDBOX, PARAMETER_SANDBOX_DEFAULT_VALUE);                                                    // true
         System.setProperty(PARAMETER_EXCHANGE_DRY, PARAMETER_DRY_DEFAULT_VALUE);                                                            // false
         System.setProperty(PARAMETER_EXCHANGE_USERNAME, PARAMETER_USERNAME_DEFAULT_VALUE);                                                  // cassandre.crypto.bot@gmail.com
@@ -154,7 +154,7 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         // Reset values.
 
         // Exchange parameters.
-        System.clearProperty(PARAMETER_EXCHANGE_NAME);
+        System.clearProperty(PARAMETER_EXCHANGE_DRIVER_CLASS_NAME);
         System.clearProperty(PARAMETER_EXCHANGE_SANDBOX);
         System.clearProperty(PARAMETER_EXCHANGE_DRY);
         System.clearProperty(PARAMETER_EXCHANGE_USERNAME);

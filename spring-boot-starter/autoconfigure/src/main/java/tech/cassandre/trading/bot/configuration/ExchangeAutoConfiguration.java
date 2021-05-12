@@ -207,7 +207,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();
-            logger.info("ExchangeConfiguration - Connection to {} successful", exchangeParameters.getName());
+            logger.info("ExchangeConfiguration - Connection to {} successful", exchangeParameters.getDriverClassName());
 
             // Prints all the supported currency pairs.
             StringJoiner currencyPairList = new StringJoiner(", ");
@@ -222,12 +222,12 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.
-            throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getName(),
+            throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getDriverClassName(),
                     "Choose a valid exchange (https://github.com/knowm/XChange) and add the dependency to Cassandre");
         } catch (HttpStatusIOException e) {
             if (e.getHttpStatusCode() == UNAUTHORIZED_STATUS_CODE) {
                 // Authorization failure.
-                throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getName(),
+                throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getDriverClassName(),
                         "Check your exchange credentials : " + e.getMessage() + " - login used : " + exchangeParameters.getUsername());
             } else {
                 // Another HTTP failure.
@@ -245,8 +245,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      */
     private String getExchangeClassName() {
         // If the name contains a dot, it means that it's the XChange class name.
-        if (exchangeParameters.getName() != null && exchangeParameters.getName().contains(".")) {
-            return exchangeParameters.getName();
+        if (exchangeParameters.getDriverClassName() != null && exchangeParameters.getDriverClassName().contains(".")) {
+            return exchangeParameters.getDriverClassName();
         }
 
         // XChange class package name and suffix.
@@ -254,12 +254,12 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
         final String xChangeCLassSuffix = "Exchange";
 
         // Returns the XChange package name.
-        assert exchangeParameters.getName() != null;
+        assert exchangeParameters.getDriverClassName() != null;
         return xChangeClassPackage                                                      // Package (org.knowm.xchange.).
-                .concat(exchangeParameters.getName().toLowerCase())                     // domain (kucoin).
+                .concat(exchangeParameters.getDriverClassName().toLowerCase())                     // domain (kucoin).
                 .concat(".")                                                            // A dot (.)
-                .concat(exchangeParameters.getName().substring(0, 1).toUpperCase())     // First letter uppercase (K).
-                .concat(exchangeParameters.getName().substring(1).toLowerCase())        // The rest of the exchange name (ucoin).
+                .concat(exchangeParameters.getDriverClassName().substring(0, 1).toUpperCase())     // First letter uppercase (K).
+                .concat(exchangeParameters.getDriverClassName().substring(1).toLowerCase())        // The rest of the exchange name (ucoin).
                 .concat(xChangeCLassSuffix);                                            // Adding exchange (Exchange).
     }
 
