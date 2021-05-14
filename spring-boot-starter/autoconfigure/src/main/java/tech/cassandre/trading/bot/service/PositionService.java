@@ -101,9 +101,9 @@ public interface PositionService {
     /**
      * Method called by streams at every ticker update.
      *
-     * @param ticker ticker
+     * @param tickers tickers
      */
-    void tickerUpdate(TickerDTO ticker);
+    void tickersUpdate(Set<TickerDTO> tickers);
 
     /**
      * Return the gains made by all closed positions.

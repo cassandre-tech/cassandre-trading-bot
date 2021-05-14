@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -40,8 +41,8 @@ public final class TestableStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public void onTickerUpdate(TickerDTO ticker) {
-        tickersUpdateReceived.add(ticker);
+    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        tickersUpdateReceived.addAll(tickers.values());
     }
 
     /**

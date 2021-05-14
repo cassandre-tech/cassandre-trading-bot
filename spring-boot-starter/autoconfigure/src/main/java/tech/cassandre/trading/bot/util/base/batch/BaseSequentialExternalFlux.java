@@ -7,7 +7,7 @@ import java.util.Set;
  *
  * @param <T> flux type
  */
-public abstract class BaseExternalFlux<T> extends BaseFlux<T> {
+public abstract class BaseSequentialExternalFlux<T> extends BaseSequentialFlux<T> {
 
     /**
      * Implements this method to return all the new values. Those values will be sent to the strategy.

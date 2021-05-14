@@ -21,6 +21,7 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -123,11 +124,11 @@ public class Strategy2 extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public final void onTickerUpdate(final TickerDTO ticker) {
-        tickersUpdateReceived.add(ticker);
-        logger.info(getClass().getSimpleName() + "-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n");
+    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        tickersUpdateReceived.addAll(tickers.values());
+        tickers.values().forEach(ticker -> logger.info(this.getClass().getSimpleName() + "-onTickersUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n"));
         try {
-            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
+            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

@@ -241,13 +241,13 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .flatMap(Set::stream)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         tickerFlux.updateRequestedCurrencyPairs(currencyPairs);
-        final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
+        final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
         // =============================================================================================================
         // Connecting flux.
         // if in dry mode, we also send the ticker to the trade service in dry mode.
         if (tradeService instanceof TradeServiceDryModeImplementation) {
-            connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickerUpdate);
+            connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickersUpdate);
         }
         connectableOrderFlux.subscribe(positionService::orderUpdate);
         connectableTradeFlux.subscribe(positionService::tradeUpdate);
@@ -311,13 +311,13 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     connectablePositionFlux.subscribe(strategy::positionUpdate);
                     connectableOrderFlux.subscribe(strategy::orderUpdate);
                     connectableTradeFlux.subscribe(strategy::tradeUpdate);
-                    connectableTickerFlux.subscribe(strategy::tickerUpdate);
+                    connectableTickerFlux.subscribe(strategy::tickersUpdate);
                     // If in dry mode, we setup dependencies.
                     if (userService instanceof UserServiceDryModeImplementation) {
                         ((UserServiceDryModeImplementation) userService).setDependencies((GenericCassandreStrategy) strategy);
                     }
                 });
-        connectableTickerFlux.subscribe(positionService::tickerUpdate);
+        connectableTickerFlux.subscribe(positionService::tickersUpdate);
         // Start flux.
         connectableAccountFlux.connect();
         connectablePositionFlux.connect();

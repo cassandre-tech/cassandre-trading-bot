@@ -15,6 +15,7 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -113,9 +114,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public final void onTickerUpdate(final TickerDTO ticker) {
-        tickersUpdateReceived.add(ticker);
-        logger.info("TestableStrategy-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n");
+    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        tickersUpdateReceived.addAll(tickers.values());
+        tickers.values().forEach(ticker -> logger.info("TestableStrategy-onTickersUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n"));
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {

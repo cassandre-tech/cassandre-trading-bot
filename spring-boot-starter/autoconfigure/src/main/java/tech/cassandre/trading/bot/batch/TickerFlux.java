@@ -9,20 +9,17 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
-import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseParallelFlux;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Ticker flux - push {@link TickerDTO}.
  */
-public class TickerFlux extends BaseExternalFlux<TickerDTO> {
+public class TickerFlux extends BaseParallelFlux<TickerDTO> {
 
     /** Application context. */
     private final ApplicationContext applicationContext;
@@ -32,9 +29,6 @@ public class TickerFlux extends BaseExternalFlux<TickerDTO> {
 
     /** Cycle iterator over requested currency pairs. */
     private Iterator<CurrencyPairDTO> currencyPairsIterator;
-
-    /** Previous values. */
-    private final Map<CurrencyPairDTO, TickerDTO> previousValues = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -75,29 +69,23 @@ public class TickerFlux extends BaseExternalFlux<TickerDTO> {
 
             // GetTickers from market service is available so we retrieve all tickers at once.
             marketService.getTickers(currencyPairs).forEach(ticker -> {
-                if (!ticker.equals(previousValues.get(ticker.getCurrencyPair()))) {
                     logger.debug("TickerFlux - New ticker received : {}", ticker);
-                    previousValues.put(ticker.getCurrencyPair(), ticker);
                     newValues.add(ticker);
-                }
             });
         } catch (NotAvailableFromExchangeException | NotYetImplementedForExchangeException e) {
             logger.debug("MarketService - getTickers not available {}", e.getMessage());
             // GetTickers from market service is unavailable so we do ticker by ticker.
             marketService.getTicker(currencyPairsIterator.next()).ifPresent(t -> {
-                if (!t.equals(previousValues.get(t.getCurrencyPair()))) {
                     logger.debug("TickerFlux - New ticker received : {}", t);
-                    previousValues.put(t.getCurrencyPair(), t);
                     newValues.add(t);
-                }
             });
         }
         return newValues;
     }
 
     @Override
-    protected final Optional<TickerDTO> saveValue(final TickerDTO newValue) {
-        return Optional.ofNullable(newValue);
+    protected final Set<TickerDTO> saveValue(final Set<TickerDTO> newValue) {
+        return newValue;
     }
 
 }

@@ -292,10 +292,10 @@ public class TradeServiceDryModeImplementation extends BaseService implements Tr
     /**
      * Method called by streams at every ticker update.
      *
-     * @param ticker ticker
+     * @param tickers ticker
      */
-    public void tickerUpdate(final TickerDTO ticker) {
-        lastTickers.put(ticker.getCurrencyPair(), ticker);
+    public void tickersUpdate(final Set<TickerDTO> tickers) {
+        tickers.forEach(ticker -> lastTickers.put(ticker.getCurrencyPair(), ticker));
     }
 
     /**

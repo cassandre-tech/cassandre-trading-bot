@@ -24,8 +24,8 @@ public class Issue558TestMock extends BaseMock {
 
         List<Ticker> tickers = new LinkedList<>();
         tickers.add(getGeneratedTicker(XCHANGE_ETH_BTC, new BigDecimal("1")));
-        tickers.add(getGeneratedTicker(XCHANGE_ETH_BTC, new BigDecimal("2")));
-        tickers.add(getGeneratedTicker(XCHANGE_ETH_BTC, new BigDecimal("3")));
+        tickers.add(getGeneratedTicker(XCHANGE_BTC_ETH, new BigDecimal("2")));
+        tickers.add(getGeneratedTicker(XCHANGE_BTC_USDT, new BigDecimal("3")));
 
         // We use getTickers instead of getTicker.
         //noinspection unchecked

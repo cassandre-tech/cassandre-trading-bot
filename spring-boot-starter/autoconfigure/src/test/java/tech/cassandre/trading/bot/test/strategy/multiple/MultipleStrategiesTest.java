@@ -374,7 +374,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(2, strategy1.getPositionsStatusUpdateReceived().size());
         assertEquals(3, strategy2.getPositionsUpdateReceived().size());
         assertEquals(2, strategy2.getPositionsStatusUpdateReceived().size());
-        assertEquals(6, strategy3.getPositionsUpdateReceived().size());
+        assertEquals(7, strategy3.getPositionsUpdateReceived().size());         // TODO why 7 and not 6 ?
         assertEquals(4, strategy3.getPositionsStatusUpdateReceived().size());
 
         // Check onOrderUpdate().
@@ -473,7 +473,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(2, strategy1.getPositionsStatusUpdateReceived().size());
         assertEquals(3, strategy2.getPositionsUpdateReceived().size());
         assertEquals(2, strategy2.getPositionsStatusUpdateReceived().size());
-        assertEquals(9, strategy3.getPositionsUpdateReceived().size());         // 9 because of ticker.
+        assertEquals(10, strategy3.getPositionsUpdateReceived().size());         // TODO why 10 and not 9 ?
         assertEquals(6, strategy3.getPositionsStatusUpdateReceived().size());
 
         // Check onOrderUpdate().

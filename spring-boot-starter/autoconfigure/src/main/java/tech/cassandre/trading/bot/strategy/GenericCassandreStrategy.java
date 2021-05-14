@@ -34,7 +34,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
@@ -172,12 +174,17 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     @Override
-    public void tickerUpdate(final TickerDTO ticker) {
-        // In multi strategies, all tickers are delivered to all strategies, so we filter in here.
-        if (getRequestedCurrencyPairs().contains(ticker.getCurrencyPair())) {
-            lastTickers.put(ticker.getCurrencyPair(), ticker);
-            onTickerUpdate(ticker);
-        }
+    public void tickersUpdate(final Set<TickerDTO> tickers) {
+        // We only retrieve the tickers requested by the strategy.
+        final Map<CurrencyPairDTO, TickerDTO> tickersToSend = tickers.stream()
+                .filter(ticker -> getRequestedCurrencyPairs().contains(ticker.getCurrencyPair()))
+                .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity()));
+
+        // We update the values of the last tickers that can be found in the strategy.
+        tickersToSend.values().forEach(ticker -> lastTickers.put(ticker.getCurrencyPair(), ticker));
+
+        // We notify the strategy with tickers.
+        onTickersUpdate(tickersToSend);
     }
 
     @Override
@@ -515,7 +522,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /**
      * Update position rules.
      *
-     * @param id position id
+     * @param id       position id
      * @param newRules new rules
      */
     public void updatePositionRules(final long id, final PositionRulesDTO newRules) {
@@ -541,7 +548,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     @Override
-    public void onTickerUpdate(final TickerDTO ticker) {
+    public void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
 
     }
 

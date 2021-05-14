@@ -19,6 +19,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -73,9 +74,9 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public void onTickerUpdate(TickerDTO ticker) {
-        // Display all received tickers.
-        System.out.println("New ticker " + ticker);
+    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        // Here we will receive tickers received.
+        tickers.values().forEach(ticker -> System.out.println("Received information about a ticker : " + ticker));
     }
 
     @Override

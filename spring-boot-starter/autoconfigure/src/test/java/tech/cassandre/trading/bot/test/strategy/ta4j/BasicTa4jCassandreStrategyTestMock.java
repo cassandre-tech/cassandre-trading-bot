@@ -267,8 +267,9 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
                         .low(new BigDecimal(130))
                         .last(new BigDecimal(130))
                         .volume(new BigDecimal(1130))
-                        .build())
-                );
+                        .build()),
+                Optional.empty()
+        );
         return service;
     }
 
@@ -309,24 +310,24 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Reply 1 : 2 positions.
         PositionDTO p1 = new PositionDTO(1, LONG, strategy, cp3, amount, "O000001", noRules);
-        PositionDTO p2 = new PositionDTO(2, LONG, strategy, cp3, amount,"O000002", noRules);
+        PositionDTO p2 = new PositionDTO(2, LONG, strategy, cp3, amount, "O000002", noRules);
         Set<PositionDTO> reply01 = new LinkedHashSet<>();
         reply01.add(p1);
         reply01.add(p2);
 
         // Reply 2 : 3 positions.
         Set<PositionDTO> reply02 = new LinkedHashSet<>();
-        PositionDTO p3 = new PositionDTO(1, LONG, strategy, cp3, amount,"O000001", noRules);
-        PositionDTO p4 = new PositionDTO(2, LONG, strategy, cp3, amount,"O000002", noRules);
-        PositionDTO p5 = new PositionDTO(3, LONG, strategy, cp3, amount,"O000003", noRules);
+        PositionDTO p3 = new PositionDTO(1, LONG, strategy, cp3, amount, "O000001", noRules);
+        PositionDTO p4 = new PositionDTO(2, LONG, strategy, cp3, amount, "O000002", noRules);
+        PositionDTO p5 = new PositionDTO(3, LONG, strategy, cp3, amount, "O000003", noRules);
         reply02.add(p3);
         reply02.add(p4);
         reply02.add(p5);
 
         // Reply 2 : 2 positions.
         Set<PositionDTO> reply03 = new LinkedHashSet<>();
-        PositionDTO p6 = new PositionDTO(1, LONG, strategy, cp3, amount,"O000001", noRules);
-        PositionDTO p7 = new PositionDTO(2, LONG, strategy, cp3, amount,"O000001", noRules);
+        PositionDTO p6 = new PositionDTO(1, LONG, strategy, cp3, amount, "O000001", noRules);
+        PositionDTO p7 = new PositionDTO(2, LONG, strategy, cp3, amount, "O000001", noRules);
         reply03.add(p6);
         reply03.add(p7);
 
