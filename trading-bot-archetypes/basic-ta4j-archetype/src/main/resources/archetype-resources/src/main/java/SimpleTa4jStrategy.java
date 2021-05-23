@@ -7,8 +7,8 @@ import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.trading.rules.OverIndicatorRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
+import org.ta4j.core.rules.OverIndicatorRule;
+import org.ta4j.core.rules.UnderIndicatorRule;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
@@ -28,7 +28,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 /**
  * Simple strategy.
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
- * How to do it : https://trading-bot.cassandre.tech/how-tos/how-to-create-a-kucoin-account
+ * How to do it : https://trading-bot.cassandre.tech/ressources/how-tos/how-to-create-a-kucoin-account.html
  */
 @CassandreStrategy(strategyName = "Simple ta4j strategy")
 public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {

@@ -50,13 +50,9 @@ jobs:
       # ================================================================================================================
       - name: Build Changelog
         id: build_changelog
-        uses: mikepenz/release-changelog-builder-action@v1.7.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: heinrichreimer/github-changelog-generator-action@v2.1.1
         with:
-          commitMode: true
-          fromTag: ${{ steps.package.outputs.version }}
-          toTag: ${{ steps.package.outputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # ================================================================================================================
       - name: Create the release

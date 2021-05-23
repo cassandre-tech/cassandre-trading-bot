@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.test.strategy.ta4j;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
@@ -51,6 +52,9 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private PositionRepository positionRepository;
 
     @Autowired
@@ -62,7 +66,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     @Bean
     @Primary
     public TickerFlux tickerFlux() {
-        return new TickerFlux(marketService());
+        return new TickerFlux(applicationContext, marketService());
     }
 
     @Bean

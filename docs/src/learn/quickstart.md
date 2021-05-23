@@ -1,7 +1,7 @@
-# Quickstart
+ # Quickstart
 
 ::: tip
-If you are new to trading, you can read our tutorial [Trading basics](../ressources/trading-basics.md).
+If you are new to trading, you can read our tutorial "[Trading basics](../ressources/trading-basics.md)".
 :::
 
 ## Create your project
@@ -228,7 +228,7 @@ Cassandre trading bot also provides positions to manage your trade automatically
 PositionRulesDTO rules = PositionRulesDTO.builder()
                 .stopGainPercentage(10)
                 .stopLossPercentage(5)
-                .create();
+                .build();
 // Create position.
 createLongPosition(new CurrencyPairDTO(BTC, USDT),
                 new BigDecimal("0,001"),

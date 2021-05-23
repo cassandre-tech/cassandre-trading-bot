@@ -208,7 +208,7 @@ Cassandre provides positions to manage your trading automatically. First, we cre
 Then we called the [createLongPosition()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createLongPosition%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO%29) method. It will automatically create a buy order. From now, with every ticker received, Cassandre will check the gain or loss made on this position; if it triggers one of the rules, Cassandre will automatically create a sell order to close it.
 
 ::: tip
-You can learn more about positions in the [Position chapter](../position-management.md).
+You can learn more about positions in the [Position chapter](./position-management.md).
 :::
 
 ::: tip

@@ -12,11 +12,11 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
@@ -62,12 +62,30 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     /** Positions status update received. */
     private final List<PositionDTO> positionsStatusUpdateReceived = new LinkedList<>();
 
+    /** Requested currency pairs. */
+    Set<CurrencyPairDTO> requestedCurrencyPairs = ConcurrentHashMap.newKeySet();
+
+    /**
+     * Constructor.
+     */
+    public TestableCassandreStrategy() {
+        requestedCurrencyPairs.add(ETH_BTC);
+        requestedCurrencyPairs.add(ETH_USDT);
+    }
+
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-        Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
-        requestedTickers.add(ETH_BTC);
-        requestedTickers.add(ETH_USDT);
-        return requestedTickers;
+        return requestedCurrencyPairs;
+    }
+
+    /**
+     * Updates the requested currency pairs.
+     *
+     * @param newRequestedCurrencyPairs new list of requested currency pairs
+     */
+    public final void updateRequestedCurrencyPairs(Set<CurrencyPairDTO> newRequestedCurrencyPairs) {
+        requestedCurrencyPairs.clear();
+        requestedCurrencyPairs.addAll(newRequestedCurrencyPairs);
     }
 
     @Override

@@ -99,7 +99,7 @@ WORKDIR /build
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
 # Copy source files and compile them (.dockerignore should handle what to copy).
-COPY . .
+COPY ../.. .
 RUN mvn -DskipTests=true package spring-boot:repackage
 
 # Creates our image.

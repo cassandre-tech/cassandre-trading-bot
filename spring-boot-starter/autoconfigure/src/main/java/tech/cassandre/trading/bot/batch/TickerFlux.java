@@ -3,9 +3,12 @@ package tech.cassandre.trading.bot.batch;
 import com.google.common.collect.Iterators;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
+import org.springframework.context.ApplicationContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
+import tech.cassandre.trading.bot.strategy.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
 
 import java.util.Iterator;
@@ -14,17 +17,18 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Ticker flux - push {@link TickerDTO}.
  */
 public class TickerFlux extends BaseExternalFlux<TickerDTO> {
 
+    /** Application context. */
+    private final ApplicationContext applicationContext;
+
     /** Market service. */
     private final MarketService marketService;
-
-    /** Cycle iterator over requested currency pairs. */
-    private final Set<CurrencyPairDTO> currencyPairs = new LinkedHashSet<>();
 
     /** Cycle iterator over requested currency pairs. */
     private Iterator<CurrencyPairDTO> currencyPairsIterator;
@@ -35,9 +39,12 @@ public class TickerFlux extends BaseExternalFlux<TickerDTO> {
     /**
      * Constructor.
      *
-     * @param newMarketService market service.
+     * @param newApplicationContext application context
+     * @param newMarketService      market service.
      */
-    public TickerFlux(final MarketService newMarketService) {
+    public TickerFlux(final ApplicationContext newApplicationContext,
+                      final MarketService newMarketService) {
+        this.applicationContext = newApplicationContext;
         this.marketService = newMarketService;
     }
 
@@ -47,7 +54,6 @@ public class TickerFlux extends BaseExternalFlux<TickerDTO> {
      * @param requestedCurrencyPairs list of requested currency pairs.
      */
     public void updateRequestedCurrencyPairs(final Set<CurrencyPairDTO> requestedCurrencyPairs) {
-        currencyPairs.addAll(requestedCurrencyPairs);
         currencyPairsIterator = Iterators.cycle(requestedCurrencyPairs);
     }
 
@@ -57,6 +63,16 @@ public class TickerFlux extends BaseExternalFlux<TickerDTO> {
         Set<TickerDTO> newValues = new LinkedHashSet<>();
 
         try {
+            // We retrieve the list of currency pairs asked by every strategy.
+            final LinkedHashSet<CurrencyPairDTO> currencyPairs = applicationContext
+                    .getBeansWithAnnotation(CassandreStrategy.class)
+                    .values()
+                    .stream()
+                    .map(o -> ((CassandreStrategyInterface) o))
+                    .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
+                    .flatMap(Set::stream)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+
             // GetTickers from market service is available so we retrieve all tickers at once.
             marketService.getTickers(currencyPairs).forEach(ticker -> {
                 if (!ticker.equals(previousValues.get(ticker.getCurrencyPair()))) {
