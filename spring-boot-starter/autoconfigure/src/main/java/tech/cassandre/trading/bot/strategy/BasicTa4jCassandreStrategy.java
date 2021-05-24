@@ -100,7 +100,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
         if (getRequestedCurrencyPairs().contains(ticker.getCurrencyPair())) { // filter only tickers for strategy instrument
             getLastTickers().put(ticker.getCurrencyPair(), ticker);
 
-            barAggregator.update(ticker.getTimestamp(), ticker.getLast(), ticker.getHigh(), ticker.getLow(), ticker.getVolume());
+            barAggregator.update(ticker.getTimestamp(), ticker.getLast(), ticker.getVolume());
 
             onTickerUpdate(ticker);
         }
