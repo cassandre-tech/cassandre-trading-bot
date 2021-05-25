@@ -34,7 +34,6 @@ public class ExchangeDriverClassNameMissingTest extends BaseTest {
             fail("Exception not raised");
         } catch (Exception e) {
             final String message = ExceptionUtils.getRootCause(e).getMessage();
-            System.out.println("=> " + message);
             assertTrue(message.contains("'driverClassName'"));
             assertFalse(message.contains("'sandbox'"));
             assertFalse(message.contains("'username'"));

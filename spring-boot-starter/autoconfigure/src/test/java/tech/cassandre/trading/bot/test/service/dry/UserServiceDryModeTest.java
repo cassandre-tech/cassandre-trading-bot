@@ -133,7 +133,7 @@ public class UserServiceDryModeTest extends BaseTest {
         // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032661 BTC.
         // last = 0.032661 (Last trade field is the price set during the last trade)
         // TickerDTO{ currencyPair=ETH/BTC, open=null, last=0.032661, bid=0.032466, ask=0.032657, high=0.034441, low=0.032355, vwap=null, volume=33794.9795777, quoteVolume=1146.8453384314658, bidSize=null, askSize=null, timestamp=2020-09-21T14:55:54.047+02:00[Europe/Paris]}
-        TickerDTO ticker = TickerDTO.builder()
+        tickerFlux.emitValue(TickerDTO.builder()
                 .currencyPair(ETH_BTC)
                 .last(new BigDecimal("0.032666"))
                 .bid(new BigDecimal("0.032466"))
@@ -142,8 +142,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .build();
-        tickerFlux.emitValue(ticker);
+                .build());
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
         // =============================================================================================================
@@ -214,7 +213,7 @@ public class UserServiceDryModeTest extends BaseTest {
         // =============================================================================================================
         // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032466 BTC.
         // last = 0.032466 (Last trade field is the price set during the last trade)
-        ticker = TickerDTO.builder()
+        tickerFlux.emitValue(TickerDTO.builder()
                 .currencyPair(ETH_BTC)
                 .last(new BigDecimal("0.032466"))
                 .bid(new BigDecimal("0.032466"))
@@ -223,8 +222,7 @@ public class UserServiceDryModeTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .build();
-        tickerFlux.emitValue(ticker);
+                .build());
         await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdateReceived().size()));
 
         // =============================================================================================================

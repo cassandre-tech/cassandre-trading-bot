@@ -90,7 +90,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Amounts locked by positions. */
     private final Map<Long, CurrencyAmountDTO> amountsLockedByPosition = new ConcurrentHashMap<>();
 
-    /** Last ticker received. */
+    /** Last tickers received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
 
     // =================================================================================================================

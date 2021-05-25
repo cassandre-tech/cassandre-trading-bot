@@ -27,14 +27,11 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
@@ -243,12 +240,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         tickerFlux.updateRequestedCurrencyPairs(currencyPairs);
         final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
-        // =============================================================================================================
-        // Connecting flux.
-        // if in dry mode, we also send the ticker to the trade service in dry mode.
-        if (tradeService instanceof TradeServiceDryModeImplementation) {
-            connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickersUpdate);
-        }
         connectableOrderFlux.subscribe(positionService::orderUpdate);
         connectableTradeFlux.subscribe(positionService::tradeUpdate);
 
@@ -312,10 +303,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     connectableOrderFlux.subscribe(strategy::orderUpdate);
                     connectableTradeFlux.subscribe(strategy::tradeUpdate);
                     connectableTickerFlux.subscribe(strategy::tickersUpdate);
-                    // If in dry mode, we setup dependencies.
-                    if (userService instanceof UserServiceDryModeImplementation) {
-                        ((UserServiceDryModeImplementation) userService).setDependencies((GenericCassandreStrategy) strategy);
-                    }
                 });
         connectableTickerFlux.subscribe(positionService::tickersUpdate);
         // Start flux.

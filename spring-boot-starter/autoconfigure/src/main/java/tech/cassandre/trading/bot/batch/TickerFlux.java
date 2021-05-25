@@ -48,6 +48,7 @@ public class TickerFlux extends BaseParallelFlux<TickerDTO> {
      * @param requestedCurrencyPairs list of requested currency pairs.
      */
     public void updateRequestedCurrencyPairs(final Set<CurrencyPairDTO> requestedCurrencyPairs) {
+        // TODO Remove this
         currencyPairsIterator = Iterators.cycle(requestedCurrencyPairs);
     }
 
@@ -73,7 +74,6 @@ public class TickerFlux extends BaseParallelFlux<TickerDTO> {
                     newValues.add(ticker);
             });
         } catch (NotAvailableFromExchangeException | NotYetImplementedForExchangeException e) {
-            logger.debug("MarketService - getTickers not available {}", e.getMessage());
             // GetTickers from market service is unavailable so we do ticker by ticker.
             marketService.getTicker(currencyPairsIterator.next()).ifPresent(t -> {
                     logger.debug("TickerFlux - New ticker received : {}", t);

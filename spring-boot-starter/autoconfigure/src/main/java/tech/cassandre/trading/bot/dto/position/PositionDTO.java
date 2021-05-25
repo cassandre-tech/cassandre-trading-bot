@@ -249,6 +249,7 @@ public class PositionDTO {
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
+            System.out.println("=>>>" + openingOrder);
             final BigDecimal tradesTotal = openingOrder.getTrades()
                     .stream()
                     .filter(t -> !t.getTradeId().equals(trade.getTradeId()))

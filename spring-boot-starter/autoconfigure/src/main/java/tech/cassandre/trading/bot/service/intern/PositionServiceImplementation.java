@@ -214,45 +214,43 @@ public class PositionServiceImplementation extends BaseService implements Positi
     public final void tickersUpdate(final Set<TickerDTO> tickers) {
         // With the ticker received, we check for every position, if it should be closed.
         logger.debug("PositionService - Updating position with {} ticker", tickers.size());
-        tickers.forEach(ticker -> {
-            positionRepository.findByStatus(OPENED)
-                    .stream()
-                    .map(positionMapper::mapToPositionDTO)
-                    .filter(p -> p.tickerUpdate(ticker))
-                    .peek(p -> logger.debug("PositionService - Position {} updated with ticker {}", p.getPositionId(), ticker))
-                    .forEach(p -> {
-                        // We close the position if it triggers the rules.
-                        // Or if the position was forced to close.
-                        if (p.shouldBeClosed() || positionsToClose.contains(p.getPositionId())) {
-                            final OrderCreationResultDTO orderCreationResult;
-                            if (p.getType() == LONG) {
-                                // Long - We just sell.
-                                orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
-                            } else {
-                                // Short - We buy back with the money we get from the original selling.
-                                // On opening, we had :
-                                // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH and it will give us 10 USDT.
-                                // We will use those 10 USDT to buy back ETH when the rule is triggered.
-                                // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
-                                // We can now use those 10 USDT to buy 5 ETH (amountSold / price).
-                                final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
-                                orderCreationResult = tradeService.createBuyMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), amountToBuy);
-                            }
-
-                            if (orderCreationResult.isSuccessful()) {
-                                p.closePositionWithOrderId(orderCreationResult.getOrder().getOrderId());
-                                logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
-                            }
-
-                            // If the position was force to close, we write it in position.
-                            if (positionsToClose.contains(p.getPositionId())) {
-                                positionsToClose.remove(p.getPositionId());
-                                p.setForceClosing(true);
-                            }
+        tickers.forEach(ticker -> positionRepository.findByStatus(OPENED)
+                .stream()
+                .map(positionMapper::mapToPositionDTO)
+                .filter(p -> p.tickerUpdate(ticker))
+                .peek(p -> logger.debug("PositionService - Position {} updated with ticker {}", p.getPositionId(), ticker))
+                .forEach(p -> {
+                    // We close the position if it triggers the rules.
+                    // Or if the position was forced to close.
+                    if (p.shouldBeClosed() || positionsToClose.contains(p.getPositionId())) {
+                        final OrderCreationResultDTO orderCreationResult;
+                        if (p.getType() == LONG) {
+                            // Long - We just sell.
+                            orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
+                        } else {
+                            // Short - We buy back with the money we get from the original selling.
+                            // On opening, we had :
+                            // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH and it will give us 10 USDT.
+                            // We will use those 10 USDT to buy back ETH when the rule is triggered.
+                            // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
+                            // We can now use those 10 USDT to buy 5 ETH (amountSold / price).
+                            final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
+                            orderCreationResult = tradeService.createBuyMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), amountToBuy);
                         }
-                        positionFlux.emitValue(p);
-                    });
-        });
+
+                        if (orderCreationResult.isSuccessful()) {
+                            p.closePositionWithOrderId(orderCreationResult.getOrder().getOrderId());
+                            logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
+                        }
+
+                        // If the position was force to close, we write it in position.
+                        if (positionsToClose.contains(p.getPositionId())) {
+                            positionsToClose.remove(p.getPositionId());
+                            p.setForceClosing(true);
+                        }
+                    }
+                    positionFlux.emitValue(p);
+                }));
     }
 
     @Override

@@ -1,13 +1,17 @@
-package tech.cassandre.trading.bot.service.dry;
+package tech.cassandre.trading.bot.util.dry;
 
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.FileNotFoundException;
@@ -23,9 +27,15 @@ import java.util.Optional;
 import java.util.Scanner;
 
 /**
- * User service (dry mode implementation).
+ * AOP for user service in dry mode.
  */
-public class UserServiceDryModeImplementation extends BaseService implements UserService {
+@Aspect
+@Configuration
+@ConditionalOnExpression("${cassandre.trading.bot.exchange.modes.dry:true}")
+public class UserServiceDryModeAOP extends BaseService {
+
+    /** Application context. */
+    private final ApplicationContext applicationContext;
 
     /** User file prefix. */
     private static final String USER_FILE_PREFIX = "user-";
@@ -42,13 +52,13 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
     /** Simulated user information. */
     private UserDTO user;
 
-    /** strategy. */
-    private GenericCassandreStrategy strategy;
-
     /**
      * Constructor.
+     *
+     * @param newApplicationContext application context
      */
-    public UserServiceDryModeImplementation() {
+    public UserServiceDryModeAOP(final ApplicationContext newApplicationContext) {
+        this.applicationContext = newApplicationContext;
         Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
         getFilesToLoad().forEach(file -> {
@@ -105,27 +115,23 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
                 .build();
     }
 
-    /**
-     * Set dependencies.
-     *
-     * @param newStrategy strategy
-     */
-    public void setDependencies(final GenericCassandreStrategy newStrategy) {
-        this.strategy = newStrategy;
+    @Around("execution(* tech.cassandre.trading.bot.service.UserService.getUser())")
+    public final Optional<UserDTO> getUser(final ProceedingJoinPoint pjp) {
+        return Optional.of(user);
     }
 
-    @Override
     public final Optional<UserDTO> getUser() {
         return Optional.of(user);
     }
 
     /**
-     * Update balance of trade account (method call by trade service).
+     * Update balance of trade account (method called by trade service).
      *
      * @param currency currency
      * @param amount   amount
      */
     public void addToBalance(final CurrencyDTO currency, final BigDecimal amount) {
+        // TODO Retrieve the trade account specified in each strategy.
         Optional<BalanceDTO> balance = user.getAccounts().get(TRADE_ACCOUNT_ID).getBalance(currency);
         final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
 
@@ -168,9 +174,6 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
             accounts.put(account.getAccountId(), account);
         });
 
-        // Change the user value and the account in the strategy.
-        strategy.getAccounts().clear();
-        strategy.getAccounts().putAll(accounts);
         user = UserDTO.builder()
                 .id(USER_ID)
                 .accounts(accounts)
@@ -188,7 +191,7 @@ public class UserServiceDryModeImplementation extends BaseService implements Use
             final Resource[] resources = resolver.getResources("classpath*:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
             return Arrays.asList(resources);
         } catch (IOException e) {
-            logger.error("TickerFluxMock encountered an error : " + e.getMessage());
+            logger.error("UserServiceDryModeAOP encountered an error : " + e.getMessage());
         }
         return Collections.emptyList();
     }

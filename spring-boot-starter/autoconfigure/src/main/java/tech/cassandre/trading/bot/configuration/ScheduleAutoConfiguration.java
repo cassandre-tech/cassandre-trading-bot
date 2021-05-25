@@ -31,7 +31,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     private static final int SCHEDULER_POOL_SIZE = 3;
 
     /** Initial delay before starting threads. */
-    public static final int INITIAL_DELAY = 1000;
+    public static final int INITIAL_DELAY = 1_000;
 
     /** Indicate that the batch should be running. */
     private final AtomicBoolean enabled = new AtomicBoolean(true);
@@ -81,7 +81,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
             try {
                 logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());
             } catch (Exception e) {
-                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());
+                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", e.getMessage());
             }
         });
         return scheduler;

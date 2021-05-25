@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
@@ -34,7 +35,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 
 @SpringBootTest
 @DisplayName("Service - Dry - Position service")
-@ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
@@ -56,10 +56,10 @@ public class PositionServiceDryModeTest extends BaseTest {
     @DisplayName("Check position lifecycle")
     public void checkPositionLifecycle() throws InterruptedException {
         // First tickers - cp1 & cp2 (dry mode).
-        // ETH, BTC - bid 0.2 / ask 0.2.
-        // ETH, USDT - bid 0,3 / ask 0.3.
-        tickerFlux.update();
-        tickerFlux.update();
+        // ETH/BTC - 0.2.
+        // ETH/USDT - 0.3.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.2")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
 
         // =============================================================================================================
         // Step 1 - Creates position 1 (ETH/BTC, 0.0001, 100% stop gain, price of 0.2).
@@ -106,8 +106,8 @@ public class PositionServiceDryModeTest extends BaseTest {
         // ETH, BTC - bid 0.2 / ask 0.3 - 50% gain.
         // ETH, USDT - bid 0,3 / ask 0.3 - no gain.
         // No change.
-        tickerFlux.update();
-        tickerFlux.update();
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(OPENED, getPositionDTO(position1Id).getStatus());
         assertEquals(OPENED, getPositionDTO(position2Id).getStatus());
@@ -115,22 +115,22 @@ public class PositionServiceDryModeTest extends BaseTest {
         // Third tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.4 - 100% gain.
         // ETH, USDT - bid 0,3 / ask 0.6 - 100% gain.
-        // No change.
-        tickerFlux.update();
-        tickerFlux.update();
+        // Should close position 1.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.4")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.6")).build());
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertEquals(CLOSED, getPositionDTO(position1Id).getStatus());
-        assertEquals(OPENED, getPositionDTO(position2Id).getStatus());
+        await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position1Id).getStatus()));
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
 
         // Fourth tickers - cp1 & cp2.
         // ETH, BTC - bid 0.2 / ask 0.4 - 100% gain.
         // ETH, USDT - bid 0,3 / ask 0.1 - 70% loss.
         // No change.
-        tickerFlux.update();
-        tickerFlux.update();
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.4")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.1")).build());
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertEquals(CLOSED, getPositionDTO(position1Id).getStatus());
-        assertEquals(CLOSED, getPositionDTO(position2Id).getStatus());
+        await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position1Id).getStatus()));
+        await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position2Id).getStatus()));
 
         // Check everything arrived.
         await().untilAsserted(() -> assertEquals(15, strategy.getPositionsUpdateReceived().size()));

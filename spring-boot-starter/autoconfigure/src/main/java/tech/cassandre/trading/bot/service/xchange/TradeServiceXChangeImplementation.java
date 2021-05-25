@@ -164,27 +164,32 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final OrderCreationResultDTO createBuyMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createBuyMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
         return createMarketOrder(strategy, BID, currencyPair, amount);
     }
 
     @Override
-    public final OrderCreationResultDTO createSellMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createSellMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
         return createMarketOrder(strategy, ASK, currencyPair, amount);
     }
 
     @Override
-    public final OrderCreationResultDTO createBuyLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createBuyLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
         return createLimitOrder(strategy, BID, currencyPair, amount, limitPrice);
     }
 
     @Override
-    public final OrderCreationResultDTO createSellLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createSellLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
         return createLimitOrder(strategy, ASK, currencyPair, amount, limitPrice);
     }
 
     @Override
-    public final boolean cancelOrder(final String orderId) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean cancelOrder(final String orderId) {
         logger.debug("TradeService - Canceling order {}", orderId);
         if (orderId != null) {
             try {
@@ -201,12 +206,8 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<OrderDTO> getOpenOrders() {
-        return getOrders();
-    }
-
-    @Override
-    public final Set<OrderDTO> getOrders() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Set<OrderDTO> getOrders() {
         logger.debug("TradeService - Getting open orders from exchange");
         try {
             // Consume a token from the token bucket.
@@ -227,7 +228,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                         .peek(o -> logger.debug("TradeService - {} local order retrieved", o))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
             } else {
-                // Else we get them from the exchange
+                // Else we get them from the exchange.
                 return tradeService.getOpenOrders()
                         .getOpenOrders()
                         .stream()
@@ -245,7 +246,8 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<TradeDTO> getTrades() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Set<TradeDTO> getTrades() {
         logger.debug("TradeService - Getting trades from exchange");
         // Query trades from the last 24 jours (24 hours because of Binance).
         TradeHistoryParamsAll params = new TradeHistoryParamsAll();

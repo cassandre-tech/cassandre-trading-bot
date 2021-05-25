@@ -48,7 +48,6 @@ import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassa
 
 @SpringBootTest
 @DisplayName("Service - Dry - User service with positions")
-@ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true"),
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),

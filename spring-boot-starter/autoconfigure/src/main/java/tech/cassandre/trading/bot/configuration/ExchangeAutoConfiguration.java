@@ -24,9 +24,6 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.dry.ExchangeServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.xchange.ExchangeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.xchange.MarketServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
@@ -179,29 +176,16 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             long tradeRate = getRateValue(exchangeParameters.getRates().getTrade());
 
             // Creates Cassandre services.
-            UserServiceDryModeImplementation userServiceDryMode;
-            TradeServiceDryModeImplementation tradeServiceDryMode = null;
-            if (!exchangeParameters.getModes().getDry()) {
-                // Normal mode.
-                this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
-                this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
-                this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                this.tradeService = new TradeServiceXChangeImplementation(tradeRate, orderRepository, xChangeTradeService);
-            } else {
-                // Dry mode.
-                this.exchangeService = new ExchangeServiceDryModeImplementation(applicationContext);
-                userServiceDryMode = new UserServiceDryModeImplementation();
-                this.userService = userServiceDryMode;
-                this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode, tradeRepository, orderRepository);
-                this.tradeService = tradeServiceDryMode;
-            }
+            this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
+            this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
+            this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
+            this.tradeService = new TradeServiceXChangeImplementation(tradeRate, orderRepository, xChangeTradeService);
 
             // Creates Cassandre flux.
-            accountFlux = new AccountFlux(userService);
-            tickerFlux = new TickerFlux(applicationContext, marketService);
-            orderFlux = new OrderFlux(tradeService, orderRepository);
-            tradeFlux = new TradeFlux(tradeService, orderRepository, tradeRepository);
+            accountFlux = new AccountFlux(getUserService());
+            tickerFlux = new TickerFlux(applicationContext, getMarketService());
+            orderFlux = new OrderFlux(getTradeService(), orderRepository);
+            tradeFlux = new TradeFlux(getTradeService(), orderRepository, tradeRepository);
             positionFlux = new PositionFlux(positionRepository, orderRepository);
 
             // Force login to check credentials.
@@ -216,12 +200,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                     .stream()
                     .map(CurrencyPairDTO::toString)
                     .collect(Collectors.joining(", ")));
-
-            // if in dry mode, we set dependencies.
-            if (tradeService instanceof TradeServiceDryModeImplementation) {
-                assert tradeServiceDryMode != null;
-                tradeServiceDryMode.setDependencies(orderFlux, tradeFlux);
-            }
 
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.

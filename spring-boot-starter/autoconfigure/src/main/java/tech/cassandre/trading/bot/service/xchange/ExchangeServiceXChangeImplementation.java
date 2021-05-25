@@ -27,13 +27,14 @@ public class ExchangeServiceXChangeImplementation extends BaseService implements
     }
 
     @Override
-    public final Set<CurrencyPairDTO> getAvailableCurrencyPairs() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Set<CurrencyPairDTO> getAvailableCurrencyPairs() {
         logger.debug("ExchangeService - Retrieving available currency pairs");
         return exchange.getExchangeMetaData()
                 .getCurrencyPairs()
                 .keySet()
                 .stream()
-                .peek(cp -> logger.debug("ExchangeService - Adding currency pair {} ", cp))
+                .peek(cp -> logger.debug("ExchangeService - {} available", cp))
                 .map(currencyMapper::mapToCurrencyPairDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
