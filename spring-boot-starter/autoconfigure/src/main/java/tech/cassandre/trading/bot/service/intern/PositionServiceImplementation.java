@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.service.intern;
 
+import org.springframework.context.ApplicationContext;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -7,7 +8,6 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.position.PositionTypeDTO;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -18,6 +18,8 @@ import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.strategy.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
@@ -51,6 +53,9 @@ public class PositionServiceImplementation extends BaseService implements Positi
     /** Big decimal scale for division. */
     public static final int SCALE = 8;
 
+    /** Application context. */
+    private final ApplicationContext applicationContext;
+
     /** Position repository. */
     private final PositionRepository positionRepository;
 
@@ -66,25 +71,28 @@ public class PositionServiceImplementation extends BaseService implements Positi
     /**
      * Constructor.
      *
+     * @param newApplicationContext application context
      * @param newPositionRepository position repository
      * @param newTradeService       trade service
      * @param newPositionFlux       position flux
      */
-    public PositionServiceImplementation(final PositionRepository newPositionRepository,
+    public PositionServiceImplementation(final ApplicationContext newApplicationContext,
+                                         final PositionRepository newPositionRepository,
                                          final TradeService newTradeService,
                                          final PositionFlux newPositionFlux) {
+        this.applicationContext = newApplicationContext;
         this.positionRepository = newPositionRepository;
         this.tradeService = newTradeService;
         this.positionFlux = newPositionFlux;
     }
 
     @Override
-    public final PositionCreationResultDTO createLongPosition(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
+    public final PositionCreationResultDTO createLongPosition(final GenericCassandreStrategy strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
         return createPosition(strategy, LONG, currencyPair, amount, rules);
     }
 
     @Override
-    public final PositionCreationResultDTO createShortPosition(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
+    public final PositionCreationResultDTO createShortPosition(final GenericCassandreStrategy strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
         return createPosition(strategy, SHORT, currencyPair, amount, rules);
     }
 
@@ -98,7 +106,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
      * @param rules        rules
      * @return position creation result
      */
-    public final PositionCreationResultDTO createPosition(final StrategyDTO strategy,
+    public final PositionCreationResultDTO createPosition(final GenericCassandreStrategy strategy,
                                                           final PositionTypeDTO type,
                                                           final CurrencyPairDTO currencyPair,
                                                           final BigDecimal amount,
@@ -121,13 +129,13 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // =========================================================================================================
             // Creates the position in database.
             Position position = new Position();
-            position.setStrategy(strategyMapper.mapToStrategy(strategy));
+            position.setStrategy(strategyMapper.mapToStrategy(strategy.getStrategyDTO()));
             position = positionRepository.save(position);
 
             // =========================================================================================================
             // Creates the position dto.
-            PositionDTO p = new PositionDTO(position.getId(), type, strategy, currencyPair, amount, orderCreationResult.getOrderId(), rules);
-            positionRepository.save(positionMapper.mapToPosition(p));
+            PositionDTO p = new PositionDTO(position.getId(), type, strategy.getStrategyDTO(), currencyPair, amount, orderCreationResult.getOrder(), rules);
+            positionRepository.save(positionMapper.mapToPosition(p));   // TODO Should i save it right away ?
             logger.debug("PositionService - Position {} opened with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
 
             // =========================================================================================================
@@ -224,29 +232,42 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     // Or if the position was forced to close.
                     if (p.shouldBeClosed() || positionsToClose.contains(p.getPositionId())) {
                         final OrderCreationResultDTO orderCreationResult;
-                        if (p.getType() == LONG) {
-                            // Long - We just sell.
-                            orderCreationResult = tradeService.createSellMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), p.getAmount().getValue());
+                        // We retrieve the strategy
+                        final Optional<GenericCassandreStrategy> strategy = applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
+                                .values()  // We get the list of all required cp of all strategies.
+                                .stream()
+                                .map(o -> ((GenericCassandreStrategy) o))
+                                .filter(cassandreStrategy -> cassandreStrategy.getStrategyDTO().getStrategyId().equals(p.getStrategy().getStrategyId()))
+                                .findFirst();
+
+                        if (strategy.isPresent()) {
+                            if (p.getType() == LONG) {
+                                // Long - We just sell.
+                                orderCreationResult = tradeService.createSellMarketOrder(strategy.get(), ticker.getCurrencyPair(), p.getAmount().getValue());
+                            } else {
+                                // Short - We buy back with the money we get from the original selling.
+                                // On opening, we had :
+                                // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH and it will give us 10 USDT.
+                                // We will use those 10 USDT to buy back ETH when the rule is triggered.
+                                // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
+                                // We can now use those 10 USDT to buy 5 ETH (amountSold / price).
+                                final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
+                                orderCreationResult = tradeService.createBuyMarketOrder(strategy.get(), ticker.getCurrencyPair(), amountToBuy);
+                            }
+
+                            if (orderCreationResult.isSuccessful()) {
+                                p.closePositionWithOrder(orderCreationResult.getOrder());
+                                // TODO Should i save it right away ?
+                                logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
+                            }
+
+                            // If the position was force to close, we write it in position.
+                            if (positionsToClose.contains(p.getPositionId())) {
+                                positionsToClose.remove(p.getPositionId());
+                                p.setForceClosing(true);
+                            }
                         } else {
-                            // Short - We buy back with the money we get from the original selling.
-                            // On opening, we had :
-                            // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH and it will give us 10 USDT.
-                            // We will use those 10 USDT to buy back ETH when the rule is triggered.
-                            // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
-                            // We can now use those 10 USDT to buy 5 ETH (amountSold / price).
-                            final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
-                            orderCreationResult = tradeService.createBuyMarketOrder(p.getStrategy(), ticker.getCurrencyPair(), amountToBuy);
-                        }
-
-                        if (orderCreationResult.isSuccessful()) {
-                            p.closePositionWithOrderId(orderCreationResult.getOrder().getOrderId());
-                            logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
-                        }
-
-                        // If the position was force to close, we write it in position.
-                        if (positionsToClose.contains(p.getPositionId())) {
-                            positionsToClose.remove(p.getPositionId());
-                            p.setForceClosing(true);
+                            logger.error("Strategy {} not found", p.getStrategy().getStrategyId());
                         }
                     }
                     positionFlux.emitValue(p);

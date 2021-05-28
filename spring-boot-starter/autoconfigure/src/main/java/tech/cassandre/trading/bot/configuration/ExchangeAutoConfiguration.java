@@ -176,10 +176,10 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             long tradeRate = getRateValue(exchangeParameters.getRates().getTrade());
 
             // Creates Cassandre services.
-            this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
-            this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
-            this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-            this.tradeService = new TradeServiceXChangeImplementation(tradeRate, orderRepository, xChangeTradeService);
+            this.exchangeService = new ExchangeServiceXChangeImplementation(getXChangeExchange());
+            this.userService = new UserServiceXChangeImplementation(accountRate, getXChangeAccountService());
+            this.marketService = new MarketServiceXChangeImplementation(tickerRate, getXChangeMarketDataService());
+            this.tradeService = new TradeServiceXChangeImplementation(tradeRate, orderRepository, getXChangeTradeService());
 
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(getUserService());

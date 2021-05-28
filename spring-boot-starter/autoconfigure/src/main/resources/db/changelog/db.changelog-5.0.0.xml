@@ -12,5 +12,13 @@
         <dropTable cascadeConstraints="true"
                    tableName="EXCHANGE_ACCOUNTS"/>
 
+        <!-- Adding market price column to orders. -->
+        <addColumn tableName="ORDERS">
+            <column name="MARKET_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="The price Cassandre had when the order was created (value)"/>
+            <column name="MARKET_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="The price Cassandre had when the order was created (currency)"/>
+        </addColumn>
+
     </changeSet>
 </databaseChangeLog>

@@ -319,6 +319,16 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         }
     }
 
+    /**
+     * Returns the last price received for a currency pair.
+     *
+     * @param currencyPair currency pair
+     * @return last price
+     */
+    public final BigDecimal getLastPriceForCurrencyPair(final CurrencyPairDTO currencyPair) {
+        return getLastTickerByCurrencyPair(currencyPair).map(TickerDTO::getLast).orElse(null);
+    }
+
     // =================================================================================================================
     // Related to orders.
 
@@ -423,7 +433,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public OrderCreationResultDTO createBuyMarketOrder(final CurrencyPairDTO currencyPair,
                                                        final BigDecimal amount) {
-        return tradeService.createBuyMarketOrder(strategy, currencyPair, amount);
+        return tradeService.createBuyMarketOrder(this, currencyPair, amount);
     }
 
     /**
@@ -435,7 +445,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public OrderCreationResultDTO createSellMarketOrder(final CurrencyPairDTO currencyPair,
                                                         final BigDecimal amount) {
-        return tradeService.createSellMarketOrder(strategy, currencyPair, amount);
+        return tradeService.createSellMarketOrder(this, currencyPair, amount);
     }
 
     /**
@@ -449,7 +459,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair,
                                                       final BigDecimal amount,
                                                       final BigDecimal limitPrice) {
-        return tradeService.createBuyLimitOrder(strategy, currencyPair, amount, limitPrice);
+        return tradeService.createBuyLimitOrder(this, currencyPair, amount, limitPrice);
     }
 
     /**
@@ -463,7 +473,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair,
                                                        final BigDecimal amount,
                                                        final BigDecimal limitPrice) {
-        return tradeService.createSellLimitOrder(strategy, currencyPair, amount, limitPrice);
+        return tradeService.createSellLimitOrder(this, currencyPair, amount, limitPrice);
     }
 
     /**
@@ -500,7 +510,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public PositionCreationResultDTO createLongPosition(final CurrencyPairDTO currencyPair,
                                                         final BigDecimal amount,
                                                         final PositionRulesDTO rules) {
-        return positionService.createLongPosition(strategy, currencyPair, amount, rules);
+        return positionService.createLongPosition(this, currencyPair, amount, rules);
     }
 
     /**
@@ -516,7 +526,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public PositionCreationResultDTO createShortPosition(final CurrencyPairDTO currencyPair,
                                                          final BigDecimal amount,
                                                          final PositionRulesDTO rules) {
-        return positionService.createShortPosition(strategy, currencyPair, amount, rules);
+        return positionService.createShortPosition(this, currencyPair, amount, rules);
     }
 
     /**

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -57,6 +58,7 @@ import static org.mockito.Mockito.when;
  */
 @SuppressWarnings("checkstyle:DesignForExtension")
 @TestConfiguration
+@EnableAspectJAutoProxy
 public class TickerFluxMock {
 
     /** Application context. */
@@ -67,7 +69,7 @@ public class TickerFluxMock {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /** To milliseconds. */
-    public static final int MILLISECONDS = 1000;
+    public static final int MILLISECONDS = 1_000;
 
     /** Tickers file prefix. */
     private static final String TICKERS_FILE_PREFIX = "tickers-";

@@ -302,7 +302,7 @@ public class UserServiceDryModeTest extends BaseTest {
         // Buying with a currency we don't have.
         final OrderCreationResultDTO buyMarketOrder1 = strategy.createBuyMarketOrder(new CurrencyPairDTO(ETH, EUR), new BigDecimal("1000"));
         assertFalse(buyMarketOrder1.isSuccessful());
-        assertTrue(buyMarketOrder1.getErrorMessage().contains("No assets for EUR"));
+        assertTrue(buyMarketOrder1.getErrorMessage().contains("Not enough assets"));
 
         // =============================================================================================================
         // Buying 1000 ether we can’t afford.

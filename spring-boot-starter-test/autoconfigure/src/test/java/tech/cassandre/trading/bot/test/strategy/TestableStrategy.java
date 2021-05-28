@@ -37,7 +37,8 @@ public final class TestableStrategy extends BasicCassandreStrategy {
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-        return accounts.stream().filter(a -> a.getAccountId().equals("trade")).findFirst();
+        accounts.forEach(accountDTO -> System.out.printf("=> " + accountDTO));
+        return accounts.stream().filter(a -> "trade".equals(a.getAccountId())).findFirst();
     }
 
     @Override

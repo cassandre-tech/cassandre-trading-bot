@@ -3,57 +3,57 @@ package tech.cassandre.trading.bot.util.dry;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.knowm.xchange.dto.account.AccountInfo;
+import org.knowm.xchange.dto.account.Balance;
+import org.knowm.xchange.dto.account.Wallet;
+import org.knowm.xchange.dto.trade.LimitOrder;
+import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.dto.trade.OpenOrders;
+import org.knowm.xchange.dto.trade.UserTrade;
+import org.knowm.xchange.dto.trade.UserTrades;
+import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
-import tech.cassandre.trading.bot.dto.trade.TradeDTO;
-import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.dto.user.BalanceDTO;
-import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
-import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
-import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
+import static org.knowm.xchange.dto.Order.OrderType.ASK;
+import static org.knowm.xchange.dto.Order.OrderType.BID;
+import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
+
 
 /**
  * AOP for trade service in dry mode.
  */
 @Aspect
-@Configuration
+@Component
 @ConditionalOnExpression("${cassandre.trading.bot.exchange.modes.dry:true}")
 public class TradeServiceDryModeAOP extends BaseService {
-
-    /** Delay before order arrives. */
-    private static final int DELAY_BEFORE_ORDER_ARRIVES = 100;
-
-    /** Delay before trade arrives. */
-    private static final int DELAY_BEFORE_TRADE_ARRIVES = 200;
 
     /** Application context. */
     private final ApplicationContext applicationContext;
 
-    /** Waiting time before sending orders and trades to flux. */
-    private static final long WAITING_TIME = 20000L;
+    /** Order repository. */
+    private final OrderRepository orderRepository;
+
+    /** Trade repository. */
+    private final TradeRepository tradeRepository;
 
     /** Dry order prefix. */
     private static final String DRY_ORDER_PREFIX = "DRY_ORDER_";
@@ -67,53 +67,36 @@ public class TradeServiceDryModeAOP extends BaseService {
     /** Order counter. */
     private final AtomicInteger orderCounter = new AtomicInteger(1);
 
-    /** Trade counter. */
-    private final AtomicInteger tradeCounter = new AtomicInteger(1);
-
     /** User service - dry mode. */
     private final UserServiceDryModeAOP userService;
-
-    /** Hashmap used to store ZonedDateTime of orders created locally. */
-    private final Map<String, ZonedDateTime> localOrdersCreationDates = new ConcurrentHashMap<>();
-
-    /** Hashmap used to store orders created locally. */
-    private final Map<String, OrderDTO> localOrders = new ConcurrentHashMap<>();
-
-    /** Hashmap used to store ZonedDateTime of orders created locally. */
-    private final Map<String, ZonedDateTime> localTradesCreationDates = new ConcurrentHashMap<>();
-
-    /** Hashmap used to store trades created locally. */
-    private final Map<String, TradeDTO> localTrades = new ConcurrentHashMap<>();
 
     /**
      * Constructor.
      *
      * @param newApplicationContext application context
+     * @param newOrderRepository    order repository
+     * @param newTradeRepository    trade repository
      * @param newUserService        user service
      */
     public TradeServiceDryModeAOP(final ApplicationContext newApplicationContext,
+                                  final OrderRepository newOrderRepository,
+                                  final TradeRepository newTradeRepository,
                                   final UserServiceDryModeAOP newUserService) {
         this.applicationContext = newApplicationContext;
+        this.orderRepository = newOrderRepository;
+        this.tradeRepository = newTradeRepository;
         this.userService = newUserService;
     }
 
-    /**
-     * Creates a fake market order.
-     *
-     * @param strategy     strategy
-     * @param orderTypeDTO order type
-     * @param currencyPair currency pair
-     * @param amount       amount
-     * @return order creation result
-     */
-    private OrderCreationResultDTO createMarketOrder(final StrategyDTO strategy, final OrderTypeDTO orderTypeDTO, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.placeMarketOrder(..)) && args(marketOrder)", argNames = "pjp, marketOrder")
+    public final String placeMarketOrder(final ProceedingJoinPoint pjp, final MarketOrder marketOrder) throws IOException {
         // We retrieve the ticker received by the strategy.
+        // TODO Find a better way to get the last ticker.
         final Optional<TickerDTO> t = applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
                 .values()
                 .stream()
-                .filter(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId().equals(strategy.getStrategyId()))
                 .map(cassandreStrategy -> ((GenericCassandreStrategy) cassandreStrategy))
-                .map(cassandreStrategy -> cassandreStrategy.getLastTickerByCurrencyPair(currencyPair))
+                .map(cassandreStrategy -> cassandreStrategy.getLastTickerByCurrencyPair(currencyMapper.mapToCurrencyPairDTO(marketOrder.getCurrencyPair())))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst();
@@ -125,182 +108,104 @@ public class TradeServiceDryModeAOP extends BaseService {
             // ETH/BTC quote currency => BTC.
             // ETH/BTC base currency => ETH.
 
-            // We check that we have a user and a trade account.
-            final Optional<UserDTO> user = userService.getUser();
-            final AccountDTO account;
-            if (user.isPresent()) {
-                account = user.get().getAccounts().get(TRADE_ACCOUNT_ID);
-                if (account == null) {
-                    return new OrderCreationResultDTO("No trade account", new Exception("No trade account"));
-                }
-            } else {
-                return new OrderCreationResultDTO("No data for user", new Exception("No data for user"));
+            // We check that we have the trade account.
+            final AccountInfo accountInfo = userService.getAccountInfo();
+            final Wallet tradeWallet = accountInfo.getWallet(TRADE_ACCOUNT_ID);
+            if (tradeWallet == null) {
+                throw new IOException("Trade wallet was not found : " + TRADE_ACCOUNT_ID);
             }
 
             // We check if we have enough assets to buy/sell.
-            if (orderTypeDTO.equals(BID)) {
+            if (marketOrder.getType().equals(BID)) {
                 // Buying order - we buy ETH from BTC.
                 // We are buying the following amount : ticker last price * amount
-                Optional<BalanceDTO> balance = account.getBalance(currencyPair.getQuoteCurrency());
-                if (balance.isPresent()) {
-                    BigDecimal ownedAssets = balance.get().getAvailable();
-                    BigDecimal cost = t.get().getLast().multiply(amount);
+                Balance balance = tradeWallet.getBalance(marketOrder.getCurrencyPair().counter);
+                if (balance != null) {
+                    BigDecimal ownedAssets = balance.getAvailable();
+                    BigDecimal cost = t.get().getLast().multiply(marketOrder.getOriginalAmount());
                     if (cost.compareTo(ownedAssets) > 0) {
-                        final String errorMessage = "Not enough assets (costs : " + cost + " " + currencyPair.getQuoteCurrency() + " - owned assets : " + ownedAssets + " " + currencyPair.getQuoteCurrency();
-                        return new OrderCreationResultDTO(errorMessage, new Exception(errorMessage));
+                        final String errorMessage = "Not enough assets (costs : " + cost + " " + marketOrder.getCurrencyPair().counter + " - owned assets : " + ownedAssets + " " + marketOrder.getCurrencyPair().counter + ")";
+                        throw new IOException(errorMessage);
                     }
                 } else {
-                    return new OrderCreationResultDTO("No assets for " + currencyPair.getQuoteCurrency(), new Exception("No assets for " + currencyPair.getQuoteCurrency()));
+                    throw new IOException("No assets for " + marketOrder.getCurrencyPair().counter);
                 }
             } else {
                 // Selling order - we sell ETH for BTC.
                 // We are selling the amount
-                Optional<BalanceDTO> balance = account.getBalance(currencyPair.getBaseCurrency());
-                if (balance.isPresent()) {
-                    BigDecimal ownedAssets = balance.get().getAvailable();
-                    if (amount.compareTo(ownedAssets) > 0) {
-                        final String errorMessage = "Not enough assets (amount : " + amount + " " + currencyPair.getQuoteCurrency() + " - owned assets : " + ownedAssets + " " + currencyPair.getBaseCurrency();
-                        return new OrderCreationResultDTO(errorMessage, new Exception(errorMessage));
+                Balance balance = tradeWallet.getBalance(marketOrder.getCurrencyPair().base);
+                if (balance != null) {
+                    BigDecimal ownedAssets = balance.getAvailable();
+                    if (marketOrder.getOriginalAmount().compareTo(ownedAssets) > 0) {
+                        final String errorMessage = "Not enough assets (amount : " + marketOrder.getOriginalAmount() + " " + marketOrder.getCurrencyPair().counter + " - owned assets : " + ownedAssets + " " + marketOrder.getCurrencyPair().base;
+                        throw new IOException(errorMessage);
                     }
                 } else {
-                    return new OrderCreationResultDTO("No assets for " + currencyPair.getBaseCurrency(), new Exception("No assets for " + currencyPair.getBaseCurrency()));
+                    throw new IOException("No assets for " + marketOrder.getCurrencyPair().base);
                 }
             }
 
             // We update the balances of the account with the values of the trade.
-            if (orderTypeDTO.equals(BID)) {
-                userService.addToBalance(currencyPair.getBaseCurrency(), amount);
-                userService.addToBalance(currencyPair.getQuoteCurrency(), amount.multiply(t.get().getLast()).multiply(new BigDecimal("-1")));
+            if (marketOrder.getType().equals(BID)) {
+                userService.addToBalance(marketOrder.getCurrencyPair().base, marketOrder.getOriginalAmount());
+                userService.addToBalance(marketOrder.getCurrencyPair().counter, marketOrder.getOriginalAmount().multiply(t.get().getLast()).multiply(new BigDecimal("-1")));
             } else {
-                userService.addToBalance(currencyPair.getBaseCurrency(), amount.multiply(new BigDecimal("-1")));
-                userService.addToBalance(currencyPair.getQuoteCurrency(), amount.multiply(t.get().getLast()));
+                userService.addToBalance(marketOrder.getCurrencyPair().base, marketOrder.getOriginalAmount().multiply(new BigDecimal("-1")));
+                userService.addToBalance(marketOrder.getCurrencyPair().counter, marketOrder.getOriginalAmount().multiply(t.get().getLast()));
             }
 
-            // We create and send the order.
-            final String orderId = getNextOrderNumber();
-            final OrderDTO order = OrderDTO.builder()
-                    .orderId(orderId)
-                    .type(orderTypeDTO)
-                    .strategy(strategy)
-                    .currencyPair(currencyPair)
-                    .amount(CurrencyAmountDTO.builder()
-                            .value(amount)
-                            .currency(currencyPair.getBaseCurrency())
-                            .build())
-                    .averagePrice(CurrencyAmountDTO.builder()
-                            .value(t.get().getLast())
-                            .currency(currencyPair.getQuoteCurrency())
-                            .build())
-                    .status(FILLED)
-                    .cumulativeAmount(CurrencyAmountDTO.builder()
-                            .value(amount)
-                            .currency(currencyPair.getBaseCurrency())
-                            .build())
-                    .timestamp(t.get().getTimestamp())
-                    .build();
-            localOrders.put(orderId, order);
-
-            // We create and send the trade.
-            final String tradeId = getNextTradeNumber();
-            final TradeDTO trade = TradeDTO.builder()
-                    .tradeId(tradeId)
-                    .type(orderTypeDTO)
-                    .orderId(orderId)
-                    .currencyPair(currencyPair)
-                    .amount(CurrencyAmountDTO.builder()
-                            .value(amount)
-                            .currency(currencyPair.getBaseCurrency())
-                            .build())
-                    .price(CurrencyAmountDTO.builder()
-                            .value(t.get().getLast())
-                            .currency(currencyPair.getQuoteCurrency())
-                            .build())
-                    .fee(CurrencyAmountDTO.ZERO)
-                    .timestamp(t.get().getTimestamp())
-                    .build();
-            localTrades.put(tradeId, trade);
-
-            localOrdersCreationDates.put(orderId, ZonedDateTime.now());
-            localTradesCreationDates.put(tradeId, ZonedDateTime.now());
-
             // We create and returns the result.
-            return new OrderCreationResultDTO(order);
+            return DRY_ORDER_PREFIX.concat(String.format("%09d", orderCounter.getAndIncrement()));
         } else {
-            return new OrderCreationResultDTO("Ticker not found", new Exception("Ticker not found"));
+            throw new RuntimeException("Ticker not found");
         }
-    }
-
-    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createBuyMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp,strategy,currencyPair,amount")
-    public final OrderCreationResultDTO createBuyMarketOrder(final ProceedingJoinPoint pjp,
-                                                             final StrategyDTO strategy,
-                                                             final CurrencyPairDTO currencyPair,
-                                                             final BigDecimal amount) {
-        return createMarketOrder(strategy, BID, currencyPair, amount);
-    }
-
-    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createSellMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
-    public final OrderCreationResultDTO createSellMarketOrder(final ProceedingJoinPoint pjp,
-                                                        final StrategyDTO strategy,
-                                                        final CurrencyPairDTO currencyPair,
-                                                        final BigDecimal amount) {
-        return createMarketOrder(strategy, ASK, currencyPair, amount);
-    }
-
-    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createBuyLimitOrder(..)) && args(strategy, currencyPair, amount, limitPrice)", argNames = "pjp, strategy, currencyPair, amount, limitPrice")
-    public final OrderCreationResultDTO createBuyLimitOrder(final ProceedingJoinPoint pjp,
-                                                      final StrategyDTO strategy,
-                                                      final CurrencyPairDTO currencyPair,
-                                                      final BigDecimal amount,
-                                                      final BigDecimal limitPrice) {
-        return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
-    }
-
-    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createSellLimitOrder(..)) && args(strategy, currencyPair, amount, limitPrice))", argNames = "pjp, strategy, currencyPair, amount, limitPrice")
-    public final OrderCreationResultDTO createSellLimitOrder(final ProceedingJoinPoint pjp,
-                                                       final StrategyDTO strategy,
-                                                       final CurrencyPairDTO currencyPair,
-                                                       final BigDecimal amount,
-                                                       final BigDecimal limitPrice) {
-        return new OrderCreationResultDTO("Not implemented", new Exception("Not implemented"));
     }
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.cancelOrder(..)) && args(orderId))", argNames = "pjp, orderId")
     public final boolean cancelOrder(final ProceedingJoinPoint pjp, final String orderId) {
-        return localOrders.remove(orderId) != null;
+        final Optional<Order> order = orderRepository.findByOrderId(orderId);
+        if (order.isPresent()) {
+            orderRepository.delete(order.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    @Around("execution(* tech.cassandre.trading.bot.service.TradeService.getOrders())")
-    public final Set<OrderDTO> getOrders(final ProceedingJoinPoint pjp) {
-        return localOrders.values()
-                .stream()
-                .filter(orderDTO -> ZonedDateTime.now().isAfter(localOrdersCreationDates.get(orderDTO.getOrderId()).plus(Duration.ofMillis(DELAY_BEFORE_ORDER_ARRIVES))))
-                .collect(Collectors.toSet());
+    @Around("execution(* org.knowm.xchange.service.trade.TradeService.getOpenOrders())")
+    public final OpenOrders getOpenOrders(final ProceedingJoinPoint pjp) {
+
+        return new OpenOrders(Collections.<LimitOrder>emptyList());
     }
 
-    @Around("execution(* tech.cassandre.trading.bot.service.TradeService.getTrades())")
-    public final Set<TradeDTO> getTrades(final ProceedingJoinPoint pjp) {
-        return localTrades.values()
-                .stream()
-                .filter(tradeDTO -> ZonedDateTime.now().isAfter(localTradesCreationDates.get(tradeDTO.getTradeId()).plus(Duration.ofMillis(DELAY_BEFORE_TRADE_ARRIVES))))
-                .collect(Collectors.toSet());
-    }
+    @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.getTradeHistory(..)) && args(params))", argNames = "pjp, params")
+    public final UserTrades getTradeHistory(final ProceedingJoinPoint pjp, final TradeHistoryParams params) {
+        List<UserTrade> trades = new LinkedList<>();
 
-    /**
-     * Returns next order number.
-     *
-     * @return next order number
-     */
-    private String getNextOrderNumber() {
-        return DRY_ORDER_PREFIX.concat(String.format("%09d", orderCounter.getAndIncrement()));
-    }
+        // For every orders in database, we will simulate an equivalent trade to close things.
+        orderRepository.findByOrderByTimestampAsc()
+                .stream() // TODO Add a filter to only select the trade that are now already in database.
+                .map(orderMapper::mapToOrderDTO)
+                .forEach(order -> {
+                    org.knowm.xchange.dto.Order.OrderType type; // TODO Optimise with mapper.
+                    if (order.getType().equals(OrderTypeDTO.BID)) {
+                        type = BID;
+                    } else {
+                        type = ASK;
+                    }
 
-    /**
-     * Returns next trade number.
-     *
-     * @return next trade number
-     */
-    private String getNextTradeNumber() {
-        return DRY_TRADE_PREFIX.concat(String.format("%09d", tradeCounter.getAndIncrement()));
+                    trades.add(UserTrade.builder()
+                            .id(order.getOrderId().replace(DRY_ORDER_PREFIX, DRY_TRADE_PREFIX))
+                            .type(type)
+                            .orderId(order.getOrderId())
+                            .currencyPair(currencyMapper.mapToCurrencyPair(order.getCurrencyPair()))
+                            .originalAmount(order.getAmount().getValue())
+                            .price(order.getMarketPrice().getValue())
+                            .feeAmount(BigDecimal.ZERO)
+                            .timestamp(Timestamp.valueOf(order.getTimestamp().toLocalDateTime()))
+                            .build());
+                });
+        return new UserTrades(trades, SortByTimestamp);
     }
 
 }

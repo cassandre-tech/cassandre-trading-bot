@@ -74,7 +74,7 @@ public abstract class Strategy extends BasicCassandreStrategy {
         tickersUpdateReceived.addAll(tickers.values());
         tickers.values().forEach(ticker -> logger.info(this.getClass().getSimpleName() + "-onTickersUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n"));
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

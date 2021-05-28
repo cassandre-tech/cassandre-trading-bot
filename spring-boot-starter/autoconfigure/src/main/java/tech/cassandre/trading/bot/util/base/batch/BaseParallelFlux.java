@@ -94,7 +94,8 @@ public abstract class BaseParallelFlux<T> extends Base {
         try {
             emitValue(getNewValues());
         } catch (RuntimeException e) {
-            logger.error("BaseExternalFlux - Error getting new values : " + e.getMessage());
+            logger.error(getClass().getSimpleName() + " - Error getting new values : " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

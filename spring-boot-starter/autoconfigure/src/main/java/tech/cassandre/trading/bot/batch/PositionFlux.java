@@ -50,7 +50,7 @@ public class PositionFlux extends BaseSequentialInternalFlux<PositionDTO> {
                     }
                     valueToSave.set(position);
                     logger.debug("PositionFlux - Updating position in database {}", position);
-                }, () -> logger.error("PositionFlux - Position {} was not found in database", newValue));
+                }, () -> logger.error("PositionFlux - Position {} was not found in database. This should never happend", newValue));
 
         return Optional.ofNullable(positionMapper.mapToPositionDTO(positionRepository.save(valueToSave.get())));
     }

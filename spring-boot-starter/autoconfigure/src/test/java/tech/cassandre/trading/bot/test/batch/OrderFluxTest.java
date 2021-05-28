@@ -32,6 +32,7 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
@@ -70,17 +71,17 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(0, orderRepository.count());
 
         // ORDER_000001.
-        final OrderCreationResultDTO order000001 = tradeService.createSellMarketOrder(strategyDTO, ETH_BTC, new BigDecimal("1"));
+        final OrderCreationResultDTO order000001 = tradeService.createSellMarketOrder(strategy, ETH_BTC, new BigDecimal("1"));
         assertTrue(order000001.isSuccessful());
         assertEquals("ORDER_000001", order000001.getOrderId());
 
         // ORDER_000002.
-        final OrderCreationResultDTO order000002 = tradeService.createBuyMarketOrder(strategyDTO, ETH_USDT, new BigDecimal("2"));
+        final OrderCreationResultDTO order000002 = tradeService.createBuyMarketOrder(strategy, ETH_USDT, new BigDecimal("2"));
         assertTrue(order000002.isSuccessful());
         assertEquals("ORDER_000002", order000002.getOrderId());
 
         // ORDER_000003.
-        final OrderCreationResultDTO order000003 = tradeService.createSellMarketOrder(strategyDTO, ETH_BTC, new BigDecimal("3"));
+        final OrderCreationResultDTO order000003 = tradeService.createSellMarketOrder(strategy, ETH_BTC, new BigDecimal("3"));
         assertTrue(order000003.isSuccessful());
         assertEquals("ORDER_000003", order000003.getOrderId());
 
@@ -120,11 +121,11 @@ public class OrderFluxTest extends BaseTest {
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()), o.getAmount());
-        assertNull(o.getAveragePrice());
+        assertEquals(CurrencyAmountDTO.ZERO, o.getAveragePrice());
         assertNull(o.getLimitPrice());
         assertNull(o.getLeverage());
-        assertEquals(PENDING_NEW, o.getStatus());
-        assertNull(o.getCumulativeAmount());
+        assertEquals(NEW, o.getStatus());
+        assertEquals(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()), o.getCumulativeAmount());
         assertNull(o.getUserReference());
         assertNotNull(o.getTimestamp());
 
@@ -137,11 +138,11 @@ public class OrderFluxTest extends BaseTest {
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_USDT, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("2", ETH_USDT.getBaseCurrency()), o.getAmount());
-        assertNull(o.getAveragePrice());
+        assertEquals(CurrencyAmountDTO.ZERO, o.getAveragePrice());
         assertNull(o.getLimitPrice());
         assertNull(o.getLeverage());
-        assertEquals(PENDING_NEW, o.getStatus());
-        assertNull(o.getCumulativeAmount());
+        assertEquals(NEW, o.getStatus());
+        assertEquals(new CurrencyAmountDTO("2", ETH_USDT.getBaseCurrency()), o.getCumulativeAmount());
         assertNull(o.getUserReference());
         assertNotNull(o.getTimestamp());
 
@@ -154,11 +155,11 @@ public class OrderFluxTest extends BaseTest {
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("3", ETH_BTC.getBaseCurrency()), o.getAmount());
-        assertNull(o.getAveragePrice());
+        assertEquals(CurrencyAmountDTO.ZERO, o.getAveragePrice());
         assertNull(o.getLimitPrice());
         assertNull(o.getLeverage());
-        assertEquals(PENDING_NEW, o.getStatus());
-        assertNull(o.getCumulativeAmount());
+        assertEquals(NEW, o.getStatus());
+        assertEquals(new CurrencyAmountDTO("3", ETH_BTC.getBaseCurrency()), o.getCumulativeAmount());
         assertNull(o.getUserReference());
         assertNotNull(o.getTimestamp());
 
