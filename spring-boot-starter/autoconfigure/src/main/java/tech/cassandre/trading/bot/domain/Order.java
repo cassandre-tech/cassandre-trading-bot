@@ -85,6 +85,14 @@ public class Order extends BaseDomain {
     })
     private CurrencyAmount limitPrice;
 
+    /** Market price - The price Cassandre had when the order was created. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "MARKET_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "MARKET_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount marketPrice;
+
     /** The leverage to use for margin related to this order. */
     @Column(name = "LEVERAGE")
     private String leverage;

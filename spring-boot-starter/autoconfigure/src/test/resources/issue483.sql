@@ -1,14 +1,8 @@
--- Data for Name: exchange_accounts; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO exchange_accounts (id, exchange, account, created_on, updated_on) VALUES (1, 'kucoin', 'cassandre.crypto.bot@gmail.com', '2021-03-10 11:27:15.519441', NULL);
-
-
 --
 -- Data for Name: strategies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO strategies (id, strategy_id, type, fk_exchange_account_id, name, created_on, updated_on) VALUES (1, '001', 'BASIC_TA4J_STRATEGY', 1, 'SMA strategy', '2021-03-10 11:27:16.649178', NULL);
+INSERT INTO strategies (id, strategy_id, type, name, created_on, updated_on) VALUES (1, '001', 'BASIC_TA4J_STRATEGY', 'SMA strategy', '2021-03-10 11:27:16.649178', NULL);
 
 
 --

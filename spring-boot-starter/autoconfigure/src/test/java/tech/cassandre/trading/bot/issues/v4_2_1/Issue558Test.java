@@ -10,23 +10,28 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Github issue 558")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true"),
+        @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
+        @Property(key = PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED, value = "true"),
 })
 @Import(Issue558TestMock.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class Issue558Test {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private LargeTestableCassandreStrategy strategy;
 
     @Autowired
     private TickerFlux tickerFlux;

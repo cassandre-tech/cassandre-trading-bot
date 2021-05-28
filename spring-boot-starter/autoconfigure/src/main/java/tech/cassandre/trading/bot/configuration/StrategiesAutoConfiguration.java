@@ -9,7 +9,6 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.domain.ExchangeAccount;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -20,7 +19,6 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
@@ -29,14 +27,11 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
 import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
@@ -88,9 +83,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     /** Exchange service. */
     private final ExchangeService exchangeService;
 
-    /** Exchange account repository. */
-    private final ExchangeAccountRepository exchangeAccountRepository;
-
     /** Strategy repository. */
     private final StrategyRepository strategyRepository;
 
@@ -121,7 +113,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
      * @param newTickerFlux                ticker flux
      * @param newOrderFlux                 order flux
      * @param newTradeFlux                 trade flux
-     * @param newExchangeAccountRepository exchange account repository
      * @param newStrategyRepository        strategy repository
      * @param newOrderRepository           order repository
      * @param newTradeRepository           trade repository
@@ -138,7 +129,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                                        final TickerFlux newTickerFlux,
                                        final OrderFlux newOrderFlux,
                                        final TradeFlux newTradeFlux,
-                                       final ExchangeAccountRepository newExchangeAccountRepository,
                                        final StrategyRepository newStrategyRepository,
                                        final OrderRepository newOrderRepository,
                                        final TradeRepository newTradeRepository,
@@ -153,7 +143,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         this.tickerFlux = newTickerFlux;
         this.orderFlux = newOrderFlux;
         this.tradeFlux = newTradeFlux;
-        this.exchangeAccountRepository = newExchangeAccountRepository;
         this.strategyRepository = newStrategyRepository;
         this.orderRepository = newOrderRepository;
         this.tradeRepository = newTradeRepository;
@@ -179,10 +168,11 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
             throw new ConfigurationException("Impossible to retrieve your user information.",
                     "Impossible to retrieve your user information. Check logs");
         } else {
+            logger.info("Accounts available on the exchange:");
             user.get()
                     .getAccounts()
                     .values()
-                    .forEach(account -> logger.info("StrategyConfiguration - Accounts available : '{}/{}'.",
+                    .forEach(account -> logger.info("- Account id / Account name: {} / {}.",
                             account.getAccountId(),
                             account.getName()));
         }
@@ -229,12 +219,12 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .collect(Collectors.toSet());
         if (!duplicatedStrategyId.isEmpty()) {
             throw new ConfigurationException("You have duplicated strategy ids",
-                    "You have duplicated strategy ids : " + String.join(",", duplicatedStrategyId));
+                    "You have duplicated strategy ids : " + String.join(", ", duplicatedStrategyId));
         }
 
         // =============================================================================================================
         // Setting up position service.
-        this.positionService = new PositionServiceImplementation(positionRepository, tradeService, positionFlux);
+        this.positionService = new PositionServiceImplementation(applicationContext, positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
         // Creating flux.
@@ -248,26 +238,21 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .flatMap(Set::stream)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         tickerFlux.updateRequestedCurrencyPairs(currencyPairs);
-        final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
+        final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
         final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
-        // =============================================================================================================
-        // Connecting flux.
-        // if in dry mode, we also send the ticker to the trade service in dry mode.
-        if (tradeService instanceof TradeServiceDryModeImplementation) {
-            connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickerUpdate);
-        }
         connectableOrderFlux.subscribe(positionService::orderUpdate);
         connectableTradeFlux.subscribe(positionService::tradeUpdate);
 
         // =============================================================================================================
         // Configuring strategies.
+        logger.info("Running the following strategies:");
         strategies.values()
                 .forEach(s -> {
                     CassandreStrategyInterface strategy = ((CassandreStrategyInterface) s);
                     CassandreStrategy annotation = s.getClass().getAnnotation(CassandreStrategy.class);
 
                     // Displaying information about strategy.
-                    logger.info("StrategyConfiguration - Running strategy '{}/{}' (requires {}).",
+                    logger.info("- Strategy '{}/{}' (requires {}).",
                             annotation.strategyId(),
                             annotation.strategyName(),
                             strategy.getRequestedCurrencyPairs().stream()
@@ -289,9 +274,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         Strategy newStrategy = new Strategy();
                         newStrategy.setStrategyId(annotation.strategyId());
                         newStrategy.setName(annotation.strategyName());
-                        // Set exchange account.
-                        Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
-                        exchangeAccount.ifPresent(newStrategy::setExchangeAccount);
                         // Set type.
                         if (strategy instanceof BasicCassandreStrategy) {
                             newStrategy.setType(BASIC_STRATEGY);
@@ -320,13 +302,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     connectablePositionFlux.subscribe(strategy::positionUpdate);
                     connectableOrderFlux.subscribe(strategy::orderUpdate);
                     connectableTradeFlux.subscribe(strategy::tradeUpdate);
-                    connectableTickerFlux.subscribe(strategy::tickerUpdate);
-                    // If in dry mode, we setup dependencies.
-                    if (userService instanceof UserServiceDryModeImplementation) {
-                        ((UserServiceDryModeImplementation) userService).setDependencies((GenericCassandreStrategy) strategy);
-                    }
+                    connectableTickerFlux.subscribe(strategy::tickersUpdate);
                 });
-        connectableTickerFlux.subscribe(positionService::tickerUpdate);
+        connectableTickerFlux.subscribe(positionService::tickersUpdate);
         // Start flux.
         connectableAccountFlux.connect();
         connectablePositionFlux.connect();

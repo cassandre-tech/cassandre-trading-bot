@@ -18,6 +18,7 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,8 +54,8 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
     private final List<TickerDTO> tickersUpdateReceived = new LinkedList<>();
 
     @Override
-    public void onTickerUpdate(TickerDTO ticker) {
-        tickersUpdateReceived.add(ticker);
+    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        tickersUpdateReceived.addAll(tickers.values());
     }
 
     @Override

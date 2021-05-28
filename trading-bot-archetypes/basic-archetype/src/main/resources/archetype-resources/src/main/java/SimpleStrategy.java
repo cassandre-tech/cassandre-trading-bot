@@ -55,9 +55,9 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	}
 
 	@Override
-	public void onTickerUpdate(final TickerDTO ticker) {
-		// Here we will receive a TickerDTO each time a new one is available.
-		System.out.println("Received information about a ticker : " + ticker);
+	public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+		// Here we will receive tickers received.
+		tickers.values().forEach(ticker -> System.out.println("Received information about a ticker : " + ticker));
 	}
 
 	@Override

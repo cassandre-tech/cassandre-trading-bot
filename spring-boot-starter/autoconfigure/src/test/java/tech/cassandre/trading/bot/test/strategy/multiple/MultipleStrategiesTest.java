@@ -8,7 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.AccountFlux;
+import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
@@ -89,6 +91,12 @@ public class MultipleStrategiesTest extends BaseTest {
 
     @Autowired
     private Strategy3 strategy3;
+
+    @Autowired
+    private OrderFlux orderFlux;
+
+    @Autowired
+    private TradeFlux tradeFlux;
 
     @Test
     @CaseId(113)
@@ -226,6 +234,8 @@ public class MultipleStrategiesTest extends BaseTest {
         assertTrue(position1Result.isSuccessful());
         final long position1Id = position1Result.getPosition().getId();
         final long position1PositionId = position1Result.getPosition().getPositionId();
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
 
         // Check positionId & positionId.
@@ -285,6 +295,8 @@ public class MultipleStrategiesTest extends BaseTest {
         assertTrue(position2Result.isSuccessful());
         final long position2Id = position2Result.getPosition().getId();
         final long position2PositionId = position2Result.getPosition().getPositionId();
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
 
@@ -352,6 +364,9 @@ public class MultipleStrategiesTest extends BaseTest {
         assertTrue(position3Result.isSuccessful());
         final long position3Id = position3Result.getPosition().getId();
         final long position3PositionId = position3Result.getPosition().getPositionId();
+
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
         // - Creating one position on ETH/USDT (0.1 ETH for 200 USDT).
         final PositionCreationResultDTO position4Result = strategy3.createLongPosition(ETH_USDT,
@@ -360,6 +375,8 @@ public class MultipleStrategiesTest extends BaseTest {
         assertTrue(position4Result.isSuccessful());
         final long position4Id = position4Result.getPosition().getId();
         final long position4PositionId = position4Result.getPosition().getPositionId();
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position4Id).getStatus()));
         TimeUnit.SECONDS.sleep(10);
 
@@ -460,6 +477,8 @@ public class MultipleStrategiesTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_USDT).last(new BigDecimal("20000")).build());
         TimeUnit.SECONDS.sleep(10);
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position3Id).getStatus()));
 
         // Check position status.
@@ -473,7 +492,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(2, strategy1.getPositionsStatusUpdateReceived().size());
         assertEquals(3, strategy2.getPositionsUpdateReceived().size());
         assertEquals(2, strategy2.getPositionsStatusUpdateReceived().size());
-        assertEquals(9, strategy3.getPositionsUpdateReceived().size());         // 9 because of ticker.
+        assertEquals(9, strategy3.getPositionsUpdateReceived().size());
         assertEquals(6, strategy3.getPositionsStatusUpdateReceived().size());
 
         // Check onOrderUpdate().

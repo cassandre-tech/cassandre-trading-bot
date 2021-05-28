@@ -35,7 +35,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 
 @SpringBootTest
 @DisplayName("Service - Dry - Position service")
-@ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -34,7 +35,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@Import(PositionServiceDryModeTestMock.class)
 public class Issue421Test extends BaseTest {
 
     @Autowired
@@ -52,11 +52,8 @@ public class Issue421Test extends BaseTest {
     @Test
     @DisplayName("Duplicated orders in database")
     public void checkDuplicatedOrderInDatabase() {
-        // First tickers - cp1 & cp2 (dry mode).
-        // ETH, BTC - bid 0.2 / ask 0.2.
-        // ETH, USDT - bid 0,3 / ask 0.3.
-        tickerFlux.update();
-        tickerFlux.update();
+        // First ticker emitted.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.2")).build());
 
         // =============================================================================================================
         // The orders created arrives before the order is created locally by the position.

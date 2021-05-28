@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
@@ -50,10 +51,14 @@ public class OrderDTO {
     /** Limit price. */
     CurrencyAmountDTO limitPrice;
 
+    /** Market price - The price Cassandre had when the order was created. */
+    CurrencyAmountDTO marketPrice;
+
     /** The leverage to use for margin related to this order. */
     String leverage;
 
     /** Order status. */
+    @NonFinal
     OrderStatusDTO status;
 
     /** Amount to be ordered / amount that has been matched against order on the order book/filled. */
@@ -68,6 +73,15 @@ public class OrderDTO {
     /** All trades related to order. */
     @Singular
     Set<TradeDTO> trades;
+
+    /**
+     * Allows you to update order status.
+     *
+     * @param newStatus new status
+     */
+    public final void updateStatus(final OrderStatusDTO newStatus) {
+        status = newStatus;
+    }
 
     /**
      * Returns trade from its id.
@@ -110,7 +124,7 @@ public class OrderDTO {
 
     @Override
     public final int hashCode() {
-        return  new HashCodeBuilder()
+        return new HashCodeBuilder()
                 .append(orderId)
                 .toHashCode();
     }

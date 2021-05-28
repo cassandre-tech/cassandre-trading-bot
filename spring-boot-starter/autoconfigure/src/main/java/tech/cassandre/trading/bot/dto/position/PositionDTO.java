@@ -111,7 +111,7 @@ public class PositionDTO {
      * @param newStrategy     strategy
      * @param newCurrencyPair currency pair
      * @param newAmount       amount
-     * @param newOpenOrderId  open order id
+     * @param newOpenOrder    open order
      * @param newRules        position rules
      */
     public PositionDTO(final long newId,
@@ -119,7 +119,7 @@ public class PositionDTO {
                        final StrategyDTO newStrategy,
                        final CurrencyPairDTO newCurrencyPair,
                        final BigDecimal newAmount,
-                       final String newOpenOrderId,
+                       final OrderDTO newOpenOrder,
                        final PositionRulesDTO newRules) {
         this.id = newId;
         this.type = newType;
@@ -130,7 +130,8 @@ public class PositionDTO {
                 .value(newAmount)
                 .currency(newCurrencyPair.getBaseCurrency())
                 .build();
-        this.openingOrderId = newOpenOrderId;
+        this.openingOrder = newOpenOrder;
+        this.openingOrderId = newOpenOrder.getOrderId();    // TODO Remove this
         this.rules = newRules;
         this.status = OPENING;
         this.forceClosing = false;
@@ -401,14 +402,15 @@ public class PositionDTO {
     /**
      * Close position with order id.
      *
-     * @param newCloseOrderId the closeOrderId to set
+     * @param newCloseOrder the closeOrderId to set
      */
-    public final void closePositionWithOrderId(final String newCloseOrderId) {
+    public final void closePositionWithOrder(final OrderDTO newCloseOrder) {
         // This method should only be called when in status OPENED.
         if (status != OPENED) {
             throw new PositionException("Impossible to set close order id for position " + id);
         }
-        closingOrderId = newCloseOrderId;
+        closingOrder = newCloseOrder;
+        closingOrderId = closingOrder.getOrderId();
         status = CLOSING;
     }
 

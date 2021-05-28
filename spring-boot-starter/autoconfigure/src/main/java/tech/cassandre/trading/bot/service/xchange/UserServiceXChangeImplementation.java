@@ -27,7 +27,8 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
     }
 
     @Override
-    public final Optional<UserDTO> getUser() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Optional<UserDTO> getUser() {
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.

@@ -2,7 +2,7 @@ package tech.cassandre.trading.bot.batch;
 
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseSequentialExternalFlux;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Account flux - push {@link AccountDTO}.
  */
-public class AccountFlux extends BaseExternalFlux<AccountDTO> {
+public class AccountFlux extends BaseSequentialExternalFlux<AccountDTO> {
 
     /** User service. */
     private final UserService userService;

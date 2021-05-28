@@ -43,27 +43,16 @@ public class PositionServiceDryModeTestMock extends BaseTest {
 
         // We don't use the getTickers method.
         given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
-
         // Replies for ETH / BTC.
         final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
         given(marketService
                 .getTicker(cp1))
-                .willReturn(
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.2")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(2)).last(new BigDecimal("0.3")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(3)).last(new BigDecimal("0.4")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(4)).last(new BigDecimal("0.4")).build())
-                );
+                .willReturn(Optional.empty());
         // Replies for ETH / USDT.
         final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
         given(marketService
                 .getTicker(cp2))
-                .willReturn(
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createZonedDateTime(5)).last(new BigDecimal("0.3")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createZonedDateTime(6)).last(new BigDecimal("0.3")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createZonedDateTime(7)).last(new BigDecimal("0.6")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createZonedDateTime(8)).last(new BigDecimal("0.1")).build())
-                );
+                .willReturn(Optional.empty());
         return marketService;
     }
 

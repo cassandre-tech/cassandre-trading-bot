@@ -5,6 +5,6 @@ package tech.cassandre.trading.bot.util.base.batch;
  *
  * @param <T> flux type
  */
-public abstract class BaseInternalFlux<T> extends BaseFlux<T> {
+public abstract class BaseSequentialInternalFlux<T> extends BaseSequentialFlux<T> {
 
 }

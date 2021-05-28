@@ -9,10 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -49,90 +49,81 @@ public class TickerFluxTest extends BaseTest {
         // =============================================================================================================
         // Test asynchronous flux.
 
-        // 14 tickers are sent via the mocked service.
-        // - 7 for cp1 ETH/BTC.
-        // - 7 for cp2 ETH/USDT.
-        // Two tickers for cp1 are identical so we expect to receive 13 tickers in the strategy.
-        // we will call the service 17 times as some replies ill be empty.
-        final int numberOfUpdatesExpected = 13;
-        final int numberOfServiceCallsExpected = 17;
+        // we will call the service 9 times.
+        final int numberOfTickersExpected = 17;
+        final int numberOfServiceCallsExpected = 9;
 
-        // Waiting for the service to have been called with all the test data (16).
+        // Waiting for the service to have been called with all the test data.
         await().untilAsserted(() -> verify(marketDataService, atLeast(numberOfServiceCallsExpected)).getTicker(any()));
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
         assertTrue(strategy.getTickersUpdateReceived().size() > 0);
-        assertTrue(strategy.getTickersUpdateReceived().size() <= numberOfUpdatesExpected);
+        assertTrue(strategy.getTickersUpdateReceived().size() <= numberOfTickersExpected);
 
         // Wait for the strategy to have received all the tickers.
-        await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfUpdatesExpected));
+        await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfTickersExpected));
         final Iterator<TickerDTO> iterator = strategy.getTickersUpdateReceived().iterator();
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.
 
-        // First value cp1 - 1.
+        // First call.
         TickerDTO t = iterator.next();
         assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(t.getLast()));
-
-        // Second value cp2 - 10.
         t = iterator.next();
         assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(t.getLast()));
 
-        // Third value cp1 - 2.
+        // Second call.
         t = iterator.next();
         assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("2").compareTo(t.getLast()));
-
-        // Fourth value cp2 - 20.
         t = iterator.next();
         assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("20").compareTo(t.getLast()));
 
-        // Fifth value cp1 - 3.
+        // Third call.
         t = iterator.next();
         assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("3").compareTo(t.getLast()));
-
-        // Sixth value cp2 - 30.
         t = iterator.next();
         assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("30").compareTo(t.getLast()));
 
-        // Seventh value cp2 - 40.
+        // Fourth call.
         t = iterator.next();
         assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("40").compareTo(t.getLast()));
 
-        // Eighth value cp1 - 4.
+        // Fifth call.
         t = iterator.next();
         assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("4").compareTo(t.getLast()));
-
-        // Ninth value cp2 - 50.
         t = iterator.next();
         assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("50").compareTo(t.getLast()));
 
-        // Tenth value cp1 - 5.
+        // Sixth call.
+        t = iterator.next();
+        assertEquals(ETH_BTC, t.getCurrencyPair());
+        assertEquals(0, new BigDecimal("40").compareTo(t.getLast()));
+
+        // Seventh call.
         t = iterator.next();
         assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("5").compareTo(t.getLast()));
-
-        // Eleventh value cp2 - 60.
         t = iterator.next();
         assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("60").compareTo(t.getLast()));
 
-        // Twelfth value cp1 - 6.
+        // Eighth call.
         t = iterator.next();
         assertEquals(ETH_BTC, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("6").compareTo(t.getLast()));
 
-        // Thirteenth value cp2 - 70.
+        // 9th call.
         t = iterator.next();
         assertEquals(ETH_USDT, t.getCurrencyPair());
         assertEquals(0, new BigDecimal("70").compareTo(t.getLast()));

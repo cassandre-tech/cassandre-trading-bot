@@ -5,7 +5,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseSequentialExternalFlux;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Trade flux - push {@link TradeDTO}.
  */
-public class TradeFlux extends BaseExternalFlux<TradeDTO> {
+public class TradeFlux extends BaseSequentialExternalFlux<TradeDTO> {
 
     /** Trade service. */
     private final TradeService tradeService;

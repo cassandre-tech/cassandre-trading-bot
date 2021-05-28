@@ -14,11 +14,11 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_NAME;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRIVER_CLASS_NAME;
 
 @DisplayName("Configuration - Exchange - Unknown exchange name")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_NAME, value = "foo")
+        @Property(key = PARAMETER_EXCHANGE_DRIVER_CLASS_NAME, value = "foo")
 })
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class UnknownExchangeTest extends BaseTest {

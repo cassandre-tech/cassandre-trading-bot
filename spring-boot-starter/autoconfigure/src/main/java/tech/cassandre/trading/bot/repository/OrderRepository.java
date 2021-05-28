@@ -1,8 +1,9 @@
 package tech.cassandre.trading.bot.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import tech.cassandre.trading.bot.domain.Order;
+import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,8 @@ import java.util.Optional;
  * Order repository.
  */
 @Repository
-public interface OrderRepository extends CrudRepository<Order, Long> {
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    // TODO Check if JPA repository is a good idea ?
 
     /**
      * Find by order id.
@@ -20,6 +22,16 @@ public interface OrderRepository extends CrudRepository<Order, Long> {
      * @return order
      */
     Optional<Order> findByOrderId(String orderId);
+
+    // TODO Add a test for this method.
+
+    /**
+     * Find order by status.
+     *
+     * @param orderStatusDTO order status
+     * @return orders
+     */
+    List<Order> findByStatus(OrderStatusDTO orderStatusDTO);
 
     /**
      * Find all orders by timestamp.

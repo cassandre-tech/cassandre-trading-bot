@@ -7,10 +7,12 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -68,9 +70,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public final void onTickerUpdate(final TickerDTO ticker) {
-        tickersUpdateReceived.add(ticker);
-        logger.info(getClass().getSimpleName() + "-onTickerUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n");
+    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        tickersUpdateReceived.addAll(tickers.values());
+        tickers.values().forEach(ticker -> logger.info(this.getClass().getSimpleName() + "-onTickersUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n"));
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {

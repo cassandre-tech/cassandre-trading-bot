@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.ExchangeService;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
@@ -29,7 +30,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-public class ExchangeServiceDryModeTest {
+public class ExchangeServiceDryModeTest extends BaseTest {
 
     @Autowired
     private ExchangeService exchangeService;
@@ -41,8 +42,8 @@ public class ExchangeServiceDryModeTest {
         // The available currencies should be the same than the strategy.
         final Set<CurrencyPairDTO> availableCurrencyPairs = exchangeService.getAvailableCurrencyPairs();
         assertEquals(2, availableCurrencyPairs.size());
-        assertTrue(availableCurrencyPairs.contains(new CurrencyPairDTO(ETH, BTC)));
-        assertTrue(availableCurrencyPairs.contains(new CurrencyPairDTO(ETH, USDT)));
+        assertTrue(availableCurrencyPairs.contains(ETH_BTC));
+        assertTrue(availableCurrencyPairs.contains(ETH_USDT));
     }
 
 }

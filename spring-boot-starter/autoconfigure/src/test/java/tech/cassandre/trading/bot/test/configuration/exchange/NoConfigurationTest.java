@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_KEY;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_NAME;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRIVER_CLASS_NAME;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_PASSPHRASE;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_ACCOUNT;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_TICKER;
@@ -27,7 +27,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 
 @DisplayName("Configuration - Exchange - No configuration")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_NAME),
+        @Property(key = PARAMETER_EXCHANGE_DRIVER_CLASS_NAME),
         @Property(key = PARAMETER_EXCHANGE_SANDBOX),
         @Property(key = PARAMETER_EXCHANGE_DRY),
         @Property(key = PARAMETER_EXCHANGE_USERNAME),
@@ -52,7 +52,7 @@ public class NoConfigurationTest extends BaseTest {
         } catch (Exception e) {
             final String message = ExceptionUtils.getRootCause(e).getMessage();
             e.printStackTrace();
-            assertTrue(message.contains("'name'"));
+            assertTrue(message.contains("'driverClassName'"));
             assertTrue(message.contains("'username'"));
             assertTrue(message.contains("'passphrase'"));
             assertTrue(message.contains("'key'"));

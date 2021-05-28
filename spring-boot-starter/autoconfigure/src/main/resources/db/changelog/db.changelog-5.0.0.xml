@@ -1,0 +1,24 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="straumat" id="changelog-5.0.0">
+
+        <!-- Dropping exchange accounts table. -->
+        <dropForeignKeyConstraint baseTableName="STRATEGIES"
+                                  constraintName="FK_STRATEGIES_EXCHANGE_ACCOUNT_ID"/>
+        <dropColumn tableName="STRATEGIES"
+                    columnName="FK_EXCHANGE_ACCOUNT_ID"/>
+        <dropTable cascadeConstraints="true"
+                   tableName="EXCHANGE_ACCOUNTS"/>
+
+        <!-- Adding market price column to orders. -->
+        <addColumn tableName="ORDERS">
+            <column name="MARKET_PRICE_VALUE" type="numeric(16, 8)"
+                    remarks="The price Cassandre had when the order was created (value)"/>
+            <column name="MARKET_PRICE_CURRENCY" type="VARCHAR(255)"
+                    remarks="The price Cassandre had when the order was created (currency)"/>
+        </addColumn>
+
+    </changeSet>
+</databaseChangeLog>

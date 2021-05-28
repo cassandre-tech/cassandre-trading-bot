@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/db.changelog-4.1.0.xml
   - include:
       file: db/changelog/db.changelog-4.1.1.xml
+  - include:
+      file: db/changelog/db.changelog-5.0.0.xml

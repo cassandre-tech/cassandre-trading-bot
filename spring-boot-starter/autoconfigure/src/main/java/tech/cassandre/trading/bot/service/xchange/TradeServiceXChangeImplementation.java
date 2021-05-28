@@ -5,7 +5,6 @@ import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import tech.cassandre.trading.bot.domain.Order;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
@@ -14,6 +13,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 import tech.cassandre.trading.bot.util.system.TimeProvider;
 
@@ -24,11 +24,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
@@ -43,9 +43,6 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     /** XChange service. */
     private final org.knowm.xchange.service.trade.TradeService tradeService;
-
-    /** Hashmap used to store orders created locally. */
-    private final Map<String, OrderDTO> localOrders = new ConcurrentHashMap<>();
 
     /**
      * Constructor.
@@ -71,7 +68,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
      * @param amount       amount
      * @return order creation result
      */
-    private OrderCreationResultDTO createMarketOrder(final StrategyDTO strategy,
+    private OrderCreationResultDTO createMarketOrder(final GenericCassandreStrategy strategy,
                                                      final OrderTypeDTO orderTypeDTO,
                                                      final CurrencyPairDTO currencyPair,
                                                      final BigDecimal amount) {
@@ -83,21 +80,37 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("TradeService - Sending market order : {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
-            final String orderId = tradeService.placeMarketOrder(m);
-            OrderDTO openingOrder = OrderDTO.builder()
-                    .orderId(orderId)
+            OrderDTO order = OrderDTO.builder()
+                    .orderId(tradeService.placeMarketOrder(m))
                     .type(orderTypeDTO)
-                    .strategy(strategy)
+                    .strategy(strategy.getStrategyDTO())
                     .currencyPair(currencyPair)
                     .amount(CurrencyAmountDTO.builder()
                             .value(amount)
                             .currency(currencyPair.getBaseCurrency())
                             .build())
+                    .cumulativeAmount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
+                    .averagePrice(CurrencyAmountDTO.builder()
+                            .value(strategy.getLastPriceForCurrencyPair(currencyPair))
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
+                    .marketPrice(CurrencyAmountDTO.builder()
+                            .value(strategy.getLastPriceForCurrencyPair(currencyPair))
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
                     .status(PENDING_NEW)
                     .timestamp(ZonedDateTime.now())
                     .build();
-            localOrders.put(orderId, openingOrder);
-            final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);
+
+            // We save the order.
+            Optional<Order> savedOrder = orderRepository.findByOrderId(order.getOrderId());
+            if (savedOrder.isEmpty()) {
+                savedOrder = Optional.of(orderRepository.save(orderMapper.mapToOrder(order)));
+            }
+            final OrderCreationResultDTO result = new OrderCreationResultDTO(orderMapper.mapToOrderDTO(savedOrder.get()));
             logger.debug("TradeService - Order created : {}", result);
             return result;
         } catch (Exception e) {
@@ -118,11 +131,12 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
      * @param limitPrice   In a BID this is the highest acceptable price, in an ASK this is the lowest acceptable price
      * @return order creation result
      */
-    private OrderCreationResultDTO createLimitOrder(final StrategyDTO strategy,
+    private OrderCreationResultDTO createLimitOrder(final GenericCassandreStrategy strategy,
                                                     final OrderTypeDTO orderTypeDTO,
                                                     final CurrencyPairDTO currencyPair,
                                                     final BigDecimal amount,
                                                     final BigDecimal limitPrice) {
+        // TODO Manage local order creation in here too.
         try {
             // Making the order.
             LimitOrder l = new LimitOrder(utilMapper.mapToOrderType(orderTypeDTO),
@@ -138,20 +152,32 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             OrderDTO openingOrder = OrderDTO.builder()
                     .orderId(orderId)
                     .type(orderTypeDTO)
-                    .strategy(strategy)
+                    .strategy(strategy.getStrategyDTO())
                     .currencyPair(currencyPair)
                     .amount(CurrencyAmountDTO.builder()
                             .value(amount)
                             .currency(currencyPair.getBaseCurrency())
                             .build())
+                    .cumulativeAmount(CurrencyAmountDTO.builder()
+                            .value(amount)
+                            .currency(currencyPair.getBaseCurrency())
+                            .build())
+                    .averagePrice(CurrencyAmountDTO.builder()
+                            .value(strategy.getLastPriceForCurrencyPair(currencyPair))
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
                     .limitPrice(CurrencyAmountDTO.builder()
                             .value(limitPrice)
+                            .currency(currencyPair.getQuoteCurrency())
+                            .build())
+                    .marketPrice(CurrencyAmountDTO.builder()
+                            .value(strategy.getLastPriceForCurrencyPair(currencyPair))
                             .currency(currencyPair.getQuoteCurrency())
                             .build())
                     .status(PENDING_NEW)
                     .timestamp(ZonedDateTime.now())
                     .build();
-            localOrders.put(orderId, openingOrder);
+
             final OrderCreationResultDTO result = new OrderCreationResultDTO(openingOrder);
             logger.debug("TradeService - Order creation result : {}", result);
             return result;
@@ -164,27 +190,42 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final OrderCreationResultDTO createBuyMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createBuyMarketOrder(final GenericCassandreStrategy strategy,
+                                                       final CurrencyPairDTO currencyPair,
+                                                       final BigDecimal amount) {
         return createMarketOrder(strategy, BID, currencyPair, amount);
     }
 
     @Override
-    public final OrderCreationResultDTO createSellMarketOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createSellMarketOrder(final GenericCassandreStrategy strategy,
+                                                        final CurrencyPairDTO currencyPair,
+                                                        final BigDecimal amount) {
         return createMarketOrder(strategy, ASK, currencyPair, amount);
     }
 
     @Override
-    public final OrderCreationResultDTO createBuyLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createBuyLimitOrder(final GenericCassandreStrategy strategy,
+                                                      final CurrencyPairDTO currencyPair,
+                                                      final BigDecimal amount,
+                                                      final BigDecimal limitPrice) {
         return createLimitOrder(strategy, BID, currencyPair, amount, limitPrice);
     }
 
     @Override
-    public final OrderCreationResultDTO createSellLimitOrder(final StrategyDTO strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final BigDecimal limitPrice) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createSellLimitOrder(final GenericCassandreStrategy strategy,
+                                                       final CurrencyPairDTO currencyPair,
+                                                       final BigDecimal amount,
+                                                       final BigDecimal limitPrice) {
         return createLimitOrder(strategy, ASK, currencyPair, amount, limitPrice);
     }
 
     @Override
-    public final boolean cancelOrder(final String orderId) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean cancelOrder(final String orderId) {
         logger.debug("TradeService - Canceling order {}", orderId);
         if (orderId != null) {
             try {
@@ -201,33 +242,28 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<OrderDTO> getOpenOrders() {
-        return getOrders();
-    }
-
-    @Override
-    public final Set<OrderDTO> getOrders() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Set<OrderDTO> getOrders() {
         logger.debug("TradeService - Getting open orders from exchange");
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
             getBucket().asScheduler().consume(1);
 
-            // We clean the local orders if they are already in database.
-            localOrders.keySet()
+            // We check if we have some local orders to push.
+            final Set<OrderDTO> localOrders = orderRepository.findByStatus(PENDING_NEW)
                     .stream()
-                    .filter(o -> orderRepository.findByOrderId(o).isPresent())
-                    .forEach(localOrders::remove);
+                    .map(orderMapper::mapToOrderDTO)
+                    .sorted(Comparator.comparing(OrderDTO::getTimestamp))
+                    .peek(orderDTO -> orderDTO.updateStatus(NEW))
+                    .peek(o -> logger.debug("TradeService - {} local order retrieved", o))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
 
-            // If we have local orders, we return them.
+            // If we have local orders to push, we return them.
             if (!localOrders.isEmpty()) {
-                return localOrders.values()
-                        .stream()
-                        .sorted(Comparator.comparing(OrderDTO::getTimestamp))
-                        .peek(o -> logger.debug("TradeService - {} local order retrieved", o))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
+                return localOrders;
             } else {
-                // Else we get them from the exchange
+                // Else we get them from the exchange.
                 return tradeService.getOpenOrders()
                         .getOpenOrders()
                         .stream()
@@ -245,7 +281,8 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     }
 
     @Override
-    public final Set<TradeDTO> getTrades() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Set<TradeDTO> getTrades() {
         logger.debug("TradeService - Getting trades from exchange");
         // Query trades from the last 24 jours (24 hours because of Binance).
         TradeHistoryParamsAll params = new TradeHistoryParamsAll();

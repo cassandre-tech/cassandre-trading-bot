@@ -1,23 +1,8 @@
 --
--- PostgreSQL database dump
---
-
--- Dumped from database version 12.6
--- Dumped by pg_dump version 12.6 (Ubuntu 12.6-0ubuntu0.20.04.1)
-
-
---
--- Data for Name: exchange_accounts; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO public.exchange_accounts (id, exchange, account, created_on, updated_on) VALUES (1, 'kucoin', 'cassandre.crypto.bot@gmail.com', '2021-03-10 11:27:15.519441', NULL);
-
-
---
 -- Data for Name: strategies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.strategies (id, strategy_id, type, fk_exchange_account_id, name, created_on, updated_on) VALUES (1, '01', 'BASIC_TA4J_STRATEGY', 1, 'SMA strategy', '2021-03-10 11:27:16.649178', NULL);
+INSERT INTO public.strategies (id, strategy_id, type, name, created_on, updated_on) VALUES (1, '01', 'BASIC_TA4J_STRATEGY', 'SMA strategy', '2021-03-10 11:27:16.649178', NULL);
 
 
 --

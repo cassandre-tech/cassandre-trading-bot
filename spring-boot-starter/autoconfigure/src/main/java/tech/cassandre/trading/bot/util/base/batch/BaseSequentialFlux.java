@@ -14,7 +14,7 @@ import static reactor.core.publisher.FluxSink.OverflowStrategy.LATEST;
  *
  * @param <T> flux
  */
-public abstract class BaseFlux<T> extends Base {
+public abstract class BaseSequentialFlux<T> extends Base {
 
     /** Flux. */
     protected final Flux<T> flux;
@@ -25,7 +25,7 @@ public abstract class BaseFlux<T> extends Base {
     /**
      * Constructor.
      */
-    public BaseFlux() {
+    public BaseSequentialFlux() {
         Flux<T> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
         flux = fluxTemp.publishOn(Schedulers.boundedElastic());
     }

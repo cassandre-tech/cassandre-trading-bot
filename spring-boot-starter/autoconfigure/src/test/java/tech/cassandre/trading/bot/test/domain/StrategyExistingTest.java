@@ -42,8 +42,6 @@ public class StrategyExistingTest {
         assertEquals(1, strategy.get().getId());
         assertEquals("01", strategy.get().getStrategyId());
         assertEquals("Testable strategy", strategy.get().getName());
-        assertEquals(PARAMETER_NAME_DEFAULT_VALUE, strategy.get().getExchangeAccount().getExchange());
-        assertEquals("cassandre.crypto.bot@gmail.com", strategy.get().getExchangeAccount().getAccount());
 
         // Test non existing strategy.
         assertFalse(strategyRepository.findByStrategyId("NON_EXISTING").isPresent());

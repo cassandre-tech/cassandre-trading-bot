@@ -7,7 +7,7 @@ import java.util.Set;
  *
  * @param <T> flux type
  */
-public abstract class BaseExternalFlux<T> extends BaseFlux<T> {
+public abstract class BaseSequentialExternalFlux<T> extends BaseSequentialFlux<T> {
 
     /**
      * Implements this method to return all the new values. Those values will be sent to the strategy.
@@ -23,7 +23,8 @@ public abstract class BaseExternalFlux<T> extends BaseFlux<T> {
         try {
             getNewValues().forEach(this::emitValue);
         } catch (RuntimeException e) {
-            logger.error("BaseExternalFlux - Error getting new values : " + e.getMessage());
+            logger.error(getClass().getSimpleName() + " - Error getting new values : " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

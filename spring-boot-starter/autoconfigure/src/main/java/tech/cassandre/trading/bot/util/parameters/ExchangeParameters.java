@@ -21,9 +21,9 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange")
 public class ExchangeParameters {
 
-    /** Exchange name. For example : coinbase, kraken, kucoin. */
-    @NotEmpty(message = "Exchange name required, for example : coinbase, kraken, kucoin...")
-    private String name;
+    /** Driver class name. For example : coinbase, kraken, kucoin. */
+    @NotEmpty(message = "Driver class  name required, for example : org.knowm.xchange.coinbasepro.CoinbaseProExchange")
+    private String driverClassName;
 
     /** API username. */
     @NotEmpty(message = "API username required")

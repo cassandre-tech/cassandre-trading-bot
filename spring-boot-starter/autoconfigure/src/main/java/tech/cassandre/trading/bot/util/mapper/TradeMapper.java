@@ -59,7 +59,7 @@ public interface TradeMapper {
                     .currency(new CurrencyDTO(source.getFeeCurrency().toString()))
                     .build();
         } else {
-            return null;
+            return CurrencyAmountDTO.ZERO;
         }
     }
 

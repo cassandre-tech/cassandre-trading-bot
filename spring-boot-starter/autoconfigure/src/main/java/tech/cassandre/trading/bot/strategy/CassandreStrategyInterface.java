@@ -89,11 +89,11 @@ public interface CassandreStrategyInterface {
     void accountUpdate(AccountDTO account);
 
     /**
-     * Method called by streams at every ticker update.
+     * Method called by streams at every tickers update.
      *
-     * @param ticker ticker
+     * @param tickers ticker
      */
-    void tickerUpdate(TickerDTO ticker);
+    void tickersUpdate(Set<TickerDTO> tickers);
 
     /**
      * Method called by streams on every order update.
@@ -146,11 +146,11 @@ public interface CassandreStrategyInterface {
     void onAccountUpdate(AccountDTO account);
 
     /**
-     * Method triggered at every ticker update.
+     * Method triggered for tickers update.
      *
-     * @param ticker ticker
+     * @param tickers ticker
      */
-    void onTickerUpdate(TickerDTO ticker);
+    void onTickersUpdate(Map<CurrencyPairDTO, TickerDTO> tickers);
 
     /**
      * Method triggered on every order update.

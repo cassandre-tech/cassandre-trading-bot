@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO.ZERO;
@@ -37,7 +38,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 
 @SpringBootTest
 @DisplayName("Service - Dry - Trade service")
-@ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
@@ -92,7 +92,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(ETH_BTC.getQuoteCurrency(), order01.get().getAveragePrice().getCurrency());
         assertNull(order01.get().getLimitPrice());
         assertNull(order01.get().getLeverage());
-        assertEquals(FILLED, order01.get().getStatus());
+        assertEquals(NEW, order01.get().getStatus());
         assertEquals(0, new BigDecimal("0.001").compareTo(order01.get().getCumulativeAmount().getValue()));
         assertEquals(ETH_BTC.getBaseCurrency(), order01.get().getCumulativeAmount().getCurrency());
         assertNull(order01.get().getUserReference());
@@ -137,7 +137,7 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertEquals(ETH_BTC.getQuoteCurrency(), order02.get().getAveragePrice().getCurrency());
         assertNull(order02.get().getLimitPrice());
         assertNull(order02.get().getLeverage());
-        assertEquals(FILLED, order02.get().getStatus());
+        assertEquals(NEW, order02.get().getStatus());
         assertEquals(0, new BigDecimal("0.002").compareTo(order02.get().getCumulativeAmount().getValue()));
         assertEquals(ETH_BTC.getBaseCurrency(), order02.get().getCumulativeAmount().getCurrency());
         assertNull(order02.get().getUserReference());
@@ -161,11 +161,6 @@ public class TradeServiceDryModeTest extends BaseTest {
         assertNotNull(trade02.get().getTimestamp());
 
         // Testing retrieve methods.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertEquals(2, tradeService.getOrders().size());
-        assertFalse(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals("NON_EXISTING")));
-        assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals(orderId01)));
-        assertTrue(tradeService.getOrders().stream().anyMatch(o -> o.getOrderId().equals(orderId02)));
         assertEquals(2, tradeService.getTrades().size());
         assertFalse(tradeService.getTrades().stream().anyMatch(t -> t.getTradeId().equals("NON_EXISTING")));
         assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getTradeId().equals(tradeId01)));

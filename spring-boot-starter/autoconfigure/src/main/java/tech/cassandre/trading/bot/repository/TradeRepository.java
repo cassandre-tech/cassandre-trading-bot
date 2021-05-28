@@ -21,6 +21,8 @@ public interface TradeRepository extends CrudRepository<Trade, Long> {
      */
     Optional<Trade> findByTradeId(String tradeId);
 
+    // TODO Add a method to retrieve all the trades of an order.
+
     /**
      * Find all trades by timestamp.
      *

@@ -37,7 +37,8 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
     }
 
     @Override
-    public final Optional<TickerDTO> getTicker(final CurrencyPairDTO currencyPair) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Optional<TickerDTO> getTicker(final CurrencyPairDTO currencyPair) {
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
@@ -57,7 +58,8 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
     }
 
     @Override
-    public final Set<TickerDTO> getTickers(final Set<CurrencyPairDTO> currencyPairs) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Set<TickerDTO> getTickers(final Set<CurrencyPairDTO> currencyPairs) {
         try {
             // We create the currency pairs parameters.
             CurrencyPairsParam params = () -> currencyPairs

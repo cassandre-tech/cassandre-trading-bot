@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.AccountFlux;
@@ -48,12 +49,12 @@ import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassa
 
 @SpringBootTest
 @DisplayName("Service - Dry - User service with positions")
-@ActiveProfiles("schedule-disabled")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true"),
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED, value = "true"),
 })
+@Import(PositionServiceDryModeTestMock.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class UserServiceWithPositionsDryModeTest extends BaseTest {
 
@@ -220,7 +221,9 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         long position3Id = position3.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         balances = getBalances();
+        balances.forEach((currencyDTO, balanceDTO) -> System.out.println("=> " + balanceDTO));
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
         assertEquals(0, new BigDecimal("70").compareTo(balances.get(USDT).getAvailable()));
         assertEquals(0, new BigDecimal("20.5").compareTo(balances.get(ETH).getAvailable()));
