@@ -223,7 +223,6 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         balances = getBalances();
-        balances.forEach((currencyDTO, balanceDTO) -> System.out.println("=> " + balanceDTO));
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
         assertEquals(0, new BigDecimal("70").compareTo(balances.get(USDT).getAvailable()));
         assertEquals(0, new BigDecimal("20.5").compareTo(balances.get(ETH).getAvailable()));
