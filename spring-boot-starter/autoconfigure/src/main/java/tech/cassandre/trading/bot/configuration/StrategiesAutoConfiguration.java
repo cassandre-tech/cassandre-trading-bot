@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,6 +55,7 @@ import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J
  * StrategyAutoConfiguration configures the strategy.
  */
 @Configuration
+@RequiredArgsConstructor
 public class StrategiesAutoConfiguration extends BaseConfiguration {
 
     /** Application context. */
@@ -100,55 +102,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
     /** Position flux. */
     private final PositionFlux positionFlux;
-
-    /**
-     * Constructor.
-     *
-     * @param newApplicationContext        application context
-     * @param newExchangeService           exchange service
-     * @param newExchangeParameters        exchange parameters
-     * @param newUserService               user service
-     * @param newTradeService              trade service
-     * @param newAccountFlux               account flux
-     * @param newTickerFlux                ticker flux
-     * @param newOrderFlux                 order flux
-     * @param newTradeFlux                 trade flux
-     * @param newStrategyRepository        strategy repository
-     * @param newOrderRepository           order repository
-     * @param newTradeRepository           trade repository
-     * @param newPositionRepository        position repository
-     * @param newPositionFlux              position flux
-     */
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    public StrategiesAutoConfiguration(final ApplicationContext newApplicationContext,
-                                       final ExchangeService newExchangeService,
-                                       final ExchangeParameters newExchangeParameters,
-                                       final UserService newUserService,
-                                       final TradeService newTradeService,
-                                       final AccountFlux newAccountFlux,
-                                       final TickerFlux newTickerFlux,
-                                       final OrderFlux newOrderFlux,
-                                       final TradeFlux newTradeFlux,
-                                       final StrategyRepository newStrategyRepository,
-                                       final OrderRepository newOrderRepository,
-                                       final TradeRepository newTradeRepository,
-                                       final PositionRepository newPositionRepository,
-                                       final PositionFlux newPositionFlux) {
-        this.applicationContext = newApplicationContext;
-        this.exchangeService = newExchangeService;
-        this.exchangeParameters = newExchangeParameters;
-        this.userService = newUserService;
-        this.tradeService = newTradeService;
-        this.accountFlux = newAccountFlux;
-        this.tickerFlux = newTickerFlux;
-        this.orderFlux = newOrderFlux;
-        this.tradeFlux = newTradeFlux;
-        this.strategyRepository = newStrategyRepository;
-        this.orderRepository = newOrderRepository;
-        this.tradeRepository = newTradeRepository;
-        this.positionRepository = newPositionRepository;
-        this.positionFlux = newPositionFlux;
-    }
 
     /**
      * Search for the strategy and runs it.

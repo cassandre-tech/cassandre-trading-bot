@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Configuration
 @Profile("!schedule-disabled")
 @EnableScheduling
+@RequiredArgsConstructor
 public class ScheduleAutoConfiguration extends BaseConfiguration {
 
     /** Await termination in seconds. */
@@ -47,24 +49,6 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
 
     /** Trade flux. */
     private final TradeFlux tradeFlux;
-
-    /**
-     * Constructor.
-     *
-     * @param newAccountFlux account flux
-     * @param newTickerFlux  ticker flux
-     * @param newOrderFlux   order flux
-     * @param newTradeFlux   trade flux
-     */
-    public ScheduleAutoConfiguration(final AccountFlux newAccountFlux,
-                                     final TickerFlux newTickerFlux,
-                                     final OrderFlux newOrderFlux,
-                                     final TradeFlux newTradeFlux) {
-        this.accountFlux = newAccountFlux;
-        this.tickerFlux = newTickerFlux;
-        this.orderFlux = newOrderFlux;
-        this.tradeFlux = newTradeFlux;
-    }
 
     /**
      * Configure the task scheduler.

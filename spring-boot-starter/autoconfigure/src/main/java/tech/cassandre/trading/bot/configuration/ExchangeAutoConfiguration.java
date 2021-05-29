@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
  */
 @Configuration
 @EnableConfigurationProperties(ExchangeParameters.class)
+@RequiredArgsConstructor
 public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** XChange user sandbox parameter. */
@@ -105,27 +107,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** Position repository. */
     private final PositionRepository positionRepository;
-
-    /**
-     * Constructor.
-     *
-     * @param newApplicationContext application context
-     * @param newExchangeParameters exchange parameters
-     * @param newOrderRepository    order repository
-     * @param newTradeRepository    trade repository
-     * @param newPositionRepository position repository
-     */
-    public ExchangeAutoConfiguration(final ApplicationContext newApplicationContext,
-                                     final ExchangeParameters newExchangeParameters,
-                                     final OrderRepository newOrderRepository,
-                                     final TradeRepository newTradeRepository,
-                                     final PositionRepository newPositionRepository) {
-        this.applicationContext = newApplicationContext;
-        this.exchangeParameters = newExchangeParameters;
-        this.orderRepository = newOrderRepository;
-        this.tradeRepository = newTradeRepository;
-        this.positionRepository = newPositionRepository;
-    }
 
     /**
      * Instantiating the exchange based on the parameter.

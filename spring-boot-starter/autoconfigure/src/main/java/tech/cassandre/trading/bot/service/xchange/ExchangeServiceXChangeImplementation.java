@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.service.xchange;
 
+import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.Exchange;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.ExchangeService;
@@ -12,19 +13,11 @@ import java.util.stream.Collectors;
 /**
  * Exchange service - XChange implementation.
  */
+@RequiredArgsConstructor
 public class ExchangeServiceXChangeImplementation extends BaseService implements ExchangeService {
 
     /** XChange service. */
     private final Exchange exchange;
-
-    /**
-     * Constructor.
-     *
-     * @param newExchange exchange
-     */
-    public ExchangeServiceXChangeImplementation(final Exchange newExchange) {
-        this.exchange = newExchange;
-    }
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")

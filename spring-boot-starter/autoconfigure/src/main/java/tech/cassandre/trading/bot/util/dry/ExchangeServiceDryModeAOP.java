@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.util.dry;
 
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,19 +24,11 @@ import java.util.Set;
 @Aspect
 @Component
 @ConditionalOnExpression("${cassandre.trading.bot.exchange.modes.dry:true}")
+@RequiredArgsConstructor
 public class ExchangeServiceDryModeAOP extends BaseService {
 
     /** Application context. */
     private final ApplicationContext applicationContext;
-
-    /**
-     * Constructor.
-     *
-     * @param newApplicationContext application context
-     */
-    public ExchangeServiceDryModeAOP(final ApplicationContext newApplicationContext) {
-        this.applicationContext = newApplicationContext;
-    }
 
     /**
      * getExchangeMetaData() AOP for dry mode.

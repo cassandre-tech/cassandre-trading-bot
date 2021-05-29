@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.batch;
 
+import lombok.RequiredArgsConstructor;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Trade flux - push {@link TradeDTO}.
  */
+@RequiredArgsConstructor
 public class TradeFlux extends BaseSequentialExternalFlux<TradeDTO> {
 
     /** Trade service. */
@@ -25,21 +27,6 @@ public class TradeFlux extends BaseSequentialExternalFlux<TradeDTO> {
 
     /** Trade repository. */
     private final TradeRepository tradeRepository;
-
-    /**
-     * Constructor.
-     *
-     * @param newTradeService    trade service
-     * @param newOrderRepository order repository
-     * @param newTradeRepository trade repository
-     */
-    public TradeFlux(final TradeService newTradeService,
-                     final OrderRepository newOrderRepository,
-                     final TradeRepository newTradeRepository) {
-        this.tradeRepository = newTradeRepository;
-        this.orderRepository = newOrderRepository;
-        this.tradeService = newTradeService;
-    }
 
     @Override
     protected final Set<TradeDTO> getNewValues() {

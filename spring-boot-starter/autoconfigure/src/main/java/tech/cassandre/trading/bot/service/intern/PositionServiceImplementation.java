@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.service.intern;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.domain.Position;
@@ -48,6 +49,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 /**
  * Position service implementation.
  */
+@RequiredArgsConstructor
 public class PositionServiceImplementation extends BaseService implements PositionService {
 
     /** Big decimal scale for division. */
@@ -67,24 +69,6 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     /** List of position that should be closed no matter the rules. */
     private final Collection<Long> positionsToClose = Collections.synchronizedCollection(new ArrayList<>());
-
-    /**
-     * Constructor.
-     *
-     * @param newApplicationContext application context
-     * @param newPositionRepository position repository
-     * @param newTradeService       trade service
-     * @param newPositionFlux       position flux
-     */
-    public PositionServiceImplementation(final ApplicationContext newApplicationContext,
-                                         final PositionRepository newPositionRepository,
-                                         final TradeService newTradeService,
-                                         final PositionFlux newPositionFlux) {
-        this.applicationContext = newApplicationContext;
-        this.positionRepository = newPositionRepository;
-        this.tradeService = newTradeService;
-        this.positionFlux = newPositionFlux;
-    }
 
     @Override
     public final PositionCreationResultDTO createLongPosition(final GenericCassandreStrategy strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {

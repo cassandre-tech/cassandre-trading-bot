@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.batch;
 
+import lombok.RequiredArgsConstructor;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.util.base.batch.BaseSequentialExternalFlux;
@@ -13,6 +14,7 @@ import java.util.Set;
 /**
  * Account flux - push {@link AccountDTO}.
  */
+@RequiredArgsConstructor
 public class AccountFlux extends BaseSequentialExternalFlux<AccountDTO> {
 
     /** User service. */
@@ -20,15 +22,6 @@ public class AccountFlux extends BaseSequentialExternalFlux<AccountDTO> {
 
     /** Previous values. */
     private Map<String, AccountDTO> previousValues = new LinkedHashMap<>();
-
-    /**
-     * Constructor.
-     *
-     * @param newUserService user service
-     */
-    public AccountFlux(final UserService newUserService) {
-        this.userService = newUserService;
-    }
 
     @Override
     protected final Set<AccountDTO> getNewValues() {

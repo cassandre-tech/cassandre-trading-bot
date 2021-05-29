@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.batch;
 
+import lombok.RequiredArgsConstructor;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -12,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Position flux - push {@link PositionDTO}.
  */
+@RequiredArgsConstructor
 public class PositionFlux extends BaseSequentialInternalFlux<PositionDTO> {
 
     /** Position repository. */
@@ -19,18 +21,6 @@ public class PositionFlux extends BaseSequentialInternalFlux<PositionDTO> {
 
     /** Order repository. */
     private final OrderRepository orderRepository;
-
-    /**
-     * Constructor.
-     *
-     * @param newPositionRepository position repository
-     * @param newOrderRepository    order repository
-     */
-    public PositionFlux(final PositionRepository newPositionRepository,
-                        final OrderRepository newOrderRepository) {
-        this.positionRepository = newPositionRepository;
-        this.orderRepository = newOrderRepository;
-    }
 
     @Override
     public final Optional<PositionDTO> saveValue(final PositionDTO newValue) {

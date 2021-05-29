@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.batch;
 
 import com.google.common.collect.Iterators;
+import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
 import org.springframework.context.ApplicationContext;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Ticker flux - push {@link TickerDTO}.
  */
+@RequiredArgsConstructor
 public class TickerFlux extends BaseParallelFlux<TickerDTO> {
 
     /** Application context. */
@@ -29,18 +31,6 @@ public class TickerFlux extends BaseParallelFlux<TickerDTO> {
 
     /** Cycle iterator over requested currency pairs. */
     private Iterator<CurrencyPairDTO> currencyPairsIterator;
-
-    /**
-     * Constructor.
-     *
-     * @param newApplicationContext application context
-     * @param newMarketService      market service.
-     */
-    public TickerFlux(final ApplicationContext newApplicationContext,
-                      final MarketService newMarketService) {
-        this.applicationContext = newApplicationContext;
-        this.marketService = newMarketService;
-    }
 
     /**
      * Update the list of requested currency pairs.

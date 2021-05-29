@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.util.dry;
 
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,7 +20,6 @@ import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
@@ -44,6 +44,7 @@ import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimest
 @Aspect
 @Component
 @ConditionalOnExpression("${cassandre.trading.bot.exchange.modes.dry:true}")
+@RequiredArgsConstructor
 public class TradeServiceDryModeAOP extends BaseService {
 
     /** Application context. */
@@ -51,9 +52,6 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     /** Order repository. */
     private final OrderRepository orderRepository;
-
-    /** Trade repository. */
-    private final TradeRepository tradeRepository;
 
     /** Dry order prefix. */
     private static final String DRY_ORDER_PREFIX = "DRY_ORDER_";
@@ -69,24 +67,6 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     /** User service - dry mode. */
     private final UserServiceDryModeAOP userService;
-
-    /**
-     * Constructor.
-     *
-     * @param newApplicationContext application context
-     * @param newOrderRepository    order repository
-     * @param newTradeRepository    trade repository
-     * @param newUserService        user service
-     */
-    public TradeServiceDryModeAOP(final ApplicationContext newApplicationContext,
-                                  final OrderRepository newOrderRepository,
-                                  final TradeRepository newTradeRepository,
-                                  final UserServiceDryModeAOP newUserService) {
-        this.applicationContext = newApplicationContext;
-        this.orderRepository = newOrderRepository;
-        this.tradeRepository = newTradeRepository;
-        this.userService = newUserService;
-    }
 
     @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.placeMarketOrder(..)) && args(marketOrder)", argNames = "pjp, marketOrder")
     public final String placeMarketOrder(final ProceedingJoinPoint pjp, final MarketOrder marketOrder) throws IOException {
