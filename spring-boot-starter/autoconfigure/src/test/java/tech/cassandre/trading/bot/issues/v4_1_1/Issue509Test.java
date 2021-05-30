@@ -18,6 +18,7 @@ import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,9 +44,8 @@ public class Issue509Test extends BaseTest {
     @Test
     @DisplayName("Fix empty openingOrder or closing order")
     public void checkEmptyOrderFix() throws InterruptedException {
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        assertEquals(0, positionRepository.findByStatus(OPENING).size());
-        assertEquals(0, positionRepository.findByStatus(CLOSING).size());
+        with().await().untilAsserted(() -> assertEquals(0, positionRepository.findByStatus(OPENING).size()));
+        with().await().untilAsserted(() -> assertEquals(0, positionRepository.findByStatus(CLOSING).size()));
 
         // Error occurs on loading position 41 (CLOSING status).
         // INSERT INTO positions (id, position_id, type, fk_strategy_id, currency_pair, amount_value, amount_currency, rules_stop_gain_percentage, rules_stop_loss_percentage, status, fk_opening_order_id, opening_order_id, fk_closing_order_id, closing_order_id, lowest_gain_price_value, lowest_gain_price_currency, highest_gain_price_value, highest_gain_price_currency, latest_gain_price_value, latest_gain_price_currency, created_on, updated_on, force_closing)
@@ -53,7 +53,7 @@ public class Issue509Test extends BaseTest {
         // The order can be opened and the closing order is indeed 605c81b212ec17000648322f.
         Optional<PositionDTO> position = strategy.getPositionByPositionId(41);
         assertTrue(position.isPresent());
-        assertEquals("605c81b212ec17000648322f", position.get().getClosingOrderId());
+        assertEquals("605c81b212ec17000648322f", position.get().getClosingOrder().getOrderId());
 
         // The closing order is this one - ID : 94 / ORDER_ID : 605c81b212ec17000648322f.
         // INSERT INTO orders (id, order_id, type, fk_strategy_id, currency_pair, amount_value, amount_currency, average_price_value, average_price_currency, limit_price_value, limit_price_currency, leverage, status, cumulative_amount_value, cumulative_amount_currency, user_reference, timestamp, created_on, updated_on)

@@ -90,7 +90,7 @@ public class ShortPositionFluxTest extends BaseTest {
                         .stopGainPercentage(1000f)   // 1 000% max gain.
                         .stopLossPercentage(100f)    // 100% max lost.
                         .build());
-        assertEquals("ORDER00010", position1Result.getPosition().getOpeningOrderId());
+        assertEquals("ORDER00010", position1Result.getPosition().getOpeningOrder().getOrderId());
         long position1Id = position1Result.getPosition().getId();
 
         // The position 1 is created.
@@ -133,10 +133,9 @@ public class ShortPositionFluxTest extends BaseTest {
         assertTrue(p1.get().getRules().isStopLossPercentageSet());
         assertEquals(100f, p1.get().getRules().getStopLossPercentage());
         assertEquals(OPENING, p1.get().getStatus());
-        assertEquals("ORDER00010", p1.get().getOpeningOrderId());
+        assertEquals("ORDER00010", p1.get().getOpeningOrder().getOrderId());
         assertEquals("ORDER00010", p1.get().getOpeningOrder().getOrderId());
         assertTrue(p1.get().getOpeningOrder().getTrades().isEmpty());
-        assertNull(p1.get().getClosingOrderId());
         assertNull(p1.get().getClosingOrder());
         assertNull(p1.get().getLowestGainPrice());
         assertNull(p1.get().getHighestGainPrice());
@@ -150,7 +149,7 @@ public class ShortPositionFluxTest extends BaseTest {
                         .stopGainPercentage(10000000f)
                         .stopLossPercentage(10000000f)
                         .build());
-        assertEquals("ORDER00020", position2Result.getPosition().getOpeningOrderId());
+        assertEquals("ORDER00020", position2Result.getPosition().getOpeningOrder().getOrderId());
         long position2Id = position2Result.getPosition().getId();
 
         // The position 2 is created.

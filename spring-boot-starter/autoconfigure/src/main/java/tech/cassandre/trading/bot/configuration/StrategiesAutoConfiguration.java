@@ -263,33 +263,25 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         connectablePositionFlux.connect();
         // If a position was stuck in OPENING or CLOSING, we fix the order set to null.
         positionRepository.findByStatus(OPENING).forEach(p -> {
-            final Optional<Order> order = orderRepository.findByOrderId(p.getOpeningOrderId());
-            if (order.isPresent()) {
-                if (p.getOpeningOrder() == null) {
-                    p.setOpeningOrder(order.get());
-                    positionRepository.save(p);
-                }
-                order.get()
-                        .getTrades()
-                        .stream()
-                        .map(tradeMapper::mapToTradeDTO)
-                        .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO));
-            }
+            final Optional<Order> openingOrder = orderRepository.findByOrderId(p.getOpeningOrder().getOrderId());
+            openingOrder.ifPresent(order -> order
+                    .getTrades()
+                    .stream()
+                    .map(tradeMapper::mapToTradeDTO)
+                    .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO)));
         });
         positionRepository.findByStatus(CLOSING).forEach(p -> {
-            final Optional<Order> order = orderRepository.findByOrderId(p.getClosingOrderId());
-            if (order.isPresent()) {
-                if (p.getClosingOrder() == null) {
-                    p.setClosingOrder(order.get());
-                    positionRepository.save(p);
-                }
-                order.get()
-                        .getTrades()
-                        .stream()
-                        .map(tradeMapper::mapToTradeDTO)
-                        .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO));
+            if (p.getClosingOrder() == null) {
+                System.out.println(p.getId());
             }
+            final Optional<Order> closingOrder = orderRepository.findByOrderId(p.getClosingOrder().getOrderId());
+            closingOrder.ifPresent(order -> order
+                    .getTrades()
+                    .stream()
+                    .map(tradeMapper::mapToTradeDTO)
+                    .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO)));
         });
+
         connectableOrderFlux.connect();
         connectableTradeFlux.connect();
         connectableTickerFlux.connect();

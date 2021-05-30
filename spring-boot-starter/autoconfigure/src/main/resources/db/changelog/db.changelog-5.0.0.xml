@@ -30,5 +30,15 @@
                               tableName="TRADES"
                               columnNames="TRADE_ID"/>
 
+        <!-- Remove OPENING_ORDER_ID & CLOSING_ORDER_ID from POSITIONS -->
+        <dropIndex tableName="POSITIONS"
+                   indexName="IDX_POSITIONS_FK_OPENING_ORDER_ID"/>
+        <dropIndex tableName="POSITIONS"
+                   indexName="IDX_POSITIONS_FK_CLOSING_ORDER_ID"/>
+        <dropColumn  tableName="POSITIONS">
+            <column  name="OPENING_ORDER_ID"/>
+            <column  name="CLOSING_ORDER_ID"/>
+        </dropColumn>
+
     </changeSet>
 </databaseChangeLog>

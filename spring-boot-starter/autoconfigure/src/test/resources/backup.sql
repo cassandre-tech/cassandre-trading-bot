@@ -45,29 +45,24 @@ VALUES -- Order BACKUP_ORDER_01 (useless).
 -- =====================================================================================================================
 -- Insert positions.
 INSERT INTO POSITIONS (ID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY,
-                       RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, OPENING_ORDER_ID, FK_OPENING_ORDER_ID,
-                       CLOSING_ORDER_ID, FK_CLOSING_ORDER_ID, LOWEST_GAIN_PRICE_VALUE, LOWEST_GAIN_PRICE_CURRENCY,
+                       RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, FK_OPENING_ORDER_ID,
+                       FK_CLOSING_ORDER_ID, LOWEST_GAIN_PRICE_VALUE, LOWEST_GAIN_PRICE_CURRENCY,
                        HIGHEST_GAIN_PRICE_VALUE, HIGHEST_GAIN_PRICE_CURRENCY, LATEST_GAIN_PRICE_VALUE,
                        LATEST_GAIN_PRICE_CURRENCY, FK_STRATEGY_ID)
 VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPENING_ORDER_01 to arrive (but will not arrive).
-       (1, 1, 'LONG', 'OPENING', 'BTC/USDT', 10, 'BTC', null, null, 'BACKUP_OPENING_ORDER_01', 3, null, null, null,
-        null, null, null, null, null, 1),
+       (1, 1, 'LONG', 'OPENING', 'BTC/USDT', 10, 'BTC', null, null, 3, null, null, null, null, null, null, null, 1),
 
        -- Position 2 : Opened position, 10% gain rule.
-       (2, 2, 'LONG', 'OPENED', 'BTC/USDT', 20, 'BTC', 10, null, 'BACKUP_OPENING_ORDER_02', 4, null, null, 1, 'USDT', 2,
-        'USDT', 3, 'USDT', 1),
+       (2, 2, 'LONG', 'OPENED', 'BTC/USDT', 20, 'BTC', 10, null, 4, null, 1, 'USDT', 2, 'USDT', 3, 'USDT', 1),
 
        -- Position 3 : Closing position, 20% loss rule, waiting for a not coming trade 'NON_EXISTING_TRADE'.
-       (3, 3, 'LONG', 'CLOSING', 'BTC/USDT', 30, 'BTC', null, 20, 'BACKUP_OPENING_ORDER_03', 5,
-        'BACKUP_CLOSING_ORDER_01', 6, 17, 'USDT', 68, 'USDT', 92, 'USDT', 1),
+       (3, 3, 'LONG', 'CLOSING', 'BTC/USDT', 30, 'BTC', null, 20, 5, 6, 17, 'USDT', 68, 'USDT', 92, 'USDT', 1),
 
        -- Position 4 : Closed position, 30% gain & 40 % loss.
-       (4, 4, 'LONG', 'CLOSED', 'BTC/USDT', 40, 'BTC', 30, 40, 'BACKUP_OPENING_ORDER_04', 7, 'BACKUP_CLOSING_ORDER_02',
-        8, 17, 'USDT', 68, 'USDT', 93, 'USDT', 1),
+       (4, 4, 'LONG', 'CLOSED', 'BTC/USDT', 40, 'BTC', 30, 40, 7, 8, 17, 'USDT', 68, 'USDT', 93, 'USDT', 1),
 
        -- Position 5 : closed.
-       (5, 5, 'LONG', 'CLOSED', 'ETH/USD', 50, 'ETH', 30, 40, 'BACKUP_OPENING_ORDER_05', 9, 'BACKUP_CLOSING_ORDER_03',
-        10, 17, 'USD', 68, 'USD', 94, 'USD', 1);
+       (5, 5, 'LONG', 'CLOSED', 'ETH/USD', 50, 'ETH', 30, 40, 9, 10, 17, 'USD', 68, 'USD', 94, 'USD', 1);
 
 -- =====================================================================================================================
 -- Insert trades.

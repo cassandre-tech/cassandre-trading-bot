@@ -73,14 +73,8 @@ public class PositionDTO {
     /** Indicates that the position must be closed no matter the rules. */
     private boolean forceClosing;
 
-    /** The order id created to open the position. */
-    private final String openingOrderId;
-
     /** The order created to open the position. */
     private OrderDTO openingOrder;
-
-    /** The order id created to open the position. */
-    private String closingOrderId;
 
     /** The order created to close the position. */
     private OrderDTO closingOrder;
@@ -131,7 +125,6 @@ public class PositionDTO {
                 .currency(newCurrencyPair.getBaseCurrency())
                 .build();
         this.openingOrder = newOpenOrder;
-        this.openingOrderId = newOpenOrder.getOrderId();    // TODO Remove this
         this.rules = newRules;
         this.status = OPENING;
         this.forceClosing = false;
@@ -221,14 +214,14 @@ public class PositionDTO {
      * @return true if the the order updated the position.
      */
     public final boolean orderUpdate(final OrderDTO updatedOrder) {
-        if (openingOrderId.equals(updatedOrder.getOrderId())) {
+        if (openingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
             this.openingOrder = updatedOrder;
             if (updatedOrder.getStatus().isInError()) {
                 this.status = OPENING_FAILURE;
             }
             return true;
         }
-        if (closingOrderId != null && closingOrderId.equals(updatedOrder.getOrderId())) {
+        if (closingOrder != null && closingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
             this.closingOrder = updatedOrder;
             if (updatedOrder.getStatus().isInError()) {
                 this.status = CLOSING_FAILURE;
@@ -246,7 +239,7 @@ public class PositionDTO {
      */
     public boolean tradeUpdate(final TradeDTO trade) {
         // If status is OPENING and the trades for the open order arrives for the whole amount ==> status = OPENED.
-        if (trade.getOrderId().equals(openingOrderId) && status == OPENING) {
+        if (trade.getOrderId().equals(openingOrder.getOrderId()) && status == OPENING) {
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
@@ -261,7 +254,7 @@ public class PositionDTO {
         }
 
         // If status is CLOSING and the trades for the close order arrives for the whole amount ==> status = CLOSED.
-        if (trade.getOrderId().equals(closingOrderId) && status == CLOSING) {
+        if (closingOrder != null && trade.getOrderId().equals(closingOrder.getOrderId()) && status == CLOSING) {
 
             // We calculate the sum of amount in the all the trades.
             // If it reaches the original amount we order, we consider the trade opened.
@@ -276,7 +269,8 @@ public class PositionDTO {
         }
 
         // Return true signaling there is an update if this trade was for this position.
-        return trade.getOrderId().equals(getOpeningOrderId()) || trade.getOrderId().equals(getClosingOrderId());
+        return trade.getOrderId().equals(openingOrder.getOrderId())
+                || (closingOrder != null && trade.getOrderId().equals(closingOrder.getOrderId()));
     }
 
     /**
@@ -410,7 +404,6 @@ public class PositionDTO {
             throw new PositionException("Impossible to set close order id for position " + id);
         }
         closingOrder = newCloseOrder;
-        closingOrderId = closingOrder.getOrderId();
         status = CLOSING;
     }
 
@@ -580,9 +573,7 @@ public class PositionDTO {
                 .append(this.rules, that.rules)
                 .append(this.status, that.status)
                 .append(this.openingOrder, that.openingOrder)
-                .append(this.openingOrderId, that.openingOrderId)
                 .append(this.closingOrder, that.closingOrder)
-                .append(this.closingOrderId, that.closingOrderId)
                 .append(this.lowestGainPrice, that.lowestGainPrice)
                 .append(this.highestGainPrice, that.highestGainPrice)
                 .append(this.latestGainPrice, that.latestGainPrice)

@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.domain;
 
 import lombok.Data;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
@@ -121,7 +122,7 @@ public class Order extends BaseDomain {
     /** All trades related to order. */
     @OneToMany(mappedBy = "order", fetch = EAGER)
     @OrderBy("timestamp")
-    // @JoinColumn(name = "FK_ORDER_ID", updatable = false)
+    @ToString.Exclude
     private Set<Trade> trades = new LinkedHashSet<>();
 
     @Override
