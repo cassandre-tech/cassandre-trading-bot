@@ -30,7 +30,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest
 @DisplayName("Service - XChange - Positions gains service")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/gains-test.sql")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/gains-test.yaml")
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)

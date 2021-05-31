@@ -29,7 +29,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 @SpringBootTest
 @DisplayName("Github issue 509")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:issue509.sql"),
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/issue509.yaml")
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
