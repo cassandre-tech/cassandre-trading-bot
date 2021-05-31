@@ -36,7 +36,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest
 @DisplayName("Batch - Trade flux")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/trade-test.sql")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/trade-test.yaml")
 })
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(TradeFluxTestMock.class)

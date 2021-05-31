@@ -31,7 +31,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 @SpringBootTest
 @DisplayName("Repository - Position")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
 public class PositionRepositoryTest {

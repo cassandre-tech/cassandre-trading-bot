@@ -45,7 +45,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest
 @DisplayName("Domain - Order")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
