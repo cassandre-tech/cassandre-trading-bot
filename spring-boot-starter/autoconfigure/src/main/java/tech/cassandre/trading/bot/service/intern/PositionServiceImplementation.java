@@ -24,9 +24,6 @@ import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -66,9 +63,6 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     /** Position flux. */
     private final PositionFlux positionFlux;
-
-    /** List of position that should be closed no matter the rules. */
-    private final Collection<Long> positionsToClose = Collections.synchronizedCollection(new ArrayList<>());
 
     @Override
     public final PositionCreationResultDTO createLongPosition(final GenericCassandreStrategy strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
@@ -155,7 +149,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final void closePosition(final long id) {
-        positionsToClose.add(id);
+        positionRepository.updateForceClosing(id, true);
     }
 
     @Override
@@ -214,7 +208,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                 .forEach(p -> {
                     // We close the position if it triggers the rules.
                     // Or if the position was forced to close.
-                    if (p.shouldBeClosed() || positionsToClose.contains(p.getPositionId())) {
+                    if (p.isForceClosing() || p.shouldBeClosed()) {
                         final OrderCreationResultDTO orderCreationResult;
                         // We retrieve the strategy
                         final Optional<GenericCassandreStrategy> strategy = applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
@@ -241,14 +235,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
                             if (orderCreationResult.isSuccessful()) {
                                 p.closePositionWithOrder(orderCreationResult.getOrder());
-                                // TODO Should i save it right away ?
+                                // TODO Should I save it right away ?
                                 logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
-                            }
-
-                            // If the position was force to close, we write it in position.
-                            if (positionsToClose.contains(p.getPositionId())) {
-                                positionsToClose.remove(p.getPositionId());
-                                p.setForceClosing(true);
                             }
                         } else {
                             logger.error("Strategy {} not found", p.getStrategy().getStrategyId());
