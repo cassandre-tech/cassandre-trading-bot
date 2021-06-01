@@ -237,4 +237,21 @@ public class PositionRepositoryTest {
         assertNull(p.get().getStopLossPercentageRule());
     }
 
+    @Test
+    @DisplayName("Check update force closing on position")
+    public void checkUpdateForceClosingPosition() {
+        // We retrieve.
+        Optional<Position> p = positionRepository.findById(5L);
+        assertTrue(p.isPresent());
+        assertFalse(p.get().isForceClosing());
+
+        // We update the force closing.
+        positionRepository.updateForceClosing(5L, true);
+
+        // We retrieve the value to check if it has been updated.
+        p = positionRepository.findById(5L);
+        assertTrue(p.isPresent());
+        assertTrue(p.get().isForceClosing());
+    }
+
 }

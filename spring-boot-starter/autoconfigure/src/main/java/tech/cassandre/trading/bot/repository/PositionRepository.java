@@ -60,7 +60,8 @@ public interface PositionRepository extends CrudRepository<Position, Long> {
 
     /**
      * Update stop gain rule.
-     * @param id position id
+     *
+     * @param id    position id
      * @param value new value
      */
     @Transactional
@@ -70,7 +71,8 @@ public interface PositionRepository extends CrudRepository<Position, Long> {
 
     /**
      * Update stop gain rule.
-     * @param id position id
+     *
+     * @param id    position id
      * @param value new value
      */
     @Transactional
@@ -79,7 +81,19 @@ public interface PositionRepository extends CrudRepository<Position, Long> {
     void updateStopLossRule(@Param("id") Long id, @Param("value") Float value);
 
     /**
+     * Update force closing.
+     *
+     * @param id    position id
+     * @param value new value
+     */
+    @Transactional
+    @Modifying
+    @Query("update Position p set p.forceClosing = :value where p.id = :id")
+    void updateForceClosing(@Param("id") Long id, @Param("value") boolean value);
+
+    /**
      * Returns the last position id for a strategy.
+     *
      * @param strategyId strategy id
      * @return last position
      */
