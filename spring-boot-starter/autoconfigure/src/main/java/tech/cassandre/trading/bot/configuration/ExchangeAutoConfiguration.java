@@ -52,7 +52,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     private static final String PASSPHRASE_PARAMETER = "passphrase";
 
     /** Unauthorized http status code. */
-    public static final int UNAUTHORIZED_STATUS_CODE = 401;
+    private static final int UNAUTHORIZED_STATUS_CODE = 401;
 
     /** Application context. */
     private final ApplicationContext applicationContext;

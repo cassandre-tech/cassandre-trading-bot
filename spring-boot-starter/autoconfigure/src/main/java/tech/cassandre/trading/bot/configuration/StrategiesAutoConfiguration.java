@@ -35,7 +35,6 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
-import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -60,9 +59,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
     /** Application context. */
     private final ApplicationContext applicationContext;
-
-    /** Exchange parameters. */
-    private final ExchangeParameters exchangeParameters;
 
     /** Trade service. */
     private final TradeService tradeService;

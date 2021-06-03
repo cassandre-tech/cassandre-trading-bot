@@ -28,8 +28,7 @@ public class Issue558TestMock extends BaseMock {
         tickers.add(getGeneratedTicker(XCHANGE_BTC_USDT, new BigDecimal("3")));
 
         // We use getTickers instead of getTicker.
-        //noinspection unchecked
-        given(marketService.getTickers(any())).willReturn(tickers, Collections.emptyList());
+        given(marketService.getTickers(any())).willReturn(tickers);
         given(marketService.getTicker(any())).willThrow(new RuntimeException("getTicker() was called !"));
         return marketService;
     }

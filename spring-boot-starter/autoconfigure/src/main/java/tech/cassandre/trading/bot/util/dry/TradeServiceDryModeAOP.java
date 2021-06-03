@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
@@ -47,12 +49,6 @@ import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimest
 @RequiredArgsConstructor
 public class TradeServiceDryModeAOP extends BaseService {
 
-    /** Application context. */
-    private final ApplicationContext applicationContext;
-
-    /** Order repository. */
-    private final OrderRepository orderRepository;
-
     /** Dry order prefix. */
     private static final String DRY_ORDER_PREFIX = "DRY_ORDER_";
 
@@ -62,6 +58,12 @@ public class TradeServiceDryModeAOP extends BaseService {
     /** Trade account ID. */
     private static final String TRADE_ACCOUNT_ID = "trade";
 
+    /** Application context. */
+    private final ApplicationContext applicationContext;
+
+    /** Order repository. */
+    private final OrderRepository orderRepository;
+
     /** Order counter. */
     private final AtomicInteger orderCounter = new AtomicInteger(1);
 
@@ -70,13 +72,18 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.placeMarketOrder(..)) && args(marketOrder)", argNames = "pjp, marketOrder")
     public final String placeMarketOrder(final ProceedingJoinPoint pjp, final MarketOrder marketOrder) throws IOException {
+        // We get the currency pair utils.
+        final CurrencyPair currencyPair = (CurrencyPair) marketOrder.getInstrument();
+        final Currency base = ((CurrencyPair) (marketOrder.getInstrument())).base;
+        final Currency counter = ((CurrencyPair) (marketOrder.getInstrument())).counter;
+
         // We retrieve the ticker received by the strategy.
         // TODO Find a better way to get the last ticker.
         final Optional<TickerDTO> t = applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
                 .values()
                 .stream()
                 .map(cassandreStrategy -> ((GenericCassandreStrategy) cassandreStrategy))
-                .map(cassandreStrategy -> cassandreStrategy.getLastTickerByCurrencyPair(currencyMapper.mapToCurrencyPairDTO(marketOrder.getCurrencyPair())))
+                .map(cassandreStrategy -> cassandreStrategy.getLastTickerByCurrencyPair(currencyMapper.mapToCurrencyPairDTO(currencyPair)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst();
@@ -99,39 +106,39 @@ public class TradeServiceDryModeAOP extends BaseService {
             if (marketOrder.getType().equals(BID)) {
                 // Buying order - we buy ETH from BTC.
                 // We are buying the following amount : ticker last price * amount
-                Balance balance = tradeWallet.getBalance(marketOrder.getCurrencyPair().counter);
+                Balance balance = tradeWallet.getBalance(counter);
                 if (balance != null) {
                     BigDecimal ownedAssets = balance.getAvailable();
                     BigDecimal cost = t.get().getLast().multiply(marketOrder.getOriginalAmount());
                     if (cost.compareTo(ownedAssets) > 0) {
-                        final String errorMessage = "Not enough assets (costs : " + cost + " " + marketOrder.getCurrencyPair().counter + " - owned assets : " + ownedAssets + " " + marketOrder.getCurrencyPair().counter + ")";
+                        final String errorMessage = "Not enough assets (costs : " + cost + " " + counter + " - owned assets : " + ownedAssets + " " + counter + ")";
                         throw new IOException(errorMessage);
                     }
                 } else {
-                    throw new IOException("No assets for " + marketOrder.getCurrencyPair().counter);
+                    throw new IOException("No assets for " + counter);
                 }
             } else {
                 // Selling order - we sell ETH for BTC.
                 // We are selling the amount
-                Balance balance = tradeWallet.getBalance(marketOrder.getCurrencyPair().base);
+                Balance balance = tradeWallet.getBalance(base);
                 if (balance != null) {
                     BigDecimal ownedAssets = balance.getAvailable();
                     if (marketOrder.getOriginalAmount().compareTo(ownedAssets) > 0) {
-                        final String errorMessage = "Not enough assets (amount : " + marketOrder.getOriginalAmount() + " " + marketOrder.getCurrencyPair().counter + " - owned assets : " + ownedAssets + " " + marketOrder.getCurrencyPair().base;
+                        final String errorMessage = "Not enough assets (amount : " + marketOrder.getOriginalAmount() + " " + counter + " - owned assets : " + ownedAssets + " " + base;
                         throw new IOException(errorMessage);
                     }
                 } else {
-                    throw new IOException("No assets for " + marketOrder.getCurrencyPair().base);
+                    throw new IOException("No assets for " + base);
                 }
             }
 
             // We update the balances of the account with the values of the trade.
             if (marketOrder.getType().equals(BID)) {
-                userService.addToBalance(marketOrder.getCurrencyPair().base, marketOrder.getOriginalAmount());
-                userService.addToBalance(marketOrder.getCurrencyPair().counter, marketOrder.getOriginalAmount().multiply(t.get().getLast()).multiply(new BigDecimal("-1")));
+                userService.addToBalance(base, marketOrder.getOriginalAmount());
+                userService.addToBalance(counter, marketOrder.getOriginalAmount().multiply(t.get().getLast()).multiply(new BigDecimal("-1")));
             } else {
-                userService.addToBalance(marketOrder.getCurrencyPair().base, marketOrder.getOriginalAmount().multiply(new BigDecimal("-1")));
-                userService.addToBalance(marketOrder.getCurrencyPair().counter, marketOrder.getOriginalAmount().multiply(t.get().getLast()));
+                userService.addToBalance(base, marketOrder.getOriginalAmount().multiply(new BigDecimal("-1")));
+                userService.addToBalance(counter, marketOrder.getOriginalAmount().multiply(t.get().getLast()));
             }
 
             // We create and returns the result.

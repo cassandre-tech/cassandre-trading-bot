@@ -23,8 +23,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      */
     Optional<Order> findByOrderId(String orderId);
 
-    // TODO Add a test for this method.
-
     /**
      * Find order by status.
      *
