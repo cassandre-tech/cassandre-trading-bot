@@ -5,18 +5,18 @@ import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.base.batch.BaseSequentialExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Order flux - push {@link OrderDTO}.
  */
 @RequiredArgsConstructor
-public class OrderFlux extends BaseSequentialExternalFlux<OrderDTO> {
+public class OrderFlux extends BaseFlux<OrderDTO> {
 
     /** Trade service. */
     private final TradeService tradeService;
@@ -53,22 +53,29 @@ public class OrderFlux extends BaseSequentialExternalFlux<OrderDTO> {
     }
 
     @Override
-    protected final Optional<OrderDTO> saveValue(final OrderDTO newValue) {
-        AtomicReference<Order> valueToSave = new AtomicReference<>();
+    protected final Set<OrderDTO> saveValues(final Set<OrderDTO> newValues) {
+        Set<Order> orders = new LinkedHashSet<>();
 
-        orderRepository.findByOrderId(newValue.getOrderId())
-                .ifPresentOrElse(order -> {
-                    // Update order.
-                    orderMapper.updateOrder(newValue, order);
-                    valueToSave.set(order);
-                    logger.debug("OrderFlux - Updating order in database {}", order);
-                }, () -> {
-                    // Create order.
-                    valueToSave.set(orderMapper.mapToOrder(newValue));
-                    logger.debug("OrderFlux - Creating order in database {}", newValue);
-                });
+        // We create or update every orders retrieved by the exchange.
+        newValues.forEach(newValue -> {
+            orderRepository.findByOrderId(newValue.getOrderId())
+                    .ifPresentOrElse(order -> {
+                        // Update order.
+                        orderMapper.updateOrder(newValue, order);
+                        orders.add(orderRepository.save(order));
+                        logger.debug("OrderFlux - Updating order in database {}", order);
+                    }, () -> {
+                        // Create order.
+                        final Order newOrder = orderMapper.mapToOrder(newValue);
+                        orders.add(orderRepository.save(newOrder));
+                        logger.debug("OrderFlux - Creating order in database {}", newValue);
+                    });
+        });
 
-        return Optional.ofNullable(orderMapper.mapToOrderDTO(orderRepository.save(valueToSave.get())));
+        // We return the saved values.
+        return orders.stream()
+                .map(orderMapper::mapToOrderDTO)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

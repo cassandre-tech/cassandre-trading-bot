@@ -3,19 +3,18 @@ package tech.cassandre.trading.bot.batch;
 import lombok.RequiredArgsConstructor;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.util.base.batch.BaseSequentialExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**
  * Account flux - push {@link AccountDTO}.
  */
 @RequiredArgsConstructor
-public class AccountFlux extends BaseSequentialExternalFlux<AccountDTO> {
+public class AccountFlux extends BaseFlux<AccountDTO> {
 
     /** User service. */
     private final UserService userService;
@@ -52,8 +51,9 @@ public class AccountFlux extends BaseSequentialExternalFlux<AccountDTO> {
     }
 
     @Override
-    protected final Optional<AccountDTO> saveValue(final AccountDTO newValue) {
-        return Optional.ofNullable(newValue);
+    protected final Set<AccountDTO> saveValues(final Set<AccountDTO> newValues) {
+        // We don't save accounts in database.
+        return newValues;
     }
 
 }

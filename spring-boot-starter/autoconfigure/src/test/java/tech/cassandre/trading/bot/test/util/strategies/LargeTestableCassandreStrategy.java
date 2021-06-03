@@ -93,9 +93,14 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public final void onAccountUpdate(final AccountDTO account) {
-        accountsUpdateReceived.add(account);
-        logger.info("TestableStrategy-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account + "\n");
+    public final void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
+        accounts.values()
+                .stream()
+                .peek(accountDTO -> logger.info("TestableStrategy-onAccountsUpdates n° {} : {} \n ",
+                        getCount(accountsUpdateReceived),
+                        accountDTO))
+                .forEach(accountsUpdateReceived::add);
+
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -104,9 +109,14 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
-        tickersUpdateReceived.addAll(tickers.values());
-        tickers.values().forEach(ticker -> logger.info("TestableStrategy-onTickersUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n"));
+    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        tickers.values()
+                .stream()
+                .peek(tickerDTO -> logger.info("TestableStrategy-onTickersUpdates n° {} : {} \n ",
+                        getCount(tickersUpdateReceived),
+                        tickerDTO))
+                .forEach(tickersUpdateReceived::add);
+
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -115,9 +125,14 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public final void onOrderUpdate(final OrderDTO order) {
-        ordersUpdateReceived.add(order);
-        logger.info("TestableStrategy-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order + "\n");
+    public final void onOrdersUpdates(final Map<String, OrderDTO> orders) {
+        orders.values()
+                .stream()
+                .peek(orderDTO -> logger.info("TestableStrategy-onOrdersUpdates n° {} : {} \n ",
+                        getCount(ordersUpdateReceived),
+                        orderDTO))
+                .forEach(ordersUpdateReceived::add);
+
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -126,9 +141,14 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public void onTradeUpdate(TradeDTO trade) {
-        tradesUpdateReceived.add(trade);
-        logger.info("TestableStrategy-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade + "\n");
+    public void onTradesUpdates(final Map<String, TradeDTO> trades) {
+        trades.values()
+                .stream()
+                .peek(tradeDTO -> logger.info("TestableStrategy-onTradesUpdates n° {} : {} \n ",
+                        getCount(tradesUpdateReceived),
+                        tradeDTO))
+                .forEach(tradesUpdateReceived::add);
+
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -137,9 +157,14 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public void onPositionUpdate(PositionDTO position) {
-        positionsUpdateReceived.add(position);
-        logger.info("TestableStrategy-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position + "\n");
+    public void onPositionsUpdates(final Map<Long, PositionDTO> positions) {
+        positions.values()
+                .stream()
+                .peek(positionDTO -> logger.info("TestableStrategy-onPositionsUpdates n° {} : {} \n ",
+                        getCount(positionsUpdateReceived),
+                        positionDTO))
+                .forEach(positionsUpdateReceived::add);
+
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         } catch (InterruptedException e) {
@@ -148,9 +173,13 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public void onPositionStatusUpdate(PositionDTO position) {
-        positionsStatusUpdateReceived.add(position);
-        logger.info("TestableStrategy-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position + "\n");
+    public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
+        positions.values()
+                .stream()
+                .peek(positionDTO -> logger.info("TestableStrategy-onPositionsStatusUpdates n° {} : {} \n ",
+                        getCount(positionsStatusUpdateReceived),
+                        positionDTO))
+                .forEach(positionsStatusUpdateReceived::add);
 
         try {
             TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
@@ -166,7 +195,7 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
      * @return int value with format
      */
     private String getCount(final List<?> list) {
-        return String.format("%03d", list.size());
+        return String.format("%03d", list.size() + 1);
     }
 
     /**

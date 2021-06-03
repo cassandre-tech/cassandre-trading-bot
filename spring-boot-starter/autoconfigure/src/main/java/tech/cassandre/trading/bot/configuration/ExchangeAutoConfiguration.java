@@ -167,7 +167,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             tickerFlux = new TickerFlux(applicationContext, getMarketService());
             orderFlux = new OrderFlux(getTradeService(), orderRepository);
             tradeFlux = new TradeFlux(getTradeService(), orderRepository, tradeRepository);
-            positionFlux = new PositionFlux(positionRepository, orderRepository);
+            positionFlux = new PositionFlux(positionRepository);
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();

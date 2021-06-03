@@ -54,7 +54,7 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
     private final List<TickerDTO> tickersUpdateReceived = new LinkedList<>();
 
     @Override
-    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
         tickersUpdateReceived.addAll(tickers.values());
     }
 

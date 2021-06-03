@@ -14,7 +14,7 @@ import static reactor.core.publisher.FluxSink.OverflowStrategy.LATEST;
  *
  * @param <T> flux
  */
-public abstract class BaseParallelFlux<T> extends Base {
+public abstract class BaseFlux<T> extends Base {
 
     /** Flux. */
     protected final Flux<Set<T>> flux;
@@ -25,7 +25,7 @@ public abstract class BaseParallelFlux<T> extends Base {
     /**
      * Constructor.
      */
-    public BaseParallelFlux() {
+    public BaseFlux() {
         Flux<Set<T>> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
         flux = fluxTemp.publishOn(Schedulers.boundedElastic());
     }
@@ -40,37 +40,6 @@ public abstract class BaseParallelFlux<T> extends Base {
         return LATEST;
     }
 
-
-    /**
-     * Implements this method to backup each update.
-     *
-     * @param newValue new value
-     * @return the value saved
-     */
-    protected abstract Set<T> saveValue(Set<T> newValue);
-
-    /**
-     * Emit new values.
-     *
-     * @param newValue new value
-     */
-    public void emitValue(final T newValue) {
-        logger.debug("{} flux emits {}", this.getClass().getName(), newValue);
-        fluxSink.next(Set.of(newValue));
-    }
-
-    /**
-     * Emit new values.
-     *
-     * @param newValue new value
-     */
-    public void emitValue(final Set<T> newValue) {
-        logger.debug("{} flux emits {}", this.getClass().getName(), newValue.size());
-        if (!newValue.isEmpty()) {
-            fluxSink.next(saveValue(newValue));
-        }
-    }
-
     /**
      * Getter for flux.
      *
@@ -81,6 +50,39 @@ public abstract class BaseParallelFlux<T> extends Base {
     }
 
     /**
+     * Emit new value.
+     *
+     * @param newValue new value
+     */
+    public void emitValue(final T newValue) {
+        emitValues(Set.of(newValue));
+    }
+
+    /**
+     * Emit new values.
+     *
+     * @param newValues new values
+     */
+    public void emitValues(final Set<T> newValues) {
+        if (!newValues.isEmpty()) {
+            logger.debug("{} flux emits {} values", this.getClass().getName(), newValues.size());
+            fluxSink.next(saveValues(newValues));
+        }
+    }
+
+    /**
+     * Method executed when values must be updated (usually called by schedulers).
+     */
+    public final void update() {
+        try {
+            emitValues(getNewValues());
+        } catch (RuntimeException e) {
+            logger.error(getClass().getSimpleName() + " - Error getting new values : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Implements this method to return all the new values. Those values will be sent to the strategy.
      *
      * @return list of new values
@@ -88,15 +90,11 @@ public abstract class BaseParallelFlux<T> extends Base {
     protected abstract Set<T> getNewValues();
 
     /**
-     * Method executed when values must be updated (usually called by schedulers).
+     * Implements this method to backup each update.
+     *
+     * @param newValue new value
+     * @return the value saved
      */
-    public final void update() {
-        try {
-            emitValue(getNewValues());
-        } catch (RuntimeException e) {
-            logger.error(getClass().getSimpleName() + " - Error getting new values : " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+    protected abstract Set<T> saveValues(Set<T> newValue);
 
 }

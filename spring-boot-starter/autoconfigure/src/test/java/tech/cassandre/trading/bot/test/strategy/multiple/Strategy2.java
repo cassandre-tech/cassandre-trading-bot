@@ -113,9 +113,14 @@ public class Strategy2 extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public final void onAccountUpdate(final AccountDTO account) {
-        accountsUpdateReceived.add(account);
-        logger.info(getClass().getSimpleName() + "-onAccountUpdate " + getCount(accountsUpdateReceived) + " : " + account + "\n");
+    public final void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
+        accounts.values()
+                .stream()
+                .peek(accountDTO -> logger.info("TestableStrategy-onAccountsUpdates n° {} : {} \n ",
+                        getCount(accountsUpdateReceived),
+                        accountDTO))
+                .forEach(accountsUpdateReceived::add);
+
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
@@ -124,9 +129,14 @@ public class Strategy2 extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
-        tickersUpdateReceived.addAll(tickers.values());
-        tickers.values().forEach(ticker -> logger.info(this.getClass().getSimpleName() + "-onTickersUpdate " + getCount(tickersUpdateReceived) + " : " + ticker + "\n"));
+    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        tickers.values()
+                .stream()
+                .peek(tickerDTO -> logger.info("TestableStrategy-onTickersUpdates n° {} : {} \n ",
+                        getCount(tickersUpdateReceived),
+                        tickerDTO))
+                .forEach(tickersUpdateReceived::add);
+
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
@@ -135,9 +145,14 @@ public class Strategy2 extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public final void onOrderUpdate(final OrderDTO order) {
-        ordersUpdateReceived.add(order);
-        logger.info(getClass().getSimpleName() + "-onOrderUpdate " + getCount(ordersUpdateReceived) + " : " + order + "\n");
+    public final void onOrdersUpdates(final Map<String, OrderDTO> orders) {
+        orders.values()
+                .stream()
+                .peek(orderDTO -> logger.info("TestableStrategy-onOrdersUpdates n° {} : {} \n ",
+                        getCount(ordersUpdateReceived),
+                        orderDTO))
+                .forEach(ordersUpdateReceived::add);
+
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
@@ -146,9 +161,14 @@ public class Strategy2 extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public void onTradeUpdate(TradeDTO trade) {
-        tradesUpdateReceived.add(trade);
-        logger.info(getClass().getSimpleName() + "-onTradeUpdate " + getCount(tradesUpdateReceived) + " : " + trade + "\n");
+    public void onTradesUpdates(final Map<String, TradeDTO> trades) {
+        trades.values()
+                .stream()
+                .peek(tradeDTO -> logger.info("TestableStrategy-onTradesUpdates n° {} : {} \n ",
+                        getCount(tradesUpdateReceived),
+                        tradeDTO))
+                .forEach(tradesUpdateReceived::add);
+
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
@@ -157,9 +177,14 @@ public class Strategy2 extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public void onPositionUpdate(PositionDTO position) {
-        positionsUpdateReceived.add(position);
-        logger.info(getClass().getSimpleName() + "-onPositionUpdate " + getCount(positionsUpdateReceived) + " : " + position + "\n");
+    public void onPositionsUpdates(final Map<Long, PositionDTO> positions) {
+        positions.values()
+                .stream()
+                .peek(positionDTO -> logger.info("TestableStrategy-onPositionsUpdates n° {} : {} \n ",
+                        getCount(positionsUpdateReceived),
+                        positionDTO))
+                .forEach(positionsUpdateReceived::add);
+
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
@@ -168,9 +193,13 @@ public class Strategy2 extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public void onPositionStatusUpdate(PositionDTO position) {
-        positionsStatusUpdateReceived.add(position);
-        logger.info(getClass().getSimpleName() + "-onPositionStatusUpdate " + getCount(positionsStatusUpdateReceived) + " : " + position + "\n");
+    public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
+        positions.values()
+                .stream()
+                .peek(positionDTO -> logger.info("TestableStrategy-onPositionsStatusUpdates n° {} : {} \n ",
+                        getCount(positionsStatusUpdateReceived),
+                        positionDTO))
+                .forEach(positionsStatusUpdateReceived::add);
 
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
@@ -186,7 +215,7 @@ public class Strategy2 extends BasicTa4jCassandreStrategy {
      * @return int value with format
      */
     private String getCount(final List<?> list) {
-        return String.format("%03d", list.size());
+        return String.format("%03d", list.size() + 1);
     }
 
     /**

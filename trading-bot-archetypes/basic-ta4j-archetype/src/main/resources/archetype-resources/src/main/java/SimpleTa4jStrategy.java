@@ -27,7 +27,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
- * Simple strategy.
+ * Simple Ta4j strategy.
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
  * How to do it : https://trading-bot.cassandre.tech/ressources/how-tos/how-to-create-a-kucoin-account.html
  */
@@ -74,15 +74,15 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
         // Here we will receive tickers received.
         tickers.values().forEach(ticker -> System.out.println("Received information about a ticker : " + ticker));
     }
 
     @Override
-    public void onPositionStatusUpdate(PositionDTO position) {
+    public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
         // Here, we will receive a PositionDTO each time a position status has changed.
-        System.out.println(" > Position update : " + position);
+        positions.values().forEach(position -> System.out.println("Received information about a position status : " + position));
     }
 
     @Override

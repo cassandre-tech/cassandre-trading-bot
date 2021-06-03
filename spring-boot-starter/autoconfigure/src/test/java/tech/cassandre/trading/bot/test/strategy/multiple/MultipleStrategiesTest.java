@@ -297,8 +297,10 @@ public class MultipleStrategiesTest extends BaseTest {
         final long position2PositionId = position2Result.getPosition().getPositionId();
         orderFlux.update();
         tradeFlux.update();
-        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        positionService.getPositions().forEach(positionDTO -> System.out.println("=> " + positionDTO.getId() + " : " + positionDTO.getStatus()));
+        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
 
         // Check positionId & positionId.
         assertEquals(2, position2Id);

@@ -10,7 +10,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
-import tech.cassandre.trading.bot.util.base.batch.BaseParallelFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Ticker flux - push {@link TickerDTO}.
  */
 @RequiredArgsConstructor
-public class TickerFlux extends BaseParallelFlux<TickerDTO> {
+public class TickerFlux extends BaseFlux<TickerDTO> {
 
     /** Application context. */
     private final ApplicationContext applicationContext;
@@ -74,8 +74,8 @@ public class TickerFlux extends BaseParallelFlux<TickerDTO> {
     }
 
     @Override
-    protected final Set<TickerDTO> saveValue(final Set<TickerDTO> newValue) {
-        return newValue;
+    protected final Set<TickerDTO> saveValues(final Set<TickerDTO> newValues) {
+        return newValues;
     }
 
 }

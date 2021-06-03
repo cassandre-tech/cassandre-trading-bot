@@ -3,37 +3,47 @@ package tech.cassandre.trading.bot.batch;
 import lombok.RequiredArgsConstructor;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.util.base.batch.BaseSequentialInternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Position flux - push {@link PositionDTO}.
  */
 @RequiredArgsConstructor
-public class PositionFlux extends BaseSequentialInternalFlux<PositionDTO> {
+public class PositionFlux extends BaseFlux<PositionDTO> {
 
     /** Position repository. */
     private final PositionRepository positionRepository;
 
-    /** Order repository. */
-    private final OrderRepository orderRepository;
+    @Override
+    protected final Set<PositionDTO> getNewValues() {
+        // We return an empty set because positions updates only comes from inside cassandre.
+        return Collections.emptySet();
+    }
 
     @Override
-    public final Optional<PositionDTO> saveValue(final PositionDTO newValue) {
-        AtomicReference<Position> valueToSave = new AtomicReference<>();
+    public final Set<PositionDTO> saveValues(final Set<PositionDTO> newValues) {
+        Set<Position> positions = new LinkedHashSet<>();
 
-        positionRepository.findById(newValue.getId())
-                .ifPresentOrElse(position -> {
-                    positionMapper.updatePosition(newValue, position);
-                    valueToSave.set(position);
-                    logger.debug("PositionFlux - Updating position in database {}", position);
-                }, () -> logger.error("PositionFlux - Position {} was not found in database. This should never happend", newValue));
+        // Only save every positions.
+        newValues.forEach(positionDTO -> {
+                    final Optional<Position> position = positionRepository.findById(positionDTO.getId());
+                    if (position.isPresent()) {
+                        positionMapper.updatePosition(positionDTO, position.get());
+                        positions.add(positionRepository.save(position.get()));
+                        logger.debug("PositionFlux - Updating position in database {}", position.get());
+                    }
+                });
 
-        return Optional.ofNullable(positionMapper.mapToPositionDTO(positionRepository.save(valueToSave.get())));
+        return positions.stream()
+                .map(positionMapper::mapToPositionDTO)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

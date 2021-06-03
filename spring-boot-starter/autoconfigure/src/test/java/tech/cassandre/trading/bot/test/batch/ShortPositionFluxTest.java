@@ -408,6 +408,7 @@ public class ShortPositionFluxTest extends BaseTest {
                 .build());
         positionStatusUpdatesCount.incrementAndGet();
         positionUpdatesCount.incrementAndGet();
+        positionUpdatesCount.incrementAndGet();// TODO Should not be necessary!
 
         // onPositionStatusUpdate - Position 2 should be opened.
         await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));

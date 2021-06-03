@@ -169,31 +169,35 @@ public class PositionServiceImplementation extends BaseService implements Positi
     }
 
     @Override
-    public final void orderUpdate(final OrderDTO order) {
-        logger.debug("PositionService - Updating position with order {}", order);
-        positionRepository.findByStatusNot(CLOSED)
-                .stream()
-                .map(positionMapper::mapToPositionDTO)
-                .forEach(p -> {
-                    if (p.orderUpdate(order)) {
-                        logger.debug("PositionService - Position {} updated with order {}", p.getPositionId(), order);
-                        positionFlux.emitValue(p);
-                    }
-                });
+    public final void ordersUpdates(final Set<OrderDTO> orders) {
+        orders.forEach(orderDTO -> {
+            logger.debug("PositionService - Updating position with order {}", orderDTO);
+            positionRepository.findByStatusNot(CLOSED)
+                    .stream()
+                    .map(positionMapper::mapToPositionDTO)
+                    .forEach(p -> {
+                        if (p.orderUpdate(orderDTO)) {
+                            logger.debug("PositionService - Position {} updated with order {}", p.getPositionId(), orderDTO);
+                            positionFlux.emitValue(p);
+                        }
+                    });
+        });
     }
 
     @Override
-    public final void tradeUpdate(final TradeDTO trade) {
-        logger.debug("PositionService - Updating position with trade {}", trade);
-        positionRepository.findByStatusNot(CLOSED)
-                .stream()
-                .map(positionMapper::mapToPositionDTO)
-                .forEach(p -> {
-                    if (p.tradeUpdate(trade)) {
-                        logger.debug("PositionService - Position {} updated with trade {}", p.getPositionId(), trade);
-                        positionFlux.emitValue(p);
-                    }
-                });
+    public final void tradesUpdates(final Set<TradeDTO> trades) {
+        trades.forEach(tradeDTO -> {
+            logger.debug("PositionService - Updating position with trade {}", tradeDTO);
+            positionRepository.findByStatusNot(CLOSED)
+                    .stream()
+                    .map(positionMapper::mapToPositionDTO)
+                    .forEach(p -> {
+                        if (p.tradeUpdate(tradeDTO)) {
+                            logger.debug("PositionService - Position {} updated with trade {}", p.getPositionId(), tradeDTO);
+                            positionFlux.emitValue(p);
+                        }
+                    });
+        });
     }
 
     @Override

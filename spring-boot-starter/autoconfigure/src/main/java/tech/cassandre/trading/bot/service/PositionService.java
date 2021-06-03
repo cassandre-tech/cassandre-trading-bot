@@ -85,23 +85,23 @@ public interface PositionService {
     Optional<PositionDTO> getPositionById(long id);
 
     /**
-     * Method called by streams at every order update.
+     * Method called by streams on orders updates.
      *
-     * @param order order
+     * @param orders orders updates
      */
-    void orderUpdate(OrderDTO order);
+    void ordersUpdates(Set<OrderDTO> orders);
 
     /**
-     * Method called by streams on every trade update.
+     * Method called by streams on trades updates.
      *
-     * @param trade trade
+     * @param trades trade updates
      */
-    void tradeUpdate(TradeDTO trade);
+    void tradesUpdates(Set<TradeDTO> trades);
 
     /**
-     * Method called by streams at every ticker update.
+     * Method called by streams on tickers updates.
      *
-     * @param tickers tickers
+     * @param tickers tickers updates
      */
     void tickersUpdate(Set<TickerDTO> tickers);
 

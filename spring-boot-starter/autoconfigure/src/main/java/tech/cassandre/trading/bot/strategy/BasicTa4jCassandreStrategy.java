@@ -98,7 +98,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     @Override
-    public final void tickersUpdate(final Set<TickerDTO> tickers) {
+    public final void tickersUpdates(final Set<TickerDTO> tickers) {
         // We only retrieve the ticker requested by the strategy (only one because it's a ta4j strategy.
         final Map<CurrencyPairDTO, TickerDTO> tickerToSend = tickers.stream()
                 .filter(ticker -> getRequestedCurrencyPair().equals(ticker.getCurrencyPair()))
@@ -109,7 +109,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
             barAggregator.update(ticker.getTimestamp(), ticker.getLast(), ticker.getHigh(), ticker.getLow(), ticker.getVolume());
         });
 
-        onTickersUpdate(tickerToSend);
+        onTickersUpdates(tickerToSend);
     }
 
     private Bar addBarAndCallStrategy(final Bar bar) {

@@ -181,9 +181,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
         // =============================================================================================================
         // Creating flux.
-        final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();
-        final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publish();
-        final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
+        final ConnectableFlux<Set<AccountDTO>> connectableAccountFlux = accountFlux.getFlux().publish();
+        final ConnectableFlux<Set<PositionDTO>> connectablePositionFlux = positionFlux.getFlux().publish();
+        final ConnectableFlux<Set<OrderDTO>> connectableOrderFlux = orderFlux.getFlux().publish();
         final LinkedHashSet<CurrencyPairDTO> currencyPairs = strategies.values()  // We get the list of all required cp of all strategies.
                 .stream()
                 .map(o -> ((CassandreStrategyInterface) o))
@@ -192,9 +192,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         tickerFlux.updateRequestedCurrencyPairs(currencyPairs);
         final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
-        final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
-        connectableOrderFlux.subscribe(positionService::orderUpdate);
-        connectableTradeFlux.subscribe(positionService::tradeUpdate);
+        final ConnectableFlux<Set<TradeDTO>> connectableTradeFlux = tradeFlux.getFlux().publish();
+        connectableOrderFlux.subscribe(positionService::ordersUpdates);
+        connectableTradeFlux.subscribe(positionService::tradesUpdates);
 
         // =============================================================================================================
         // Configuring strategies.
@@ -251,16 +251,19 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.initializeAccounts(user.get().getAccounts());
 
                     // Setting flux.
-                    connectableAccountFlux.subscribe(strategy::accountUpdate);
-                    connectablePositionFlux.subscribe(strategy::positionUpdate);
-                    connectableOrderFlux.subscribe(strategy::orderUpdate);
-                    connectableTradeFlux.subscribe(strategy::tradeUpdate);
-                    connectableTickerFlux.subscribe(strategy::tickersUpdate);
+                    connectableAccountFlux.subscribe(strategy::accountsUpdates);
+                    connectablePositionFlux.subscribe(strategy::positionsUpdates);
+                    connectableOrderFlux.subscribe(strategy::ordersUpdates);
+                    connectableTradeFlux.subscribe(strategy::tradesUpdates);
+                    connectableTickerFlux.subscribe(strategy::tickersUpdates);
                 });
         connectableTickerFlux.subscribe(positionService::tickersUpdate);
         // Start flux.
         connectableAccountFlux.connect();
         connectablePositionFlux.connect();
+
+
+        // TODO Send all updates at the same time.
         // If a position was stuck in OPENING or CLOSING, we fix the order set to null.
         positionRepository.findByStatus(OPENING).forEach(p -> {
             final Optional<Order> openingOrder = orderRepository.findByOrderId(p.getOpeningOrder().getOrderId());
@@ -268,7 +271,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     .getTrades()
                     .stream()
                     .map(tradeMapper::mapToTradeDTO)
-                    .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO)));
+                    .forEach(tradeDTO -> positionService.tradesUpdates(Set.of(tradeDTO))));
         });
         positionRepository.findByStatus(CLOSING).forEach(p -> {
             if (p.getClosingOrder() == null) {
@@ -279,7 +282,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     .getTrades()
                     .stream()
                     .map(tradeMapper::mapToTradeDTO)
-                    .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO)));
+                    .forEach(tradeDTO -> positionService.tradesUpdates(Set.of((tradeDTO)))));
         });
 
         connectableOrderFlux.connect();

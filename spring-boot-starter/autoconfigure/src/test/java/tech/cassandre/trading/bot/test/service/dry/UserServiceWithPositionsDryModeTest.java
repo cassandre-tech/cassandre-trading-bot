@@ -308,6 +308,8 @@ public class UserServiceWithPositionsDryModeTest extends BaseTest {
         // We check that the position don't lock amount anymore.
         // Only 0.5 ETH locked because of position 1.
         // 20 KCS because of position 3.
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         assertEquals(2, strategy.getAmountsLockedByPosition().size());
         assertEquals(0, new BigDecimal("0.5").compareTo(strategy.getAmountsLockedByCurrency(ETH)));
         assertEquals(0, new BigDecimal("20").compareTo(strategy.getAmountsLockedByCurrency(KCS)));

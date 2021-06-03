@@ -41,7 +41,7 @@ public final class TestableStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public final void onTickersUpdate(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
         tickersUpdateReceived.addAll(tickers.values());
     }
 
