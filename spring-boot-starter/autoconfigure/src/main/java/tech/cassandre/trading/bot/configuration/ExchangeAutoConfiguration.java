@@ -217,12 +217,12 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
         // Returns the XChange package name.
         assert exchangeParameters.getDriverClassName() != null;
-        return xChangeClassPackage                                                      // Package (org.knowm.xchange.).
-                .concat(exchangeParameters.getDriverClassName().toLowerCase())                     // domain (kucoin).
-                .concat(".")                                                            // A dot (.)
-                .concat(exchangeParameters.getDriverClassName().substring(0, 1).toUpperCase())     // First letter uppercase (K).
-                .concat(exchangeParameters.getDriverClassName().substring(1).toLowerCase())        // The rest of the exchange name (ucoin).
-                .concat(xChangeCLassSuffix);                                            // Adding exchange (Exchange).
+        return xChangeClassPackage                                                              // Package (org.knowm.xchange.).
+                .concat(exchangeParameters.getDriverClassName().toLowerCase())                  // domain (kucoin).
+                .concat(".")                                                                    // A dot (.)
+                .concat(exchangeParameters.getDriverClassName().substring(0, 1).toUpperCase())  // First letter uppercase (K).
+                .concat(exchangeParameters.getDriverClassName().substring(1).toLowerCase())     // The rest of the exchange name (ucoin).
+                .concat(xChangeCLassSuffix);                                                    // Adding exchange (Exchange).
     }
 
     /**

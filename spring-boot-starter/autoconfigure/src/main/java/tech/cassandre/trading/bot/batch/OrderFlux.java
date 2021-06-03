@@ -57,20 +57,18 @@ public class OrderFlux extends BaseFlux<OrderDTO> {
         Set<Order> orders = new LinkedHashSet<>();
 
         // We create or update every orders retrieved by the exchange.
-        newValues.forEach(newValue -> {
-            orderRepository.findByOrderId(newValue.getOrderId())
-                    .ifPresentOrElse(order -> {
-                        // Update order.
-                        orderMapper.updateOrder(newValue, order);
-                        orders.add(orderRepository.save(order));
-                        logger.debug("OrderFlux - Updating order in database {}", order);
-                    }, () -> {
-                        // Create order.
-                        final Order newOrder = orderMapper.mapToOrder(newValue);
-                        orders.add(orderRepository.save(newOrder));
-                        logger.debug("OrderFlux - Creating order in database {}", newValue);
-                    });
-        });
+        newValues.forEach(newValue -> orderRepository.findByOrderId(newValue.getOrderId())
+                .ifPresentOrElse(order -> {
+                    // Update order.
+                    orderMapper.updateOrder(newValue, order);
+                    orders.add(orderRepository.save(order));
+                    logger.debug("OrderFlux - Updating order in database {}", order);
+                }, () -> {
+                    // Create order.
+                    final Order newOrder = orderMapper.mapToOrder(newValue);
+                    orders.add(orderRepository.save(newOrder));
+                    logger.debug("OrderFlux - Creating order in database {}", newValue);
+                }));
 
         // We return the saved values.
         return orders.stream()

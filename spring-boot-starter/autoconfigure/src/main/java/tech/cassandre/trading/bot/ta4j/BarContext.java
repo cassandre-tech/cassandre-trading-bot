@@ -38,7 +38,7 @@ class BarContext {
     /**
      * Open price.
      */
-    private double open;
+    private final double open;
     /**
      * Close price.
      */

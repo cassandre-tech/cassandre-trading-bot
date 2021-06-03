@@ -53,23 +53,21 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
         Set<Trade> trades = new LinkedHashSet<>();
 
         // We create or update every trades retrieved by the exchange.
-        newValues.forEach(newValue -> {
-            tradeRepository.findByTradeId(newValue.getTradeId())
-                    .ifPresentOrElse(trade -> {
-                        // Update trade.
-                        tradeMapper.updateTrade(newValue, trade);
-                        // TODO Should be useless during updates no ?
-                        orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(trade::setOrder);
-                        trades.add(tradeRepository.save(trade));
-                        logger.debug("TradeFlux - Updating trade in database {}", trade);
-                    }, () -> {
-                        // Create trade.
-                        final Trade newTrade = tradeMapper.mapToTrade(newValue);
-                        orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(newTrade::setOrder);
-                        trades.add(tradeRepository.save(newTrade));
-                        logger.debug("TradeFlux - Creating trade in database {}", newTrade);
-                    });
-        });
+        newValues.forEach(newValue -> tradeRepository.findByTradeId(newValue.getTradeId())
+                .ifPresentOrElse(trade -> {
+                    // Update trade.
+                    tradeMapper.updateTrade(newValue, trade);
+                    // TODO Should be useless during updates no ?
+                    orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(trade::setOrder);
+                    trades.add(tradeRepository.save(trade));
+                    logger.debug("TradeFlux - Updating trade in database {}", trade);
+                }, () -> {
+                    // Create trade.
+                    final Trade newTrade = tradeMapper.mapToTrade(newValue);
+                    orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(newTrade::setOrder);
+                    trades.add(tradeRepository.save(newTrade));
+                    logger.debug("TradeFlux - Creating trade in database {}", newTrade);
+                }));
 
         // We return the saved values.
         return trades.stream()

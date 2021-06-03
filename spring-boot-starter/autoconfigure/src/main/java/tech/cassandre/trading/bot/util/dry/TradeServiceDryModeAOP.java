@@ -161,8 +161,7 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around("execution(* org.knowm.xchange.service.trade.TradeService.getOpenOrders())")
     public final OpenOrders getOpenOrders(final ProceedingJoinPoint pjp) {
-
-        return new OpenOrders(Collections.<LimitOrder>emptyList());
+        return new OpenOrders(Collections.emptyList());
     }
 
     @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.getTradeHistory(..)) && args(params))", argNames = "pjp, params")
