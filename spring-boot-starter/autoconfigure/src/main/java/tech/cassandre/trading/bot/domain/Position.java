@@ -40,11 +40,11 @@ public class Position extends BaseDomain {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    /** An identifier that uniquely identifies the position. */
+    /** An identifier that uniquely identifies the position for a strategy. */
     @Column(name = "POSITION_ID")
     private Long positionId;
 
-    /** Position type. */
+    /** Position type - Short or Long. */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private PositionTypeDTO type;

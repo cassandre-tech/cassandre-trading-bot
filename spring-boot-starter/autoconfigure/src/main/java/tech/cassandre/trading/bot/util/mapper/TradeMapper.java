@@ -82,6 +82,7 @@ public interface TradeMapper {
     // Domain to DTO.
 
     @Mapping(target = "order.trades", ignore = true)
+    @Mapping(target = "orderId", source = "order.orderId")
     TradeDTO mapToTradeDTO(Trade source);
 
 }

@@ -30,6 +30,13 @@
                               tableName="TRADES"
                               columnNames="TRADE_ID"/>
 
+        <!-- Remove ORDER_ID from TRADES -->
+        <dropIndex tableName="TRADES"
+                   indexName="IDX_TRADES_ORDER_ID"/>
+        <dropColumn  tableName="TRADES">
+            <column  name="ORDER_ID"/>
+        </dropColumn>
+
         <!-- Remove OPENING_ORDER_ID & CLOSING_ORDER_ID from POSITIONS -->
         <dropIndex tableName="POSITIONS"
                    indexName="IDX_POSITIONS_FK_OPENING_ORDER_ID"/>

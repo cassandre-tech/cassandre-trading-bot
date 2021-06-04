@@ -48,7 +48,7 @@ public class Order extends BaseDomain {
     @Column(name = "ORDER_ID")
     private String orderId;
 
-    /** Order type i.e. bid or ask. */
+    /** Order type i.e. bid (buy) or ask (sell). */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private OrderTypeDTO type;
@@ -142,6 +142,7 @@ public class Order extends BaseDomain {
                 .append(this.amount, that.amount)
                 .append(this.averagePrice, that.averagePrice)
                 .append(this.limitPrice, that.limitPrice)
+                .append(this.marketPrice, that.marketPrice)
                 .append(this.leverage, that.leverage)
                 .append(this.status, that.status)
                 .append(this.cumulativeAmount, that.cumulativeAmount)
@@ -153,7 +154,7 @@ public class Order extends BaseDomain {
     @Override
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(orderId)
                 .toHashCode();
     }
 

@@ -214,7 +214,7 @@ public class TradeTest extends BaseTest {
         assertEquals(11, tradeInDatabase.get().getId());
         assertEquals("BACKUP_TRADE_11", tradeInDatabase.get().getTradeId());
         assertEquals(BID, tradeInDatabase.get().getType());
-        assertEquals("BACKUP_ORDER_01", tradeInDatabase.get().getOrderId());
+        assertEquals("BACKUP_ORDER_01", tradeInDatabase.get().getOrder().getOrderId());
         assertEquals("ETH/BTC", tradeInDatabase.get().getCurrencyPair());
         assertEquals(0, tradeInDatabase.get().getAmount().getValue().compareTo(new BigDecimal("1.100001")));
         assertEquals("ETH", tradeInDatabase.get().getAmount().getCurrency());

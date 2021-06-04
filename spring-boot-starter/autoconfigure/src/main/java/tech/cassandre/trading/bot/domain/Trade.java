@@ -41,25 +41,21 @@ public class Trade extends BaseDomain {
     @Column(name = "TRADE_ID")
     private String tradeId;
 
-    /** Order type i.e. bid or ask. */
+    /** Trade type i.e. bid (buy) or ask (sell). */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private OrderTypeDTO type;
 
-    /** The id of the order responsible for execution of this trade. */
+    /** The order responsible of this trade. */
     @ManyToOne
     @JoinColumn(name = "FK_ORDER_ID", nullable = false)
     private Order order;
-
-    /** The id of the order responsible for execution of this trade. */
-    @Column(name = "ORDER_ID")
-    private String orderId;
 
     /** Currency pair. */
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
 
-    /** Amount that was ordered (currency). */
+    /** Amount that was ordered. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "AMOUNT_VALUE")),
@@ -83,7 +79,7 @@ public class Trade extends BaseDomain {
     })
     private CurrencyAmount fee;
 
-    /** An identifier provided by the user on placement that uniquely identifies the order. */
+    /** An identifier provided by the user on placement that uniquely identifies the order of this trade. */
     @Column(name = "USER_REFERENCE")
     private String userReference;
 
@@ -104,7 +100,6 @@ public class Trade extends BaseDomain {
                 .append(this.id, that.id)
                 .append(this.tradeId, that.tradeId)
                 .append(this.type, that.type)
-                .append(this.orderId, that.orderId)
                 .append(this.currencyPair, that.currencyPair)
                 .append(this.amount, that.amount)
                 .append(this.price, that.price)
@@ -117,7 +112,7 @@ public class Trade extends BaseDomain {
     @Override
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(tradeId)
                 .toHashCode();
     }
 

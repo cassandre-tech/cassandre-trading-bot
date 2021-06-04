@@ -30,16 +30,16 @@ public class Strategy extends BaseDomain {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    /** An identifier that uniquely identifies the strategy. */
+    /** An identifier that uniquely identifies the strategy - Comes from the Java annotation. */
     @Column(name = "STRATEGY_ID")
     private String strategyId;
 
-    /** Strategy type. */
+    /** Strategy type - Basic or ta4j. */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private StrategyTypeDTO type;
 
-    /** Strategy name. */
+    /** Strategy name - Comes from the Java annotation. */
     @Column(name = "NAME")
     private String name;
 
@@ -63,6 +63,7 @@ public class Strategy extends BaseDomain {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
+                .append(strategyId)
                 .toHashCode();
     }
 
