@@ -39,7 +39,6 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -180,13 +179,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<Set<AccountDTO>> connectableAccountFlux = accountFlux.getFlux().publish();
         final ConnectableFlux<Set<PositionDTO>> connectablePositionFlux = positionFlux.getFlux().publish();
         final ConnectableFlux<Set<OrderDTO>> connectableOrderFlux = orderFlux.getFlux().publish();
-        final LinkedHashSet<CurrencyPairDTO> currencyPairs = strategies.values()  // We get the list of all required cp of all strategies.
-                .stream()
-                .map(o -> ((CassandreStrategyInterface) o))
-                .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
-                .flatMap(Set::stream)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        tickerFlux.updateRequestedCurrencyPairs(currencyPairs);
         final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
         final ConnectableFlux<Set<TradeDTO>> connectableTradeFlux = tradeFlux.getFlux().publish();
         connectableOrderFlux.subscribe(positionService::ordersUpdates);

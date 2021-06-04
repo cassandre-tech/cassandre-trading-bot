@@ -31,13 +31,14 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
     public final Set<PositionDTO> saveValues(final Set<PositionDTO> newValues) {
         Set<Position> positions = new LinkedHashSet<>();
 
-        // Only save every positions.
+        // We save every positions sent to the flux.
         newValues.forEach(positionDTO -> {
                     final Optional<Position> position = positionRepository.findById(positionDTO.getId());
                     if (position.isPresent()) {
+                        // If the position is in database (which must be always true), we update it in database.
                         positionMapper.updatePosition(positionDTO, position.get());
                         positions.add(positionRepository.save(position.get()));
-                        logger.debug("PositionFlux - Updating position in database {}", position.get());
+                        logger.debug("PositionFlux - Updating position in database: {}", positionDTO);
                     }
                 });
 

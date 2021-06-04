@@ -30,21 +30,22 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
 
     @Override
     protected final Set<TradeDTO> getNewValues() {
-        logger.debug("TradeFlux - Retrieving new values");
+        logger.debug("TradeFlux - Retrieving new trades from exchange");
         Set<TradeDTO> newValues = new LinkedHashSet<>();
 
         // Finding which trades has been updated.
         tradeService.getTrades()
-                .stream().filter(t -> orderRepository.findByOrderId(t.getOrderId()).isPresent())    // We only accept trades with order present in database
+                .stream()
+                .filter(t -> orderRepository.findByOrderId(t.getOrderId()).isPresent())    // We only accept trades with order present in database
                 .forEach(trade -> {
-                    logger.debug("TradeFlux - Treating trade : {}", trade.getTradeId());
+                    logger.debug("TradeFlux - Treating trade: {}", trade.getTradeId());
                     final Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(trade.getTradeId());
                     if (tradeInDatabase.isEmpty() || !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
-                        logger.debug("TradeFlux - Trade {} has changed : {}", trade.getTradeId(), trade);
+                        logger.debug("TradeFlux - Updated trade from exchange: {}", trade);
                         newValues.add(trade);
                     }
                 });
-        logger.debug("TradeFlux - {} trade(s) updated", newValues.size());
+
         return newValues;
     }
 
@@ -57,19 +58,16 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
                 .ifPresentOrElse(trade -> {
                     // Update trade.
                     tradeMapper.updateTrade(newValue, trade);
-                    // TODO Should be useless during updates no ?
-                    orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(trade::setOrder);
                     trades.add(tradeRepository.save(trade));
-                    logger.debug("TradeFlux - Updating trade in database {}", trade);
+                    logger.debug("TradeFlux - Updating trade in database: {}", trade);
                 }, () -> {
                     // Create trade.
                     final Trade newTrade = tradeMapper.mapToTrade(newValue);
                     orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(newTrade::setOrder);
                     trades.add(tradeRepository.save(newTrade));
-                    logger.debug("TradeFlux - Creating trade in database {}", newTrade);
+                    logger.debug("TradeFlux - Creating trade in database: {}", newTrade);
                 }));
 
-        // We return the saved values.
         return trades.stream()
                 .map(tradeMapper::mapToTradeDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
