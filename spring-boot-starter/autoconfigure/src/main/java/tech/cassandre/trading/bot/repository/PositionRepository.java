@@ -14,13 +14,13 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Position repository.
+ * {@link Position} repository.
  */
 @Repository
 public interface PositionRepository extends JpaRepository<Position, Long> {
 
     /**
-     * Find a position by its id.
+     * Find a position by its positin id.
      *
      * @param positionId position id
      * @return positions
@@ -28,35 +28,44 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
     Optional<Position> findByPositionId(long positionId);
 
     /**
-     * Find all position (sorted by id).
+     * Retrieve all positions (sorted by id).
      *
      * @return positions
      */
     List<Position> findByOrderById();
 
     /**
-     * Find all positions by status.
+     * Retrieve all positions by its status.
      *
      * @param status status
-     * @return list of positions
+     * @return positions
      */
     List<Position> findByStatus(PositionStatusDTO status);
 
     /**
-     * Find all positions not having a specific status.
+     * Retrieve all positions not having a specific status.
      *
      * @param status status
-     * @return list of positions
+     * @return positions
      */
     List<Position> findByStatusNot(PositionStatusDTO status);
 
     /**
-     * Find all positions with a list of status.
+     * Retrieve all positions with specific status.
      *
      * @param status list of status
-     * @return list of positions
+     * @return positions
      */
     List<Position> findByStatusIn(Set<PositionStatusDTO> status);
+
+    /**
+     * Returns the last position id for a strategy.
+     *
+     * @param strategyId strategy id
+     * @return positions
+     */
+    @Query("SELECT coalesce(max(p.positionId), 0) FROM Position p where p.strategy.id = :strategyId")
+    Long getLastPositionIdUsedByStrategy(@Param("strategyId") Long strategyId);
 
     /**
      * Update stop gain rule.
@@ -70,7 +79,7 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
     void updateStopGainRule(@Param("id") Long id, @Param("value") Float value);
 
     /**
-     * Update stop gain rule.
+     * Update stop loss rule.
      *
      * @param id    position id
      * @param value new value
@@ -90,14 +99,5 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
     @Modifying
     @Query("update Position p set p.forceClosing = :value where p.id = :id")
     void updateForceClosing(@Param("id") Long id, @Param("value") boolean value);
-
-    /**
-     * Returns the last position id for a strategy.
-     *
-     * @param strategyId strategy id
-     * @return last position
-     */
-    @Query("SELECT coalesce(max(p.positionId), 0) FROM Position p where p.strategy.id = :strategyId")
-    Long getLastPositionIdUsedByStrategy(@Param("strategyId") Long strategyId);
 
 }

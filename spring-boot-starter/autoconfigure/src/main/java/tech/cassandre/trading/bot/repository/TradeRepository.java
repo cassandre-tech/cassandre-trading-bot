@@ -8,25 +8,23 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Trade repository.
+ * {@link Trade} repository.
  */
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> {
 
     /**
-     * Find by trade id.
+     * Find a trade by its trade id.
      *
      * @param tradeId trade id
      * @return trade
      */
     Optional<Trade> findByTradeId(String tradeId);
 
-    // TODO Add a method to retrieve all the trades of an order.
-
     /**
-     * Find all trades by timestamp.
+     * Retrieve all trades order by its timestamp.
      *
-     * @return positions
+     * @return trades
      */
     List<Trade> findByOrderByTimestampAsc();
 

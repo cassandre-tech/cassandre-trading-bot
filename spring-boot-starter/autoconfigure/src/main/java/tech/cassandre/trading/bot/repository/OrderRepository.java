@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Order repository.
+ * {@link Order} repository.
  */
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    // TODO Check if JPA repository is a good idea ?
 
     /**
-     * Find by order id.
+     * Find an order by its order id.
      *
      * @param orderId order id
      * @return order
@@ -24,7 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderId(String orderId);
 
     /**
-     * Find order by status.
+     * Find orders by its status.
      *
      * @param orderStatusDTO order status
      * @return orders
@@ -32,9 +31,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStatus(OrderStatusDTO orderStatusDTO);
 
     /**
-     * Find all orders by timestamp.
+     * Retrieve all orders by its timestamp.
      *
-     * @return positions
+     * @return orders
      */
     List<Order> findByOrderByTimestampAsc();
 
