@@ -47,10 +47,10 @@ public class TradeDTO {
     /** An identifier set by the exchange that uniquely identifies the trade. */
     String tradeId;
 
-    /** Order type i.e. bid or ask. */
+    /** Order type i.e. bid (buy) or ask (sell). */
     OrderTypeDTO type;
 
-    /** The id of the order responsible for execution of this trade. */
+    /** The order responsible of this trade. */
     String orderId;
 
     /** Order. */

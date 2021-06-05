@@ -52,7 +52,7 @@ public class PositionDTO {
     /** An identifier that uniquely identifies the position. */
     private final Long positionId;
 
-    /** Position type. */
+    /** Position type (Long or Short). */
     private final PositionTypeDTO type;
 
     /** The strategy that created the position. */
@@ -312,6 +312,7 @@ public class PositionDTO {
             });
             return true;
         } else {
+            // Not a ticker for this position.
             return false;
         }
     }
@@ -367,15 +368,6 @@ public class PositionDTO {
     }
 
     /**
-     * Setter forceClosing.
-     *
-     * @param newForceClosing the forceClosing to set
-     */
-    public final void setForceClosing(final boolean newForceClosing) {
-        forceClosing = newForceClosing;
-    }
-
-    /**
      * Returns true if the position should be closed.
      *
      * @return true if the rules says the position should be closed.
@@ -386,8 +378,8 @@ public class PositionDTO {
             return true;
         }
 
-        final Optional<GainDTO> latestCalculatedGain = getLatestCalculatedGain();
         // Returns true if one of the rule is triggered.
+        final Optional<GainDTO> latestCalculatedGain = getLatestCalculatedGain();
         return latestCalculatedGain.filter(gainDTO -> rules.isStopGainPercentageSet() && gainDTO.getPercentage() >= rules.getStopGainPercentage()
                 || rules.isStopLossPercentageSet() && gainDTO.getPercentage() <= -rules.getStopLossPercentage())
                 .isPresent();
@@ -401,7 +393,7 @@ public class PositionDTO {
     public final void closePositionWithOrder(final OrderDTO newCloseOrder) {
         // This method should only be called when in status OPENED.
         if (status != OPENED) {
-            throw new PositionException("Impossible to set close order id for position " + id);
+            throw new PositionException("Impossible to close position " + id + " because of its status");
         }
         closingOrder = newCloseOrder;
         status = CLOSING;
@@ -555,38 +547,6 @@ public class PositionDTO {
         return GainDTO.ZERO;
     }
 
-    @Override
-    public final boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final PositionDTO that = (PositionDTO) o;
-        return new EqualsBuilder()
-                .append(this.id, that.id)
-                .append(this.positionId, that.positionId)
-                .append(this.type, that.type)
-                .append(this.currencyPair, that.currencyPair)
-                .append(this.amount, that.amount)
-                .append(this.rules, that.rules)
-                .append(this.status, that.status)
-                .append(this.openingOrder, that.openingOrder)
-                .append(this.closingOrder, that.closingOrder)
-                .append(this.lowestGainPrice, that.lowestGainPrice)
-                .append(this.highestGainPrice, that.highestGainPrice)
-                .append(this.latestGainPrice, that.latestGainPrice)
-                .isEquals();
-    }
-
-    @Override
-    public final int hashCode() {
-        return new HashCodeBuilder()
-                .append(id)
-                .toHashCode();
-    }
-
     /**
      * Get position description.
      *
@@ -656,34 +616,36 @@ public class PositionDTO {
     }
 
 
-    /**
-     * Getter lowestPrice.
-     *
-     * @return lowestPrice
-     */
-    @Deprecated(since = "4.1.0", forRemoval = true)
-    public final CurrencyAmountDTO getLowestPrice() {
-        return lowestGainPrice;
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PositionDTO that = (PositionDTO) o;
+        return new EqualsBuilder()
+                .append(this.id, that.id)
+                .append(this.positionId, that.positionId)
+                .append(this.type, that.type)
+                .append(this.currencyPair, that.currencyPair)
+                .append(this.amount, that.amount)
+                .append(this.rules, that.rules)
+                .append(this.status, that.status)
+                .append(this.openingOrder, that.openingOrder)
+                .append(this.closingOrder, that.closingOrder)
+                .append(this.lowestGainPrice, that.lowestGainPrice)
+                .append(this.highestGainPrice, that.highestGainPrice)
+                .append(this.latestGainPrice, that.latestGainPrice)
+                .isEquals();
     }
 
-    /**
-     * Getter highestPrice.
-     *
-     * @return highestPrice
-     */
-    @Deprecated(since = "4.1.0", forRemoval = true)
-    public final CurrencyAmountDTO getHighestPrice() {
-        return highestGainPrice;
-    }
-
-    /**
-     * Getter latestPrice.
-     *
-     * @return latestPrice
-     */
-    @Deprecated(since = "4.1.0", forRemoval = true)
-    public final CurrencyAmountDTO getLatestPrice() {
-        return latestGainPrice;
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder()
+                .append(id)
+                .toHashCode();
     }
 
 }

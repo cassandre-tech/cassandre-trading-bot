@@ -33,7 +33,7 @@ public class OrderDTO {
     /** An identifier set by the exchange that uniquely identifies the order. */
     String orderId;
 
-    /** Order type i.e. bid or ask. */
+    /** Order type i.e. bid (buy) or ask (sell). */
     OrderTypeDTO type;
 
     /** The strategy that created the order. */
@@ -75,7 +75,7 @@ public class OrderDTO {
     Set<TradeDTO> trades;
 
     /**
-     * Allows you to update order status.
+     * Allows you to manually update order status.
      *
      * @param newStatus new status
      */
@@ -90,13 +90,9 @@ public class OrderDTO {
      * @return trade
      */
     public final Optional<TradeDTO> getTrade(final String tradeId) {
-        if (tradeId == null) {
-            return Optional.empty();
-        } else {
-            return trades.stream()
-                    .filter(t -> tradeId.equals(t.getTradeId()))
-                    .findFirst();
-        }
+        return trades.stream()
+                .filter(t -> t.getTradeId().equals(tradeId))
+                .findFirst();
     }
 
     @Override

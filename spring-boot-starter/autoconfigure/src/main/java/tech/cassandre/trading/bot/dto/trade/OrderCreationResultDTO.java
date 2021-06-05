@@ -50,7 +50,11 @@ public final class OrderCreationResultDTO {
      * @return orderId
      */
     public String getOrderId() {
-        return getOrder().getOrderId();
+        if (getOrder() != null) {
+            return getOrder().getOrderId();
+        } else {
+            return "Order not available";
+        }
     }
 
     @Override
