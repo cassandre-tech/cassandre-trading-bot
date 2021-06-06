@@ -33,7 +33,7 @@ public interface CassandreStrategyInterface {
     void setStrategy(StrategyDTO newStrategyDTO);
 
     /**
-     * Initialize accounts with accounts.
+     * Initialize strategy accounts with exchange accounts data.
      *
      * @param accounts accounts
      */
@@ -110,7 +110,7 @@ public interface CassandreStrategyInterface {
     void tradesUpdates(Set<TradeDTO> trades);
 
     /**
-     * Method called by streams on every position update.
+     * Method called by streams on positions updates.
      *
      * @param positions positions updates
      */
@@ -119,7 +119,7 @@ public interface CassandreStrategyInterface {
     /**
      * Implements this method to tell the bot which currency pairs your strategy will receive.
      *
-     * @return the list of currency pairs tickers your want to receive
+     * @return the list of currency pairs tickers your want to receive in this strategy
      */
     Set<CurrencyPairDTO> getRequestedCurrencyPairs();
 
@@ -127,14 +127,14 @@ public interface CassandreStrategyInterface {
      * Implements this method to tell the bot which account from the accounts you own is the trading one.
      *
      * @param accounts all your accounts
-     * @return trading account
+     * @return your trading account
      */
     Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts);
 
     /**
-     * Returns your trading account.
+     * Returns the trading account.
      *
-     * @return trading account
+     * @return your trading account
      */
     Optional<AccountDTO> getTradeAccount();
 
@@ -167,16 +167,16 @@ public interface CassandreStrategyInterface {
     void onTradesUpdates(Map<String, TradeDTO> trades);
 
     /**
-     * Method called by streams on every positions update.
+     * Method called by streams on positions updates.
      *
      * @param positions positions updates
      */
     void onPositionsUpdates(Map<Long, PositionDTO> positions);
 
     /**
-     * Method called by streams on every positions status updates.
+     * Method called by streams on positions status updates.
      *
-     * @param positions positions updates
+     * @param positions positions status updates
      */
     void onPositionsStatusUpdates(Map<Long, PositionDTO> positions);
 

@@ -8,6 +8,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
+import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.position.PositionTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -23,11 +24,13 @@ import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +41,7 @@ import static java.math.RoundingMode.FLOOR;
 import static java.math.RoundingMode.HALF_UP;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 
@@ -257,6 +261,19 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                     }
                     positionFlux.emitValue(p);
                 }));
+    }
+
+    @Override
+    public final Map<Long, CurrencyAmountDTO> amountsLockedByPosition() {
+        // List of status that locks amounts.
+        Set<PositionStatusDTO> status = new HashSet<>();
+        status.add(OPENING);
+        status.add(OPENED);
+
+        return positionRepository.findByStatusIn(status)
+                .stream()
+                .map(positionMapper::mapToPositionDTO)
+                .collect(Collectors.toMap(PositionDTO::getId, PositionDTO::getAmountToLock, (key, value) -> key, HashMap::new));
     }
 
     @Override

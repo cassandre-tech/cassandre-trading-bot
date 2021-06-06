@@ -16,6 +16,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
@@ -159,7 +160,7 @@ public class PositionGainsServiceTest {
         assertEquals(ETH, gain7.getNetAmount().getCurrency());
 
         // Check all gains.
-        final HashMap<CurrencyDTO, GainDTO> gains = positionService.getGains();
+        final Map<CurrencyDTO, GainDTO> gains = positionService.getGains();
         assertEquals(3, gains.size());
 
         // Gains USDT.

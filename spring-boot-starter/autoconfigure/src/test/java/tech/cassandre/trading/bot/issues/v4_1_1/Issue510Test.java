@@ -16,6 +16,7 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
@@ -44,7 +45,7 @@ public class Issue510Test extends BaseTest {
     @Test
     @DisplayName("Fix empty openingOrder or closing order")
     public void checkEmptyOrderFix() {
-        final HashMap<CurrencyDTO, GainDTO> gains = positionService.getGains();
+        final Map<CurrencyDTO, GainDTO> gains = positionService.getGains();
 
         // Check fees in position 6 (they must be in USDT in Kucoin data).
         final Optional<PositionDTO> position = strategy.getPositionByPositionId(6);

@@ -6,13 +6,14 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -105,10 +106,17 @@ public interface PositionService {
     void tickersUpdates(Set<TickerDTO> tickers);
 
     /**
+     * Returns the amounts locked by every position.
+     *
+     * @return amounts locked by every position
+     */
+    Map<Long, CurrencyAmountDTO> amountsLockedByPosition();
+
+    /**
      * Return the gains made by all closed positions.
      *
      * @return gains by currency.
      */
-    HashMap<CurrencyDTO, GainDTO> getGains();
+    Map<CurrencyDTO, GainDTO> getGains();
 
 }

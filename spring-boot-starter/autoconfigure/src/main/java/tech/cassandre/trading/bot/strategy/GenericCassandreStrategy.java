@@ -35,7 +35,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -87,9 +86,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Positions previous status. */
     private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
-    /** Amounts locked by positions. */
-    private final Map<Long, CurrencyAmountDTO> amountsLockedByPosition = new ConcurrentHashMap<>();
-
     /** Last tickers received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
 
@@ -103,6 +99,15 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public final StrategyDTO getStrategyDTO() {
         return strategy;
+    }
+
+    /**
+     * Getter exchangeService.
+     *
+     * @return exchangeService
+     */
+    public final ExchangeService getExchangeService() {
+        return exchangeService;
     }
 
     @Override
@@ -123,15 +128,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setOrderRepository(final OrderRepository newOrderRepository) {
         this.orderRepository = newOrderRepository;
-    }
-
-    /**
-     * Getter exchangeService.
-     *
-     * @return exchangeService
-     */
-    public final ExchangeService getExchangeService() {
-        return exchangeService;
     }
 
     @Override
@@ -157,11 +153,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
                 .stream()
                 .filter(p -> p.getStatus() != CLOSED)
                 .forEach(p -> previousPositionsStatus.put(p.getId(), p.getStatus()));
-        // We set the locked amount from database.
-        this.positionService.getPositions()
-                .stream()
-                .filter(p -> p.getStatus() != CLOSED)
-                .forEach(p -> amountsLockedByPosition.put(p.getId(), p.getAmountToLock()));
     }
 
     // =================================================================================================================
@@ -220,13 +211,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         final Map<Long, PositionDTO> positionsStatusUpdates = new HashMap<>();
 
         positions.forEach(positionDTO -> {
-            // On every position update, we update the position locked.
-            // TODO Move this to service.
-            amountsLockedByPosition.put(positionDTO.getId(), positionDTO.getAmountToLock());
-            if (positionDTO.getStatus() == CLOSED) {
-                amountsLockedByPosition.remove(positionDTO.getId());
-            }
-
             // For every position update.
             if (positionDTO.getStrategy().getId().equals(strategy.getId())) {
                 positionsUpdates.put(positionDTO.getPositionId(), positionDTO);
@@ -285,7 +269,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return amountsLockedByPosition
      */
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
-        return amountsLockedByPosition;
+        return positionService.amountsLockedByPosition();
     }
 
     /**
@@ -295,7 +279,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return amount
      */
     public final BigDecimal getAmountsLockedByCurrency(final CurrencyDTO currency) {
-        return amountsLockedByPosition.values()
+        return getAmountsLockedByPosition()
+                .values()
                 .stream()
                 .filter(currencyAmount -> currencyAmount.getCurrency().equals(currency))
                 .map(CurrencyAmountDTO::getValue)
@@ -312,20 +297,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public final Map<CurrencyPairDTO, TickerDTO> getLastTickers() {
         return lastTickers;
-    }
-
-    /**
-     * Return the last ticker for a currency pair.
-     *
-     * @param currencyPair currency pair
-     * @return last ticker received
-     */
-    public final Optional<TickerDTO> getLastTickerByCurrencyPair(final String currencyPair) {
-        if (currencyPair == null) {
-            return Optional.empty();
-        } else {
-            return getLastTickerByCurrencyPair(new CurrencyPairDTO(currencyPair));
-        }
     }
 
     /**
@@ -440,7 +411,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @return total gains
      */
-    public final HashMap<CurrencyDTO, GainDTO> getGains() {
+    public final Map<CurrencyDTO, GainDTO> getGains() {
         return positionService.getGains();
     }
 
