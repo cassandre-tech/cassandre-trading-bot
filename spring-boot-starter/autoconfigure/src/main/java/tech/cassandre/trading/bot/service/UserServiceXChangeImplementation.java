@@ -1,7 +1,6 @@
-package tech.cassandre.trading.bot.service.xchange;
+package tech.cassandre.trading.bot.service;
 
 import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.IOException;
@@ -39,10 +38,10 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             logger.debug("UserService - Account information retrieved " + user);
             return Optional.ofNullable(user);
         } catch (IOException e) {
-            logger.error("UserService - Error retrieving account information : {}", e.getMessage());
+            logger.error("UserService - Error retrieving account information: {}", e.getMessage());
             return Optional.empty();
         } catch (InterruptedException e) {
-            logger.error("UserService - InterruptedException : {}", e.getMessage());
+            logger.error("UserService - InterruptedException: {}", e.getMessage());
             return Optional.empty();
         }
     }

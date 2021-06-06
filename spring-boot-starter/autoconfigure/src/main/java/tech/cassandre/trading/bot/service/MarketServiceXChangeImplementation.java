@@ -1,11 +1,10 @@
-package tech.cassandre.trading.bot.service.xchange;
+package tech.cassandre.trading.bot.service;
 
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.marketdata.params.CurrencyPairsParam;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.IOException;
@@ -46,13 +45,13 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
 
             logger.debug("MarketService - Getting ticker for {}", currencyPair);
             TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)));
-            logger.debug("MarketService - Retrieved value is : {}", t);
+            logger.debug("MarketService - Retrieved value is: {}", t);
             return Optional.ofNullable(t);
         } catch (IOException e) {
-            logger.error("MarketService - Error retrieving ticker about {} : {}", currencyPair, e.getMessage());
+            logger.error("MarketService - Error retrieving ticker for {}: {}", currencyPair, e.getMessage());
             return Optional.empty();
         } catch (InterruptedException e) {
-            logger.error("MarketService - InterruptedException {} : {}", currencyPair, e.getMessage());
+            logger.error("MarketService - InterruptedException {}: {}", currencyPair, e.getMessage());
             return Optional.empty();
         }
     }
@@ -75,13 +74,13 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             final List<Ticker> tickers = marketDataService.getTickers(params);
             return tickers.stream()
                     .map(tickerMapper::mapToTickerDTO)
-                    .peek(t -> logger.debug("MarketService - Retrieved value : {}", t))
+                    .peek(t -> logger.debug("MarketService - Retrieved value: {}", t))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (IOException e) {
-            logger.error("MarketService - Error retrieving tickers : {}", e.getMessage());
+            logger.error("MarketService - Error retrieving tickers: {}", e.getMessage());
             return Collections.emptySet();
         } catch (InterruptedException e) {
-            logger.error("MarketService - InterruptedException : {}", e.getMessage());
+            logger.error("MarketService - InterruptedException: {}", e.getMessage());
             return Collections.emptySet();
         }
     }

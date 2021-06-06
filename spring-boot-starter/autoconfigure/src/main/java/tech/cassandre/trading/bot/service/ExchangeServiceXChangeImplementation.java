@@ -1,9 +1,8 @@
-package tech.cassandre.trading.bot.service.xchange;
+package tech.cassandre.trading.bot.service;
 
 import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.Exchange;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.util.LinkedHashSet;

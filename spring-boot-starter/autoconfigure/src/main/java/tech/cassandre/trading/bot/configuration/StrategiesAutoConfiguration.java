@@ -28,7 +28,7 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
+import tech.cassandre.trading.bot.service.PositionServiceCassandreImplementation;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
@@ -172,7 +172,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
         // =============================================================================================================
         // Creating position service.
-        this.positionService = new PositionServiceImplementation(applicationContext, positionRepository, tradeService, positionFlux);
+        this.positionService = new PositionServiceCassandreImplementation(applicationContext, positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
         // Creating flux.
@@ -252,7 +252,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 });
 
         // Position service should receive tickers after strategies.
-        connectableTickerFlux.subscribe(positionService::tickersUpdate);
+        connectableTickerFlux.subscribe(positionService::tickersUpdates);
 
         // Start flux.
         connectableAccountFlux.connect();

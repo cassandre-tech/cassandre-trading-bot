@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Service allowing to create and retrieve positions.
+ * Service allowing you to manage positions.
  */
 public interface PositionService {
 
@@ -38,9 +38,9 @@ public interface PositionService {
                                                  PositionRulesDTO rules);
 
     /**
-     * Creates a long position with its associated rules.
+     * Creates a short position with its associated rules.
      * Short position is nothing but selling share.
-     * If you are bearish (means you think that price of xyz share are going to fall) at that time you sell some amount of share is called taking Short Position in share.
+     * If you are bearish (means you think that price of X share are going to fall) at that time you sell some amount of share is called taking Short Position in share.
      *
      * @param strategy     strategy
      * @param currencyPair currency pair
@@ -56,14 +56,13 @@ public interface PositionService {
     /**
      * Update position rules.
      *
-     * @param id position id
+     * @param id       position id
      * @param newRules new rules
      */
     void updatePositionRules(long id, PositionRulesDTO newRules);
 
     /**
      * Close position (no matter the rules).
-     * The closing will happened when the next ticker arrives.
      *
      * @param id position id
      */
@@ -94,7 +93,7 @@ public interface PositionService {
     /**
      * Method called by streams on trades updates.
      *
-     * @param trades trade updates
+     * @param trades trades updates
      */
     void tradesUpdates(Set<TradeDTO> trades);
 
@@ -103,7 +102,7 @@ public interface PositionService {
      *
      * @param tickers tickers updates
      */
-    void tickersUpdate(Set<TickerDTO> tickers);
+    void tickersUpdates(Set<TickerDTO> tickers);
 
     /**
      * Return the gains made by all closed positions.

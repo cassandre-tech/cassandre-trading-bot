@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.service.intern;
+package tech.cassandre.trading.bot.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -17,8 +17,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
@@ -47,7 +45,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
  * Position service implementation.
  */
 @RequiredArgsConstructor
-public class PositionServiceImplementation extends BaseService implements PositionService {
+public class PositionServiceCassandreImplementation extends BaseService implements PositionService {
 
     /** Big decimal scale for division. */
     private static final int SCALE = 8;
@@ -89,8 +87,12 @@ public class PositionServiceImplementation extends BaseService implements Positi
                                                           final CurrencyPairDTO currencyPair,
                                                           final BigDecimal amount,
                                                           final PositionRulesDTO rules) {
-        // Trying to create an order.
-        logger.debug("PositionService - Creating a {} position for {} on {} with the rules : {}", type.toString().toLowerCase(Locale.ROOT), amount, currencyPair, rules);
+        logger.debug("PositionService - Creating a {} position for {} on {} with the rules : {}",
+                type.toString().toLowerCase(Locale.ROOT),
+                amount,
+                currencyPair,
+                rules);
+
         // =============================================================================================================
         // Creates the order.
         final OrderCreationResultDTO orderCreationResult;
@@ -113,22 +115,24 @@ public class PositionServiceImplementation extends BaseService implements Positi
             // =========================================================================================================
             // Creates the position dto.
             PositionDTO p = new PositionDTO(position.getId(), type, strategy.getStrategyDTO(), currencyPair, amount, orderCreationResult.getOrder(), rules);
-            positionRepository.save(positionMapper.mapToPosition(p));   // TODO Should i save it right away ?
-            logger.debug("PositionService - Position {} opened with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
+            positionRepository.save(positionMapper.mapToPosition(p));
+            logger.debug("PositionService - Position {} opened with order {}",
+                    p.getPositionId(),
+                    orderCreationResult.getOrder().getOrderId());
 
             // =========================================================================================================
-            // Creates the result.
+            // Creates the result & emit the position.
             positionFlux.emitValue(p);
             return new PositionCreationResultDTO(p);
         } else {
             logger.error("PositionService - Position creation failure : {}", orderCreationResult.getErrorMessage());
-            // If it doesn't work, returns the error.
             return new PositionCreationResultDTO(orderCreationResult.getErrorMessage(), orderCreationResult.getException());
         }
     }
 
     @Override
     public final void updatePositionRules(final long id, final PositionRulesDTO newRules) {
+        logger.debug("PositionService - Update position {} with the rules: {}", id, newRules);
         final Optional<Position> p = positionRepository.findById(id);
         // If position exists and position is not closed.
         if (p.isPresent() && p.get().getStatus() != CLOSED) {
@@ -149,6 +153,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final void closePosition(final long id) {
+        logger.debug("PositionService - Force closing position {}", id);
         positionRepository.updateForceClosing(id, true);
     }
 
@@ -163,7 +168,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
 
     @Override
     public final Optional<PositionDTO> getPositionById(final long id) {
-        logger.debug("PositionService - Retrieving position {}", id);
+        logger.debug("PositionService - Retrieving position by id {}", id);
         final Optional<Position> position = positionRepository.findById(id);
         return position.map(positionMapper::mapToPositionDTO);
     }
@@ -171,13 +176,15 @@ public class PositionServiceImplementation extends BaseService implements Positi
     @Override
     public final void ordersUpdates(final Set<OrderDTO> orders) {
         orders.forEach(orderDTO -> {
-            logger.debug("PositionService - Updating position with order {}", orderDTO);
+            logger.debug("PositionService - Updating positions with order {}", orderDTO);
             positionRepository.findByStatusNot(CLOSED)
                     .stream()
                     .map(positionMapper::mapToPositionDTO)
                     .forEach(p -> {
                         if (p.orderUpdate(orderDTO)) {
-                            logger.debug("PositionService - Position {} updated with order {}", p.getPositionId(), orderDTO);
+                            logger.debug("PositionService - Position {} updated with order {}",
+                                    p.getPositionId(),
+                                    orderDTO);
                             positionFlux.emitValue(p);
                         }
                     });
@@ -187,13 +194,15 @@ public class PositionServiceImplementation extends BaseService implements Positi
     @Override
     public final void tradesUpdates(final Set<TradeDTO> trades) {
         trades.forEach(tradeDTO -> {
-            logger.debug("PositionService - Updating position with trade {}", tradeDTO);
+            logger.debug("PositionService - Updating positions with trade {}", tradeDTO);
             positionRepository.findByStatusNot(CLOSED)
                     .stream()
                     .map(positionMapper::mapToPositionDTO)
                     .forEach(p -> {
                         if (p.tradeUpdate(tradeDTO)) {
-                            logger.debug("PositionService - Position {} updated with trade {}", p.getPositionId(), tradeDTO);
+                            logger.debug("PositionService - Position {} updated with trade {}",
+                                    p.getPositionId(),
+                                    tradeDTO);
                             positionFlux.emitValue(p);
                         }
                     });
@@ -201,8 +210,8 @@ public class PositionServiceImplementation extends BaseService implements Positi
     }
 
     @Override
-    public final void tickersUpdate(final Set<TickerDTO> tickers) {
-        // With the ticker received, we check for every position, if it should be closed.
+    public final void tickersUpdates(final Set<TickerDTO> tickers) {
+        // With the ticker received, we check for every opened position, if it should be closed.
         logger.debug("PositionService - Updating position with {} ticker", tickers.size());
         tickers.forEach(ticker -> positionRepository.findByStatus(OPENED)
                 .stream()
@@ -214,7 +223,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                     // Or if the position was forced to close.
                     if (p.isForceClosing() || p.shouldBeClosed()) {
                         final OrderCreationResultDTO orderCreationResult;
-                        // We retrieve the strategy
+                        // We retrieve the strategy that created the position.
                         final Optional<GenericCassandreStrategy> strategy = applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
                                 .values()  // We get the list of all required cp of all strategies.
                                 .stream()
@@ -222,6 +231,7 @@ public class PositionServiceImplementation extends BaseService implements Positi
                                 .filter(cassandreStrategy -> cassandreStrategy.getStrategyDTO().getStrategyId().equals(p.getStrategy().getStrategyId()))
                                 .findFirst();
 
+                        // Here, we treat the order creation depending on the position type (Short or long).
                         if (strategy.isPresent()) {
                             if (p.getType() == LONG) {
                                 // Long - We just sell.
@@ -232,14 +242,13 @@ public class PositionServiceImplementation extends BaseService implements Positi
                                 // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH and it will give us 10 USDT.
                                 // We will use those 10 USDT to buy back ETH when the rule is triggered.
                                 // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
-                                // We can now use those 10 USDT to buy 5 ETH (amountSold / price).
+                                // We can now use those 10 USDT to buy 5 ETH (amount sold / price).
                                 final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
                                 orderCreationResult = tradeService.createBuyMarketOrder(strategy.get(), ticker.getCurrencyPair(), amountToBuy);
                             }
 
                             if (orderCreationResult.isSuccessful()) {
                                 p.closePositionWithOrder(orderCreationResult.getOrder());
-                                // TODO Should I save it right away ?
                                 logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
                             }
                         } else {

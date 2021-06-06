@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 /**
- * Service giving information about orders and allowing you to create new orders.
+ * Service getting information about orders and allowing you to create new ones.
  */
 public interface TradeService {
 

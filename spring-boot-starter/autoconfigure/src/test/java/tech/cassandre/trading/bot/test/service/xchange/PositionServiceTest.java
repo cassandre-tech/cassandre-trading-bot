@@ -120,7 +120,7 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(30f).stopLossPercentage(30f).build());
         assertFalse(p3.isSuccessful());
         assertNull(p3.getPosition());
-        assertTrue(p3.getErrorMessage().contains("TradeService - Error calling createBuyMarketOrder"));
+        assertTrue(p3.getErrorMessage().contains("TradeService - Error calling createMarketOrder"));
         assertEquals("Error exception", p3.getException().getMessage());
         assertEquals(2, positionService.getPositions().size());
     }
