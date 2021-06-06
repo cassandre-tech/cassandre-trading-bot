@@ -50,7 +50,7 @@ import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRA
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J_STRATEGY;
 
 /**
- * StrategyAutoConfiguration configures the strategy.
+ * StrategyAutoConfiguration configures the strategies.
  */
 @Configuration
 @RequiredArgsConstructor
@@ -99,12 +99,12 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     private final PositionFlux positionFlux;
 
     /**
-     * Search for the strategy and runs it.
+     * Search for strategies and runs them.
      */
     @PostConstruct
     @SuppressWarnings("checkstyle:MethodLength")
     public void configure() {
-        // Retrieving all the beans have the annotation @Strategy.
+        // Retrieving all the beans have the @Strategy annotation.
         final Map<String, Object> strategies = applicationContext.getBeansWithAnnotation(CassandreStrategy.class);
 
         // =============================================================================================================
@@ -155,23 +155,23 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result - Strategies in error : " + strategyList);
         }
 
-        // Check that there is no duplicated strategy id.
+        // Check that there is no duplicated strategy ids.
         final Set<String> strategyIds = strategies.values()
                 .stream()
                 .map(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId())
                 .collect(Collectors.toSet());
-        final Set<String> duplicatedStrategyId = strategies.values()
+        final Set<String> duplicatedStrategyIds = strategies.values()
                 .stream()
                 .map(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId())
-                .filter(s -> Collections.frequency(strategyIds, s) > 1)
+                .filter(strategyId -> Collections.frequency(strategyIds, strategyId) > 1)
                 .collect(Collectors.toSet());
-        if (!duplicatedStrategyId.isEmpty()) {
+        if (!duplicatedStrategyIds.isEmpty()) {
             throw new ConfigurationException("You have duplicated strategy ids",
-                    "You have duplicated strategy ids : " + String.join(", ", duplicatedStrategyId));
+                    "You have duplicated strategy ids: " + String.join(", ", duplicatedStrategyIds));
         }
 
         // =============================================================================================================
-        // Setting up position service.
+        // Creating position service.
         this.positionService = new PositionServiceImplementation(applicationContext, positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
@@ -181,8 +181,12 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<Set<OrderDTO>> connectableOrderFlux = orderFlux.getFlux().publish();
         final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
         final ConnectableFlux<Set<TradeDTO>> connectableTradeFlux = tradeFlux.getFlux().publish();
+
+        // =============================================================================================================
+        // Connecting flux to positions that requires them.
         connectableOrderFlux.subscribe(positionService::ordersUpdates);
         connectableTradeFlux.subscribe(positionService::tradesUpdates);
+
 
         // =============================================================================================================
         // Configuring strategies.
@@ -209,7 +213,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         final StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(existingStrategy);
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
-                        logger.debug("StrategyConfiguration - Strategy updated in database {}", existingStrategy);
+                        logger.debug("StrategyConfiguration - Strategy updated in database: {}", existingStrategy);
                     }, () -> {
                         // Creation.
                         Strategy newStrategy = new Strategy();
@@ -222,11 +226,14 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         if (strategy instanceof BasicTa4jCassandreStrategy) {
                             newStrategy.setType(BASIC_TA4J_STRATEGY);
                         }
-                        logger.debug("StrategyConfiguration - Strategy saved in database {}", newStrategy);
+                        logger.debug("StrategyConfiguration - Strategy saved in database: {}", newStrategy);
                         StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(strategyRepository.save(newStrategy));
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
                     });
+
+                    // Initialize accounts values in strategy.
+                    strategy.initializeAccounts(user.get().getAccounts());
 
                     // Setting services & repositories.
                     strategy.setOrderRepository(orderRepository);
@@ -235,8 +242,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.setTradeService(tradeService);
                     strategy.setPositionService(positionService);
                     strategy.setPositionRepository(positionRepository);
-                    // Initialize accounts.
-                    strategy.initializeAccounts(user.get().getAccounts());
 
                     // Setting flux.
                     connectableAccountFlux.subscribe(strategy::accountsUpdates);
@@ -245,14 +250,22 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     connectableTradeFlux.subscribe(strategy::tradesUpdates);
                     connectableTickerFlux.subscribe(strategy::tickersUpdates);
                 });
+
+        // Position service should receive tickers after strategies.
         connectableTickerFlux.subscribe(positionService::tickersUpdate);
+
         // Start flux.
         connectableAccountFlux.connect();
         connectablePositionFlux.connect();
+        connectableOrderFlux.connect();
+        connectableTradeFlux.connect();
+        connectableTickerFlux.connect();
 
-
-        // TODO Send all updates at the same time.
-        // If a position was stuck in OPENING or CLOSING, we fix the order set to null.
+        // =============================================================================================================
+        // Maintenance code.
+        // If a position was blocked in OPENING or CLOSING, we send again the trades.
+        // This could happen if cassandre crashes after saving a trade and did not have time to send it to
+        // positionService.
         positionRepository.findByStatus(OPENING).forEach(p -> {
             final Optional<Order> openingOrder = orderRepository.findByOrderId(p.getOpeningOrder().getOrderId());
             openingOrder.ifPresent(order -> order
@@ -262,9 +275,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     .forEach(tradeDTO -> positionService.tradesUpdates(Set.of(tradeDTO))));
         });
         positionRepository.findByStatus(CLOSING).forEach(p -> {
-            if (p.getClosingOrder() == null) {
-                System.out.println(p.getId());
-            }
             final Optional<Order> closingOrder = orderRepository.findByOrderId(p.getClosingOrder().getOrderId());
             closingOrder.ifPresent(order -> order
                     .getTrades()
@@ -272,10 +282,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     .map(tradeMapper::mapToTradeDTO)
                     .forEach(tradeDTO -> positionService.tradesUpdates(Set.of((tradeDTO)))));
         });
-
-        connectableOrderFlux.connect();
-        connectableTradeFlux.connect();
-        connectableTickerFlux.connect();
     }
 
     /**

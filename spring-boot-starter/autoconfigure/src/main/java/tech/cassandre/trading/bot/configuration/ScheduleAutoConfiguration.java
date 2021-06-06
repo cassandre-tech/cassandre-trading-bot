@@ -29,13 +29,16 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /** Scheduler pool size. */
     private static final int SCHEDULER_POOL_SIZE = 3;
 
-    /** Initial delay before starting threads. */
+    /** Initial delay before starting threads in milliseconds. */
     private static final int AWAIT_START_IN_MILLISECONDS = 1_000;
 
-    /** Await termination in seconds. */
+    /** Await termination delay in milliseconds. */
     private static final int AWAIT_TERMINATION_IN_MILLISECONDS = 30_000;
 
-    /** Indicate that the batch should be running. */
+    /** Thread prefix for schedulers. */
+    private static final String THREAD_NAME_PREFIX = "Cassandre-flux-";
+
+    /** Flux continues to run as long as enabled is set to true. */
     private final AtomicBoolean enabled = new AtomicBoolean(true);
 
     /** Account flux. */
@@ -58,14 +61,15 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     @Bean
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setThreadNamePrefix(THREAD_NAME_PREFIX);
         scheduler.setAwaitTerminationMillis(AWAIT_TERMINATION_IN_MILLISECONDS);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
         scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
-        scheduler.setErrorHandler(throwable -> {
+        scheduler.setErrorHandler(t -> {
             try {
-                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());
+                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks: {}", t.getMessage());
             } catch (Exception e) {
-                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", e.getMessage());
+                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks: {}", e.getMessage());
             }
         });
         return scheduler;
@@ -92,7 +96,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Recurrent calls the trade flux.
+     * Recurrent calls the order/trade flux.
      */
     @Scheduled(initialDelay = AWAIT_START_IN_MILLISECONDS, fixedDelay = 1)
     public void tradeFluxUpdate() {
