@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.ta4j;
+package tech.cassandre.trading.bot.util.ta4j;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

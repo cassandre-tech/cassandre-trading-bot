@@ -9,8 +9,8 @@ import reactor.core.publisher.BaseSubscriber;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.ta4j.BarAggregator;
-import tech.cassandre.trading.bot.ta4j.DurationBarAggregator;
+import tech.cassandre.trading.bot.util.ta4j.BarAggregator;
+import tech.cassandre.trading.bot.util.ta4j.DurationBarAggregator;
 
 import java.math.BigDecimal;
 import java.time.Duration;
