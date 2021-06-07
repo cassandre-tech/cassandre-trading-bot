@@ -250,7 +250,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
-            getBucket().asScheduler().consume(1);
+            bucket.asScheduler().consume(1);
 
             // We check if we have some local orders to push.
             final Set<OrderDTO> localOrders = orderRepository.findByStatus(PENDING_NEW)
@@ -309,7 +309,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 try {
                     // Consume a token from the token bucket.
                     // If a token is not available this method will block until the refill adds one to the bucket.
-                    getBucket().asScheduler().consume(1);
+                    bucket.asScheduler().consume(1);
                     results.addAll(
                             tradeService.getTradeHistory(params)
                                     .getUserTrades()

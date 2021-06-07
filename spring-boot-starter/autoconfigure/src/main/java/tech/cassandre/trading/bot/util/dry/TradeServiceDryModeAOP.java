@@ -4,11 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.dto.account.AccountInfo;
-import org.knowm.xchange.dto.account.Balance;
-import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrade;
@@ -19,13 +14,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
+import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.user.BalanceDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -34,10 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.knowm.xchange.dto.Order.OrderType.ASK;
-import static org.knowm.xchange.dto.Order.OrderType.BID;
+import static java.math.BigDecimal.ZERO;
 import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
-
 
 /**
  * AOP for trade service in dry mode.
@@ -54,9 +48,6 @@ public class TradeServiceDryModeAOP extends BaseService {
     /** Dry trade prefix. */
     private static final String DRY_TRADE_PREFIX = "DRY_TRADE_";
 
-    /** Trade account ID. */
-    private static final String TRADE_ACCOUNT_ID = "trade";
-
     /** Application context. */
     private final ApplicationContext applicationContext;
 
@@ -69,82 +60,93 @@ public class TradeServiceDryModeAOP extends BaseService {
     /** User service - dry mode. */
     private final UserServiceDryModeAOP userService;
 
-    @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.placeMarketOrder(..)) && args(marketOrder)", argNames = "pjp, marketOrder")
-    public final String placeMarketOrder(final ProceedingJoinPoint pjp, final MarketOrder marketOrder) throws IOException {
-        // We get the currency pair utils.
-        final CurrencyPair currencyPair = (CurrencyPair) marketOrder.getInstrument();
-        final Currency base = ((CurrencyPair) (marketOrder.getInstrument())).base;
-        final Currency counter = ((CurrencyPair) (marketOrder.getInstrument())).counter;
-
-        // We retrieve the ticker received by the strategy.
-        // TODO Find a better way to get the last ticker.
-        final Optional<TickerDTO> t = applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
-                .values()
-                .stream()
-                .map(cassandreStrategy -> ((GenericCassandreStrategy) cassandreStrategy))
-                .map(cassandreStrategy -> cassandreStrategy.getLastTickerByCurrencyPair(currencyMapper.mapToCurrencyPairDTO(currencyPair)))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .findFirst();
-
-        // We create the order.
-        if (t.isPresent()) {
-            // If we don't have enough assets, we can't buy.
-            // Example :
-            // ETH/BTC quote currency => BTC.
-            // ETH/BTC base currency => ETH.
-
-            // We check that we have the trade account.
-            final AccountInfo accountInfo = userService.getAccountInfo();
-            final Wallet tradeWallet = accountInfo.getWallet(TRADE_ACCOUNT_ID);
-            if (tradeWallet == null) {
-                throw new IOException("Trade wallet was not found : " + TRADE_ACCOUNT_ID);
-            }
-
-            // We check if we have enough assets to buy/sell.
-            if (marketOrder.getType().equals(BID)) {
-                // Buying order - we buy ETH from BTC.
-                // We are buying the following amount : ticker last price * amount
-                Balance balance = tradeWallet.getBalance(counter);
-                if (balance != null) {
-                    BigDecimal ownedAssets = balance.getAvailable();
-                    BigDecimal cost = t.get().getLast().multiply(marketOrder.getOriginalAmount());
-                    if (cost.compareTo(ownedAssets) > 0) {
-                        final String errorMessage = "Not enough assets (costs : " + cost + " " + counter + " - owned assets : " + ownedAssets + " " + counter + ")";
-                        throw new IOException(errorMessage);
-                    }
-                } else {
-                    throw new IOException("No assets for " + counter);
-                }
-            } else {
-                // Selling order - we sell ETH for BTC.
-                // We are selling the amount
-                Balance balance = tradeWallet.getBalance(base);
-                if (balance != null) {
-                    BigDecimal ownedAssets = balance.getAvailable();
-                    if (marketOrder.getOriginalAmount().compareTo(ownedAssets) > 0) {
-                        final String errorMessage = "Not enough assets (amount : " + marketOrder.getOriginalAmount() + " " + counter + " - owned assets : " + ownedAssets + " " + base;
-                        throw new IOException(errorMessage);
-                    }
-                } else {
-                    throw new IOException("No assets for " + base);
-                }
-            }
-
-            // We update the balances of the account with the values of the trade.
-            if (marketOrder.getType().equals(BID)) {
-                userService.addToBalance(base, marketOrder.getOriginalAmount());
-                userService.addToBalance(counter, marketOrder.getOriginalAmount().multiply(t.get().getLast()).multiply(new BigDecimal("-1")));
-            } else {
-                userService.addToBalance(base, marketOrder.getOriginalAmount().multiply(new BigDecimal("-1")));
-                userService.addToBalance(counter, marketOrder.getOriginalAmount().multiply(t.get().getLast()));
-            }
-
-            // We create and returns the result.
-            return DRY_ORDER_PREFIX.concat(String.format("%09d", orderCounter.getAndIncrement()));
-        } else {
-            throw new RuntimeException("Ticker not found");
+    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createBuyMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
+    public final OrderCreationResultDTO createBuyMarketOrder(final ProceedingJoinPoint pjp,
+                                                       final GenericCassandreStrategy strategy,
+                                                       final CurrencyPairDTO currencyPair,
+                                                       final BigDecimal amount) {
+        // We check that we have the trade account.
+        final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
+        if (tradeAccount.isEmpty()) {
+            throw new RuntimeException("Trade account was not found");
         }
+
+        // We check if we have enough assets to buy.
+        // Buying order - we buy ETH with BTC.
+        // We are buying the following amount : ticker last price * amount
+        Optional<BalanceDTO> balance = tradeAccount.get().getBalance(currencyPair.getQuoteCurrency());
+        final Optional<TickerDTO> ticker = strategy.getLastTickerByCurrencyPair(currencyPair);
+
+        if (balance.isPresent() && ticker.isPresent()) {
+            BigDecimal ownedAssets = balance.get().getAvailable();
+            BigDecimal cost = ticker.get().getLast().multiply(amount);
+            if (cost.compareTo(ownedAssets) > 0) {
+                final String errorMessage = "Not enough assets (costs : " + cost + " " + currencyPair.getQuoteCurrency() + " - owned assets : " + ownedAssets + " " + currencyPair.getQuoteCurrency() + ")";
+                return new OrderCreationResultDTO(errorMessage, new RuntimeException());
+            }
+        } else {
+            return new OrderCreationResultDTO("No assets (" + currencyPair.getQuoteCurrency() + ")", new RuntimeException());
+        }
+
+        // We execute the buy.
+        Object result = null;
+        try {
+            result = pjp.proceed();
+        } catch (Throwable throwable) {
+            logger.error("Error in Dry mode AOP: {}", throwable.getMessage());
+        }
+
+        // We update the account.
+        userService.addToBalance(currencyMapper.mapToCurrency(currencyPair.getBaseCurrency()), amount);
+        userService.addToBalance(currencyMapper.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()).multiply(new BigDecimal("-1")));
+
+        return (OrderCreationResultDTO) result;
+    }
+
+    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createSellMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
+    public final OrderCreationResultDTO createSellMarketOrder(final ProceedingJoinPoint pjp,
+                                                        final GenericCassandreStrategy strategy,
+                                                        final CurrencyPairDTO currencyPair,
+                                                        final BigDecimal amount) {
+        // We check that we have the trade account.
+        final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
+        if (tradeAccount.isEmpty()) {
+            throw new RuntimeException("Trade account was not found");
+        }
+
+        // Selling order - we sell ETH to buy BTC.
+        // We are selling the amount
+        Optional<BalanceDTO> balance = tradeAccount.get().getBalance(currencyPair.getBaseCurrency());
+        final Optional<TickerDTO> ticker = strategy.getLastTickerByCurrencyPair(currencyPair);
+
+        if (balance.isPresent() && ticker.isPresent()) {
+            BigDecimal ownedAssets = balance.get().getAvailable();
+            if (amount.compareTo(ownedAssets) > 0) {
+                final String errorMessage = "Not enough assets (amount : " + amount + " " + currencyPair.getQuoteCurrency() + " - owned assets : " + ownedAssets + " " + currencyPair.getBaseCurrency();
+                return new OrderCreationResultDTO(errorMessage, new RuntimeException());
+            }
+        } else {
+            return new OrderCreationResultDTO("No assets (" + currencyPair.getBaseCurrency() + ")", new RuntimeException());
+        }
+
+        // We execute the sell.
+        Object result = null;
+        try {
+            result = pjp.proceed();
+        } catch (Throwable throwable) {
+            logger.error("Error in Dry mode AOP: {}", throwable.getMessage());
+        }
+
+        // We update the account.
+        userService.addToBalance(currencyMapper.mapToCurrency(currencyPair.getBaseCurrency()), amount.multiply(new BigDecimal("-1")));
+        userService.addToBalance(currencyMapper.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()));
+
+        return (OrderCreationResultDTO) result;
+    }
+
+    @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.placeMarketOrder(..)) && args(marketOrder)", argNames = "pjp, marketOrder")
+    public final String placeMarketOrder(final ProceedingJoinPoint pjp, final MarketOrder marketOrder) {
+        return DRY_ORDER_PREFIX.concat(String.format("%09d", orderCounter.getAndIncrement()));
     }
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.cancelOrder(..)) && args(orderId))", argNames = "pjp, orderId")
@@ -169,27 +171,20 @@ public class TradeServiceDryModeAOP extends BaseService {
 
         // For every orders in database, we will simulate an equivalent trade to close things.
         orderRepository.findByOrderByTimestampAsc()
-                .stream() // TODO Add a filter to only select the trade that are now already in database.
+                .stream()
+                //.filter(order -> order.getTrades().isEmpty()) TODO Why this makes TradeServiceDryModeTest.checkCreateBuyAndSellOrder fails during test?
                 .map(orderMapper::mapToOrderDTO)
-                .forEach(order -> {
-                    org.knowm.xchange.dto.Order.OrderType type; // TODO Optimise with mapper.
-                    if (order.getType().equals(OrderTypeDTO.BID)) {
-                        type = BID;
-                    } else {
-                        type = ASK;
-                    }
+                .forEach(order -> trades.add(UserTrade.builder()
+                        .id(order.getOrderId().replace(DRY_ORDER_PREFIX, DRY_TRADE_PREFIX))
+                        .type(utilMapper.mapToOrderType(order.getType()))
+                        .orderId(order.getOrderId())
+                        .currencyPair(currencyMapper.mapToCurrencyPair(order.getCurrencyPair()))
+                        .originalAmount(order.getAmount().getValue())
+                        .price(order.getMarketPrice().getValue())
+                        .feeAmount(ZERO)
+                        .timestamp(Timestamp.valueOf(order.getTimestamp().toLocalDateTime()))
+                        .build()));
 
-                    trades.add(UserTrade.builder()
-                            .id(order.getOrderId().replace(DRY_ORDER_PREFIX, DRY_TRADE_PREFIX))
-                            .type(type)
-                            .orderId(order.getOrderId())
-                            .currencyPair(currencyMapper.mapToCurrencyPair(order.getCurrencyPair()))
-                            .originalAmount(order.getAmount().getValue())
-                            .price(order.getMarketPrice().getValue())
-                            .feeAmount(BigDecimal.ZERO)
-                            .timestamp(Timestamp.valueOf(order.getTimestamp().toLocalDateTime()))
-                            .build());
-                });
         return new UserTrades(trades, SortByTimestamp);
     }
 

@@ -50,12 +50,10 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
             });
         } catch (NotAvailableFromExchangeException | NotYetImplementedForExchangeException e) {
             // If getAllTickers is not available, we retrieve tickers one bye one.
-            requestedCurrencyPairs.forEach(currencyPairDTO -> {
-                marketService.getTicker(currencyPairDTO).ifPresent(tickerDTO -> {
-                    logger.debug("TickerFlux - New ticker received: {}", tickerDTO);
-                    newValues.add(tickerDTO);
-                });
-            });
+            requestedCurrencyPairs.forEach(currencyPairDTO -> marketService.getTicker(currencyPairDTO).ifPresent(tickerDTO -> {
+                logger.debug("TickerFlux - New ticker received: {}", tickerDTO);
+                newValues.add(tickerDTO);
+            }));
         }
 
         return newValues;

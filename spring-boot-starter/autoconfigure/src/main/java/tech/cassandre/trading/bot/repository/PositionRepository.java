@@ -20,7 +20,7 @@ import java.util.Set;
 public interface PositionRepository extends JpaRepository<Position, Long> {
 
     /**
-     * Find a position by its positin id.
+     * Find a position by its position id.
      *
      * @param positionId position id
      * @return positions

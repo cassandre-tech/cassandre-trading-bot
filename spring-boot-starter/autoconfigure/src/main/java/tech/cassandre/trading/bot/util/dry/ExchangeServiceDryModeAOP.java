@@ -34,11 +34,11 @@ public class ExchangeServiceDryModeAOP extends BaseService {
      * getExchangeMetaData() AOP for dry mode.
      *
      * @param pjp ProceedingJoinPoint
-     * @return list of currency pairs
+     * @return list of supported currency pairs
      */
     @Around("execution(* org.knowm.xchange.Exchange.getExchangeMetaData())")
     public final ExchangeMetaData getExchangeMetaData(final ProceedingJoinPoint pjp) {
-        Map<CurrencyPair, CurrencyPairMetaData> currencyPairs = applicationContext
+        Map<CurrencyPair, CurrencyPairMetaData> supportedCurrencyPairs = applicationContext
                 .getBeansWithAnnotation(CassandreStrategy.class)
                 .values()  // We get the list of all required cp of all strategies.
                 .stream()
@@ -48,7 +48,12 @@ public class ExchangeServiceDryModeAOP extends BaseService {
                 .distinct()
                 .map(currencyMapper::mapToCurrencyPair)
                 .collect(HashMap::new, (map, cp) -> map.put(cp, null), Map::putAll);
-        return new ExchangeMetaData(currencyPairs, null, null, null, null);
+
+        return new ExchangeMetaData(supportedCurrencyPairs,
+                null,
+                null,
+                null,
+                null);
     }
 
 }

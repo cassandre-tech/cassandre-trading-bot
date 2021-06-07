@@ -65,19 +65,19 @@ public abstract class BaseFlux<T> extends Base {
      */
     public void emitValues(final Set<T> newValues) {
         if (!newValues.isEmpty()) {
-            logger.debug("{} flux emits {} values", this.getClass().getName(), newValues.size());
+            logger.debug("{} flux emits {} values", getClass().getSimpleName(), newValues.size());
             fluxSink.next(saveValues(newValues));
         }
     }
 
     /**
-     * Method executed when values must be updated (usually called by schedulers).
+     * Method executed when values has to be retrieved (usually called by schedulers).
      */
     public final void update() {
         try {
             emitValues(getNewValues());
         } catch (RuntimeException e) {
-            logger.error(getClass().getSimpleName() + " - Error getting new values : " + e.getMessage());
+            logger.error("{} encountered and error {}", getClass().getSimpleName(), e.getMessage());
             e.printStackTrace();
         }
     }
@@ -90,7 +90,7 @@ public abstract class BaseFlux<T> extends Base {
     protected abstract Set<T> getNewValues();
 
     /**
-     * Implements this method to backup each update.
+     * Implements this method to backup each new value.
      *
      * @param newValue new value
      * @return the value saved

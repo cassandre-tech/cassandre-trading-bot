@@ -13,7 +13,7 @@ import java.time.Duration;
 public abstract class BaseService extends Base {
 
     /** Bucket. */
-    private final Bucket bucket;
+    protected final Bucket bucket;
 
     /**
      * Construct a base service without rate limit.
@@ -31,15 +31,6 @@ public abstract class BaseService extends Base {
     public BaseService(final long rate) {
         Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(rate));
         bucket = Bucket4j.builder().addLimit(limit).build();
-    }
-
-    /**
-     * Getter for bucket.
-     *
-     * @return bucket
-     */
-    public final Bucket getBucket() {
-        return bucket;
     }
 
 }

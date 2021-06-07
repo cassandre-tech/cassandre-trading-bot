@@ -71,7 +71,7 @@ public class PositionDTO {
     private PositionStatusDTO status;
 
     /** Indicates that the position must be closed no matter the rules. */
-    private boolean forceClosing;
+    private final boolean forceClosing;
 
     /** The order created to open the position. */
     private OrderDTO openingOrder;

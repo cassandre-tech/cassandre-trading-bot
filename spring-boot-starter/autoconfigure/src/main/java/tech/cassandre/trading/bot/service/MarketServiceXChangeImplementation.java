@@ -41,7 +41,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
-            getBucket().asScheduler().consume(1);
+            bucket.asScheduler().consume(1);
 
             logger.debug("MarketService - Getting ticker for {}", currencyPair);
             TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)));
@@ -68,7 +68,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
 
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
-            getBucket().asScheduler().consume(1);
+            bucket.asScheduler().consume(1);
 
             logger.debug("MarketService - Getting tickers for {} currency pairs", currencyPairs.size());
             final List<Ticker> tickers = marketDataService.getTickers(params);

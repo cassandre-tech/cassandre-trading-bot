@@ -67,7 +67,7 @@ public class ExchangeParameters {
     @Valid
     private Rates rates = new Rates();
 
-    /** Exchange API rate calls. */
+    /** Exchange modes. */
     @Validated
     @Getter
     @Setter
@@ -76,11 +76,11 @@ public class ExchangeParameters {
     public static class Modes {
 
         /** Set it to true to use the sandbox. */
-        @NotNull(message = "Sandbox parameter required, set it to true to use the sandbox")
+        @NotNull(message = "Sandbox parameter required, set it to true to use the exchange sandbox")
         private Boolean sandbox;
 
         /** Set it to true to use the dry mode. */
-        @NotNull(message = "Dry parameter required, set it to true to use the dry mode")
+        @NotNull(message = "Dry parameter required, set it to true to use the dry mode (simulated exchange)")
         private Boolean dry;
 
     }

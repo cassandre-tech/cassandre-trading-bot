@@ -31,7 +31,7 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
-            getBucket().asScheduler().consume(1);
+            bucket.asScheduler().consume(1);
 
             logger.debug("UserService - Retrieving account information");
             final UserDTO user = accountMapper.mapToUserDTO(xChangeAccountService.getAccountInfo());
