@@ -21,9 +21,9 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -42,14 +42,14 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy1.PARAMETER_STRATEGY_1_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy3.PARAMETER_STRATEGY_3_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.ta4j.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
-import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.beta.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Strategy - Running multiple strategies")

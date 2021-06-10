@@ -12,8 +12,8 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +106,7 @@ public class MarketServiceTest extends BaseTest {
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         tickerFlux.update();
         // We should have two tickers received by the strategy
-        await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdatesReceived().size()));
     }
 
 }

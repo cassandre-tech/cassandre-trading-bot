@@ -9,8 +9,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 
 import java.util.Optional;
 
@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_NAME_DEFAULT_VALUE;
 
 @SpringBootTest
 @DisplayName("Domain - Strategy - After restart")

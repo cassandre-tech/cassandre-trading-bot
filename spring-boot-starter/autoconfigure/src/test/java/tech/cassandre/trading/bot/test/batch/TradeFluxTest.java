@@ -7,14 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.beta.batch.mocks.TradeFluxTestMock;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -72,15 +73,15 @@ public class TradeFluxTest extends BaseTest {
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
-        assertTrue(strategy.getTradesUpdateReceived().size() > 0);
-        assertTrue(strategy.getTradesUpdateReceived().size() <= numberOfUpdatesExpected);
+        assertTrue(strategy.getTradesUpdatesReceived().size() > 0);
+        assertTrue(strategy.getTradesUpdatesReceived().size() <= numberOfUpdatesExpected);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(strategy.getTradesUpdateReceived().size() >= numberOfUpdatesExpected));
+        await().untilAsserted(() -> assertTrue(strategy.getTradesUpdatesReceived().size() >= numberOfUpdatesExpected));
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.
-        final Iterator<TradeDTO> trades = strategy.getTradesUpdateReceived().iterator();
+        final Iterator<TradeDTO> trades = strategy.getTradesUpdatesReceived().iterator();
 
         // Check update 1.
         TradeDTO t = trades.next();

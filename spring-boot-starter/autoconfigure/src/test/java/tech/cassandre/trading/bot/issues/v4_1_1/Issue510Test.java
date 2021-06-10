@@ -10,12 +10,11 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 

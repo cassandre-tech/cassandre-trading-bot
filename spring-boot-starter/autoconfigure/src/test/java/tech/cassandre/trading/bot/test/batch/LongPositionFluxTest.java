@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.beta.batch.mocks.LongPositionFluxTestMock;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
@@ -20,10 +21,10 @@ import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Batch - Long position flux")
@@ -107,7 +108,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals(OPENING, p.getStatus());
 
         // onPositionUpdate - Position 1 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), strategy.getPositionsUpdatesReceived().size()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
@@ -605,19 +606,19 @@ public class LongPositionFluxTest extends BaseTest {
     }
 
     private int getPositionsUpdatesCount() {
-        return strategy.getPositionsUpdateReceived().size();
+        return strategy.getPositionsUpdatesReceived().size();
     }
 
     private int getPositionsStatusUpdatesCount() {
-        return strategy.getPositionsStatusUpdateReceived().size();
+        return strategy.getPositionsStatusUpdatesReceived().size();
     }
 
     private PositionDTO getLastPositionUpdate() {
-        return strategy.getPositionsUpdateReceived().get(strategy.getPositionsUpdateReceived().size() - 1);
+        return strategy.getPositionsUpdatesReceived().get(strategy.getPositionsUpdatesReceived().size() - 1);
     }
 
     private PositionDTO getLastPositionStatusUpdate() {
-        return strategy.getPositionsStatusUpdateReceived().get(strategy.getPositionsStatusUpdateReceived().size() - 1);
+        return strategy.getPositionsStatusUpdatesReceived().get(strategy.getPositionsStatusUpdatesReceived().size() - 1);
     }
 
 }

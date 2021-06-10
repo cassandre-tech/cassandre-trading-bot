@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.beta.batch.mocks;
 
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -6,7 +6,7 @@ import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.springframework.boot.test.context.TestConfiguration;
-import tech.cassandre.trading.bot.test.util.junit.BaseMock;
+import tech.cassandre.trading.bot.beta.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;

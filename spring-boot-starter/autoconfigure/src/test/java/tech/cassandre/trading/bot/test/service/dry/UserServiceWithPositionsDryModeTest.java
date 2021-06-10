@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -20,10 +19,10 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -43,9 +42,9 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
-import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Service - Dry - User service with positions")

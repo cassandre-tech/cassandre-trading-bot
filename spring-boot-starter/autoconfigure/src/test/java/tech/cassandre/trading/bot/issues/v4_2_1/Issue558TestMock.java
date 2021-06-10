@@ -3,11 +3,10 @@ package tech.cassandre.trading.bot.issues.v4_2_1;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.test.context.TestConfiguration;
-import tech.cassandre.trading.bot.test.util.junit.BaseMock;
+import tech.cassandre.trading.bot.beta.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 

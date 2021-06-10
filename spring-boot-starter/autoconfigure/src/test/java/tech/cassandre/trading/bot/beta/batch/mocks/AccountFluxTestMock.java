@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.beta.batch.mocks;
 
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
@@ -6,22 +6,15 @@ import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
 import org.knowm.xchange.service.account.AccountService;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.util.junit.BaseMock;
+import tech.cassandre.trading.bot.beta.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -617,22 +610,6 @@ public class AccountFluxTestMock extends BaseMock {
                 account02Wallet,
                 account03Wallet
         );
-    }
-
-    @Bean
-    @Primary
-    public MarketService marketService() {
-        MarketService service = mock(MarketService.class);
-        given(service.getTicker(any())).willReturn(Optional.empty());
-        return service;
-    }
-
-    @Bean
-    @Primary
-    public TradeService tradeService() {
-        TradeService service = mock(TradeService.class);
-        given(service.getOrders()).willReturn(new LinkedHashSet<>());
-        return service;
     }
 
 }

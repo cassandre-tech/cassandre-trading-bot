@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.util.strategies;
+package tech.cassandre.trading.bot.beta.util.strategies;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +22,12 @@ import java.util.concurrent.TimeUnit;
 
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.BTC_ETH;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.BTC_USDT;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_USDT;
-import static tech.cassandre.trading.bot.test.util.junit.BaseTest.KCS_USDT;
-import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.BTC_ETH;
+import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.BTC_USDT;
+import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.ETH_BTC;
+import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.ETH_USDT;
+import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.KCS_USDT;
+import static tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 
 /**
  * Testable strategy (used for tests).

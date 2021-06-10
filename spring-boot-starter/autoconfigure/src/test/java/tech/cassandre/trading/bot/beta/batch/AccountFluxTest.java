@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.beta.batch;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -7,13 +7,13 @@ import org.knowm.xchange.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.beta.batch.mocks.AccountFluxTestMock;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -27,18 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Batch - Account flux")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(AccountFluxTestMock.class)
 public class AccountFluxTest extends BaseTest {
 
@@ -64,8 +62,8 @@ public class AccountFluxTest extends BaseTest {
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
-        assertTrue(strategy.getAccountsUpdateReceived().size() > 0);
-        assertTrue(strategy.getAccountsUpdateReceived().size() <= numberOfUpdatesExpected);
+        assertTrue(strategy.getAccountsUpdatesReceived().size() > 0);
+        assertTrue(strategy.getAccountsUpdatesReceived().size() <= numberOfUpdatesExpected);
 
         // Wait for the strategy to have received all the test values.
         await().untilAsserted(() -> assertEquals(numberOfUpdatesExpected, strategy.getAccountsUpdatesReceived().size()));

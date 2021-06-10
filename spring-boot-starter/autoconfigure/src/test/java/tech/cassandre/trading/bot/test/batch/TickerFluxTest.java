@@ -8,11 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.beta.batch.mocks.TickerFluxTestMock;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -25,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Batch - Ticker flux")
@@ -58,12 +59,12 @@ public class TickerFluxTest extends BaseTest {
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
-        assertTrue(strategy.getTickersUpdateReceived().size() > 0);
-        assertTrue(strategy.getTickersUpdateReceived().size() <= numberOfTickersExpected);
+        assertTrue(strategy.getTickersUpdatesReceived().size() > 0);
+        assertTrue(strategy.getTickersUpdatesReceived().size() <= numberOfTickersExpected);
 
         // Wait for the strategy to have received all the tickers.
-        await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfTickersExpected));
-        final Iterator<TickerDTO> iterator = strategy.getTickersUpdateReceived().iterator();
+        await().untilAsserted(() -> assertTrue(strategy.getTickersUpdatesReceived().size() >= numberOfTickersExpected));
+        final Iterator<TickerDTO> iterator = strategy.getTickersUpdatesReceived().iterator();
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.

@@ -7,15 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.beta.batch.mocks.OrderFluxTestMock;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -33,10 +34,9 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Batch - Order flux")
@@ -97,12 +97,12 @@ public class OrderFluxTest extends BaseTest {
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
-        assertTrue(strategy.getOrdersUpdateReceived().size() > 0);
-        assertTrue(strategy.getOrdersUpdateReceived().size() <= numberOfUpdatesExpected);
+        assertTrue(strategy.getOrdersUpdatesReceived().size() > 0);
+        assertTrue(strategy.getOrdersUpdatesReceived().size() <= numberOfUpdatesExpected);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(strategy.getOrdersUpdateReceived().size() >= numberOfUpdatesExpected));
-        final Iterator<OrderDTO> orders = strategy.getOrdersUpdateReceived().iterator();
+        await().untilAsserted(() -> assertTrue(strategy.getOrdersUpdatesReceived().size() >= numberOfUpdatesExpected));
+        final Iterator<OrderDTO> orders = strategy.getOrdersUpdatesReceived().iterator();
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.

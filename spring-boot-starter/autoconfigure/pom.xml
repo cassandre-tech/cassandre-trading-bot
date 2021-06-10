@@ -271,6 +271,9 @@
                     <forkCount>1</forkCount>
                     <excludes>
                         <exclude>**/integration/**</exclude>
+                        <exclude>**/issues/**</exclude>
+                        <exclude>**/test/**</exclude>
+                        <exclude>**/util/ta4j/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.util.junit;
+package tech.cassandre.trading.bot.beta.util.junit;
 
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Wallet;

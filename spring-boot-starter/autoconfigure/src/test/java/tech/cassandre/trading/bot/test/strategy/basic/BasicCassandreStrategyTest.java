@@ -7,13 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -28,9 +29,9 @@ import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRA
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
-import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.strategy.ta4j.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @SpringBootTest
@@ -64,13 +65,13 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertEquals(BASIC_STRATEGY, strategyInDatabase.get().getType());
 
         // Wait for the strategy to have received all the account test values.
-        with().await().untilAsserted(() -> assertTrue(strategy.getTickersUpdateReceived().size() >= numberOfValuesExpected));
+        with().await().untilAsserted(() -> assertTrue(strategy.getTickersUpdatesReceived().size() >= numberOfValuesExpected));
 
         // Checking that all other data have been received.
-        assertFalse(strategy.getOrdersUpdateReceived().isEmpty());
+        assertFalse(strategy.getOrdersUpdatesReceived().isEmpty());
         assertFalse(strategy.getAccountsUpdatesReceived().isEmpty());
-        assertFalse(strategy.getTickersUpdateReceived().isEmpty());
-        assertFalse(strategy.getTradesUpdateReceived().isEmpty());
+        assertFalse(strategy.getTickersUpdatesReceived().isEmpty());
+        assertFalse(strategy.getTradesUpdatesReceived().isEmpty());
         assertEquals(2, strategy.getLastTickers().size());
         assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTickers().get(ETH_BTC).getLast()));
 

@@ -20,10 +20,10 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -76,9 +76,9 @@ public class TradeTest extends BaseTest {
     public void checkLoadTradeFromDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());
-        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
+        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
+        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
+        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
 
         // =============================================================================================================
         // Check trade 01.
@@ -182,9 +182,9 @@ public class TradeTest extends BaseTest {
     public void checkSaveTradeInDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());
-        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
+        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
+        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
+        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
 
         // =============================================================================================================
         // Loading strategy.
@@ -205,7 +205,7 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .build();
         tradeFlux.emitValue(t1);
-        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdatesReceived().size()));
 
         // =============================================================================================================
         // Trade - Check created order (domain).
@@ -262,7 +262,7 @@ public class TradeTest extends BaseTest {
                 .userReference("Updated reference")
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .build());
-        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdatesReceived().size()));
         await().untilAsserted(() -> assertNotNull(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn()));
         assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
         ZonedDateTime updatedOn = tradeInDatabase.get().getCreatedOn();

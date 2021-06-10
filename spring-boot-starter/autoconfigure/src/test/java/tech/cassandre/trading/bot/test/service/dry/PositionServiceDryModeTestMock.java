@@ -7,12 +7,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;

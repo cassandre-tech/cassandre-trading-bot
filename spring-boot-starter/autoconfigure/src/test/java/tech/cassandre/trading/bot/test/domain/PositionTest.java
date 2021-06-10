@@ -24,10 +24,10 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -53,7 +53,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Domain - Position")
@@ -98,9 +98,9 @@ public class PositionTest extends BaseTest {
     public void checkLoadPositionFromDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());
-        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
+        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
+        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
+        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
 
         // =============================================================================================================
         // Check position 1 - OPENING.
@@ -279,9 +279,9 @@ public class PositionTest extends BaseTest {
     public void checkSavedNewPosition() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());
-        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
+        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
+        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
+        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.2")).build());
@@ -369,13 +369,13 @@ public class PositionTest extends BaseTest {
     public void checkSavedDataDuringPositionLifecycle() {
         // =============================================================================================================
         // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());
-        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
+        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
+        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
+        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
 
         // First ticker emitted for dry mode - MANDATORY.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.01")).build());
-        await().untilAsserted(() -> assertEquals(1, strategy.getTickersUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getTickersUpdatesReceived().size()));
 
         // =============================================================================================================
         // A position is created on ETH/BTC - ID 6.
@@ -481,7 +481,7 @@ public class PositionTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.07").compareTo(getPosition(positionId).getLatestGainPrice().getValue())));
 
         // Check lowest & highest in database.
-        await().untilAsserted(() -> assertEquals(6, strategy.getTickersUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(6, strategy.getTickersUpdatesReceived().size()));
         assertTrue(getPositionDTO(positionId).getLowestCalculatedGain().isPresent());
         assertTrue(getPositionDTO(positionId).getHighestCalculatedGain().isPresent());
         assertEquals(0, new BigDecimal("0.005").compareTo(getPositionDTO(positionId).getLowestGainPrice().getValue()));

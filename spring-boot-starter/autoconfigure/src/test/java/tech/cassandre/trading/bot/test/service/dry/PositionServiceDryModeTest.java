@@ -7,17 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -31,7 +30,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Service - Dry - Position service")
@@ -75,10 +74,10 @@ public class PositionServiceDryModeTest extends BaseTest {
         // Few seconds after, order and trade will arrive and status will be OPENED.
         // Two updates will have been received.
         assertEquals(OPENING, getPositionDTO(position1Id).getStatus());
-        await().untilAsserted(() -> assertEquals(3, strategy.getPositionsUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsStatusUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdateReceived().get(1).getStatus()));
+        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdatesReceived().get(1).getStatus()));
 
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH/BTC, 0.0002, 20% stop loss, price of 0.2).
@@ -94,10 +93,10 @@ public class PositionServiceDryModeTest extends BaseTest {
         // Few seconds after, order and trade will arrive and status will be OPENED.
         // Two updates will have been received.
         assertEquals(OPENING, getPositionDTO(position2Id).getStatus());
-        await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdateReceived().get(3).getStatus()));
+        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdatesReceived().get(3).getStatus()));
 
         // =============================================================================================================
         // Tickers are coming.

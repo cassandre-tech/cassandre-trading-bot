@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.util.strategies;
+package tech.cassandre.trading.bot.beta.util.strategies;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -13,7 +13,7 @@ import java.util.Set;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 
 /**
  * Strategy with not trading account.

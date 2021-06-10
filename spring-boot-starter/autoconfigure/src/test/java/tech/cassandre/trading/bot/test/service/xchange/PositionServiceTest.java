@@ -21,10 +21,10 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.test.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -50,12 +50,11 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.CANCELED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.STOPPED;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Service - XChange - Position service")
@@ -147,11 +146,11 @@ public class PositionServiceTest extends BaseTest {
 
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
 
         // Check order created internally by Cassandre.
-        final OrderDTO orderP1 = strategy.getOrdersUpdateReceived().get(0);
+        final OrderDTO orderP1 = strategy.getOrdersUpdatesReceived().get(0);
         assertNotNull(orderP1);
         assertEquals("ORDER00010", orderP1.getOrderId());
         assertEquals(BID, orderP1.getType());
@@ -185,8 +184,8 @@ public class PositionServiceTest extends BaseTest {
 
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdatesReceived().size()));
 
         // Position 1.
         Optional<PositionDTO> position1 = strategy.getPositionByPositionId(position1Id);
@@ -218,7 +217,7 @@ public class PositionServiceTest extends BaseTest {
 
         // =============================================================================================================
         // An update for opening order ORDER00020 (position 2) arrives and change status.
-        final long positionUpdateCount1 = strategy.getPositionsUpdateReceived().size();
+        final long positionUpdateCount1 = strategy.getPositionsUpdatesReceived().size();
         OrderDTO order00020 = OrderDTO.builder()
                 .orderId("ORDER00020")
                 .type(BID)
@@ -229,7 +228,7 @@ public class PositionServiceTest extends BaseTest {
                 .timestamp(ZonedDateTime.now())
                 .build();
         orderFlux.emitValue(order00020);
-        await().untilAsserted(() -> assertEquals(positionUpdateCount1 + 1, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(positionUpdateCount1 + 1, strategy.getPositionsUpdatesReceived().size()));
 
         // Position 1 - No changes.
         position1 = strategy.getPositionByPositionId(position1Id);
@@ -290,8 +289,8 @@ public class PositionServiceTest extends BaseTest {
 
         // An update arrives and changes the status order of position 1.
         orderFlux.emitValue(closingOrder01);
-        await().untilAsserted(() -> assertEquals(4, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(8, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(4, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(8, strategy.getPositionsUpdatesReceived().size()));
 
         // Position 1 - closing order status should have changed.
         position1 = strategy.getPositionByPositionId(position1Id);
@@ -348,8 +347,8 @@ public class PositionServiceTest extends BaseTest {
 
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
 
         // Position 1.
         Optional<PositionDTO> position1 = strategy.getPositionByPositionId(position1Id);
@@ -405,8 +404,8 @@ public class PositionServiceTest extends BaseTest {
 
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
 
         // Position 1.
         Optional<PositionDTO> position1 = strategy.getPositionByPositionId(position1Id);
@@ -505,8 +504,8 @@ public class PositionServiceTest extends BaseTest {
 
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
 
         // Creates position 2 (ETH/BTC, 0.0002, 20% stop loss).
         final PositionCreationResultDTO p2 = strategy.createLongPosition(ETH_USDT,
@@ -518,8 +517,8 @@ public class PositionServiceTest extends BaseTest {
 
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdatesReceived().size()));
 
         // Trade 2 - should change status of position 1.
         tradeFlux.emitValue(TradeDTO.builder()
@@ -559,8 +558,8 @@ public class PositionServiceTest extends BaseTest {
         // The opening trade arrives, change the status to OPENED and set the price.
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
 
         tradeFlux.emitValue(TradeDTO.builder()
                 .tradeId("000002")
@@ -615,8 +614,8 @@ public class PositionServiceTest extends BaseTest {
 
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
 
         // Two tickers arrived - min and max gain should not be set.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("100")).build());
@@ -699,8 +698,8 @@ public class PositionServiceTest extends BaseTest {
 
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(10, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(10, strategy.getPositionsUpdatesReceived().size()));
 
         // The close trade arrives, change the status and set the price.
         tradeFlux.emitValue(TradeDTO.builder()
@@ -749,8 +748,8 @@ public class PositionServiceTest extends BaseTest {
         // The opening trade arrives, change the status to OPENED and set the price.
         // We retrieve the order from the service and we wait for the order to update the position.
         orderFlux.update();
-        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdateReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
 
         tradeFlux.emitValue(TradeDTO.builder()
                 .tradeId("000002")
