@@ -50,22 +50,19 @@ public class AccountFluxTest extends BaseTest {
     @CaseId(2)
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        // =============================================================================================================
-        // Test asynchronous flux.
-
         // The mock will reply 7 times with data.
-        final int numberOfUpdatesExpected = 7;
+        final int numberOfRepliesExpected = 7;
 
         // Waiting for the service to have been called 7 times.
-        await().untilAsserted(() -> verify(accountService, atLeast(numberOfUpdatesExpected)).getAccountInfo());
+        await().untilAsserted(() -> verify(accountService, atLeast(numberOfRepliesExpected)).getAccountInfo());
 
         // Checking that some data have already been treated by strategy but not all !
         // The flux should be asynchronous and a single thread in strategy is treating updates.
         assertTrue(strategy.getAccountsUpdatesReceived().size() > 0);
-        assertTrue(strategy.getAccountsUpdatesReceived().size() <= numberOfUpdatesExpected);
+        assertTrue(strategy.getAccountsUpdatesReceived().size() <= numberOfRepliesExpected);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertEquals(numberOfUpdatesExpected, strategy.getAccountsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(numberOfRepliesExpected, strategy.getAccountsUpdatesReceived().size()));
 
         // Test all values received by the strategy with update methods.
         final Iterator<AccountDTO> iterator = strategy.getAccountsUpdatesReceived().iterator();
