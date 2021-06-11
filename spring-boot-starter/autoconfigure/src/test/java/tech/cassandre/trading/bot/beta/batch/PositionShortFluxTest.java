@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.beta.batch;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -6,10 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.beta.batch.mocks.PositionShortFluxTestMock;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
@@ -21,23 +24,17 @@ import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
-import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -46,14 +43,12 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Batch - Short position flux")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
-@DirtiesContext(classMode = BEFORE_CLASS)
 @Import(PositionShortFluxTestMock.class)
 public class PositionShortFluxTest extends BaseTest {
 
@@ -75,10 +70,6 @@ public class PositionShortFluxTest extends BaseTest {
     @Autowired
     private PositionRepository positionRepository;
 
-    private final AtomicInteger positionUpdatesCount = new AtomicInteger(0);
-
-    private final AtomicInteger positionStatusUpdatesCount = new AtomicInteger(0);
-
     @Test
     @CaseId(91)
     @DisplayName("Check received data")
@@ -94,22 +85,19 @@ public class PositionShortFluxTest extends BaseTest {
         assertEquals("ORDER00010", position1Result.getPosition().getOpeningOrder().getOrderId());
         long position1Id = position1Result.getPosition().getId();
 
-        // The position 1 is created.
-        // 1 position status update - The position is created with the OPENING status.
-        positionStatusUpdatesCount.incrementAndGet();
-        // 2 positions updates - Position created and the position created with the order set.
-        positionUpdatesCount.incrementAndGet();
-        positionUpdatesCount.incrementAndGet();
-
         // onPositionStatusUpdate - Position 1 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        // 1 position status update - The position is created with the OPENING status.
+        await().untilAsserted(() -> assertEquals(1, getPositionsStatusUpdatesCount()));
         PositionDTO p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENING, p.getStatus());
 
         // onPositionUpdate - Position 1 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), strategy.getPositionsUpdatesReceived().size()));
+        // 2 positions updates:
+        // - Position created with the local order (status PENDING_NEW).
+        // - Position updated with the distant order (status NEW).
+        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
@@ -153,22 +141,18 @@ public class PositionShortFluxTest extends BaseTest {
         assertEquals("ORDER00020", position2Result.getPosition().getOpeningOrder().getOrderId());
         long position2Id = position2Result.getPosition().getId();
 
-        // The position 2 is created.
-        // 1 position status update - The position is created with the OPENING status.
-        positionStatusUpdatesCount.incrementAndGet();
-        // 2 positions updates - Position created and the position created with the order set.
-        positionUpdatesCount.incrementAndGet();
-        positionUpdatesCount.incrementAndGet();
-
         // onPositionStatusUpdate - Position 2 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        // 1 more position status update - Position 2 is created with the OPENING status.
+        await().untilAsserted(() -> assertEquals(2, getPositionsStatusUpdatesCount()));
         p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
         assertEquals(OPENING, p.getStatus());
 
         // onPositionUpdate - Position 2 should arrive (OPENING).
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        // - Position created with the local order (status PENDING_NEW).
+        // - Position updated with the distant order (status NEW).
+        await().untilAsserted(() -> assertEquals(4, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
@@ -214,8 +198,7 @@ public class PositionShortFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("0.02", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-02-2020"))
                 .build());
-        positionUpdatesCount.incrementAndGet();
-        // The same trade is emitted two times with an update (on time).
+        // The same trade is emitted two times with an update (on timestamp).
         tradeFlux.emitValue(TradeDTO.builder()
                 .tradeId("000011")
                 .orderId("ORDER00010")
@@ -225,7 +208,6 @@ public class PositionShortFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("0.02", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("03-02-2020"))
                 .build());
-        positionUpdatesCount.incrementAndGet();
 
         // Second trade.
         tradeFlux.emitValue(TradeDTO.builder()
@@ -237,7 +219,6 @@ public class PositionShortFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("0.04", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
-        positionUpdatesCount.incrementAndGet();
         // The same trade is emitted two times with an update (on time).
         tradeFlux.emitValue(TradeDTO.builder()
                 .tradeId("000001")
@@ -248,20 +229,17 @@ public class PositionShortFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("0.04", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
-        positionUpdatesCount.incrementAndGet();
-
-        // With the two trades emitted, status should change.
-        positionStatusUpdatesCount.incrementAndGet();
 
         // onPositionStatusUpdate - Position 1 should change to OPENED.
-        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        // With the two trades emitted, status should change to OPENED.
+        await().untilAsserted(() -> assertEquals(3, getPositionsStatusUpdatesCount()));
         p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENED, p.getStatus());
 
-        // onPositionUpdate - 2 trades emitted 2 times so 4 updates (+2 already received for position opening).
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        // onPositionUpdate - 2 trades emitted 2 times so 4 updates (+4 already received for position opening).
+        await().untilAsserted(() -> assertEquals(8, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
@@ -311,10 +289,10 @@ public class PositionShortFluxTest extends BaseTest {
         // First ticker arrives - min, max and last gain should be set to that value.
         // Price goes to 0.01 meaning that with my 0.3 BTC I can buy 30 eth.
         // I gain ((0.03 - 0.01) / 0.01) * 100 = 200 %
-        // And, in amount : 30 - 10 = 20
+        // And, in amount : 30 - 10 = 20.
+        // Price update so a new position update.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.01")).build());
-        positionUpdatesCount.incrementAndGet();
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(9, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.01").compareTo(p.getLowestGainPrice().getValue()));
@@ -332,9 +310,9 @@ public class PositionShortFluxTest extends BaseTest {
         // I sold 10 ETH for BTC meaning I now have 0.3 BTC (at the price of 0.03).
         // Price goes to 0.015 meaning I can now buy 20 ETH.
         // 100% gain and 10 ETH in amount.
+        // Price update so a new position update.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.015")).build());
-        positionUpdatesCount.incrementAndGet();
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(10, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.015").compareTo(p.getLowestGainPrice().getValue()));
@@ -351,9 +329,9 @@ public class PositionShortFluxTest extends BaseTest {
         // Third ticker arrives (90% loss) - min and last gain should be set to that value.
         // I sold 10 ETH for BTC meaning I now have 0.3 BTC (at the price of 0.03).
         // Price goes to 0.3 meaning I can now buy 1 ETH.
+        // Price update so a new position update.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
-        positionUpdatesCount.incrementAndGet();
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(11, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.3").compareTo(p.getLowestGainPrice().getValue()));
@@ -366,9 +344,6 @@ public class PositionShortFluxTest extends BaseTest {
         assertEquals(-90, latestCalculatedGain.get().getPercentage());
         assertEquals(0, new BigDecimal("-9").compareTo(latestCalculatedGain.get().getAmount().getValue()));
         assertEquals(ETH, latestCalculatedGain.get().getAmount().getCurrency());
-
-        // A ticker arrive for another cp. Nothing should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("100")).build());
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
@@ -407,19 +382,22 @@ public class PositionShortFluxTest extends BaseTest {
                 .amount(new CurrencyAmountDTO("0.0002", ETH_USDT.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("0.03", ETH_USDT.getQuoteCurrency()))
                 .build());
-        positionStatusUpdatesCount.incrementAndGet();
-        positionUpdatesCount.incrementAndGet();
-        positionUpdatesCount.incrementAndGet();// TODO Should not be necessary!
 
         // onPositionStatusUpdate - Position 2 should be opened.
-        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        // New update of position because the trade opened the solution.
+        await().untilAsserted(() -> assertEquals(4, getPositionsStatusUpdatesCount()));
         p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
         assertEquals(OPENED, p.getStatus());
 
+        // A ticker arrive for position 2.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("100")).build());
+
         // onPositionUpdate.
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        // The trade changed at the same time the trade and the status to OPENED.
+        // A ticker set the new price just after.
+        await().untilAsserted(() -> assertEquals(13, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
@@ -456,13 +434,9 @@ public class PositionShortFluxTest extends BaseTest {
         // I sold 10 ETH for BTC meaning I now have 0.3 BTC (at the price of 0.03).
         // Price goes to 0.0003 meaning I can now buy 1 000 ETH.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.0003")).build());
-        positionStatusUpdatesCount.incrementAndGet();
-        // 2 updates of position (closeOrderId set & then closerOrder set).
-        positionUpdatesCount.incrementAndGet();
-        positionUpdatesCount.incrementAndGet();
 
         // We check the gain.
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(15, getPositionsUpdatesCount()));
         latestCalculatedGain = getLastPositionUpdate().getLatestCalculatedGain();
         assertTrue(latestCalculatedGain.isPresent());
         assertEquals(9900, latestCalculatedGain.get().getPercentage());
@@ -470,20 +444,19 @@ public class PositionShortFluxTest extends BaseTest {
         assertEquals(ETH, latestCalculatedGain.get().getAmount().getCurrency());
 
         // onPositionStatusUpdate - Position should be closing.
-        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(5, getPositionsStatusUpdatesCount()));
         p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSING, p.getStatus());
 
         // OnPositionUpdate.
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(15, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSING, p.getStatus());
 
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
         p1 = strategy.getPositionByPositionId(position1Id);
@@ -523,7 +496,6 @@ public class PositionShortFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
-        positionStatusUpdatesCount.incrementAndGet();
 
         // We send a duplicated value.
         tradeFlux.emitValue(TradeDTO.builder().tradeId("000003")
@@ -534,12 +506,10 @@ public class PositionShortFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
-        // 2 updates of position (closeOrderId set & then closerOrder set).
-        positionUpdatesCount.incrementAndGet();
-        positionUpdatesCount.incrementAndGet();
 
         // onPosition for first trade arrival.
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        // Two more updates because of two trades arriving (duplicated but we use emit function).
+        await().untilAsserted(() -> assertEquals(17, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
@@ -554,7 +524,6 @@ public class PositionShortFluxTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
-        positionUpdatesCount.incrementAndGet();
         // We send a duplicated value.
         tradeFlux.emitValue(TradeDTO.builder().tradeId("000004")
                 .orderId("ORDER00011")
@@ -566,7 +535,8 @@ public class PositionShortFluxTest extends BaseTest {
                 .build());
 
         // onPositionStatusUpdate - Position should be closed.
-        await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
+        // One update because position change of status (now closed).
+        await().untilAsserted(() -> assertEquals(6, getPositionsStatusUpdatesCount()));
         p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
