@@ -53,15 +53,14 @@ public class AccountFluxTest extends BaseTest {
         // =============================================================================================================
         // Test asynchronous flux.
 
-        // We will call the service 8 times and we will have two empty answers.
+        // The mock will reply 7 times with data.
         final int numberOfUpdatesExpected = 7;
-        final int numberOfServiceCallsExpected = 9;
 
-        // Waiting for the service to have been called with all the test data.
-        await().untilAsserted(() -> verify(accountService, atLeast(numberOfServiceCallsExpected)).getAccountInfo());
+        // Waiting for the service to have been called 7 times.
+        await().untilAsserted(() -> verify(accountService, atLeast(numberOfUpdatesExpected)).getAccountInfo());
 
-        // Checking that somme data have already been treated.
-        // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
+        // Checking that some data have already been treated by strategy but not all !
+        // The flux should be asynchronous and a single thread in strategy is treating updates.
         assertTrue(strategy.getAccountsUpdatesReceived().size() > 0);
         assertTrue(strategy.getAccountsUpdatesReceived().size() <= numberOfUpdatesExpected);
 

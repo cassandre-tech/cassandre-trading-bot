@@ -172,6 +172,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
         // =============================================================================================================
         // Creating position service.
+        // TODO Delete this.
         this.positionService = new PositionServiceCassandreImplementation(applicationContext, positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
@@ -186,7 +187,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         // Connecting flux to positions that requires them.
         connectableOrderFlux.subscribe(positionService::ordersUpdates);
         connectableTradeFlux.subscribe(positionService::tradesUpdates);
-
 
         // =============================================================================================================
         // Configuring strategies.

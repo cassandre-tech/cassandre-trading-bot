@@ -43,7 +43,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     public static final String PARAMETER_TESTABLE_STRATEGY_ENABLED = "testableStrategy.enabled";
 
     /** Waiting time during each method. */
-    public static final Duration MINIMUM_METHOD_DURATION = Duration.ofMillis(1);
+    public static final Duration MINIMUM_METHOD_DURATION = Duration.ofMillis(10);
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
