@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.batch;
+package tech.cassandre.trading.bot.beta.batch;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -7,13 +7,12 @@ import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.beta.batch.mocks.TickerFluxTestMock;
-import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.dto.market.TickerDTO;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -25,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
@@ -33,7 +31,6 @@ import static tech.cassandre.trading.bot.beta.util.junit.configuration.Configura
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(TickerFluxTestMock.class)
 public class TickerFluxTest extends BaseTest {
 
@@ -51,7 +48,7 @@ public class TickerFluxTest extends BaseTest {
         // Test asynchronous flux.
 
         // we will call the service 9 times.
-        final int numberOfTickersExpected = 17;
+        final int numberOfTickersExpected = 14;
         final int numberOfServiceCallsExpected = 9;
 
         // Waiting for the service to have been called with all the test data.
