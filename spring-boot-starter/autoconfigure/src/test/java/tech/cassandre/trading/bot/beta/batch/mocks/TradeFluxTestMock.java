@@ -41,7 +41,7 @@ public class TradeFluxTestMock extends BaseMock {
                 // Reply 02.
                 // - TRADE_0000001 : no changes.
                 // - TRADE_0000002 : no changes.
-                // - TRADE_0000003 : no changes.
+                // - TRADE_0000003 : new
                 // - TRADE_0000004 : new.
                 // - TRADE_0000005 : new.
                 getReply02(),
@@ -98,7 +98,7 @@ public class TradeFluxTestMock extends BaseMock {
      * Reply 02.
      * - TRADE_0000001 : no changes.
      * - TRADE_0000002 : no changes.
-     * - TRADE_0000003 : no changes.
+     * - TRADE_0000003 : new.
      * - TRADE_0000004 : new.
      * - TRADE_0000005 : new.
      *
@@ -106,12 +106,12 @@ public class TradeFluxTestMock extends BaseMock {
      */
     private UserTrades getReply02() {
         UserTrade trade0000001 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.100001"),             // Original amount.
-                XCHANGE_ETH_BTC,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
-                Date.from(createZonedDateTime(1).toInstant()),   // Date.
-                "TRADE_0000001",                         // Trade id.
+                Order.OrderType.BID,                                // Order type.
+                new BigDecimal("1.100001"),                     // Original amount.
+                XCHANGE_ETH_BTC,                                    // Instrument.
+                new BigDecimal("2.200002"),                     // Price.
+                Date.from(createZonedDateTime(1).toInstant()),  // Date.
+                "TRADE_0000001",                                // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
                 XCHANGE_ETH_BTC.counter,                         // fee currency.
