@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.beta.batch.mocks.LongPositionFluxTestMock;
+import tech.cassandre.trading.bot.beta.batch.mocks.PositionShortFluxTestMock;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
@@ -21,14 +21,15 @@ import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.awaitility.Awaitility.await;
@@ -36,25 +37,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
-import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
+import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@DisplayName("Batch - Long position flux")
+@DisplayName("Batch - Short position flux")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-@Import(LongPositionFluxTestMock.class)
-public class LongPositionFluxTest extends BaseTest {
+@DirtiesContext(classMode = BEFORE_CLASS)
+@Import(PositionShortFluxTestMock.class)
+public class PositionShortFluxTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
@@ -79,12 +80,12 @@ public class LongPositionFluxTest extends BaseTest {
     private final AtomicInteger positionStatusUpdatesCount = new AtomicInteger(0);
 
     @Test
-    @CaseId(4)
+    @CaseId(91)
     @DisplayName("Check received data")
-    public void checkReceivedData() {
+    public void checkReceivedData() throws InterruptedException {
         // =============================================================================================================
-        // Creates position 1 - should be OPENING.
-        final PositionCreationResultDTO position1Result = strategy.createLongPosition(ETH_BTC,
+        // Creates short position 1 of 10 ETH (for BTC) - should be OPENING.
+        final PositionCreationResultDTO position1Result = strategy.createShortPosition(ETH_BTC,
                 new BigDecimal("10"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(1000f)   // 1 000% max gain.
@@ -121,7 +122,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
-        assertEquals(LONG, p1.get().getType());
+        assertEquals(SHORT, p1.get().getType());
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
@@ -143,7 +144,7 @@ public class LongPositionFluxTest extends BaseTest {
 
         // =============================================================================================================
         // Creates positions 2 - should be OPENING.
-        final PositionCreationResultDTO position2Result = strategy.createLongPosition(ETH_USDT,
+        final PositionCreationResultDTO position2Result = strategy.createShortPosition(ETH_USDT,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder()
                         .stopGainPercentage(10000000f)
@@ -180,7 +181,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertTrue(p2.isPresent());
         assertEquals(2, p2.get().getId());
         assertEquals(2, p2.get().getPositionId());
-        assertEquals(LONG, p2.get().getType());
+        assertEquals(SHORT, p2.get().getType());
         assertNotNull(p2.get().getStrategy());
         assertEquals(1, p2.get().getStrategy().getId());
         assertEquals("01", p2.get().getStrategy().getStrategyId());
@@ -272,7 +273,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
-        assertEquals(LONG, p1.get().getType());
+        assertEquals(SHORT, p1.get().getType());
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
@@ -301,66 +302,73 @@ public class LongPositionFluxTest extends BaseTest {
 
         // =============================================================================================================
         // Test of tickers updating the position 1.
+        // I sold 10 ETH for BTC
+        // Two trades :
+        // - 5 at 0.02 (1 ETH costs 0.03 BTC).
+        // - 5 at 0.04 (1 ETH costs 0.03 BTC).
+        // Meaning I now have 0.3 BTC (at the mean price of 0.03).
 
-        // First ticker arrives (500% gain) - min, max and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.18")).build());
+        // First ticker arrives - min, max and last gain should be set to that value.
+        // Price goes to 0.01 meaning that with my 0.3 BTC I can buy 30 eth.
+        // I gain ((0.03 - 0.01) / 0.01) * 100 = 200 %
+        // And, in amount : 30 - 10 = 20
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.01")).build());
         positionUpdatesCount.incrementAndGet();
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
-        assertEquals(0, new BigDecimal("0.18").compareTo(p.getLowestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.18").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.01").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.01").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.01").compareTo(p.getLatestGainPrice().getValue()));
 
         // We check the gain.
         Optional<GainDTO> latestCalculatedGain = p.getLatestCalculatedGain();
         assertTrue(latestCalculatedGain.isPresent());
-        assertEquals(500, latestCalculatedGain.get().getPercentage());
-        assertEquals(0, new BigDecimal("1.5").compareTo(latestCalculatedGain.get().getAmount().getValue()));
-        assertEquals(BTC, latestCalculatedGain.get().getAmount().getCurrency());
+        assertEquals(200, latestCalculatedGain.get().getPercentage());
+        assertEquals(0, new BigDecimal(20).compareTo(latestCalculatedGain.get().getAmount().getValue()));
+        assertEquals(ETH, latestCalculatedGain.get().getAmount().getCurrency());
 
-        // Second ticker arrives (100% gain) - min and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.06")).build());
-        positionUpdatesCount.incrementAndGet();
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
-        p = getLastPositionUpdate();
-        assertEquals(position1Id, p.getId());
-        assertEquals(0, new BigDecimal("0.06").compareTo(p.getLowestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.06").compareTo(p.getLatestGainPrice().getValue()));
-
-        // Third ticker arrives (200% gain) - only last should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.09")).build());
-        positionUpdatesCount.incrementAndGet();
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
-        p = getLastPositionUpdate();
-        assertEquals(position1Id, p.getId());
-        assertEquals(0, new BigDecimal("0.06").compareTo(p.getLowestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.09").compareTo(p.getLatestGainPrice().getValue()));
-
-        // Fourth ticker arrives (50% loss) - min and last gain should be set to that value.
+        // Second ticker arrives (100% gain).
+        // I sold 10 ETH for BTC meaning I now have 0.3 BTC (at the price of 0.03).
+        // Price goes to 0.015 meaning I can now buy 20 ETH.
+        // 100% gain and 10 ETH in amount.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.015")).build());
         positionUpdatesCount.incrementAndGet();
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.015").compareTo(p.getLowestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.18").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.01").compareTo(p.getHighestGainPrice().getValue()));
         assertEquals(0, new BigDecimal("0.015").compareTo(p.getLatestGainPrice().getValue()));
 
-        // A ticker arrive for another cp. Nothing should change.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("100")).build());
+        // We check the gain.
+        latestCalculatedGain = p.getLatestCalculatedGain();
+        assertTrue(latestCalculatedGain.isPresent());
+        assertEquals(100, latestCalculatedGain.get().getPercentage());
+        assertEquals(0, new BigDecimal(10).compareTo(latestCalculatedGain.get().getAmount().getValue()));
+        assertEquals(ETH, latestCalculatedGain.get().getAmount().getCurrency());
 
-        // Firth ticker arrives (600% gain) - max and last gain should be set to that value.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.21")).build());
+        // Third ticker arrives (90% loss) - min and last gain should be set to that value.
+        // I sold 10 ETH for BTC meaning I now have 0.3 BTC (at the price of 0.03).
+        // Price goes to 0.3 meaning I can now buy 1 ETH.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
         positionUpdatesCount.incrementAndGet();
         await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
-        assertEquals(0, new BigDecimal("0.015").compareTo(p.getLowestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p.getHighestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(p.getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.01").compareTo(p.getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(p.getLatestGainPrice().getValue()));
+
+        // We check the gain.
+        latestCalculatedGain = p.getLatestCalculatedGain();
+        assertTrue(latestCalculatedGain.isPresent());
+        assertEquals(-90, latestCalculatedGain.get().getPercentage());
+        assertEquals(0, new BigDecimal("-9").compareTo(latestCalculatedGain.get().getAmount().getValue()));
+        assertEquals(ETH, latestCalculatedGain.get().getAmount().getCurrency());
+
+        // A ticker arrive for another cp. Nothing should change.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("100")).build());
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
@@ -368,7 +376,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
-        assertEquals(LONG, p1.get().getType());
+        assertEquals(SHORT, p1.get().getType());
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
@@ -385,9 +393,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals("000001", openingTradesIterator.next().getTradeId());
         assertEquals("000011", openingTradesIterator.next().getTradeId());
         assertNull(p1.get().getClosingOrder());
-        assertEquals(0, new BigDecimal("0.015").compareTo(p1.get().getLowestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p1.get().getHighestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p1.get().getLatestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(p1.get().getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.01").compareTo(p1.get().getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(p1.get().getLatestGainPrice().getValue()));
 
         // =============================================================================================================
         // Trade arrives for position 2 - should now be OPENED
@@ -401,6 +409,7 @@ public class LongPositionFluxTest extends BaseTest {
                 .build());
         positionStatusUpdatesCount.incrementAndGet();
         positionUpdatesCount.incrementAndGet();
+        positionUpdatesCount.incrementAndGet();// TODO Should not be necessary!
 
         // onPositionStatusUpdate - Position 2 should be opened.
         await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
@@ -422,7 +431,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertTrue(p2.isPresent());
         assertEquals(2, p2.get().getId());
         assertEquals(2, p2.get().getPositionId());
-        assertEquals(LONG, p2.get().getType());
+        assertEquals(SHORT, p2.get().getType());
         assertNotNull(p2.get().getStrategy());
         assertEquals(1, p2.get().getStrategy().getId());
         assertEquals("01", p2.get().getStrategy().getStrategyId());
@@ -438,17 +447,27 @@ public class LongPositionFluxTest extends BaseTest {
         openingTradesIterator = p2.get().getOpeningOrder().getTrades().iterator();
         assertEquals("000002", openingTradesIterator.next().getTradeId());
         assertNull(p2.get().getClosingOrder());
-        assertNull(p2.get().getLowestGainPrice());
-        assertNull(p2.get().getHighestGainPrice());
-        assertNull(p2.get().getLatestGainPrice());
+        assertEquals(0, new BigDecimal("100").compareTo(p2.get().getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("100").compareTo(p2.get().getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("100").compareTo(p2.get().getLatestGainPrice().getValue()));
 
         // =============================================================================================================
         // A ticker arrives that triggers max gain rules of position 1 - should now be CLOSING.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("100")).build());
+        // I sold 10 ETH for BTC meaning I now have 0.3 BTC (at the price of 0.03).
+        // Price goes to 0.0003 meaning I can now buy 1 000 ETH.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.0003")).build());
         positionStatusUpdatesCount.incrementAndGet();
         // 2 updates of position (closeOrderId set & then closerOrder set).
         positionUpdatesCount.incrementAndGet();
         positionUpdatesCount.incrementAndGet();
+
+        // We check the gain.
+        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
+        latestCalculatedGain = getLastPositionUpdate().getLatestCalculatedGain();
+        assertTrue(latestCalculatedGain.isPresent());
+        assertEquals(9900, latestCalculatedGain.get().getPercentage());
+        assertEquals(0, new BigDecimal("990").compareTo(latestCalculatedGain.get().getAmount().getValue()));
+        assertEquals(ETH, latestCalculatedGain.get().getAmount().getCurrency());
 
         // onPositionStatusUpdate - Position should be closing.
         await().untilAsserted(() -> assertEquals(positionStatusUpdatesCount.get(), getPositionsStatusUpdatesCount()));
@@ -464,13 +483,14 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSING, p.getStatus());
 
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
         p1 = strategy.getPositionByPositionId(position1Id);
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
-        assertEquals(LONG, p1.get().getType());
+        assertEquals(SHORT, p1.get().getType());
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
@@ -488,9 +508,9 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals("000011", openingTradesIterator.next().getTradeId());
         assertEquals("ORDER00011", p1.get().getClosingOrder().getOrderId());
         assertTrue(p1.get().getClosingOrder().getTrades().isEmpty());
-        assertEquals(0, new BigDecimal("0.015").compareTo(p1.get().getLowestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p1.get().getHighestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("100").compareTo(p1.get().getLatestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(p1.get().getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.01").compareTo(p1.get().getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.0003").compareTo(p1.get().getLatestGainPrice().getValue()));
 
         // =============================================================================================================
         // Position 1 will have CLOSED status as the trade arrives.
@@ -499,7 +519,7 @@ public class LongPositionFluxTest extends BaseTest {
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(ETH_BTC)
-                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .amount(new CurrencyAmountDTO("500", ETH_BTC.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
@@ -510,7 +530,7 @@ public class LongPositionFluxTest extends BaseTest {
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(ETH_BTC)
-                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .amount(new CurrencyAmountDTO("500", ETH_BTC.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("01-01-2020"))
                 .build());
@@ -530,7 +550,7 @@ public class LongPositionFluxTest extends BaseTest {
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(ETH_BTC)
-                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
+                .amount(new CurrencyAmountDTO("500", ETH_BTC.getBaseCurrency()))
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020"))
                 .build());
@@ -540,8 +560,8 @@ public class LongPositionFluxTest extends BaseTest {
                 .orderId("ORDER00011")
                 .type(ASK)
                 .currencyPair(ETH_BTC)
-                .amount(new CurrencyAmountDTO("5", ETH_BTC.getBaseCurrency()))
-                .price(new CurrencyAmountDTO("2", ETH_BTC.getQuoteCurrency()))
+                .amount(new CurrencyAmountDTO("500", ETH_BTC.getBaseCurrency()))
+                .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .timestamp(createZonedDateTime("02-01-2020").plusDays(1))
                 .build());
 
@@ -553,12 +573,17 @@ public class LongPositionFluxTest extends BaseTest {
         assertEquals(CLOSED, p.getStatus());
 
         // onPosition for second trade arrival.
-        // 16 and not 17 because as the position is closed with the third trade, the position will not accept new trade !
-        await().untilAsserted(() -> assertEquals(positionUpdatesCount.get(), getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSED, p.getStatus());
+
+        // We check the gain.
+        latestCalculatedGain = p.getLatestCalculatedGain();
+        assertTrue(latestCalculatedGain.isPresent());
+        assertEquals(9900, latestCalculatedGain.get().getPercentage());
+        assertEquals(0, new BigDecimal("990").compareTo(latestCalculatedGain.get().getAmount().getValue()));
+        assertEquals(ETH, latestCalculatedGain.get().getAmount().getCurrency());
 
         // Checking what we have in database.
         assertEquals(2, strategy.getPositions().size());
@@ -566,7 +591,7 @@ public class LongPositionFluxTest extends BaseTest {
         assertTrue(p1.isPresent());
         assertEquals(1, p1.get().getId());
         assertEquals(1, p1.get().getPositionId());
-        assertEquals(LONG, p1.get().getType());
+        assertEquals(SHORT, p1.get().getType());
         assertNotNull(p1.get().getStrategy());
         assertEquals(1, p1.get().getStrategy().getId());
         assertEquals("01", p1.get().getStrategy().getStrategyId());
@@ -586,9 +611,9 @@ public class LongPositionFluxTest extends BaseTest {
         final Iterator<TradeDTO> closingTradesIterator = p1.get().getClosingOrder().getTrades().iterator();
         assertEquals("000003", closingTradesIterator.next().getTradeId());
         assertEquals("000004", closingTradesIterator.next().getTradeId());
-        assertEquals(0, new BigDecimal("0.015").compareTo(p1.get().getLowestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("0.21").compareTo(p1.get().getHighestGainPrice().getValue()));
-        assertEquals(0, new BigDecimal("100").compareTo(p1.get().getLatestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(p1.get().getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.01").compareTo(p1.get().getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.0003").compareTo(p1.get().getLatestGainPrice().getValue()));
 
         // Just checking trades creation.
         assertNotNull(strategy.getPositionByPositionId(position1Id));
