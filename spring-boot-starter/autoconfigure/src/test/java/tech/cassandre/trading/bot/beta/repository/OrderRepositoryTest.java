@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.repository;
+package tech.cassandre.trading.bot.beta.repository;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import tech.cassandre.trading.bot.domain.Order;
-import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.domain.Order;
+import tech.cassandre.trading.bot.repository.OrderRepository;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -58,6 +58,8 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals("BTC", o.getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("0.000001").compareTo(o.getLimitPrice().getValue()));
         assertEquals("BTC", o.getLimitPrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000033").compareTo(o.getMarketPrice().getValue()));
+        assertEquals("KCS", o.getMarketPrice().getCurrency());
         assertEquals("LEVERAGE_1", o.getLeverage());
         assertEquals(NEW, o.getStatus());
         assertEquals(0, new BigDecimal("0.000004").compareTo(o.getCumulativeAmount().getValue()));

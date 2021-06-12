@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.repository;
+package tech.cassandre.trading.bot.beta.repository;
 
 import com.google.common.collect.Sets;
 import io.qase.api.annotation.CaseId;
@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import tech.cassandre.trading.bot.domain.Position;
-import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.domain.Position;
+import tech.cassandre.trading.bot.repository.PositionRepository;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -214,7 +214,7 @@ public class PositionRepositoryTest {
     @CaseId(109)
     @DisplayName("Check update rules on position")
     public void checkUpdateRulesOnPosition() {
-        // We retrieve .
+        // We retrieve the positions.
         Optional<Position> p = positionRepository.findById(5L);
         assertTrue(p.isPresent());
         assertEquals(30, p.get().getStopGainPercentageRule());
@@ -240,7 +240,7 @@ public class PositionRepositoryTest {
     @Test
     @DisplayName("Check update force closing on position")
     public void checkUpdateForceClosingPosition() {
-        // We retrieve.
+        // We retrieve the position.
         Optional<Position> p = positionRepository.findById(5L);
         assertTrue(p.isPresent());
         assertFalse(p.get().isForceClosing());
