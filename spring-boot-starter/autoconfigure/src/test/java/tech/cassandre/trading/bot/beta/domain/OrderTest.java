@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.domain;
+package tech.cassandre.trading.bot.beta.domain;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +9,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
@@ -17,10 +21,6 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
-import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -40,6 +40,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest
@@ -47,8 +48,8 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @Configuration({
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
-@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class OrderTest extends BaseTest {
 
     @Autowired
@@ -90,6 +91,8 @@ public class OrderTest extends BaseTest {
         assertEquals(BTC, o.get().getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("0.000001").compareTo(o.get().getLimitPrice().getValue()));
         assertEquals(BTC, o.get().getLimitPrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000033").compareTo(o.get().getMarketPrice().getValue()));
+        assertEquals(KCS, o.get().getMarketPrice().getCurrency());
         assertEquals("LEVERAGE_1", o.get().getLeverage());
         assertEquals(NEW, o.get().getStatus());
         assertEquals(0, new BigDecimal("0.000004").compareTo(o.get().getCumulativeAmount().getValue()));
@@ -170,6 +173,7 @@ public class OrderTest extends BaseTest {
                 .amount(new CurrencyAmountDTO("1.00001", ETH_BTC.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("1.00003", ETH_BTC.getQuoteCurrency()))
                 .limitPrice(new CurrencyAmountDTO("1.00005", ETH_BTC.getQuoteCurrency()))
+                .marketPrice(new CurrencyAmountDTO("1.00006", ETH_BTC.getBaseCurrency()))
                 .leverage("leverage3")
                 .status(NEW)
                 .cumulativeAmount(new CurrencyAmountDTO("1.00002", ETH_BTC.getBaseCurrency()))
@@ -195,6 +199,8 @@ public class OrderTest extends BaseTest {
         assertEquals(ETH_BTC.getQuoteCurrency().toString(), orderInDatabase.get().getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("1.00005").compareTo(orderInDatabase.get().getLimitPrice().getValue()));
         assertEquals(ETH_BTC.getQuoteCurrency().toString(), orderInDatabase.get().getLimitPrice().getCurrency());
+        assertEquals(0, new BigDecimal("1.00006").compareTo(orderInDatabase.get().getMarketPrice().getValue()));
+        assertEquals(ETH_BTC.getBaseCurrency().toString(), orderInDatabase.get().getMarketPrice().getCurrency());
         assertEquals("leverage3", orderInDatabase.get().getLeverage());
         assertEquals(NEW, orderInDatabase.get().getStatus());
         assertEquals(0, new BigDecimal("1.00002").compareTo(orderInDatabase.get().getCumulativeAmount().getValue()));
@@ -222,6 +228,8 @@ public class OrderTest extends BaseTest {
         assertEquals(ETH_BTC.getQuoteCurrency(), order.get().getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("1.00005").compareTo(order.get().getLimitPrice().getValue()));
         assertEquals(ETH_BTC.getQuoteCurrency(), order.get().getLimitPrice().getCurrency());
+        assertEquals(0, new BigDecimal("1.00006").compareTo(order.get().getMarketPrice().getValue()));
+        assertEquals(ETH_BTC.getBaseCurrency(), order.get().getMarketPrice().getCurrency());
         assertEquals("leverage3", order.get().getLeverage());
         assertEquals(NEW, order.get().getStatus());
         assertEquals(0, new BigDecimal("1.00002").compareTo(order.get().getCumulativeAmount().getValue()));

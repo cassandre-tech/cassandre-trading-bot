@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.domain;
+package tech.cassandre.trading.bot.beta.domain;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +9,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.domain.Trade;
@@ -20,10 +24,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
-import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -48,8 +48,8 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @Configuration({
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
-@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class TradeTest extends BaseTest {
 
     @Autowired
@@ -238,6 +238,7 @@ public class TradeTest extends BaseTest {
         assertEquals("BACKUP_TRADE_11", tradeDTO.getTradeId());
         assertEquals(BID, tradeDTO.getType());
         assertEquals("BACKUP_ORDER_01", tradeDTO.getOrderId());
+        assertEquals("BACKUP_ORDER_01", tradeDTO.getOrder().getOrderId());
         assertEquals(ETH_BTC, tradeDTO.getCurrencyPair());
         assertEquals(ETH_BTC.getBaseCurrency(), tradeDTO.getAmount().getCurrency());
         assertEquals(0, tradeDTO.getAmount().getValue().compareTo(new BigDecimal("1.100001")));

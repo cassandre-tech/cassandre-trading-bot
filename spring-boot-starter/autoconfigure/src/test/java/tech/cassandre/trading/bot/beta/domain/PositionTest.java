@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.domain;
+package tech.cassandre.trading.bot.beta.domain;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +11,10 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
@@ -24,10 +28,6 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy;
-import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
-import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
@@ -42,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -53,7 +54,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Domain - Position")
@@ -275,7 +275,7 @@ public class PositionTest extends BaseTest {
 
     @Test
     @CaseId(31)
-    @DisplayName("Check how a new positions is saved")
+    @DisplayName("Check how a new position is saved")
     public void checkSavedNewPosition() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
@@ -422,15 +422,12 @@ public class PositionTest extends BaseTest {
 
         // We should have one more position and one more trade in database.
         await().untilAsserted(() -> assertEquals(6, positionRepository.count()));
-        // TODO Should word but fails at 10
-        //await().untilAsserted(() -> assertEquals(11, tradeRepository.count()));
 
         // =============================================================================================================
         // We should now be OPENED.
         // We are in dry mode, we wait for order and trade to arrive, position will now be opened.
         tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPosition(positionId).getStatus()));
-        //await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdateReceived().size()));
 
         // Check saved position in database.
         p = getPosition(positionId);
@@ -450,14 +447,9 @@ public class PositionTest extends BaseTest {
         assertFalse(p.getOpeningOrder().getTrades().isEmpty());
         assertTrue(p.getOpeningOrder().getTrades().stream().anyMatch(t -> "DRY_TRADE_000000001".equals(t.getTradeId())));
         assertNull(p.getClosingOrder());
-        //assertNull(p.getLowestGainPrice()); // Should be null bot not. Maybe because of tickerflux
-        //assertNull(p.getHighestGainPrice());
-        //assertNull(p.getLatestGainPrice());
 
         // =============================================================================================================
         // Now that the position is OPENED, we are sending tickers to see if lowest, highest and latest price change.
-        // TODO Why it doesn't work anymore ?
-        //await().untilAsserted(() -> assertNull(getPosition(positionId).getLatestGainPrice()));
 
         // First ticker arrives (500% gain) - min and max gain should be set to that value.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.06")).build());
@@ -493,7 +485,6 @@ public class PositionTest extends BaseTest {
 
         // Check that the new data was inserted in database.
         await().untilAsserted(() -> assertEquals(6, positionRepository.count()));
-//        await().untilAsserted(() -> assertEquals(11, tradeRepository.count()));
         assertEquals(createdOn, getPosition(positionId).getCreatedOn());
         assertTrue(updatedON.isBefore(getPosition(positionId).getUpdatedOn()));
 
@@ -531,7 +522,6 @@ public class PositionTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .build());
         await().untilAsserted(() -> assertEquals(1, getPositionDTO(positionId).getClosingOrder().getTrades().size()));
-//        await().untilAsserted(() -> assertEquals(12, tradeRepository.count()));
         assertEquals(CLOSING, getPositionDTO(positionId).getStatus());
 
         // The second close trade arrives, status should change.
@@ -544,7 +534,6 @@ public class PositionTest extends BaseTest {
                 .price(new CurrencyAmountDTO("1", ETH_BTC.getQuoteCurrency()))
                 .build());
         await().untilAsserted(() -> assertEquals(2, getPositionDTO(positionId).getClosingOrder().getTrades().size()));
-        //await().untilAsserted(() -> assertEquals(13, tradeRepository.count()));
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(positionId).getStatus()));
 
         // =============================================================================================================
@@ -573,8 +562,6 @@ public class PositionTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.005").compareTo(p.getLowestGainPrice().getValue()));
         assertEquals(0, new BigDecimal("0.07").compareTo(p.getHighestGainPrice().getValue()));
         assertEquals(0, new BigDecimal("0.07").compareTo(p.getLatestGainPrice().getValue()));
-        // TODO WHy do i have much more ?
-        //        assertEquals(13, tradeRepository.count());
     }
 
     /**
