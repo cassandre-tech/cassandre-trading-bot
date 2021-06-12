@@ -1,11 +1,10 @@
-package tech.cassandre.trading.bot.test.configuration.exchange;
+package tech.cassandre.trading.bot.beta.configuration.exchange;
 
 import io.qase.api.annotation.CaseId;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
@@ -14,18 +13,16 @@ import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_TRADE;
+import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_TICKER;
 
-@DisplayName("Configuration - Exchange - Invalid trade rate")
+@DisplayName("Configuration - Exchange - Invalid ticker rate")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_RATE_TRADE, value = "AT20S")
+        @Property(key = PARAMETER_EXCHANGE_RATE_TICKER, value = "AT20S")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-public class InvalidRateForTradeTest extends BaseTest {
+public class InvalidRateForTickerTest extends BaseTest {
 
     @Test
-    @CaseId(16)
+    @CaseId(15)
     @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {
@@ -42,8 +39,8 @@ public class InvalidRateForTradeTest extends BaseTest {
             assertFalse(message.contains("'key'"));
             assertFalse(message.contains("'secret'"));
             assertFalse(message.contains("Invalid account rate"));
-            assertFalse(message.contains("Invalid ticker rate"));
-            assertTrue(message.contains("Invalid trade rate"));
+            assertTrue(message.contains("Invalid ticker rate"));
+            assertFalse(message.contains("Invalid order rate"));
         }
     }
 

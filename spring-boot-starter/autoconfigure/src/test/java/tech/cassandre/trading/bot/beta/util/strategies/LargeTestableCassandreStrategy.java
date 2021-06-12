@@ -20,21 +20,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
 import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.BTC_ETH;
 import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.BTC_USDT;
 import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.ETH_BTC;
 import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.ETH_USDT;
 import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.KCS_USDT;
 import static tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
 
 /**
  * Testable strategy (used for tests).
  */
 @SuppressWarnings("unused")
 @CassandreStrategy(
-        strategyId = "09",
+        strategyId = "01",
         strategyName = "Large testable strategy")
 @ConditionalOnProperty(
         value = PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED,

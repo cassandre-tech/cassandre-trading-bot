@@ -1,31 +1,27 @@
-package tech.cassandre.trading.bot.test.configuration.exchange;
+package tech.cassandre.trading.bot.beta.configuration.exchange;
 
 import io.qase.api.annotation.CaseId;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRIVER_CLASS_NAME;
 
-@DisplayName("Configuration - Exchange - Driver class name parameter is missing")
+@DisplayName("Configuration - Exchange - Coinbase pro")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_DRIVER_CLASS_NAME)
+        @Property(key = PARAMETER_EXCHANGE_DRIVER_CLASS_NAME, value = "org.knowm.xchange.coinbasepro.CoinbaseProExchange")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
-public class ExchangeDriverClassNameMissingTest extends BaseTest {
+public class CoinbaseProTest extends BaseTest {
 
     @Test
-    @CaseId(11)
+    @CaseId(9)
     @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {
@@ -34,15 +30,7 @@ public class ExchangeDriverClassNameMissingTest extends BaseTest {
             fail("Exception not raised");
         } catch (Exception e) {
             final String message = ExceptionUtils.getRootCause(e).getMessage();
-            assertTrue(message.contains("'driverClassName'"));
-            assertFalse(message.contains("'sandbox'"));
-            assertFalse(message.contains("'username'"));
-            assertFalse(message.contains("'passphrase'"));
-            assertFalse(message.contains("'key'"));
-            assertFalse(message.contains("'secret'"));
-            assertFalse(message.contains("'rates.account'"));
-            assertFalse(message.contains("'rates.ticker'"));
-            assertFalse(message.contains("'rates.trade'"));
+            assertTrue(message.contains("Illegal base64 character 2d"));
         }
     }
 

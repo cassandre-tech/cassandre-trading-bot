@@ -26,9 +26,9 @@ import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.PositionServiceCassandreImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.PositionServiceCassandreImplementation;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
@@ -39,6 +39,7 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -156,10 +157,10 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         }
 
         // Check that there is no duplicated strategy ids.
-        final Set<String> strategyIds = strategies.values()
+        final List<String> strategyIds = strategies.values()
                 .stream()
                 .map(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         final Set<String> duplicatedStrategyIds = strategies.values()
                 .stream()
                 .map(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId())
