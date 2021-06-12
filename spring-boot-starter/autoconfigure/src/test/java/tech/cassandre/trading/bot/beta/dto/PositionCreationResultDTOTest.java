@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.dto;
+package tech.cassandre.trading.bot.beta.dto;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
@@ -18,13 +18,12 @@ public class PositionCreationResultDTOTest {
     @CaseId(47)
     @DisplayName("Check successful position creation")
     public void checkSuccessfulPositionCreation() {
-        // TODO Fix this
-/*        OrderDTO o = OrderDTO.builder().orderId("2").build();
-        PositionDTO p = PositionDTO.builder().id(1).openingOrderId("2").openingOrder(o).build();
+        OrderDTO o = OrderDTO.builder().orderId("2").build();
+        PositionDTO p = PositionDTO.builder().id(1).openingOrder(o).build();
         final PositionCreationResultDTO result = new PositionCreationResultDTO(p);
         assertEquals(1, result.getPosition().getId());
-        assertEquals("2", result.getPosition().getOpeningOrderId());
-        assertTrue(result.isSuccessful());*/
+        assertEquals("2", result.getPosition().getOpeningOrder().getOrderId());
+        assertTrue(result.isSuccessful());
     }
 
     @Test

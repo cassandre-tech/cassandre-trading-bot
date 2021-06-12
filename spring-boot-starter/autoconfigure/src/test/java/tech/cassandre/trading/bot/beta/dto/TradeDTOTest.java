@@ -1,15 +1,15 @@
-package tech.cassandre.trading.bot.test.dto;
+package tech.cassandre.trading.bot.beta.dto;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.ETH_BTC;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -29,7 +29,7 @@ public class TradeDTOTest {
                 .tradeId("0000001")
                 .type(BID)
                 .orderId("000002")
-                .currencyPair(new CurrencyPairDTO(ETH, BTC))
+                .currencyPair(ETH_BTC)
                 .amount(new CurrencyAmountDTO("1", ETH))
                 .price(new CurrencyAmountDTO("1", BTC))
                 .fee(new CurrencyAmountDTO("1", BTC))

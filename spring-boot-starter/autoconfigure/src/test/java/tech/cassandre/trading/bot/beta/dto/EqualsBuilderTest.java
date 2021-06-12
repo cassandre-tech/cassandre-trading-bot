@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.dto;
+package tech.cassandre.trading.bot.beta.dto;
 
 import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
