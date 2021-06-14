@@ -30,7 +30,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +45,7 @@ import static tech.cassandre.trading.bot.beta.util.strategies.NoTradingAccountSt
 import static tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -242,8 +242,10 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(1, position1Id);
         assertEquals(1, position1PositionId);
 
-        // Check onPositionUpdate() & onPositionStatusUpdate().
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        // Check onPositionUpdate() & onPositionStatusUpdate().*
+        // For strategy 1:
+        // Positions updates 3 : Position created in OPENING, move to OPENED, Updated order.
+        // Positions status updates 2 : OPENING and then OPENED.
         assertEquals(3, strategy1.getPositionsUpdatesReceived().size());
         assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size());
         assertEquals(0, strategy2.getPositionsUpdatesReceived().size());
@@ -262,6 +264,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(0, strategy3.getTradesUpdatesReceived().size());
 
         // Check getOrders() & getOrderByOrderId().
+        // Only strategy 1 should have received an order.
         assertEquals(1, strategy1.getOrders().size());
         assertTrue(strategy1.getOrderByOrderId("DRY_ORDER_000000001").isPresent());
         assertEquals(0, strategy2.getOrders().size());
@@ -270,6 +273,7 @@ public class MultipleStrategiesTest extends BaseTest {
         assertTrue(strategy3.getOrderByOrderId("DRY_ORDER_000000001").isEmpty());
 
         // Check getTrades() & getTradeByTradeId().
+        // Only strategy 1 should have received a trade.
         assertEquals(1, strategy1.getTrades().size());
         assertTrue(strategy1.getTradeByTradeId("DRY_TRADE_000000001").isPresent());
         assertEquals(0, strategy2.getTrades().size());
@@ -297,9 +301,6 @@ public class MultipleStrategiesTest extends BaseTest {
         final long position2PositionId = position2Result.getPosition().getPositionId();
         orderFlux.update();
         tradeFlux.update();
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
-        positionService.getPositions().forEach(positionDTO -> System.out.println("=> " + positionDTO.getId() + " : " + positionDTO.getStatus()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
 
         // Check positionId & positionId.
@@ -307,6 +308,9 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(1, position2PositionId);
 
         // Check onPositionUpdate() & onPositionStatusUpdate().
+        // For strategy 2:
+        // Positions updates 3 : Position created in OPENING, move to OPENED, Updated order.
+        // Positions status updates 2 : OPENING and then OPENED.
         assertEquals(3, strategy1.getPositionsUpdatesReceived().size());
         assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size());
         assertEquals(3, strategy2.getPositionsUpdatesReceived().size());
@@ -366,10 +370,10 @@ public class MultipleStrategiesTest extends BaseTest {
         assertTrue(position3Result.isSuccessful());
         final long position3Id = position3Result.getPosition().getId();
         final long position3PositionId = position3Result.getPosition().getPositionId();
-
         orderFlux.update();
         tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
+
         // - Creating one position on ETH/USDT (0.1 ETH for 200 USDT).
         final PositionCreationResultDTO position4Result = strategy3.createLongPosition(ETH_USDT,
                 new BigDecimal("0.1"),
@@ -380,7 +384,6 @@ public class MultipleStrategiesTest extends BaseTest {
         orderFlux.update();
         tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position4Id).getStatus()));
-        TimeUnit.SECONDS.sleep(10);
 
         // Check positionId & positionId.
         assertEquals(3, position3Id);
@@ -478,7 +481,7 @@ public class MultipleStrategiesTest extends BaseTest {
         // Position 4 - Bought 0.1 ETH for 200 USDT - ETH/USDT : 2000.
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(BTC_USDT).last(new BigDecimal("20000")).build());
-        TimeUnit.SECONDS.sleep(10);
+        await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position3Id).getStatus()));
         orderFlux.update();
         tradeFlux.update();
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position3Id).getStatus()));

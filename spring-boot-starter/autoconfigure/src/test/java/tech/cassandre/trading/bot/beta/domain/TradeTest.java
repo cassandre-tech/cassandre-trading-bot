@@ -76,7 +76,6 @@ public class TradeTest extends BaseTest {
     public void checkLoadTradeFromDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
         assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
         assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
 

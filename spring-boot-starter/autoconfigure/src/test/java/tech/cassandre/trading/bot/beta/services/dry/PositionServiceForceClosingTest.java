@@ -99,7 +99,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
-        assertEquals(OPENING, getPositionDTO(position2Id).getStatus());
+        await().untilAsserted(() -> assertEquals(OPENING, getPositionDTO(position2Id).getStatus()));
         await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
