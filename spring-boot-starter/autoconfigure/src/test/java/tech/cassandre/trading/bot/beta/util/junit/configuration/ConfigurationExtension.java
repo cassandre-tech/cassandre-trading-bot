@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
 
-import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy1.PARAMETER_STRATEGY_1_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy3.PARAMETER_STRATEGY_3_ENABLED;
+import static tech.cassandre.trading.bot.beta.strategy.multiple.Strategy1.PARAMETER_STRATEGY_1_ENABLED;
+import static tech.cassandre.trading.bot.beta.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
+import static tech.cassandre.trading.bot.beta.strategy.multiple.Strategy3.PARAMETER_STRATEGY_3_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;

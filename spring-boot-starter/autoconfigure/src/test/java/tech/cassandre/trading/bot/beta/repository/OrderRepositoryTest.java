@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.beta.util.junit.BaseTest;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
@@ -30,6 +32,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class OrderRepositoryTest extends BaseTest {
 
     @Autowired

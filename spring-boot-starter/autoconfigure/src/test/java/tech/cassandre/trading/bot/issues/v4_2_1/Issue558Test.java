@@ -14,9 +14,9 @@ import tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStr
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Github issue 558")
@@ -41,7 +41,7 @@ public class Issue558Test {
         tickerFlux.update();
 
         // We should received three tickers with juste one call to getFlux.
-        await().untilAsserted(() -> assertEquals(3, strategy.getTickersUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy.getTickersUpdatesReceived().size()));
     }
 
 }

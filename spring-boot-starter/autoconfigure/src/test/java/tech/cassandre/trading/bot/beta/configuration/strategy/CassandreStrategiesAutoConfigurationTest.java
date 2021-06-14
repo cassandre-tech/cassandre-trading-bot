@@ -11,14 +11,14 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static tech.cassandre.trading.bot.beta.strategy.multiple.Strategy1.PARAMETER_STRATEGY_1_ENABLED;
+import static tech.cassandre.trading.bot.beta.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
+import static tech.cassandre.trading.bot.beta.strategy.multiple.Strategy3.PARAMETER_STRATEGY_3_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.beta.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy1.PARAMETER_STRATEGY_1_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy3.PARAMETER_STRATEGY_3_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.ta4j.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.beta.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @DisplayName("Configuration - Strategy - Autoconfiguration")
 @Configuration({

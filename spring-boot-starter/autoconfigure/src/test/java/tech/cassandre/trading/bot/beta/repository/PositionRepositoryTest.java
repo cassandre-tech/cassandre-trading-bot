@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.beta.util.junit.configuration.Property;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -34,6 +36,7 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionRepositoryTest {
 
     @Autowired

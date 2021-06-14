@@ -1,19 +1,25 @@
-package tech.cassandre.trading.bot.beta.util.strategies;
+package tech.cassandre.trading.bot.beta.strategy.multiple;
 
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.ta4j.core.BaseStrategy;
+import org.ta4j.core.Strategy;
+import org.ta4j.core.indicators.SMAIndicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.rules.OverIndicatorRule;
+import org.ta4j.core.rules.UnderIndicatorRule;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 
-import java.util.LinkedHashSet;
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,33 +27,27 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.BTC_ETH;
-import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.BTC_USDT;
-import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.ETH_BTC;
-import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.ETH_USDT;
-import static tech.cassandre.trading.bot.beta.util.junit.BaseTest.KCS_USDT;
-import static tech.cassandre.trading.bot.beta.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
+import static tech.cassandre.trading.bot.beta.strategy.multiple.MultipleStrategiesTest.BTC_ETH;
+import static tech.cassandre.trading.bot.beta.strategy.multiple.Strategy2.PARAMETER_STRATEGY_2_ENABLED;
 
 /**
- * Testable strategy (used for tests).
+ * Strategy 2.
  */
 @SuppressWarnings("unused")
 @CassandreStrategy(
-        strategyId = "01",
-        strategyName = "Large testable strategy")
+        strategyId = "02",
+        strategyName = "Strategy 2")
 @ConditionalOnProperty(
-        value = PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED,
+        value = PARAMETER_STRATEGY_2_ENABLED,
         havingValue = "true")
 @Getter
-public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
+public class Strategy2 extends BasicTa4jCassandreStrategy {
 
-    /** Testable strategy enabled parameter. */
-    public static final String PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED = "largeTestableStrategy.enabled";
+    /** Strategy enabled parameter. */
+    public static final String PARAMETER_STRATEGY_2_ENABLED = "strategy2.enabled";
 
     /** Waiting time during each method. */
-    public static final int WAITING_TIME_IN_SECONDS = 1;
+    public static final int WAITING_TIME_IN_MILLISECONDS = 10;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -71,15 +71,35 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
     private final List<PositionDTO> positionsStatusUpdatesReceived = new LinkedList<>();
 
     @Override
-    public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-        Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
-        requestedTickers.add(ETH_BTC);
-        requestedTickers.add(ETH_USDT);
-        requestedTickers.add(BTC_USDT);
-        requestedTickers.add(KCS_USDT);
-        requestedTickers.add(BTC_ETH);
-        requestedTickers.add(new CurrencyPairDTO(ETH, EUR));
-        return requestedTickers;
+    public CurrencyPairDTO getRequestedCurrencyPair() {
+        return BTC_ETH;
+    }
+
+    @Override
+    public int getMaximumBarCount() {
+        return 24;
+    }
+
+    @Override
+    public Duration getDelayBetweenTwoBars() {
+        return Duration.ofHours(1);
+    }
+
+    @Override
+    public Strategy getStrategy() {
+        ClosePriceIndicator closePrice = new ClosePriceIndicator(getSeries());
+        SMAIndicator sma = new SMAIndicator(closePrice, 3);
+        return new BaseStrategy(new UnderIndicatorRule(sma, closePrice), new OverIndicatorRule(sma, closePrice));
+    }
+
+    @Override
+    public void shouldEnter() {
+
+    }
+
+    @Override
+    public void shouldExit() {
+
     }
 
     @Override
@@ -104,7 +124,7 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
                 .forEach(accountsUpdatesReceived::add);
 
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -120,7 +140,7 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
                 .forEach(tickersUpdatesReceived::add);
 
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -136,7 +156,7 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
                 .forEach(ordersUpdatesReceived::add);
 
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -152,7 +172,7 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
                 .forEach(tradesUpdatesReceived::add);
 
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -168,7 +188,7 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
                 .forEach(positionsUpdatesReceived::add);
 
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -184,7 +204,7 @@ public class LargeTestableCassandreStrategy extends BasicCassandreStrategy {
                 .forEach(positionsStatusUpdatesReceived::add);
 
         try {
-            TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+            TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

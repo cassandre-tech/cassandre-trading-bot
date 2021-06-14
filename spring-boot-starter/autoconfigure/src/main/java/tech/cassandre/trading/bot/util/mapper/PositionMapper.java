@@ -51,13 +51,13 @@ public interface PositionMapper {
                     .stopLossPercentage(source.getStopLossPercentageRule())
                     .build();
         }
-        // Stop gain set.
+        // Only a stop gain set.
         if (stopGainRuleSet && !stopLossRuleSet) {
             rules = PositionRulesDTO.builder()
                     .stopGainPercentage(source.getStopGainPercentageRule())
                     .build();
         }
-        // Stop loss set.
+        // Only a stop loss set.
         if (!stopGainRuleSet && stopLossRuleSet) {
             rules = PositionRulesDTO.builder()
                     .stopLossPercentage(source.getStopLossPercentageRule())

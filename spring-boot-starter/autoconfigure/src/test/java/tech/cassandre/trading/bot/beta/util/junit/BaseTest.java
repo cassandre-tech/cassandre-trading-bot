@@ -3,23 +3,11 @@ package tech.cassandre.trading.bot.beta.util.junit;
 import org.awaitility.Awaitility;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
-import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.util.mapper.AccountMapper;
-import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
-import tech.cassandre.trading.bot.util.mapper.OrderMapper;
-import tech.cassandre.trading.bot.util.mapper.PositionMapper;
-import tech.cassandre.trading.bot.util.mapper.StrategyMapper;
-import tech.cassandre.trading.bot.util.mapper.TickerMapper;
-import tech.cassandre.trading.bot.util.mapper.TradeMapper;
-import tech.cassandre.trading.bot.util.mapper.UtilMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -35,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
@@ -90,7 +77,7 @@ public class BaseTest {
     protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
     /** How much we should wait for tests until it is declared as failed. */
-    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 30;
+    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
 
     /**
      * Constructor.
