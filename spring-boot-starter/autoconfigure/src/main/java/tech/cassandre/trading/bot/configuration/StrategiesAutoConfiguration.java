@@ -173,7 +173,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
         // =============================================================================================================
         // Creating position service.
-        // TODO Delete this.
         this.positionService = new PositionServiceCassandreImplementation(applicationContext, positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================

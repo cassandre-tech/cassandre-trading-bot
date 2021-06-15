@@ -4,7 +4,7 @@ import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.test.context.TestConfiguration;
-import tech.cassandre.trading.bot.beta.util.junit.BaseMock;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;

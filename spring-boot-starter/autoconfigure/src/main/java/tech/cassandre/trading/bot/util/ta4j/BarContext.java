@@ -14,6 +14,7 @@ import java.time.ZonedDateTime;
 @Getter
 @EqualsAndHashCode
 @Log4j2
+public
 class BarContext {
     /**
      * The duration.
@@ -61,8 +62,8 @@ class BarContext {
      * @param newVolume    volume
      */
     @SuppressWarnings("checkstyle:AvoidInlineConditionals")
-    BarContext(final Duration newDuration, final ZonedDateTime newStartTime, final Number newLow, final Number newHigh,
-               final Number newOpen, final Number newClose, final Number newVolume) {
+    public BarContext(final Duration newDuration, final ZonedDateTime newStartTime, final Number newLow, final Number newHigh,
+                      final Number newOpen, final Number newClose, final Number newVolume) {
         if (newDuration == null || newStartTime == null) {
             throw new IllegalArgumentException("Cannot construct bar context without duration and timestamp specified");
         }
@@ -77,12 +78,12 @@ class BarContext {
         this.volume = newVolume != null ? newVolume.doubleValue() : 0;
     }
 
-    public boolean isAfter(final ZonedDateTime timestamp) {
+    public final boolean isAfter(final ZonedDateTime timestamp) {
         return timestamp.isAfter(endTime.minus(Duration.ofSeconds(1)));
     }
 
     @SuppressWarnings("checkstyle:AvoidInlineConditionals")
-    public void update(final Number newLow, final Number newHigh, final Number newClose, final Number newVolume) {
+    public final void update(final Number newLow, final Number newHigh, final Number newClose, final Number newVolume) {
         if (newClose == null) {
             throw new IllegalArgumentException("Cannot update bar context without at least specifying close price");
         }
