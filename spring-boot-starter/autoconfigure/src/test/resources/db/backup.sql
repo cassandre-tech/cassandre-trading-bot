@@ -82,7 +82,7 @@ VALUES -- note : No trade for order BACKUP_OPENING_ORDER_01 - This is why positi
        (4, 'BACKUP_TRADE_04', 6, 'ASK', 20, 'BTC', 'BTC/USDT', 40, 'USDT', '2020-08-04', 4, 'USDT', 'Trade 04'),
 
        -- Order BACKUP_TRADE_05 - Trade from the order selling BACKUP_OPENING_ORDER_05.
-       (5, 'BACKUP_TRADE_05', 8, 'ASK', 50, 'ETH', 'ETH/USD', 50, 'USD', '2020-08-05', 5, 'USD', 'Trade 05'),
+       (5, 'BACKUP_TRADE_05', 8, 'ASK', 40, 'ETH', 'ETH/USD', 40, 'USD', '2020-08-05', 5, 'USD', 'Trade 05'),
 
        -- For position 5.
        (6, 'BACKUP_TRADE_06', 9, 'BID', 10, 'ETH', 'ETH/USD', 11, 'USD', '2020-08-05', 5, 'USD', 'Trade 06'),

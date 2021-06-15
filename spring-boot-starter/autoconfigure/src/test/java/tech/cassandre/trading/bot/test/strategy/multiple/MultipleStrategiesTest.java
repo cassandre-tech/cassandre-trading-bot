@@ -244,22 +244,22 @@ public class MultipleStrategiesTest extends BaseTest {
         // For strategy 1:
         // Positions updates 3 : Position created in OPENING, move to OPENED, Updated order.
         // Positions status updates 2 : OPENING and then OPENED.
-        assertEquals(3, strategy1.getPositionsUpdatesReceived().size());
-        assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size());
-        assertEquals(0, strategy2.getPositionsUpdatesReceived().size());
-        assertEquals(0, strategy2.getPositionsStatusUpdatesReceived().size());
-        assertEquals(0, strategy3.getPositionsStatusUpdatesReceived().size());
-        assertEquals(0, strategy3.getPositionsUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(3, strategy1.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy2.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy2.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy3.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy3.getPositionsUpdatesReceived().size()));
 
         // Check onOrderUpdate().
-        assertEquals(1, strategy1.getOrdersUpdatesReceived().size());
-        assertEquals(0, strategy2.getOrdersUpdatesReceived().size());
-        assertEquals(0, strategy3.getOrdersUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(1, strategy1.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy2.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy3.getOrdersUpdatesReceived().size()));
 
         // Check onTradeUpdate().
-        assertEquals(1, strategy1.getTradesUpdatesReceived().size());
-        assertEquals(0, strategy2.getTradesUpdatesReceived().size());
-        assertEquals(0, strategy3.getTradesUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(1, strategy1.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy2.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy3.getTradesUpdatesReceived().size()));
 
         // Check getOrders() & getOrderByOrderId().
         // Only strategy 1 should have received an order.
@@ -309,22 +309,22 @@ public class MultipleStrategiesTest extends BaseTest {
         // For strategy 2:
         // Positions updates 3 : Position created in OPENING, move to OPENED, Updated order.
         // Positions status updates 2 : OPENING and then OPENED.
-        assertEquals(3, strategy1.getPositionsUpdatesReceived().size());
-        assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(3, strategy1.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(3, strategy2.getPositionsUpdatesReceived().size()));
-        assertEquals(2, strategy2.getPositionsStatusUpdatesReceived().size());
-        assertEquals(0, strategy3.getPositionsStatusUpdatesReceived().size());
-        assertEquals(0, strategy3.getPositionsUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(2, strategy2.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy3.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy3.getPositionsUpdatesReceived().size()));
 
         // Check onOrderUpdate().
-        assertEquals(1, strategy1.getOrdersUpdatesReceived().size());
-        assertEquals(1, strategy2.getOrdersUpdatesReceived().size());
-        assertEquals(0, strategy3.getOrdersUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(1, strategy1.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy2.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy3.getOrdersUpdatesReceived().size()));
 
         // Check onTradeUpdate().
-        assertEquals(1, strategy1.getTradesUpdatesReceived().size());
-        assertEquals(1, strategy2.getTradesUpdatesReceived().size());
-        assertEquals(0, strategy3.getTradesUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(1, strategy1.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy2.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(0, strategy3.getTradesUpdatesReceived().size()));
 
         // Check getOrders() & getOrderByOrderId().
         assertEquals(1, strategy1.getOrders().size());
@@ -390,22 +390,22 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(2, position4PositionId);
 
         // Check onPositionUpdate() & onPositionStatusUpdate().
-        assertEquals(4, strategy1.getPositionsUpdatesReceived().size());         // 4 because of new ticker.
-        assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size());
-        assertEquals(3, strategy2.getPositionsUpdatesReceived().size());
-        assertEquals(2, strategy2.getPositionsStatusUpdatesReceived().size());
-        assertEquals(6, strategy3.getPositionsUpdatesReceived().size());
-        assertEquals(4, strategy3.getPositionsStatusUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(4, strategy1.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy2.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy2.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(6, strategy3.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(4, strategy3.getPositionsStatusUpdatesReceived().size()));
 
         // Check onOrderUpdate().
-        assertEquals(1, strategy1.getOrdersUpdatesReceived().size());
-        assertEquals(1, strategy2.getOrdersUpdatesReceived().size());
-        assertEquals(2, strategy3.getOrdersUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(1, strategy1.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy2.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy3.getOrdersUpdatesReceived().size()));
 
         // Check onTradeUpdate().
-        assertEquals(1, strategy1.getTradesUpdatesReceived().size());
-        assertEquals(1, strategy2.getTradesUpdatesReceived().size());
-        assertEquals(2, strategy3.getTradesUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(1, strategy1.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy2.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy3.getTradesUpdatesReceived().size()));
 
         // Check getOrders() & getOrderByOrderId().
         assertEquals(1, strategy1.getOrders().size());
@@ -491,22 +491,22 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(OPENED, getPositionDTO(position4Id).getStatus());
 
         // Check onPositionUpdate() & onPositionStatusUpdate().
-        assertEquals(5, strategy1.getPositionsUpdatesReceived().size());         // 5 because of new ticker.
-        assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size());
-        assertEquals(3, strategy2.getPositionsUpdatesReceived().size());
-        assertEquals(2, strategy2.getPositionsStatusUpdatesReceived().size());
-        // assertEquals(9, strategy3.getPositionsUpdatesReceived().size()); TODO Fails in CI
-        //assertEquals(6, strategy3.getPositionsStatusUpdatesReceived().size()); TODO fails on CI
+        await().untilAsserted(() -> assertEquals(5, strategy1.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy2.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy2.getPositionsStatusUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(9, strategy3.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(6, strategy3.getPositionsStatusUpdatesReceived().size()));
 
         // Check onOrderUpdate().
-        assertEquals(1, strategy1.getOrdersUpdatesReceived().size());
-        assertEquals(1, strategy2.getOrdersUpdatesReceived().size());
-        assertEquals(3, strategy3.getOrdersUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(1, strategy1.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy2.getOrdersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy3.getOrdersUpdatesReceived().size()));
 
         // Check onTradeUpdate().
-        assertEquals(1, strategy1.getTradesUpdatesReceived().size());
-        assertEquals(1, strategy2.getTradesUpdatesReceived().size());
-        ///assertEquals(3, strategy3.getTradesUpdatesReceived().size()); TODO Fails on CI
+        await().untilAsserted(() -> assertEquals(1, strategy1.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy2.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy3.getTradesUpdatesReceived().size()));
 
         // Check getOrders() & getOrderByOrderId().
         assertEquals(1, strategy1.getOrders().size());

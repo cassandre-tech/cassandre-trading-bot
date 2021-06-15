@@ -11,10 +11,12 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.math.BigDecimal.ZERO;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
@@ -93,6 +95,19 @@ public class OrderDTO {
         return trades.stream()
                 .filter(t -> t.getTradeId().equals(tradeId))
                 .findFirst();
+    }
+
+    /**
+     * Returns true if the order has been fulfilled with trades.
+     *
+     * @return true if order completed
+     */
+    public final boolean isFulfilled() {
+        final BigDecimal tradesAmount = getTrades()
+                .stream()
+                .map(t -> t.getAmount().getValue())
+                .reduce(ZERO, BigDecimal::add);
+        return amount.getValue().compareTo(tradesAmount) == 0;
     }
 
     @Override

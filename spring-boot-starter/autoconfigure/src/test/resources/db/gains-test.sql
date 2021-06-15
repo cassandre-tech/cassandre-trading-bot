@@ -53,8 +53,8 @@ INSERT INTO POSITIONS (ID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALU
 VALUES (1, 1, 'LONG', 'CLOSED', 'BTC/USDT', 10, 'BTC', null, null, 1, 2, null, null, null, null, null, null, 1),
        (2, 2, 'LONG', 'CLOSED', 'ETH/BTC', 20, 'ETH', null, null, 3, 4, null, null, null, null, null, null, 1),
        (3, 3, 'LONG', 'CLOSED', 'BTC/USDT', 30, 'BTC', null, null, 5, 6, null, null, null, null, null, null, 1),
-       (4, 4, 'LONG', 'OPENING', 'BTC/USDT', 50, 'BTC', null, null, 7, 8, null, null, null, null, null, null, 1),
-       (5, 5, 'LONG', 'OPENED', 'BTC/USDT', 50, 'BTC', null, null, 9, 10, null, null, null, null, null, null, 1),
+       (4, 4, 'LONG', 'OPENING', 'BTC/USDT', 50, 'BTC', null, null, 7, null, null, null, null, null, null, null, 1),
+       (5, 5, 'LONG', 'OPENED', 'BTC/USDT', 50, 'BTC', null, null, 9, null, null, null, null, null, null, null, 1),
        (6, 6, 'LONG', 'CLOSING', 'BTC/USDT', 50, 'BTC', null, null, 11, 12, null, null, null, null, null, null, 1),
        (7, 7, 'SHORT', 'CLOSED', 'ETH/USDT', 10, 'ETH', null, null, 13, 14, null, null, null, null, null, null, 1);
 
@@ -66,7 +66,7 @@ values -- For position 1.
        (1, 'TRADE_11', 1, 'BID', 7, 'BTC', 'BTC/USDT', 11, 'USDT', DATE '2020-08-05', 1, 'USDT'),
        (2, 'TRADE_12', 1, 'BID', 3, 'BTC', 'BTC/USDT', 12, 'USDT', DATE '2020-08-06', 2, 'USDT'),
        (3, 'TRADE_13', 2, 'ASK', 1, 'BTC', 'BTC/USDT', 13, 'USDT', DATE '2020-08-07', 3, 'USDT'),
-       (4, 'TRADE_14', 2, 'ASK', 2, 'BTC', 'BTC/USDT', 14, 'USDT', DATE '2020-08-08', 4, 'USDT'),
+       (4, 'TRADE_14', 2, 'ASK', 1, 'BTC', 'BTC/USDT', 14, 'USDT', DATE '2020-08-08', 4, 'USDT'),
        (5, 'TRADE_15', 2, 'ASK', 8, 'BTC', 'BTC/USDT', 15, 'USDT', DATE '2020-08-09', 5, 'USDT'),
        -- For position 2.
        (6, 'TRADE_21', 3, 'BID', 20, 'ETH', 'ETH/BTC', 100, 'USDT', DATE '2020-08-05', 5, 'BTC'),

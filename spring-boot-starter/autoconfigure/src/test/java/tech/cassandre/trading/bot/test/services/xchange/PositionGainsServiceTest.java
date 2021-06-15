@@ -46,26 +46,26 @@ public class PositionGainsServiceTest {
             TRADE_11 - Bought 7 for 11 = 77.
             TRADE_12 - Bought 3 for 12 = 36.
             TRADE_13 - Sold 1 for 13 = 13.
-            TRADE_14 - Sold 2 for 14 = 28.
+            TRADE_14 - Sold 1 for 14 = 14.
             TRADE_15 - Sold 8 for 15 = 120.
-            We bought 10 BTC for 113 USDT and sold them for 161 USDT.
-            Amount gain : 48 USDT.
-            Amount percentage : 42.48 % - ((161 - 113) / 113) * 100.
+            We bought 10 BTC for 113 USDT and sold them for 147 USDT.
+            Amount gain : 34 USDT.
+            Amount percentage : 30.08 % - ((147 - 113) / 113) * 100.
             Fees : 15 USDT.
         */
         final Optional<PositionDTO> p1 = positionService.getPositionById(1L);
         assertTrue(p1.isPresent());
         final GainDTO gain1 = p1.get().getGain();
         // Gain (amount).
-        assertEquals(0, new BigDecimal("48").compareTo(gain1.getAmount().getValue()));
+        assertEquals(0, new BigDecimal("34").compareTo(gain1.getAmount().getValue()));
         assertEquals(USDT, gain1.getAmount().getCurrency());
         // Gain (percentage).
-        assertEquals(42.48, gain1.getPercentage());
+        assertEquals(30.09, gain1.getPercentage());
         // Gain (fees).
         assertEquals(0, new BigDecimal("15").compareTo(gain1.getFees().getValue()));
         assertEquals(USDT, gain1.getFees().getCurrency());
         // Net gain.
-        assertEquals(0, new BigDecimal("33").compareTo(gain1.getNetAmount().getValue()));
+        assertEquals(0, new BigDecimal("19").compareTo(gain1.getNetAmount().getValue()));
         assertEquals(USDT, gain1.getNetAmount().getCurrency());
 
         /*
@@ -163,13 +163,13 @@ public class PositionGainsServiceTest {
         // Gains USDT.
         final GainDTO usdtGain = gains.get(USDT);
         assertNotNull(usdtGain);
-        assertEquals(27.77, usdtGain.getPercentage());
-        assertEquals(0, new BigDecimal("198").compareTo(usdtGain.getAmount().getValue()));
+        assertEquals(25.81, usdtGain.getPercentage());
+        assertEquals(0, new BigDecimal("184").compareTo(usdtGain.getAmount().getValue()));
         assertEquals(USDT, usdtGain.getAmount().getCurrency());
         assertEquals(0, new BigDecimal("26").compareTo(usdtGain.getFees().getValue()));
         assertEquals(USDT, usdtGain.getFees().getCurrency());
         // Net gain.
-        assertEquals(0, new BigDecimal("172").compareTo(usdtGain.getNetAmount().getValue()));
+        assertEquals(0, new BigDecimal("158").compareTo(usdtGain.getNetAmount().getValue()));
         assertEquals(USDT, usdtGain.getNetAmount().getCurrency());
 
         // Gains BTC.
