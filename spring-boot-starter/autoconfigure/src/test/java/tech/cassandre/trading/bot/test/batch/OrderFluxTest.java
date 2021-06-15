@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,6 @@ public class OrderFluxTest extends BaseTest {
     private OrderRepository orderRepository;
 
     @Test
-    @CaseId(3)
     @DisplayName("Check received data")
     public void checkReceivedData() {
         // The mock will reply 3 times.

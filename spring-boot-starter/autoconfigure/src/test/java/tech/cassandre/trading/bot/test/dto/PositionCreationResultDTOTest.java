@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.dto;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
@@ -15,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PositionCreationResultDTOTest {
 
     @Test
-    @CaseId(47)
     @DisplayName("Check successful position creation")
     public void checkSuccessfulPositionCreation() {
         OrderDTO o = OrderDTO.builder().orderId("2").build();
@@ -27,7 +25,6 @@ public class PositionCreationResultDTOTest {
     }
 
     @Test
-    @CaseId(48)
     @DisplayName("Check unsuccessful position creation")
     public void checkUnsuccessfulPositionCreation() {
         final PositionCreationResultDTO p = new PositionCreationResultDTO("Error message", new RuntimeException("Exception"));

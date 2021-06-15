@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.services.dry;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +72,6 @@ public class UserServiceTest extends BaseTest {
     private LargeTestableCassandreStrategy strategy;
 
     @Test
-    @CaseId(66)
     @DisplayName("Check imported user data")
     public void checkImportUserData() {
         // Retrieve user.
@@ -122,7 +120,6 @@ public class UserServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(67)
     @DisplayName("Check balances updates")
     public void checkBalancesUpdate() {
         // We retrieve the account information in the strategy.
@@ -264,7 +261,6 @@ public class UserServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(68)
     @DisplayName("Check buying error")
     public void checkBuyingError() {
         // =============================================================================================================
@@ -313,7 +309,6 @@ public class UserServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(69)
     @DisplayName("Check selling error")
     public void checkSellingError() {
         // =============================================================================================================

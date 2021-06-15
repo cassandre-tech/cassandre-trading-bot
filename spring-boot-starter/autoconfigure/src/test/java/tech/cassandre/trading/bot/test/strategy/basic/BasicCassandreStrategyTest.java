@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.strategy.basic;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,6 @@ public class BasicCassandreStrategyTest extends BaseTest {
     private StrategyRepository strategyRepository;
 
     @Test
-    @CaseId(82)
     @DisplayName("Check strategy behavior")
     public void checkStrategyBehavior() {
         final int numberOfValuesExpected = 7;

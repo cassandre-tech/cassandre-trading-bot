@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,6 @@ public class TradeFluxTest extends BaseTest {
     private org.knowm.xchange.service.trade.TradeService xChangeTradeService;
 
     @Test
-    @CaseId(6)
     @DisplayName("Check received data")
     public void checkReceivedData() {
         // =============================================================================================================

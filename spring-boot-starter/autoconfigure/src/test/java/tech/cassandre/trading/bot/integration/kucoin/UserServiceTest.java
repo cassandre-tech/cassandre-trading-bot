@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -54,7 +53,6 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    @CaseId(90)
     @Tag("integration")
     @DisplayName("Check get user, accounts and balances")
     public void checkGetUser() {

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.repository;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,6 @@ public class OrderRepositoryTest extends BaseTest {
     private OrderRepository orderRepository;
 
     @Test
-    @CaseId(56)
     @DisplayName("Check imported data")
     public void checkImportedOrders() {
         // Orders.

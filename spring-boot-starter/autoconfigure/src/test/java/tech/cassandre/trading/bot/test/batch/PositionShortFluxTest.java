@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,6 @@ public class PositionShortFluxTest extends BaseTest {
     private PositionRepository positionRepository;
 
     @Test
-    @CaseId(91)
     @DisplayName("Check received data")
     public void checkReceivedData() throws InterruptedException {
         // =============================================================================================================

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.configuration.exchange;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +19,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class CoinbaseTest extends BaseTest {
 
     @Test
-    @CaseId(10)
     @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {

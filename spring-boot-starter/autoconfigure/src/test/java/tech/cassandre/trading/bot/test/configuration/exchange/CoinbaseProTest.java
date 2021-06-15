@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.configuration.exchange;
 
-import io.qase.api.annotation.CaseId;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class CoinbaseProTest extends BaseTest {
 
     @Test
-    @CaseId(9)
     @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {

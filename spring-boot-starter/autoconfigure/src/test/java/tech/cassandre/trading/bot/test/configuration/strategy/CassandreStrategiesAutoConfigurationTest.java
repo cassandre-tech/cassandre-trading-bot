@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.configuration.strategy;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
@@ -30,7 +29,6 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
 class CassandreStrategiesAutoConfigurationTest {
 
     @Test
-    @CaseId(20)
     @DisplayName("Check when a valid strategy was found")
     public void checkValidStrategyFound() {
         try {
@@ -50,7 +48,6 @@ class CassandreStrategiesAutoConfigurationTest {
     }
 
     @Test
-    @CaseId(22)
     @DisplayName("Check error messages when no strategy is found")
     public void checkNoStrategyFound() {
         try {
@@ -72,7 +69,6 @@ class CassandreStrategiesAutoConfigurationTest {
     }
 
     @Test
-    @CaseId(24)
     @DisplayName("Check error messages when having an invalid strategy")
     public void checkInvalidStrategyError() {
         try {
@@ -93,7 +89,6 @@ class CassandreStrategiesAutoConfigurationTest {
     }
 
     @Test
-    @CaseId(25)
     @DisplayName("Check error messages if a strategy has an invalid trade account")
     public void checkStrategyWithInvalidTradeAccount() {
         try {
@@ -115,7 +110,6 @@ class CassandreStrategiesAutoConfigurationTest {
     }
 
     @Test
-    @CaseId(112)
     @DisplayName("Check error messages if two strategies have the same id")
     public void checkStrategiesWithDuplicatedIds() {
         try {

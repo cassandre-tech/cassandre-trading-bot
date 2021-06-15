@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.gemini;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -69,7 +68,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(94)
     @Tag("integration")
     @DisplayName("Check creates a buy/sell market order")
     @Disabled("Gemini doesn't support market order")
@@ -99,7 +97,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(95)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     @Disabled("Gemini doesn't support market order")
@@ -145,7 +142,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(96)
     @Tag("integration")
     @DisplayName("Check cancel an order")
     @Disabled("Gemini doesn't support market order")
@@ -170,7 +166,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(97)
     @Tag("integration")
     @DisplayName("Check get trades")
     @Disabled("Gemini doesn't support market order")

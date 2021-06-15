@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.services.dry;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +73,6 @@ public class UserServiceWithPositionsTest extends BaseTest {
     private LargeTestableCassandreStrategy strategy;
 
     @Test
-    @CaseId(100)
     @DisplayName("Check user balances updates with positions")
     public void checkUserBalancesUpdatesWithPosition() throws InterruptedException {
         final PositionRulesDTO rules = PositionRulesDTO.builder()
@@ -185,6 +183,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         final PositionCreationResultDTO position2 = strategy.createLongPosition(ETH_USDT, new BigDecimal("10"), rules);
         long position2Id = position2.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
+        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         balances = getBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));

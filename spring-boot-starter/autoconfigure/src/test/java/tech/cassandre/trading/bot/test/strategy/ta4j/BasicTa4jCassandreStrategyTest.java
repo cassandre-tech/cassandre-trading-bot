@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.strategy.ta4j;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,6 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
     private StrategyRepository strategyRepository;
 
     @Test
-    @CaseId(83)
     @DisplayName("Check strategy behavior")
     public void checkStrategyBehavior() {
         // Check type.

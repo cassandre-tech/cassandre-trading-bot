@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -67,7 +66,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(86)
     @Tag("integration")
     @DisplayName("Check creates a buy/sell market order")
     public void checkCreateBuySellMarketOrder() {
@@ -96,7 +94,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(87)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     public void checkCreateBuyLimitOrder() {
@@ -138,7 +135,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(88)
     @Tag("integration")
     @DisplayName("Check cancel an order")
     public void checkCancelOrder() {
@@ -159,7 +155,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(89)
     @Tag("integration")
     @DisplayName("Check get trades")
     public void checkGetTrades() {

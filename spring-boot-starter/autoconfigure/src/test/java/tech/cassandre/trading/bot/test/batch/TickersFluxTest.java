@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.service.marketdata.MarketDataService;
@@ -41,7 +40,6 @@ public class TickersFluxTest extends BaseTest {
     private MarketDataService marketDataService;
 
     @Test
-    @CaseId(5)
     @DisplayName("Check received data")
     public void checkReceivedData() {
         // =============================================================================================================

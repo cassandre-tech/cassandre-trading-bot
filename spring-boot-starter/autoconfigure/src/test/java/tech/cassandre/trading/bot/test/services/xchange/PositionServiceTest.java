@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.services.xchange;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +85,6 @@ public class PositionServiceTest extends BaseTest {
     private PositionFlux positionFlux;
 
     @Test
-    @CaseId(71)
     @DisplayName("Check position creation")
     public void checkCreatePosition() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
@@ -126,7 +124,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(72)
     @DisplayName("Check position order update")
     public void checkPositionOrderUpdate() {
         // =============================================================================================================
@@ -324,7 +321,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(73)
     @DisplayName("Check opening order failure")
     public void checkOpeningOrderFailure() {
         // =============================================================================================================
@@ -380,7 +376,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(74)
     @DisplayName("Check closing order failure")
     public void checkClosingOrderFailure() {
         // =============================================================================================================
@@ -463,7 +458,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(75)
     @DisplayName("Check get positions and get positions by id")
     public void checkGetPosition() {
         // Creates position 1 (ETH/BTC, 0.0001, 10% stop gain).
@@ -489,7 +483,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(76)
     @DisplayName("Check trade update")
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void checkTradeUpdate() {
@@ -543,7 +536,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(77)
     @DisplayName("Check close position")
     public void checkClosePosition() throws InterruptedException {
         // =============================================================================================================
@@ -598,7 +590,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(78)
     @DisplayName("Check lowest, highest and latest gain")
     public void checkLowestHighestAndLatestGain() throws InterruptedException {
         // A position is created on ETH/BTC.
@@ -739,7 +730,6 @@ public class PositionServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(110)
     @DisplayName("Check update rules on position")
     public void checkUpdateRulesOnPosition() throws InterruptedException {
         // =============================================================================================================

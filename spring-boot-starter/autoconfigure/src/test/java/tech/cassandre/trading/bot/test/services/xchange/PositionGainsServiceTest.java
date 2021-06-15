@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.services.xchange;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,6 @@ public class PositionGainsServiceTest {
     private PositionService positionService;
 
     @Test
-    @CaseId(70)
     @DisplayName("Check gains calculation")
     public void checkGainsCalculation() {
         /*

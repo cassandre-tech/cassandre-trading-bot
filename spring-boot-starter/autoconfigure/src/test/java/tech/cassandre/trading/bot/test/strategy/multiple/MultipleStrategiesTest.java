@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.strategy.multiple;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +98,6 @@ public class MultipleStrategiesTest extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Test
-    @CaseId(113)
     @DisplayName("Check multiple strategies behavior")
     public void checkMultipleStrategyBehavior() throws InterruptedException {
         //==============================================================================================================

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.services.dry;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +51,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
     private TickerFlux tickerFlux;
 
     @Test
-    @CaseId(64)
     @DisplayName("Check force closing")
     public void checkForceClosing() {
         // First tickers - cp1 & cp2 (dry mode).

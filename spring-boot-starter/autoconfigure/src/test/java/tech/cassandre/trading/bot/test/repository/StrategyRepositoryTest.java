@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.repository;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ public class StrategyRepositoryTest {
     private StrategyRepository strategyRepository;
 
     @Test
-    @CaseId(62)
     @DisplayName("Check imported data")
     public void checkImportedOrders() {
         // Testing an existing strategy.

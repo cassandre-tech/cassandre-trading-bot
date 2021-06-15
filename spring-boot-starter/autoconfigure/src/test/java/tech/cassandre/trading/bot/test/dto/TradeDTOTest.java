@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.dto;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -18,7 +17,6 @@ import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
 public class TradeDTOTest {
 
     @Test
-    @CaseId(54)
     @DisplayName("Check equals()")
     public void checkEqualToForTrades() {
         // Test that only id is important when testing equality.
@@ -46,7 +44,6 @@ public class TradeDTOTest {
     }
 
     @Test
-    @CaseId(55)
     @DisplayName("Check null trades")
     public void checkNullTrades() {
         TradeDTO t1 = TradeDTO.builder().tradeId("0000001").build();

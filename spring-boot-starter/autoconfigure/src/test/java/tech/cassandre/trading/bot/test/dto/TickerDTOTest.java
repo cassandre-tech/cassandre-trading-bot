@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.dto;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -16,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class TickerDTOTest extends BaseTest {
 
 	@Test
-	@CaseId(53)
 	@DisplayName("Check equals()")
 	public void checkEqualToForTickers() {
 		// Dates.

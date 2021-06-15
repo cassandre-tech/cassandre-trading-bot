@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.services.dry;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,6 @@ public class TradeServiceTest extends BaseTest {
     private TickerFlux tickerFlux;
 
     @Test
-    @CaseId(65)
     @DisplayName("Check buy and sell order creation")
     public void checkCreateBuyAndSellOrder() throws InterruptedException {
         tickerFlux.update();

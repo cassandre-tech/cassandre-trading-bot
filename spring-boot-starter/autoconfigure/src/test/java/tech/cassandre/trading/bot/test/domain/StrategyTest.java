@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.domain;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ public class StrategyTest {
     private StrategyRepository strategyRepository;
 
     @Test
-    @CaseId(34)
     @DisplayName("Check saved strategy in database")
     public void checkLoadOrderFromDatabase() {
         // Test existing strategy.

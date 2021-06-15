@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.services.dry;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,6 @@ public class PositionServiceTest extends BaseTest {
     private TickerFlux tickerFlux;
 
     @Test
-    @CaseId(64)
     @DisplayName("Check position lifecycle")
     public void checkPositionLifecycle() {
         // First tickers - cp1 & cp2 (dry mode).
@@ -98,7 +96,6 @@ public class PositionServiceTest extends BaseTest {
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
-        assertEquals(OPENING, getPositionDTO(position2Id).getStatus());
         await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));

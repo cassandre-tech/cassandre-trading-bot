@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.test.repository;
 
 import com.google.common.collect.Sets;
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,6 @@ public class PositionRepositoryTest {
     private PositionRepository positionRepository;
 
     @Test
-    @CaseId(57)
     @DisplayName("Check imported data")
     public void checkImportedPositions() {
         // Positions.
@@ -179,7 +177,6 @@ public class PositionRepositoryTest {
     }
 
     @Test
-    @CaseId(58)
     @DisplayName("Check find by status")
     public void checkFindByStatus() {
         final List<Position> openingPositions = positionRepository.findByStatus(OPENING);
@@ -202,7 +199,6 @@ public class PositionRepositoryTest {
     }
 
     @Test
-    @CaseId(59)
     @DisplayName("Check find by status not")
     public void checkFindByStatusNot() {
         final List<Position> notClosingPositions = positionRepository.findByStatusNot(CLOSING);
@@ -214,7 +210,6 @@ public class PositionRepositoryTest {
     }
 
     @Test
-    @CaseId(109)
     @DisplayName("Check update rules on position")
     public void checkUpdateRulesOnPosition() {
         // We retrieve the positions.

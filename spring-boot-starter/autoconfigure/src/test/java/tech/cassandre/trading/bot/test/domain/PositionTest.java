@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.domain;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +88,6 @@ public class PositionTest extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Test
-    @CaseId(30)
     @DisplayName("Check load position from database")
     public void checkLoadPositionFromDatabase() {
         // =============================================================================================================
@@ -269,7 +267,6 @@ public class PositionTest extends BaseTest {
     }
 
     @Test
-    @CaseId(31)
     @DisplayName("Check how a new position is saved")
     public void checkSavedNewPosition() {
         // =============================================================================================================
@@ -359,7 +356,6 @@ public class PositionTest extends BaseTest {
     }
 
     @Test
-    @CaseId(32)
     @DisplayName("Check saved data during position lifecycle")
     public void checkSavedDataDuringPositionLifecycle() {
         // =============================================================================================================

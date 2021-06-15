@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.dto;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -23,7 +22,6 @@ public class OrderDTOTest {
 
 	@Test
 	@SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength" })
-	@CaseId(46)
 	@DisplayName("Check equals()")
 	public void checkEqualToForOrder() {
 		// Order 1.

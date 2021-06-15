@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.binance;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -59,7 +58,6 @@ public class MarketServiceTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Test
-    @CaseId(114)
     @Tag("integration")
     @DisplayName("Check get ticker")
     public void checkGetTicker() {
@@ -98,7 +96,6 @@ public class MarketServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(115)
     @Tag("integration")
     @DisplayName("Check ticker flux")
     public void checkTickerFlux() throws InterruptedException {

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.domain;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,6 @@ public class OrderTest extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Test
-    @CaseId(28)
     @DisplayName("Check load order from database")
     public void checkLoadOrderFromDatabase() {
         // =============================================================================================================
@@ -149,7 +147,6 @@ public class OrderTest extends BaseTest {
     }
 
     @Test
-    @CaseId(29)
     @DisplayName("Check save order in database")
     public void checkSaveOrderInDatabase() {
         // =============================================================================================================

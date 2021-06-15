@@ -117,12 +117,6 @@
             <version>2.5.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.qase</groupId>
-            <artifactId>qase-junit5</artifactId>
-            <version>1.0.2</version>
-            <scope>test</scope>
-        </dependency>
         <!-- Used for tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
