@@ -313,7 +313,7 @@ public class MultipleStrategiesTest extends BaseTest {
         // Positions status updates 2 : OPENING and then OPENED.
         assertEquals(3, strategy1.getPositionsUpdatesReceived().size());
         assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size());
-        assertEquals(3, strategy2.getPositionsUpdatesReceived().size());
+        await().untilAsserted(() -> assertEquals(3, strategy2.getPositionsUpdatesReceived().size()));
         assertEquals(2, strategy2.getPositionsStatusUpdatesReceived().size());
         assertEquals(0, strategy3.getPositionsStatusUpdatesReceived().size());
         assertEquals(0, strategy3.getPositionsUpdatesReceived().size());

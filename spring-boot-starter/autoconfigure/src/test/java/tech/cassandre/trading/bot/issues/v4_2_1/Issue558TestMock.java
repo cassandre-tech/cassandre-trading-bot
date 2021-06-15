@@ -25,6 +25,7 @@ public class Issue558TestMock extends BaseMock {
         tickers.add(getGeneratedTicker(XCHANGE_ETH_BTC, new BigDecimal("1")));
         tickers.add(getGeneratedTicker(XCHANGE_BTC_ETH, new BigDecimal("2")));
         tickers.add(getGeneratedTicker(XCHANGE_BTC_USDT, new BigDecimal("3")));
+        tickers.add(null);
 
         // We use getTickers instead of getTicker.
         given(marketService.getTickers(any())).willReturn(tickers);
