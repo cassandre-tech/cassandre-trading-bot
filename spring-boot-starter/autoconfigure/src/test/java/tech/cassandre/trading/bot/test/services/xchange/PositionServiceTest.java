@@ -281,7 +281,6 @@ public class PositionServiceTest extends BaseTest {
                 .build();
         position1.get().closePositionWithOrder(closingOrder01);
         positionFlux.emitValue(position1.get());
-        await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));
 
         // An update arrives and changes the status order of position 1.
         orderFlux.emitValue(closingOrder01);

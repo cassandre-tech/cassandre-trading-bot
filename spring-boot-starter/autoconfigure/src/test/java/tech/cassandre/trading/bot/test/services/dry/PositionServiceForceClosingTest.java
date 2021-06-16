@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -25,10 +27,8 @@ import java.util.Optional;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
@@ -36,7 +36,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
-@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles("schedule-disabled")
 @Import(PositionServiceForceClosingTestMock.class)
 public class PositionServiceForceClosingTest extends BaseTest {
 
@@ -47,12 +47,18 @@ public class PositionServiceForceClosingTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Autowired
+    private OrderFlux orderFlux;
+
+    @Autowired
+    private TradeFlux tradeFlux;
+
+    @Autowired
     private TickerFlux tickerFlux;
 
     @Test
     @DisplayName("Check force closing")
     public void checkForceClosing() {
-        // First tickers - cp1 & cp2 (dry mode).
+        // First tickers (dry mode).
         // ETH/BTC - 0.2.
         // ETH/USDT - 0.3.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.2")).build());
@@ -75,7 +81,8 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
-        assertEquals(OPENING, getPositionDTO(position1Id).getStatus());
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(3, strategy.getPositionsUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
@@ -97,6 +104,8 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
@@ -112,6 +121,8 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // No change.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
 
@@ -121,6 +132,8 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // New tickers will trigger close.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position2Id).getStatus()));
 
@@ -130,6 +143,8 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // New tickers will trigger close.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
+        orderFlux.update();
+        tradeFlux.update();
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position2Id).getStatus()));
     }
