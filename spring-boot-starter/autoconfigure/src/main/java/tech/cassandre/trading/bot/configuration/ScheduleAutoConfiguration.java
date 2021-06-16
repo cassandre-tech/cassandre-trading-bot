@@ -64,7 +64,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
         scheduler.setThreadNamePrefix(THREAD_NAME_PREFIX);
         scheduler.setAwaitTerminationMillis(AWAIT_TERMINATION_IN_MILLISECONDS);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
-        scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
+        //scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
         scheduler.setErrorHandler(t -> {
             try {
                 logger.error("ScheduleAutoConfiguration - Error in scheduled tasks: {}", t.getMessage());
