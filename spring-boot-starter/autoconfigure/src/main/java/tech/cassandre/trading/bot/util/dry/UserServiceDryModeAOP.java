@@ -106,15 +106,6 @@ public class UserServiceDryModeAOP extends BaseService {
     }
 
     /**
-     * Getter accountInfo.
-     *
-     * @return accountInfo
-     */
-    public final AccountInfo getAccountInfo() {
-        return accountInfo;
-    }
-
-    /**
      * Update balance of trade account (method called by trade service).
      *
      * @param currency currency
