@@ -632,7 +632,7 @@ public class PositionServiceTest extends BaseTest {
                 .build());
 
         // The two tickers arrived during the OPENING status should not have change highest lowest and latest gain.
-        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdatesReceived().size()));
         PositionDTO position1 = getPositionDTO(position1Id);
         assertTrue(position1.getLowestCalculatedGain().isEmpty());
         assertTrue(position1.getHighestCalculatedGain().isEmpty());

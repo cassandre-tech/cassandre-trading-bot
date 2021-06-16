@@ -87,7 +87,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
         orderFlux.update();
         tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdatesReceived().get(1).getStatus()));
 
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH_USDT, 0.0002, 20% stop loss, price of 0.3).
@@ -108,7 +107,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
         orderFlux.update();
         tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdatesReceived().get(3).getStatus()));
 
         // =============================================================================================================
         // Tickers are coming.

@@ -77,7 +77,6 @@ public class PositionServiceTest extends BaseTest {
         // Third: trade corresponding to the order arrives.
         assertEquals(OPENING, getPositionDTO(position1Id).getStatus());
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdatesReceived().get(1).getStatus()));
 
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH_USDT, 0.0002, 20% stop loss, price of 0.3).
@@ -96,7 +95,6 @@ public class PositionServiceTest extends BaseTest {
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdatesReceived().get(3).getStatus()));
 
         // =============================================================================================================
         // Tickers are coming.
