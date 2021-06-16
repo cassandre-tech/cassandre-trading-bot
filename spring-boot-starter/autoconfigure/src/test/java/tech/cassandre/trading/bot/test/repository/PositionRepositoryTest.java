@@ -1,11 +1,11 @@
 package tech.cassandre.trading.bot.test.repository;
 
 import com.google.common.collect.Sets;
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.repository.PositionRepository;
@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -34,13 +35,13 @@ import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionRepositoryTest {
 
     @Autowired
     private PositionRepository positionRepository;
 
     @Test
-    @CaseId(57)
     @DisplayName("Check imported data")
     public void checkImportedPositions() {
         // Positions.
@@ -176,7 +177,6 @@ public class PositionRepositoryTest {
     }
 
     @Test
-    @CaseId(58)
     @DisplayName("Check find by status")
     public void checkFindByStatus() {
         final List<Position> openingPositions = positionRepository.findByStatus(OPENING);
@@ -199,7 +199,6 @@ public class PositionRepositoryTest {
     }
 
     @Test
-    @CaseId(59)
     @DisplayName("Check find by status not")
     public void checkFindByStatusNot() {
         final List<Position> notClosingPositions = positionRepository.findByStatusNot(CLOSING);
@@ -211,10 +210,9 @@ public class PositionRepositoryTest {
     }
 
     @Test
-    @CaseId(109)
     @DisplayName("Check update rules on position")
     public void checkUpdateRulesOnPosition() {
-        // We retrieve .
+        // We retrieve the positions.
         Optional<Position> p = positionRepository.findById(5L);
         assertTrue(p.isPresent());
         assertEquals(30, p.get().getStopGainPercentageRule());
@@ -240,7 +238,7 @@ public class PositionRepositoryTest {
     @Test
     @DisplayName("Check update force closing on position")
     public void checkUpdateForceClosingPosition() {
-        // We retrieve.
+        // We retrieve the position.
         Optional<Position> p = positionRepository.findById(5L);
         assertTrue(p.isPresent());
         assertFalse(p.get().isForceClosing());

@@ -217,7 +217,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     public final void tickersUpdates(final Set<TickerDTO> tickers) {
         // With the ticker received, we check for every opened position, if it should be closed.
         logger.debug("PositionService - Updating position with {} ticker", tickers.size());
-        tickers.forEach(ticker -> positionRepository.findByStatus(OPENED)
+        tickers.forEach(ticker -> positionRepository.findByStatusNot(CLOSED)
                 .stream()
                 .map(positionMapper::mapToPositionDTO)
                 .filter(p -> p.tickerUpdate(ticker))
@@ -254,6 +254,8 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                             if (orderCreationResult.isSuccessful()) {
                                 p.closePositionWithOrder(orderCreationResult.getOrder());
                                 logger.debug("PositionService - Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
+                            } else {
+                                logger.error("PositionService - Position {} not closed: {}", p.getPositionId(), orderCreationResult.getErrorMessage());
                             }
                         } else {
                             logger.error("Strategy {} not found", p.getStrategy().getStrategyId());

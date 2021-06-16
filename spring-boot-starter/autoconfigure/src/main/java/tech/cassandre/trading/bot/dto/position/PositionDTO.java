@@ -67,9 +67,6 @@ public class PositionDTO {
     /** Position rules. */
     private final PositionRulesDTO rules;
 
-    /** Position status. */
-    private PositionStatusDTO status;
-
     /** Indicates that the position must be closed no matter the rules. */
     private final boolean forceClosing;
 
@@ -126,8 +123,45 @@ public class PositionDTO {
                 .build();
         this.openingOrder = newOpenOrder;
         this.rules = newRules;
-        this.status = OPENING;
         this.forceClosing = false;
+    }
+
+    /**
+     * Returns position status.
+     *
+     * @return status
+     */
+    @ToString.Include(name = "status")
+    public final PositionStatusDTO getStatus() {
+        // No closing order.
+        if (closingOrder == null) {
+            // Error.
+            if (openingOrder.getStatus().isInError()) {
+                return OPENING_FAILURE;
+            }
+
+            if (openingOrder.isFulfilled()) {
+                return OPENED;
+            }
+        }
+
+        // Closing order present
+        if (closingOrder != null) {
+            // Error.
+            if (closingOrder.getStatus().isInError()) {
+                return CLOSING_FAILURE;
+            }
+
+            // Checking if fulfilled or not.
+            if (!closingOrder.isFulfilled()) {
+                return CLOSING;
+            } else {
+                return CLOSED;
+            }
+        }
+
+        // If non others status is set, it means we are just starting so it's opening.
+        return OPENING;
     }
 
     /**
@@ -137,7 +171,7 @@ public class PositionDTO {
      * @return gain
      */
     private Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
-        if (this.status != OPENING && price != null) {
+        if (getStatus() != OPENING && price != null) {
             // How gain calculation works for long positions ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50 USDT.
             //  - Sold 10 ETH with a price of 6 -> Amount of 60 USDT.
@@ -216,16 +250,10 @@ public class PositionDTO {
     public final boolean orderUpdate(final OrderDTO updatedOrder) {
         if (openingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
             this.openingOrder = updatedOrder;
-            if (updatedOrder.getStatus().isInError()) {
-                this.status = OPENING_FAILURE;
-            }
             return true;
         }
         if (closingOrder != null && closingOrder.getOrderId().equals(updatedOrder.getOrderId())) {
             this.closingOrder = updatedOrder;
-            if (updatedOrder.getStatus().isInError()) {
-                this.status = CLOSING_FAILURE;
-            }
             return true;
         }
         return false;
@@ -238,36 +266,6 @@ public class PositionDTO {
      * @return true if the the trade updated the position.
      */
     public boolean tradeUpdate(final TradeDTO trade) {
-        // If status is OPENING and the trades for the open order arrives for the whole amount ==> status = OPENED.
-        if (trade.getOrderId().equals(openingOrder.getOrderId()) && status == OPENING) {
-
-            // We calculate the sum of amount in the all the trades.
-            // If it reaches the original amount we order, we consider the trade opened.
-            final BigDecimal tradesTotal = openingOrder.getTrades()
-                    .stream()
-                    .filter(t -> !t.getTradeId().equals(trade.getTradeId()))
-                    .map(t -> t.getAmount().getValue())
-                    .reduce(trade.getAmount().getValue(), BigDecimal::add);
-            if (openingOrder.getAmount().getValue().compareTo(tradesTotal) == 0) {
-                status = OPENED;
-            }
-        }
-
-        // If status is CLOSING and the trades for the close order arrives for the whole amount ==> status = CLOSED.
-        if (closingOrder != null && trade.getOrderId().equals(closingOrder.getOrderId()) && status == CLOSING) {
-
-            // We calculate the sum of amount in the all the trades.
-            // If it reaches the original amount we order, we consider the trade opened.
-            final BigDecimal tradesTotal = closingOrder.getTrades()
-                    .stream()
-                    .filter(t -> !t.getTradeId().equals(trade.getTradeId()))
-                    .map(t -> t.getAmount().getValue())
-                    .reduce(trade.getAmount().getValue(), BigDecimal::add);
-            if (closingOrder.getAmount().getValue().compareTo(tradesTotal) == 0) {
-                status = CLOSED;
-            }
-        }
-
         // Return true signaling there is an update if this trade was for this position.
         return trade.getOrderId().equals(openingOrder.getOrderId())
                 || (closingOrder != null && trade.getOrderId().equals(closingOrder.getOrderId()));
@@ -323,7 +321,7 @@ public class PositionDTO {
      * @return amount
      */
     public CurrencyAmountDTO getAmountToLock() {
-        if (status == CLOSED) {
+        if (getStatus() == CLOSED) {
             return CurrencyAmountDTO.ZERO;
         }
 
@@ -392,11 +390,10 @@ public class PositionDTO {
      */
     public final void closePositionWithOrder(final OrderDTO newCloseOrder) {
         // This method should only be called when in status OPENED.
-        if (status != OPENED) {
+        if (getStatus() != OPENED) {
             throw new PositionException("Impossible to close position " + id + " because of its status");
         }
         closingOrder = newCloseOrder;
-        status = CLOSING;
     }
 
     /**
@@ -445,7 +442,7 @@ public class PositionDTO {
      * @return gain
      */
     public GainDTO getGain() {
-        if (status == CLOSED) {
+        if (getStatus() == CLOSED) {
             if (this.type == LONG) {
                 // Gain calculation for currency pair : ETH-BTC
                 // The first listed currency of a currency pair is called the base currency.
@@ -571,7 +568,7 @@ public class PositionDTO {
                 value += rules.getStopLossPercentage() + " % loss";
             }
             value += ")";
-            switch (status) {
+            switch (getStatus()) {
                 case OPENING:
                     value += " - Opening - Waiting for the trades of order " + openingOrder.getOrderId();
                     break;
@@ -632,7 +629,7 @@ public class PositionDTO {
                 .append(this.currencyPair, that.currencyPair)
                 .append(this.amount, that.amount)
                 .append(this.rules, that.rules)
-                .append(this.status, that.status)
+                .append(this.getStatus(), that.getStatus())
                 .append(this.openingOrder, that.openingOrder)
                 .append(this.closingOrder, that.closingOrder)
                 .append(this.lowestGainPrice, that.lowestGainPrice)

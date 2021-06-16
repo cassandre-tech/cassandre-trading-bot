@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,7 +49,6 @@ public class MarketServiceTest {
     private MarketService marketService;
 
     @Test
-    @CaseId(85)
     @Tag("integration")
     @DisplayName("Check get ticker")
     public void checkGetTicker() {

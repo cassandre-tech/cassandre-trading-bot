@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.coinbasepro;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +14,8 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -69,7 +68,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(103)
     @Tag("integration")
     @DisplayName("Check creates a buy/sell market order")
     public void checkCreateBuySellMarketOrder() {
@@ -98,7 +96,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(104)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     public void checkCreateBuyLimitOrder() {
@@ -140,7 +137,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(105)
     @Tag("integration")
     @DisplayName("Check cancel an order")
     @Disabled("Seems Coinbase pro doesn't support canceling an order")
@@ -165,7 +161,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(106)
     @Tag("integration")
     @DisplayName("Check get trades")
     public void checkGetTrades() {

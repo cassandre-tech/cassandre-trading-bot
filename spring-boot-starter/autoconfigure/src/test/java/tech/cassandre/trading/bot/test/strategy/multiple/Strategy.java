@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.test.strategy.multiple;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Abstract class for strategy.
  */
+@Getter
 public abstract class Strategy extends BasicCassandreStrategy {
 
     /** Waiting time during each method. */
@@ -29,22 +31,22 @@ public abstract class Strategy extends BasicCassandreStrategy {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /** Accounts update received. */
-    private final List<AccountDTO> accountsUpdateReceived = new LinkedList<>();
+    private final List<AccountDTO> accountsUpdatesReceived = new LinkedList<>();
 
     /** Tickers update received. */
-    private final List<TickerDTO> tickersUpdateReceived = new LinkedList<>();
+    private final List<TickerDTO> tickersUpdatesReceived = new LinkedList<>();
 
     /** Orders update received. */
-    private final List<OrderDTO> ordersUpdateReceived = new LinkedList<>();
+    private final List<OrderDTO> ordersUpdatesReceived = new LinkedList<>();
 
     /** Trades update received. */
-    private final List<TradeDTO> tradesUpdateReceived = new LinkedList<>();
+    private final List<TradeDTO> tradesUpdatesReceived = new LinkedList<>();
 
     /** Positions update received. */
-    private final List<PositionDTO> positionsUpdateReceived = new LinkedList<>();
+    private final List<PositionDTO> positionsUpdatesReceived = new LinkedList<>();
 
     /** Positions status update received. */
-    private final List<PositionDTO> positionsStatusUpdateReceived = new LinkedList<>();
+    private final List<PositionDTO> positionsStatusUpdatesReceived = new LinkedList<>();
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
@@ -63,9 +65,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
         accounts.values()
                 .stream()
                 .peek(accountDTO -> logger.info("TestableStrategy-onAccountsUpdates n° {} : {} \n ",
-                        getCount(accountsUpdateReceived),
+                        getCount(accountsUpdatesReceived),
                         accountDTO))
-                .forEach(accountsUpdateReceived::add);
+                .forEach(accountsUpdatesReceived::add);
 
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
@@ -79,9 +81,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
         tickers.values()
                 .stream()
                 .peek(tickerDTO -> logger.info("TestableStrategy-onTickersUpdates n° {} : {} \n ",
-                        getCount(tickersUpdateReceived),
+                        getCount(tickersUpdatesReceived),
                         tickerDTO))
-                .forEach(tickersUpdateReceived::add);
+                .forEach(tickersUpdatesReceived::add);
 
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
@@ -95,9 +97,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
         orders.values()
                 .stream()
                 .peek(orderDTO -> logger.info("TestableStrategy-onOrdersUpdates n° {} : {} \n ",
-                        getCount(ordersUpdateReceived),
+                        getCount(ordersUpdatesReceived),
                         orderDTO))
-                .forEach(ordersUpdateReceived::add);
+                .forEach(ordersUpdatesReceived::add);
 
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
@@ -111,9 +113,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
         trades.values()
                 .stream()
                 .peek(tradeDTO -> logger.info("TestableStrategy-onTradesUpdates n° {} : {} \n ",
-                        getCount(tradesUpdateReceived),
+                        getCount(tradesUpdatesReceived),
                         tradeDTO))
-                .forEach(tradesUpdateReceived::add);
+                .forEach(tradesUpdatesReceived::add);
 
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
@@ -127,9 +129,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
         positions.values()
                 .stream()
                 .peek(positionDTO -> logger.info("TestableStrategy-onPositionsUpdates n° {} : {} \n ",
-                        getCount(positionsUpdateReceived),
+                        getCount(positionsUpdatesReceived),
                         positionDTO))
-                .forEach(positionsUpdateReceived::add);
+                .forEach(positionsUpdatesReceived::add);
 
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
@@ -143,9 +145,9 @@ public abstract class Strategy extends BasicCassandreStrategy {
         positions.values()
                 .stream()
                 .peek(positionDTO -> logger.info("TestableStrategy-onPositionsStatusUpdates n° {} : {} \n ",
-                        getCount(positionsStatusUpdateReceived),
+                        getCount(positionsStatusUpdatesReceived),
                         positionDTO))
-                .forEach(positionsStatusUpdateReceived::add);
+                .forEach(positionsStatusUpdatesReceived::add);
 
         try {
             TimeUnit.MILLISECONDS.sleep(WAITING_TIME_IN_MILLISECONDS);
@@ -162,69 +164,6 @@ public abstract class Strategy extends BasicCassandreStrategy {
      */
     private String getCount(final List<?> list) {
         return String.format("%03d", list.size() + 1);
-    }
-
-    /**
-     * Getter lastAccountsReceived.
-     *
-     * @return last accounts received.
-     */
-    public final List<AccountDTO> getAccountsUpdatesReceived() {
-        return accountsUpdateReceived;
-    }
-
-    /**
-     * Getter lastTickersReceived.
-     *
-     * @return lastTickersReceived
-     */
-    public final List<TickerDTO> getTickersUpdateReceived() {
-        return tickersUpdateReceived;
-    }
-
-    /**
-     * Getter lastOrdersReceived.
-     *
-     * @return lastOrderReceived
-     */
-    public final List<OrderDTO> getOrdersUpdateReceived() {
-        return ordersUpdateReceived;
-    }
-
-    /**
-     * Getter tradesUpdateReceived.
-     *
-     * @return tradesUpdateReceived
-     */
-    public final List<TradeDTO> getTradesUpdateReceived() {
-        return tradesUpdateReceived;
-    }
-
-    /**
-     * Getter accountsUpdateReceived.
-     *
-     * @return accountsUpdateReceived
-     */
-    public final List<AccountDTO> getAccountsUpdateReceived() {
-        return accountsUpdateReceived;
-    }
-
-    /**
-     * Getter positionsUpdateReceived.
-     *
-     * @return positionsUpdateReceived
-     */
-    public final List<PositionDTO> getPositionsUpdateReceived() {
-        return positionsUpdateReceived;
-    }
-
-    /**
-     * Getter positionsStatusUpdateReceived.
-     *
-     * @return positionsStatusUpdateReceived
-     */
-    public final List<PositionDTO> getPositionsStatusUpdateReceived() {
-        return positionsStatusUpdateReceived;
     }
 
 }

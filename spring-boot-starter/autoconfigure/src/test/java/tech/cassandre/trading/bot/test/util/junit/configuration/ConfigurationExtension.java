@@ -15,7 +15,7 @@ import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy3.PARAME
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 
 /**
  * Configuration extension - set and clear system properties.
@@ -99,13 +99,13 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
     public static final String PARAMETER_SECRET_DEFAULT_VALUE = "5f6e91e0-796b-4947-b75e-eaa5c06b6bed";
 
     /** Rate for account parameter. */
-    public static final String PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE = "100";
+    public static final String PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE = "10";
 
     /** Rate for ticker parameter. */
-    public static final String PARAMETER_RATE_TICKER_DEFAULT_VALUE = "101";
+    public static final String PARAMETER_RATE_TICKER_DEFAULT_VALUE = "11";
 
     /** Rate for trade parameter. */
-    public static final String PARAMETER_RATE_TRADE_DEFAULT_VALUE = "102";
+    public static final String PARAMETER_RATE_TRADE_DEFAULT_VALUE = "12";
 
     @Override
     public void beforeAll(ExtensionContext context) {

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.binance;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,8 +11,8 @@ import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +58,6 @@ public class MarketServiceTest extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Test
-    @CaseId(114)
     @Tag("integration")
     @DisplayName("Check get ticker")
     public void checkGetTicker() {
@@ -98,7 +96,6 @@ public class MarketServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(115)
     @Tag("integration")
     @DisplayName("Check ticker flux")
     public void checkTickerFlux() throws InterruptedException {
@@ -106,7 +103,7 @@ public class MarketServiceTest extends BaseTest {
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         tickerFlux.update();
         // We should have two tickers received by the strategy
-        await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdatesReceived().size()));
     }
 
 }

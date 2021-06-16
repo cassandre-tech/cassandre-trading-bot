@@ -1,10 +1,10 @@
 package tech.cassandre.trading.bot.test.repository;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 @SpringBootTest
 @DisplayName("Repository - Strategy")
@@ -22,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class StrategyRepositoryTest {
 
     @Autowired
     private StrategyRepository strategyRepository;
 
     @Test
-    @CaseId(62)
     @DisplayName("Check imported data")
     public void checkImportedOrders() {
         // Testing an existing strategy.

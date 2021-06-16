@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.dto;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -21,7 +20,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 public class AccountDTOTest {
 
 	@Test
-	@CaseId(38)
 	@DisplayName("Check equals() on account id & name")
 	public void checkEqualToForAccountIdAndName() {
 		// Account 1 (null).
@@ -45,7 +43,6 @@ public class AccountDTOTest {
 	}
 
 	@Test
-	@CaseId(39)
 	@DisplayName("Check equals() on balances list")
 	public void checkEqualToForBalancesList() {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
@@ -85,7 +82,6 @@ public class AccountDTOTest {
 
 	@Test
 	@SuppressWarnings("checkstyle:MethodLength")
-	@CaseId(40)
 	@DisplayName("Check equals() on balances values")
 	public void checkEqualToForBalancesValues() {
 		Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();

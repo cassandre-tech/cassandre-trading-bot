@@ -1,21 +1,20 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.batch.mocks.OrderFluxTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -30,10 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
@@ -43,7 +40,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(OrderFluxTestMock.class)
 public class OrderFluxTest extends BaseTest {
 
@@ -60,27 +56,26 @@ public class OrderFluxTest extends BaseTest {
     private OrderRepository orderRepository;
 
     @Test
-    @CaseId(3)
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        // =============================================================================================================
-        // Test asynchronous flux.
+        // The mock will reply 3 times.
         final int numberOfUpdatesExpected = 8;
-        final int numberOfServiceCallsExpected = 4;
+        final int numberOfServiceCallsExpected = 3;
 
+        /// We will create 3 orders that will be in database. First we check the database is empty.
         assertEquals(0, orderRepository.count());
 
-        // ORDER_000001.
+        // ORDER_000001 creation.
         final OrderCreationResultDTO order000001 = tradeService.createSellMarketOrder(strategy, ETH_BTC, new BigDecimal("1"));
         assertTrue(order000001.isSuccessful());
         assertEquals("ORDER_000001", order000001.getOrderId());
 
-        // ORDER_000002.
+        // ORDER_000002 creation.
         final OrderCreationResultDTO order000002 = tradeService.createBuyMarketOrder(strategy, ETH_USDT, new BigDecimal("2"));
         assertTrue(order000002.isSuccessful());
         assertEquals("ORDER_000002", order000002.getOrderId());
 
-        // ORDER_000003.
+        // ORDER_000003 creation.
         final OrderCreationResultDTO order000003 = tradeService.createSellMarketOrder(strategy, ETH_BTC, new BigDecimal("3"));
         assertTrue(order000003.isSuccessful());
         assertEquals("ORDER_000003", order000003.getOrderId());
@@ -95,14 +90,14 @@ public class OrderFluxTest extends BaseTest {
         // Waiting for the service to have been called with all the test data.
         await().untilAsserted(() -> verify(xChangeTradeService, atLeast(numberOfServiceCallsExpected)).getOpenOrders());
 
-        // Checking that somme data have already been treated.
-        // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
-        assertTrue(strategy.getOrdersUpdateReceived().size() > 0);
-        assertTrue(strategy.getOrdersUpdateReceived().size() <= numberOfUpdatesExpected);
+        // Checking that some data have already been treated by strategy but not all !
+        // The flux should be asynchronous and a single thread in strategy is treating updates.
+        assertTrue(strategy.getOrdersUpdatesReceived().size() > 0);
+        assertTrue(strategy.getOrdersUpdatesReceived().size() <= numberOfUpdatesExpected);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(strategy.getOrdersUpdateReceived().size() >= numberOfUpdatesExpected));
-        final Iterator<OrderDTO> orders = strategy.getOrdersUpdateReceived().iterator();
+        await().untilAsserted(() -> assertTrue(strategy.getOrdersUpdatesReceived().size() >= numberOfUpdatesExpected));
+        final Iterator<OrderDTO> orders = strategy.getOrdersUpdatesReceived().iterator();
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.

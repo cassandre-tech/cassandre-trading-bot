@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,13 +45,17 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
 
         try {
             // Get all tickers at once from market service if the method is implemented.
-            marketService.getTickers(requestedCurrencyPairs).forEach(tickerDTO -> {
+            marketService.getTickers(requestedCurrencyPairs).stream()
+                    .filter(Objects::nonNull)
+                    .forEach(tickerDTO -> {
                     logger.debug("TickerFlux - New ticker received: {}", tickerDTO);
                     newValues.add(tickerDTO);
             });
         } catch (NotAvailableFromExchangeException | NotYetImplementedForExchangeException e) {
             // If getAllTickers is not available, we retrieve tickers one bye one.
-            requestedCurrencyPairs.forEach(currencyPairDTO -> marketService.getTicker(currencyPairDTO).ifPresent(tickerDTO -> {
+            requestedCurrencyPairs.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(currencyPairDTO -> marketService.getTicker(currencyPairDTO).ifPresent(tickerDTO -> {
                 logger.debug("TickerFlux - New ticker received: {}", tickerDTO);
                 newValues.add(tickerDTO);
             }));

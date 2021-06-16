@@ -10,7 +10,7 @@ INSERT INTO ORDERS (ID, ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_
                     LEVERAGE, LIMIT_PRICE_VALUE, LIMIT_PRICE_CURRENCY, MARKET_PRICE_VALUE, MARKET_PRICE_CURRENCY, FK_STRATEGY_ID)
 VALUES -- Order BACKUP_ORDER_01 (useless).
        (1, 'BACKUP_ORDER_01', 'ASK', 0.000005, 'ETH', 'ETH/BTC', 'My reference 1', '2020-11-18', 'NEW', 0.000004, 'ETH',
-        0.000003, 'BTC', 'LEVERAGE_1', 0.000001, 'BTC', 0.000003, 'BTC', 1),
+        0.000003, 'BTC', 'LEVERAGE_1', 0.000001, 'BTC', 0.000033, 'KCS', 1),
 
        -- Order BACKUP_ORDER_02 (useless).
        (2, 'BACKUP_ORDER_02', 'BID', 0.000015, 'USDT', 'USDT/BTC', 'My reference 2', '2020-11-19', 'PENDING_NEW',
@@ -82,7 +82,7 @@ VALUES -- note : No trade for order BACKUP_OPENING_ORDER_01 - This is why positi
        (4, 'BACKUP_TRADE_04', 6, 'ASK', 20, 'BTC', 'BTC/USDT', 40, 'USDT', '2020-08-04', 4, 'USDT', 'Trade 04'),
 
        -- Order BACKUP_TRADE_05 - Trade from the order selling BACKUP_OPENING_ORDER_05.
-       (5, 'BACKUP_TRADE_05', 8, 'ASK', 50, 'ETH', 'ETH/USD', 50, 'USD', '2020-08-05', 5, 'USD', 'Trade 05'),
+       (5, 'BACKUP_TRADE_05', 8, 'ASK', 40, 'ETH', 'ETH/USD', 40, 'USD', '2020-08-05', 5, 'USD', 'Trade 05'),
 
        -- For position 5.
        (6, 'BACKUP_TRADE_06', 9, 'BID', 10, 'ETH', 'ETH/USD', 11, 'USD', '2020-08-05', 5, 'USD', 'Trade 06'),
