@@ -57,6 +57,7 @@ public class PositionServiceTest extends BaseTest {
         // ETH/USDT - 0.3.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.2")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
+        await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdatesReceived().size()));
 
         // =============================================================================================================
         // Step 1 - Creates position 1 (ETH/BTC, 0.0001, 100% stop gain, price of 0.2).
