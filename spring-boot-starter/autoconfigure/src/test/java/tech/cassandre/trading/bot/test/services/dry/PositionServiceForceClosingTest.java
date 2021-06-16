@@ -23,6 +23,7 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
@@ -125,10 +126,12 @@ public class PositionServiceForceClosingTest extends BaseTest {
 
         // We will force closing of position 2.
         strategy.closePosition(position2Id);
+        await().during(Duration.ofSeconds(5));
 
         // New tickers will trigger close.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
+        await().during(Duration.ofSeconds(5));
         orderFlux.update();
         tradeFlux.update();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
@@ -136,10 +139,12 @@ public class PositionServiceForceClosingTest extends BaseTest {
 
         // We will force closing of position 1.
         strategy.closePosition(position1Id);
+        await().during(Duration.ofSeconds(5));
 
         // New tickers will trigger close.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
+        await().during(Duration.ofSeconds(5));
         orderFlux.update();
         tradeFlux.update();
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position1Id).getStatus()));
