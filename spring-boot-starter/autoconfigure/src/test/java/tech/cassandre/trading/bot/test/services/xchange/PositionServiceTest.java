@@ -376,7 +376,7 @@ public class PositionServiceTest extends BaseTest {
 
     @Test
     @DisplayName("Check closing order failure")
-    public void     checkClosingOrderFailure() {
+    public void checkClosingOrderFailure() {
         // =============================================================================================================
         // Creates a position. Then, when closing an order update with an error.
         // The position must end up being in CLOSING_FAILURE

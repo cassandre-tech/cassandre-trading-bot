@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
@@ -38,6 +40,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 })
 @ActiveProfiles("schedule-disabled")
 @Import(PositionServiceForceClosingTestMock.class)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionServiceForceClosingTest extends BaseTest {
 
     @Autowired
@@ -83,8 +86,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // Third: trade corresponding to the order arrives.
         orderFlux.update();
         tradeFlux.update();
-        await().untilAsserted(() -> assertEquals(3, strategy.getPositionsUpdatesReceived().size()));
-        await().untilAsserted(() -> assertEquals(2, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdatesReceived().get(1).getStatus()));
 
@@ -106,8 +107,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // Third: trade corresponding to the order arrives.
         orderFlux.update();
         tradeFlux.update();
-        await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdatesReceived().size()));
-        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
         await().untilAsserted(() -> assertEquals(OPENED, strategy.getPositionsStatusUpdatesReceived().get(3).getStatus()));
 
