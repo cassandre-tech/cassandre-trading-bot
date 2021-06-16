@@ -24,7 +24,6 @@ import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
@@ -97,7 +96,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
-        await().untilAsserted(() -> assertEquals(OPENING, getPositionDTO(position2Id).getStatus()));
         await().untilAsserted(() -> assertEquals(6, strategy.getPositionsUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
@@ -115,8 +113,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
-        assertFalse(getPositionDTO(position1Id).isForceClosing());
-        assertFalse(getPositionDTO(position2Id).isForceClosing());
 
         // We will force closing of position 2.
         strategy.closePosition(position2Id);
@@ -126,8 +122,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position2Id).getStatus()));
-        assertFalse(getPositionDTO(position1Id).isForceClosing());
-        assertTrue(getPositionDTO(position2Id).isForceClosing());
 
         // We will force closing of position 1.
         strategy.closePosition(position1Id);

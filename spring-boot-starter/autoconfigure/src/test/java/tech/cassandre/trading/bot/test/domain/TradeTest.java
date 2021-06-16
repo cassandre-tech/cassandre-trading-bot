@@ -163,9 +163,9 @@ public class TradeTest extends BaseTest {
         assertEquals(ASK, t.get().getType());
         assertEquals("BACKUP_CLOSING_ORDER_02", t.get().getOrderId());
         assertEquals(new CurrencyPairDTO(ETH, USD), t.get().getCurrencyPair());
-        assertEquals(0, new BigDecimal("50").compareTo(t.get().getAmount().getValue()));
+        assertEquals(0, new BigDecimal("40").compareTo(t.get().getAmount().getValue()));
         assertEquals(ETH, t.get().getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("50").compareTo(t.get().getPrice().getValue()));
+        assertEquals(0, new BigDecimal("40").compareTo(t.get().getPrice().getValue()));
         assertEquals(USD, t.get().getPrice().getCurrency());
         assertEquals(0, new BigDecimal("5").compareTo(t.get().getFee().getValue()));
         assertEquals(USD, t.get().getFee().getCurrency());

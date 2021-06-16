@@ -72,6 +72,7 @@ public class PositionLongFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
+        // TODO Verify updates count
         // =============================================================================================================
         // Creates position 1 - should be OPENING.
         final PositionCreationResultDTO position1Result = strategy.createLongPosition(ETH_BTC,
@@ -333,7 +334,7 @@ public class PositionLongFluxTest extends BaseTest {
         // Firth ticker arrives (600% gain) - max and last gain should be set to that value.
         // Price update so a new position update.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.21")).build());
-        await().untilAsserted(() -> assertEquals(13, getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(14, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertEquals(position1Id, p.getId());
         assertEquals(0, new BigDecimal("0.015").compareTo(p.getLowestGainPrice().getValue()));
@@ -388,7 +389,7 @@ public class PositionLongFluxTest extends BaseTest {
 
         // onPositionUpdate.
         // One trade arrives so we have a position update.
-        await().untilAsserted(() -> assertEquals(14, getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(15, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
@@ -435,7 +436,7 @@ public class PositionLongFluxTest extends BaseTest {
         // OnPositionUpdate.
         // - Position closed with the local order (status PENDING_NEW).
         // - Position updated with the distant order (status NEW).
-        await().untilAsserted(() -> assertEquals(16, getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(17, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
@@ -493,7 +494,7 @@ public class PositionLongFluxTest extends BaseTest {
 
         // onPosition for first trade arrival.
         // Two new updates : the two trades received (even if they were the same as we use emit method).
-        await().untilAsserted(() -> assertEquals(18, getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(19, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
@@ -529,7 +530,7 @@ public class PositionLongFluxTest extends BaseTest {
         // onPosition for second trade arrival.
         // Positions updates:
         // - Trade 000004 arrives. In one update we have one more trade and a status change.
-        await().untilAsserted(() -> assertEquals(19, getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(20, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
