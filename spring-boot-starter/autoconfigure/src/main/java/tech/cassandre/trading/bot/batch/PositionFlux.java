@@ -39,6 +39,8 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
                 positionMapper.updatePosition(positionDTO, position.get());
                 positions.add(positionRepository.save(position.get()));
                 logger.debug("PositionFlux - Updating position in database: {}", positionDTO);
+            } else {
+                logger.error("PositionFlux - Position {} not found in database:", positionDTO.getId());
             }
         });
 
