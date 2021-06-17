@@ -72,7 +72,6 @@ public class PositionLongFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        // TODO Verify updates count
         // =============================================================================================================
         // Creates position 1 - should be OPENING.
         final PositionCreationResultDTO position1Result = strategy.createLongPosition(ETH_BTC,

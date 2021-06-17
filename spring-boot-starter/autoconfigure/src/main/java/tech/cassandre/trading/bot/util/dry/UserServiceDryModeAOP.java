@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.FileNotFoundException;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 
 import static java.math.BigDecimal.ZERO;
@@ -45,9 +46,6 @@ public class UserServiceDryModeAOP extends BaseService {
 
     /** User ID. */
     private static final String USER_ID = "user";
-
-    /** Trade account ID. */
-    private static final String TRADE_ACCOUNT_ID = "trade";
 
     /** Account information. */
     private AccountInfo accountInfo;
@@ -108,45 +106,49 @@ public class UserServiceDryModeAOP extends BaseService {
     /**
      * Update balance of trade account (method called by trade service).
      *
+     * @param strategy strategy
      * @param currency currency
      * @param amount   amount
      */
-    public void addToBalance(final Currency currency, final BigDecimal amount) {
-        // TODO Retrieve the trade account specified in each strategy.
-        // Optional<BalanceDTO> balance = user.getAccounts().get(TRADE_ACCOUNT_ID).getBalance(currency);
-        final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
+    public void addToBalance(final GenericCassandreStrategy strategy, final Currency currency, final BigDecimal amount) {
+        final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
+        if (tradeAccount.isEmpty()) {
+            logger.error("Trading account not found!");
+        } else {
 
-        // We build a new account information from what we saved.
-        Collection<Wallet> wallets = new LinkedHashSet<>();
+            // We build a new account information from what we saved.
+            Collection<Wallet> wallets = new LinkedHashSet<>();
 
-        // We retreat all the wallets we have.
-        accountInfo.getWallets().forEach((name, wallet) -> {
-            HashMap<Currency, Balance> balances = new LinkedHashMap<>();
+            // We retreat all the wallets we have.
+            accountInfo.getWallets()
+                    .forEach((name, wallet) -> {
+                        HashMap<Currency, Balance> balances = new LinkedHashMap<>();
 
-            // For each balance, we add it if nothing changed or, if on trading account and we need to change the amount,
-            // Then we do it.
-            wallet.getBalances().forEach((balanceCurrency, balance) -> {
-                if (name.equals(TRADE_ACCOUNT_ID) && balanceCurrency.equals(currency)) {
-                    // If we are on the account and currency to update, we calculate the new value.
-                    balances.put(balanceCurrency, new Balance(balanceCurrency, balance.getTotal().add(amount)));
-                } else {
-                    // Else we keep the same value.
-                    balances.put(balanceCurrency, balance);
-                }
-            });
+                        // For each balance, we add it if nothing changed or, if on trading account and we need to change the amount,
+                        // Then we do it.
+                        wallet.getBalances().forEach((balanceCurrency, balance) -> {
+                            if (name.equals(tradeAccount.get().getName()) && balanceCurrency.equals(currency)) {
+                                // If we are on the account and currency to update, we calculate the new value.
+                                balances.put(balanceCurrency, new Balance(balanceCurrency, balance.getTotal().add(amount)));
+                            } else {
+                                // Else we keep the same value.
+                                balances.put(balanceCurrency, balance);
+                            }
+                        });
 
-            // if for the trading account, we don't have a balance for the currency we are trying to add/remove
-            // amounts, then we create a new balance.
-            if (name.equals(TRADE_ACCOUNT_ID) && balances.get(currency) == null) {
-                balances.put(currency, new Balance(currency, amount));
-            }
+                        // if for the trading account, we don't have a balance for the currency we are trying to add/remove
+                        // amounts, then we create a new balance.
+                        if (name.equals(tradeAccount.get().getName()) && balances.get(currency) == null) {
+                            balances.put(currency, new Balance(currency, amount));
+                        }
 
-            // We add the wallet.
-            wallets.add(new Wallet(name, name, balances.values(), Collections.emptySet(), ZERO, ZERO));
-        });
+                        // We add the wallet.
+                        wallets.add(new Wallet(name, name, balances.values(), Collections.emptySet(), ZERO, ZERO));
+                    });
 
-        // Creates the account info.
-        accountInfo = new AccountInfo(USER_ID, wallets);
+            // Creates the account info.
+            accountInfo = new AccountInfo(USER_ID, wallets);
+        }
     }
 
     /**

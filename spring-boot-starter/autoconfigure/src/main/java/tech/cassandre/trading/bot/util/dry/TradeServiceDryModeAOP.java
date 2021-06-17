@@ -97,8 +97,8 @@ public class TradeServiceDryModeAOP extends BaseService {
         }
 
         // We update the account.
-        userService.addToBalance(currencyMapper.mapToCurrency(currencyPair.getBaseCurrency()), amount);
-        userService.addToBalance(currencyMapper.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()).multiply(new BigDecimal("-1")));
+        userService.addToBalance(strategy, currencyMapper.mapToCurrency(currencyPair.getBaseCurrency()), amount);
+        userService.addToBalance(strategy, currencyMapper.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()).multiply(new BigDecimal("-1")));
 
         return (OrderCreationResultDTO) result;
     }
@@ -138,8 +138,8 @@ public class TradeServiceDryModeAOP extends BaseService {
         }
 
         // We update the account.
-        userService.addToBalance(currencyMapper.mapToCurrency(currencyPair.getBaseCurrency()), amount.multiply(new BigDecimal("-1")));
-        userService.addToBalance(currencyMapper.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()));
+        userService.addToBalance(strategy, currencyMapper.mapToCurrency(currencyPair.getBaseCurrency()), amount.multiply(new BigDecimal("-1")));
+        userService.addToBalance(strategy, currencyMapper.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()));
 
         return (OrderCreationResultDTO) result;
     }

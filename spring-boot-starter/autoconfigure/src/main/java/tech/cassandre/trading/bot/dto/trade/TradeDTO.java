@@ -91,8 +91,7 @@ public class TradeDTO {
                 .append(this.amount, that.amount)
                 .append(this.price, that.price)
                 .append(this.fee, that.fee)
-                // TODO In PositionServiceDryModeTest.checkPositionLifecycle() the timestamp equality fails.
-                //.append(this.timestamp, that.timestamp)
+                .append(this.timestamp, that.timestamp)
                 .isEquals();
     }
 
