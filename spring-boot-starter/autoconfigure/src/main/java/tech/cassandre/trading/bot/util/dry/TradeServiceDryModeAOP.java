@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrade;
@@ -24,14 +25,15 @@ import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.math.BigDecimal.ZERO;
+import static org.knowm.xchange.dto.Order.OrderStatus.FILLED;
 import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 
 /**
  * AOP for trade service in dry mode.
@@ -62,9 +64,9 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createBuyMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
     public final OrderCreationResultDTO createBuyMarketOrder(final ProceedingJoinPoint pjp,
-                                                       final GenericCassandreStrategy strategy,
-                                                       final CurrencyPairDTO currencyPair,
-                                                       final BigDecimal amount) {
+                                                             final GenericCassandreStrategy strategy,
+                                                             final CurrencyPairDTO currencyPair,
+                                                             final BigDecimal amount) {
         // We check that we have the trade account.
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         if (tradeAccount.isEmpty()) {
@@ -105,9 +107,9 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createSellMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
     public final OrderCreationResultDTO createSellMarketOrder(final ProceedingJoinPoint pjp,
-                                                        final GenericCassandreStrategy strategy,
-                                                        final CurrencyPairDTO currencyPair,
-                                                        final BigDecimal amount) {
+                                                              final GenericCassandreStrategy strategy,
+                                                              final CurrencyPairDTO currencyPair,
+                                                              final BigDecimal amount) {
         // We check that we have the trade account.
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         if (tradeAccount.isEmpty()) {
@@ -162,7 +164,27 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around("execution(* org.knowm.xchange.service.trade.TradeService.getOpenOrders())")
     public final OpenOrders getOpenOrders(final ProceedingJoinPoint pjp) {
-        return new OpenOrders(Collections.emptyList());
+        List<LimitOrder> orders = new LinkedList<>();
+
+        // For every new order in database, we send an update saying the order is filled.
+        orderRepository.findByStatus(PENDING_NEW)
+                .stream()
+                .map(orderMapper::mapToOrderDTO)
+                .forEach(orderDTO -> {
+                    orders.add(
+                            new LimitOrder.Builder(utilMapper.mapToOrderType(orderDTO.getType()), currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()))
+                                    .id(orderDTO.getOrderId())
+                                    .originalAmount(orderDTO.getAmount().getValue())
+                                    .averagePrice(orderDTO.getAveragePrice().getValue())
+                                    .limitPrice(orderDTO.getLimitPrice().getValue())
+                                    .orderStatus(FILLED)
+                                    .cumulativeAmount(orderDTO.getCumulativeAmount().getValue())
+                                    .userReference(orderDTO.getUserReference())
+                                    .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
+                                    .build());
+                });
+
+        return new OpenOrders(orders);
     }
 
     @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.getTradeHistory(..)) && args(params))", argNames = "pjp, params")
@@ -173,16 +195,16 @@ public class TradeServiceDryModeAOP extends BaseService {
         orderRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(orderMapper::mapToOrderDTO)
-                .filter(orderDTO -> !orderDTO.isFulfilled())
-                .forEach(order -> trades.add(UserTrade.builder()
-                        .id(order.getOrderId().replace(DRY_ORDER_PREFIX, DRY_TRADE_PREFIX))
-                        .type(utilMapper.mapToOrderType(order.getType()))
-                        .orderId(order.getOrderId())
-                        .currencyPair(currencyMapper.mapToCurrencyPair(order.getCurrencyPair()))
-                        .originalAmount(order.getAmount().getValue())
-                        .price(order.getMarketPrice().getValue())
+                .filter(orderDTO -> !orderDTO.isFulfilled())    // Only orders with trades not arrived
+                .forEach(orderDTO -> trades.add(UserTrade.builder()
+                        .id(orderDTO.getOrderId().replace(DRY_ORDER_PREFIX, DRY_TRADE_PREFIX))
+                        .type(utilMapper.mapToOrderType(orderDTO.getType()))
+                        .orderId(orderDTO.getOrderId())
+                        .currencyPair(currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()))
+                        .originalAmount(orderDTO.getAmount().getValue())
+                        .price(orderDTO.getMarketPrice().getValue())
                         .feeAmount(ZERO)
-                        .timestamp(Timestamp.valueOf(order.getTimestamp().toLocalDateTime()))
+                        .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
                         .build()));
 
         return new UserTrades(trades, SortByTimestamp);
