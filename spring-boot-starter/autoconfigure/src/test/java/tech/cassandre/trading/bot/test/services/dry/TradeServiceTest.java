@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -155,12 +154,6 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(ZERO, trade02.get().getFee());
         assertNull(trade02.get().getUserReference());
         assertNotNull(trade02.get().getTimestamp());
-
-        // Testing retrieve methods.
-        assertEquals(2, tradeService.getTrades().size());
-        assertFalse(tradeService.getTrades().stream().anyMatch(t -> t.getTradeId().equals("NON_EXISTING")));
-        assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getTradeId().equals(tradeId01)));
-        assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getTradeId().equals(tradeId02)));
     }
 
 }

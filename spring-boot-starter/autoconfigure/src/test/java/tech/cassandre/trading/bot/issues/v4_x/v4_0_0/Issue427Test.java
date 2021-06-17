@@ -64,6 +64,7 @@ public class Issue427Test extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("ORDER_000001")
                 .type(ASK)
+                .strategy(strategyDTO)
                 .currencyPair(ETH_BTC)
                 .amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
                 .averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))

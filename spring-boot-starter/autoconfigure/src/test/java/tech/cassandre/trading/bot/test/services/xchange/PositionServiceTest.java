@@ -285,7 +285,7 @@ public class PositionServiceTest extends BaseTest {
         // An update arrives and changes the status order of position 1.
         orderFlux.emitValue(closingOrder01);
         await().untilAsserted(() -> assertEquals(4, strategy.getOrdersUpdatesReceived().size()));
-        await().untilAsserted(() -> assertEquals(8, strategy.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));
 
         // Position 1 - closing order status should have changed.
         position1 = strategy.getPositionByPositionId(position1Id);

@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy;
@@ -27,7 +28,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreS
 })
 @Import(Issue558TestMock.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-public class Issue558Test {
+public class Issue558Test extends BaseTest {
 
     @Autowired
     private LargeTestableCassandreStrategy strategy;

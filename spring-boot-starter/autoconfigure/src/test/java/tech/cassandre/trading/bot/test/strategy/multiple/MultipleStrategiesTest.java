@@ -34,7 +34,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -64,7 +64,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @ActiveProfiles("schedule-disabled")
-@DirtiesContext(classMode = AFTER_CLASS)
+@DirtiesContext(classMode = BEFORE_CLASS)
 public class MultipleStrategiesTest extends BaseTest {
 
     @Autowired

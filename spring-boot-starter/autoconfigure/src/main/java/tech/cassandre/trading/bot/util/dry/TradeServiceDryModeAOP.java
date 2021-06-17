@@ -172,8 +172,8 @@ public class TradeServiceDryModeAOP extends BaseService {
         // For every orders in database, we will simulate an equivalent trade to close things.
         orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                //.filter(order -> order.getTrades().isEmpty()) TODO Why this makes TradeServiceDryModeTest.checkCreateBuyAndSellOrder fails during test?
                 .map(orderMapper::mapToOrderDTO)
+                .filter(orderDTO -> !orderDTO.isFulfilled())
                 .forEach(order -> trades.add(UserTrade.builder()
                         .id(order.getOrderId().replace(DRY_ORDER_PREFIX, DRY_TRADE_PREFIX))
                         .type(utilMapper.mapToOrderType(order.getType()))

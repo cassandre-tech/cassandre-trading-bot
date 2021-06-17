@@ -2,7 +2,6 @@ package tech.cassandre.trading.bot.util.base.batch;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
-import reactor.core.scheduler.Schedulers;
 import tech.cassandre.trading.bot.util.base.Base;
 
 import java.util.Set;
@@ -26,8 +25,7 @@ public abstract class BaseFlux<T> extends Base {
      * Constructor.
      */
     public BaseFlux() {
-        Flux<Set<T>> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
-        flux = fluxTemp.publishOn(Schedulers.elastic());
+        flux = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
     }
 
     /**

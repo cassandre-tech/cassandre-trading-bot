@@ -36,9 +36,18 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
             final Optional<Position> position = positionRepository.findById(positionDTO.getId());
             if (position.isPresent()) {
                 // If the position is in database (which must be always true), we update it.
+                logger.info("BEGIN");
+                logger.info("=============================");
+                logger.info("*** Position received for update {}", positionDTO);
+                logger.info("*** Position in database: {}", position.get());
+
                 positionMapper.updatePosition(positionDTO, position.get());
                 positions.add(positionRepository.save(position.get()));
+
+                logger.info("*** Updating position in database with: {}", positionDTO);
+                logger.info("=============================");
                 logger.debug("PositionFlux - Updating position in database: {}", positionDTO);
+                logger.info("END");
             } else {
                 logger.error("PositionFlux - Position {} not found in database:", positionDTO.getId());
             }
