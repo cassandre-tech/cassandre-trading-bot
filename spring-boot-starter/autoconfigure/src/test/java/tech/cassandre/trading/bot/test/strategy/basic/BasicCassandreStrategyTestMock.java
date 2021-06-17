@@ -154,10 +154,12 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
                 BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("3")),
                 BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("4")),
                 BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("5")),
-                BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("6"))
+                BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("6")),
+                Optional.empty()
         );
         given(service.getTicker(ETH_USDT)).willReturn(
-                BaseTest.getFakeTicker(ETH_USDT, new BigDecimal("10000"))
+                BaseTest.getFakeTicker(ETH_USDT, new BigDecimal("10000")),
+                Optional.empty()
         );
         return service;
     }
