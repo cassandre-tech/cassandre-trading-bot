@@ -13,10 +13,14 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 
 import java.io.FileNotFoundException;
@@ -34,12 +38,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 
 /**
  * Ticker flux mock - Allows developers to simulate tickers via tsv files.
@@ -64,6 +70,22 @@ public class TickerFluxMock {
     /** Application context. */
     @Autowired
     private ApplicationContext applicationContext;
+
+    /** Order flux. */
+    @Autowired
+    private OrderFlux orderFlux;
+
+    /** Order repository. */
+    @Autowired
+    private OrderRepository orderRepository;
+
+    /** Trade repository. */
+    @Autowired
+    private TradeRepository tradeRepository;
+
+    /** Position repository. */
+    @Autowired
+    private PositionRepository positionRepository;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -110,14 +132,17 @@ public class TickerFluxMock {
 
                         @Override
                         public Object answer(final InvocationOnMock invocationOnMock) {
-                            try {
-                                TimeUnit.SECONDS.sleep(1);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
+                            orderFlux.update();
+                            await().until(() -> orderRepository.count() == tradeRepository.count());
+                            await().until(() -> positionRepository.findByStatus(OPENING).size() == 0);
+                            await().until(() -> positionRepository.findByStatus(CLOSING).size() == 0);
                             if (tickers.hasNext()) {
                                 return Optional.of(tickers.next());
                             } else {
+                                orderFlux.update();
+                                await().until(() -> orderRepository.count() == tradeRepository.count());
+                                await().until(() -> positionRepository.findByStatus(OPENING).size() == 0);
+                                await().until(() -> positionRepository.findByStatus(CLOSING).size() == 0);
                                 fluxTerminated.put(cp, true);
                                 return Optional.empty();
                             }

@@ -53,7 +53,7 @@ public final class OrderCreationResultDTO {
         if (getOrder() != null) {
             return getOrder().getOrderId();
         } else {
-            return "Order not available";
+            return "No order";
         }
     }
 

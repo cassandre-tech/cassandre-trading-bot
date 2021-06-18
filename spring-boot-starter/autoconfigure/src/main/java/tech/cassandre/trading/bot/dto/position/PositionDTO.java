@@ -170,7 +170,7 @@ public class PositionDTO {
      * @param price price
      * @return gain
      */
-    private Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
+    public Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
         if (getStatus() != OPENING && price != null) {
             // How gain calculation works for long positions ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50 USDT.

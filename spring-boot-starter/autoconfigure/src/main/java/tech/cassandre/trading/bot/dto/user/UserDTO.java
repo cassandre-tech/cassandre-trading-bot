@@ -10,6 +10,7 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -31,6 +32,23 @@ public class UserDTO {
 
     /** Information timestamp. */
     ZonedDateTime timestamp;
+
+    /**
+     * Find an account with its id.
+     *
+     * @param accountId account id
+     * @return account
+     */
+    public Optional<AccountDTO> getAccountById(final String accountId) {
+        if (accountId == null) {
+            return Optional.empty();
+        } else {
+            return accounts.values()
+                    .stream()
+                    .filter(accountDTO -> accountId.equals(accountDTO.getAccountId()))
+                    .findFirst();
+        }
+    }
 
     /**
      * Getter timestamp.

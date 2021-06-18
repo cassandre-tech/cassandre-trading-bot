@@ -8,10 +8,14 @@ import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.user.UserDTO;
+import tech.cassandre.trading.bot.strategy.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
@@ -50,12 +54,18 @@ public class UserServiceDryModeAOP extends BaseService {
     /** Account information. */
     private AccountInfo accountInfo;
 
+    /** Application context. */
+    private final ApplicationContext applicationContext;
+
     /**
      * Constructor.
+     *
+     * @param newApplicationContext application context
      */
-    public UserServiceDryModeAOP() {
-        Collection<Wallet> wallets = new LinkedHashSet<>();
+    public UserServiceDryModeAOP(final ApplicationContext newApplicationContext) {
+        applicationContext = newApplicationContext;
 
+        Collection<Wallet> wallets = new LinkedHashSet<>();
         getFilesToLoad().forEach(file -> {
             if (file.getFilename() != null) {
 
@@ -148,6 +158,14 @@ public class UserServiceDryModeAOP extends BaseService {
 
             // Creates the account info.
             accountInfo = new AccountInfo(USER_ID, wallets);
+            // Updates all strategies.
+            final UserDTO userDTO = accountMapper.mapToUserDTO(accountInfo);
+            applicationContext
+                    .getBeansWithAnnotation(CassandreStrategy.class)
+                    .values()  // We get the list of all required cp of all strategies.
+                    .stream()
+                    .map(o -> ((CassandreStrategyInterface) o))
+                    .forEach(cassandreStrategyInterface -> cassandreStrategyInterface.initializeAccounts(userDTO.getAccounts()));
         }
     }
 
