@@ -1,10 +1,14 @@
 package tech.cassandre.trading.bot.service;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.DateUtils;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
-import org.knowm.xchange.service.trade.params.DefaultCancelOrderByCurrencyPairAndIdParams;
+import org.knowm.xchange.service.trade.params.CancelOrderByCurrencyPair;
+import org.knowm.xchange.service.trade.params.CancelOrderByIdParams;
+import org.knowm.xchange.service.trade.params.CancelOrderByOrderTypeParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
@@ -247,13 +251,15 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
-    public boolean cancelOrder(final String orderId, final CurrencyPairDTO currencyPair) {
-        logger.debug("TradeService - Canceling order {}", orderId);
+    public boolean cancelOrder(final Order order) {
+        logger.debug("TradeService - Canceling order {}", order.getOrderId());
+
+        var orderId = order.getOrderId();
         if (orderId != null) {
             try {
-                logger.debug("TradeService - Successfully canceled order {} : {}", orderId, currencyPair);
-                var params = new DefaultCancelOrderByCurrencyPairAndIdParams(dto2xchange(currencyPair), orderId);
-                return tradeService.cancelOrder(params);
+                logger.debug("TradeService - Successfully canceled order {} : {} : {}", orderId, order.getCurrencyPair(), order.getType());
+
+                return tradeService.cancelOrder(dto2xchange(order));
             } catch (Exception e) {
                 logger.error("TradeService - Error canceling order {}: {}", orderId, e.getMessage());
                 return false;
@@ -350,7 +356,43 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         return results;
     }
 
-    private CurrencyPair dto2xchange(final CurrencyPairDTO source) {
-        return new CurrencyPair(source.getBaseCurrency().getCurrencyCode(), source.getQuoteCurrency().getCurrencyCode());
+
+    private SolidCancelOrderParams dto2xchange(final Order order) {
+        // CancelOrderParams has to be instanceof:
+        //   BinanceTradeService: CancelOrderByCurrencyPair (currencyPair) && CancelOrderByIdParams (id)
+        //   CoinbaseProTradeService: CancelOrderByIdParams (id)
+        //   CoinbaseTradeService (v1 & v2): not available
+        //   GeminiTradeService: CancelOrderByIdParams (id)
+        //   KucoinTradeService: CancelOrderByIdParams (id)
+        //   SimulatedTradeService:
+        //      ( CancelOrderByCurrencyPair (id) && CancelOrderByIdParams (id) && CancelOrderByOrderTypeParams (type) ) + type has to be ASK|BID
+        //      || DefaultCancelOrderParamId (id)
+
+        //   CancelOrderByUserReferenceParams does not appear to be used
+
+        return new SolidCancelOrderParams(
+                order.getOrderId(),
+                new CurrencyPair(order.getCurrencyPair()),
+                dto2xchange(order.getType())
+        );
+    }
+
+    private org.knowm.xchange.dto.Order.OrderType dto2xchange(final OrderTypeDTO source) {
+        switch (source) {
+            case BID: return org.knowm.xchange.dto.Order.OrderType.BID;
+            case ASK: return org.knowm.xchange.dto.Order.OrderType.ASK;
+            default: throw new IllegalStateException("Apparently OrderTypeDto has a value which hasn't been mapped");
+        }
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    private static class SolidCancelOrderParams implements CancelOrderByOrderTypeParams, CancelOrderByCurrencyPair, CancelOrderByIdParams {
+        /** Order id. */
+        private final String orderId;
+        /** currency pair. */
+        private final CurrencyPair currencyPair;
+        /** order type. */
+        private final org.knowm.xchange.dto.Order.OrderType orderType;
     }
 }

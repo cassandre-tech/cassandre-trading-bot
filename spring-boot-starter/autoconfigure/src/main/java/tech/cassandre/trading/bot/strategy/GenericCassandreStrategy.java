@@ -503,23 +503,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @param id id
      * @return true if cancelled
-     * @deprecated use {@link #cancelOrder(long, CurrencyPairDTO)}
      */
-    @Deprecated( forRemoval = true )
     boolean cancelOrder(final long id) {
         final Optional<Order> order = orderRepository.findById(id);
-        return order.filter(value -> cancelOrder(value.getOrderId())).isPresent();
-    }
-
-    /**
-     * Cancel order.
-     *
-     * @param id id
-     * @return true if cancelled
-     */
-    boolean cancelOrder(final long id, final CurrencyPairDTO currencyPair) {
-        final Optional<Order> order = orderRepository.findById(id);
-        return order.filter(value -> cancelOrder(value.getOrderId(), currencyPair)).isPresent();
+        return order.map(this::cancelOrder).orElse(false);
     }
 
     /**
@@ -527,7 +514,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @param orderId order id
      * @return true if cancelled
-     * @deprecated use {@link #cancelOrder(String, CurrencyPairDTO)}
+     * @deprecated use {@link #cancelOrder(Order)}
      */
     @Deprecated(forRemoval = true)
     boolean cancelOrder(final String orderId) {
@@ -537,11 +524,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /**
      * Cancel order.
      *
-     * @param orderId order id
+     * @param order the order to cancel
      * @return true if cancelled
      */
-    boolean cancelOrder(final String orderId, final CurrencyPairDTO currencyPairDTO) {
-        return tradeService.cancelOrder(orderId, currencyPairDTO);
+    boolean cancelOrder(final Order order) {
+        return tradeService.cancelOrder(order);
     }
 
     /**

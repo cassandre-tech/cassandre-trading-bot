@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.service;
 
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -71,7 +72,7 @@ public interface TradeService {
      *
      * @param orderId order id
      * @return true if cancelled
-     * @deprecated use {@link #cancelOrder(String, CurrencyPairDTO)}
+     * @deprecated use {@link #cancelOrder(Order)}
      */
     @Deprecated(forRemoval = true)
     boolean cancelOrder(String orderId);
@@ -79,11 +80,10 @@ public interface TradeService {
     /**
      * Cancel order.
      *
-     * @param orderId order id
-     * @param currencyPair target currency pair
+     * @param order the order to cancel
      * @return true if cancelled
      */
-    boolean cancelOrder(String orderId, CurrencyPairDTO currencyPair);
+    boolean cancelOrder(Order order);
 
     /**
      * Get orders from exchange.
