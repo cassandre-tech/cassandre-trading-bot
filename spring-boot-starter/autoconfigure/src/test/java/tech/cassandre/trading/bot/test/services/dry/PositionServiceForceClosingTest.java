@@ -13,8 +13,6 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -47,12 +45,6 @@ public class PositionServiceForceClosingTest extends BaseTest {
 
     @Autowired
     private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private TradeRepository tradeRepository;
 
     @Autowired
     private OrderFlux orderFlux;

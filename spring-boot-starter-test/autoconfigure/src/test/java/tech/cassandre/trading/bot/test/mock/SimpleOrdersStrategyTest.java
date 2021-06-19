@@ -15,7 +15,6 @@ import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 
@@ -47,12 +46,6 @@ public class SimpleOrdersStrategyTest extends BaseTest {
 
     @Autowired
     private TradeRepository tradeRepository;
-
-    @Autowired
-    private TickerFluxMock tickerFluxMock;
-
-    @Autowired
-    private MarketService marketService;
 
     @Autowired
     private UserService userService;

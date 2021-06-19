@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 import tech.cassandre.trading.bot.util.validator.Rate;
 
@@ -18,6 +19,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @ToString
+@EnableConfigurationProperties({ExchangeParameters.class,
+        ExchangeParameters.Modes.class,
+        ExchangeParameters.Rates.class})
 @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange")
 public class ExchangeParameters {
 

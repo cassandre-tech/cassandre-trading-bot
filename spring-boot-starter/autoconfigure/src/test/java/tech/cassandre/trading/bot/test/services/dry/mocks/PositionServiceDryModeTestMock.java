@@ -20,7 +20,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
-@SuppressWarnings("unchecked")
 @TestConfiguration
 public class PositionServiceDryModeTestMock extends BaseTest {
 

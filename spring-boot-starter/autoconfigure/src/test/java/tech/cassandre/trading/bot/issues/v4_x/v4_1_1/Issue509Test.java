@@ -42,7 +42,7 @@ public class Issue509Test extends BaseTest {
 
     @Test
     @DisplayName("Fix empty openingOrder or closing order")
-    public void checkEmptyOrderFix() throws InterruptedException {
+    public void checkEmptyOrderFix() {
         with().await().untilAsserted(() -> assertEquals(0, positionRepository.findByStatus(OPENING).size()));
         with().await().untilAsserted(() -> assertEquals(0, positionRepository.findByStatus(CLOSING).size()));
 

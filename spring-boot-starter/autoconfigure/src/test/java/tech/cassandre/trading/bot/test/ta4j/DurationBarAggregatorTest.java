@@ -82,9 +82,9 @@ class DurationBarAggregatorTest {
     }
 
 
-    private class TestSubscriber extends BaseSubscriber<Bar> {
+    private static class TestSubscriber extends BaseSubscriber<Bar> {
         boolean subscribed;
-        List<Bar> bars = new ArrayList<>();
+        final List<Bar> bars = new ArrayList<>();
 
 
         @Override

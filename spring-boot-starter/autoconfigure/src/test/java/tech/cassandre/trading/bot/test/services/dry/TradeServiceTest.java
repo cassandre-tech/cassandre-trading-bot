@@ -52,7 +52,7 @@ public class TradeServiceTest extends BaseTest {
 
     @Test
     @DisplayName("Check buy and sell order creation")
-    public void checkCreateBuyAndSellOrder() throws InterruptedException {
+    public void checkCreateBuyAndSellOrder() {
         tickerFlux.update();
 
         // What we expect.

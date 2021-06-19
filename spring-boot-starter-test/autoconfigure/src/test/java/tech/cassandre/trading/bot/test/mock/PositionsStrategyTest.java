@@ -8,12 +8,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.util.BaseTest;
 
 import java.math.BigDecimal;
@@ -24,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest(properties = {"POSITIONS_STRATEGY_ENABLED=true", "SIMPLE_ORDER_STRATEGY_ENABLED=false"})
 @ComponentScan("tech.cassandre.trading.bot")
@@ -43,20 +38,9 @@ public class PositionsStrategyTest extends BaseTest {
     @Autowired
     private TradeRepository tradeRepository;
 
-    @Autowired
-    private TickerFluxMock tickerFluxMock;
-
-    @Autowired
-    private MarketService marketService;
-
-    @Autowired
-    private UserService userService;
-
     @Test
     @DisplayName("Check strategy behavior")
     public void checkStrategyBehavior() {
-        CurrencyPairDTO BTC_USDT = new CurrencyPairDTO(BTC, USDT);
-
         // We wait for all the tickers to be treated.
         // BTC/USDT => 7.
         with().await().untilAsserted(() -> assertEquals(7, positionsStrategy.getTickersUpdateReceived().size()));

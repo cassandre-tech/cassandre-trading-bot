@@ -60,6 +60,14 @@
             <version>5.0.8</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Util -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->
 
@@ -94,6 +102,39 @@
                     <configLocation>../../checkstyle_configuration.xml</configLocation>
                     <failOnViolation>true</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
+                </configuration>
+            </plugin>
+            <!-- Compilation (with mapstruct & spring boot processor) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.4.1.Final</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.16</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>2.4.1</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <!-- Surefire -->
@@ -137,12 +178,31 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.20.0</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/delombok</outputDirectory>
+                    <addOutputDirectory>false</addOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
                     <detectOfflineLinks>false</detectOfflineLinks>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <sourcepath>${project.build.directory}/delombok</sourcepath>
                 </configuration>
                 <executions>
                     <execution>

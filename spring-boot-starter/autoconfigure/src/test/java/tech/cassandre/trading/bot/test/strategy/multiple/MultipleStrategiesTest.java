@@ -99,7 +99,7 @@ public class MultipleStrategiesTest extends BaseTest {
 
     @Test
     @DisplayName("Check multiple strategies behavior")
-    public void checkMultipleStrategyBehavior() throws InterruptedException {
+    public void checkMultipleStrategyBehavior() {
         //==============================================================================================================
         // Strategies tested.
         // Strategy 1 - Requesting BTC/USDT.

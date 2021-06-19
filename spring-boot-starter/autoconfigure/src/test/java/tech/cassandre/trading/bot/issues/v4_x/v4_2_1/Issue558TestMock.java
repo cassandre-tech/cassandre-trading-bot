@@ -7,6 +7,7 @@ import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,10 +27,9 @@ public class Issue558TestMock extends BaseMock {
         tickers.add(getGeneratedTicker(XCHANGE_BTC_ETH, new BigDecimal("2")));
         tickers.add(getGeneratedTicker(XCHANGE_BTC_USDT, new BigDecimal("3")));
 
-        List<Ticker> emptyTickers = new LinkedList<>();
-
         // We use getTickers instead of getTicker.
-        given(marketService.getTickers(any())).willReturn(tickers, emptyTickers);
+        //noinspection unchecked
+        given(marketService.getTickers(any())).willReturn(tickers, Collections.emptyList());
         given(marketService.getTicker(any())).willThrow(new RuntimeException("getTicker() was called !"));
         return marketService;
     }

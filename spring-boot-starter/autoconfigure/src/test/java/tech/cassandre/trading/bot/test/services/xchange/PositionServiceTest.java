@@ -741,7 +741,7 @@ public class PositionServiceTest extends BaseTest {
 
     @Test
     @DisplayName("Check update rules on position")
-    public void checkUpdateRulesOnPosition() throws InterruptedException {
+    public void checkUpdateRulesOnPosition() {
         // =============================================================================================================
         // Creates position 1 (ETH/BTC, 0.0001, 100% stop gain).
         final PositionCreationResultDTO creationResult1 = strategy.createLongPosition(ETH_BTC,

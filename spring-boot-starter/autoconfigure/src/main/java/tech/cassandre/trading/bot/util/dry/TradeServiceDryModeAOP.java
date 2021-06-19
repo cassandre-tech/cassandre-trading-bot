@@ -26,6 +26,7 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
+import tech.cassandre.trading.bot.util.exception.DryModeException;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -81,7 +82,7 @@ public class TradeServiceDryModeAOP extends BaseService {
         // We check that we have the trade account.
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         if (tradeAccount.isEmpty()) {
-            throw new RuntimeException("Trade account was not found");
+            throw new DryModeException("Trade account was not found");
         }
 
         // We check if we have enough assets to buy.

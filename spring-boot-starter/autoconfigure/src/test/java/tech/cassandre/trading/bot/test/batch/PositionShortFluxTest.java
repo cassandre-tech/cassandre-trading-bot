@@ -71,7 +71,7 @@ public class PositionShortFluxTest extends BaseTest {
 
     @Test
     @DisplayName("Check received data")
-    public void checkReceivedData() throws InterruptedException {
+    public void checkReceivedData() {
         // =============================================================================================================
         // Creates short position 1 of 10 ETH (for BTC) - should be OPENING.
         final PositionCreationResultDTO position1Result = strategy.createShortPosition(ETH_BTC,

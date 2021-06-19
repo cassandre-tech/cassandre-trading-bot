@@ -1,11 +1,11 @@
 package tech.cassandre.trading.bot.test.mock;
 
+import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -65,26 +65,22 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 @SuppressWarnings("checkstyle:DesignForExtension")
 @TestConfiguration
 @EnableAspectJAutoProxy
+@RequiredArgsConstructor
 public class TickerFluxMock {
 
     /** Application context. */
-    @Autowired
     private ApplicationContext applicationContext;
 
     /** Order flux. */
-    @Autowired
     private OrderFlux orderFlux;
 
     /** Order repository. */
-    @Autowired
     private OrderRepository orderRepository;
 
     /** Trade repository. */
-    @Autowired
     private TradeRepository tradeRepository;
 
     /** Position repository. */
-    @Autowired
     private PositionRepository positionRepository;
 
     /** Logger. */
@@ -214,7 +210,7 @@ public class TickerFluxMock {
                         final String high = rowScanner.next().replaceAll("\"", "");
                         final String low = rowScanner.next().replaceAll("\"", "");
                         final String volume = rowScanner.next().replaceAll("\"", "");
-                        String turnover = null;
+                        String turnover;
                         if (rowScanner.hasNext()) {
                             turnover = rowScanner.next().replaceAll("\"", "");
                         } else {
