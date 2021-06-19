@@ -205,7 +205,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
                 .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value) -> id, LinkedHashMap::new));
 
         // We update the values of the last tickers that can be found in the strategy.
-        tickersUpdates.values().forEach(ticker -> lastTickers.put(ticker.getCurrencyPair(), ticker));
+        lastTickers.putAll(tickersUpdates);
 
         // We notify the strategy.
         onTickersUpdates(tickersUpdates);
