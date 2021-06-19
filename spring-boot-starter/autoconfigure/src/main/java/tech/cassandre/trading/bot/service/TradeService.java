@@ -71,8 +71,19 @@ public interface TradeService {
      *
      * @param orderId order id
      * @return true if cancelled
+     * @deprecated use {@link #cancelOrder(String, CurrencyPairDTO)}
      */
+    @Deprecated(forRemoval = true)
     boolean cancelOrder(String orderId);
+
+    /**
+     * Cancel order.
+     *
+     * @param orderId order id
+     * @param currencyPair target currency pair
+     * @return true if cancelled
+     */
+    boolean cancelOrder(String orderId, CurrencyPairDTO currencyPair);
 
     /**
      * Get orders from exchange.

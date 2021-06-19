@@ -47,46 +47,74 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 @SuppressWarnings("checkstyle:DesignForExtension")
 public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
 
-    /** Currency mapper. */
+    /**
+     * Currency mapper.
+     */
     protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);
 
-    /** Order mapper. */
+    /**
+     * Order mapper.
+     */
     protected final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
 
-    /** Trade mapper. */
+    /**
+     * Trade mapper.
+     */
     protected final TradeMapper tradeMapper = Mappers.getMapper(TradeMapper.class);
 
-    /** Position mapper. */
+    /**
+     * Position mapper.
+     */
     protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
 
-    /** Strategy. */
+    /**
+     * Strategy.
+     */
     private StrategyDTO strategy;
 
-    /** Order repository. */
+    /**
+     * Order repository.
+     */
     private OrderRepository orderRepository;
 
-    /** Trade repository. */
+    /**
+     * Trade repository.
+     */
     private TradeRepository tradeRepository;
 
-    /** Position repository. */
+    /**
+     * Position repository.
+     */
     private PositionRepository positionRepository;
 
-    /** Exchange service. */
+    /**
+     * Exchange service.
+     */
     private ExchangeService exchangeService;
 
-    /** Trade service. */
+    /**
+     * Trade service.
+     */
     private TradeService tradeService;
 
-    /** Position service. */
+    /**
+     * Position service.
+     */
     private PositionService positionService;
 
-    /** The accounts owned by the user. */
+    /**
+     * The accounts owned by the user.
+     */
     private final Map<String, AccountDTO> userAccounts = new LinkedHashMap<>();
 
-    /** Positions previous status. */
+    /**
+     * Positions previous status.
+     */
     private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
-    /** Last tickers received. */
+    /**
+     * Last tickers received.
+     */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
 
     // =================================================================================================================
@@ -163,7 +191,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         final Map<String, AccountDTO> accountsUpdates = accounts
                 .stream()
                 .peek(accountDTO -> userAccounts.put(accountDTO.getAccountId(), accountDTO)) // We store the account values in the strategy.
-                .collect(Collectors.toMap(AccountDTO::getAccountId, Function.identity(), (id, value)->id, LinkedHashMap::new));
+                .collect(Collectors.toMap(AccountDTO::getAccountId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
 
         // We notify the strategy.
         onAccountsUpdates(accountsUpdates);
@@ -174,7 +202,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         // We only retrieve the tickers requested by the strategy.
         final Map<CurrencyPairDTO, TickerDTO> tickersUpdates = tickers.stream()
                 .filter(ticker -> getRequestedCurrencyPairs().contains(ticker.getCurrencyPair()))
-                .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value)->id, LinkedHashMap::new));
+                .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value) -> id, LinkedHashMap::new));
 
         // We update the values of the last tickers that can be found in the strategy.
         tickersUpdates.values().forEach(ticker -> lastTickers.put(ticker.getCurrencyPair(), ticker));
@@ -188,7 +216,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         // We only retrieve the orders for the strategy.
         final Map<String, OrderDTO> ordersUpdates = orders.stream()
                 .filter(orderDTO -> orderDTO.getStrategy().getId().equals(strategy.getId()))
-                .collect(Collectors.toMap(OrderDTO::getOrderId, Function.identity(), (id, value)->id, LinkedHashMap::new));
+                .collect(Collectors.toMap(OrderDTO::getOrderId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
 
         // We notify the strategy.
         onOrdersUpdates(ordersUpdates);
@@ -199,7 +227,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         // We only retrieve the orders for the strategy.
         final Map<String, TradeDTO> tradesUpdates = trades.stream()
                 .filter(tradeDTO -> tradeDTO.getOrder().getStrategy().getId().equals(strategy.getId()))
-                .collect(Collectors.toMap(TradeDTO::getTradeId, Function.identity(), (id, value)->id, LinkedHashMap::new));
+                .collect(Collectors.toMap(TradeDTO::getTradeId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
 
         // We notify the strategy.
         onTradesUpdates(tradesUpdates);
@@ -475,7 +503,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @param id id
      * @return true if cancelled
+     * @deprecated use {@link #cancelOrder(long, CurrencyPairDTO)}
      */
+    @Deprecated( forRemoval = true )
     boolean cancelOrder(final long id) {
         final Optional<Order> order = orderRepository.findById(id);
         return order.filter(value -> cancelOrder(value.getOrderId())).isPresent();
@@ -484,11 +514,34 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /**
      * Cancel order.
      *
+     * @param id id
+     * @return true if cancelled
+     */
+    boolean cancelOrder(final long id, final CurrencyPairDTO currencyPair) {
+        final Optional<Order> order = orderRepository.findById(id);
+        return order.filter(value -> cancelOrder(value.getOrderId(), currencyPair)).isPresent();
+    }
+
+    /**
+     * Cancel order.
+     *
+     * @param orderId order id
+     * @return true if cancelled
+     * @deprecated use {@link #cancelOrder(String, CurrencyPairDTO)}
+     */
+    @Deprecated(forRemoval = true)
+    boolean cancelOrder(final String orderId) {
+        return tradeService.cancelOrder(orderId);
+    }
+
+    /**
+     * Cancel order.
+     *
      * @param orderId order id
      * @return true if cancelled
      */
-    boolean cancelOrder(final String orderId) {
-        return tradeService.cancelOrder(orderId);
+    boolean cancelOrder(final String orderId, final CurrencyPairDTO currencyPairDTO) {
+        return tradeService.cancelOrder(orderId, currencyPairDTO);
     }
 
     /**

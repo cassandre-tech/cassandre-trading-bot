@@ -1,8 +1,10 @@
 package tech.cassandre.trading.bot.service;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.service.trade.params.DefaultCancelOrderByCurrencyPairAndIdParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
@@ -245,6 +247,25 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean cancelOrder(final String orderId, final CurrencyPairDTO currencyPair) {
+        logger.debug("TradeService - Canceling order {}", orderId);
+        if (orderId != null) {
+            try {
+                logger.debug("TradeService - Successfully canceled order {} : {}", orderId, currencyPair);
+                var params = new DefaultCancelOrderByCurrencyPairAndIdParams(dto2xchange(currencyPair), orderId);
+                return tradeService.cancelOrder(params);
+            } catch (Exception e) {
+                logger.error("TradeService - Error canceling order {}: {}", orderId, e.getMessage());
+                return false;
+            }
+        } else {
+            logger.error("TradeService - Error canceling order, order id provided is null");
+            return false;
+        }
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:DesignForExtension")
     public Set<OrderDTO> getOrders() {
         logger.debug("TradeService - Getting orders from exchange");
         try {
@@ -329,4 +350,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         return results;
     }
 
+    private CurrencyPair dto2xchange(final CurrencyPairDTO source) {
+        return new CurrencyPair(source.getBaseCurrency().getCurrencyCode(), source.getQuoteCurrency().getCurrencyCode());
+    }
 }
