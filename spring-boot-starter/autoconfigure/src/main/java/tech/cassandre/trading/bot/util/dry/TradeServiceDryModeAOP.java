@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -207,7 +206,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                 .forEach(orderDTO -> {
                             tradePrices.put(orderDTO.getOrderId(), orderDTO.getMarketPriceValue());
 
-                            final Optional<PositionDTO> positionDTO = positionRepository.findByStatusNot(PositionStatusDTO.CLOSED)
+                            final Optional<PositionDTO> positionDTO = positionRepository.findAll()
                                     .stream()
                                     .filter(position -> position.getClosingOrder() != null)
                                     .filter(position -> position.getClosingOrder().getOrderId().equals(orderDTO.getOrderId()))
@@ -228,7 +227,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         // Treating long positions.
 
                                         if (positionDTO.get().getRules().isStopGainPercentageSet()
-                                                && gainDTO.get().getPercentage() >= positionDTO.get().getRules().getStopGainPercentage()) {
+                                                && gainDTO.get().getPercentage() >= 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
                                             // This means the stop gain won and we should transform the price.
 
@@ -238,13 +237,13 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  250 % evolution => ((70000 - 20000) / 20000) * 100 = 250 %
                                             //  How to calculate the new price.
                                             //  openingTrade market price * (( openingTrade market price * rules gain)/100)
-                                            final BigDecimal augmentation = openingTrade.getPriceValue()
+                                            final BigDecimal augmentation = positionDTO.get().getOpeningOrder().getMarketPriceValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
                                                     .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
                                             tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().add(augmentation));
 
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
-                                                && gainDTO.get().getPercentage() <= positionDTO.get().getRules().getStopLossPercentage()) {
+                                                && gainDTO.get().getPercentage() < 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
                                             // This means the stop gain won and we should transform the price.
 
@@ -254,7 +253,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  -40 % evolution => ((30000 - 50000) / 50000) * 100 = -40 %
                                             //  How to calculate the new price.
                                             //  openingTrade market price * (( openingTrade market price * rules gain)/100)
-                                            final BigDecimal reduction = openingTrade.getPriceValue()
+                                            final BigDecimal reduction = positionDTO.get().getOpeningOrder().getMarketPriceValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))
                                                     .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
                                             tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().subtract(reduction));
@@ -265,7 +264,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         // Treating short positions.
 
                                         if (positionDTO.get().getRules().isStopGainPercentageSet()
-                                                && gainDTO.get().getPercentage() >= positionDTO.get().getRules().getStopGainPercentage()) {
+                                                && gainDTO.get().getPercentage() >= 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
                                             // This means the stop gain won and we should transform the price.
 
@@ -285,10 +284,10 @@ public class TradeServiceDryModeAOP extends BaseService {
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
                                                     .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
                                             orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().add(augmentation));
-                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().divide(openingTrade.getAmountValue().add(augmentation), BIGINTEGER_SCALE, FLOOR));
+                                            tradePrices.put(orderDTO.getOrderId(), positionDTO.get().getOpeningOrder().getMarketPriceValue().divide(openingTrade.getAmountValue().add(augmentation), BIGINTEGER_SCALE, FLOOR));
 
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
-                                                && gainDTO.get().getPercentage() <= positionDTO.get().getRules().getStopLossPercentage()) {
+                                                && gainDTO.get().getPercentage() < 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
                                             // This means the stop gain won and we should transform the price.
 
@@ -309,11 +308,17 @@ public class TradeServiceDryModeAOP extends BaseService {
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))
                                                     .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
                                             orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().subtract(reduction));
-                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().divide(openingTrade.getAmountValue().subtract(reduction), BIGINTEGER_SCALE, FLOOR));
+                                            tradePrices.put(orderDTO.getOrderId(), positionDTO.get().getOpeningOrder().getMarketPriceValue().divide(openingTrade.getAmountValue().subtract(reduction), BIGINTEGER_SCALE, FLOOR));
                                         }
                                         // =====================================================================================
                                     }
+                                } else {
+                                    System.out.println(orderDTO.getOrderId() + "=> " + gainDTO);
                                 }
+//                                if (positionDTO.get().getId() == 1) {
+//                                    System.out.println("===> " + gainDTO);
+//                                    tradePrices.forEach((s, bigDecimal) -> System.out.println(s + "=>" + bigDecimal));
+//                                }
                             }
                         }
                 );
@@ -322,7 +327,8 @@ public class TradeServiceDryModeAOP extends BaseService {
         List<UserTrade> trades = orderRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(orderMapper::mapToOrderDTO)
-                .filter(orderDTO -> !orderDTO.isFulfilled())    // Only orders with trades not arrived.
+                .filter(orderDTO -> !orderDTO.isFulfilled())                        // Only orders without trade.
+                .filter(orderDTO -> tradePrices.get(orderDTO.getOrderId()) != null) // Only orders with price calculated.
                 .map(orderDTO -> UserTrade.builder()
                         .id(orderDTO.getOrderId().replace(DRY_ORDER_PREFIX, DRY_TRADE_PREFIX))
                         .type(utilMapper.mapToOrderType(orderDTO.getType()))

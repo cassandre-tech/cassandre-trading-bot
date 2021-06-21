@@ -45,8 +45,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 
 /**
  * Ticker flux mock - Allows developers to simulate tickers via tsv files.
@@ -132,21 +130,16 @@ public class TickerFluxMock {
                     fluxTerminated.put(cp, false);
                     //noinspection rawtypes
                     when(marketService.getTicker(cp)).thenAnswer(new Answer() {
-                        // Tickers
+                        // Tickers to send.
                         private final Iterator<TickerDTO> tickers = getTickersFromFile(resource).iterator();
 
                         @Override
                         public Object answer(final InvocationOnMock invocationOnMock) {
-                            // We make sure everything is treated.
                             await().until(() -> {
                                 orderFlux.update();
                                 tradeFlux.update();
                                 return orderRepository.count() == tradeRepository.count();
                             });
-                            await().until(() -> positionRepository.findByStatus(OPENING).size() == 0);
-                            await().until(() -> positionRepository.findByStatus(CLOSING).size() == 0);
-
-                            // We send the next tickers.
                             if (tickers.hasNext()) {
                                 return Optional.of(tickers.next());
                             } else {

@@ -18,6 +18,7 @@ import java.util.Map;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 
 /**
  * Basic Ta4j strategy test.
@@ -43,6 +44,13 @@ public class SimpleTa4jStrategyTest {
 
         System.out.println("Cumulated gains:");
         gains.forEach((currency, gain) -> System.out.println(currency + " : " + gain.getAmount()));
+
+        System.out.println("Position closed :");
+        strategy.getPositions()
+                .values()
+                .stream()
+                .filter(p -> p.getStatus().equals(CLOSED))
+                .forEach(p -> System.out.println(" - " + p.getDescription()));
 
         System.out.println("Position still opened :");
         strategy.getPositions()

@@ -192,11 +192,6 @@ public class PositionDTO {
                 }
                 final BigDecimal valueICanSell = amount.getValue().multiply(price);
 
-                // TODO. This should not happened if a ticker is present before creating an order.
-                if (valueIBought.compareTo(ZERO) == 0) {
-                    return Optional.empty();
-                }
-
                 // Percentage.
                 final BigDecimal gainPercentage = ((valueICanSell.subtract(valueIBought))
                         .divide(valueIBought, BIGINTEGER_SCALE, FLOOR))
@@ -298,7 +293,7 @@ public class PositionDTO {
      */
     public final boolean tickerUpdate(final TickerDTO ticker) {
         // If the position is not closing and the ticker is the one expected.
-        if (getClosingOrder() == null && ticker.getCurrencyPair().equals(currencyPair)) {
+        if (getStatus() == OPENED && ticker.getCurrencyPair().equals(currencyPair)) {
 
             // We retrieve the gains.
             final Optional<GainDTO> calculatedGain = calculateGainFromPrice(ticker.getLast());
@@ -609,7 +604,7 @@ public class PositionDTO {
                     break;
                 case CLOSED:
                     final GainDTO gain = getGain();
-                    value += " on " + getCurrencyPair() + " - Closed - Gain : " + getFormattedValue(gain.getPercentage()) + " %";
+                    value += " on " + getCurrencyPair() + " - Closed - " + gain;
                     break;
                 default:
                     value = "Incorrect state for position " + getId();
