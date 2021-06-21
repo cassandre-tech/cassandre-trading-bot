@@ -103,7 +103,7 @@ public class MarketServiceTest extends BaseTest {
         TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         tickerFlux.update();
         // We should have two tickers received by the strategy
-        await().untilAsserted(() -> assertEquals(2, strategy.getTickersUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(4, strategy.getTickersUpdatesReceived().size()));
     }
 
 }

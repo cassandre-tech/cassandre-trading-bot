@@ -351,9 +351,10 @@
                             </properties>
                             <reuseForks>false</reuseForks>
                             <forkCount>1</forkCount>
-                            <includes>
-                                <includes>**/integration/**</includes>
-                            </includes>
+                            <excludes>
+                                <exclude>**/test/**</exclude>
+                                <exclude>**/issues/**</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -66,9 +66,6 @@ public class MarketServiceTest {
         // bid.
         assertNotNull(t.get().getBid());
         assertTrue(t.get().getBid().compareTo(ZERO) > 0);
-        // ask.
-        assertNotNull(t.get().getAsk());
-        assertTrue(t.get().getAsk().compareTo(ZERO) > 0);
         // bidSize.
         assertNull(t.get().getBidSize());
         // askSize.

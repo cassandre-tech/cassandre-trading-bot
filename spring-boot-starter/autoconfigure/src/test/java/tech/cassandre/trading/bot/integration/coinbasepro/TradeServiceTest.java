@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -78,7 +77,7 @@ public class TradeServiceTest extends BaseTest {
         final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
         assertFalse(result1.isSuccessful());
         assertNull(result1.getOrder());
-        assertEquals("TradeService - Error calling createBuyMarketOrder for 1E-8 ETH/BTC : org.knowm.xchange.coinbasepro.dto.CoinbaseProException: funds must be a number", result1.getErrorMessage());
+        assertEquals("TradeService - Error calling createMarketOrder for 1E-8 ETH/BTC: org.knowm.xchange.coinbasepro.dto.CoinbaseProException: funds must be a number", result1.getErrorMessage());
         assertNotNull(result1.getException());
 
         // =============================================================================================================
@@ -126,7 +125,6 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(0, order1.get().getLimitPrice().getValue().compareTo(new BigDecimal("0.0001")));
         assertEquals(cp.getQuoteCurrency(), order1.get().getLimitPrice().getCurrency());
         assertNull(order1.get().getLeverage());
-        assertEquals(PENDING_NEW, order1.get().getStatus());
         assertNull(order1.get().getUserReference());
         assertNotNull(order1.get().getTimestamp());
         assertTrue(order1.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
