@@ -15,6 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -75,6 +76,10 @@ public class TickerFluxMock {
     @Autowired
     private OrderFlux orderFlux;
 
+    /** Trade flux. */
+    @Autowired
+    private TradeFlux tradeFlux;
+
     /** Order repository. */
     @Autowired
     private OrderRepository orderRepository;
@@ -132,8 +137,11 @@ public class TickerFluxMock {
 
                         @Override
                         public Object answer(final InvocationOnMock invocationOnMock) {
-                            orderFlux.update();
-                            await().until(() -> orderRepository.count() == tradeRepository.count());
+                            await().until(() -> {
+                                orderFlux.update();
+                                tradeFlux.update();
+                                return orderRepository.count() == tradeRepository.count();
+                            });
                             await().until(() -> positionRepository.findByStatus(OPENING).size() == 0);
                             await().until(() -> positionRepository.findByStatus(CLOSING).size() == 0);
                             if (tickers.hasNext()) {

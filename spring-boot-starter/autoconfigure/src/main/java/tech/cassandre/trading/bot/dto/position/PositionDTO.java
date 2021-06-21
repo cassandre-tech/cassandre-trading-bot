@@ -171,7 +171,7 @@ public class PositionDTO {
      * @return gain
      */
     public Optional<GainDTO> calculateGainFromPrice(final BigDecimal price) {
-        if (getStatus() != OPENING && price != null) {
+        if (price != null) {
             // How gain calculation works for long positions ?
             //  - Bought 10 ETH with a price of 5 -> Amount of 50 USDT.
             //  - Sold 10 ETH with a price of 6 -> Amount of 60 USDT.
@@ -179,11 +179,23 @@ public class PositionDTO {
             // Gain percentage: ((60 - 50) / 50) * 100 = 20 %
             if (this.type == LONG) {
                 // Amounts.
-                final BigDecimal valueIBought = openingOrder.getTrades()
-                        .stream()
-                        .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
-                        .reduce(ZERO, BigDecimal::add);
+                final BigDecimal valueIBought;
+                if (openingOrder.isFulfilled()) {
+                    // If we received all the trades, I can calculate exactly the amount I bought.
+                    valueIBought = openingOrder.getTrades()
+                            .stream()
+                            .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                            .reduce(ZERO, BigDecimal::add);
+                } else {
+                    // If we did not receive all trades, I use order information.
+                    valueIBought = openingOrder.getAmount().getValue().multiply(openingOrder.getAveragePrice().getValue());
+                }
                 final BigDecimal valueICanSell = amount.getValue().multiply(price);
+
+                // TODO. This should not happened if a ticker is present before creating an order.
+                if (valueIBought.compareTo(ZERO) == 0) {
+                    return Optional.empty();
+                }
 
                 // Percentage.
                 final BigDecimal gainPercentage = ((valueICanSell.subtract(valueIBought))
@@ -215,10 +227,17 @@ public class PositionDTO {
             // Gain = amountICanBuy - amount.
             if (this.type == SHORT) {
                 // Amounts.
-                final BigDecimal amountGained = openingOrder.getTrades()
-                        .stream()
-                        .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
-                        .reduce(ZERO, BigDecimal::add);
+                final BigDecimal amountGained;
+                if (openingOrder.isFulfilled()) {
+                    // If we received all the trades, I can calculate exactly the amount I bought.
+                    amountGained = openingOrder.getTrades()
+                            .stream()
+                            .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                            .reduce(ZERO, BigDecimal::add);
+                } else {
+                    // If we did not receive all trades, I use order information.
+                    amountGained = openingOrder.getAmount().getValue().multiply(openingOrder.getAveragePrice().getValue());
+                }
                 final BigDecimal amountICanBuy = amountGained.divide(price, BIGINTEGER_SCALE, FLOOR);
                 // Percentage.
                 final BigDecimal gainPercentage = ((amountICanBuy.subtract(amount.getValue()))

@@ -8,6 +8,8 @@ import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderDTO;
+import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
@@ -122,6 +124,16 @@ public final class PositionsStrategy extends BasicCassandreStrategy {
     @Override
     public void onPositionsUpdates(Map<Long, PositionDTO> positions) {
         positions.values().forEach(positionDTO -> logger.info("- Position update : {}\n", positionDTO));
+    }
+
+    @Override
+    public void onOrdersUpdates(Map<String, OrderDTO> orders) {
+        orders.values().forEach(orderDTO -> logger.info("- Order update : {}\n", orderDTO));
+    }
+
+    @Override
+    public void onTradesUpdates(Map<String, TradeDTO> trades) {
+        trades.values().forEach(tradeDTO -> logger.info("- Trade update : {}\n", tradeDTO));
     }
 
     /**
