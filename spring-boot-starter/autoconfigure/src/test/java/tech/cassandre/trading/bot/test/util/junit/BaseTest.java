@@ -77,7 +77,7 @@ public class BaseTest {
     protected static final long WAITING_TIME_IN_SECONDS = 5L;
 
     /** How much we should wait for tests until it is declared as failed. */
-    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 10;
+    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
 
     /**
      * Constructor.
