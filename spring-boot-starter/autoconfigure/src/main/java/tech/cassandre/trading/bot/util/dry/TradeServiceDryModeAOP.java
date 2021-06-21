@@ -182,12 +182,11 @@ public class TradeServiceDryModeAOP extends BaseService {
                 .map(orderMapper::mapToOrderDTO)
                 .map(orderDTO -> new LimitOrder.Builder(utilMapper.mapToOrderType(orderDTO.getType()), currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()))
                         .id(orderDTO.getOrderId())
-                        .originalAmount(orderDTO.getAmount().getValue())
-                        .averagePrice(orderDTO.getAveragePrice().getValue())
-                        // TODO Fix this
-//                        .limitPrice(orderDTO.getLimitPrice().getValue())
+                        .originalAmount(orderDTO.getAmountValue())
+                        .averagePrice(orderDTO.getAveragePriceValue())
+                        .limitPrice(orderDTO.getLimitPriceValue())
                         .orderStatus(FILLED)
-                        .cumulativeAmount(orderDTO.getCumulativeAmount().getValue())
+                        .cumulativeAmount(orderDTO.getCumulativeAmountValue())
                         .userReference(orderDTO.getUserReference())
                         .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
                         .build())
@@ -206,7 +205,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                 .map(orderMapper::mapToOrderDTO)
                 .filter(orderDTO -> !orderDTO.isFulfilled())    // Only orders with trades not arrived
                 .forEach(orderDTO -> {
-                            tradePrices.put(orderDTO.getOrderId(), orderDTO.getMarketPrice().getValue());
+                            tradePrices.put(orderDTO.getOrderId(), orderDTO.getMarketPriceValue());
 
                             final Optional<PositionDTO> positionDTO = positionRepository.findByStatusNot(PositionStatusDTO.CLOSED)
                                     .stream()
@@ -218,7 +217,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                             // If this order is used to close position, we calculate a new price.
                             // A gain was made, we recalculate it from the order.
                             if (positionDTO.isPresent()) {
-                                final Optional<GainDTO> gainDTO = positionDTO.get().calculateGainFromPrice(orderDTO.getMarketPrice().getValue());
+                                final Optional<GainDTO> gainDTO = positionDTO.get().calculateGainFromPrice(orderDTO.getMarketPriceValue());
 
                                 if (gainDTO.isPresent()) {
                                     // We need the opening trade to know the price the asset was bought.
@@ -239,10 +238,10 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  250 % evolution => ((70000 - 20000) / 20000) * 100 = 250 %
                                             //  How to calculate the new price.
                                             //  openingTrade market price * (( openingTrade market price * rules gain)/100)
-                                            final BigDecimal augmentation = openingTrade.getPrice().getValue()
+                                            final BigDecimal augmentation = openingTrade.getPriceValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
                                                     .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
-                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPrice().getValue().add(augmentation));
+                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().add(augmentation));
 
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
                                                 && gainDTO.get().getPercentage() <= positionDTO.get().getRules().getStopLossPercentage()) {
@@ -255,10 +254,10 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  -40 % evolution => ((30000 - 50000) / 50000) * 100 = -40 %
                                             //  How to calculate the new price.
                                             //  openingTrade market price * (( openingTrade market price * rules gain)/100)
-                                            final BigDecimal reduction = openingTrade.getPrice().getValue()
+                                            final BigDecimal reduction = openingTrade.getPriceValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))
                                                     .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
-                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPrice().getValue().subtract(reduction));
+                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().subtract(reduction));
                                         }
                                         // =====================================================================================
                                     } else {
@@ -282,11 +281,11 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  To gain 100%, I should be able to by 2 bitcoins : opening trade amount * (opening trade amount * stop gain/100)
                                             //  so the question is how much a bitcoin should cost so I can buy 2 with 70 000 USDT
                                             //  2 * price = 70 000 USDT => price = 70 000/2 = 35 000
-                                            final BigDecimal augmentation = openingTrade.getAmount().getValue()
+                                            final BigDecimal augmentation = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
                                                     .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
-                                            orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmount().getValue().add(augmentation));
-                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPrice().getValue().divide(openingTrade.getAmount().getValue().add(augmentation), BIGINTEGER_SCALE, FLOOR));
+                                            orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().add(augmentation));
+                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().divide(openingTrade.getAmountValue().add(augmentation), BIGINTEGER_SCALE, FLOOR));
 
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
                                                 && gainDTO.get().getPercentage() <= positionDTO.get().getRules().getStopLossPercentage()) {
@@ -306,11 +305,11 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  To lose 10%, I should finish by only being able to buy 0,90 BTC : opening trade amount * (opening trade amount * stop gain/100)
                                             //  so the question is how much a bitcoin should cost so I can buy 0,90 with 40 000 USDT
                                             //  0.9 * price = 40 000 USDT => price = 40 000/0.9
-                                            final BigDecimal reduction = openingTrade.getAmount().getValue()
+                                            final BigDecimal reduction = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))
                                                     .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
-                                            orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmount().getValue().subtract(reduction));
-                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPrice().getValue().divide(openingTrade.getAmount().getValue().subtract(reduction), BIGINTEGER_SCALE, FLOOR));
+                                            orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().subtract(reduction));
+                                            tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().divide(openingTrade.getAmountValue().subtract(reduction), BIGINTEGER_SCALE, FLOOR));
                                         }
                                         // =====================================================================================
                                     }
@@ -329,7 +328,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                         .type(utilMapper.mapToOrderType(orderDTO.getType()))
                         .orderId(orderDTO.getOrderId())
                         .currencyPair(currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()))
-                        .originalAmount(orderDTO.getAmount().getValue())
+                        .originalAmount(orderDTO.getAmountValue())
                         .price(tradePrices.get(orderDTO.getOrderId()))
                         .feeAmount(ZERO)
                         .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))

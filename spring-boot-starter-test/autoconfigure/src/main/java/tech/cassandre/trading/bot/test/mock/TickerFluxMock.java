@@ -137,6 +137,7 @@ public class TickerFluxMock {
 
                         @Override
                         public Object answer(final InvocationOnMock invocationOnMock) {
+                            // We make sure everything is treated.
                             await().until(() -> {
                                 orderFlux.update();
                                 tradeFlux.update();
@@ -144,13 +145,11 @@ public class TickerFluxMock {
                             });
                             await().until(() -> positionRepository.findByStatus(OPENING).size() == 0);
                             await().until(() -> positionRepository.findByStatus(CLOSING).size() == 0);
+
+                            // We send the next tickers.
                             if (tickers.hasNext()) {
                                 return Optional.of(tickers.next());
                             } else {
-                                orderFlux.update();
-                                await().until(() -> orderRepository.count() == tradeRepository.count());
-                                await().until(() -> positionRepository.findByStatus(OPENING).size() == 0);
-                                await().until(() -> positionRepository.findByStatus(CLOSING).size() == 0);
                                 fluxTerminated.put(cp, true);
                                 return Optional.empty();
                             }

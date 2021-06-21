@@ -184,11 +184,11 @@ public class PositionDTO {
                     // If we received all the trades, I can calculate exactly the amount I bought.
                     valueIBought = openingOrder.getTrades()
                             .stream()
-                            .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                            .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                             .reduce(ZERO, BigDecimal::add);
                 } else {
                     // If we did not receive all trades, I use order information.
-                    valueIBought = openingOrder.getAmount().getValue().multiply(openingOrder.getAveragePrice().getValue());
+                    valueIBought = openingOrder.getAmountValue().multiply(openingOrder.getAveragePriceValue());
                 }
                 final BigDecimal valueICanSell = amount.getValue().multiply(price);
 
@@ -232,11 +232,11 @@ public class PositionDTO {
                     // If we received all the trades, I can calculate exactly the amount I bought.
                     amountGained = openingOrder.getTrades()
                             .stream()
-                            .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                            .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                             .reduce(ZERO, BigDecimal::add);
                 } else {
                     // If we did not receive all trades, I use order information.
-                    amountGained = openingOrder.getAmount().getValue().multiply(openingOrder.getAveragePrice().getValue());
+                    amountGained = openingOrder.getAmountValue().multiply(openingOrder.getAveragePriceValue());
                 }
                 final BigDecimal amountICanBuy = amountGained.divide(price, BIGINTEGER_SCALE, FLOOR);
                 // Percentage.
@@ -350,14 +350,14 @@ public class PositionDTO {
                 // We calculate the amount we bought from opening order trades.
                 final BigDecimal amountBought = openingOrder.getTrades()
                         .stream()
-                        .map(t -> t.getAmount().getValue())
+                        .map(TradeDTO::getAmountValue)
                         .reduce(ZERO, BigDecimal::add);
                 // If we have a closing order, we calculate how much we sold.
                 BigDecimal amountSold = ZERO;
                 if (closingOrder != null) {
                     amountSold = closingOrder.getTrades()
                             .stream()
-                            .map(t -> t.getAmount().getValue())
+                            .map(TradeDTO::getAmountValue)
                             .reduce(ZERO, BigDecimal::add);
                 }
                 return new CurrencyAmountDTO(amountBought.subtract(amountSold), currencyPair.getBaseCurrency());
@@ -367,14 +367,14 @@ public class PositionDTO {
                 // We calculate the amount we sold from opening order trades.
                 final BigDecimal amountSold = openingOrder.getTrades()
                         .stream()
-                        .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                        .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                         .reduce(ZERO, BigDecimal::add);
                 // If we have a closing order, we calculate how much we bought.
                 BigDecimal amountBought = ZERO;
                 if (closingOrder != null) {
                     amountBought = closingOrder.getTrades()
                             .stream()
-                            .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                            .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                             .reduce(ZERO, BigDecimal::add);
                 }
                 return new CurrencyAmountDTO(amountSold.subtract(amountBought), currencyPair.getQuoteCurrency());
@@ -481,12 +481,12 @@ public class PositionDTO {
                 // Gain  -> ((150 - 100) / 100) * 100 = 50 %
                 BigDecimal bought = openingOrder.getTrades()
                         .stream()
-                        .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                        .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                         .reduce(ZERO, BigDecimal::add);
 
                 BigDecimal sold = closingOrder.getTrades()
                         .stream()
-                        .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                        .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                         .reduce(ZERO, BigDecimal::add);
 
                 // Calculate gain.
@@ -495,7 +495,7 @@ public class PositionDTO {
 
                 // Calculate fees.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
-                        .map(t -> t.getFee().getValue())
+                        .map(TradeDTO::getFeeValue)
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
@@ -522,12 +522,12 @@ public class PositionDTO {
             if (this.type == SHORT) {
                 BigDecimal sold = openingOrder.getTrades()
                         .stream()
-                        .map(t -> t.getAmount().getValue())
+                        .map(TradeDTO::getAmountValue)
                         .reduce(ZERO, BigDecimal::add);
 
                 BigDecimal bought = closingOrder.getTrades()
                         .stream()
-                        .map(t -> t.getAmount().getValue())
+                        .map(TradeDTO::getAmountValue)
                         .reduce(ZERO, BigDecimal::add);
 
                 // Calculate gain.
@@ -536,7 +536,7 @@ public class PositionDTO {
 
                 // Calculate fees.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
-                        .map(t -> t.getFee().getValue())
+                        .map(TradeDTO::getFeeValue)
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();

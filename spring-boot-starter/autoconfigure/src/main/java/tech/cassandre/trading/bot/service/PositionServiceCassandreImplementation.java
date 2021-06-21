@@ -307,20 +307,20 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                     if (p.getType() == LONG) {
                         totalBefore.put(currency, p.getOpeningOrder().getTrades()
                                 .stream()
-                                .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                                .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                                 .reduce(totalBefore.get(currency), BigDecimal::add));
                         totalAfter.put(currency, p.getClosingOrder().getTrades()
                                 .stream()
-                                .map(t -> t.getAmount().getValue().multiply(t.getPrice().getValue()))
+                                .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                                 .reduce(totalAfter.get(currency), BigDecimal::add));
                     } else {
                         totalBefore.put(currency, p.getOpeningOrder().getTrades()
                                 .stream()
-                                .map(t -> t.getAmount().getValue())
+                                .map(TradeDTO::getAmountValue)
                                 .reduce(totalBefore.get(currency), BigDecimal::add));
                         totalAfter.put(currency, p.getClosingOrder().getTrades()
                                 .stream()
-                                .map(t -> t.getAmount().getValue())
+                                .map(TradeDTO::getAmountValue)
                                 .reduce(totalAfter.get(currency), BigDecimal::add));
                     }
 

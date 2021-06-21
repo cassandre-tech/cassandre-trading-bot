@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -73,6 +74,45 @@ public class TradeDTO {
 
     /** The timestamp of the trade. */
     ZonedDateTime timestamp;
+
+    /**
+     * Returns amount value.
+     *
+     * @return amount value
+     */
+    public BigDecimal getAmountValue() {
+        if (amount == null) {
+            return null;
+        } else {
+            return amount.getValue();
+        }
+    }
+
+    /**
+     * Returns price value.
+     *
+     * @return price value
+     */
+    public BigDecimal getPriceValue() {
+        if (price == null) {
+            return null;
+        } else {
+            return price.getValue();
+        }
+    }
+
+    /**
+     * Returns fee value.
+     *
+     * @return fee value
+     */
+    public BigDecimal getFeeValue() {
+        if (fee == null) {
+            return null;
+        } else {
+            return fee.getValue();
+        }
+    }
 
     @Override
     public final boolean equals(final Object o) {

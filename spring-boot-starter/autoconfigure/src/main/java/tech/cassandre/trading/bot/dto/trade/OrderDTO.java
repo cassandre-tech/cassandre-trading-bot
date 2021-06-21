@@ -98,6 +98,71 @@ public class OrderDTO {
     }
 
     /**
+     * Returns amount value.
+     *
+     * @return amount value
+     */
+    public BigDecimal getAmountValue() {
+        if (amount == null) {
+            return null;
+        } else {
+            return amount.getValue();
+        }
+    }
+
+    /**
+     * Returns average price value.
+     *
+     * @return average price value.
+     */
+    public BigDecimal getAveragePriceValue() {
+        if (averagePrice == null) {
+            return null;
+        } else {
+            return averagePrice.getValue();
+        }
+    }
+
+    /**
+     * Returns limit price value.
+     *
+     * @return limit price value
+     */
+    public BigDecimal getLimitPriceValue() {
+        if (limitPrice == null) {
+            return null;
+        } else {
+            return limitPrice.getValue();
+        }
+    }
+
+    /**
+     * Returns market price.
+     *
+     * @return market price value
+     */
+    public BigDecimal getMarketPriceValue() {
+        if (marketPrice == null) {
+            return null;
+        } else {
+            return marketPrice.getValue();
+        }
+    }
+
+    /**
+     * Returns cumulative amount.
+     *
+     * @return cumulative amount.
+     */
+    public BigDecimal getCumulativeAmountValue() {
+        if (cumulativeAmount == null) {
+            return null;
+        } else {
+            return cumulativeAmount.getValue();
+        }
+    }
+
+    /**
      * Returns true if the order has been fulfilled with trades.
      *
      * @return true if order completed
@@ -105,9 +170,9 @@ public class OrderDTO {
     public final boolean isFulfilled() {
         final BigDecimal tradesAmount = getTrades()
                 .stream()
-                .map(t -> t.getAmount().getValue())
+                .map(TradeDTO::getAmountValue)
                 .reduce(ZERO, BigDecimal::add);
-        return amount.getValue().compareTo(tradesAmount) == 0;
+        return getAmountValue().compareTo(tradesAmount) == 0;
     }
 
     @Override
