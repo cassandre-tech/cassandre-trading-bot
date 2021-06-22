@@ -312,13 +312,13 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         }
                                         // =====================================================================================
                                     }
-                                } else {
-                                    System.out.println(orderDTO.getOrderId() + "=> " + gainDTO);
+//                                    if (positionDTO.get().getId() == 1) {
+//                                        System.out.println("===> " + positionDTO);
+//                                        System.out.println("===> " + orderDTO);
+//                                        System.out.println("===> " + gainDTO);
+//                                        tradePrices.forEach((s, bigDecimal) -> System.out.println(s + "=>" + bigDecimal));
+//                                    }
                                 }
-//                                if (positionDTO.get().getId() == 1) {
-//                                    System.out.println("===> " + gainDTO);
-//                                    tradePrices.forEach((s, bigDecimal) -> System.out.println(s + "=>" + bigDecimal));
-//                                }
                             }
                         }
                 );
