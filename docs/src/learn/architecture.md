@@ -1,2 +1,2 @@
 # Architecture
-![Cassandre architecture](./cassandre-trading-bot-architecture.png)
+![Cassandre architecture](./images/cassandre-trading-bot-architecture.png)

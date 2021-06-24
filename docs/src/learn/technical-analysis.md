@@ -25,7 +25,7 @@ On a chart, the horizontal axis is time, and the vertical axis is the price. The
 
 This is how it looks like :
 
-![Technical analysis chart](./technical_analysis_chart.png)
+![Technical analysis chart](./images/technical_analysis_chart.png)
 
 After adding bars to this chart, you can draw lines to forecast future prices. For example, you can draw a line connecting the highest prices, expecting other traders will sell at this point.
 
