@@ -139,9 +139,14 @@ On the exchange, you usually have several accounts, and Cassandre needs to know 
 ```java
 @Override
 public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-    return accounts.stream()
-                    .filter(a -> "trade".equals(a.getName()))
-                    .findFirst();
+        // From all the accounts retrieved by the server, we return the one we used for trading.
+        if (accounts.size() == 1) {
+            return accounts.stream().findAny();
+        } else {
+            return accounts.stream()
+                .filter(a -> "trade".equals(a.getName()))
+                .findFirst();
+        }
 }
 ```
 
@@ -166,7 +171,7 @@ public Duration getDelayBetweenTwoBars() {
 ```
 
 ::: tip
-This method allows you, for example, to receive tickers every second but only add one to the bar every day.
+This method allows you, for example, to receive tickers every second but only add one to your bar every day.
 :::
 
 ### Create your strategy
@@ -252,9 +257,10 @@ curl -s "https://api.kucoin.com/api/v1/market/candles?type=1day&symbol=BTC-USDT&
 
 It will create a file named `tickers-btc-usdt.tsv` that contains the historical rate of `btc-usdt` from `startDate` (3 months ago) to `endDate` (now). Of course, you can change dates and currency pair.
 
-Now place this file in the `src/test/resources` folder of our project and add this line to your JUnit test class:
+Now place this file in the `src/test/resources` folder of our project and add those lines to your JUnit test class:
 
 ```java
+@ComponentScan("tech.cassandre.trading.bot")
 @Import(TickerFluxMock.class)
 ```
 
@@ -268,15 +274,26 @@ Now we write the tests :
 @Test
 @DisplayName("Check gains")
 public void gainTest() {
+        await().forever().until(() -> tickerFluxMock.isFluxDone());
+
+        final Map<CurrencyDTO, GainDTO> gains = strategy.getGains();
+
         System.out.println("Cumulated gains:");
         gains.forEach((currency, gain) -> System.out.println(currency + " : " + gain.getAmount()));
 
-        System.out.println("Position still opened :");
+        System.out.println("Position closed:");
         strategy.getPositions()
-                .values()
-                .stream()
-                .filter(p -> p.getStatus().equals(OPENED))
-                .forEach(p -> System.out.println(" - " + p.getDescription()));
+            .values()
+            .stream()
+            .filter(p -> p.getStatus().equals(CLOSED))
+            .forEach(p -> System.out.println(" - " + p.getDescription()));
+
+        System.out.println("Position not closed:");
+        strategy.getPositions()
+            .values()
+            .stream()
+            .filter(p -> !p.getStatus().equals(CLOSED))
+            .forEach(p -> System.out.println(" - " + p.getDescription()));
 
         assertTrue(gains.get(strategy.getRequestedCurrencyPair().getQuoteCurrency()).getPercentage() > 0);
 }
@@ -284,4 +301,4 @@ public void gainTest() {
 
 The first thing we do with the `await()` method is to wait until all data from `btc-usdt.csv` are imported. Then, we calculate every closed position's gain, and we check that the profits are superior to zero.
 
-The last thing we do is display the list of open positions to see if there are things to improve.
+The last thing we do is display the list of opened positions to see if there are things to improve.

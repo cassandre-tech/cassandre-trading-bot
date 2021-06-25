@@ -62,13 +62,14 @@ curl -s "https://api.kucoin.com/api/v1/market/candles?type=1day&symbol=BTC-USDT&
 
 It will create a file named `tickers-btc-usdt.tsv` that contains the historical rate of BTC-USDT from `startDate` (3 months ago) to `endDate` (now). Of course, you can choose your own dates and currency pair.
 
-Place this file in the `src/test/resources` folder of your project and add this line to your JUnit test class: 
+Place this file in the `src/test/resources` folder of your project and add those lines to your JUnit test class: 
 
 ```java
+@ComponentScan("tech.cassandre.trading.bot")
 @Import(TickerFluxMock.class)
 ```
 
 Now, during the tests, instead of receiving tickers from the exchange, you will receive tickers imported from the `tsv/csv` files you put in `src/test/resources`.
 
-You can see an example of dry mode and backtesting in the [Technical analysis chapter](src/learn/technical-analysis-backup/overview.md).
+You can see an example of dry mode and backtesting in the [Technical analysis chapter](./technical-analysis).
 
