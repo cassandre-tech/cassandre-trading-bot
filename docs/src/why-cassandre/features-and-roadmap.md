@@ -7,6 +7,6 @@
 * Buy / Sell market & limit orders.
 * [Automatic position management](../learn/position-management.md) (with stop gain & stop loss rules).
 * [Dry mode & backtesting](../learn/dry-mode-and-backtesting.md).
-* Extensively tested and [documented](../learn/quickstart.md).
+* Extensively tested and documented.
 
 Our Roadmap is available on [Github](https://github.com/cassandre-tech/cassandre-trading-bot/milestones?direction=asc&sort=due_date&state=open).
