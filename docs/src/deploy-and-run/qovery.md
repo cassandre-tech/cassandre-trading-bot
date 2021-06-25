@@ -40,7 +40,7 @@ Edit `src/main/resources/application.properties` to configure the database:, we 
 
 ```properties
 # Exchange configuration.
-cassandre.trading.bot.exchange.name=kucoin
+cassandre.trading.bot.exchange.driver-class-name=kucoin
 cassandre.trading.bot.exchange.username=cassandre.crypto.bot@gmail.com
 cassandre.trading.bot.exchange.passphrase=cassandre
 cassandre.trading.bot.exchange.key=5df8eea30092f40009cb3c6a
@@ -56,10 +56,10 @@ cassandre.trading.bot.exchange.rates.ticker=PT1S
 cassandre.trading.bot.exchange.rates.trade=PT1S
 #
 # Database configuration.
-cassandre.trading.bot.database.datasource.driver-class-name=org.postgresql.Driver
-cassandre.trading.bot.database.datasource.url=jdbc:postgresql://${QOVERY_DATABASE_QOVERY_TEST_HOST}:5432/${QOVERY_DATABASE_QOVERY_TEST_DATABASE_NAME}
-cassandre.trading.bot.database.datasource.username=${QOVERY_DATABASE_QOVERY_TEST_USERNAME}
-cassandre.trading.bot.database.datasource.password=${QOVERY_DATABASE_QOVERY_TEST_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://${QOVERY_DATABASE_QOVERY_TEST_HOST}:5432/${QOVERY_DATABASE_QOVERY_TEST_DATABASE_NAME}
+spring.datasource.username=${QOVERY_DATABASE_QOVERY_TEST_USERNAME}
+spring.datasource.password=${QOVERY_DATABASE_QOVERY_TEST_PASSWORD}
 ```
 ### Add the PostgreSQL driver
 To connect to a PostgreSQL server, you need to add the JDBC driver to your project. Edit your pom.xml and add:
