@@ -104,7 +104,7 @@
 	<parent>
 		<groupId>tech.cassandre.trading.bot</groupId>
 		<artifactId>cassandre-trading-bot-project</artifactId>
-		<version>5.0.0</version>
+		<version>5.0.1-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<!-- =========================================================================================================== -->
