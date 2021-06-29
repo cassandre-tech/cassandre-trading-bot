@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/db.changelog-master.yaml
+  - include:
+      file: db/gains-test.sql

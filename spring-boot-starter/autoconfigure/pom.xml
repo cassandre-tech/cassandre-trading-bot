@@ -28,6 +28,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
@@ -113,12 +117,6 @@
             <version>2.5.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.qase</groupId>
-            <artifactId>qase-junit5</artifactId>
-            <version>1.0.2</version>
-            <scope>test</scope>
-        </dependency>
         <!-- Used for tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
@@ -170,7 +168,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Dysprosium-SR20</version>
+                <version>Dysprosium-SR21</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -201,7 +199,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>8.42</version>
+                        <version>8.43</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -307,7 +305,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>delombok</goal>
                         </goals>
@@ -317,7 +315,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
                 <configuration>
                     <detectOfflineLinks>false</detectOfflineLinks>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
@@ -353,11 +351,10 @@
                             </properties>
                             <reuseForks>false</reuseForks>
                             <forkCount>1</forkCount>
-                            <includes>
-                                <includes>**/integration/**</includes>
-                                <includes>**/issues/**</includes>
+                            <excludes>
                                 <exclude>**/test/**</exclude>
-                            </includes>
+                                <exclude>**/issues/**</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -371,7 +368,7 @@
     <parent>
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
-        <version>4.3.0</version>
+        <version>5.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->

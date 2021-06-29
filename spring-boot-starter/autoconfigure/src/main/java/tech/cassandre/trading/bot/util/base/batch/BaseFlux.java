@@ -2,10 +2,9 @@ package tech.cassandre.trading.bot.util.base.batch;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
-import reactor.core.scheduler.Schedulers;
 import tech.cassandre.trading.bot.util.base.Base;
 
-import java.util.Optional;
+import java.util.Set;
 
 import static reactor.core.publisher.FluxSink.OverflowStrategy.LATEST;
 
@@ -17,17 +16,16 @@ import static reactor.core.publisher.FluxSink.OverflowStrategy.LATEST;
 public abstract class BaseFlux<T> extends Base {
 
     /** Flux. */
-    protected final Flux<T> flux;
+    protected final Flux<Set<T>> flux;
 
     /** Flux sink. */
-    protected FluxSink<T> fluxSink;
+    protected FluxSink<Set<T>> fluxSink;
 
     /**
      * Constructor.
      */
     public BaseFlux() {
-        Flux<T> fluxTemp = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
-        flux = fluxTemp.publishOn(Schedulers.boundedElastic());
+        flux = Flux.create(newFluxSink -> this.fluxSink = newFluxSink, getOverflowStrategy());
     }
 
     /**
@@ -40,35 +38,61 @@ public abstract class BaseFlux<T> extends Base {
         return LATEST;
     }
 
-
-    /**
-     * Implements this method to backup each update.
-     *
-     * @param newValue new value
-     * @return the value saved
-     */
-    protected abstract Optional<T> saveValue(T newValue);
-
-    /**
-     * Emit a new value.
-     *
-     * @param newValue new value
-     */
-    public void emitValue(final T newValue) {
-        saveValue(newValue)
-                .ifPresent(t -> {
-                    logger.debug("{} flux emits a new value : {}", this.getClass().getName(), t);
-                    fluxSink.next(t);
-                });
-    }
-
     /**
      * Getter for flux.
      *
      * @return flux
      */
-    public Flux<T> getFlux() {
+    public Flux<Set<T>> getFlux() {
         return flux;
     }
+
+    /**
+     * Emit new value.
+     *
+     * @param newValue new value
+     */
+    public void emitValue(final T newValue) {
+        emitValues(Set.of(newValue));
+    }
+
+    /**
+     * Emit new values.
+     *
+     * @param newValues new values
+     */
+    public void emitValues(final Set<T> newValues) {
+        if (!newValues.isEmpty()) {
+            logger.debug("{} flux emits {} values", getClass().getSimpleName(), newValues.size());
+            fluxSink.next(saveValues(newValues));
+        }
+    }
+
+    /**
+     * Method executed when values has to be retrieved (usually called by schedulers).
+     */
+    public final void update() {
+        try {
+            emitValues(getNewValues());
+        } catch (RuntimeException e) {
+            logger.error("{} encountered and error {}", getClass().getSimpleName(), e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Implements this method to return all the new values. Those values will be sent to the strategy.
+     *
+     * @return list of new values
+     */
+    protected abstract Set<T> getNewValues();
+
+    /**
+     * Implements this method to backup each new value.
+     *
+     * @param newValue new value
+     * @return the value saved
+     */
+    protected abstract Set<T> saveValues(Set<T> newValue);
 
 }

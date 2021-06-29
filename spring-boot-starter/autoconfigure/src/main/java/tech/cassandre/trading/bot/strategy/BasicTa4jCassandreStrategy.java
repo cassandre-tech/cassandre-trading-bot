@@ -9,16 +9,18 @@ import reactor.core.publisher.BaseSubscriber;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.ta4j.BarAggregator;
-import tech.cassandre.trading.bot.ta4j.DurationBarAggregator;
+import tech.cassandre.trading.bot.util.ta4j.BarAggregator;
+import tech.cassandre.trading.bot.util.ta4j.DurationBarAggregator;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Basic ta4j strategy.
@@ -96,14 +98,18 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     @Override
-    public final void tickerUpdate(final TickerDTO ticker) {
-        if (getRequestedCurrencyPairs().contains(ticker.getCurrencyPair())) { // filter only tickers for strategy instrument
+    public final void tickersUpdates(final Set<TickerDTO> tickers) {
+        // We only retrieve the ticker requested by the strategy (only one because it's a ta4j strategy.
+        final Map<CurrencyPairDTO, TickerDTO> tickerToSend = tickers.stream()
+                .filter(ticker -> getRequestedCurrencyPair().equals(ticker.getCurrencyPair()))
+                .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity()));
+
+        tickerToSend.values().forEach(ticker -> {
             getLastTickers().put(ticker.getCurrencyPair(), ticker);
-
             barAggregator.update(ticker.getTimestamp(), ticker.getLast(), ticker.getHigh(), ticker.getLow(), ticker.getVolume());
+        });
 
-            onTickerUpdate(ticker);
-        }
+        onTickersUpdates(tickerToSend);
     }
 
     private Bar addBarAndCallStrategy(final Bar bar) {

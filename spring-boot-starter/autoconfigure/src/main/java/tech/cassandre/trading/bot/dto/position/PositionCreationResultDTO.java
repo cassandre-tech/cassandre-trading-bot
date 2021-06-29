@@ -9,7 +9,7 @@ import lombok.Value;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class PositionCreationResultDTO {
 
-    /** Position (filled if order creation is successful). */
+    /** Position (filled if position is successful). */
     PositionDTO position;
 
     /** Error message (filled if position creation failed). */

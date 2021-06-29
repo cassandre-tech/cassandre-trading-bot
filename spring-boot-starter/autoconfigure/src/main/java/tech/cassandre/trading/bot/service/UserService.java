@@ -12,7 +12,7 @@ public interface UserService {
     /**
      * Retrieve user information from exchange (user, accounts and balances).
      *
-     * @return account from exchange
+     * @return user from exchange
      */
     Optional<UserDTO> getUser();
 

@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.domain;
 
 import lombok.Data;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
@@ -47,7 +48,7 @@ public class Order extends BaseDomain {
     @Column(name = "ORDER_ID")
     private String orderId;
 
-    /** Order type i.e. bid or ask. */
+    /** Order type i.e. bid (buy) or ask (sell). */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private OrderTypeDTO type;
@@ -85,6 +86,14 @@ public class Order extends BaseDomain {
     })
     private CurrencyAmount limitPrice;
 
+    /** Market price - The price Cassandre had when the order was created. */
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "MARKET_PRICE_VALUE")),
+            @AttributeOverride(name = "currency", column = @Column(name = "MARKET_PRICE_CURRENCY"))
+    })
+    private CurrencyAmount marketPrice;
+
     /** The leverage to use for margin related to this order. */
     @Column(name = "LEVERAGE")
     private String leverage;
@@ -113,7 +122,7 @@ public class Order extends BaseDomain {
     /** All trades related to order. */
     @OneToMany(mappedBy = "order", fetch = EAGER)
     @OrderBy("timestamp")
-    // @JoinColumn(name = "FK_ORDER_ID", updatable = false)
+    @ToString.Exclude
     private Set<Trade> trades = new LinkedHashSet<>();
 
     @Override
@@ -133,6 +142,7 @@ public class Order extends BaseDomain {
                 .append(this.amount, that.amount)
                 .append(this.averagePrice, that.averagePrice)
                 .append(this.limitPrice, that.limitPrice)
+                .append(this.marketPrice, that.marketPrice)
                 .append(this.leverage, that.leverage)
                 .append(this.status, that.status)
                 .append(this.cumulativeAmount, that.cumulativeAmount)
@@ -144,7 +154,7 @@ public class Order extends BaseDomain {
     @Override
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(orderId)
                 .toHashCode();
     }
 

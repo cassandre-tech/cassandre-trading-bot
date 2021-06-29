@@ -1,20 +1,19 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
+import tech.cassandre.trading.bot.test.batch.mocks.TradeFluxTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -36,9 +34,8 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest
 @DisplayName("Batch - Trade flux")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/trade-test.sql")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/trade-test.yaml")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(TradeFluxTestMock.class)
 public class TradeFluxTest extends BaseTest {
 
@@ -52,7 +49,6 @@ public class TradeFluxTest extends BaseTest {
     private org.knowm.xchange.service.trade.TradeService xChangeTradeService;
 
     @Test
-    @CaseId(6)
     @DisplayName("Check received data")
     public void checkReceivedData() {
         // =============================================================================================================
@@ -72,15 +68,15 @@ public class TradeFluxTest extends BaseTest {
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
-        assertTrue(strategy.getTradesUpdateReceived().size() > 0);
-        assertTrue(strategy.getTradesUpdateReceived().size() <= numberOfUpdatesExpected);
+        assertTrue(strategy.getTradesUpdatesReceived().size() > 0);
+        assertTrue(strategy.getTradesUpdatesReceived().size() <= numberOfUpdatesExpected);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertTrue(strategy.getTradesUpdateReceived().size() >= numberOfUpdatesExpected));
+        await().untilAsserted(() -> assertTrue(strategy.getTradesUpdatesReceived().size() >= numberOfUpdatesExpected));
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.
-        final Iterator<TradeDTO> trades = strategy.getTradesUpdateReceived().iterator();
+        final Iterator<TradeDTO> trades = strategy.getTradesUpdatesReceived().iterator();
 
         // Check update 1.
         TradeDTO t = trades.next();

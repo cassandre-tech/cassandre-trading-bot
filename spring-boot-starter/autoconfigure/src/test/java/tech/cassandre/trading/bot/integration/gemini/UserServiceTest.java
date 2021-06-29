@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.gemini;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${GEMINI_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${GEMINI_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${GEMINI_USERNAME}",
@@ -51,7 +50,6 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    @CaseId(98)
     @Tag("integration")
     @DisplayName("Check get user, accounts and balances")
     public void checkGetUser() {
@@ -85,7 +83,7 @@ public class UserServiceTest {
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());
         assertTrue(tradeWallet.getBalance(ANC).isEmpty());
         // Values.
-        assertEquals(0, tradeWallet.getBalance("BTC").get().getTotal().compareTo(new BigDecimal("2000")));
+        assertEquals(0, tradeWallet.getBalance("BTC").get().getTotal().compareTo(new BigDecimal("3000")));
     }
 
 }

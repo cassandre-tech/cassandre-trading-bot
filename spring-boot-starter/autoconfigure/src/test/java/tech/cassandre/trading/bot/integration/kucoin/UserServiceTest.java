@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${KUCOIN_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
@@ -54,7 +53,6 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    @CaseId(90)
     @Tag("integration")
     @DisplayName("Check get user, accounts and balances")
     public void checkGetUser() {

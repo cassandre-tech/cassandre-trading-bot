@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 
 /**
- * Currency amount (amount value + currency).
+ * Currency amount (amount value and currency).
  */
 @Value
 @Builder

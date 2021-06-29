@@ -9,13 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.PositionRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 
 import java.io.FileNotFoundException;
@@ -33,8 +39,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -57,17 +63,38 @@ import static org.mockito.Mockito.when;
  */
 @SuppressWarnings("checkstyle:DesignForExtension")
 @TestConfiguration
+@EnableAspectJAutoProxy
 public class TickerFluxMock {
 
     /** Application context. */
     @Autowired
     private ApplicationContext applicationContext;
 
+    /** Order flux. */
+    @Autowired
+    private OrderFlux orderFlux;
+
+    /** Trade flux. */
+    @Autowired
+    private TradeFlux tradeFlux;
+
+    /** Order repository. */
+    @Autowired
+    private OrderRepository orderRepository;
+
+    /** Trade repository. */
+    @Autowired
+    private TradeRepository tradeRepository;
+
+    /** Position repository. */
+    @Autowired
+    private PositionRepository positionRepository;
+
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /** To milliseconds. */
-    public static final int MILLISECONDS = 1000;
+    public static final int MILLISECONDS = 1_000;
 
     /** Tickers file prefix. */
     private static final String TICKERS_FILE_PREFIX = "tickers-";
@@ -103,16 +130,16 @@ public class TickerFluxMock {
                     fluxTerminated.put(cp, false);
                     //noinspection rawtypes
                     when(marketService.getTicker(cp)).thenAnswer(new Answer() {
-                        // Tickers
+                        // Tickers to send.
                         private final Iterator<TickerDTO> tickers = getTickersFromFile(resource).iterator();
 
                         @Override
                         public Object answer(final InvocationOnMock invocationOnMock) {
-                            try {
-                                TimeUnit.SECONDS.sleep(1);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
+                            await().until(() -> {
+                                orderFlux.update();
+                                tradeFlux.update();
+                                return orderRepository.count() == tradeRepository.count();
+                            });
                             if (tickers.hasNext()) {
                                 return Optional.of(tickers.next());
                             } else {

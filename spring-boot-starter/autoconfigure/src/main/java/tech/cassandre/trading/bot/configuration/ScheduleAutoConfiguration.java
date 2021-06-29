@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -22,18 +23,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Configuration
 @Profile("!schedule-disabled")
 @EnableScheduling
+@RequiredArgsConstructor
 public class ScheduleAutoConfiguration extends BaseConfiguration {
-
-    /** Await termination in seconds. */
-    private static final int AWAIT_TERMINATION_SECONDS = 30;
 
     /** Scheduler pool size. */
     private static final int SCHEDULER_POOL_SIZE = 3;
 
-    /** Initial delay before starting threads. */
-    public static final int INITIAL_DELAY = 1000;
+    /** Initial delay before starting threads in milliseconds. */
+    private static final int AWAIT_START_IN_MILLISECONDS = 1_000;
 
-    /** Indicate that the batch should be running. */
+    /** Await termination delay in milliseconds. */
+    private static final int AWAIT_TERMINATION_IN_MILLISECONDS = 30_000;
+
+    /** Thread prefix for schedulers. */
+    private static final String THREAD_NAME_PREFIX = "Cassandre-flux-";
+
+    /** Flux continues to run as long as enabled is set to true. */
     private final AtomicBoolean enabled = new AtomicBoolean(true);
 
     /** Account flux. */
@@ -49,24 +54,6 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     private final TradeFlux tradeFlux;
 
     /**
-     * Constructor.
-     *
-     * @param newAccountFlux account flux
-     * @param newTickerFlux  ticker flux
-     * @param newOrderFlux   order flux
-     * @param newTradeFlux   trade flux
-     */
-    public ScheduleAutoConfiguration(final AccountFlux newAccountFlux,
-                                     final TickerFlux newTickerFlux,
-                                     final OrderFlux newOrderFlux,
-                                     final TradeFlux newTradeFlux) {
-        this.accountFlux = newAccountFlux;
-        this.tickerFlux = newTickerFlux;
-        this.orderFlux = newOrderFlux;
-        this.tradeFlux = newTradeFlux;
-    }
-
-    /**
      * Configure the task scheduler.
      *
      * @return task scheduler
@@ -74,14 +61,15 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     @Bean
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setAwaitTerminationSeconds(AWAIT_TERMINATION_SECONDS);
+        scheduler.setThreadNamePrefix(THREAD_NAME_PREFIX);
+        scheduler.setAwaitTerminationMillis(AWAIT_TERMINATION_IN_MILLISECONDS);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
         scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
-        scheduler.setErrorHandler(throwable -> {
+        scheduler.setErrorHandler(t -> {
             try {
-                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());
+                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks: {}", t.getMessage());
             } catch (Exception e) {
-                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks : {}", throwable.getMessage());
+                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks: {}", e.getMessage());
             }
         });
         return scheduler;
@@ -90,7 +78,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /**
      * Recurrent calls the account flux.
      */
-    @Scheduled(initialDelay = INITIAL_DELAY, fixedDelay = 1)
+    @Scheduled(initialDelay = AWAIT_START_IN_MILLISECONDS, fixedDelay = 1)
     public void accountFluxUpdate() {
         if (enabled.get()) {
             accountFlux.update();
@@ -100,7 +88,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /**
      * Recurrent calls the ticker flux.
      */
-    @Scheduled(initialDelay = INITIAL_DELAY, fixedDelay = 1)
+    @Scheduled(initialDelay = AWAIT_START_IN_MILLISECONDS, fixedDelay = 1)
     public void tickerFluxUpdate() {
         if (enabled.get()) {
             tickerFlux.update();
@@ -108,9 +96,9 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Recurrent calls the trade flux.
+     * Recurrent calls the order/trade flux.
      */
-    @Scheduled(initialDelay = INITIAL_DELAY, fixedDelay = 1)
+    @Scheduled(initialDelay = AWAIT_START_IN_MILLISECONDS, fixedDelay = 1)
     public void tradeFluxUpdate() {
         if (enabled.get()) {
             orderFlux.update();

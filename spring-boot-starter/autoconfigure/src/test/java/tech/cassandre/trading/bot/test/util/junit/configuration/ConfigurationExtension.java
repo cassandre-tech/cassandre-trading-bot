@@ -15,11 +15,7 @@ import static tech.cassandre.trading.bot.test.strategy.multiple.Strategy3.PARAME
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStrategy.PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_PASSWORD;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_URL;
-import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Datasource.PARAMETER_DATABASE_DATASOURCE_USERNAME;
+import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
 
 /**
  * Configuration extension - set and clear system properties.
@@ -27,8 +23,8 @@ import static tech.cassandre.trading.bot.util.parameters.DatabaseParameters.Data
 @NotThreadSafe // System properties are JVM-global, so don't run tests in parallel with this rule.
 public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallback {
 
-    /** Exchange name parameter. */
-    public static final String PARAMETER_EXCHANGE_NAME = "cassandre.trading.bot.exchange.name";
+    /** Driver class name parameter. */
+    public static final String PARAMETER_EXCHANGE_DRIVER_CLASS_NAME = "cassandre.trading.bot.exchange.driver-class-name";
 
     /** Username parameter. */
     public static final String PARAMETER_EXCHANGE_USERNAME = "cassandre.trading.bot.exchange.username";
@@ -103,32 +99,20 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
     public static final String PARAMETER_SECRET_DEFAULT_VALUE = "5f6e91e0-796b-4947-b75e-eaa5c06b6bed";
 
     /** Rate for account parameter. */
-    public static final String PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE = "100";
+    public static final String PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE = "10";
 
     /** Rate for ticker parameter. */
-    public static final String PARAMETER_RATE_TICKER_DEFAULT_VALUE = "101";
+    public static final String PARAMETER_RATE_TICKER_DEFAULT_VALUE = "11";
 
     /** Rate for trade parameter. */
-    public static final String PARAMETER_RATE_TRADE_DEFAULT_VALUE = "102";
-
-    /** Database datasource driver. */
-    public static final String PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME_DEFAULT_VALUE = "org.hsqldb.jdbc.JDBCDriver";
-
-    /** Database datasource url. */
-    public static final String PARAMETER_DATABASE_DATASOURCE_URL_DEFAULT_VALUE = "jdbc:hsqldb:mem:cassandre-database;shutdown=true";
-
-    /** Database datasource username. */
-    public static final String PARAMETER_DATABASE_DATASOURCE_USERNAME_DEFAULT_VALUE = "sa";
-
-    /** Database datasource password. */
-    public static final String PARAMETER_DATABASE_DATASOURCE_PASSWORD_DEFAULT_VALUE = "";
+    public static final String PARAMETER_RATE_TRADE_DEFAULT_VALUE = "12";
 
     @Override
     public void beforeAll(ExtensionContext context) {
         // Set default values.
 
         // Exchange parameters.
-        System.setProperty(PARAMETER_EXCHANGE_NAME, PARAMETER_NAME_DEFAULT_VALUE);                                                          // Kucoin
+        System.setProperty(PARAMETER_EXCHANGE_DRIVER_CLASS_NAME, PARAMETER_NAME_DEFAULT_VALUE);                                                          // Kucoin
         System.setProperty(PARAMETER_EXCHANGE_SANDBOX, PARAMETER_SANDBOX_DEFAULT_VALUE);                                                    // true
         System.setProperty(PARAMETER_EXCHANGE_DRY, PARAMETER_DRY_DEFAULT_VALUE);                                                            // false
         System.setProperty(PARAMETER_EXCHANGE_USERNAME, PARAMETER_USERNAME_DEFAULT_VALUE);                                                  // cassandre.crypto.bot@gmail.com
@@ -138,11 +122,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.setProperty(PARAMETER_EXCHANGE_RATE_ACCOUNT, PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE);                                          // 100
         System.setProperty(PARAMETER_EXCHANGE_RATE_TICKER, PARAMETER_RATE_TICKER_DEFAULT_VALUE);                                            // 101
         System.setProperty(PARAMETER_EXCHANGE_RATE_TRADE, PARAMETER_RATE_TRADE_DEFAULT_VALUE);                                              // 102
-        // Database parameters.
-        System.setProperty(PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME, PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME_DEFAULT_VALUE); // org.hsqldb.jdbc.JDBCDriver
-        System.setProperty(PARAMETER_DATABASE_DATASOURCE_URL, PARAMETER_DATABASE_DATASOURCE_URL_DEFAULT_VALUE);                             // jdbc:hsqldb:mem:cassandre-database;shutdown=true
-        System.setProperty(PARAMETER_DATABASE_DATASOURCE_USERNAME, PARAMETER_DATABASE_DATASOURCE_USERNAME_DEFAULT_VALUE);                   // sa
-        System.setProperty(PARAMETER_DATABASE_DATASOURCE_PASSWORD, PARAMETER_DATABASE_DATASOURCE_PASSWORD_DEFAULT_VALUE);                   // empty
         // Strategies configuration.
         System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE);                                   // false
         System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE);             // false
@@ -175,7 +154,7 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         // Reset values.
 
         // Exchange parameters.
-        System.clearProperty(PARAMETER_EXCHANGE_NAME);
+        System.clearProperty(PARAMETER_EXCHANGE_DRIVER_CLASS_NAME);
         System.clearProperty(PARAMETER_EXCHANGE_SANDBOX);
         System.clearProperty(PARAMETER_EXCHANGE_DRY);
         System.clearProperty(PARAMETER_EXCHANGE_USERNAME);
@@ -185,11 +164,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.clearProperty(PARAMETER_EXCHANGE_RATE_ACCOUNT);
         System.clearProperty(PARAMETER_EXCHANGE_RATE_TICKER);
         System.clearProperty(PARAMETER_EXCHANGE_RATE_TRADE);
-        // Database parameters.
-        System.clearProperty(PARAMETER_DATABASE_DATASOURCE_DRIVER_CLASS_NAME);
-        System.clearProperty(PARAMETER_DATABASE_DATASOURCE_URL);
-        System.clearProperty(PARAMETER_DATABASE_DATASOURCE_USERNAME);
-        System.clearProperty(PARAMETER_DATABASE_DATASOURCE_PASSWORD);
         // Strategies configuration.
         System.clearProperty(PARAMETER_INVALID_STRATEGY_ENABLED);
         System.clearProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED);

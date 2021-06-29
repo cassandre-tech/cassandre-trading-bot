@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.coinbasepro;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ import static tech.cassandre.trading.bot.dto.user.AccountFeatureDTO.TRADING;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${COINBASE_PRO_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${COINBASE_PRO_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${COINBASE_PRO_USERNAME}",
@@ -51,7 +50,6 @@ public class UserServiceTest {
     private UserService userService;
 
     @Test
-    @CaseId(107)
     @Tag("integration")
     @DisplayName("Check get user, accounts and balances")
     public void checkGetUser() {

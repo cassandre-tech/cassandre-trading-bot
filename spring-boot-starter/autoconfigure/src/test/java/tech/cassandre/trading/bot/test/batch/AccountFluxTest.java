@@ -1,19 +1,18 @@
 package tech.cassandre.trading.bot.test.batch;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchange.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
+import tech.cassandre.trading.bot.test.batch.mocks.AccountFluxTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
@@ -38,7 +36,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 @Import(AccountFluxTestMock.class)
 public class AccountFluxTest extends BaseTest {
 
@@ -49,26 +46,21 @@ public class AccountFluxTest extends BaseTest {
     private AccountService accountService;
 
     @Test
-    @CaseId(2)
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        // =============================================================================================================
-        // Test asynchronous flux.
+        // The mock will reply 7 times with data.
+        final int numberOfRepliesExpected = 7;
 
-        // We will call the service 8 times and we will have two empty answers.
-        final int numberOfUpdatesExpected = 7;
-        final int numberOfServiceCallsExpected = 9;
+        // Waiting for the service to have been called 7 times.
+        await().untilAsserted(() -> verify(accountService, atLeast(numberOfRepliesExpected)).getAccountInfo());
 
-        // Waiting for the service to have been called with all the test data.
-        await().untilAsserted(() -> verify(accountService, atLeast(numberOfServiceCallsExpected)).getAccountInfo());
-
-        // Checking that somme data have already been treated.
-        // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
-        assertTrue(strategy.getAccountsUpdateReceived().size() > 0);
-        assertTrue(strategy.getAccountsUpdateReceived().size() <= numberOfUpdatesExpected);
+        // Checking that some data have already been treated by strategy but not all !
+        // The flux should be asynchronous and a single thread in strategy is treating updates.
+        assertTrue(strategy.getAccountsUpdatesReceived().size() > 0);
+        assertTrue(strategy.getAccountsUpdatesReceived().size() <= numberOfRepliesExpected);
 
         // Wait for the strategy to have received all the test values.
-        await().untilAsserted(() -> assertEquals(numberOfUpdatesExpected, strategy.getAccountsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(numberOfRepliesExpected, strategy.getAccountsUpdatesReceived().size()));
 
         // Test all values received by the strategy with update methods.
         final Iterator<AccountDTO> iterator = strategy.getAccountsUpdatesReceived().iterator();

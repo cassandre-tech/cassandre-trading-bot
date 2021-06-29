@@ -1,0 +1,66 @@
+name: Branch push
+
+on:
+  push:
+    branches-ignore:
+      - development
+      - master
+
+jobs:
+  build:
+    # ==================================================================================================================
+    # Configuration.
+    runs-on: ubuntu-latest
+
+    steps:
+      # ================================================================================================================
+      - name: JDK 11 Setup
+        id: jdk
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      # ================================================================================================================
+      - name: Retrieve the sources
+        id: sources
+        uses: actions/checkout@v1
+
+      # ================================================================================================================
+      - name: Build, run tests, package and deploy to Maven central
+        id: package
+        run: |
+          mvn install -Dgpg.skip
+
+      # ================================================================================================================
+      - name: Retrieve the version
+        id: version
+        run: |
+          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+
+      # ================================================================================================================
+      - name: Test Cassandre trading bot maven archetype - basic strategy
+        id: cassandre-trading-bot-spring-boot-starter-basic-archetype
+        run: |
+          mvn -B archetype:generate \
+            -DarchetypeGroupId=tech.cassandre.trading.bot \
+            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
+            -DarchetypeVersion=${{ steps.version.outputs.version }} \
+            -DgroupId=com.example \
+            -DartifactId=archetype-test-basic \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.example
+          mvn -f archetype-test-basic/pom.xml compile
+
+      # ================================================================================================================
+      - name: Test Cassandre trading bot maven archetype - basic ta4j strategy
+        id: cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype
+        run: |
+          mvn -B archetype:generate \
+            -DarchetypeGroupId=tech.cassandre.trading.bot \
+            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype \
+            -DarchetypeVersion=${{ steps.version.outputs.version }} \
+            -DgroupId=com.example \
+            -DartifactId=archetype-test-ta4j-basic \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.example
+          mvn -f archetype-test-ta4j-basic/pom.xml compile

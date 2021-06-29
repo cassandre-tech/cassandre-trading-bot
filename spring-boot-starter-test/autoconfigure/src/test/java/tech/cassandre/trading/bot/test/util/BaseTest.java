@@ -20,7 +20,7 @@ import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
 public class BaseTest {
 
     /** How much we should wait for tests until it ends. */
-    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
+    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 120;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());

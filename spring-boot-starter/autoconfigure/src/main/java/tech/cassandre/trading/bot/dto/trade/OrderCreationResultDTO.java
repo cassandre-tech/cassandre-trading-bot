@@ -8,9 +8,6 @@ import lombok.Getter;
 @Getter
 public final class OrderCreationResultDTO {
 
-    /** Order ID (filled if order creation is successful). */
-    private final String orderId;
-
     /** Order (filled if order creation is successful). */
     private OrderDTO order;
 
@@ -30,7 +27,6 @@ public final class OrderCreationResultDTO {
      */
     public OrderCreationResultDTO(final OrderDTO newOrder) {
         successful = true;
-        this.orderId = newOrder.getOrderId();
         this.order = newOrder;
         this.errorMessage = null;
         this.exception = null;
@@ -44,9 +40,21 @@ public final class OrderCreationResultDTO {
      */
     public OrderCreationResultDTO(final String newErrorMessage, final Exception newException) {
         successful = false;
-        this.orderId = null;
         this.errorMessage = newErrorMessage;
         this.exception = newException;
+    }
+
+    /**
+     * Getter orderId.
+     *
+     * @return orderId
+     */
+    public String getOrderId() {
+        if (getOrder() != null) {
+            return getOrder().getOrderId();
+        } else {
+            return "No order";
+        }
     }
 
     @Override

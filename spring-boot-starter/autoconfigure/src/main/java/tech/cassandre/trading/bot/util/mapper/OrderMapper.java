@@ -26,6 +26,7 @@ public interface OrderMapper {
     @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapLimitOrderToOrderDTOCumulativeAmount")
     @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapLimitOrderToOrderDTOAveragePrice")
     @Mapping(source = "source", target = "limitPrice", qualifiedByName = "mapLimitOrderToOrderDTOLimitPrice")
+    @Mapping(target = "marketPrice", ignore = true)
     @Mapping(source = "instrument", target = "currencyPair")
     @Mapping(target = "strategy", ignore = true)
     @Mapping(target = "trades", ignore = true)

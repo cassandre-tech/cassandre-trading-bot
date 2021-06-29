@@ -1,10 +1,10 @@
 package tech.cassandre.trading.bot.test.repository;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -19,6 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
@@ -27,16 +28,16 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 @SpringBootTest
 @DisplayName("Repository - Order")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class OrderRepositoryTest extends BaseTest {
 
     @Autowired
     private OrderRepository orderRepository;
 
     @Test
-    @CaseId(56)
     @DisplayName("Check imported data")
     public void checkImportedOrders() {
         // Orders.
@@ -58,6 +59,8 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals("BTC", o.getAveragePrice().getCurrency());
         assertEquals(0, new BigDecimal("0.000001").compareTo(o.getLimitPrice().getValue()));
         assertEquals("BTC", o.getLimitPrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000033").compareTo(o.getMarketPrice().getValue()));
+        assertEquals("KCS", o.getMarketPrice().getCurrency());
         assertEquals("LEVERAGE_1", o.getLeverage());
         assertEquals(NEW, o.getStatus());
         assertEquals(0, new BigDecimal("0.000004").compareTo(o.getCumulativeAmount().getValue()));

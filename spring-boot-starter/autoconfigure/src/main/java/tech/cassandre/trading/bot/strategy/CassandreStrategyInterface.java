@@ -33,7 +33,7 @@ public interface CassandreStrategyInterface {
     void setStrategy(StrategyDTO newStrategyDTO);
 
     /**
-     * Initialize accounts with accounts.
+     * Initialize strategy accounts with exchange accounts data.
      *
      * @param accounts accounts
      */
@@ -82,44 +82,44 @@ public interface CassandreStrategyInterface {
     void setPositionService(PositionService newPositionService);
 
     /**
-     * Method called by streams at every account update.
+     * Method called by streams on accounts updates.
      *
-     * @param account account
+     * @param accounts accounts updates
      */
-    void accountUpdate(AccountDTO account);
+    void accountsUpdates(Set<AccountDTO> accounts);
 
     /**
-     * Method called by streams at every ticker update.
+     * Method called by streams on tickers updates.
      *
-     * @param ticker ticker
+     * @param tickers tickers updates
      */
-    void tickerUpdate(TickerDTO ticker);
+    void tickersUpdates(Set<TickerDTO> tickers);
 
     /**
-     * Method called by streams on every order update.
+     * Method called by streams on orders updates.
      *
-     * @param order order
+     * @param orders orders updates
      */
-    void orderUpdate(OrderDTO order);
+    void ordersUpdates(Set<OrderDTO> orders);
 
     /**
-     * Method called by streams on every trade update.
+     * Method called by streams on trades updates.
      *
-     * @param trade trade
+     * @param trades trades updates
      */
-    void tradeUpdate(TradeDTO trade);
+    void tradesUpdates(Set<TradeDTO> trades);
 
     /**
-     * Method called by streams on every position update.
+     * Method called by streams on positions updates.
      *
-     * @param position trade
+     * @param positions positions updates
      */
-    void positionUpdate(PositionDTO position);
+    void positionsUpdates(Set<PositionDTO> positions);
 
     /**
      * Implements this method to tell the bot which currency pairs your strategy will receive.
      *
-     * @return the list of currency pairs tickers your want to receive
+     * @return the list of currency pairs tickers your want to receive in this strategy
      */
     Set<CurrencyPairDTO> getRequestedCurrencyPairs();
 
@@ -127,57 +127,57 @@ public interface CassandreStrategyInterface {
      * Implements this method to tell the bot which account from the accounts you own is the trading one.
      *
      * @param accounts all your accounts
-     * @return trading account
+     * @return your trading account
      */
     Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts);
 
     /**
-     * Returns your trading account.
+     * Returns the trading account.
      *
-     * @return trading account
+     * @return your trading account
      */
     Optional<AccountDTO> getTradeAccount();
 
     /**
-     * Method triggered at every account update.
+     * Method called by streams on accounts updates.
      *
-     * @param account account
+     * @param accounts accounts updates
      */
-    void onAccountUpdate(AccountDTO account);
+    void onAccountsUpdates(Map<String, AccountDTO> accounts);
 
     /**
-     * Method triggered at every ticker update.
+     * Method called by streams on tickers updates.
      *
-     * @param ticker ticker
+     * @param tickers tickers updates
      */
-    void onTickerUpdate(TickerDTO ticker);
+    void onTickersUpdates(Map<CurrencyPairDTO, TickerDTO> tickers);
 
     /**
-     * Method triggered on every order update.
+     * Method called by streams on orders updates.
      *
-     * @param order order
+     * @param orders orders updates
      */
-    void onOrderUpdate(OrderDTO order);
+    void onOrdersUpdates(Map<String, OrderDTO> orders);
 
     /**
-     * Method triggered on every trade update.
+     * Method called by streams on trades updates.
      *
-     * @param trade trade
+     * @param trades trades updates
      */
-    void onTradeUpdate(TradeDTO trade);
+    void onTradesUpdates(Map<String, TradeDTO> trades);
 
     /**
-     * Method triggered on every position update.
+     * Method called by streams on positions updates.
      *
-     * @param position position
+     * @param positions positions updates
      */
-    void onPositionUpdate(PositionDTO position);
+    void onPositionsUpdates(Map<Long, PositionDTO> positions);
 
     /**
-     * Method triggered on every position status update.
+     * Method called by streams on positions status updates.
      *
-     * @param position position
+     * @param positions positions status updates
      */
-    void onPositionStatusUpdate(PositionDTO position);
+    void onPositionsStatusUpdates(Map<Long, PositionDTO> positions);
 
 }

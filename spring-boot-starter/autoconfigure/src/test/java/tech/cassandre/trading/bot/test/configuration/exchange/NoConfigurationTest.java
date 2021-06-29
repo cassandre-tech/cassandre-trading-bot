@@ -1,11 +1,9 @@
 package tech.cassandre.trading.bot.test.configuration.exchange;
 
-import io.qase.api.annotation.CaseId;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
-import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.CassandreTradingBot;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -13,10 +11,9 @@ import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRIVER_CLASS_NAME;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_KEY;
-import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_NAME;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_PASSPHRASE;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_ACCOUNT;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_TICKER;
@@ -27,7 +24,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 
 @DisplayName("Configuration - Exchange - No configuration")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_NAME),
+        @Property(key = PARAMETER_EXCHANGE_DRIVER_CLASS_NAME),
         @Property(key = PARAMETER_EXCHANGE_SANDBOX),
         @Property(key = PARAMETER_EXCHANGE_DRY),
         @Property(key = PARAMETER_EXCHANGE_USERNAME),
@@ -38,11 +35,9 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_RATE_TICKER),
         @Property(key = PARAMETER_EXCHANGE_RATE_TRADE)
 })
-@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class NoConfigurationTest extends BaseTest {
 
     @Test
-    @CaseId(17)
     @DisplayName("Check error messages")
     public void checkErrorMessages() {
         try {
@@ -52,7 +47,7 @@ public class NoConfigurationTest extends BaseTest {
         } catch (Exception e) {
             final String message = ExceptionUtils.getRootCause(e).getMessage();
             e.printStackTrace();
-            assertTrue(message.contains("'name'"));
+            assertTrue(message.contains("'driverClassName'"));
             assertTrue(message.contains("'username'"));
             assertTrue(message.contains("'passphrase'"));
             assertTrue(message.contains("'key'"));

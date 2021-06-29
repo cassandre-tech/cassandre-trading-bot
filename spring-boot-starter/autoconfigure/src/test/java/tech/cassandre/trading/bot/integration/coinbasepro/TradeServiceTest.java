@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.coinbasepro;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +14,8 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -29,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -37,7 +35,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${COINBASE_PRO_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${COINBASE_PRO_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${COINBASE_PRO_USERNAME}",
@@ -69,7 +67,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(103)
     @Tag("integration")
     @DisplayName("Check creates a buy/sell market order")
     public void checkCreateBuySellMarketOrder() {
@@ -80,7 +77,7 @@ public class TradeServiceTest extends BaseTest {
         final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
         assertFalse(result1.isSuccessful());
         assertNull(result1.getOrder());
-        assertEquals("TradeService - Error calling createBuyMarketOrder for 1E-8 ETH/BTC : org.knowm.xchange.coinbasepro.dto.CoinbaseProException: funds must be a number", result1.getErrorMessage());
+        assertEquals("TradeService - Error calling createMarketOrder for 1E-8 ETH/BTC: org.knowm.xchange.coinbasepro.dto.CoinbaseProException: funds must be a number", result1.getErrorMessage());
         assertNotNull(result1.getException());
 
         // =============================================================================================================
@@ -98,7 +95,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(104)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     public void checkCreateBuyLimitOrder() {
@@ -129,7 +125,6 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(0, order1.get().getLimitPrice().getValue().compareTo(new BigDecimal("0.0001")));
         assertEquals(cp.getQuoteCurrency(), order1.get().getLimitPrice().getCurrency());
         assertNull(order1.get().getLeverage());
-        assertEquals(PENDING_NEW, order1.get().getStatus());
         assertNull(order1.get().getUserReference());
         assertNotNull(order1.get().getTimestamp());
         assertTrue(order1.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
@@ -140,7 +135,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(105)
     @Tag("integration")
     @DisplayName("Check cancel an order")
     @Disabled("Seems Coinbase pro doesn't support canceling an order")
@@ -165,7 +159,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(106)
     @Tag("integration")
     @DisplayName("Check get trades")
     public void checkGetTrades() {

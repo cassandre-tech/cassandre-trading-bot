@@ -1,11 +1,9 @@
 package tech.cassandre.trading.bot.test.dto;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -16,33 +14,27 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_USDT;
 
 @DisplayName("DTO - OrderDTO")
 public class OrderDTOTest {
 
 	@Test
 	@SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength" })
-	@CaseId(46)
 	@DisplayName("Check equals()")
 	public void checkEqualToForOrder() {
-		// Currency pairs.
-		final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
-		final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
-
 		// Order 1.
 		OrderDTO order01 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -51,13 +43,13 @@ public class OrderDTOTest {
 		OrderDTO order02 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -68,13 +60,13 @@ public class OrderDTOTest {
 		OrderDTO order03 = OrderDTO.builder()
 				.orderId("000002")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -85,13 +77,13 @@ public class OrderDTOTest {
 		OrderDTO order04 = OrderDTO.builder()
 				.orderId("000001")
 				.type(BID)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -102,13 +94,13 @@ public class OrderDTOTest {
 		OrderDTO order05 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp2)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_USDT)
+				.amount(new CurrencyAmountDTO("1", ETH_USDT.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_USDT.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_USDT.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_USDT.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -120,13 +112,13 @@ public class OrderDTOTest {
 		OrderDTO order06 = OrderDTO.builder()
 				.orderId("000001")
 				.type(BID)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("9", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("9", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -137,13 +129,13 @@ public class OrderDTOTest {
 		OrderDTO order07 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("9", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("9", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -154,13 +146,13 @@ public class OrderDTOTest {
 		OrderDTO order08 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("9", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("9", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -171,13 +163,13 @@ public class OrderDTOTest {
 		OrderDTO order09 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage2")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -188,13 +180,13 @@ public class OrderDTOTest {
 		OrderDTO order10 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(PENDING_NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -205,13 +197,13 @@ public class OrderDTOTest {
 		OrderDTO order11 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("9", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("9", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -222,13 +214,13 @@ public class OrderDTOTest {
 		OrderDTO order12 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage1")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_2")
 				.timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();
@@ -239,13 +231,13 @@ public class OrderDTOTest {
 		OrderDTO order13 = OrderDTO.builder()
 				.orderId("000001")
 				.type(ASK)
-				.currencyPair(cp1)
-				.amount(new CurrencyAmountDTO("1", cp1.getBaseCurrency()))
-				.averagePrice(new CurrencyAmountDTO("3", cp1.getQuoteCurrency()))
-				.limitPrice(new CurrencyAmountDTO("5", cp1.getQuoteCurrency()))
+				.currencyPair(ETH_BTC)
+				.amount(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()))
+				.averagePrice(new CurrencyAmountDTO("3", ETH_BTC.getQuoteCurrency()))
+				.limitPrice(new CurrencyAmountDTO("5", ETH_BTC.getQuoteCurrency()))
 				.leverage("leverage2")
 				.status(NEW)
-				.cumulativeAmount(new CurrencyAmountDTO("2", cp1.getBaseCurrency()))
+				.cumulativeAmount(new CurrencyAmountDTO("2", ETH_BTC.getBaseCurrency()))
 				.userReference("MY_REF_1")
 				.timestamp(ZonedDateTime.of(2018, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC")))
 				.build();

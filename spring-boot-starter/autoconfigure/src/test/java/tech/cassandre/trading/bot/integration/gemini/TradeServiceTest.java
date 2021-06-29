@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.gemini;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +14,8 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -37,7 +36,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${GEMINI_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${GEMINI_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${GEMINI_USERNAME}",
@@ -69,7 +68,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(94)
     @Tag("integration")
     @DisplayName("Check creates a buy/sell market order")
     @Disabled("Gemini doesn't support market order")
@@ -99,7 +97,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(95)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     @Disabled("Gemini doesn't support market order")
@@ -145,7 +142,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(96)
     @Tag("integration")
     @DisplayName("Check cancel an order")
     @Disabled("Gemini doesn't support market order")
@@ -170,7 +166,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(97)
     @Tag("integration")
     @DisplayName("Check get trades")
     @Disabled("Gemini doesn't support market order")

@@ -7,22 +7,25 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.test.mock.TickerFluxMock;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 
 /**
  * Basic Ta4j strategy test.
  */
 @SpringBootTest
 @Import(TickerFluxMock.class)
+@ComponentScan("tech.cassandre.trading.bot")
 @DisplayName("Simple ta4j strategy test")
 public class SimpleTa4jStrategyTest {
 
@@ -37,10 +40,17 @@ public class SimpleTa4jStrategyTest {
     public void gainTest() {
         await().forever().until(() -> tickerFluxMock.isFluxDone());
 
-        final HashMap<CurrencyDTO, GainDTO> gains = strategy.getGains();
+        final Map<CurrencyDTO, GainDTO> gains = strategy.getGains();
 
         System.out.println("Cumulated gains:");
         gains.forEach((currency, gain) -> System.out.println(currency + " : " + gain.getAmount()));
+
+        System.out.println("Position closed :");
+        strategy.getPositions()
+                .values()
+                .stream()
+                .filter(p -> p.getStatus().equals(CLOSED))
+                .forEach(p -> System.out.println(" - " + p.getDescription()));
 
         System.out.println("Position still opened :");
         strategy.getPositions()

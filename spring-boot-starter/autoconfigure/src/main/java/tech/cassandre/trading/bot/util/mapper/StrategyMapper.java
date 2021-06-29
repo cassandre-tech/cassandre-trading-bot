@@ -16,7 +16,6 @@ public interface StrategyMapper {
 
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
-    @Mapping(target = "exchangeAccount", ignore = true)
     Strategy mapToStrategy(StrategyDTO source);
 
     // =================================================================================================================

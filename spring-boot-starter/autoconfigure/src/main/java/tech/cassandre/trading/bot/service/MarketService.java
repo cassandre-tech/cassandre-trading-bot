@@ -20,7 +20,7 @@ public interface MarketService {
     Optional<TickerDTO> getTicker(CurrencyPairDTO currencyPair);
 
     /**
-     * Returns tickers for currency pairs.
+     * Returns tickers for several currency pairs.
      *
      * @param currencyPairs currency pairs
      * @return tickers

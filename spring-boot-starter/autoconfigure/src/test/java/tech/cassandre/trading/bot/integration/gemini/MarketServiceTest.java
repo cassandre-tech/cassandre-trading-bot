@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.gemini;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${GEMINI_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${GEMINI_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${GEMINI_USERNAME}",
@@ -50,7 +49,6 @@ public class MarketServiceTest {
     private MarketService marketService;
 
     @Test
-    @CaseId(93)
     @Tag("integration")
     @DisplayName("Check get ticker")
     public void checkGetTicker() {
@@ -68,9 +66,6 @@ public class MarketServiceTest {
         // bid.
         assertNotNull(t.get().getBid());
         assertTrue(t.get().getBid().compareTo(ZERO) > 0);
-        // ask.
-        assertNotNull(t.get().getAsk());
-        assertTrue(t.get().getAsk().compareTo(ZERO) > 0);
         // bidSize.
         assertNull(t.get().getBidSize());
         // askSize.

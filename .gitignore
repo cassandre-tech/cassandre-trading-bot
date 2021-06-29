@@ -110,6 +110,9 @@ Supprimerait loose-touch.iml
 output-*
 /.idea/
 
+# Yarn - We retrieve the latest release of all libs during CI
+docs/yarn.lock
+
 # others
 /_data/
 /_site/

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.dto;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -14,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EqualsBuilderTest {
 
     @Test
-    @CaseId(41)
     @DisplayName("Check equals on strings")
     public void checkStringEquals() {
         boolean result;
@@ -59,7 +57,6 @@ public class EqualsBuilderTest {
     }
 
     @Test
-    @CaseId(42)
     @DisplayName("Check equals on BigDecimal")
     public void checkBigDecimalEquals() {
         boolean result;

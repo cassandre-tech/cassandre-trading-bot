@@ -11,12 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
@@ -33,21 +30,16 @@ public class Strategy extends BaseDomain {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    /** An identifier that uniquely identifies the strategy. */
+    /** An identifier that uniquely identifies the strategy - Comes from the Java annotation. */
     @Column(name = "STRATEGY_ID")
     private String strategyId;
 
-    /** Strategy type. */
+    /** Strategy type - Basic or ta4j. */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private StrategyTypeDTO type;
 
-    /** Exchange account used by the strategy. */
-    @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "FK_EXCHANGE_ACCOUNT_ID", updatable = false)
-    private ExchangeAccount exchangeAccount;
-
-    /** Strategy name. */
+    /** Strategy name - Comes from the Java annotation. */
     @Column(name = "NAME")
     private String name;
 
@@ -71,6 +63,7 @@ public class Strategy extends BaseDomain {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
+                .append(strategyId)
                 .toHashCode();
     }
 

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.kucoin;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -14,8 +13,8 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
@@ -35,7 +33,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-        "cassandre.trading.bot.exchange.name=${KUCOIN_NAME}",
+        "cassandre.trading.bot.exchange.driver-class-name=${KUCOIN_NAME}",
         "cassandre.trading.bot.exchange.modes.sandbox=true",
         "cassandre.trading.bot.exchange.modes.dry=false",
         "cassandre.trading.bot.exchange.username=${KUCOIN_USERNAME}",
@@ -67,7 +65,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(86)
     @Tag("integration")
     @DisplayName("Check creates a buy/sell market order")
     public void checkCreateBuySellMarketOrder() {
@@ -96,7 +93,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(87)
     @Tag("integration")
     @DisplayName("Check creates a buy limit order")
     public void checkCreateBuyLimitOrder() {
@@ -127,7 +123,6 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(0, order1.get().getLimitPrice().getValue().compareTo(new BigDecimal("0.000001")));
         assertEquals(cp.getQuoteCurrency(), order1.get().getLimitPrice().getCurrency());
         assertNull(order1.get().getLeverage());
-        assertEquals(PENDING_NEW, order1.get().getStatus());
         assertNull(order1.get().getUserReference());
         assertNotNull(order1.get().getTimestamp());
         assertTrue(order1.get().getTimestamp().isAfter(ZonedDateTime.now().minusMinutes(1)));
@@ -138,7 +133,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(88)
     @Tag("integration")
     @DisplayName("Check cancel an order")
     public void checkCancelOrder() {
@@ -159,7 +153,6 @@ public class TradeServiceTest extends BaseTest {
     }
 
     @Test
-    @CaseId(89)
     @Tag("integration")
     @DisplayName("Check get trades")
     public void checkGetTrades() {

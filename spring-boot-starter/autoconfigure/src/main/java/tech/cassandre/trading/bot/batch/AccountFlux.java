@@ -1,19 +1,20 @@
 package tech.cassandre.trading.bot.batch;
 
+import lombok.RequiredArgsConstructor;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 /**
  * Account flux - push {@link AccountDTO}.
  */
-public class AccountFlux extends BaseExternalFlux<AccountDTO> {
+@RequiredArgsConstructor
+public class AccountFlux extends BaseFlux<AccountDTO> {
 
     /** User service. */
     private final UserService userService;
@@ -21,46 +22,38 @@ public class AccountFlux extends BaseExternalFlux<AccountDTO> {
     /** Previous values. */
     private Map<String, AccountDTO> previousValues = new LinkedHashMap<>();
 
-    /**
-     * Constructor.
-     *
-     * @param newUserService user service
-     */
-    public AccountFlux(final UserService newUserService) {
-        this.userService = newUserService;
-    }
-
     @Override
     protected final Set<AccountDTO> getNewValues() {
-        logger.debug("AccountFlux - Retrieving new values");
+        logger.debug("AccountFlux - Retrieving accounts information from exchange");
         Set<AccountDTO> newValues = new LinkedHashSet<>();
 
         // Calling the service and treating results.
         userService.getUser().ifPresent(user -> {
             // For each account, we check if there is something new.
             user.getAccounts().forEach((accountId, account) -> {
-                logger.debug("AccountFlux - Treating account : {}", accountId);
+                logger.debug("AccountFlux - Treating account: {}", accountId);
                 if (previousValues.containsKey(accountId)) {
                     // If in the previous values, check the balances.
                     if (!account.equals(previousValues.get(accountId))) {
-                        logger.debug("AccountFlux - Account {} has changed : {}", accountId, account);
+                        logger.debug("AccountFlux - Account {} has changed: {}", accountId, account);
                         newValues.add(account);
                     }
                 } else {
                     // Send if it does not exist.
-                    logger.debug("AccountFlux - New account : {}", account);
+                    logger.debug("AccountFlux - New account: {}", account);
                     newValues.add(account);
                 }
             });
             previousValues = user.getAccounts();
         });
-        logger.debug("AccountFlux - {} account(s) updated", newValues.size());
+
         return newValues;
     }
 
     @Override
-    protected final Optional<AccountDTO> saveValue(final AccountDTO newValue) {
-        return Optional.ofNullable(newValue);
+    protected final Set<AccountDTO> saveValues(final Set<AccountDTO> newValues) {
+        // We don't save accounts in database.
+        return newValues;
     }
 
 }

@@ -27,6 +27,7 @@ public interface TradeMapper {
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapUserTradeToTradeDTOAmount")
     @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
     @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
+    @Mapping(target = "order", ignore = true)
     @Mapping(source = "orderUserReference", target = "userReference")
     @Mapping(source = "instrument", target = "currencyPair")
     TradeDTO mapToTradeDTO(UserTrade source);
@@ -59,7 +60,7 @@ public interface TradeMapper {
                     .currency(new CurrencyDTO(source.getFeeCurrency().toString()))
                     .build();
         } else {
-            return null;
+            return CurrencyAmountDTO.ZERO;
         }
     }
 
@@ -81,6 +82,7 @@ public interface TradeMapper {
     // Domain to DTO.
 
     @Mapping(target = "order.trades", ignore = true)
+    @Mapping(target = "orderId", source = "order.orderId")
     TradeDTO mapToTradeDTO(Trade source);
 
 }

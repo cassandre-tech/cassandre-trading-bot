@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,6 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.domain.ExchangeAccount;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -20,31 +20,26 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.PositionServiceCassandreImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.intern.PositionServiceImplementation;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
-import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -56,16 +51,14 @@ import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRA
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J_STRATEGY;
 
 /**
- * StrategyAutoConfiguration configures the strategy.
+ * StrategyAutoConfiguration configures the strategies.
  */
 @Configuration
+@RequiredArgsConstructor
 public class StrategiesAutoConfiguration extends BaseConfiguration {
 
     /** Application context. */
     private final ApplicationContext applicationContext;
-
-    /** Exchange parameters. */
-    private final ExchangeParameters exchangeParameters;
 
     /** Trade service. */
     private final TradeService tradeService;
@@ -88,9 +81,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     /** Exchange service. */
     private final ExchangeService exchangeService;
 
-    /** Exchange account repository. */
-    private final ExchangeAccountRepository exchangeAccountRepository;
-
     /** Strategy repository. */
     private final StrategyRepository strategyRepository;
 
@@ -110,64 +100,12 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     private final PositionFlux positionFlux;
 
     /**
-     * Constructor.
-     *
-     * @param newApplicationContext        application context
-     * @param newExchangeService           exchange service
-     * @param newExchangeParameters        exchange parameters
-     * @param newUserService               user service
-     * @param newTradeService              trade service
-     * @param newAccountFlux               account flux
-     * @param newTickerFlux                ticker flux
-     * @param newOrderFlux                 order flux
-     * @param newTradeFlux                 trade flux
-     * @param newExchangeAccountRepository exchange account repository
-     * @param newStrategyRepository        strategy repository
-     * @param newOrderRepository           order repository
-     * @param newTradeRepository           trade repository
-     * @param newPositionRepository        position repository
-     * @param newPositionFlux              position flux
-     */
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    public StrategiesAutoConfiguration(final ApplicationContext newApplicationContext,
-                                       final ExchangeService newExchangeService,
-                                       final ExchangeParameters newExchangeParameters,
-                                       final UserService newUserService,
-                                       final TradeService newTradeService,
-                                       final AccountFlux newAccountFlux,
-                                       final TickerFlux newTickerFlux,
-                                       final OrderFlux newOrderFlux,
-                                       final TradeFlux newTradeFlux,
-                                       final ExchangeAccountRepository newExchangeAccountRepository,
-                                       final StrategyRepository newStrategyRepository,
-                                       final OrderRepository newOrderRepository,
-                                       final TradeRepository newTradeRepository,
-                                       final PositionRepository newPositionRepository,
-                                       final PositionFlux newPositionFlux) {
-        this.applicationContext = newApplicationContext;
-        this.exchangeService = newExchangeService;
-        this.exchangeParameters = newExchangeParameters;
-        this.userService = newUserService;
-        this.tradeService = newTradeService;
-        this.accountFlux = newAccountFlux;
-        this.tickerFlux = newTickerFlux;
-        this.orderFlux = newOrderFlux;
-        this.tradeFlux = newTradeFlux;
-        this.exchangeAccountRepository = newExchangeAccountRepository;
-        this.strategyRepository = newStrategyRepository;
-        this.orderRepository = newOrderRepository;
-        this.tradeRepository = newTradeRepository;
-        this.positionRepository = newPositionRepository;
-        this.positionFlux = newPositionFlux;
-    }
-
-    /**
-     * Search for the strategy and runs it.
+     * Search for strategies and runs them.
      */
     @PostConstruct
     @SuppressWarnings("checkstyle:MethodLength")
     public void configure() {
-        // Retrieving all the beans have the annotation @Strategy.
+        // Retrieving all the beans have the @Strategy annotation.
         final Map<String, Object> strategies = applicationContext.getBeansWithAnnotation(CassandreStrategy.class);
 
         // =============================================================================================================
@@ -179,10 +117,11 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
             throw new ConfigurationException("Impossible to retrieve your user information.",
                     "Impossible to retrieve your user information. Check logs");
         } else {
+            logger.info("Accounts available on the exchange:");
             user.get()
                     .getAccounts()
                     .values()
-                    .forEach(account -> logger.info("StrategyConfiguration - Accounts available : '{}/{}'.",
+                    .forEach(account -> logger.info("- Account id / Account name: {} / {}.",
                             account.getAccountId(),
                             account.getName()));
         }
@@ -217,57 +156,48 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result - Strategies in error : " + strategyList);
         }
 
-        // Check that there is no duplicated strategy id.
-        final Set<String> strategyIds = strategies.values()
+        // Check that there is no duplicated strategy ids.
+        final List<String> strategyIds = strategies.values()
                 .stream()
                 .map(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId())
-                .collect(Collectors.toSet());
-        final Set<String> duplicatedStrategyId = strategies.values()
+                .collect(Collectors.toList());
+        final Set<String> duplicatedStrategyIds = strategies.values()
                 .stream()
                 .map(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId())
-                .filter(s -> Collections.frequency(strategyIds, s) > 1)
+                .filter(strategyId -> Collections.frequency(strategyIds, strategyId) > 1)
                 .collect(Collectors.toSet());
-        if (!duplicatedStrategyId.isEmpty()) {
+        if (!duplicatedStrategyIds.isEmpty()) {
             throw new ConfigurationException("You have duplicated strategy ids",
-                    "You have duplicated strategy ids : " + String.join(",", duplicatedStrategyId));
+                    "You have duplicated strategy ids: " + String.join(", ", duplicatedStrategyIds));
         }
 
         // =============================================================================================================
-        // Setting up position service.
-        this.positionService = new PositionServiceImplementation(positionRepository, tradeService, positionFlux);
+        // Creating position service.
+        this.positionService = new PositionServiceCassandreImplementation(applicationContext, positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
         // Creating flux.
-        final ConnectableFlux<AccountDTO> connectableAccountFlux = accountFlux.getFlux().publish();
-        final ConnectableFlux<PositionDTO> connectablePositionFlux = positionFlux.getFlux().publish();
-        final ConnectableFlux<OrderDTO> connectableOrderFlux = orderFlux.getFlux().publish();
-        final LinkedHashSet<CurrencyPairDTO> currencyPairs = strategies.values()  // We get the list of all required cp of all strategies.
-                .stream()
-                .map(o -> ((CassandreStrategyInterface) o))
-                .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
-                .flatMap(Set::stream)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        tickerFlux.updateRequestedCurrencyPairs(currencyPairs);
-        final ConnectableFlux<TickerDTO> connectableTickerFlux = tickerFlux.getFlux().publish();
-        final ConnectableFlux<TradeDTO> connectableTradeFlux = tradeFlux.getFlux().publish();
+        final ConnectableFlux<Set<AccountDTO>> connectableAccountFlux = accountFlux.getFlux().publish();
+        final ConnectableFlux<Set<PositionDTO>> connectablePositionFlux = positionFlux.getFlux().publish();
+        final ConnectableFlux<Set<OrderDTO>> connectableOrderFlux = orderFlux.getFlux().publish();
+        final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
+        final ConnectableFlux<Set<TradeDTO>> connectableTradeFlux = tradeFlux.getFlux().publish();
+
         // =============================================================================================================
-        // Connecting flux.
-        // if in dry mode, we also send the ticker to the trade service in dry mode.
-        if (tradeService instanceof TradeServiceDryModeImplementation) {
-            connectableTickerFlux.subscribe(((TradeServiceDryModeImplementation) tradeService)::tickerUpdate);
-        }
-        connectableOrderFlux.subscribe(positionService::orderUpdate);
-        connectableTradeFlux.subscribe(positionService::tradeUpdate);
+        // Connecting flux to positions that requires them.
+        connectableOrderFlux.subscribe(positionService::ordersUpdates);
+        connectableTradeFlux.subscribe(positionService::tradesUpdates);
 
         // =============================================================================================================
         // Configuring strategies.
+        logger.info("Running the following strategies:");
         strategies.values()
                 .forEach(s -> {
                     CassandreStrategyInterface strategy = ((CassandreStrategyInterface) s);
                     CassandreStrategy annotation = s.getClass().getAnnotation(CassandreStrategy.class);
 
                     // Displaying information about strategy.
-                    logger.info("StrategyConfiguration - Running strategy '{}/{}' (requires {}).",
+                    logger.info("- Strategy '{}/{}' (requires {}).",
                             annotation.strategyId(),
                             annotation.strategyName(),
                             strategy.getRequestedCurrencyPairs().stream()
@@ -283,15 +213,12 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         final StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(existingStrategy);
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
-                        logger.debug("StrategyConfiguration - Strategy updated in database {}", existingStrategy);
+                        logger.debug("StrategyConfiguration - Strategy updated in database: {}", existingStrategy);
                     }, () -> {
                         // Creation.
                         Strategy newStrategy = new Strategy();
                         newStrategy.setStrategyId(annotation.strategyId());
                         newStrategy.setName(annotation.strategyName());
-                        // Set exchange account.
-                        Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
-                        exchangeAccount.ifPresent(newStrategy::setExchangeAccount);
                         // Set type.
                         if (strategy instanceof BasicCassandreStrategy) {
                             newStrategy.setType(BASIC_STRATEGY);
@@ -299,11 +226,14 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         if (strategy instanceof BasicTa4jCassandreStrategy) {
                             newStrategy.setType(BASIC_TA4J_STRATEGY);
                         }
-                        logger.debug("StrategyConfiguration - Strategy saved in database {}", newStrategy);
+                        logger.debug("StrategyConfiguration - Strategy saved in database: {}", newStrategy);
                         StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(strategyRepository.save(newStrategy));
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
                     });
+
+                    // Initialize accounts values in strategy.
+                    strategy.initializeAccounts(user.get().getAccounts());
 
                     // Setting services & repositories.
                     strategy.setOrderRepository(orderRepository);
@@ -312,56 +242,46 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.setTradeService(tradeService);
                     strategy.setPositionService(positionService);
                     strategy.setPositionRepository(positionRepository);
-                    // Initialize accounts.
-                    strategy.initializeAccounts(user.get().getAccounts());
 
                     // Setting flux.
-                    connectableAccountFlux.subscribe(strategy::accountUpdate);
-                    connectablePositionFlux.subscribe(strategy::positionUpdate);
-                    connectableOrderFlux.subscribe(strategy::orderUpdate);
-                    connectableTradeFlux.subscribe(strategy::tradeUpdate);
-                    connectableTickerFlux.subscribe(strategy::tickerUpdate);
-                    // If in dry mode, we setup dependencies.
-                    if (userService instanceof UserServiceDryModeImplementation) {
-                        ((UserServiceDryModeImplementation) userService).setDependencies((GenericCassandreStrategy) strategy);
-                    }
+                    connectableAccountFlux.subscribe(strategy::accountsUpdates);
+                    connectablePositionFlux.subscribe(strategy::positionsUpdates);
+                    connectableOrderFlux.subscribe(strategy::ordersUpdates);
+                    connectableTradeFlux.subscribe(strategy::tradesUpdates);
+                    connectableTickerFlux.subscribe(strategy::tickersUpdates);
                 });
-        connectableTickerFlux.subscribe(positionService::tickerUpdate);
+
+        // Position service should receive tickers after strategies.
+        connectableTickerFlux.subscribe(positionService::tickersUpdates);
+
         // Start flux.
         connectableAccountFlux.connect();
         connectablePositionFlux.connect();
-        // If a position was stuck in OPENING or CLOSING, we fix the order set to null.
-        positionRepository.findByStatus(OPENING).forEach(p -> {
-            final Optional<Order> order = orderRepository.findByOrderId(p.getOpeningOrderId());
-            if (order.isPresent()) {
-                if (p.getOpeningOrder() == null) {
-                    p.setOpeningOrder(order.get());
-                    positionRepository.save(p);
-                }
-                order.get()
-                        .getTrades()
-                        .stream()
-                        .map(tradeMapper::mapToTradeDTO)
-                        .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO));
-            }
-        });
-        positionRepository.findByStatus(CLOSING).forEach(p -> {
-            final Optional<Order> order = orderRepository.findByOrderId(p.getClosingOrderId());
-            if (order.isPresent()) {
-                if (p.getClosingOrder() == null) {
-                    p.setClosingOrder(order.get());
-                    positionRepository.save(p);
-                }
-                order.get()
-                        .getTrades()
-                        .stream()
-                        .map(tradeMapper::mapToTradeDTO)
-                        .forEach(tradeDTO -> positionService.tradeUpdate(tradeDTO));
-            }
-        });
         connectableOrderFlux.connect();
         connectableTradeFlux.connect();
         connectableTickerFlux.connect();
+
+        // =============================================================================================================
+        // Maintenance code.
+        // If a position was blocked in OPENING or CLOSING, we send again the trades.
+        // This could happen if cassandre crashes after saving a trade and did not have time to send it to
+        // positionService.
+        positionRepository.findByStatus(OPENING).forEach(p -> {
+            final Optional<Order> openingOrder = orderRepository.findByOrderId(p.getOpeningOrder().getOrderId());
+            openingOrder.ifPresent(order -> order
+                    .getTrades()
+                    .stream()
+                    .map(tradeMapper::mapToTradeDTO)
+                    .forEach(tradeDTO -> positionService.tradesUpdates(Set.of(tradeDTO))));
+        });
+        positionRepository.findByStatus(CLOSING).forEach(p -> {
+            final Optional<Order> closingOrder = orderRepository.findByOrderId(p.getClosingOrder().getOrderId());
+            closingOrder.ifPresent(order -> order
+                    .getTrades()
+                    .stream()
+                    .map(tradeMapper::mapToTradeDTO)
+                    .forEach(tradeDTO -> positionService.tradesUpdates(Set.of((tradeDTO)))));
+        });
     }
 
     /**

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.dto;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
@@ -17,7 +16,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 public class GainDTOTest {
 
     @Test
-    @CaseId(43)
     @DisplayName("Check toString() method")
     public void checkToString() {
         final GainDTO gain1 = GainDTO.ZERO;
@@ -32,7 +30,6 @@ public class GainDTOTest {
     }
 
     @Test
-    @CaseId(44)
     @DisplayName("Check isInferiorTo() method")
     public void checkIsInferiorTO() {
         GainDTO gain = GainDTO.builder()
@@ -58,7 +55,6 @@ public class GainDTOTest {
     }
 
     @Test
-    @CaseId(45)
     @DisplayName("Check isSuperiorTo() method")
     public void isSuperiorTo() {
         GainDTO gain = GainDTO.builder()

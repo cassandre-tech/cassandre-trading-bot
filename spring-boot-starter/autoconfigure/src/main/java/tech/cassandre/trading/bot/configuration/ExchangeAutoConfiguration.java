@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
@@ -16,8 +17,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.domain.ExchangeAccount;
-import tech.cassandre.trading.bot.repository.ExchangeAccountRepository;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -25,27 +25,24 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.dry.ExchangeServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.dry.TradeServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.dry.UserServiceDryModeImplementation;
-import tech.cassandre.trading.bot.service.xchange.ExchangeServiceXChangeImplementation;
-import tech.cassandre.trading.bot.service.xchange.MarketServiceXChangeImplementation;
-import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
-import tech.cassandre.trading.bot.service.xchange.UserServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.ExchangeServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.MarketServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.UserServiceXChangeImplementation;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * ExchangeConfiguration configures the exchange connection.
  */
 @Configuration
 @EnableConfigurationProperties(ExchangeParameters.class)
+@RequiredArgsConstructor
 public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** XChange user sandbox parameter. */
@@ -55,7 +52,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     private static final String PASSPHRASE_PARAMETER = "passphrase";
 
     /** Unauthorized http status code. */
-    public static final int UNAUTHORIZED_STATUS_CODE = 401;
+    private static final int UNAUTHORIZED_STATUS_CODE = 401;
 
     /** Application context. */
     private final ApplicationContext applicationContext;
@@ -102,9 +99,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Position flux. */
     private PositionFlux positionFlux;
 
-    /** Exchange account repository. */
-    private final ExchangeAccountRepository exchangeAccountRepository;
-
     /** Order repository. */
     private final OrderRepository orderRepository;
 
@@ -113,30 +107,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
     /** Position repository. */
     private final PositionRepository positionRepository;
-
-    /**
-     * Constructor.
-     *
-     * @param newApplicationContext        application context
-     * @param newExchangeParameters        exchange parameters
-     * @param newExchangeAccountRepository exchange account repository
-     * @param newOrderRepository           order repository
-     * @param newTradeRepository           trade repository
-     * @param newPositionRepository        position repository
-     */
-    public ExchangeAutoConfiguration(final ApplicationContext newApplicationContext,
-                                     final ExchangeParameters newExchangeParameters,
-                                     final ExchangeAccountRepository newExchangeAccountRepository,
-                                     final OrderRepository newOrderRepository,
-                                     final TradeRepository newTradeRepository,
-                                     final PositionRepository newPositionRepository) {
-        this.applicationContext = newApplicationContext;
-        this.exchangeParameters = newExchangeParameters;
-        this.exchangeAccountRepository = newExchangeAccountRepository;
-        this.orderRepository = newOrderRepository;
-        this.tradeRepository = newTradeRepository;
-        this.positionRepository = newPositionRepository;
-    }
 
     /**
      * Instantiating the exchange based on the parameter.
@@ -187,65 +157,39 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             long tradeRate = getRateValue(exchangeParameters.getRates().getTrade());
 
             // Creates Cassandre services.
-            UserServiceDryModeImplementation userServiceDryMode;
-            TradeServiceDryModeImplementation tradeServiceDryMode = null;
-            if (!exchangeParameters.getModes().getDry()) {
-                // Normal mode.
-                logger.info("ExchangeConfiguration - Dry mode is OFF");
-                this.exchangeService = new ExchangeServiceXChangeImplementation(xChangeExchange);
-                this.userService = new UserServiceXChangeImplementation(accountRate, xChangeAccountService);
-                this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                this.tradeService = new TradeServiceXChangeImplementation(tradeRate, orderRepository, xChangeTradeService);
-            } else {
-                // Dry mode.
-                logger.info("ExchangeConfiguration - Dry mode is ON");
-                this.exchangeService = new ExchangeServiceDryModeImplementation(applicationContext);
-                userServiceDryMode = new UserServiceDryModeImplementation();
-                this.userService = userServiceDryMode;
-                this.marketService = new MarketServiceXChangeImplementation(tickerRate, xChangeMarketDataService);
-                tradeServiceDryMode = new TradeServiceDryModeImplementation(userServiceDryMode, tradeRepository, orderRepository);
-                this.tradeService = tradeServiceDryMode;
-            }
+            this.exchangeService = new ExchangeServiceXChangeImplementation(getXChangeExchange());
+            this.userService = new UserServiceXChangeImplementation(accountRate, getXChangeAccountService());
+            this.marketService = new MarketServiceXChangeImplementation(tickerRate, getXChangeMarketDataService());
+            this.tradeService = new TradeServiceXChangeImplementation(tradeRate, orderRepository, getXChangeTradeService());
 
             // Creates Cassandre flux.
-            accountFlux = new AccountFlux(userService);
-            tickerFlux = new TickerFlux(applicationContext, marketService);
-            orderFlux = new OrderFlux(tradeService, orderRepository);
-            tradeFlux = new TradeFlux(tradeService, orderRepository, tradeRepository);
-            positionFlux = new PositionFlux(positionRepository, orderRepository);
+            accountFlux = new AccountFlux(getUserService());
+            tickerFlux = new TickerFlux(applicationContext, getMarketService());
+            orderFlux = new OrderFlux(getTradeService(), orderRepository);
+            tradeFlux = new TradeFlux(getTradeService(), orderRepository, tradeRepository);
+            positionFlux = new PositionFlux(positionRepository);
 
             // Force login to check credentials.
             xChangeAccountService.getAccountInfo();
-            logger.info("ExchangeConfiguration - Connection to {} successful", exchangeParameters.getName());
+            logger.info("Exchange connection with username {} successful (Dry mode : {} / Sandbox : {})",
+                    exchangeParameters.getUsername(),
+                    exchangeParameters.getModes().getDry(),
+                    exchangeParameters.getModes().getSandbox());
 
             // Prints all the supported currency pairs.
-            StringJoiner currencyPairList = new StringJoiner(", ");
-            exchangeService.getAvailableCurrencyPairs().forEach(currencyPairDTO -> currencyPairList.add(currencyPairDTO.toString()));
-            logger.info("ExchangeConfiguration - Supported currency pairs : {} ", currencyPairList);
+            logger.info("Supported currency pairs by the exchange : {}.", exchangeService.getAvailableCurrencyPairs()
+                    .stream()
+                    .map(CurrencyPairDTO::toString)
+                    .collect(Collectors.joining(", ")));
 
-            // if in dry mode, we set dependencies.
-            if (tradeService instanceof TradeServiceDryModeImplementation) {
-                assert tradeServiceDryMode != null;
-                tradeServiceDryMode.setDependencies(orderFlux, tradeFlux);
-            }
-
-            // Save the exchange account in database.
-            Optional<ExchangeAccount> exchangeAccount = exchangeAccountRepository.findByExchangeAndAccount(exchangeParameters.getName(), exchangeParameters.getUsername());
-            if (exchangeAccount.isEmpty()) {
-                ExchangeAccount ea = new ExchangeAccount();
-                ea.setExchange(exchangeParameters.getName());
-                ea.setAccount(exchangeParameters.getUsername());
-                ea = exchangeAccountRepository.save(ea);
-                logger.info("ExchangeConfiguration - Exchange configuration saved in database {}", ea);
-            }
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.
-            throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getName(),
+            throw new ConfigurationException("Impossible to find the exchange you requested : " + exchangeParameters.getDriverClassName(),
                     "Choose a valid exchange (https://github.com/knowm/XChange) and add the dependency to Cassandre");
         } catch (HttpStatusIOException e) {
             if (e.getHttpStatusCode() == UNAUTHORIZED_STATUS_CODE) {
                 // Authorization failure.
-                throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getName(),
+                throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getDriverClassName(),
                         "Check your exchange credentials : " + e.getMessage() + " - login used : " + exchangeParameters.getUsername());
             } else {
                 // Another HTTP failure.
@@ -263,8 +207,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      */
     private String getExchangeClassName() {
         // If the name contains a dot, it means that it's the XChange class name.
-        if (exchangeParameters.getName() != null && exchangeParameters.getName().contains(".")) {
-            return exchangeParameters.getName();
+        if (exchangeParameters.getDriverClassName() != null && exchangeParameters.getDriverClassName().contains(".")) {
+            return exchangeParameters.getDriverClassName();
         }
 
         // XChange class package name and suffix.
@@ -272,13 +216,13 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
         final String xChangeCLassSuffix = "Exchange";
 
         // Returns the XChange package name.
-        assert exchangeParameters.getName() != null;
-        return xChangeClassPackage                                                      // Package (org.knowm.xchange.).
-                .concat(exchangeParameters.getName().toLowerCase())                     // domain (kucoin).
-                .concat(".")                                                            // A dot (.)
-                .concat(exchangeParameters.getName().substring(0, 1).toUpperCase())     // First letter uppercase (K).
-                .concat(exchangeParameters.getName().substring(1).toLowerCase())        // The rest of the exchange name (ucoin).
-                .concat(xChangeCLassSuffix);                                            // Adding exchange (Exchange).
+        assert exchangeParameters.getDriverClassName() != null;
+        return xChangeClassPackage                                                              // Package (org.knowm.xchange.).
+                .concat(exchangeParameters.getDriverClassName().toLowerCase())                  // domain (kucoin).
+                .concat(".")                                                                    // A dot (.)
+                .concat(exchangeParameters.getDriverClassName().substring(0, 1).toUpperCase())  // First letter uppercase (K).
+                .concat(exchangeParameters.getDriverClassName().substring(1).toLowerCase())     // The rest of the exchange name (ucoin).
+                .concat(xChangeCLassSuffix);                                                    // Adding exchange (Exchange).
     }
 
     /**

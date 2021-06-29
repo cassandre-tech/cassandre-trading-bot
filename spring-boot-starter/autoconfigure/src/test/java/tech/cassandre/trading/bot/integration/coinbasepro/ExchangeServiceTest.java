@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.integration.coinbasepro;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
 @TestPropertySource(properties = {
-		"cassandre.trading.bot.exchange.name=${COINBASE_PRO_NAME}",
+		"cassandre.trading.bot.exchange.driver-class-name=${COINBASE_PRO_NAME}",
 		"cassandre.trading.bot.exchange.modes.sandbox=true",
 		"cassandre.trading.bot.exchange.modes.dry=false",
 		"cassandre.trading.bot.exchange.username=${COINBASE_PRO_USERNAME}",
@@ -44,7 +43,6 @@ public class ExchangeServiceTest {
 
 	@Test
 	@Tag("integration")
-	@CaseId(101)
 	@DisplayName("Check get available currency pairs")
 	public void checkGetAvailableCurrencyPairs() {
 		// Expected values.

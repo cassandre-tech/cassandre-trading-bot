@@ -18,7 +18,7 @@ import tech.cassandre.trading.bot.util.mapper.UtilMapper;
 public abstract class Base {
 
     /** Logger. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     /** Type mapper. */
     protected final UtilMapper utilMapper = Mappers.getMapper(UtilMapper.class);

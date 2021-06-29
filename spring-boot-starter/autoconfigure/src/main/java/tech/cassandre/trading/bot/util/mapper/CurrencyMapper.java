@@ -60,6 +60,14 @@ public interface CurrencyMapper {
     // =================================================================================================================
     // XChange to DTO.
 
+    default Currency mapToCurrency(CurrencyDTO source) {
+        if (source != null) {
+            return new Currency(source.getCode());
+        } else {
+            return null;
+        }
+    }
+
     default CurrencyPair mapToCurrencyPair(CurrencyPairDTO source) {
         return new CurrencyPair(source.getBaseCurrency().getCode(), source.getQuoteCurrency().getCode());
     }

@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.domain;
 
-import io.qase.api.annotation.CaseId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.strategy.basic.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -46,10 +45,10 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest
 @DisplayName("Domain - Trade")
 @Configuration({
-        @Property(key = "spring.datasource.data", value = "classpath:/backup.sql")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
 })
-@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @ActiveProfiles("schedule-disabled")
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class TradeTest extends BaseTest {
 
     @Autowired
@@ -71,14 +70,12 @@ public class TradeTest extends BaseTest {
     private OrderFlux orderFlux;
 
     @Test
-    @CaseId(35)
     @DisplayName("Check load trade from database")
     public void checkLoadTradeFromDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());
-        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
+        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
+        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
 
         // =============================================================================================================
         // Check trade 01.
@@ -166,9 +163,9 @@ public class TradeTest extends BaseTest {
         assertEquals(ASK, t.get().getType());
         assertEquals("BACKUP_CLOSING_ORDER_02", t.get().getOrderId());
         assertEquals(new CurrencyPairDTO(ETH, USD), t.get().getCurrencyPair());
-        assertEquals(0, new BigDecimal("50").compareTo(t.get().getAmount().getValue()));
+        assertEquals(0, new BigDecimal("40").compareTo(t.get().getAmount().getValue()));
         assertEquals(ETH, t.get().getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("50").compareTo(t.get().getPrice().getValue()));
+        assertEquals(0, new BigDecimal("40").compareTo(t.get().getPrice().getValue()));
         assertEquals(USD, t.get().getPrice().getCurrency());
         assertEquals(0, new BigDecimal("5").compareTo(t.get().getFee().getValue()));
         assertEquals(USD, t.get().getFee().getCurrency());
@@ -177,14 +174,13 @@ public class TradeTest extends BaseTest {
     }
 
     @Test
-    @CaseId(36)
     @DisplayName("Check save trade in database")
     public void checkSaveTradeInDatabase() {
         // =============================================================================================================
         // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdateReceived().size());
-        assertTrue(strategy.getTradesUpdateReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdateReceived().isEmpty());
+        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
+        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
+        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
 
         // =============================================================================================================
         // Loading strategy.
@@ -205,7 +201,7 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .build();
         tradeFlux.emitValue(t1);
-        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdatesReceived().size()));
 
         // =============================================================================================================
         // Trade - Check created order (domain).
@@ -214,7 +210,7 @@ public class TradeTest extends BaseTest {
         assertEquals(11, tradeInDatabase.get().getId());
         assertEquals("BACKUP_TRADE_11", tradeInDatabase.get().getTradeId());
         assertEquals(BID, tradeInDatabase.get().getType());
-        assertEquals("BACKUP_ORDER_01", tradeInDatabase.get().getOrderId());
+        assertEquals("BACKUP_ORDER_01", tradeInDatabase.get().getOrder().getOrderId());
         assertEquals("ETH/BTC", tradeInDatabase.get().getCurrencyPair());
         assertEquals(0, tradeInDatabase.get().getAmount().getValue().compareTo(new BigDecimal("1.100001")));
         assertEquals("ETH", tradeInDatabase.get().getAmount().getCurrency());
@@ -238,6 +234,7 @@ public class TradeTest extends BaseTest {
         assertEquals("BACKUP_TRADE_11", tradeDTO.getTradeId());
         assertEquals(BID, tradeDTO.getType());
         assertEquals("BACKUP_ORDER_01", tradeDTO.getOrderId());
+        assertEquals("BACKUP_ORDER_01", tradeDTO.getOrder().getOrderId());
         assertEquals(ETH_BTC, tradeDTO.getCurrencyPair());
         assertEquals(ETH_BTC.getBaseCurrency(), tradeDTO.getAmount().getCurrency());
         assertEquals(0, tradeDTO.getAmount().getValue().compareTo(new BigDecimal("1.100001")));
@@ -262,7 +259,7 @@ public class TradeTest extends BaseTest {
                 .userReference("Updated reference")
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .build());
-        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdateReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdatesReceived().size()));
         await().untilAsserted(() -> assertNotNull(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn()));
         assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
         ZonedDateTime updatedOn = tradeInDatabase.get().getCreatedOn();
@@ -287,7 +284,6 @@ public class TradeTest extends BaseTest {
     }
 
     @Test
-    @CaseId(37)
     @DisplayName("Check link between order and trade")
     public void checkStrategyValueInTrade() {
         // =============================================================================================================

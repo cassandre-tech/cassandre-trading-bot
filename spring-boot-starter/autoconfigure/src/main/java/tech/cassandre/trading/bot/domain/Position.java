@@ -40,11 +40,11 @@ public class Position extends BaseDomain {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    /** An identifier that uniquely identifies the position. */
+    /** An identifier that uniquely identifies the position for a strategy. */
     @Column(name = "POSITION_ID")
     private Long positionId;
 
-    /** Position type. */
+    /** Position type - Short or Long. */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private PositionTypeDTO type;
@@ -83,18 +83,10 @@ public class Position extends BaseDomain {
     @Column(name = "FORCE_CLOSING")
     private boolean forceClosing;
 
-    /** The order id created to open the position. */
-    @Column(name = "OPENING_ORDER_ID")
-    private String openingOrderId;
-
     /** The order created to open the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
     @JoinColumn(name = "FK_OPENING_ORDER_ID")
     private Order openingOrder;
-
-    /** The order id created to open the position. */
-    @Column(name = "CLOSING_ORDER_ID")
-    private String closingOrderId;
 
     /** The order created to close the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
@@ -144,9 +136,7 @@ public class Position extends BaseDomain {
                 .append(this.stopLossPercentageRule, that.stopLossPercentageRule)
                 .append(this.status, that.status)
                 .append(this.forceClosing, that.forceClosing)
-                .append(this.openingOrderId, that.openingOrderId)
                 .append(this.openingOrder, that.openingOrder)
-                .append(this.closingOrderId, that.closingOrderId)
                 .append(this.closingOrder, that.closingOrder)
                 .append(this.lowestGainPrice, that.lowestGainPrice)
                 .append(this.highestGainPrice, that.highestGainPrice)
