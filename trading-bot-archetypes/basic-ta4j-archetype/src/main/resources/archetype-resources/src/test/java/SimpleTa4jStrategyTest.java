@@ -45,18 +45,18 @@ public class SimpleTa4jStrategyTest {
         System.out.println("Cumulated gains:");
         gains.forEach((currency, gain) -> System.out.println(currency + " : " + gain.getAmount()));
 
-        System.out.println("Position closed :");
+        System.out.println("Position closed:");
         strategy.getPositions()
                 .values()
                 .stream()
                 .filter(p -> p.getStatus().equals(CLOSED))
                 .forEach(p -> System.out.println(" - " + p.getDescription()));
 
-        System.out.println("Position still opened :");
+        System.out.println("Position not closed:");
         strategy.getPositions()
                 .values()
                 .stream()
-                .filter(p -> p.getStatus().equals(OPENED))
+                .filter(p -> !p.getStatus().equals(CLOSED))
                 .forEach(p -> System.out.println(" - " + p.getDescription()));
 
         assertTrue(gains.get(strategy.getRequestedCurrencyPair().getQuoteCurrency()).getPercentage() > 0);

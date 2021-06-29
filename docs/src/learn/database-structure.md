@@ -1,2 +1,2 @@
 # Database structure
-![Database structure](./cassandre-trading-bot-database.png)
+![Database structure](./images/cassandre-trading-bot-database.png)

@@ -24,7 +24,7 @@ Then, you can create the position with that rule:
 createLongPosition(new CurrencyPairDTO(ETH, BTC), new BigDecimal("0.5"), rules);
 ```
 
-At this moment, Cassandre will create a buy order of 0.5 ETH (At that moment, 1 ETH costs 1500 USDT), and this will cost us 750 USDT. The position status will be [OPENING](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionStatusDTO.html#OPENING), and when all the corresponding trades have arrived, the status will move to [OPENED](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionStatusDTO.html#OPENED).
+At this moment, Cassandre will create a buy order of 0.5 ETH (1 ETH costs 1500 USDT), and this will cost us 750 USDT. The position status will be [OPENING](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionStatusDTO.html#OPENING), and when all the corresponding trades have arrived, the status will move to [OPENED](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionStatusDTO.html#OPENED).
 
 ::: tip
 Note: if you want to check if you have enough funds available (at least 750 USDT in our case) before creating the position, you can use the [canBuy()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canBuy%28tech.cassandre.trading.bot.dto.user.AccountDTO,tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29) method.
@@ -45,7 +45,7 @@ Let's say you create a short position on 1 ETH with this command:
 createShortPosition(new CurrencyPairDTO(ETH, BTC), new BigDecimal("1"), rules);
 ```
 
-Cassandre will sell 1 ETH and get 1 500 USDT and wait until the price is down enough to buy 2 ETH with that 1 500 USDT. 
+Cassandre will sell 1 ETH and get 1 500 USDT and wait until the price is down enough to buy 2 ETH with 1 500 USDT. 
 
 ::: tip
 Note: if you want to check if you have enough funds available (at 1 ETH in our case) before creating the position, you can use the [canSell()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canSell%28tech.cassandre.trading.bot.dto.util.CurrencyDTO,java.math.BigDecimal%29) method.
@@ -57,4 +57,4 @@ On a position you can get the:
 * The highest calculated gain with [getHighestGainPrice()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getHighestGainPrice())
 * The latest calculated gain with [getLatestGainPrice](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLatestGainPrice())
 
-Once the position is closed, you can get the gain & fees with [getGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getGain())
+Once the position is closed, you can get the final gain & fees with [getGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getGain())
