@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.3.5</version>
+            <version>4.4.0</version>
         </dependency>
 
         <!-- XChange -->
