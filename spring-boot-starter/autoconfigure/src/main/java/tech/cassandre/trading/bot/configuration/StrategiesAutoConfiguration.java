@@ -45,6 +45,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.math.BigDecimal.ZERO;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
@@ -121,9 +122,16 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
             user.get()
                     .getAccounts()
                     .values()
-                    .forEach(account -> logger.info("- Account id / Account name: {} / {}.",
+                    .forEach(account -> {
+                        logger.info("- Account id / Account name: {} / {}.",
                             account.getAccountId(),
-                            account.getName()));
+                            account.getName());
+                        account.getBalances()
+                                .values()
+                                .stream()
+                                .filter(balance -> balance.getAvailable().compareTo(ZERO) != 0)
+                                .forEach(balance -> logger.info(" - {} {}", balance.getAvailable(), balance.getCurrency()));
+                    });
         }
 
         // Check that there is at least one strategy.
