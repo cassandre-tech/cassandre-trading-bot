@@ -65,7 +65,7 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals(NEW, o.getStatus());
         assertEquals(0, new BigDecimal("0.000004").compareTo(o.getCumulativeAmount().getValue()));
         assertEquals("My reference 1", o.getUserReference());
-        assertEquals(createZonedDateTime("18-11-2020"), o.getTimestamp());
+        assertTrue(createZonedDateTime("18-11-2020").isEqual(o.getTimestamp()));
 
         // Retrieving order 1 with findByOrderId().
         Optional<Order> oBis = orderRepository.findByOrderId("BACKUP_ORDER_01");
@@ -91,7 +91,7 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals(PENDING_NEW, o.getStatus());
         assertEquals(0, new BigDecimal("0.000014").compareTo(o.getCumulativeAmount().getValue()));
         assertEquals("My reference 2", o.getUserReference());
-        assertEquals(createZonedDateTime("19-11-2020"), o.getTimestamp());
+        assertTrue(createZonedDateTime("19-11-2020").isEqual(o.getTimestamp()));
 
         // Retrieving order 2 with findByOrderId().
         oBis = orderRepository.findByOrderId("BACKUP_ORDER_02");

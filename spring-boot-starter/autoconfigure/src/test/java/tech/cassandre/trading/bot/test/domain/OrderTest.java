@@ -96,7 +96,8 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.000004").compareTo(o.get().getCumulativeAmount().getValue()));
         assertEquals(ETH, o.get().getCumulativeAmount().getCurrency());
         assertEquals("My reference 1", o.get().getUserReference());
-        assertEquals(createZonedDateTime("18-11-2020"), o.get().getTimestamp());
+        assertTrue(createZonedDateTime("18-11-2020").isEqual(o.get().getTimestamp()));
+
         assertEquals(0, o.get().getTrades().size());
 
         // Test equals.
@@ -126,7 +127,7 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.000014").compareTo(o.get().getCumulativeAmount().getValue()));
         assertEquals(USDT, o.get().getCumulativeAmount().getCurrency());
         assertEquals("My reference 2", o.get().getUserReference());
-        assertEquals(createZonedDateTime("19-11-2020"), o.get().getTimestamp());
+        assertTrue(createZonedDateTime("19-11-2020").isEqual(o.get().getTimestamp()));
         assertEquals(0, o.get().getTrades().size());
 
         // Check trades of orders.
@@ -203,7 +204,7 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("1.00002").compareTo(orderInDatabase.get().getCumulativeAmount().getValue()));
         assertEquals(ETH_BTC.getBaseCurrency().toString(), orderInDatabase.get().getCumulativeAmount().getCurrency());
         assertEquals("MY_REF_3", orderInDatabase.get().getUserReference());
-        assertEquals(createZonedDateTime("01-01-2020"), orderInDatabase.get().getTimestamp());
+        assertTrue(createZonedDateTime("01-01-2020").isEqual(orderInDatabase.get().getTimestamp()));
         // Tests for created on and updated on fields.
         ZonedDateTime createdOn = orderInDatabase.get().getCreatedOn();
         assertNotNull(createdOn);
@@ -232,7 +233,7 @@ public class OrderTest extends BaseTest {
         assertEquals(0, new BigDecimal("1.00002").compareTo(order.get().getCumulativeAmount().getValue()));
         assertEquals(ETH_BTC.getBaseCurrency(), order.get().getCumulativeAmount().getCurrency());
         assertEquals("MY_REF_3", order.get().getUserReference());
-        assertEquals(createZonedDateTime("01-01-2020"), order.get().getTimestamp());
+        assertTrue(createZonedDateTime("01-01-2020").isEqual(order.get().getTimestamp()));
 
         // =============================================================================================================
         // Updating the order and adding a trade - first time.
@@ -307,6 +308,7 @@ public class OrderTest extends BaseTest {
 
     /**
      * Retrieve order from database.
+     *
      * @param id order id
      * @return order
      */

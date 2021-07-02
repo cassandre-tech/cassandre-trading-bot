@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -138,8 +137,7 @@ public class BaseTest {
      * @return ZonedDateTime
      */
     protected static ZonedDateTime createZonedDateTime(final String date) {
-        LocalDateTime ldt = LocalDateTime.parse(date + " 00:00", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-        return ldt.atZone(ZoneId.systemDefault());
+        return ZonedDateTime.parse(date + " 00:00:00 UTC", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss VV"));
     }
 
 }
