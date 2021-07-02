@@ -1,8 +1,10 @@
 package tech.cassandre.trading.bot.service;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.service.trade.params.DefaultCancelOrderByCurrencyPairAndIdParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
@@ -231,8 +233,18 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         logger.debug("TradeService - Canceling order {}", orderId);
         if (orderId != null) {
             try {
-                logger.debug("TradeService - Successfully canceled order {}", orderId);
-                return tradeService.cancelOrder(orderId);
+                // We retrieve the order currency pair.
+                final Optional<Order> order = orderRepository.findByOrderId(orderId);
+                if (order.isPresent()) {
+                    OrderDTO orderDTO = orderMapper.mapToOrderDTO(order.get());
+                    final CurrencyPair currencyPair = currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair());
+                    DefaultCancelOrderByCurrencyPairAndIdParams params = new DefaultCancelOrderByCurrencyPairAndIdParams(currencyPair, orderId);
+                    logger.debug("TradeService - Successfully canceled order {}", orderId);
+                    return tradeService.cancelOrder(params);
+                } else {
+                    logger.error("TradeService - Error canceling order {}: order not found in database", orderId);
+                    return false;
+                }
             } catch (Exception e) {
                 logger.error("TradeService - Error canceling order {}: {}", orderId, e.getMessage());
                 return false;
