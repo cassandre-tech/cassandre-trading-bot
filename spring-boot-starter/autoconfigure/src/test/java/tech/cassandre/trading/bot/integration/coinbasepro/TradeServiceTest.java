@@ -77,7 +77,7 @@ public class TradeServiceTest extends BaseTest {
         final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
         assertFalse(result1.isSuccessful());
         assertNull(result1.getOrder());
-        assertEquals("TradeService - Error calling createMarketOrder for 1E-8 ETH/BTC: org.knowm.xchange.coinbasepro.dto.CoinbaseProException: funds must be a number", result1.getErrorMessage());
+        assertTrue(result1.getErrorMessage().contains("funds must be a number"));
         assertNotNull(result1.getException());
 
         // =============================================================================================================

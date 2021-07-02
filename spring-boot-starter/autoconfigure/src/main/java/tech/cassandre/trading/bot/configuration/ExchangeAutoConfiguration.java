@@ -22,12 +22,12 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
-import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.ExchangeServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.MarketServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.UserServiceXChangeImplementation;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
@@ -196,6 +196,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 throw new ConfigurationException("Error while connecting to the exchange : " + e.getMessage());
             }
         } catch (Exception e) {
+            System.out.println("=>" + exchangeParameters);
             throw new ConfigurationException("Unknown configuration error : " + e.getMessage());
         }
     }
