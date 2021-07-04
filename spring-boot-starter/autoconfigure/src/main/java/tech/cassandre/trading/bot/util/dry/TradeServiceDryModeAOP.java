@@ -217,7 +217,6 @@ public class TradeServiceDryModeAOP extends BaseService {
                             // A gain was made, we recalculate it from the order.
                             if (positionDTO.isPresent()) {
                                 final Optional<GainDTO> gainDTO = positionDTO.get().calculateGainFromPrice(orderDTO.getMarketPriceValue());
-
                                 if (gainDTO.isPresent()) {
                                     // We need the opening trade to know the price the asset was bought.
                                     final TradeDTO openingTrade = positionDTO.get().getOpeningOrder().getTrades().iterator().next();
@@ -312,12 +311,11 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         }
                                         // =====================================================================================
                                     }
-//                                    if (positionDTO.get().getId() == 1) {
-//                                        System.out.println("===> " + positionDTO);
-//                                        System.out.println("===> " + orderDTO);
-//                                        System.out.println("===> " + gainDTO);
-//                                        tradePrices.forEach((s, bigDecimal) -> System.out.println(s + "=>" + bigDecimal));
-//                                    }
+                                    if (positionDTO.get().getId() == 1) {
+                                        System.out.println("===> " + positionDTO);
+                                        System.out.println("Closing order ===> " + orderDTO + " gain: " + gainDTO);
+                                        tradePrices.forEach((s, bigDecimal) -> System.out.println(s + "=>" + bigDecimal));
+                                    }
                                 }
                             }
                         }
@@ -340,7 +338,6 @@ public class TradeServiceDryModeAOP extends BaseService {
                         .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
                         .build())
                 .collect(Collectors.toList());
-
         return new UserTrades(trades, SortByTimestamp);
     }
 

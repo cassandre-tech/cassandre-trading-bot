@@ -124,6 +124,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             exchangeSpecification.setExchangeSpecificParametersItem(PASSPHRASE_PARAMETER, exchangeParameters.getPassphrase());
             exchangeSpecification.setApiKey(exchangeParameters.getKey());
             exchangeSpecification.setSecretKey(exchangeParameters.getSecret());
+            exchangeSpecification.getResilience().setRateLimiterEnabled(true);
 
             // Specific parameters.
             if (exchangeParameters.getProxyHost() != null) {

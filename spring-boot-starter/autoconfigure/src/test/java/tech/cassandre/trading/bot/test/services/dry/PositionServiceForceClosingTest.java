@@ -123,7 +123,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // We will force closing of position 2.
         strategy.closePosition(position2Id);
 
-        // New tickers will noy trigger close.
+        // New tickers will not trigger close.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.32")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.32")).build());
         await().untilAsserted(() -> {
