@@ -179,6 +179,22 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     "You have duplicated strategy ids: " + String.join(", ", duplicatedStrategyIds));
         }
 
+        // Check that the currency pairs required by the strategies are available on the exchange.
+        final Set<CurrencyPairDTO> availableCurrencyPairs = exchangeService.getAvailableCurrencyPairs();
+        final Set<String> notAvailableCurrencyPairs = applicationContext
+                .getBeansWithAnnotation(CassandreStrategy.class)
+                .values()
+                .stream()
+                .map(o -> ((CassandreStrategyInterface) o))
+                .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
+                .flatMap(Set::stream)
+                .filter(currencyPairDTO -> !availableCurrencyPairs.contains(currencyPairDTO))
+                .map(CurrencyPairDTO::toString)
+                .collect(Collectors.toSet());
+        if (!notAvailableCurrencyPairs.isEmpty()) {
+            logger.warn("Your exchange doesn't supports the following currency pairs you requested: {}", String.join(", ", notAvailableCurrencyPairs));
+        }
+
         // =============================================================================================================
         // Creating position service.
         this.positionService = new PositionServiceCassandreImplementation(applicationContext, positionRepository, tradeService, positionFlux);
