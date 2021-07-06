@@ -237,7 +237,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         final StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(existingStrategy);
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
-                        logger.debug("StrategyConfiguration - Strategy updated in database: {}", existingStrategy);
+                        logger.debug("Strategy updated in database: {}", existingStrategy);
                     }, () -> {
                         // Creation.
                         Strategy newStrategy = new Strategy();
@@ -250,7 +250,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         if (strategy instanceof BasicTa4jCassandreStrategy) {
                             newStrategy.setType(BASIC_TA4J_STRATEGY);
                         }
-                        logger.debug("StrategyConfiguration - Strategy saved in database: {}", newStrategy);
+                        logger.debug("Strategy saved in database: {}", newStrategy);
                         StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(strategyRepository.save(newStrategy));
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
