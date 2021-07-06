@@ -28,7 +28,7 @@ public class UnknownExchangeTest extends BaseTest {
             fail("Exception not raised");
         } catch (Exception e) {
             final String message = ExceptionUtils.getRootCause(e).getMessage();
-            assertTrue(message.contains("Impossible to find the exchange you requested : foo"));
+            assertTrue(message.contains("Impossible to find the exchange you requested: foo"));
         }
     }
 

@@ -129,7 +129,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
             positionFlux.emitValue(p);
             return new PositionCreationResultDTO(p);
         } else {
-            logger.error("PositionService - Position creation failure : {}", orderCreationResult.getErrorMessage());
+            logger.error("Position creation failure : {}", orderCreationResult.getErrorMessage());
             return new PositionCreationResultDTO(orderCreationResult.getErrorMessage(), orderCreationResult.getException());
         }
     }

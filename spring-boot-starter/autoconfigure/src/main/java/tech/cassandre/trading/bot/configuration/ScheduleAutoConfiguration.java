@@ -29,14 +29,14 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /** Scheduler pool size. */
     private static final int SCHEDULER_POOL_SIZE = 3;
 
-    /** Initial delay before starting threads in milliseconds. */
-    private static final int AWAIT_START_IN_MILLISECONDS = 1_000;
+    /** Start delay in milliseconds. */
+    private static final int START_DELAY_IN_MILLISECONDS = 1_000;
 
-    /** Await termination delay in milliseconds. */
-    private static final int AWAIT_TERMINATION_IN_MILLISECONDS = 30_000;
+    /** Termination delay in milliseconds. */
+    private static final int TERMINATION_DELAY_IN_MILLISECONDS = 10_000;
 
     /** Thread prefix for schedulers. */
-    private static final String THREAD_NAME_PREFIX = "Cassandre-flux-";
+    private static final String THREAD_NAME_PREFIX = "cassandre-flux-";
 
     /** Flux continues to run as long as enabled is set to true. */
     private final AtomicBoolean enabled = new AtomicBoolean(true);
@@ -61,24 +61,24 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     @Bean
     public TaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setThreadNamePrefix(THREAD_NAME_PREFIX);
-        scheduler.setAwaitTerminationMillis(AWAIT_TERMINATION_IN_MILLISECONDS);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
+        scheduler.setAwaitTerminationMillis(TERMINATION_DELAY_IN_MILLISECONDS);
+        scheduler.setThreadNamePrefix(THREAD_NAME_PREFIX);
         scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
         scheduler.setErrorHandler(t -> {
             try {
-                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks: {}", t.getMessage());
+                logger.error("Error in scheduled tasks: {}", t.getMessage());
             } catch (Exception e) {
-                logger.error("ScheduleAutoConfiguration - Error in scheduled tasks: {}", e.getMessage());
+                logger.error("Error in scheduled tasks: {}", e.getMessage());
             }
         });
         return scheduler;
     }
 
     /**
-     * Recurrent calls the account flux.
+     * Recurrent calls to the account flux.
      */
-    @Scheduled(initialDelay = AWAIT_START_IN_MILLISECONDS, fixedDelay = 1)
+    @Scheduled(initialDelay = START_DELAY_IN_MILLISECONDS, fixedDelay = 1)
     public void accountFluxUpdate() {
         if (enabled.get()) {
             accountFlux.update();
@@ -86,9 +86,9 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Recurrent calls the ticker flux.
+     * Recurrent calls to the ticker flux.
      */
-    @Scheduled(initialDelay = AWAIT_START_IN_MILLISECONDS, fixedDelay = 1)
+    @Scheduled(initialDelay = START_DELAY_IN_MILLISECONDS, fixedDelay = 1)
     public void tickerFluxUpdate() {
         if (enabled.get()) {
             tickerFlux.update();
@@ -96,10 +96,10 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Recurrent calls the order/trade flux.
+     * Recurrent calls to the order & trade flux.
      */
-    @Scheduled(initialDelay = AWAIT_START_IN_MILLISECONDS, fixedDelay = 1)
-    public void tradeFluxUpdate() {
+    @Scheduled(initialDelay = START_DELAY_IN_MILLISECONDS, fixedDelay = 1)
+    public void orderAndTradeFluxUpdate() {
         if (enabled.get()) {
             orderFlux.update();
             tradeFlux.update();

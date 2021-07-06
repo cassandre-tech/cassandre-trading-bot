@@ -311,11 +311,6 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         }
                                         // =====================================================================================
                                     }
-                                    if (positionDTO.get().getId() == 1) {
-                                        System.out.println("===> " + positionDTO);
-                                        System.out.println("Closing order ===> " + orderDTO + " gain: " + gainDTO);
-                                        tradePrices.forEach((s, bigDecimal) -> System.out.println(s + "=>" + bigDecimal));
-                                    }
                                 }
                             }
                         }

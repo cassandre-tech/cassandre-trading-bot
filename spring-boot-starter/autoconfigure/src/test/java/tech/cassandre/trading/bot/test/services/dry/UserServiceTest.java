@@ -346,7 +346,6 @@ public class UserServiceTest extends BaseTest {
         // Selling with a currency we don't have.
         final OrderCreationResultDTO sellMarketOrder1 = strategy.createSellMarketOrder(new CurrencyPairDTO(ETH, EUR), new BigDecimal("1000"));
         assertFalse(sellMarketOrder1.isSuccessful());
-        System.out.println("=> " + sellMarketOrder1.getErrorMessage());
         assertTrue(sellMarketOrder1.getErrorMessage().contains("Not enough assets"));
 
         // =============================================================================================================
