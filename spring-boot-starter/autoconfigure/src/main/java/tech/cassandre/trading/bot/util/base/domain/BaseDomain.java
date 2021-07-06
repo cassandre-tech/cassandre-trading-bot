@@ -11,7 +11,7 @@ import javax.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 
 /**
- * Base domain (manage createdOn and updatedOn).
+ * Base domain (manage createdOn and updatedOn fields).
  */
 @Data
 @MappedSuperclass
