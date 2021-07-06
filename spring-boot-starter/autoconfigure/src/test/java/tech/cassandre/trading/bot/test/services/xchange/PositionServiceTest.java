@@ -643,7 +643,6 @@ public class PositionServiceTest extends BaseTest {
         // We had 2 positions updates (Closing then closed).
         // +1 with trade arriving
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.18")).build());
-        // TODO Was 6 and then passed to 4!
         await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdatesReceived().size()));
         position1 = getPositionDTO(position1Id);
         assertTrue(position1.getLowestCalculatedGain().isPresent());

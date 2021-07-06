@@ -166,8 +166,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             // Creates Cassandre flux.
             accountFlux = new AccountFlux(getUserService());
             tickerFlux = new TickerFlux(applicationContext, getMarketService());
-            orderFlux = new OrderFlux(getTradeService(), orderRepository);
-            tradeFlux = new TradeFlux(getTradeService(), orderRepository, tradeRepository);
+            orderFlux = new OrderFlux(orderRepository, getTradeService());
+            tradeFlux = new TradeFlux(orderRepository, tradeRepository, getTradeService());
             positionFlux = new PositionFlux(positionRepository);
 
             // Force login to check credentials.

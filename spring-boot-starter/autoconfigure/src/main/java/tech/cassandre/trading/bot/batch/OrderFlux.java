@@ -18,34 +18,34 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderFlux extends BaseFlux<OrderDTO> {
 
-    /** Trade service. */
-    private final TradeService tradeService;
-
     /** Order repository. */
     private final OrderRepository orderRepository;
 
+    /** Trade service. */
+    private final TradeService tradeService;
+
     @Override
     protected final Set<OrderDTO> getNewValues() {
-        logger.debug("OrderFlux - Retrieving new orders from exchange");
+        logger.debug("Retrieving orders from exchange");
         Set<OrderDTO> newValues = new LinkedHashSet<>();
 
         // Getting all the orders from the exchange.
         tradeService.getOrders()
                 .forEach(order -> {
-                    logger.debug("OrderFlux - Treating order: {}", order.getOrderId());
+                    logger.debug("Checking order: {}", order.getOrderId());
                     final Optional<Order> orderInDatabase = orderRepository.findByOrderId(order.getOrderId());
 
                     // If the order is not in database, we insert it only if strategy is set on that order.
-                    // If strategy is not set, it means that Cassandre did not yet save the locally created order.
+                    // If strategy is not set, it means that Cassandre did not yet save its locally created order.
                     if (orderInDatabase.isEmpty() && order.getStrategy() != null) {
-                        logger.debug("OrderFlux - New order from exchange: {}", order);
+                        logger.debug("New order from exchange: {}", order);
                         newValues.add(order);
                     }
 
                     // If the local order is already saved in database and the order retrieved from the exchange
                     // is different, then, we update the order in database.
                     if (orderInDatabase.isPresent() && !orderMapper.mapToOrderDTO(orderInDatabase.get()).equals(order)) {
-                        logger.debug("OrderFlux - Updated order from exchange: {}", order);
+                        logger.debug("Updated order from exchange: {}", order);
                         newValues.add(order);
                     }
                 });
@@ -63,12 +63,12 @@ public class OrderFlux extends BaseFlux<OrderDTO> {
                     // Update order.
                     orderMapper.updateOrder(newValue, order);
                     orders.add(orderRepository.save(order));
-                    logger.debug("OrderFlux - Updating order in database: {}", order);
+                    logger.debug("Updating order in database: {}", order);
                 }, () -> {
                     // Create order.
                     final Order newOrder = orderMapper.mapToOrder(newValue);
                     orders.add(orderRepository.save(newOrder));
-                    logger.debug("OrderFlux - Creating order in database: {}", newValue);
+                    logger.debug("Creating order in database: {}", newOrder);
                 }));
 
         return orders.stream()
