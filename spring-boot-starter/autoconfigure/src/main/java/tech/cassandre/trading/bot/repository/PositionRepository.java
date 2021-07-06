@@ -35,7 +35,7 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
     List<Position> findByOrderById();
 
     /**
-     * Retrieve all positions by its status.
+     * Find positions with a specific status.
      *
      * @param status status
      * @return positions
@@ -43,7 +43,7 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
     List<Position> findByStatus(PositionStatusDTO status);
 
     /**
-     * Retrieve all positions not having a specific status.
+     * Find positions without a specific status.
      *
      * @param status status
      * @return positions
@@ -51,7 +51,7 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
     List<Position> findByStatusNot(PositionStatusDTO status);
 
     /**
-     * Retrieve all positions with specific status.
+     * Find positions with any of specific status.
      *
      * @param status list of status
      * @return positions
@@ -59,7 +59,7 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
     List<Position> findByStatusIn(Set<PositionStatusDTO> status);
 
     /**
-     * Returns the last position id for a strategy.
+     * Returns the last position id used by a strategy.
      *
      * @param strategyId strategy id
      * @return positions
@@ -93,7 +93,7 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
      * Update force closing.
      *
      * @param id    position id
-     * @param value new value
+     * @param value true to force closing
      */
     @Transactional
     @Modifying

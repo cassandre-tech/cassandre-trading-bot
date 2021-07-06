@@ -28,7 +28,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByOrderId(String orderId);
 
     /**
-     * Find orders by its status.
+     * Find orders with a specific status.
      *
      * @param orderStatusDTO order status
      * @return orders
@@ -36,7 +36,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStatus(OrderStatusDTO orderStatusDTO);
 
     /**
-     * Find orders by its status.
+     * Find orders without a specific status.
      *
      * @param orderStatusDTO order status
      * @return orders
@@ -44,7 +44,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStatusNot(OrderStatusDTO orderStatusDTO);
 
     /**
-     * Retrieve all orders by its timestamp.
+     * Retrieve all orders (sorted by timestamp).
      *
      * @return orders
      */
@@ -52,7 +52,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     /**
      * Update order amount.
-     * (WARNING: Only used by dry mode, please do not use).
+     * WARNING: Only used by the dry mode, please do not use.
      *
      * @param id    order id
      * @param value new amount

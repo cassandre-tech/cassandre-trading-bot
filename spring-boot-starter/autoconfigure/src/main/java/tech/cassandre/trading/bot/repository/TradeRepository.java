@@ -22,7 +22,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     Optional<Trade> findByTradeId(String tradeId);
 
     /**
-     * Retrieve all trades order by its timestamp.
+     * Retrieve all trades (sorted by timestamp).
      *
      * @return trades
      */
