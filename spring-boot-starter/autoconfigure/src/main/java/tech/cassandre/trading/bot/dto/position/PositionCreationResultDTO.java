@@ -18,16 +18,12 @@ public class PositionCreationResultDTO {
     /** Exception (filled if position creation failed). */
     Exception exception;
 
-    /** Indicates if the position creation was successful or not. */
-    boolean successful;
-
     /**
      * Constructor for successful position creation.
      *
      * @param newPosition position
      */
     public PositionCreationResultDTO(final PositionDTO newPosition) {
-        successful = true;
         this.position = newPosition;
         this.errorMessage = null;
         this.exception = null;
@@ -40,10 +36,18 @@ public class PositionCreationResultDTO {
      * @param newException    exception
      */
     public PositionCreationResultDTO(final String newErrorMessage, final Exception newException) {
-        successful = false;
         this.position = null;
         this.errorMessage = newErrorMessage;
         this.exception = newException;
+    }
+
+    /**
+     * Getter successful.
+     *
+     * @return successful
+     */
+    public final boolean isSuccessful() {
+        return position != null;
     }
 
 }

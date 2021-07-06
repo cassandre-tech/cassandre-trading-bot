@@ -33,7 +33,7 @@ public class StrategyDTO {
     String name;
 
     /** Last position id used. */
-    @ToString.Include
+    @ToString.Exclude
     AtomicLong lastPositionIdUsed = new AtomicLong();
 
     /**
@@ -74,7 +74,6 @@ public class StrategyDTO {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(strategyId)
                 .toHashCode();
     }
 

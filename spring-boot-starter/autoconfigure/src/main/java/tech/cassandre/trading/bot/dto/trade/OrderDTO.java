@@ -102,6 +102,7 @@ public class OrderDTO {
      *
      * @return amount value
      */
+    // TODO Is it usefull ?
     public BigDecimal getAmountValue() {
         if (amount == null) {
             return null;
@@ -115,6 +116,7 @@ public class OrderDTO {
      *
      * @return average price value.
      */
+    // TODO Is it usefull ?
     public BigDecimal getAveragePriceValue() {
         if (averagePrice == null) {
             return null;
@@ -128,6 +130,7 @@ public class OrderDTO {
      *
      * @return limit price value
      */
+    // TODO Is it usefull ?
     public BigDecimal getLimitPriceValue() {
         if (limitPrice == null) {
             return null;
@@ -141,6 +144,7 @@ public class OrderDTO {
      *
      * @return market price value
      */
+    // TODO Is it usefull ?
     public BigDecimal getMarketPriceValue() {
         if (marketPrice == null) {
             return null;
@@ -154,6 +158,7 @@ public class OrderDTO {
      *
      * @return cumulative amount.
      */
+    // TODO Is it usefull ?
     public BigDecimal getCumulativeAmountValue() {
         if (cumulativeAmount == null) {
             return null;
@@ -168,11 +173,11 @@ public class OrderDTO {
      * @return true if order completed
      */
     public final boolean isFulfilled() {
-        final BigDecimal tradesAmount = getTrades()
+        return getTrades()
                 .stream()
                 .map(TradeDTO::getAmountValue)
-                .reduce(ZERO, BigDecimal::add);
-        return getAmountValue().compareTo(tradesAmount) == 0;
+                .reduce(ZERO, BigDecimal::add)
+                .compareTo(getAmountValue()) == 0;
     }
 
     @Override

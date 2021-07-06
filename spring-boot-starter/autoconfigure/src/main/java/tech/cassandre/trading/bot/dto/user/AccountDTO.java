@@ -102,7 +102,6 @@ public class AccountDTO {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(accountId)
-                .append(name)
                 .toHashCode();
     }
 
