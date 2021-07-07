@@ -49,7 +49,6 @@ public class NoConfigurationTest extends BaseTest {
             e.printStackTrace();
             assertTrue(message.contains("'driverClassName'"));
             assertTrue(message.contains("'username'"));
-            assertTrue(message.contains("'passphrase'"));
             assertTrue(message.contains("'key'"));
             assertTrue(message.contains("'secret'"));
             assertTrue(message.contains("'modes.sandbox'"));

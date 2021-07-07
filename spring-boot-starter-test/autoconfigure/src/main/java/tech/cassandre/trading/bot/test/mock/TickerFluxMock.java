@@ -20,7 +20,6 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 
@@ -70,14 +69,6 @@ public class TickerFluxMock {
     @Autowired
     private ApplicationContext applicationContext;
 
-    /** Order flux. */
-    @Autowired
-    private OrderFlux orderFlux;
-
-    /** Trade flux. */
-    @Autowired
-    private TradeFlux tradeFlux;
-
     /** Order repository. */
     @Autowired
     private OrderRepository orderRepository;
@@ -86,9 +77,13 @@ public class TickerFluxMock {
     @Autowired
     private TradeRepository tradeRepository;
 
-    /** Position repository. */
+    /** Order flux. */
     @Autowired
-    private PositionRepository positionRepository;
+    private OrderFlux orderFlux;
+
+    /** Trade flux. */
+    @Autowired
+    private TradeFlux tradeFlux;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -118,7 +113,7 @@ public class TickerFluxMock {
         MarketService marketService = mock(MarketService.class);
 
         // We don't use the getTickers method.
-        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in this mode"));
+        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in dry mode"));
 
         // For every files.
         getFilesToLoad()
@@ -126,7 +121,7 @@ public class TickerFluxMock {
                 .forEach(resource -> {
                     // Adding data.
                     final CurrencyPairDTO cp = getCurrencyPairFromFileName(resource);
-                    logger.info("Adding tests data from " + resource.getFilename().substring(resource.getFilename().indexOf(TICKERS_FILE_PREFIX)));
+                    logger.info("Adding tests data from {}", resource.getFilename().substring(resource.getFilename().indexOf(TICKERS_FILE_PREFIX)));
                     fluxTerminated.put(cp, false);
                     //noinspection rawtypes
                     when(marketService.getTicker(cp)).thenAnswer(new Answer() {
@@ -164,7 +159,7 @@ public class TickerFluxMock {
             final Resource[] resources = resolver.getResources("classpath*:" + TICKERS_FILE_PREFIX + "*" + TICKERS_FILE_SUFFIX);
             return Arrays.asList(resources);
         } catch (IOException e) {
-            logger.error("TickerFluxMock encountered an error : " + e.getMessage());
+            logger.error("TickerFluxMock encountered an error: {}", e.getMessage());
         }
         return Collections.emptyList();
     }
@@ -241,7 +236,7 @@ public class TickerFluxMock {
         } catch (FileNotFoundException e) {
             logger.error("{} not found !", file.getFilename());
         } catch (IOException e) {
-            logger.error("IOException : " + e);
+            logger.error("IOException : {}", e.getMessage());
         }
         return tickers;
     }
