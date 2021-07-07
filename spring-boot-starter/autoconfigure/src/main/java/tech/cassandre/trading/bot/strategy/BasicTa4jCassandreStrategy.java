@@ -227,12 +227,12 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     /**
-     * Called when your strategy says you should enter.
+     * Called when your strategy think you should enter.
      */
     public abstract void shouldEnter();
 
     /**
-     * Called when your strategy says your should exit.
+     * Called when your strategy think your should exit.
      */
     public abstract void shouldExit();
 

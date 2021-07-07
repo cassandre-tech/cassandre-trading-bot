@@ -20,7 +20,7 @@ import java.util.Set;
 
 /**
  * Cassandre strategy interface.
- * This allows the framework to communicate with the strategy.
+ * This interface defines how Cassandre interacts with a user strategy.
  */
 @SuppressWarnings("unused")
 public interface CassandreStrategyInterface {
@@ -124,7 +124,7 @@ public interface CassandreStrategyInterface {
     Set<CurrencyPairDTO> getRequestedCurrencyPairs();
 
     /**
-     * Implements this method to tell the bot which account from the accounts you own is the trading one.
+     * Implements this method to tell the bot which account from the accounts you own is the one you use for trading.
      *
      * @param accounts all your accounts
      * @return your trading account
@@ -139,42 +139,42 @@ public interface CassandreStrategyInterface {
     Optional<AccountDTO> getTradeAccount();
 
     /**
-     * Method called by streams on accounts updates.
+     * Method called by Cassandre when there are accounts updates.
      *
      * @param accounts accounts updates
      */
     void onAccountsUpdates(Map<String, AccountDTO> accounts);
 
     /**
-     * Method called by streams on tickers updates.
+     * Method called by Cassandre when there are tickers updates.
      *
      * @param tickers tickers updates
      */
     void onTickersUpdates(Map<CurrencyPairDTO, TickerDTO> tickers);
 
     /**
-     * Method called by streams on orders updates.
+     * Method called by Cassandre when there are orders updates.
      *
      * @param orders orders updates
      */
     void onOrdersUpdates(Map<String, OrderDTO> orders);
 
     /**
-     * Method called by streams on trades updates.
+     * Method called by Cassandre when there are trades updates.
      *
      * @param trades trades updates
      */
     void onTradesUpdates(Map<String, TradeDTO> trades);
 
     /**
-     * Method called by streams on positions updates.
+     * Method called by Cassandre when there are positions updates.
      *
      * @param positions positions updates
      */
     void onPositionsUpdates(Map<Long, PositionDTO> positions);
 
     /**
-     * Method called by streams on positions status updates.
+     * Method called by Cassandre when there are positions status updates.
      *
      * @param positions positions status updates
      */
