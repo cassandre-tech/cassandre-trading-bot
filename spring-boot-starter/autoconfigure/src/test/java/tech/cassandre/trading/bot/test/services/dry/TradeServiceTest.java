@@ -29,7 +29,6 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO.ZERO;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
@@ -106,7 +105,7 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(ETH_BTC.getBaseCurrency(), trade01.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.2").compareTo(trade01.get().getPrice().getValue()));
         assertEquals(ETH_BTC.getQuoteCurrency(), trade01.get().getPrice().getCurrency());
-        assertEquals(ZERO, trade01.get().getFee());
+        assertNull(trade01.get().getFee());
         assertNull(trade01.get().getUserReference());
         assertNotNull(trade01.get().getTimestamp());
 
@@ -151,7 +150,7 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(ETH_BTC.getBaseCurrency(), trade02.get().getAmount().getCurrency());
         assertEquals(0, new BigDecimal("0.2").compareTo(trade02.get().getPrice().getValue()));
         assertEquals(ETH_BTC.getQuoteCurrency(), trade02.get().getPrice().getCurrency());
-        assertEquals(ZERO, trade02.get().getFee());
+        assertNull(trade02.get().getFee());
         assertNull(trade02.get().getUserReference());
         assertNotNull(trade02.get().getTimestamp());
     }

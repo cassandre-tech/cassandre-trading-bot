@@ -78,15 +78,12 @@ public class PositionDTO {
     private OrderDTO closingOrder;
 
     /** Price of lowest gain reached by this position. */
-    // TODO Should be initialized.
     private CurrencyAmountDTO lowestGainPrice;
 
     /** Price of highest gain reached by this position. */
-    // TODO Should be initialized.
     private CurrencyAmountDTO highestGainPrice;
 
     /** Price of latest gain price for this position. */
-    // TODO Should be initialized.
     private CurrencyAmountDTO latestGainPrice;
 
     /** 100%. */
@@ -492,11 +489,12 @@ public class PositionDTO {
 
                 // Calculate fees.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
                         .map(TradeDTO::getFeeValue)
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
-                if (firstTrade.isPresent()) {
+                if (firstTrade.isPresent() && firstTrade.get().getFee() != null) {
                     feeCurrency = firstTrade.get().getFee().getCurrency();
                 } else {
                     feeCurrency = currencyPair.getQuoteCurrency();
@@ -533,11 +531,12 @@ public class PositionDTO {
 
                 // Calculate fees.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
                         .map(TradeDTO::getFeeValue)
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
-                if (firstTrade.isPresent()) {
+                if (firstTrade.isPresent() && firstTrade.get().getFee() != null) {
                     feeCurrency = firstTrade.get().getFee().getCurrency();
                 } else {
                     feeCurrency = currencyPair.getQuoteCurrency();
