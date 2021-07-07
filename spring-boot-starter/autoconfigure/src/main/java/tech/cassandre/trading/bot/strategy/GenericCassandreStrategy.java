@@ -269,7 +269,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return amountsLockedByPosition
      */
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
-        return positionService.amountsLockedByPosition();
+        return positionService.getAmountsLockedByPosition();
     }
 
     /**

@@ -1,9 +1,12 @@
 package tech.cassandre.trading.bot.service;
 
+import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -42,6 +45,17 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             return Optional.empty();
         } catch (InterruptedException e) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Map<String, AccountDTO> getAccounts() {
+        final Optional<UserDTO> user = getUser();
+        if (user.isPresent()) {
+            return user.get().getAccounts();
+        } else {
+            return Collections.emptyMap();
         }
     }
 

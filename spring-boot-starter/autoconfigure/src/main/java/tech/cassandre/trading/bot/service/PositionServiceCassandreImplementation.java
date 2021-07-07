@@ -8,7 +8,6 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 import tech.cassandre.trading.bot.dto.position.PositionTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -23,6 +22,7 @@ import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -157,15 +157,14 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
 
     @Override
     public final void closePosition(final long id) {
-        logger.debug("Force closing position {}", id);
+        logger.debug("Force position {} to close", id);
         positionRepository.updateForceClosing(id, true);
     }
 
     @Override
     public final Set<PositionDTO> getPositions() {
         logger.debug("Retrieving all positions");
-        return positionRepository.findByOrderById()
-                .stream()
+        return positionRepository.findByOrderById().stream()
                 .map(positionMapper::mapToPositionDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
@@ -181,17 +180,11 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     public final void ordersUpdates(final Set<OrderDTO> orders) {
         orders.forEach(orderDTO -> {
             logger.debug("Updating positions with order {}", orderDTO);
-            positionRepository.findByStatusNot(CLOSED)
-                    .stream()
+            positionRepository.findByStatusNot(CLOSED).stream()
                     .map(positionMapper::mapToPositionDTO)
-                    .forEach(p -> {
-                        if (p.orderUpdate(orderDTO)) {
-                            logger.debug("Position {} updated with order {}",
-                                    p.getPositionId(),
-                                    orderDTO);
-                            positionFlux.emitValue(p);
-                        }
-                    });
+                    .filter(positionDTO -> positionDTO.orderUpdate(orderDTO))
+                    .peek(positionDTO -> logger.debug("Position {} updated with order {}", positionDTO.getPositionId(), orderDTO))
+                    .forEach(positionFlux::emitValue);
         });
     }
 
@@ -199,17 +192,11 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     public final void tradesUpdates(final Set<TradeDTO> trades) {
         trades.forEach(tradeDTO -> {
             logger.debug("Updating positions with trade {}", tradeDTO);
-            positionRepository.findByStatusNot(CLOSED)
-                    .stream()
+            positionRepository.findByStatusNot(CLOSED).stream()
                     .map(positionMapper::mapToPositionDTO)
-                    .forEach(p -> {
-                        if (p.tradeUpdate(tradeDTO)) {
-                            logger.debug("Position {} updated with trade {}",
-                                    p.getPositionId(),
-                                    tradeDTO);
-                            positionFlux.emitValue(p);
-                        }
-                    });
+                    .filter(positionDTO -> positionDTO.tradeUpdate(tradeDTO))
+                    .peek(positionDTO -> logger.debug("Position {} updated with trade {}", positionDTO.getPositionId(), tradeDTO))
+                    .forEach(positionFlux::emitValue);
         });
     }
 
@@ -261,19 +248,15 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                             logger.error("Strategy {} not found", p.getStrategy().getStrategyId());
                         }
                     }
+                    // We emit the position even anyway because the ticker updated it.
                     positionFlux.emitValue(p);
                 }));
     }
 
     @Override
-    public final Map<Long, CurrencyAmountDTO> amountsLockedByPosition() {
+    public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
         // List of status that locks amounts.
-        Set<PositionStatusDTO> status = new HashSet<>();
-        status.add(OPENING);
-        status.add(OPENED);
-
-        return positionRepository.findByStatusIn(status)
-                .stream()
+        return positionRepository.findByStatusIn(new HashSet<>(Arrays.asList(OPENING, OPENED))).stream()
                 .map(positionMapper::mapToPositionDTO)
                 .collect(Collectors.toMap(PositionDTO::getId, PositionDTO::getAmountToLock, (key, value) -> key, HashMap::new));
     }
@@ -325,7 +308,8 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                     }
 
                     // And now the fees.
-                    Stream.concat(p.getOpeningOrder().getTrades().stream(), p.getClosingOrder().getTrades().stream()).forEach(t -> totalFees.add(t.getFee()));
+                    Stream.concat(p.getOpeningOrder().getTrades().stream(), p.getClosingOrder().getTrades().stream())
+                            .forEach(t -> totalFees.add(t.getFee()));
                 });
 
         gains.keySet()

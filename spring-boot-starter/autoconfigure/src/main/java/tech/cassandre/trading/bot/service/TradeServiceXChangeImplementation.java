@@ -250,7 +250,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 return false;
             }
         } else {
-            logger.error("TradeService - Error canceling order, order id provided is null");
+            logger.error("Error canceling order, order id provided is null");
             return false;
         }
     }
@@ -305,11 +305,12 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         params.setEndTime(now);
 
         // We only ask for trades with currency pairs that was used in the previous orders we made.
+        // And we only choose the orders that are not fulfilled.
         final LinkedHashSet<CurrencyPairDTO> currencyPairs = orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(Order::getCurrencyPair)
-                .distinct()
-                .map(currencyMapper::mapToCurrencyPairDTO)
+                .map(orderMapper::mapToOrderDTO)
+                .filter(orderDTO -> !orderDTO.isFulfilled())
+                .map(OrderDTO::getCurrencyPair)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         Set<TradeDTO> results = new LinkedHashSet<>();

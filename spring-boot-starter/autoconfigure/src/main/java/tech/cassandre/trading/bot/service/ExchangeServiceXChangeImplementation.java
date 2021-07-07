@@ -26,7 +26,7 @@ public class ExchangeServiceXChangeImplementation extends BaseService implements
                 .getCurrencyPairs()
                 .keySet()
                 .stream()
-                .peek(cp -> logger.debug("- {} available", cp))
+                .peek(cp -> logger.debug(" - {} available", cp))
                 .map(currencyMapper::mapToCurrencyPairDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }

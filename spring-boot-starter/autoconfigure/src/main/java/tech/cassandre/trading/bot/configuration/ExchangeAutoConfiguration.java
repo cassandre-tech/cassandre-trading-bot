@@ -171,7 +171,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             positionFlux = new PositionFlux(positionRepository);
 
             // Force login to check credentials.
-            logger.info("Exchange connection with driver: {}.", exchangeParameters.getDriverClassName());
+            logger.info("Exchange connection with {} driver.", exchangeParameters.getDriverClassName());
             xChangeAccountService.getAccountInfo();
             logger.info("Exchange connection with username {} successful (Dry mode: {} / Sandbox: {}.)",
                     exchangeParameters.getUsername(),

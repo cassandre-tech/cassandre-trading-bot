@@ -96,7 +96,7 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Recurrent calls to the order & trade flux.
+     * Recurrent calls to the order and trade flux.
      */
     @Scheduled(initialDelay = START_DELAY_IN_MILLISECONDS, fixedDelay = 1)
     public void orderAndTradeFluxUpdate() {
