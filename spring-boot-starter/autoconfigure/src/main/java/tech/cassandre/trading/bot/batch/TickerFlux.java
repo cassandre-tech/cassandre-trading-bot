@@ -39,7 +39,7 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
                 .getBeansWithAnnotation(CassandreStrategy.class)
                 .values()
                 .stream()
-                .map(o -> ((CassandreStrategyInterface) o))
+                .map(o -> (CassandreStrategyInterface) o)
                 .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
                 .flatMap(Set::stream)
                 .collect(Collectors.toCollection(LinkedHashSet::new));

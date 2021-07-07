@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.util.exception;
 
 /**
- * Dry mode exception.
+ * Exception in cassandre dry mode.
  */
 public class DryModeException extends RuntimeException {
 

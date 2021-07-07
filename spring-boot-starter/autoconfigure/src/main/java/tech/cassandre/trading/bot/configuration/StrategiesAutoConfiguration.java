@@ -185,7 +185,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .getBeansWithAnnotation(CassandreStrategy.class)
                 .values()
                 .stream()
-                .map(o -> ((CassandreStrategyInterface) o))
+                .map(o -> (CassandreStrategyInterface) o)
                 .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
                 .flatMap(Set::stream)
                 .filter(currencyPairDTO -> !availableCurrencyPairs.contains(currencyPairDTO))
@@ -217,7 +217,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         logger.info("Running the following strategies:");
         strategies.values()
                 .forEach(s -> {
-                    CassandreStrategyInterface strategy = ((CassandreStrategyInterface) s);
+                    CassandreStrategyInterface strategy = (CassandreStrategyInterface) s;
                     CassandreStrategy annotation = s.getClass().getAnnotation(CassandreStrategy.class);
 
                     // Displaying information about strategy.

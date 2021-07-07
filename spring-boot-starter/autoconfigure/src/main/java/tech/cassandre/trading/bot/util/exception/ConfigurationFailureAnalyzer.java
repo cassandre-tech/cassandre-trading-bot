@@ -4,7 +4,7 @@ import org.springframework.boot.diagnostics.AbstractFailureAnalyzer;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 
 /**
- * Failure analyzer for configuration error.
+ * Failure analyzer for Cassandre configuration error.
  */
 public class ConfigurationFailureAnalyzer extends AbstractFailureAnalyzer<ConfigurationException> {
 

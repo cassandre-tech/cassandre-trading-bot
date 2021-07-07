@@ -16,7 +16,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
-import tech.cassandre.trading.bot.util.system.TimeProvider;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -299,7 +298,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         logger.debug("Getting trades from exchange");
         // Query trades from the last 24 jours (24 hours is the maximum because of Binance limitations).
         TradeHistoryParamsAll params = new TradeHistoryParamsAll();
-        Date now = TimeProvider.now();
+        Date now = new Date();
         Date startDate = DateUtils.addDays(now, -1);
         params.setStartTime(startDate);
         params.setEndTime(now);

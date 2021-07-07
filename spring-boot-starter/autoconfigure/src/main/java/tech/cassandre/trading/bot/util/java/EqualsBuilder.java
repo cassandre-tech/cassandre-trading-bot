@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 /**
- * Equals builder.
+ * Equals builder dealing correctly with BigDecimal and ZonedDateTime.
  */
 public class EqualsBuilder {
 

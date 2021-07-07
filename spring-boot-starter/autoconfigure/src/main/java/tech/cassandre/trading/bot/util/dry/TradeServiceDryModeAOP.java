@@ -12,7 +12,6 @@ import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.service.trade.params.TradeHistoryParams;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
-import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
@@ -58,6 +57,9 @@ public class TradeServiceDryModeAOP extends BaseService {
     /** Dry order prefix. */
     private static final String DRY_ORDER_PREFIX = "DRY_ORDER_";
 
+    /** Order counter. */
+    private final AtomicInteger orderCounter = new AtomicInteger(1);
+
     /** Dry trade prefix. */
     private static final String DRY_TRADE_PREFIX = "DRY_TRADE_";
 
@@ -67,11 +69,11 @@ public class TradeServiceDryModeAOP extends BaseService {
     /** Position repository. */
     private final PositionRepository positionRepository;
 
-    /** Order counter. */
-    private final AtomicInteger orderCounter = new AtomicInteger(1);
-
     /** User service - dry mode. */
     private final UserServiceDryModeAOP userService;
+
+    /** 100%. */
+    private static final BigDecimal ONE_HUNDRED_BIG_DECIMAL = new BigDecimal("100");
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createBuyMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
     public final OrderCreationResultDTO createBuyMarketOrder(final ProceedingJoinPoint pjp,
@@ -124,7 +126,7 @@ public class TradeServiceDryModeAOP extends BaseService {
         // We check that we have the trade account.
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         if (tradeAccount.isEmpty()) {
-            throw new RuntimeException("Trade account was not found");
+            throw new DryModeException("Trade account was not found");
         }
 
         // Selling order - we sell ETH to buy BTC.
@@ -164,13 +166,7 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.cancelOrder(..)) && args(orderId))", argNames = "pjp, orderId")
     public final boolean cancelOrder(final ProceedingJoinPoint pjp, final String orderId) {
-        final Optional<Order> order = orderRepository.findByOrderId(orderId);
-        if (order.isPresent()) {
-            orderRepository.delete(order.get());
-            return true;
-        } else {
-            return false;
-        }
+        throw new DryModeException("Not supported");
     }
 
     @Around("execution(* org.knowm.xchange.service.trade.TradeService.getOpenOrders())")
@@ -213,12 +209,12 @@ public class TradeServiceDryModeAOP extends BaseService {
                                     .map(positionMapper::mapToPositionDTO)
                                     .findFirst();
 
-                            // If this order is used to close position, we calculate a new price.
+                            // If this order is used to close position, we calculate a new price to match rules percentages.
                             // A gain was made, we recalculate it from the order.
                             if (positionDTO.isPresent()) {
                                 final Optional<GainDTO> gainDTO = positionDTO.get().calculateGainFromPrice(orderDTO.getMarketPriceValue());
                                 if (gainDTO.isPresent()) {
-                                    // We need the opening trade to know the price the asset was bought.
+                                    // We need the trade of the opening order to know the price the asset was bought.
                                     final TradeDTO openingTrade = positionDTO.get().getOpeningOrder().getTrades().iterator().next();
 
                                     if (positionDTO.get().getType().equals(LONG)) {
@@ -238,7 +234,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  openingTrade market price * (( openingTrade market price * rules gain)/100)
                                             final BigDecimal augmentation = positionDTO.get().getOpeningOrder().getMarketPriceValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
-                                                    .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
+                                                    .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
                                             tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().add(augmentation));
 
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
@@ -254,7 +250,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  openingTrade market price * (( openingTrade market price * rules gain)/100)
                                             final BigDecimal reduction = positionDTO.get().getOpeningOrder().getMarketPriceValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))
-                                                    .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
+                                                    .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
                                             tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().subtract(reduction));
                                         }
                                         // =====================================================================================
@@ -281,7 +277,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  2 * price = 70 000 USDT => price = 70 000/2 = 35 000
                                             final BigDecimal augmentation = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
-                                                    .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
+                                                    .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
                                             orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().add(augmentation));
                                             tradePrices.put(orderDTO.getOrderId(), positionDTO.get().getOpeningOrder().getMarketPriceValue().divide(openingTrade.getAmountValue().add(augmentation), BIGINTEGER_SCALE, FLOOR));
 
@@ -305,7 +301,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  0.9 * price = 40 000 USDT => price = 40 000/0.9
                                             final BigDecimal reduction = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))
-                                                    .divide(new BigDecimal("100"), BIGINTEGER_SCALE, FLOOR);
+                                                    .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
                                             orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().subtract(reduction));
                                             tradePrices.put(orderDTO.getOrderId(), positionDTO.get().getOpeningOrder().getMarketPriceValue().divide(openingTrade.getAmountValue().subtract(reduction), BIGINTEGER_SCALE, FLOOR));
                                         }
@@ -316,7 +312,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                         }
                 );
 
-        // For every orders in database, we will simulate an equivalent trade to close things.
+        // For every orders not fulfilled in database, we will simulate an equivalent trade to close it.
         List<UserTrade> trades = orderRepository.findByOrderByTimestampAsc()
                 .stream()
                 .map(orderMapper::mapToOrderDTO)

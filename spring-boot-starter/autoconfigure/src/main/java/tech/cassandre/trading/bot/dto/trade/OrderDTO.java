@@ -102,7 +102,7 @@ public class OrderDTO {
      *
      * @return amount value
      */
-    // TODO Is it usefull ?
+    // TODO Is it useful ?
     public BigDecimal getAmountValue() {
         if (amount == null) {
             return null;
@@ -116,7 +116,7 @@ public class OrderDTO {
      *
      * @return average price value.
      */
-    // TODO Is it usefull ?
+    // TODO Is it useful ?
     public BigDecimal getAveragePriceValue() {
         if (averagePrice == null) {
             return null;
@@ -130,7 +130,7 @@ public class OrderDTO {
      *
      * @return limit price value
      */
-    // TODO Is it usefull ?
+    // TODO Is it useful ?
     public BigDecimal getLimitPriceValue() {
         if (limitPrice == null) {
             return null;
@@ -144,7 +144,7 @@ public class OrderDTO {
      *
      * @return market price value
      */
-    // TODO Is it usefull ?
+    // TODO Is it useful ?
     public BigDecimal getMarketPriceValue() {
         if (marketPrice == null) {
             return null;
@@ -158,7 +158,7 @@ public class OrderDTO {
      *
      * @return cumulative amount.
      */
-    // TODO Is it usefull ?
+    // TODO Is it useful ?
     public BigDecimal getCumulativeAmountValue() {
         if (cumulativeAmount == null) {
             return null;
