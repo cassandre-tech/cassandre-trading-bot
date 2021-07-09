@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderStatusDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
@@ -197,6 +198,7 @@ public class TradeServiceDryModeAOP extends BaseService {
         Map<String, BigDecimal> tradePrices = new HashMap<>();
         orderRepository.findByOrderByTimestampAsc()
                 .stream()
+                .filter(order -> order.getStatus() == OrderStatusDTO.FILLED)
                 .map(orderMapper::mapToOrderDTO)
                 .filter(orderDTO -> !orderDTO.isFulfilled())    // Only orders with trades not arrived
                 .forEach(orderDTO -> {
@@ -213,6 +215,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                             // A gain was made, we recalculate it from the order.
                             if (positionDTO.isPresent()) {
                                 final Optional<GainDTO> gainDTO = positionDTO.get().calculateGainFromPrice(orderDTO.getMarketPriceValue());
+
                                 if (gainDTO.isPresent()) {
                                     // We need the trade of the opening order to know the price the asset was bought.
                                     final TradeDTO openingTrade = positionDTO.get().getOpeningOrder().getTrades().iterator().next();
@@ -236,7 +239,6 @@ public class TradeServiceDryModeAOP extends BaseService {
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
                                                     .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
                                             tradePrices.put(orderDTO.getOrderId(), openingTrade.getPriceValue().add(augmentation));
-
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
                                                 && gainDTO.get().getPercentage() < 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
