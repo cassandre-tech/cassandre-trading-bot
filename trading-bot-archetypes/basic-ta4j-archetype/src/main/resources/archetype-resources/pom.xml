@@ -51,6 +51,12 @@
 			<artifactId>xchange-kucoin</artifactId>
 			<version>5.0.8</version>
 		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-simulated</artifactId>
+			<version>5.0.8</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- Tests -->
 		<dependency>
