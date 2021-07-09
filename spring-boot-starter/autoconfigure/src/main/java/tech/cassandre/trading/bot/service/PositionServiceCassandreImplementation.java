@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -309,7 +310,8 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
 
                     // And now the fees.
                     Stream.concat(p.getOpeningOrder().getTrades().stream(), p.getClosingOrder().getTrades().stream())
-                            .forEach(t -> totalFees.add(t.getFee()));
+                            .filter(tradeDTO -> tradeDTO.getFee() != null)
+                            .forEach(tradeDTO -> totalFees.add(tradeDTO.getFee()));
                 });
 
         gains.keySet()
@@ -322,6 +324,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
 
                     // We calculate the fees for the currency.
                     final BigDecimal fees = totalFees.stream()
+                            .filter(Objects::nonNull)
                             .filter(amount -> amount.getCurrency().equals(currency))
                             .map(CurrencyAmountDTO::getValue)
                             .reduce(ZERO, BigDecimal::add);
