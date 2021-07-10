@@ -21,10 +21,6 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       # ================================================================================================================
-      - name: Retrieve the sources
-        uses: actions/checkout@v1
-
-      # ================================================================================================================
       - name: JDK 11 Setup
         uses: actions/setup-java@v1
         with:
@@ -34,7 +30,11 @@ jobs:
           server-password: MAVEN_PASSWORD
 
       # ================================================================================================================
-      - name: Build, run tests, package
+      - name: Retrieve the sources
+        uses: actions/checkout@v1
+
+      # ================================================================================================================
+      - name: Build, run tests, package and deploy
         id: package
         env: # Environment variables.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
