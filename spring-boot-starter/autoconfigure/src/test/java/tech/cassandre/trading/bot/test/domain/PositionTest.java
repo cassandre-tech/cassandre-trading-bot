@@ -310,9 +310,12 @@ public class PositionTest extends BaseTest {
         assertNull(p6.getClosingOrder());
 
         // If we wait a bit, the order and trade will arrive and the position status will be OPENED.
-        orderFlux.update();
-        tradeFlux.update();
-        await().untilAsserted(() -> assertEquals(OPENED, getPosition(6L).getStatus()));
+        await().untilAsserted(() -> {
+            orderFlux.update();
+            tradeFlux.update();
+            assertEquals(OPENED, getPosition(6L).getStatus());
+        });
+
         p6 = getPosition(6L);
         assertEquals(6L, p6.getId());
         assertEquals(6L, p6.getPositionId());
@@ -417,8 +420,11 @@ public class PositionTest extends BaseTest {
         // =============================================================================================================
         // We should now be OPENED.
         // We are in dry mode, we wait for order and trade to arrive, position will now be opened.
-        tradeFlux.update();
-        await().untilAsserted(() -> assertEquals(OPENED, getPosition(positionId).getStatus()));
+        await().untilAsserted(() -> {
+            orderFlux.update();
+            tradeFlux.update();
+            assertEquals(OPENED, getPosition(positionId).getStatus());
+        });
 
         // Check saved position in database.
         p = getPosition(positionId);
@@ -557,6 +563,7 @@ public class PositionTest extends BaseTest {
 
     /**
      * Retrieve position from database.
+     *
      * @param id position id
      * @return position
      */
@@ -571,6 +578,7 @@ public class PositionTest extends BaseTest {
 
     /**
      * Retrieve position from database.
+     *
      * @param id position id
      * @return position
      */

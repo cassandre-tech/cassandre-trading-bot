@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.AccountFlux;
+import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -16,6 +18,8 @@ import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.OrderRepository;
+import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.services.dry.mocks.TradeServiceDryModeTestMock;
@@ -28,7 +32,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
-import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,6 +60,12 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreS
 public class UserServiceTest extends BaseTest {
 
     @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private TradeRepository tradeRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -67,6 +76,12 @@ public class UserServiceTest extends BaseTest {
 
     @Autowired
     private AccountFlux accountFlux;
+
+    @Autowired
+    private OrderFlux orderFlux;
+
+    @Autowired
+    private TradeFlux tradeFlux;
 
     @Autowired
     private LargeTestableCassandreStrategy strategy;
@@ -197,9 +212,15 @@ public class UserServiceTest extends BaseTest {
         // Testing the trade.
         // Amount => 0.02
         // Price => 0.032666
-        with().await().until(() -> tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())));
-        final Optional<TradeDTO> buyingTrade = tradeService.getTrades()
+        await().untilAsserted(() -> {
+            orderFlux.update();
+            tradeFlux.update();
+            assertTrue(orderRepository.findByOrderId(buyMarketOrder.getOrder().getOrderId()).isPresent());
+            assertTrue(tradeRepository.findByOrderByTimestampAsc().stream().anyMatch(t -> t.getOrder().getOrderId().equals(buyMarketOrder.getOrder().getOrderId())));
+        });
+        final Optional<TradeDTO> buyingTrade = tradeRepository.findByOrderByTimestampAsc()
                 .stream()
+                .map(tradeMapper::mapToTradeDTO)
                 .filter(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())).findFirst();
         assertTrue(buyingTrade.isPresent());
         assertEquals(BID, buyingTrade.get().getType());
@@ -249,9 +270,15 @@ public class UserServiceTest extends BaseTest {
         // Testing the trade.
         // Amount => 0.02
         // Price => 0.032466
-        with().await().until(() -> tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())));
-        final Optional<TradeDTO> sellingTrade = tradeService.getTrades()
+        await().untilAsserted(() -> {
+            orderFlux.update();
+            tradeFlux.update();
+            assertTrue(orderRepository.findByOrderId(sellMarketOrder.getOrder().getOrderId()).isPresent());
+            assertTrue(tradeRepository.findByOrderByTimestampAsc().stream().anyMatch(t -> t.getOrder().getOrderId().equals(sellMarketOrder.getOrder().getOrderId())));
+        });
+        final Optional<TradeDTO> sellingTrade = tradeRepository.findByOrderByTimestampAsc()
                 .stream()
+                .map(tradeMapper::mapToTradeDTO)
                 .filter(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())).findFirst();
         assertTrue(sellingTrade.isPresent());
         assertEquals(ASK, sellingTrade.get().getType());
