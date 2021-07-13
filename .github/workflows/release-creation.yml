@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v1
 
       # ================================================================================================================
-      - name: Build, run tests, package and deploy
+      - name: Build, package and deploy
         id: package
         env: # Environment variables.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

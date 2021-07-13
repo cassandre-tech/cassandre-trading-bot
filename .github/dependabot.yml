@@ -9,3 +9,12 @@ updates:
       timezone: Europe/Paris
     open-pull-requests-limit: 10
     target-branch: development
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "18:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 10
+    target-branch: development
