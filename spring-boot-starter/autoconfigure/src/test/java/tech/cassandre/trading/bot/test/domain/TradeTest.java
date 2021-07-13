@@ -260,8 +260,10 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .build());
         await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdatesReceived().size()));
-        await().untilAsserted(() -> assertNotNull(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn()));
-        assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
+        Optional<Trade> trade11 = tradeRepository.findByTradeId("BACKUP_TRADE_11");
+        assertTrue(trade11.isPresent());
+        assertNotNull(trade11.get().getUpdatedOn());
+        assertEquals(createdOn, trade11.get().getCreatedOn());
         ZonedDateTime updatedOn = tradeInDatabase.get().getCreatedOn();
 
         // =============================================================================================================
@@ -276,8 +278,11 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
-        await().untilAsserted(() -> assertTrue(updatedOn.isBefore(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn())));
-        assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
+        await().untilAsserted(() -> assertEquals(3, strategy.getTradesUpdatesReceived().size()));
+        trade11 = tradeRepository.findByTradeId("BACKUP_TRADE_11");
+        assertTrue(trade11.isPresent());
+        assertTrue(updatedOn.isBefore(trade11.get().getUpdatedOn()));
+        assertEquals(createdOn, trade11.get().getCreatedOn());
         // We check if we still have the strategy set.
         final Optional<TradeDTO> optionalTrade = strategy.getTradeByTradeId("BACKUP_TRADE_11");
         assertTrue(optionalTrade.isPresent());
