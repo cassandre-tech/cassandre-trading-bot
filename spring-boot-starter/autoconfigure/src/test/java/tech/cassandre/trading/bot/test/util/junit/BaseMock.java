@@ -43,11 +43,11 @@ import static org.mockito.Mockito.mock;
  */
 public class BaseMock extends BaseTest {
 
+    /** Service rate. */
+    private static final int SERVICE_RATE = 900;
+
     @Autowired
     private ApplicationContext applicationContext;
-
-    /** Service rate. */
-    public static final int SERVICE_RATE = 900;
 
     @Autowired
     protected OrderRepository orderRepository;

@@ -91,8 +91,7 @@ class BarContextTest {
     }
 
     ZonedDateTime getTime(String value) {
-        return LocalDateTime.parse(value, dateTimeFormatter)
-                .atZone(ZoneId.systemDefault());
+        return LocalDateTime.parse(value, dateTimeFormatter).atZone(ZoneId.systemDefault());
     }
 
 }
