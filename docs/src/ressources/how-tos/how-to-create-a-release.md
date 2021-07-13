@@ -8,7 +8,7 @@
   * [trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources/pom.xml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources/pom.xml).
 
 ## Create the release with Maven
-You must be using `ssh` and not `https`, to switch to `ssh`, type : 
+You must be using `ssh` and not `https`. To switch to `ssh`, type : 
 ```bash
 git remote set-url origin git@github.com:cassandre-tech/cassandre-trading-bot.git
 ```
@@ -18,7 +18,7 @@ Start the release with :
 mvn gitflow:release-start
 ```
 
-After choosing the release number, finish the release, push branches and tags, with this command :
+After choosing the release number, finish the release, push branches and tags, with this command:
 ```bash
 mvn gitflow:release-finish
 ```

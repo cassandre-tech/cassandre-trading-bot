@@ -32,9 +32,9 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
         "cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
         "cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",
         "cassandre.trading.bot.exchange.secret=${KUCOIN_SECRET}",
-        "cassandre.trading.bot.exchange.rates.account=100",
-        "cassandre.trading.bot.exchange.rates.ticker=101",
-        "cassandre.trading.bot.exchange.rates.trade=102",
+        "cassandre.trading.bot.exchange.rates.account=1000",
+        "cassandre.trading.bot.exchange.rates.ticker=1001",
+        "cassandre.trading.bot.exchange.rates.trade=1002",
         "cassandre.trading.bot.database.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver",
         "cassandre.trading.bot.database.datasource.url=jdbc:hsqldb:mem:cassandre-database;shutdown=true",
         "cassandre.trading.bot.database.datasource.username=sa",
@@ -69,12 +69,6 @@ public class MarketServiceTest {
         // ask.
         assertNotNull(t.get().getAsk());
         assertTrue(t.get().getAsk().compareTo(ZERO) > 0);
-        // high.
-        assertNotNull(t.get().getHigh());
-        assertTrue(t.get().getHigh().compareTo(ZERO) > 0);
-        // low.
-        assertNotNull(t.get().getLow());
-        assertTrue(t.get().getLow().compareTo(ZERO) > 0);
         // volume.
         assertNotNull(t.get().getVolume());
         assertTrue(t.get().getVolume().compareTo(ZERO) > 0);

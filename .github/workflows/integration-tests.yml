@@ -50,31 +50,3 @@ jobs:
           BINANCE_SECRET: ${{ secrets.BINANCE_SECRET }}
         run: |
           mvn -Pintegration package
-
-      # ================================================================================================================
-      - name: Test Cassandre trading bot maven archetype - basic strategy
-        id: cassandre-trading-bot-spring-boot-starter-basic-archetype
-        run: |
-          mvn -B archetype:generate \
-            -DarchetypeGroupId=tech.cassandre.trading.bot \
-            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
-            -DarchetypeVersion=${{ steps.version.outputs.version }} \
-            -DgroupId=com.example \
-            -DartifactId=archetype-test-basic \
-            -Dversion=1.0-SNAPSHOT \
-            -Dpackage=com.example
-          mvn -f archetype-test-basic/pom.xml test
-
-      # ================================================================================================================
-      - name: Test Cassandre trading bot maven archetype - basic ta4j strategy
-        id: cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype
-        run: |
-          mvn -B archetype:generate \
-            -DarchetypeGroupId=tech.cassandre.trading.bot \
-            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype \
-            -DarchetypeVersion=${{ steps.version.outputs.version }} \
-            -DgroupId=com.example \
-            -DartifactId=archetype-test-ta4j-basic \
-            -Dversion=1.0-SNAPSHOT \
-            -Dpackage=com.example
-          mvn -f archetype-test-ta4j-basic/pom.xml test

@@ -93,7 +93,7 @@ public class TradeTest extends BaseTest {
         assertEquals(0, new BigDecimal("1").compareTo(t.get().getFee().getValue()));
         assertEquals(USDT, t.get().getFee().getCurrency());
         assertEquals("Trade 01", t.get().getUserReference());
-        assertEquals(createZonedDateTime("01-08-2020"), t.get().getTimestamp());
+        assertTrue(createZonedDateTime("01-08-2020").isEqual(t.get().getTimestamp()));
 
         // Test equals.
         Optional<TradeDTO> tBis = strategy.getTradeByTradeId("BACKUP_TRADE_01");
@@ -116,7 +116,7 @@ public class TradeTest extends BaseTest {
         assertEquals(0, new BigDecimal("2").compareTo(t.get().getFee().getValue()));
         assertEquals(USDT, t.get().getFee().getCurrency());
         assertEquals("Trade 02", t.get().getUserReference());
-        assertEquals(createZonedDateTime("02-08-2020"), t.get().getTimestamp());
+        assertTrue(createZonedDateTime("02-08-2020").isEqual(t.get().getTimestamp()));
 
         // =============================================================================================================
         // Check trade 03.
@@ -134,7 +134,7 @@ public class TradeTest extends BaseTest {
         assertEquals(0, new BigDecimal("3").compareTo(t.get().getFee().getValue()));
         assertEquals(USDT, t.get().getFee().getCurrency());
         assertEquals("Trade 03", t.get().getUserReference());
-        assertEquals(createZonedDateTime("03-08-2020"), t.get().getTimestamp());
+        assertTrue(createZonedDateTime("03-08-2020").isEqual(t.get().getTimestamp()));
 
         // =============================================================================================================
         // Check trade 04.
@@ -152,7 +152,7 @@ public class TradeTest extends BaseTest {
         assertEquals(0, new BigDecimal("4").compareTo(t.get().getFee().getValue()));
         assertEquals(USDT, t.get().getFee().getCurrency());
         assertEquals("Trade 04", t.get().getUserReference());
-        assertEquals(createZonedDateTime("04-08-2020"), t.get().getTimestamp());
+        assertTrue(createZonedDateTime("04-08-2020").isEqual(t.get().getTimestamp()));
 
         // =============================================================================================================
         // Check trade 05.
@@ -170,7 +170,7 @@ public class TradeTest extends BaseTest {
         assertEquals(0, new BigDecimal("5").compareTo(t.get().getFee().getValue()));
         assertEquals(USD, t.get().getFee().getCurrency());
         assertEquals("Trade 05", t.get().getUserReference());
-        assertEquals(createZonedDateTime("05-08-2020"), t.get().getTimestamp());
+        assertTrue(createZonedDateTime("05-08-2020").isEqual(t.get().getTimestamp()));
     }
 
     @Test
@@ -219,7 +219,7 @@ public class TradeTest extends BaseTest {
         assertEquals(0, tradeInDatabase.get().getFee().getValue().compareTo(new BigDecimal("3.300003")));
         assertEquals("BTC", tradeInDatabase.get().getFee().getCurrency());
         assertEquals("My reference !", tradeInDatabase.get().getUserReference());
-        assertEquals(createZonedDateTime("01-09-2020"), tradeInDatabase.get().getTimestamp());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(tradeInDatabase.get().getTimestamp()));
 
         // Tests for created on and updated on fields.
         ZonedDateTime createdOn = tradeInDatabase.get().getCreatedOn();
@@ -244,7 +244,7 @@ public class TradeTest extends BaseTest {
         assertEquals(0, tradeDTO.getFee().getValue().compareTo(new BigDecimal("3.300003")));
         assertEquals(BTC, tradeDTO.getFee().getCurrency());
         assertEquals("My reference !", tradeDTO.getUserReference());
-        assertEquals(createZonedDateTime("01-09-2020"), tradeDTO.getTimestamp());
+        assertTrue(createZonedDateTime("01-09-2020").isEqual(tradeDTO.getTimestamp()));
 
         // =============================================================================================================
         // Updating the trade - first time.
@@ -260,8 +260,10 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .build());
         await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdatesReceived().size()));
-        await().untilAsserted(() -> assertNotNull(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn()));
-        assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
+        Optional<Trade> trade11 = tradeRepository.findByTradeId("BACKUP_TRADE_11");
+        assertTrue(trade11.isPresent());
+        assertNotNull(trade11.get().getUpdatedOn());
+        assertEquals(createdOn, trade11.get().getCreatedOn());
         ZonedDateTime updatedOn = tradeInDatabase.get().getCreatedOn();
 
         // =============================================================================================================
@@ -276,8 +278,11 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
-        await().untilAsserted(() -> assertTrue(updatedOn.isBefore(tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getUpdatedOn())));
-        assertEquals(createdOn, tradeRepository.findByTradeId("BACKUP_TRADE_11").get().getCreatedOn());
+        await().untilAsserted(() -> assertEquals(3, strategy.getTradesUpdatesReceived().size()));
+        trade11 = tradeRepository.findByTradeId("BACKUP_TRADE_11");
+        assertTrue(trade11.isPresent());
+        assertTrue(updatedOn.isBefore(trade11.get().getUpdatedOn()));
+        assertEquals(createdOn, trade11.get().getCreatedOn());
         // We check if we still have the strategy set.
         final Optional<TradeDTO> optionalTrade = strategy.getTradeByTradeId("BACKUP_TRADE_11");
         assertTrue(optionalTrade.isPresent());

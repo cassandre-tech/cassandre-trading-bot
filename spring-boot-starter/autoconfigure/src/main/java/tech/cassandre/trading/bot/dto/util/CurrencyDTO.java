@@ -666,6 +666,9 @@ public final class CurrencyDTO implements Serializable {
     /** Tether USD Anchor. */
     public static final CurrencyDTO USDT = createCurrency("USDT", "Tether USD Anchor", null);
 
+    /** USD Coin. */
+    public static final CurrencyDTO USDC = createCurrency("USDC", "USD Coin", null);
+
     /** Unitary Status Dollar eCoin. */
     public static final CurrencyDTO USDE = createCurrency("USDE", "Unitary Status Dollar eCoin", null);
 

@@ -43,15 +43,14 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             // If a token is not available this method will block until the refill adds one to the bucket.
             bucket.asScheduler().consume(1);
 
-            logger.debug("MarketService - Getting ticker for {}", currencyPair);
+            logger.debug("Getting ticker for {} currency pair", currencyPair);
             TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)));
-            logger.debug("MarketService - Retrieved value is: {}", t);
+            logger.debug(" - New ticker {}", t);
             return Optional.ofNullable(t);
         } catch (IOException e) {
-            logger.error("MarketService - Error retrieving ticker for {}: {}", currencyPair, e.getMessage());
+            logger.error("Error retrieving ticker: {}", e.getMessage());
             return Optional.empty();
         } catch (InterruptedException e) {
-            logger.error("MarketService - InterruptedException {}: {}", currencyPair, e.getMessage());
             return Optional.empty();
         }
     }
@@ -70,17 +69,16 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             // If a token is not available this method will block until the refill adds one to the bucket.
             bucket.asScheduler().consume(1);
 
-            logger.debug("MarketService - Getting tickers for {} currency pairs", currencyPairs.size());
+            logger.debug("Getting tickers for {} currency pairs", currencyPairs.size());
             final List<Ticker> tickers = marketDataService.getTickers(params);
             return tickers.stream()
                     .map(tickerMapper::mapToTickerDTO)
-                    .peek(t -> logger.debug("MarketService - Retrieved value: {}", t))
+                    .peek(t -> logger.debug(" - New ticker: {}", t))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (IOException e) {
-            logger.error("MarketService - Error retrieving tickers: {}", e.getMessage());
+            logger.error("Error retrieving tickers: {}", e.getMessage());
             return Collections.emptySet();
         } catch (InterruptedException e) {
-            logger.error("MarketService - InterruptedException: {}", e.getMessage());
             return Collections.emptySet();
         }
     }

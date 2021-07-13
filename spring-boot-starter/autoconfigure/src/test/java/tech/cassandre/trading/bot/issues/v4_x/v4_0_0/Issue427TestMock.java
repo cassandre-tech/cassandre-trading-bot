@@ -54,13 +54,13 @@ public class Issue427TestMock extends BaseTest {
     @Bean
     @Primary
     public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService(), orderRepository);
+        return new OrderFlux(orderRepository, tradeService());
     }
 
     @Bean
     @Primary
     public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService(), orderRepository, tradeRepository);
+        return new TradeFlux(orderRepository, tradeRepository, tradeService());
     }
 
     @Bean

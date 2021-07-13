@@ -54,7 +54,7 @@ public class CurrencyAmount {
         if (value != null) {
             return value + " " + currency;
         } else {
-            return "Not provided";
+            return "Null";
         }
     }
 

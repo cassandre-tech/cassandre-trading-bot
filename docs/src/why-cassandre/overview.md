@@ -29,14 +29,14 @@ For a [BasicTa4jCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.tra
 * [shouldExit()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html#shouldExit%28%29) to indicate what you want to do when it's time to sell.
 
 ## Data updates
-To be notified of new data, you can override the following methods : 
+To be notified of new data, you can override the following methods :
 
-* [onAccountUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onAccountUpdate%28tech.cassandre.trading.bot.dto.user.AccountDTO%29) to receive updates about your account.
-* [onTickerUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickerUpdate%28tech.cassandre.trading.bot.dto.market.TickerDTO%29) to receive new tickers.
-* [onOrderUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onOrderUpdate%28tech.cassandre.trading.bot.dto.trade.OrderDTO%29) to receive updates about your orders.
-* [onTradeUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTradeUpdate%28tech.cassandre.trading.bot.dto.trade.TradeDTO%29) to receive updates about your trades.
-* [onPositionUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) to receive updates about your positions.
-* [onPositionStatusUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionStatusUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) to receive updates about position status change.
+* [onAccountsUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onAccountsUpdates(java.util.Map)) to receive updates about your account.
+* [onTickersUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickersUpdates(java.util.Map)) to receive new tickers.
+* [onOrdersUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onOrdersUpdates(java.util.Map)) to receive updates about your orders.
+* [onTradesUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTradesUpdates(java.util.Map)) to receive updates about your trades.
+* [onPositionsUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionsUpdates(java.util.Map)) to receive updates about your positions.
+* [onPositionsStatusUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionsStatusUpdates(java.util.Map)) to receive updates about position status change.
 
 ## Buying/selling
 Inside your strategy, you can create market orders with the methods :

@@ -42,10 +42,9 @@ public class ExchangeServiceDryModeAOP extends BaseService {
                 .getBeansWithAnnotation(CassandreStrategy.class)
                 .values()  // We get the list of all required cp of all strategies.
                 .stream()
-                .map(o -> ((CassandreStrategyInterface) o))
+                .map(o -> (CassandreStrategyInterface) o)
                 .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
                 .flatMap(Set::stream)
-                .distinct()
                 .map(currencyMapper::mapToCurrencyPair)
                 .collect(HashMap::new, (map, cp) -> map.put(cp, null), Map::putAll);
 

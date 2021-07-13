@@ -40,7 +40,7 @@ Edit `src/main/resources/application.properties` to configure the database:, we 
 
 ```properties
 # Exchange configuration.
-cassandre.trading.bot.exchange.name=kucoin
+cassandre.trading.bot.exchange.driver-class-name=kucoin
 cassandre.trading.bot.exchange.username=cassandre.crypto.bot@gmail.com
 cassandre.trading.bot.exchange.passphrase=cassandre
 cassandre.trading.bot.exchange.key=5df8eea30092f40009cb3c6a
@@ -56,10 +56,10 @@ cassandre.trading.bot.exchange.rates.ticker=PT1S
 cassandre.trading.bot.exchange.rates.trade=PT1S
 #
 # Database configuration.
-cassandre.trading.bot.database.datasource.driver-class-name=org.postgresql.Driver
-cassandre.trading.bot.database.datasource.url=jdbc:postgresql://${QOVERY_DATABASE_QOVERY_TEST_HOST}:5432/${QOVERY_DATABASE_QOVERY_TEST_DATABASE_NAME}
-cassandre.trading.bot.database.datasource.username=${QOVERY_DATABASE_QOVERY_TEST_USERNAME}
-cassandre.trading.bot.database.datasource.password=${QOVERY_DATABASE_QOVERY_TEST_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=jdbc:postgresql://${QOVERY_DATABASE_QOVERY_TEST_HOST}:5432/${QOVERY_DATABASE_QOVERY_TEST_DATABASE_NAME}
+spring.datasource.username=${QOVERY_DATABASE_QOVERY_TEST_USERNAME}
+spring.datasource.password=${QOVERY_DATABASE_QOVERY_TEST_PASSWORD}
 ```
 ### Add the PostgreSQL driver
 To connect to a PostgreSQL server, you need to add the JDBC driver to your project. Edit your pom.xml and add:
@@ -120,35 +120,35 @@ git push -u origin main
 ## Configure Qovery
 Connect to [Qovery](https://www.qovery.com/) and signup, then go to the project menu and click on `create a new project`.
 
-![qovery - Create a project](./qovery-create-project.png)
+![qovery - Create a project](./images/qovery-create-project.png)
 
 Enter your project name (`qovery-test`):
 
-![qovery - Configure the project](./qovery-configure-project.png)
+![qovery - Configure the project](./images/qovery-configure-project.png)
 
 Now, create an application with the name (`qovery-test-app`) and choose `I have an application` on the next screen:
 
-![qovery - Create an application](./qovery-create-application.png)
+![qovery - Create an application](./images/qovery-create-application.png)
 
 Then, select the github project you want to deploy to Qovery:
 
-![qovery - Select Github project](./qovery-select-github-project.png)
+![qovery - Select Github project](./images/qovery-select-github-project.png)
 
 Choose the type of application you have (java):
 
-![qovery - Select application type](./qovery-application-type-choice.png)
+![qovery - Select application type](./images/qovery-application-type-choice.png)
 
 Choose the type of database (PostgreSQL):
 
-![qovery - Select database type](./qovery-database-choice.png)
+![qovery - Select database type](./images/qovery-database-choice.png)
 
 Choose the name of the database (`qovery-test-database`):
 
-![qovery - Configure database](./qovery-database-configuration.png)
+![qovery - Configure database](./images/qovery-database-configuration.png)
 
 Now, check everything is ok the summary page and press create !
 
-![qovery - Deployment summary](./qovery-deployment-summary.png)
+![qovery - Deployment summary](./images/qovery-deployment-summary.png)
 
 Qovery will now connect to your repo, creates a configuration file, creates your server and your database, retrieve your sources, build the docker image and run it ! That's it.
 

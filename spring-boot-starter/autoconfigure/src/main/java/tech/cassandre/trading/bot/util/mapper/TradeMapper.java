@@ -37,19 +37,27 @@ public interface TradeMapper {
     @Mapping(target = "updatedOn", ignore = true)
     default CurrencyAmountDTO mapUserTradeToTradeDTOAmount(UserTrade source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
-        return CurrencyAmountDTO.builder()
-                .value(source.getOriginalAmount())
-                .currency(cp.getBaseCurrency())
-                .build();
+        if (source.getOriginalAmount() != null && source.getInstrument() != null) {
+            return CurrencyAmountDTO.builder()
+                    .value(source.getOriginalAmount())
+                    .currency(cp.getBaseCurrency())
+                    .build();
+        } else {
+            return null;
+        }
     }
 
     @Named("mapUserTradeToTradeDTOPrice")
     default CurrencyAmountDTO mapUserTradeToTradeDTOPrice(UserTrade source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
-        return CurrencyAmountDTO.builder()
-                .value(source.getPrice())
-                .currency(cp.getQuoteCurrency())
-                .build();
+        if (source.getPrice() != null && source.getInstrument() != null) {
+            return CurrencyAmountDTO.builder()
+                    .value(source.getPrice())
+                    .currency(cp.getQuoteCurrency())
+                    .build();
+        } else {
+            return null;
+        }
     }
 
     @Named("mapUserTradeToTradeDTOFee")
@@ -60,7 +68,7 @@ public interface TradeMapper {
                     .currency(new CurrencyDTO(source.getFeeCurrency().toString()))
                     .build();
         } else {
-            return CurrencyAmountDTO.ZERO;
+            return null;
         }
     }
 

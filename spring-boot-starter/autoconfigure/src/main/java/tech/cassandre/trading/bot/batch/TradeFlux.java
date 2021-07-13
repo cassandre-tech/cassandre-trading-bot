@@ -19,29 +19,38 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TradeFlux extends BaseFlux<TradeDTO> {
 
-    /** Trade service. */
-    private final TradeService tradeService;
-
     /** Order repository. */
     private final OrderRepository orderRepository;
 
     /** Trade repository. */
     private final TradeRepository tradeRepository;
 
+    /** Trade service. */
+    private final TradeService tradeService;
+
     @Override
     protected final Set<TradeDTO> getNewValues() {
-        logger.debug("TradeFlux - Retrieving new trades from exchange");
+        logger.debug("Retrieving trades from exchange");
         Set<TradeDTO> newValues = new LinkedHashSet<>();
 
         // Finding which trades has been updated.
         tradeService.getTrades()
                 .stream()
-                .filter(t -> orderRepository.findByOrderId(t.getOrderId()).isPresent())    // We only accept trades with order present in database
+                // Note: we only save trades when the order present in database.
+                .filter(t -> orderRepository.findByOrderId(t.getOrderId()).isPresent())
                 .forEach(trade -> {
-                    logger.debug("TradeFlux - Treating trade: {}", trade.getTradeId());
+                    logger.debug("Checking trade: {}", trade.getTradeId());
                     final Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(trade.getTradeId());
-                    if (tradeInDatabase.isEmpty() || !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
-                        logger.debug("TradeFlux - Updated trade from exchange: {}", trade);
+
+                    // The trade is not in database.
+                    if (tradeInDatabase.isEmpty()) {
+                        logger.debug("New trade from exchange: {}", trade);
+                        newValues.add(trade);
+                    }
+
+                    // The trade is in database but the trade values from the server changed.
+                    if (tradeInDatabase.isPresent() && !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
+                        logger.debug("Updated trade from exchange: {}", trade);
                         newValues.add(trade);
                     }
                 });
@@ -59,13 +68,14 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
                     // Update trade.
                     tradeMapper.updateTrade(newValue, trade);
                     trades.add(tradeRepository.save(trade));
-                    logger.debug("TradeFlux - Updating trade in database: {}", trade);
+                    logger.debug("Updating trade in database: {}", trade);
                 }, () -> {
                     // Create trade.
                     final Trade newTrade = tradeMapper.mapToTrade(newValue);
+                    // Order is always present as we check it in getNewValues().
                     orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(newTrade::setOrder);
                     trades.add(tradeRepository.save(newTrade));
-                    logger.debug("TradeFlux - Creating trade in database: {}", newTrade);
+                    logger.debug("Creating trade in database: {}", newTrade);
                 }));
 
         return trades.stream()

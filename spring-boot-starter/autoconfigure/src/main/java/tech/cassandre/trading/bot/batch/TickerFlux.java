@@ -13,6 +13,7 @@ import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
 
     @Override
     protected final Set<TickerDTO> getNewValues() {
-        logger.debug("TickerFlux - Retrieving tickers from exchange");
+        logger.debug("Retrieving tickers from exchange");
         Set<TickerDTO> newValues = new LinkedHashSet<>();
 
         // We retrieve the list of currency pairs asked by all strategies.
@@ -38,7 +39,7 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
                 .getBeansWithAnnotation(CassandreStrategy.class)
                 .values()
                 .stream()
-                .map(o -> ((CassandreStrategyInterface) o))
+                .map(o -> (CassandreStrategyInterface) o)
                 .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
                 .flatMap(Set::stream)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -47,18 +48,17 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
             // Get all tickers at once from market service if the method is implemented.
             marketService.getTickers(requestedCurrencyPairs).stream()
                     .filter(Objects::nonNull)
-                    .forEach(tickerDTO -> {
-                    logger.debug("TickerFlux - New ticker received: {}", tickerDTO);
-                    newValues.add(tickerDTO);
-            });
+                    .peek(tickerDTO -> logger.debug("New ticker received: {}", tickerDTO))
+                    .forEach(newValues::add);
         } catch (NotAvailableFromExchangeException | NotYetImplementedForExchangeException e) {
             // If getAllTickers is not available, we retrieve tickers one bye one.
             requestedCurrencyPairs.stream()
                     .filter(Objects::nonNull)
-                    .forEach(currencyPairDTO -> marketService.getTicker(currencyPairDTO).ifPresent(tickerDTO -> {
-                logger.debug("TickerFlux - New ticker received: {}", tickerDTO);
-                newValues.add(tickerDTO);
-            }));
+                    .map(marketService::getTicker)
+                    .filter(Optional::isPresent)
+                    .peek(tickerDTO -> logger.debug("New ticker received: {}", tickerDTO))
+                    .map(Optional::get)
+                    .forEach(newValues::add);
         }
 
         return newValues;

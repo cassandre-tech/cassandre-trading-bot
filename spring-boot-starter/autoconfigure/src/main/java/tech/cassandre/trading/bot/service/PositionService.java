@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Service allowing you to manage positions.
+ * Service allowing you to manage your positions.
  */
 public interface PositionService {
 
@@ -106,11 +106,11 @@ public interface PositionService {
     void tickersUpdates(Set<TickerDTO> tickers);
 
     /**
-     * Returns the amounts locked by every position.
+     * Returns the amounts locked by each position.
      *
-     * @return amounts locked by every position
+     * @return amounts locked by each position
      */
-    Map<Long, CurrencyAmountDTO> amountsLockedByPosition();
+    Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition();
 
     /**
      * Return the gains made by all closed positions.

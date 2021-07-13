@@ -83,11 +83,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** The accounts owned by the user. */
     private final Map<String, AccountDTO> userAccounts = new LinkedHashMap<>();
 
-    /** Positions previous status. */
-    private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
-
     /** Last tickers received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
+
+    /** Positions previous status - used for onPositionsStatusUpdates() - Internal use only. */
+    private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
     // =================================================================================================================
     // Internal methods to setup dependencies.
@@ -116,13 +116,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     @Override
-    public void initializeAccounts(final Map<String, AccountDTO> newAccounts) {
-        userAccounts.putAll(newAccounts);
-    }
-
-    @Override
     public final void setPositionRepository(final PositionRepository newPositionRepository) {
         this.positionRepository = newPositionRepository;
+        // To manage onPositionsStatusUpdates, we retrieve the positions status from our database.
+        this.positionRepository.findByStatusNot(CLOSED).forEach(position -> previousPositionsStatus.put(position.getId(), position.getStatus()));
     }
 
     @Override
@@ -131,13 +128,13 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     @Override
-    public void setExchangeService(final ExchangeService newExchangeService) {
-        this.exchangeService = newExchangeService;
+    public final void setTradeRepository(final TradeRepository newTradeRepository) {
+        this.tradeRepository = newTradeRepository;
     }
 
     @Override
-    public final void setTradeRepository(final TradeRepository newTradeRepository) {
-        this.tradeRepository = newTradeRepository;
+    public void setExchangeService(final ExchangeService newExchangeService) {
+        this.exchangeService = newExchangeService;
     }
 
     @Override
@@ -148,11 +145,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setPositionService(final PositionService newPositionService) {
         this.positionService = newPositionService;
-        // We set the previous positions status from database.
-        this.positionService.getPositions()
-                .stream()
-                .filter(p -> p.getStatus() != CLOSED)
-                .forEach(p -> previousPositionsStatus.put(p.getId(), p.getStatus()));
+    }
+
+    @Override
+    public void initializeAccounts(final Map<String, AccountDTO> newAccounts) {
+        userAccounts.putAll(newAccounts);
     }
 
     // =================================================================================================================
@@ -160,9 +157,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public void accountsUpdates(final Set<AccountDTO> accounts) {
         // We notify the strategy.
-        final Map<String, AccountDTO> accountsUpdates = accounts
-                .stream()
-                .peek(accountDTO -> userAccounts.put(accountDTO.getAccountId(), accountDTO)) // We store the account values in the strategy.
+        final Map<String, AccountDTO> accountsUpdates = accounts.stream()
+                // We store the account values in the strategy.
+                .peek(accountDTO -> userAccounts.put(accountDTO.getAccountId(), accountDTO))
                 .collect(Collectors.toMap(AccountDTO::getAccountId, Function.identity(), (id, value)->id, LinkedHashMap::new));
 
         // We notify the strategy.
@@ -173,11 +170,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public void tickersUpdates(final Set<TickerDTO> tickers) {
         // We only retrieve the tickers requested by the strategy.
         final Map<CurrencyPairDTO, TickerDTO> tickersUpdates = tickers.stream()
-                .filter(ticker -> getRequestedCurrencyPairs().contains(ticker.getCurrencyPair()))
+                .filter(tickerDTO -> getRequestedCurrencyPairs().contains(tickerDTO.getCurrencyPair()))
+                // We update the values of the last tickers that can be found in the strategy.
+                .peek(tickerDTO -> lastTickers.put(tickerDTO.getCurrencyPair(), tickerDTO))
                 .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value)->id, LinkedHashMap::new));
-
-        // We update the values of the last tickers that can be found in the strategy.
-        tickersUpdates.values().forEach(ticker -> lastTickers.put(ticker.getCurrencyPair(), ticker));
 
         // We notify the strategy.
         onTickersUpdates(tickersUpdates);
@@ -185,7 +181,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     @Override
     public void ordersUpdates(final Set<OrderDTO> orders) {
-        // We only retrieve the orders for the strategy.
+        // We only retrieve the orders created by this strategy.
         final Map<String, OrderDTO> ordersUpdates = orders.stream()
                 .filter(orderDTO -> orderDTO.getStrategy().getId().equals(strategy.getId()))
                 .collect(Collectors.toMap(OrderDTO::getOrderId, Function.identity(), (id, value)->id, LinkedHashMap::new));
@@ -196,7 +192,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     @Override
     public void tradesUpdates(final Set<TradeDTO> trades) {
-        // We only retrieve the orders for the strategy.
+        // We only retrieve the trades created by this strategy.
         final Map<String, TradeDTO> tradesUpdates = trades.stream()
                 .filter(tradeDTO -> tradeDTO.getOrder().getStrategy().getId().equals(strategy.getId()))
                 .collect(Collectors.toMap(TradeDTO::getTradeId, Function.identity(), (id, value)->id, LinkedHashMap::new));
@@ -217,10 +213,12 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
                 // From positionUpdate(), we see if it's also a onPositionStatusUpdate().
                 if (previousPositionsStatus.get(positionDTO.getId()) != positionDTO.getStatus()) {
-                    previousPositionsStatus.put(positionDTO.getId(), positionDTO.getStatus());
                     if (positionDTO.getStatus() == CLOSED) {
                         // As CLOSED positions cannot change anymore, we don't need to store their previous positions.
                         previousPositionsStatus.remove(positionDTO.getId());
+                    } else {
+                        // As we have a new status for this positions, we update it in previousPositionsStatus.
+                        previousPositionsStatus.put(positionDTO.getId(), positionDTO.getStatus());
                     }
                     positionsStatusUpdates.put(positionDTO.getPositionId(), positionDTO);
                 }
@@ -269,11 +267,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return amountsLockedByPosition
      */
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
-        return positionService.amountsLockedByPosition();
+        return positionService.getAmountsLockedByPosition();
     }
 
     /**
-     * Returns the amount locked by currency.
+     * Returns the amounts locked for a specific currency.
      *
      * @param currency currency
      * @return amount

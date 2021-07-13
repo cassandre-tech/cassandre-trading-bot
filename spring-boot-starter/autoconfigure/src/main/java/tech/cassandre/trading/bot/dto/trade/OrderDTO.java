@@ -168,11 +168,11 @@ public class OrderDTO {
      * @return true if order completed
      */
     public final boolean isFulfilled() {
-        final BigDecimal tradesAmount = getTrades()
+        return getTrades()
                 .stream()
                 .map(TradeDTO::getAmountValue)
-                .reduce(ZERO, BigDecimal::add);
-        return getAmountValue().compareTo(tradesAmount) == 0;
+                .reduce(ZERO, BigDecimal::add)
+                .compareTo(getAmountValue()) == 0;
     }
 
     @Override

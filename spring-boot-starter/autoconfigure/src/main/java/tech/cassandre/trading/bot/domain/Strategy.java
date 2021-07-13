@@ -34,7 +34,7 @@ public class Strategy extends BaseDomain {
     @Column(name = "STRATEGY_ID")
     private String strategyId;
 
-    /** Strategy type - Basic or ta4j. */
+    /** Strategy type - Basic or Ta4j. */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private StrategyTypeDTO type;
@@ -63,7 +63,6 @@ public class Strategy extends BaseDomain {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(strategyId)
                 .toHashCode();
     }
 

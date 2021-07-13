@@ -15,7 +15,6 @@ import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static java.math.BigDecimal.ZERO;
 import static org.awaitility.Awaitility.await;
@@ -98,11 +97,10 @@ public class MarketServiceTest extends BaseTest {
     @Test
     @Tag("integration")
     @DisplayName("Check ticker flux")
-    public void checkTickerFlux() throws InterruptedException {
+    public void checkTickerFlux() {
         tickerFlux.update();
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
         tickerFlux.update();
-        // We should have two tickers received by the strategy
+        // We should have four tickers received by the strategy
         await().untilAsserted(() -> assertEquals(4, strategy.getTickersUpdatesReceived().size()));
     }
 

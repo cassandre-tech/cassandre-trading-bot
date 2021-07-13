@@ -81,9 +81,11 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
-        orderFlux.update();
-        tradeFlux.update();
-        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
+        await().untilAsserted(() -> {
+            orderFlux.update();
+            tradeFlux.update();
+            assertEquals(OPENED, getPositionDTO(position1Id).getStatus());
+        });
 
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH_USDT, 0.0002, 20% stop loss, price of 0.3).
@@ -101,9 +103,11 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
-        orderFlux.update();
-        tradeFlux.update();
-        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
+        await().untilAsserted(() -> {
+            orderFlux.update();
+            tradeFlux.update();
+            assertEquals(OPENED, getPositionDTO(position2Id).getStatus());
+        });
 
         // =============================================================================================================
         // Tickers are coming.
@@ -123,7 +127,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
         // We will force closing of position 2.
         strategy.closePosition(position2Id);
 
-        // New tickers will noy trigger close.
+        // New tickers will not trigger close.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.32")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.32")).build());
         await().untilAsserted(() -> {

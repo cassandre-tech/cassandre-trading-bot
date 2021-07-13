@@ -20,7 +20,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@DisplayName("Domain - Strategy - Creation")
+@DisplayName("Domain - Strategy")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })

@@ -9,7 +9,7 @@ public class ConfigurationException extends RuntimeException {
     private String advisedAction;
 
     /**
-     * Constructor without action.
+     * Configuration exception without action.
      *
      * @param message error message
      */
@@ -18,7 +18,7 @@ public class ConfigurationException extends RuntimeException {
     }
 
     /**
-     * Constructor.
+     * Configuration exception.
      *
      * @param message          error message
      * @param newAdvisedAction advised action to fix this problem

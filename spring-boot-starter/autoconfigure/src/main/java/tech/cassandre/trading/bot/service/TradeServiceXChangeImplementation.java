@@ -1,8 +1,10 @@
 package tech.cassandre.trading.bot.service;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.service.trade.params.DefaultCancelOrderByCurrencyPairAndIdParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
@@ -14,7 +16,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
-import tech.cassandre.trading.bot.util.system.TimeProvider;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -76,7 +77,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             MarketOrder m = new MarketOrder(utilMapper.mapToOrderType(orderTypeDTO),
                     amount,
                     currencyMapper.mapToCurrencyPair(currencyPair));
-            logger.debug("TradeService - Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            logger.debug("Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
             OrderDTO order = OrderDTO.builder()
@@ -110,7 +111,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 savedOrder = Optional.of(orderRepository.save(orderMapper.mapToOrder(order)));
             }
             final OrderCreationResultDTO result = new OrderCreationResultDTO(orderMapper.mapToOrderDTO(savedOrder.get()));
-            logger.debug("TradeService - Order created: {}", result);
+            logger.debug("Order created: {}", result);
             return result;
         } catch (Exception e) {
             final String error = "TradeService - Error calling createMarketOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
@@ -143,7 +144,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     null,
                     null,
                     limitPrice);
-            logger.debug("TradeService - Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            logger.debug("Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending & creating the order.
             OrderDTO order = OrderDTO.builder()
@@ -181,7 +182,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 savedOrder = Optional.of(orderRepository.save(orderMapper.mapToOrder(order)));
             }
             final OrderCreationResultDTO result = new OrderCreationResultDTO(orderMapper.mapToOrderDTO(savedOrder.get()));
-            logger.debug("TradeService - Order creation result: {}", result);
+            logger.debug("Order creation result: {}", result);
             return result;
         } catch (Exception e) {
             final String error = "TradeService - Error calling createLimitOrder for " + amount + " " + currencyPair + " : " + e.getMessage();
@@ -228,17 +229,27 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
     public boolean cancelOrder(final String orderId) {
-        logger.debug("TradeService - Canceling order {}", orderId);
+        logger.debug("Canceling order {}", orderId);
         if (orderId != null) {
             try {
-                logger.debug("TradeService - Successfully canceled order {}", orderId);
-                return tradeService.cancelOrder(orderId);
+                // We retrieve the order currency pair.
+                final Optional<Order> order = orderRepository.findByOrderId(orderId);
+                if (order.isPresent()) {
+                    OrderDTO orderDTO = orderMapper.mapToOrderDTO(order.get());
+                    final CurrencyPair currencyPair = currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair());
+                    DefaultCancelOrderByCurrencyPairAndIdParams params = new DefaultCancelOrderByCurrencyPairAndIdParams(currencyPair, orderId);
+                    logger.debug("Successfully canceled order {}", orderId);
+                    return tradeService.cancelOrder(params);
+                } else {
+                    logger.error(" Error canceling order {}: order not found in database", orderId);
+                    return false;
+                }
             } catch (Exception e) {
-                logger.error("TradeService - Error canceling order {}: {}", orderId, e.getMessage());
+                logger.error("Error canceling order {}: {}", orderId, e.getMessage());
                 return false;
             }
         } else {
-            logger.error("TradeService - Error canceling order, order id provided is null");
+            logger.error("Error canceling order, order id provided is null");
             return false;
         }
     }
@@ -246,7 +257,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
     public Set<OrderDTO> getOrders() {
-        logger.debug("TradeService - Getting orders from exchange");
+        logger.debug("Getting orders from exchange");
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
@@ -257,7 +268,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     .stream()
                     .map(orderMapper::mapToOrderDTO)
                     .sorted(Comparator.comparing(OrderDTO::getTimestamp))
-                    .peek(orderDTO -> logger.debug("TradeService - local order retrieved: {}", orderDTO))
+                    .peek(orderDTO -> logger.debug("Local order retrieved: {}", orderDTO))
                     .peek(orderDTO -> orderDTO.updateStatus(NEW))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -270,14 +281,13 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                         .getOpenOrders()
                         .stream()
                         .map(orderMapper::mapToOrderDTO)
-                        .peek(orderDTO -> logger.debug("TradeService - remote order retrieved: {}", orderDTO))
+                        .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
             }
         } catch (IOException e) {
-            logger.error("TradeService - Error retrieving orders: {}", e.getMessage());
+            logger.error("Error retrieving orders: {}", e.getMessage());
             return Collections.emptySet();
         } catch (InterruptedException e) {
-            logger.error("TradeService - InterruptedException: {}", e.getMessage());
             return Collections.emptySet();
         }
     }
@@ -285,20 +295,21 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
     public Set<TradeDTO> getTrades() {
-        logger.debug("TradeService - Getting trades from exchange");
+        logger.debug("Getting trades from exchange");
         // Query trades from the last 24 jours (24 hours is the maximum because of Binance limitations).
         TradeHistoryParamsAll params = new TradeHistoryParamsAll();
-        Date now = TimeProvider.now();
+        Date now = new Date();
         Date startDate = DateUtils.addDays(now, -1);
         params.setStartTime(startDate);
         params.setEndTime(now);
 
         // We only ask for trades with currency pairs that was used in the previous orders we made.
+        // And we only choose the orders that are not fulfilled.
         final LinkedHashSet<CurrencyPairDTO> currencyPairs = orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(Order::getCurrencyPair)
-                .distinct()
-                .map(currencyMapper::mapToCurrencyPairDTO)
+                .map(orderMapper::mapToOrderDTO)
+                .filter(orderDTO -> !orderDTO.isFulfilled())
+                .map(OrderDTO::getCurrencyPair)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         Set<TradeDTO> results = new LinkedHashSet<>();
@@ -319,13 +330,13 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                                     .collect(Collectors.toCollection(LinkedHashSet::new))
                     );
                 } catch (IOException e) {
-                    logger.error("TradeService - Error retrieving trades: {}", e.getMessage());
+                    logger.error("Error retrieving trades: {}", e.getMessage());
                 } catch (InterruptedException e) {
-                    logger.error("TradeService - InterruptedException: {}", e.getMessage());
+                    logger.error("InterruptedException: {}", e.getMessage());
                 }
             });
         }
-        logger.debug("TradeService - {} trade(s) found", results.size());
+        logger.debug("{} trade(s) found", results.size());
         return results;
     }
 

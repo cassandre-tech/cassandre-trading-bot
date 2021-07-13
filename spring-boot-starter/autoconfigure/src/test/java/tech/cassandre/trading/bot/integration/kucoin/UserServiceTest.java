@@ -36,9 +36,9 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
         "cassandre.trading.bot.exchange.passphrase=${KUCOIN_PASSPHRASE}",
         "cassandre.trading.bot.exchange.key=${KUCOIN_KEY}",
         "cassandre.trading.bot.exchange.secret=${KUCOIN_SECRET}",
-        "cassandre.trading.bot.exchange.rates.account=100",
-        "cassandre.trading.bot.exchange.rates.ticker=101",
-        "cassandre.trading.bot.exchange.rates.trade=102",
+        "cassandre.trading.bot.exchange.rates.account=1000",
+        "cassandre.trading.bot.exchange.rates.ticker=1001",
+        "cassandre.trading.bot.exchange.rates.trade=1002",
         "cassandre.trading.bot.database.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver",
         "cassandre.trading.bot.database.datasource.url=jdbc:hsqldb:mem:cassandre-database;shutdown=true",
         "cassandre.trading.bot.database.datasource.username=sa",
@@ -98,7 +98,7 @@ public class UserServiceTest {
         assertTrue(tradeWallet.getBalance(BTC).isPresent());
         assertTrue(tradeWallet.getBalance("ETH").isPresent());
         assertTrue(tradeWallet.getBalance(ETH).isPresent());
-        assertTrue(mainWallet.getBalance("USDT").isPresent());
+        assertTrue(tradeWallet.getBalance("USDT").isPresent());
         assertTrue(tradeWallet.getBalance(USDT).isPresent());
         // Non existing balances.
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());

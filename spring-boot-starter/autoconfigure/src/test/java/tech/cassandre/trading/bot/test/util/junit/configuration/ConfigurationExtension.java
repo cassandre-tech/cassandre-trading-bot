@@ -20,7 +20,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreS
 /**
  * Configuration extension - set and clear system properties.
  */
-@NotThreadSafe // System properties are JVM-global, so don't run tests in parallel with this rule.
+@NotThreadSafe // System properties are JVM-global, so don't run tests in parallel.
 public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallback {
 
     /** Driver class name parameter. */
