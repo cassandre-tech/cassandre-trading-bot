@@ -20,7 +20,6 @@ import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.services.dry.mocks.TradeServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
@@ -67,9 +66,6 @@ public class UserServiceTest extends BaseTest {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private TradeService tradeService;
 
     @Autowired
     private TickerFlux tickerFlux;

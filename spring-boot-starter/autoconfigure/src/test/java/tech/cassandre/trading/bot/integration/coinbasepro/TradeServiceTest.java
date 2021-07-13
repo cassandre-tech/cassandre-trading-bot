@@ -77,7 +77,7 @@ public class TradeServiceTest extends BaseTest {
         final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.00000001"));
         assertFalse(result1.isSuccessful());
         assertNull(result1.getOrder());
-        assertTrue(result1.getErrorMessage().contains("funds must be a number"));
+        assertTrue(result1.getErrorMessage().contains("size must be a number"));
         assertNotNull(result1.getException());
 
         // =============================================================================================================
@@ -137,7 +137,7 @@ public class TradeServiceTest extends BaseTest {
     @Test
     @Tag("integration")
     @DisplayName("Check cancel an order")
-    @Disabled("Seems Coinbase pro doesn't support canceling an order")
+    @Disabled("Not supported by coinbase")
     public void checkCancelOrder() {
         final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
 
