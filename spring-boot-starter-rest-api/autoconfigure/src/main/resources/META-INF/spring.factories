@@ -1,0 +1,2 @@
+#org.springframework.boot.diagnostics.FailureAnalyzer=tech.cassandre.trading.bot.util.exception.ConfigurationFailureAnalyzer
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=tech.cassandre.trading.bot.configuration.APIConfiguration

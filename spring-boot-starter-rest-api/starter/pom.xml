@@ -6,8 +6,8 @@
 
 	<!-- =========================================================================================================== -->
 	<!-- Project information -->
-	<artifactId>cassandre-trading-bot-spring-boot-starter-test</artifactId>
-	<name>Trading bot spring boot starter - Backtesting</name>
+	<artifactId>cassandre-trading-bot-spring-boot-starter-rest-api</artifactId>
+	<name>Trading bot spring boot starter - Rest api</name>
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->
@@ -16,17 +16,17 @@
 		<!-- Spring dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
 		</dependency>
 
-		<!-- Cassandre trading bot -->
+		<!-- Autoconfigure -->
 		<dependency>
 			<groupId>tech.cassandre.trading.bot</groupId>
-			<artifactId>cassandre-trading-bot-spring-boot-starter-test-autoconfigure</artifactId>
+			<artifactId>cassandre-trading-bot-spring-boot-starter-rest-api-autoconfigure</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
@@ -46,7 +46,7 @@
 					<dependency>
 						<groupId>com.puppycrawl.tools</groupId>
 						<artifactId>checkstyle</artifactId>
-						<version>8.44</version>
+						<version>8.41.1</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -93,7 +93,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.2.0</version>
 				<configuration>
 					<detectOfflineLinks>false</detectOfflineLinks>
 					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
