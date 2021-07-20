@@ -85,7 +85,7 @@ jobs:
       # ================================================================================================================
       - name: Opload codacy coverage results
         id: upload-codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@v1
+        uses: codacy/codacy-coverage-reporter-action@v1.0.1
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
           coverage-reports: spring-boot-starter/autoconfigure/target/site/jacoco/jacoco.xml
