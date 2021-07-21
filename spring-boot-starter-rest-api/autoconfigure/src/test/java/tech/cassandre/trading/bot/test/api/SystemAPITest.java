@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.test.api.util;
+package tech.cassandre.trading.bot.test.api;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +15,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("API - Ping API test")
+@DisplayName("API - System API test")
 @Import(BaseMock.class)
-public class PingAPITest extends APITest {
+public class SystemAPITest extends APITest {
 
     @Test
     @DisplayName("Check ping response")
@@ -25,6 +25,14 @@ public class PingAPITest extends APITest {
         mockMvc.perform(get("/ping"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("pong")));
+    }
+
+    @Test
+    @DisplayName("Check version response")
+    public final void checkVersionResponse() throws Exception {
+        mockMvc.perform(get("/version"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("1.0.0")));
     }
 
 }

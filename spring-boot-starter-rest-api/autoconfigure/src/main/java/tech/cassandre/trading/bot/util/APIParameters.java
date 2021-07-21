@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * Database parameters from application.properties.
+ * API security parameters from application.properties.
  */
 @Validated
 @Getter

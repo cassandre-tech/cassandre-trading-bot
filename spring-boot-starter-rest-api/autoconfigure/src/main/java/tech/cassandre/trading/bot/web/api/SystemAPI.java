@@ -1,4 +1,4 @@
-package tech.cassandre.trading.bot.web.api.util;
+package tech.cassandre.trading.bot.web.api;
 
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -11,12 +11,12 @@ import static tech.cassandre.trading.bot.util.HttpStatus.STATUS_OK;
 import static tech.cassandre.trading.bot.util.HttpStatus.STATUS_OK_MESSAGE;
 
 /**
- * Ping API.
+ * System API.
  */
-public interface PingAPI {
+public interface SystemAPI {
 
     /**
-     * Ping.
+     * Ping method (returns pong).
      *
      * @return pong
      */
@@ -27,5 +27,18 @@ public interface PingAPI {
             @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE)
     })
     String ping();
+
+    /**
+     * Returns API version.
+     *
+     * @return version
+     */
+    @RequestMapping(value = "/version", method = GET)
+    @ApiOperation(value = "Returns API version", response = String.class)
+    @ApiImplicitParams({})
+    @ApiResponses(value = {
+            @ApiResponse(code = STATUS_OK, message = STATUS_OK_MESSAGE)
+    })
+    String version();
 
 }
