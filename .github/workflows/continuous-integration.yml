@@ -83,9 +83,10 @@ jobs:
           mvn -f archetype-test-ta4j-basic/pom.xml test
 
       # ================================================================================================================
-      - name: Opload codacy coverage results
+      - name: Upload codacy coverage results
         id: upload-codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1.0.1
+        continue-on-error: true
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
           coverage-reports: spring-boot-starter/autoconfigure/target/site/jacoco/jacoco.xml
