@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -32,7 +31,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest(properties = {"SIMPLE_ORDER_STRATEGY_ENABLED=true", "POSITIONS_STRATEGY_ENABLED=false"})
-@ComponentScan("tech.cassandre.trading.bot")
 @Import(TickerFluxMock.class)
 @DisplayName("Simple orders strategy test")
 @DirtiesContext(classMode = BEFORE_CLASS)

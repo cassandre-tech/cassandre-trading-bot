@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
@@ -25,7 +24,6 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
  */
 @SpringBootTest
 @Import(TickerFluxMock.class)
-@ComponentScan("tech.cassandre.trading.bot")
 @DisplayName("Simple ta4j strategy test")
 public class SimpleTa4jStrategyTest {
 
