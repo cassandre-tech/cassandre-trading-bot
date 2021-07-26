@@ -272,6 +272,13 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.7</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*tech.cassandre.trading.bot.integration/**/*.class</exclude>
+                        <exclude>**/*tech.cassandre.trading.bot.issues/**/*.class</exclude>
+                        <exclude>**/*package-info.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
