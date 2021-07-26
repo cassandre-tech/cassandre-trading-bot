@@ -24,8 +24,9 @@ jobs:
       # ================================================================================================================
       - name: JDK 11 Setup
         id: jdk
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
           java-version: '11'
           server-id: ossrh
           server-username: MAVEN_USERNAME
@@ -34,7 +35,7 @@ jobs:
       # ================================================================================================================
       - name: Retrieve the sources
         id: sources
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       # ================================================================================================================
       - name: Retrieve the version
