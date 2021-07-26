@@ -86,8 +86,7 @@ jobs:
       # ================================================================================================================
       - name: Upload codacy coverage results
         id: upload-codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@v1.0.1
-        continue-on-error: true
-        with:
-          api-token: ${{ secrets.CODACY_API_TOKEN }}
-          coverage-reports: spring-boot-starter/autoconfigure/target/site/jacoco/jacoco.xml
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
+          --project-token ${{ secrets.CODACY_API_TOKEN }}
+          -r spring-boot-starter/autoconfigure/target/site/jacoco/jacoco.xml
