@@ -10,7 +10,7 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.test.util.BaseTest;
+import tech.cassandre.trading.bot.test.core.util.BaseTest;
 
 import java.math.BigDecimal;
 import java.util.Optional;

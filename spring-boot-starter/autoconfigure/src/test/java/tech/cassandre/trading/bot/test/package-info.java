@@ -1,4 +1,4 @@
 /**
- * Tests (Dry mode to false).
+ * Tests.
  */
 package tech.cassandre.trading.bot.test;
