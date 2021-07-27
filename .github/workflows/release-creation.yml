@@ -14,11 +14,11 @@ jobs:
     steps:
       # ================================================================================================================
       - name: GPG Setup
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           echo "$GPG_PRIVATE_KEY" > private.asc
           gpg --import --batch private.asc
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       # ================================================================================================================
       - name: JDK 11 Setup
@@ -57,7 +57,6 @@ jobs:
 
       # ================================================================================================================
       - name: Create the release
-        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -143,7 +142,6 @@ jobs:
 
       # ================================================================================================================
       - name: Change release in website sources
-        id: sed
         run: find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.getLatestRelease.outputs.release }}/g' {} \;
 
       # ================================================================================================================
