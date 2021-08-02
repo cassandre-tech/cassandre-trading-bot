@@ -4,8 +4,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -63,11 +62,21 @@ public interface PositionService {
     void updatePositionRules(long id, PositionRulesDTO newRules);
 
     /**
-     * Close position (no matter the rules).
+     * Close a position - This method is used by Cassandre internally.
+     *
+     * @param strategy strategy
+     * @param id       position id
+     * @param ticker   ticker
+     * @return order creation result
+     */
+    OrderCreationResultDTO closePosition(GenericCassandreStrategy strategy, long id, TickerDTO ticker);
+
+    /**
+     * Force a position to close (no matter the rules) - This method can be use by user code.
      *
      * @param id position id
      */
-    void closePosition(long id);
+    void forcePositionClosing(long id);
 
     /**
      * Get positions.
@@ -83,27 +92,6 @@ public interface PositionService {
      * @return position
      */
     Optional<PositionDTO> getPositionById(long id);
-
-    /**
-     * Method called by streams on orders updates.
-     *
-     * @param orders orders updates
-     */
-    void ordersUpdates(Set<OrderDTO> orders);
-
-    /**
-     * Method called by streams on trades updates.
-     *
-     * @param trades trades updates
-     */
-    void tradesUpdates(Set<TradeDTO> trades);
-
-    /**
-     * Method called by streams on tickers updates.
-     *
-     * @param tickers tickers updates
-     */
-    void tickersUpdates(Set<TickerDTO> tickers);
 
     /**
      * Returns the amounts locked by each position.

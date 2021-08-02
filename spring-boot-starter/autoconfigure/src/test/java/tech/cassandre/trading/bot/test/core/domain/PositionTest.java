@@ -91,11 +91,6 @@ public class PositionTest extends BaseTest {
     @DisplayName("Check load position from database")
     public void checkLoadPositionFromDatabase() {
         // =============================================================================================================
-        // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
-
-        // =============================================================================================================
         // Check position 1 - OPENING.
         PositionDTO p = strategy.getPositions().get(1L);
         assertNotNull(p);
@@ -269,12 +264,6 @@ public class PositionTest extends BaseTest {
     @Test
     @DisplayName("Check how a new position is saved")
     public void checkSavedNewPosition() {
-        // =============================================================================================================
-        // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
-        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
-
         // First ticker emitted for dry mode - MANDATORY.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.2")).build());
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
@@ -361,12 +350,6 @@ public class PositionTest extends BaseTest {
     @Test
     @DisplayName("Check saved data during position lifecycle")
     public void checkSavedDataDuringPositionLifecycle() {
-        // =============================================================================================================
-        // Check that positions, orders and trades are restored in strategy & services.
-        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
-        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
-
         // First ticker emitted for dry mode - MANDATORY.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.01")).build());
         await().untilAsserted(() -> assertEquals(1, strategy.getTickersUpdatesReceived().size()));

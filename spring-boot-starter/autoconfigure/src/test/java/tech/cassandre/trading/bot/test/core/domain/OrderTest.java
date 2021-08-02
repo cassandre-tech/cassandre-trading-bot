@@ -67,12 +67,6 @@ public class OrderTest extends BaseTest {
     @DisplayName("Check load order from database")
     public void checkLoadOrderFromDatabase() {
         // =============================================================================================================
-        // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
-        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
-
-        // =============================================================================================================
         // Check order 1.
         Optional<OrderDTO> o = strategy.getOrderByOrderId("BACKUP_ORDER_01");
         assertTrue(o.isPresent());
@@ -150,12 +144,6 @@ public class OrderTest extends BaseTest {
     @Test
     @DisplayName("Check save order in database")
     public void checkSaveOrderInDatabase() {
-        // =============================================================================================================
-        // Check that positions, orders and trades in database doesn't trigger strategy events.
-        assertEquals(1, strategy.getPositionsUpdatesReceived().size());
-        assertTrue(strategy.getTradesUpdatesReceived().isEmpty());
-        assertTrue(strategy.getOrdersUpdatesReceived().isEmpty());
-
         // =============================================================================================================
         // Loading strategy.
         StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("001").build();
@@ -266,7 +254,7 @@ public class OrderTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .userReference("TRADE MY_REF_3")
                 .build());
-        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdatesReceived().size()));
         Optional<Order> backupOrder03 = orderRepository.findByOrderId("BACKUP_ORDER_03");
         assertTrue(backupOrder03.isPresent());
         assertEquals(1, backupOrder03.get().getTrades().size());

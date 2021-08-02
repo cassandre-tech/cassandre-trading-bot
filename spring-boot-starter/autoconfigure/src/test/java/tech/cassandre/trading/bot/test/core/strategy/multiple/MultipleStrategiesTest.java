@@ -506,7 +506,7 @@ public class MultipleStrategiesTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(2, strategy1.getPositionsStatusUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(4, strategy2.getPositionsUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy2.getPositionsStatusUpdatesReceived().size()));
-        await().untilAsserted(() -> assertEquals(12, strategy3.getPositionsUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(13, strategy3.getPositionsUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(6, strategy3.getPositionsStatusUpdatesReceived().size()));
 
         // Check onOrderUpdate().

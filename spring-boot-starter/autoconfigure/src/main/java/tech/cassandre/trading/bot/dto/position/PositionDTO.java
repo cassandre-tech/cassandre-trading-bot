@@ -296,7 +296,7 @@ public class PositionDTO {
         // If the position is not closing and the ticker is the one expected.
         if (getStatus() == OPENED && ticker.getCurrencyPair().equals(currencyPair)) {
 
-            // We calculate the gain and we update fields price fields.
+            // We calculate the gain, and we update fields price fields.
             // LastGain for sure.
             // Lowest and highest if it changes.
             calculateGainFromPrice(ticker.getLast()).ifPresent(gain -> {

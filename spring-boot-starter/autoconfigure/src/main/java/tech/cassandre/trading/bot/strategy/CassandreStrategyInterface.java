@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.strategy;
 
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
@@ -38,6 +39,13 @@ public interface CassandreStrategyInterface {
      * @param accounts accounts
      */
     void initializeAccounts(Map<String, AccountDTO> accounts);
+
+    /**
+     * Setter position flux.
+     *
+     * @param newPositionFlux position flux
+     */
+    void setPositionFlux(PositionFlux newPositionFlux);
 
     /**
      * Setter order repository.
