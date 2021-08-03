@@ -254,7 +254,7 @@ public class OrderTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .userReference("TRADE MY_REF_3")
                 .build());
-        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdatesReceived().size()));
         Optional<Order> backupOrder03 = orderRepository.findByOrderId("BACKUP_ORDER_03");
         assertTrue(backupOrder03.isPresent());
         assertEquals(1, backupOrder03.get().getTrades().size());

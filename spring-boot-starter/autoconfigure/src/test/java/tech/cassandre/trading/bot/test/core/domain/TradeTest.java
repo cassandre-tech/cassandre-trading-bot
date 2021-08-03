@@ -190,7 +190,7 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .build();
         tradeFlux.emitValue(t1);
-        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(1, strategy.getTradesUpdatesReceived().size()));
 
         // =============================================================================================================
         // Trade - Check created order (domain).
@@ -248,7 +248,7 @@ public class TradeTest extends BaseTest {
                 .userReference("Updated reference")
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .build());
-        await().untilAsserted(() -> assertEquals(3, strategy.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(2, strategy.getTradesUpdatesReceived().size()));
         Optional<Trade> trade11 = tradeRepository.findByTradeId("BACKUP_TRADE_11");
         assertTrue(trade11.isPresent());
         assertNotNull(trade11.get().getUpdatedOn());
@@ -267,7 +267,7 @@ public class TradeTest extends BaseTest {
                 .timestamp(createZonedDateTime("01-09-2020"))
                 .fee(new CurrencyAmountDTO(new BigDecimal("3.300003"), BTC))
                 .build());
-        await().untilAsserted(() -> assertEquals(4, strategy.getTradesUpdatesReceived().size()));
+        await().untilAsserted(() -> assertEquals(3, strategy.getTradesUpdatesReceived().size()));
         trade11 = tradeRepository.findByTradeId("BACKUP_TRADE_11");
         assertTrue(trade11.isPresent());
         assertTrue(updatedOn.isBefore(trade11.get().getUpdatedOn()));
