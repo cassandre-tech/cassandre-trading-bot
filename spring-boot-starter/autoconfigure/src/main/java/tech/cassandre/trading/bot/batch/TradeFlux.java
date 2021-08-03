@@ -33,7 +33,7 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
         logger.debug("Retrieving trades from exchange");
         Set<TradeDTO> newValues = new LinkedHashSet<>();
 
-        // Finding which trades has been updated.
+        // Finding which trades have been updated.
         tradeService.getTrades()
                 .stream()
                 // Note: we only save trades when the order present in database.
@@ -62,7 +62,7 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
     public final Set<TradeDTO> saveValues(final Set<TradeDTO> newValues) {
         Set<Trade> trades = new LinkedHashSet<>();
 
-        // We create or update every trades retrieved by the exchange.
+        // We create or update every trade retrieved by the exchange.
         newValues.forEach(newValue -> tradeRepository.findByTradeId(newValue.getTradeId())
                 .ifPresentOrElse(trade -> {
                     // Update trade.

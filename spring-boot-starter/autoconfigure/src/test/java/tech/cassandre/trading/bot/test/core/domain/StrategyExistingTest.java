@@ -40,7 +40,7 @@ public class StrategyExistingTest {
         assertEquals("01", strategy.get().getStrategyId());
         assertEquals("Testable strategy", strategy.get().getName());
 
-        // Test non existing strategy.
+        // Test non-existing strategy.
         assertFalse(strategyRepository.findByStrategyId("NON_EXISTING").isPresent());
     }
 

@@ -41,7 +41,7 @@ public class Issue558Test extends BaseTest {
     public void checkGetTickers() {
         tickerFlux.update();
 
-        // We should received three tickers with juste one call to getFlux.
+        // We should receive three tickers with juste one call to getFlux.
         await().untilAsserted(() -> assertEquals(3, strategy.getTickersUpdatesReceived().size()));
     }
 

@@ -67,7 +67,7 @@ public class TradeFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(xChangeTradeService, atLeast(numberOfServiceCallsExpected)).getTradeHistory(any()));
 
         // Checking that somme data have already been treated.
-        // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
+        // but not all as the flux should be asynchronous and single thread and strategy method waits 1 second.
         assertTrue(strategy.getTradesUpdatesReceived().size() > 0);
         assertTrue(strategy.getTradesUpdatesReceived().size() <= numberOfUpdatesExpected);
 

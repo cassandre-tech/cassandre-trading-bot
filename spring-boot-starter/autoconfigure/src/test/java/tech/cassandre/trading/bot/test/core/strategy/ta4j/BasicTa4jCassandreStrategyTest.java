@@ -87,7 +87,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         // Trying to buy 2 bitcoin for 390 USDT per bitcoin - should not work.
         assertFalse(strategy.canBuy(new BigDecimal("2")));
         assertFalse(strategy.canBuy(account, new BigDecimal("2")));
-        // Trying to buy 1 bitcoin for 390 USDT per bitcoin but I want 400 USDT left - should not work.
+        // Trying to buy 1 bitcoin for 390 USDT per bitcoin, but I want 400 USDT left - should not work.
         assertFalse(strategy.canBuy(new BigDecimal("2"), new BigDecimal("400")));
         assertFalse(strategy.canBuy(account, new BigDecimal("2"), new BigDecimal("400")));
 

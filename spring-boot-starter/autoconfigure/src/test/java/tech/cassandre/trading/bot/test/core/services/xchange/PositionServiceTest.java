@@ -142,7 +142,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
         long position1Id = p1.getPosition().getId();
 
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
@@ -178,7 +178,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
         long position2Id = p2.getPosition().getId();
 
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdatesReceived().size()));
@@ -339,7 +339,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
         long position1Id = p1.getPosition().getId();
 
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
@@ -395,7 +395,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
         long position1Id = p1.getPosition().getId();
 
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
@@ -503,7 +503,7 @@ public class PositionServiceTest extends BaseTest {
         assertTrue(positionService.getPositionById(1).isPresent());
         assertEquals(OPENING, positionService.getPositionById(1).get().getStatus());
 
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
@@ -516,7 +516,7 @@ public class PositionServiceTest extends BaseTest {
         assertTrue(positionService.getPositionById(2).isPresent());
         assertEquals(OPENING, positionService.getPositionById(2).get().getStatus());
 
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdatesReceived().size()));
@@ -556,7 +556,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getOrderId());
 
         // The opening trade arrives, change the status to OPENED and set the price.
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
@@ -612,7 +612,7 @@ public class PositionServiceTest extends BaseTest {
                         .build());
         final long position1Id = creationResult1.getPosition().getId();
 
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));
@@ -700,7 +700,7 @@ public class PositionServiceTest extends BaseTest {
         position1 = getPositionDTO(position1Id);
         assertEquals(CLOSING, position1.getStatus());
 
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(2, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(11, strategy.getPositionsUpdatesReceived().size()));
@@ -752,7 +752,7 @@ public class PositionServiceTest extends BaseTest {
         assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getOrderId());
 
         // The opening trade arrives, change the status to OPENED and set the price.
-        // We retrieve the order from the service and we wait for the order to update the position.
+        // We retrieve the order from the service, and we wait for the order to update the position.
         orderFlux.update();
         await().untilAsserted(() -> assertEquals(1, strategy.getOrdersUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(2, strategy.getPositionsUpdatesReceived().size()));

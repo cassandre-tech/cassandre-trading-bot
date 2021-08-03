@@ -137,7 +137,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
 
         // =============================================================================================================
         // We create a first long position on ETH/USDT.
-        // CP2 : ETH/USDT - 1 ETH costs 1500 USDT - We buy 0.5 ETH and it will cost 750 USDT.
+        // CP2 : ETH/USDT - 1 ETH costs 1500 USDT - We buy 0.5 ETH, and it will cost 750 USDT.
         // Before.              After.
         // 0.99962937 BTC   =>  0.99962937 BTC.
         // 1000 USDT        =>  250 USDT.
@@ -168,14 +168,14 @@ public class UserServiceWithPositionsTest extends BaseTest {
         assertTrue(strategy.canBuy(BTC_ETH, new BigDecimal("0.2")));
         assertFalse(strategy.canBuy(BTC_ETH, new BigDecimal("0.20001")));
 
-        // Price update for CP2.
-        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We buy 10 ETH and it will cost 100 USDT.
+        // Price updates for CP2.
+        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We buy 10 ETH, and it will cost 100 USDT.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("10")).build());
         await().untilAsserted(() -> assertEquals(6, strategy.getTickersUpdatesReceived().size()));
 
         // =============================================================================================================
-        // We create a second long position on ETH/USDT.
-        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We buy 10 ETH and it will cost 100 USDT.
+        // We create another long position on ETH/USDT.
+        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We buy 10 ETH, and it will cost 100 USDT.
         // Before.              After.
         // 0.99962937 BTC   =>  0.99962937 BTC.
         // 250 USDT         =>  150 USDT.
@@ -210,7 +210,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
 
         // =============================================================================================================
         // We create a third long position on KCS/USDT.
-        // CP4 : KCS/USDT - 1 KCS costs 4 USDT - We buy 20 KCS and it will costs 80 USDT.
+        // CP4 : KCS/USDT - 1 KCS costs 4 USDT - We buy 20 KCS, and it will cost 80 USDT.
         // Before.              After.
         // 0.99962937 BTC   =>  0.99962937 BTC.
         // 150 USDT         =>  70 USDT.
@@ -242,7 +242,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
 
         // =============================================================================================================
         // We create a first short position on ETH/USDT.
-        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sell 1 ETH and it will give us 10 USDT.
+        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sell 1 ETH, and it will give us 10 USDT.
         // Before.              After.
         // 0.99962937 BTC   =>  0.99962937 BTC
         // 70 USDT          =>  80 USDT (10 locked in positions).
@@ -267,7 +267,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         assertEquals(0, new BigDecimal("10").compareTo(currencyAmountForPosition4.getValue()));
         assertEquals(USDT, currencyAmountForPosition4.getCurrency());
 
-        // As we now have 10 USDT locked in positions, we should not be able sell 80 but 70.
+        // As we now have 10 USDT locked in positions, we should not be able to sell 80 but 70.
         assertEquals(0, new BigDecimal("80").compareTo(balances.get(USDT).getAvailable()));
         assertFalse(strategy.canSell(USDT, new BigDecimal("80")));
         assertTrue(strategy.canSell(USDT, new BigDecimal("70")));
@@ -276,17 +276,17 @@ public class UserServiceWithPositionsTest extends BaseTest {
         // We will now close position 2 on ETH/USDT (long) & position 4 on ETH/USDT (short).
         // They both have a 100% stop gain rule.
         // Actual price
-        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We buy 10 ETH and it will cost 100 USDT.
+        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We buy 10 ETH, and it will cost 100 USDT.
 
         // For the position long 2, we send :
-        // CP2 : ETH/USDT - 1 ETH costs 100 USDT - We sell 10 ETH and it will give us 1000 USDT.
+        // CP2 : ETH/USDT - 1 ETH costs 100 USDT - We sell 10 ETH, and it will give us 1000 USDT.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("100")).build());
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position2Id).getStatus()));
 
         // For the position short 4, we started at :
-        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sell 1 ETH and it will give us 10 USDT.
+        // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sell 1 ETH, and it will give us 10 USDT.
         // And now we are at :
-        // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
+        // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH, and it will cost us 10 USDT.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("2")).build());
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position4Id).getStatus()));
 

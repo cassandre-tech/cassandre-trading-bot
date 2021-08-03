@@ -34,7 +34,7 @@ public class ExchangeServiceTest extends BaseTest {
     @Test
     @DisplayName("Check the list of available currency pairs")
     public void checkGetAvailableCurrencyPairs() {
-        // The available currencies should be the same than the strategy.
+        // The available currencies should be the same as the ones requested by the strategies.
         final Set<CurrencyPairDTO> availableCurrencyPairs = exchangeService.getAvailableCurrencyPairs();
         assertEquals(2, availableCurrencyPairs.size());
         assertTrue(availableCurrencyPairs.contains(ETH_BTC));

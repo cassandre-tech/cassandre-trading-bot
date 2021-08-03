@@ -116,7 +116,7 @@ public class PositionGainsServiceTest {
         assertEquals(0, new BigDecimal("139").compareTo(gain3.getNetAmount().getValue()));
         assertEquals(USDT, gain3.getNetAmount().getCurrency());
 
-        // The should not not gain for positions 4,5 & 6.
+        // There should be no gain for positions 4,5 & 6.
         final Optional<PositionDTO> p4 = positionService.getPositionById(4L);
         assertTrue(p4.isPresent());
         assertEquals(0, p4.get().getGain().getPercentage());

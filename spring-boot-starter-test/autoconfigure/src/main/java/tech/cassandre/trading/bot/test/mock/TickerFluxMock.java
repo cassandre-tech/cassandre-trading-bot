@@ -115,7 +115,7 @@ public class TickerFluxMock {
         // We don't use the getTickers method.
         given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in dry mode"));
 
-        // For every files.
+        // For every file.
         getFilesToLoad()
                 .stream().filter(resource -> resource.getFilename() != null)
                 .forEach(resource -> {

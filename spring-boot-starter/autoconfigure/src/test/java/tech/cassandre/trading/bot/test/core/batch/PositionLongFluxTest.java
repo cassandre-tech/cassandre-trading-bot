@@ -527,7 +527,7 @@ public class PositionLongFluxTest extends BaseTest {
         assertEquals(CLOSED, p.getStatus());
 
         // onPosition for second trade arrival.
-        // Positions updates:
+        // List of positions updates:
         // - Trade 000004 arrives. In one update we have one more trade and a status change.
         await().untilAsserted(() -> assertEquals(19, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();

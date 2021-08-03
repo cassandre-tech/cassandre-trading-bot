@@ -304,7 +304,7 @@ public class TradeTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(orderCount + 1, orderRepository.count()));
 
         // =============================================================================================================
-        // Then a new trade arrives for order NEW_ORDER and we check that the strategy is set.
+        // Then a new trade arrives for order NEW_ORDER, and we check that the strategy is set.
         long tradeCount = tradeRepository.count();
         tradeFlux.emitValue(TradeDTO.builder()
                 .tradeId("NEW_TRADE")

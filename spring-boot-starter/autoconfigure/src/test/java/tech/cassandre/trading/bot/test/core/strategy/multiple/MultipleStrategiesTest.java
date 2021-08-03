@@ -225,7 +225,7 @@ public class MultipleStrategiesTest extends BaseTest {
 
         //==============================================================================================================
         // Strategy 1 - Creating 1 position on BTC/USDT (0.001 BTC for 50 USDT).
-        // The price of 1 BTC is 50 000 USDT and we buy 0.001 BTC for 50 USDT.
+        // The price of 1 BTC is 50 000 USDT, and we buy 0.001 BTC for 50 USDT.
         // We stop at 100% gain.
         final PositionCreationResultDTO position1Result = strategy1.createLongPosition(BTC_USDT,
                 new BigDecimal("0.001"),
@@ -292,7 +292,7 @@ public class MultipleStrategiesTest extends BaseTest {
 
         //==============================================================================================================
         // Strategy 2 - Creating 1 position on BTC/ETH (0.2 BTC for 0.5 ETH).
-        // The price of 1 BTC is 25 ETH and we buy 0.02 BTC for 0.5 ETH.
+        // The price of 1 BTC is 25 ETH, and we buy 0.02 BTC for 0.5 ETH.
         // We stop at 100% gain.
         final PositionCreationResultDTO position2Result = strategy2.createLongPosition(BTC_ETH,
                 new BigDecimal("0.02"),

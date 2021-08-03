@@ -21,11 +21,11 @@ public class EqualsBuilderTest {
         result = new EqualsBuilder().append(null, null).isEquals();
         assertTrue(result);
 
-        // First object null and second non null -> Not equals.
+        // First object null and second is also not null -> Not equals.
         result = new EqualsBuilder().append(null, "e").isEquals();
         assertFalse(result);
 
-        // First object non null and the second null -> Not equals.
+        // First object is not null and the second is null -> Not equals.
         result = new EqualsBuilder().append("e", null).isEquals();
         assertFalse(result);
 

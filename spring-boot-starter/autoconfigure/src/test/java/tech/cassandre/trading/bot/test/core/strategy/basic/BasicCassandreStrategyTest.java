@@ -90,10 +90,10 @@ public class BasicCassandreStrategyTest extends BaseTest {
         // Buying something for an asset we don't have.
         assertFalse(strategy.canBuy(BTC_ETH, new BigDecimal("0.00001")));
         assertFalse(strategy.canBuy(account, BTC_ETH, new BigDecimal("0.00001")));
-        // Trying to buy a full bitcoin but we only have 2 000 USDT.
+        // Trying to buy a full bitcoin, but we only have 2 000 USDT.
         assertFalse(strategy.canBuy(ETH_USDT, new BigDecimal("1")));
         assertFalse(strategy.canBuy(account, ETH_USDT, new BigDecimal("1")));
-        // Trying to buy a 0.1 bitcoin that costs 1 000 USDT and we have 2 000 USDT.
+        // Trying to buy a 0.1 bitcoin that costs 1 000 USDT, and we have 2 000 USDT.
         assertTrue(strategy.canBuy(ETH_USDT, new BigDecimal("0.1")));
         assertTrue(strategy.canBuy(account, ETH_USDT, new BigDecimal("0.1")));
         // Trying to buy a 0.1 bitcoin that costs 1 001 USDT (we have 2 000 USDT). But we want to have 1 000 USDT left.

@@ -40,7 +40,7 @@ public class Issue482Test extends BaseTest {
         tickerFlux.update();
         tickerFlux.update();
 
-        // We should received three tickers.
+        // We should receive three tickers.
         await().untilAsserted(() -> assertTrue(strategy.getTickersUpdatesReceived().size() > 3));
     }
 

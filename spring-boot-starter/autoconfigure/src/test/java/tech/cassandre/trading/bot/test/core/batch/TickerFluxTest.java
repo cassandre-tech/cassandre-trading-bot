@@ -53,7 +53,7 @@ public class TickerFluxTest extends BaseTest {
         await().untilAsserted(() -> verify(marketDataService, atLeast(numberOfServiceCallsExpected)).getTicker(any()));
 
         // Checking that somme data have already been treated.
-        // but not all as the flux should be asynchronous and single thread and strategy method method waits 1 second.
+        // but not all as the flux should be asynchronous and single thread and strategy method waits 1 second.
         assertTrue(strategy.getTickersUpdatesReceived().size() > 0);
         assertTrue(strategy.getTickersUpdatesReceived().size() <= numberOfTickersExpected);
 

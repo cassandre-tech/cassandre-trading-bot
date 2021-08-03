@@ -27,7 +27,7 @@ import static lombok.AccessLevel.PRIVATE;
  * BTC : 0.99963006
  * ETH : 10
  * <p>
- * - Buying 0.004 Bitcoin (should costs 0.05748 ether).
+ * - Buying 0.004 Bitcoin (should cost 0.05748 ether).
  * TradeDTO{currencyPair=ETH/BTC, originalAmount=0.004, price=0.034797}
  * <p>
  * - Account after buying
@@ -51,7 +51,7 @@ public class TradeDTO {
     /** Order type i.e. bid (buy) or ask (sell). */
     OrderTypeDTO type;
 
-    /** The order responsible of this trade. */
+    /** The order responsible for this trade. */
     String orderId;
 
     /** Order. */

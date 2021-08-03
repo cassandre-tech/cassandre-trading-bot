@@ -109,7 +109,7 @@ public class TradeServiceTest extends BaseTest {
         assertNull(trade01.get().getUserReference());
         assertNotNull(trade01.get().getTimestamp());
 
-        // We create a sell order to check order numbers and type.
+        // We create a sell order, so we could check order numbers and type.
         final OrderCreationResultDTO buyMarketOrder02 = strategy.createSellMarketOrder(ETH_BTC, new BigDecimal("0.002"));
         assertTrue(buyMarketOrder02.isSuccessful());
         assertEquals(orderId02, buyMarketOrder02.getOrder().getOrderId());

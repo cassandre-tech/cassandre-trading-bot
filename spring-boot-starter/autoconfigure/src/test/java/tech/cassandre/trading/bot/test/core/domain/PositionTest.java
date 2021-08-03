@@ -279,7 +279,7 @@ public class PositionTest extends BaseTest {
 
         // Check that the position was correctly created.
         // The corresponding order and trade will arrive in few seconds.
-        // In the mean time, the position should be in OPENING status.
+        // In the meantime, the position should be in OPENING status.
         await().untilAsserted(() -> assertEquals(positionCount + 1, positionRepository.count()));
         Position p6 = getPosition(6L);
         assertEquals(6L, p6.getId());
@@ -373,7 +373,7 @@ public class PositionTest extends BaseTest {
 
         // Check that the position was correctly created.
         // The corresponding order and trade will arrive in few seconds.
-        // In the mean time, the position should be in OPENING status.
+        // In the meantime, the position should be in OPENING status.
         await().untilAsserted(() -> assertEquals(OPENING, getPosition(positionId).getStatus()));
         Position p = getPosition(positionId);
         assertEquals(positionId, p.getId());

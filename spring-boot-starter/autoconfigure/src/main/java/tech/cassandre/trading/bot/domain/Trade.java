@@ -46,7 +46,7 @@ public class Trade extends BaseDomain {
     @Column(name = "TYPE")
     private OrderTypeDTO type;
 
-    /** The order responsible of this trade. */
+    /** The order responsible for this trade. */
     @ManyToOne
     @JoinColumn(name = "FK_ORDER_ID", nullable = false)
     private Order order;

@@ -701,7 +701,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @param currencyPair currency pair
      * @param amount       amount
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final CurrencyPairDTO currencyPair,
                                 final BigDecimal amount) {
@@ -715,7 +715,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currencyPair        currency pair
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after buying
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final CurrencyPairDTO currencyPair,
                                 final BigDecimal amount,
@@ -730,7 +730,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param account      account
      * @param currencyPair currency pair
      * @param amount       amount
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final AccountDTO account,
                                 final CurrencyPairDTO currencyPair,
@@ -745,7 +745,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currencyPair        currency pair
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after buying
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final AccountDTO account,
                                 final CurrencyPairDTO currencyPair,
@@ -779,7 +779,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @param currency currency
      * @param amount   amount
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final CurrencyDTO currency,
                                  final BigDecimal amount) {
@@ -793,7 +793,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currency            currency
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after selling
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final CurrencyDTO currency,
                                  final BigDecimal amount,
@@ -808,7 +808,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param account  account
      * @param currency currency pair
      * @param amount   amount
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final AccountDTO account,
                                  final CurrencyDTO currency,
@@ -823,7 +823,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currency            currency
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after selling
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final AccountDTO account,
                                  final CurrencyDTO currency,

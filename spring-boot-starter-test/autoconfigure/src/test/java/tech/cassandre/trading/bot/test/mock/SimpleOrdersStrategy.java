@@ -33,7 +33,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 public final class SimpleOrdersStrategy extends BasicCassandreStrategy {
 
     /** Logger. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     /** BTC/USDT. */
     private final CurrencyPairDTO BTC_USDT = new CurrencyPairDTO(BTC, USDT);
@@ -58,20 +58,20 @@ public final class SimpleOrdersStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+    public void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
         // We have 200 000 USDT & 100 Ether.
         tickers.values().forEach(tickerDTO -> logger.info("Ticker received: {} \n", tickerDTO));
 
         // BTC/USDT.
         final TickerDTO tickerBTCUSDT = tickers.get(BTC_USDT);
         if (tickerBTCUSDT != null) {
-            // We buy one bitcoin when it reach 50 000 USDT.
+            // We buy one bitcoin when it reaches 50 000 USDT.
             if (tickerBTCUSDT.getLast().compareTo(new BigDecimal("50000")) == 0) {
                 final OrderCreationResultDTO buyMarketOrder = createBuyMarketOrder(BTC_USDT, new BigDecimal(2));
                 logger.info("- BTC/USDT: Buying 2 BTC at 50 000 USDT, order n°{}\n", buyMarketOrder.getOrderId());
             }
 
-            // We sell this bitcoin when it reach 70 000 USDT
+            // We sell this bitcoin when it reaches 70 000 USDT
             if (tickerBTCUSDT.getLast().compareTo(new BigDecimal("70000")) == 0) {
                 final OrderCreationResultDTO sellMarketOrder = createSellMarketOrder(BTC_USDT, new BigDecimal(1));
                 logger.info("- BTC/USDT: Selling 1 BTC at 70 000 USDT, order n°{}\n", sellMarketOrder.getOrderId());
@@ -81,13 +81,13 @@ public final class SimpleOrdersStrategy extends BasicCassandreStrategy {
         // ETH/USDT.
         final TickerDTO tickerETHUSDT = tickers.get(ETH_USDT);
         if (tickerETHUSDT != null) {
-            // We buy 3 ethers when it reach 5 000 USDT.
+            // We buy 3 ethers when it reaches 5 000 USDT.
             if (tickerETHUSDT.getLast().compareTo(new BigDecimal("5000")) == 0) {
                 final OrderCreationResultDTO buyMarketOrder = createBuyMarketOrder(ETH_USDT, new BigDecimal(3));
                 logger.info("- ETH/USDT: Buying 3 ETH at 5 000 USDT, order n°{}\n", buyMarketOrder.getOrderId());
             }
 
-            // We sell 4 ethers when it reach 10 000 USDT.
+            // We sell 4 ethers when it reaches 10 000 USDT.
             if (tickerETHUSDT.getLast().compareTo(new BigDecimal("10000")) == 0) {
                 final OrderCreationResultDTO sellMarketOrder = createSellMarketOrder(ETH_USDT, new BigDecimal(4));
                 logger.info("- ETH/USDT: Selling 4 ETH at 10 000 USDT, order n° {}\n", sellMarketOrder.getOrderId());
@@ -102,7 +102,7 @@ public final class SimpleOrdersStrategy extends BasicCassandreStrategy {
      *
      * @return tickersUpdateReceived
      */
-    public final List<TickerDTO> getTickersUpdateReceived() {
+    public List<TickerDTO> getTickersUpdateReceived() {
         return tickersUpdateReceived;
     }
 

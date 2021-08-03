@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Cassandre strategy interface.
+ * Cassandre's strategy interface.
  * This interface defines how Cassandre interacts with a user strategy.
  */
 @SuppressWarnings("unused")

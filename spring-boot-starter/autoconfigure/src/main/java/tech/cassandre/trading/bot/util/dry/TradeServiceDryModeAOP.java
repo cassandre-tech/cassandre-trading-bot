@@ -227,7 +227,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         if (positionDTO.get().getRules().isStopGainPercentageSet()
                                                 && gainDTO.get().getPercentage() >= 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
-                                            // This means the stop gain won and we should transform the price.
+                                            // This means the stop gain won, and we should transform the price.
 
                                             // Long position n°1 (rules : 200.0 % gain).
                                             //  Opening order: 20 000 USDT.
@@ -242,7 +242,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
                                                 && gainDTO.get().getPercentage() < 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
-                                            // This means the stop gain won and we should transform the price.
+                                            // This means the stop gain won, and we should transform the price.
 
                                             // Long position n°2 (rules : 20.0 % loss).
                                             //  Opening order: 50 000 USDT.
@@ -263,7 +263,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         if (positionDTO.get().getRules().isStopGainPercentageSet()
                                                 && gainDTO.get().getPercentage() >= 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
-                                            // This means the stop gain won and we should transform the price.
+                                            // This means the stop gain won, and we should transform the price.
 
                                             // Short position n°4 (rules : 100.0 % gain)
                                             //  Opening order: 70 000 USDT.
@@ -275,7 +275,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  How to calculate the new price.
                                             //  Amount I gained = opening trade amount * 70 000 USDT.
                                             //  To gain 100%, I should be able to by 2 bitcoins : opening trade amount * (opening trade amount * stop gain/100)
-                                            //  so the question is how much a bitcoin should cost so I can buy 2 with 70 000 USDT
+                                            //  so the question is how much a bitcoin should cost, so I can buy 2 with 70 000 USDT
                                             //  2 * price = 70 000 USDT => price = 70 000/2 = 35 000
                                             final BigDecimal augmentation = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
@@ -286,7 +286,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
                                                 && gainDTO.get().getPercentage() < 0) {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
-                                            // This means the stop gain won and we should transform the price.
+                                            // This means the stop gain won, and we should transform the price.
 
                                             // Short position n°3 (rules : 10.0 % loss)
                                             //  Opening order: 40 000 USDT.
@@ -299,7 +299,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  How to calculate the new price.
                                             //  Amount I gained = opening trade amount * 40 000 USDT.
                                             //  To lose 10%, I should finish by only being able to buy 0,90 BTC : opening trade amount * (opening trade amount * stop gain/100)
-                                            //  so the question is how much a bitcoin should cost so I can buy 0,90 with 40 000 USDT
+                                            //  so the question is how much a bitcoin should cost, so I can buy 0,90 with 40 000 USDT
                                             //  0.9 * price = 40 000 USDT => price = 40 000/0.9
                                             final BigDecimal reduction = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))

@@ -36,7 +36,7 @@ public class StrategyRepositoryTest {
         Optional<Strategy> strategy = strategyRepository.findByStrategyId("01");
         assertTrue(strategy.isPresent());
 
-        // Testing a non existing strategy.
+        // Testing a non-existing strategy.
         strategy = strategyRepository.findByStrategyId("NON_EXISTING");
         assertFalse(strategy.isPresent());
     }

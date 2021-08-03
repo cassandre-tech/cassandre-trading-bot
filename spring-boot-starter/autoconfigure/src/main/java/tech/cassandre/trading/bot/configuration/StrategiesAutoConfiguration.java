@@ -199,7 +199,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         // Maintenance code.
         // If a position was blocked in OPENING or CLOSING, we send again the trades.
         // This could happen if cassandre crashes after saving a trade and did not have time to send it to
-        // positionService. Here we force the status recalculation and we save it.
+        // positionService. Here we force the status recalculation, and we save it.
         positionRepository.findByStatusIn(Stream.of(OPENING, CLOSING).collect(Collectors.toSet()))
                 .stream()
                 .map(positionMapper::mapToPositionDTO)

@@ -46,7 +46,7 @@ public class StrategyTest {
         assertTrue(sBis.isPresent());
         assertEquals(s.get(), sBis.get());
 
-        // Test non existing strategy.
+        // Test non-existing strategy.
         assertFalse(strategyRepository.findByStrategyId("NON_EXISTING").isPresent());
     }
 

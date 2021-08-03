@@ -77,13 +77,13 @@ public class PositionDTO {
     /** The order created to close the position. */
     private OrderDTO closingOrder;
 
-    /** Price of lowest gain reached by this position. */
+    /** Price of the lowest gain reached by this position. */
     private CurrencyAmountDTO lowestGainPrice;
 
-    /** Price of highest gain reached by this position. */
+    /** Price of the highest gain reached by this position. */
     private CurrencyAmountDTO highestGainPrice;
 
-    /** Price of latest gain price for this position. */
+    /** Price of the latest gain price for this position. */
     private CurrencyAmountDTO latestGainPrice;
 
     /** 100%. */
@@ -135,7 +135,7 @@ public class PositionDTO {
     @ToString.Include(name = "status")
     public final PositionStatusDTO getStatus() {
         if (closingOrder == null) {
-            // No closing order.
+            // No closing order is present.
 
             // An error occurred with the order.
             if (openingOrder.getStatus().isInError()) {
@@ -258,7 +258,7 @@ public class PositionDTO {
      * Method called by Cassandre on every order update.
      *
      * @param updatedOrder order
-     * @return true if the the order updated the position.
+     * @return true if the order updated the position.
      */
     public final boolean orderUpdate(final OrderDTO updatedOrder) {
         // Check if it's for the opening order.
@@ -278,7 +278,7 @@ public class PositionDTO {
      * Method called by Cassandre on every trade update.
      *
      * @param trade trade
-     * @return true if the the trade updated the position.
+     * @return true if the trade updated the position.
      */
     public boolean tradeUpdate(final TradeDTO trade) {
         // Return true to indicate that the trade was for this position.
@@ -290,7 +290,7 @@ public class PositionDTO {
      * Method called by Cassandre on every ticker update.
      *
      * @param ticker ticker
-     * @return true if the the ticker updated the position.
+     * @return true if the ticker updated the position.
      */
     public final boolean tickerUpdate(final TickerDTO ticker) {
         // If the position is not closing and the ticker is the one expected.
@@ -309,12 +309,12 @@ public class PositionDTO {
 
                 // If we don't close now, we update lowest and latest.
                 if (!shouldBeClosed()) {
-                    // If we don't have a lowest gain or if it's a lowest gain.
+                    // If the latest gain price is inferior to the lowest gain price, we update it.
                     final Optional<GainDTO> lowestCalculatedGain = getLowestCalculatedGain();
                     if (lowestCalculatedGain.isEmpty() || gain.isInferiorTo(lowestCalculatedGain.get())) {
                         lowestGainPrice = latestGainPrice;
                     }
-                    // If we don't have a highest gain or if it's a highest gain.
+                    // If the latest gain price is superior to the highest gain price, we update it.
                     final Optional<GainDTO> highestCalculatedGain = getHighestCalculatedGain();
                     if (highestCalculatedGain.isEmpty() || gain.isSuperiorTo(highestCalculatedGain.get())) {
                         highestGainPrice = latestGainPrice;
