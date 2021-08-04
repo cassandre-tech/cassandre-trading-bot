@@ -148,7 +148,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-gemini</artifactId>
-            <version>5.0.9</version>
+            <version>5.0.10</version>
             <scope>test</scope>
         </dependency>
         <!-- For Binance integration tests -->
