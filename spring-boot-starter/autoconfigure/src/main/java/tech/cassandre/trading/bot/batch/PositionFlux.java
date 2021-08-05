@@ -31,7 +31,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
     public final Set<PositionDTO> saveValues(final Set<PositionDTO> newValues) {
         Set<Position> positions = new LinkedHashSet<>();
 
-        // We save every positions sent to the flux.
+        // We save every position sent to the flux.
         newValues.forEach(positionDTO -> {
             final Optional<Position> position = positionRepository.findById(positionDTO.getId());
             if (position.isPresent()) {

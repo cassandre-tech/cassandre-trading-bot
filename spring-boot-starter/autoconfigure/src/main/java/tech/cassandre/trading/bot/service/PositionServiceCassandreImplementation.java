@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -10,14 +9,12 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
 import tech.cassandre.trading.bot.dto.position.PositionTypeDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
@@ -54,9 +51,6 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
 
     /** Big decimal scale for division. */
     private static final int SCALE = 8;
-
-    /** Application context. */
-    private final ApplicationContext applicationContext;
 
     /** Position repository. */
     private final PositionRepository positionRepository;
@@ -157,7 +151,44 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     }
 
     @Override
-    public final void closePosition(final long id) {
+    public final OrderCreationResultDTO closePosition(final GenericCassandreStrategy strategy, final long id, final TickerDTO ticker) {
+        final Optional<Position> position = positionRepository.findById(id);
+        if (position.isPresent()) {
+            final PositionDTO positionDTO = positionMapper.mapToPositionDTO(position.get());
+
+            final OrderCreationResultDTO orderCreationResult;
+            // Here, we treat the order creation depending on the position type (Short or long).
+
+            if (positionDTO.getType() == LONG) {
+                // Long - We just sell.
+                orderCreationResult = tradeService.createSellMarketOrder(strategy, ticker.getCurrencyPair(), positionDTO.getAmount().getValue());
+            } else {
+                // Short - We buy back with the money we get from the original selling.
+                // On opening, we had :
+                // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH, and it will give us 10 USDT.
+                // We will use those 10 USDT to buy back ETH when the rule is triggered.
+                // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH, and it will cost us 10 USDT.
+                // We can now use those 10 USDT to buy 5 ETH (amount sold / price).
+                final BigDecimal amountToBuy = positionDTO.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
+                orderCreationResult = tradeService.createBuyMarketOrder(strategy, ticker.getCurrencyPair(), amountToBuy);
+            }
+
+            if (orderCreationResult.isSuccessful()) {
+                positionDTO.closePositionWithOrder(orderCreationResult.getOrder());
+                logger.debug("Position {} closed with order {}", positionDTO.getPositionId(), orderCreationResult.getOrder().getOrderId());
+            } else {
+                logger.error("Position {} not closed: {}", positionDTO.getPositionId(), orderCreationResult.getErrorMessage());
+            }
+            positionFlux.emitValue(positionDTO);
+            return orderCreationResult;
+        } else {
+            logger.error("Impossible to close position {} because we couldn't find it in database", id);
+            return new OrderCreationResultDTO("Impossible to close position " + id + " because we couldn't find it in database", null);
+        }
+    }
+
+    @Override
+    public final void forcePositionClosing(final long id) {
         logger.debug("Force position {} to close", id);
         positionRepository.updateForceClosing(id, true);
     }
@@ -175,83 +206,6 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
         logger.debug("Retrieving position by id {}", id);
         final Optional<Position> position = positionRepository.findById(id);
         return position.map(positionMapper::mapToPositionDTO);
-    }
-
-    @Override
-    public final void ordersUpdates(final Set<OrderDTO> orders) {
-        orders.forEach(orderDTO -> {
-            logger.debug("Updating positions with order {}", orderDTO);
-            positionRepository.findByStatusNot(CLOSED).stream()
-                    .map(positionMapper::mapToPositionDTO)
-                    .filter(positionDTO -> positionDTO.orderUpdate(orderDTO))
-                    .peek(positionDTO -> logger.debug("Position {} updated with order {}", positionDTO.getPositionId(), orderDTO))
-                    .forEach(positionFlux::emitValue);
-        });
-    }
-
-    @Override
-    public final void tradesUpdates(final Set<TradeDTO> trades) {
-        trades.forEach(tradeDTO -> {
-            logger.debug("Updating positions with trade {}", tradeDTO);
-            positionRepository.findByStatusNot(CLOSED).stream()
-                    .map(positionMapper::mapToPositionDTO)
-                    .filter(positionDTO -> positionDTO.tradeUpdate(tradeDTO))
-                    .peek(positionDTO -> logger.debug("Position {} updated with trade {}", positionDTO.getPositionId(), tradeDTO))
-                    .forEach(positionFlux::emitValue);
-        });
-    }
-
-    @Override
-    public final void tickersUpdates(final Set<TickerDTO> tickers) {
-        // With the ticker received, we check for every opened position, if it should be closed.
-        logger.debug("Updating position with {} ticker", tickers.size());
-        tickers.forEach(ticker -> positionRepository.findByStatusNot(CLOSED)
-                .stream()
-                .map(positionMapper::mapToPositionDTO)
-                .filter(p -> p.tickerUpdate(ticker))
-                .peek(p -> logger.debug("Position {} updated with ticker {}", p.getPositionId(), ticker))
-                .forEach(p -> {
-                    // We close the position if it triggers the rules.
-                    // Or if the position was forced to close.
-                    if (p.isForceClosing() || p.shouldBeClosed()) {
-                        final OrderCreationResultDTO orderCreationResult;
-                        // We retrieve the strategy that created the position.
-                        final Optional<GenericCassandreStrategy> strategy = applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
-                                .values()  // We get the list of all required cp of all strategies.
-                                .stream()
-                                .map(o -> ((GenericCassandreStrategy) o))
-                                .filter(cassandreStrategy -> cassandreStrategy.getStrategyDTO().getStrategyId().equals(p.getStrategy().getStrategyId()))
-                                .findFirst();
-
-                        // Here, we treat the order creation depending on the position type (Short or long).
-                        if (strategy.isPresent()) {
-                            if (p.getType() == LONG) {
-                                // Long - We just sell.
-                                orderCreationResult = tradeService.createSellMarketOrder(strategy.get(), ticker.getCurrencyPair(), p.getAmount().getValue());
-                            } else {
-                                // Short - We buy back with the money we get from the original selling.
-                                // On opening, we had :
-                                // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH and it will give us 10 USDT.
-                                // We will use those 10 USDT to buy back ETH when the rule is triggered.
-                                // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH and it will costs us 10 USDT.
-                                // We can now use those 10 USDT to buy 5 ETH (amount sold / price).
-                                final BigDecimal amountToBuy = p.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
-                                orderCreationResult = tradeService.createBuyMarketOrder(strategy.get(), ticker.getCurrencyPair(), amountToBuy);
-                            }
-
-                            if (orderCreationResult.isSuccessful()) {
-                                p.closePositionWithOrder(orderCreationResult.getOrder());
-                                logger.debug("Position {} closed with order {}", p.getPositionId(), orderCreationResult.getOrder().getOrderId());
-                            } else {
-                                logger.error("Position {} not closed: {}", p.getPositionId(), orderCreationResult.getErrorMessage());
-                            }
-                        } else {
-                            logger.error("Strategy {} not found", p.getStrategy().getStrategyId());
-                        }
-                    }
-                    // We emit the position even anyway because the ticker updated it.
-                    positionFlux.emitValue(p);
-                }));
     }
 
     @Override

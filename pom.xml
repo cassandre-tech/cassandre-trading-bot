@@ -8,17 +8,36 @@
 	<!-- Project information -->
 	<groupId>tech.cassandre.trading.bot</groupId>
 	<artifactId>cassandre-trading-bot-project</artifactId>
-	<version>5.0.1</version>
+	<version>5.0.2</version>
 	<packaging>pom</packaging>
 	<name>Cassandre trading bot</name>
 	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
+	<licenses>
+		<license>
+			<name>GNU General Public License v3.0</name>
+			<url>https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/LICENSE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<!-- =========================================================================================================== -->
+
+	<!-- =========================================================================================================== -->
+	<!-- Developers -->
+	<developers>
+		<developer>
+			<id>straumat</id>
+			<email>stephane.traumat@gmail.com</email>
+			<name>Stéphane Traumat</name>
+			<url>https://github.com/straumat</url>
+		</developer>
+	</developers>
 	<!-- =========================================================================================================== -->
 
 	<!-- =========================================================================================================== -->
 	<!-- Source Code Management -->
 	<scm>
-		<connection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</connection>
-		<url>https://maven.pkg.github.com/cassandre-trading-bot.git</url>
+		<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
+		<connection>scm:git:git://github.com/cassandre-tech/cassandre-trading-bot.git</connection>
 		<developerConnection>scm:git:git@github.com:cassandre-tech/cassandre-trading-bot.git</developerConnection>
 	</scm>
 	<!-- =========================================================================================================== -->
@@ -36,7 +55,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.2</version>
+		<version>2.5.3</version>
 		<relativePath/>
 	</parent>
 	<!-- =========================================================================================================== -->

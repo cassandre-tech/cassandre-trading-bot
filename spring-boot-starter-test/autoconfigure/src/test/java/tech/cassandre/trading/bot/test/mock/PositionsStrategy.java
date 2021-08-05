@@ -37,7 +37,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 public final class PositionsStrategy extends BasicCassandreStrategy {
 
     /** Logger. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     /** BTC/USDT. */
     private final CurrencyPairDTO BTC_USDT = new CurrencyPairDTO(BTC, USDT);
@@ -56,7 +56,7 @@ public final class PositionsStrategy extends BasicCassandreStrategy {
     }
 
     @Override
-    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+    public void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
         // We have 200 000 USDT & 100 Ether.
         tickers.values().forEach(tickerDTO -> logger.info("Ticker received: {} \n", tickerDTO));
 
@@ -141,7 +141,7 @@ public final class PositionsStrategy extends BasicCassandreStrategy {
      *
      * @return tickersUpdateReceived
      */
-    public final List<TickerDTO> getTickersUpdateReceived() {
+    public List<TickerDTO> getTickersUpdateReceived() {
         return tickersUpdateReceived;
     }
 

@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.4.0</version>
+            <version>4.4.2</version>
         </dependency>
 
         <!-- XChange -->
@@ -199,7 +199,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>8.44</version>
+                        <version>8.45</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -267,6 +267,26 @@
                         <exclude>**/integration/**</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- attached to Maven test phase -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Jar (classes, sources & documentation)-->
             <plugin>
@@ -352,7 +372,7 @@
                             <reuseForks>false</reuseForks>
                             <forkCount>1</forkCount>
                             <excludes>
-                                <exclude>**/test/**</exclude>
+                                <exclude>**/core/**</exclude>
                                 <exclude>**/issues/**</exclude>
                             </excludes>
                         </configuration>
@@ -368,7 +388,7 @@
     <parent>
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
-        <version>5.0.1</version>
+        <version>5.0.2</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->

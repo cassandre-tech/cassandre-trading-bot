@@ -10,7 +10,6 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -44,6 +43,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
@@ -196,8 +196,19 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         }
 
         // =============================================================================================================
+        // Maintenance code.
+        // If a position was blocked in OPENING or CLOSING, we send again the trades.
+        // This could happen if cassandre crashes after saving a trade and did not have time to send it to
+        // positionService. Here we force the status recalculation, and we save it.
+        positionRepository.findByStatusIn(Stream.of(OPENING, CLOSING).collect(Collectors.toSet()))
+                .stream()
+                .map(positionMapper::mapToPositionDTO)
+                .map(positionMapper::mapToPosition)
+                .forEach(positionRepository::save);
+
+        // =============================================================================================================
         // Creating position service.
-        this.positionService = new PositionServiceCassandreImplementation(applicationContext, positionRepository, tradeService, positionFlux);
+        this.positionService = new PositionServiceCassandreImplementation(positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
         // Creating flux.
@@ -206,11 +217,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<Set<OrderDTO>> connectableOrderFlux = orderFlux.getFlux().publish();
         final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
         final ConnectableFlux<Set<TradeDTO>> connectableTradeFlux = tradeFlux.getFlux().publish();
-
-        // =============================================================================================================
-        // Connecting flux to position service.
-        connectableOrderFlux.subscribe(positionService::ordersUpdates);
-        connectableTradeFlux.subscribe(positionService::tradesUpdates);
 
         // =============================================================================================================
         // Configuring strategies.
@@ -259,6 +265,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.initializeAccounts(user.get().getAccounts());
 
                     // Setting services & repositories to strategy.
+                    strategy.setPositionFlux(positionFlux);
                     strategy.setOrderRepository(orderRepository);
                     strategy.setTradeRepository(tradeRepository);
                     strategy.setExchangeService(exchangeService);
@@ -274,37 +281,12 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     connectableTickerFlux.subscribe(strategy::tickersUpdates);
                 });
 
-        // Position service should receive tickers after strategies.
-        connectableTickerFlux.subscribe(positionService::tickersUpdates);
-
         // Start flux.
         connectableAccountFlux.connect();
         connectablePositionFlux.connect();
         connectableOrderFlux.connect();
         connectableTradeFlux.connect();
         connectableTickerFlux.connect();
-
-        // =============================================================================================================
-        // Maintenance code.
-        // If a position was blocked in OPENING or CLOSING, we send again the trades.
-        // This could happen if cassandre crashes after saving a trade and did not have time to send it to
-        // positionService.
-        positionRepository.findByStatus(OPENING).forEach(p -> {
-            final Optional<Order> openingOrder = orderRepository.findByOrderId(p.getOpeningOrder().getOrderId());
-            openingOrder.ifPresent(order -> order
-                    .getTrades()
-                    .stream()
-                    .map(tradeMapper::mapToTradeDTO)
-                    .forEach(tradeDTO -> positionService.tradesUpdates(Set.of(tradeDTO))));
-        });
-        positionRepository.findByStatus(CLOSING).forEach(p -> {
-            final Optional<Order> closingOrder = orderRepository.findByOrderId(p.getClosingOrder().getOrderId());
-            closingOrder.ifPresent(order -> order
-                    .getTrades()
-                    .stream()
-                    .map(tradeMapper::mapToTradeDTO)
-                    .forEach(tradeDTO -> positionService.tradesUpdates(Set.of((tradeDTO)))));
-        });
     }
 
     /**

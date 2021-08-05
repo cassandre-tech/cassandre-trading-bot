@@ -134,7 +134,7 @@ public class UserServiceDryModeAOP extends BaseService {
                     .forEach((name, wallet) -> {
                         HashMap<Currency, Balance> balances = new LinkedHashMap<>();
 
-                        // For each balance, we add it if nothing changed or, if on trading account and we need to change the amount,
+                        // For each balance, we add it if nothing changed or, if on trading account, and we need to change the amount,
                         // Then we do it.
                         wallet.getBalances().forEach((balanceCurrency, balance) -> {
                             if (name.equals(tradeAccount.get().getName()) && balanceCurrency.equals(currency)) {

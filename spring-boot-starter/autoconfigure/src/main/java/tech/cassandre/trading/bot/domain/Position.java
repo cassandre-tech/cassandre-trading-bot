@@ -93,7 +93,7 @@ public class Position extends BaseDomain {
     @JoinColumn(name = "FK_CLOSING_ORDER_ID")
     private Order closingOrder;
 
-    /** Price of lowest gain reached by this position. */
+    /** Price of the lowest gain reached by this position. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "LOWEST_GAIN_PRICE_VALUE")),
@@ -101,7 +101,7 @@ public class Position extends BaseDomain {
     })
     private CurrencyAmount lowestGainPrice;
 
-    /** Price of highest gain reached by this position. */
+    /** Price of the highest gain reached by this position. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "HIGHEST_GAIN_PRICE_VALUE")),
@@ -109,7 +109,7 @@ public class Position extends BaseDomain {
     })
     private CurrencyAmount highestGainPrice;
 
-    /** Price of latest gain price for this position. */
+    /** Price of the latest gain price for this position. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "LATEST_GAIN_PRICE_VALUE")),

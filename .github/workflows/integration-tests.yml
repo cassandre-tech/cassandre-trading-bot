@@ -12,14 +12,15 @@ jobs:
 
     steps:
       # ================================================================================================================
-      - name: Retrieve the sources
-        uses: actions/checkout@v1
+      - name: JDK 11 Setup
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
 
       # ================================================================================================================
-      - name: JDK 11 Setup
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
+      - name: Retrieve the sources
+        uses: actions/checkout@v2
 
       # ================================================================================================================
       - name: Build, run tests, package and deploy to Maven central - Also sends Qase tests reports

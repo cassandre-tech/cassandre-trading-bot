@@ -57,7 +57,7 @@ public class OrderFlux extends BaseFlux<OrderDTO> {
     protected final Set<OrderDTO> saveValues(final Set<OrderDTO> newValues) {
         Set<Order> orders = new LinkedHashSet<>();
 
-        // We create or update every orders retrieved by the exchange.
+        // We create or update every order retrieved by the exchange.
         newValues.forEach(newValue -> orderRepository.findByOrderId(newValue.getOrderId())
                 .ifPresentOrElse(order -> {
                     // Update order.

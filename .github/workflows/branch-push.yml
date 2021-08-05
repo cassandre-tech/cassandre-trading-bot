@@ -15,31 +15,28 @@ jobs:
     steps:
       # ================================================================================================================
       - name: JDK 11 Setup
-        id: jdk
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
           java-version: '11'
 
       # ================================================================================================================
       - name: Retrieve the sources
-        id: sources
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       # ================================================================================================================
-      - name: Retrieve the version
+      - name: Build, run tests, package and deploy to Maven central
+        run: |
+          mvn install -Dgpg.skip
+
+      # ================================================================================================================
+      - name: Retrieve the version from Maven pom
         id: version
         run: |
           echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
 
       # ================================================================================================================
-      - name: Build, run tests, package and deploy to Maven central
-        id: package
-        run: |
-          mvn install -Dgpg.skip
-
-      # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic strategy
-        id: cassandre-trading-bot-spring-boot-starter-basic-archetype
         run: |
           mvn -B archetype:generate \
             -DarchetypeGroupId=tech.cassandre.trading.bot \
@@ -53,7 +50,6 @@ jobs:
 
       # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic ta4j strategy
-        id: cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype
         run: |
           mvn -B archetype:generate \
             -DarchetypeGroupId=tech.cassandre.trading.bot \

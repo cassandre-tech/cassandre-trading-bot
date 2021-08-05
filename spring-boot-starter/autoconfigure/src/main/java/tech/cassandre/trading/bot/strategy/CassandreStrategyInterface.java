@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.strategy;
 
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
@@ -19,7 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Cassandre strategy interface.
+ * Cassandre's strategy interface.
  * This interface defines how Cassandre interacts with a user strategy.
  */
 @SuppressWarnings("unused")
@@ -38,6 +39,13 @@ public interface CassandreStrategyInterface {
      * @param accounts accounts
      */
     void initializeAccounts(Map<String, AccountDTO> accounts);
+
+    /**
+     * Setter position flux.
+     *
+     * @param newPositionFlux position flux
+     */
+    void setPositionFlux(PositionFlux newPositionFlux);
 
     /**
      * Setter order repository.

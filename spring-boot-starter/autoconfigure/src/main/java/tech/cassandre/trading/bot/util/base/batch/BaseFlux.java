@@ -69,7 +69,7 @@ public abstract class BaseFlux<T> extends Base {
     }
 
     /**
-     * Method executed when values has to be retrieved (usually called by schedulers).
+     * Method executed when values have to be retrieved (usually called by schedulers).
      */
     public final void update() {
         try {
@@ -88,7 +88,7 @@ public abstract class BaseFlux<T> extends Base {
     protected abstract Set<T> getNewValues();
 
     /**
-     * Implements this method to backup each new value.
+     * Implements this method to save values coming from flux.
      *
      * @param newValue new value
      * @return the value saved

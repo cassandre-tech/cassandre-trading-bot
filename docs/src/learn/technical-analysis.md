@@ -257,10 +257,9 @@ curl -s "https://api.kucoin.com/api/v1/market/candles?type=1day&symbol=BTC-USDT&
 
 It will create a file named `tickers-btc-usdt.tsv` that contains the historical rate of `btc-usdt` from `startDate` (3 months ago) to `endDate` (now). Of course, you can change dates and currency pair.
 
-Now place this file in the `src/test/resources` folder of our project and add those lines to your JUnit test class:
+Now place this file in the `src/test/resources` folder of our project and add this line to your JUnit test class:
 
 ```java
-@ComponentScan("tech.cassandre.trading.bot")
 @Import(TickerFluxMock.class)
 ```
 

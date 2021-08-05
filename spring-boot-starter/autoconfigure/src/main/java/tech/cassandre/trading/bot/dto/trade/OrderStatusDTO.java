@@ -29,7 +29,7 @@ public enum OrderStatusDTO {
     /** Waiting to be replaced by another order on order book at exchange. */
     PENDING_REPLACE,
 
-    /** Order has been replace by another order on order book at exchange. */
+    /** Order has been replaced by another order on order book at exchange. */
     REPLACED,
 
     /** Order has been triggered at stop price. */
