@@ -240,7 +240,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     final CancelOrderParams cancelOrderParams = new CancelOrderParams(
                             orderId,
                             currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()),
-                            utilMapper.mapToOrderType(order.get().getType()));
+                            utilMapper.mapToOrderType(orderDTO.getType()));
                     logger.debug("Canceling order {}", orderId);
                     return tradeService.cancelOrder(cancelOrderParams);
                 } else {
