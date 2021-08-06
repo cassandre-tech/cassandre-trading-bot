@@ -1,10 +1,8 @@
 package tech.cassandre.trading.bot.service;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
-import org.knowm.xchange.service.trade.params.DefaultCancelOrderByCurrencyPairAndIdParams;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
@@ -16,6 +14,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
+import tech.cassandre.trading.bot.util.xchange.CancelOrderParams;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -232,14 +231,18 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         logger.debug("Canceling order {}", orderId);
         if (orderId != null) {
             try {
-                // We retrieve the order currency pair.
+                // We retrieve the order information.
                 final Optional<Order> order = orderRepository.findByOrderId(orderId);
                 if (order.isPresent()) {
                     OrderDTO orderDTO = orderMapper.mapToOrderDTO(order.get());
-                    final CurrencyPair currencyPair = currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair());
-                    DefaultCancelOrderByCurrencyPairAndIdParams params = new DefaultCancelOrderByCurrencyPairAndIdParams(currencyPair, orderId);
-                    logger.debug("Successfully canceled order {}", orderId);
-                    return tradeService.cancelOrder(params);
+
+                    // Using a special object to specify which order to cancel.
+                    final CancelOrderParams cancelOrderParams = new CancelOrderParams(
+                            orderId,
+                            currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()),
+                            utilMapper.mapToOrderType(order.get().getType()));
+                    logger.debug("Canceling order {}", orderId);
+                    return tradeService.cancelOrder(cancelOrderParams);
                 } else {
                     logger.error(" Error canceling order {}: order not found in database", orderId);
                     return false;
