@@ -69,7 +69,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- XChange release -->
-		<xChange.version>5.0.9</xChange.version>
+		<xchange.version>5.0.9</xchange.version>
 	</properties>
 	<!-- =========================================================================================================== -->
 

@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
-            <version>${xChange.version}</version>
+            <version>${xchange.version}</version>
         </dependency>
 
         <!-- Ta4j -->
@@ -121,41 +121,41 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-simulated</artifactId>
-            <version>${xChange.version}</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Kucoin integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>${xChange.version}</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Coinbase integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbase</artifactId>
-            <version>${xChange.version}</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbasepro</artifactId>
-            <version>${xChange.version}</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Gemini integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-gemini</artifactId>
-            <version>${xChange.version}</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Binance integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-binance</artifactId>
-            <version>${xChange.version}</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

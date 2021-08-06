@@ -19,7 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- XChange release -->
-		<xChange.version>5.0.9</xChange.version>
+		<xchange.version>5.0.9</xchange.version>
 	</properties>
 	<!-- =========================================================================================================== -->
 
@@ -48,12 +48,12 @@
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-kucoin</artifactId>
-			<version>${xChange.version}</version>
+			<version>${xchange.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-simulated</artifactId>
-			<version>${xChange.version}</version>
+			<version>${xchange.version}</version>
 			<scope>test</scope>
 		</dependency>
 

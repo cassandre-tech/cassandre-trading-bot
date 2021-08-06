@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-simulated</artifactId>
-            <version>${xChange.version}</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
 
