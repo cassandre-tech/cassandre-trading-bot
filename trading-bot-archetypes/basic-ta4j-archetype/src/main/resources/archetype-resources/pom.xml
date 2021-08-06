@@ -18,6 +18,8 @@
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- XChange release -->
+		<xChange.version>5.0.9</xChange.version>
 	</properties>
 	<!-- =========================================================================================================== -->
 
@@ -46,12 +48,12 @@
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-kucoin</artifactId>
-			<version>5.0.10</version>
+			<version>${xChange.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-simulated</artifactId>
-			<version>5.0.10</version>
+			<version>${xChange.version}</version>
 			<scope>test</scope>
 		</dependency>
 
