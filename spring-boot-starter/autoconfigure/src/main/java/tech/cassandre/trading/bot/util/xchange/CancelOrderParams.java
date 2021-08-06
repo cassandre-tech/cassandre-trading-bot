@@ -11,9 +11,9 @@ import org.knowm.xchange.service.trade.params.CancelOrderByOrderTypeParams;
 /**
  * Cancel order params.
  * CancelOrderParams has to be instanceof:
- * - BinanceTradeService: CancelOrderByCurrencyPair (currencyPair) && CancelOrderByIdParams (id)
+ * - BinanceTradeService: CancelOrderByCurrencyPair (currencyPair) and CancelOrderByIdParams (id)
  * - CoinbaseProTradeService: CancelOrderByIdParams (id)
- * - CoinbaseTradeService (v1 & v2): not available
+ * - CoinbaseTradeService (v1 and v2): not available
  * - GeminiTradeService: CancelOrderByIdParams (id)
  * - KucoinTradeService: CancelOrderByIdParams (id)
  * - SimulatedTradeService:
