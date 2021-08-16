@@ -3,7 +3,9 @@ package tech.cassandre.trading.bot.service;
 import org.apache.commons.lang3.time.DateUtils;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
+import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
+import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParamCurrencyPair;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -262,10 +264,6 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     public Set<OrderDTO> getOrders() {
         logger.debug("Getting orders from exchange");
         try {
-            // Consume a token from the token bucket.
-            // If a token is not available this method will block until the refill adds one to the bucket.
-            bucket.asScheduler().consume(1);
-
             // We check if we have some local orders to push.
             final Set<OrderDTO> localOrders = orderRepository.findByStatus(PENDING_NEW)
                     .stream()
@@ -279,21 +277,50 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             if (!localOrders.isEmpty()) {
                 return localOrders;
             } else {
-                // Else we get them from the exchange.
-                return tradeService.getOpenOrders()
-                        .getOpenOrders()
-                        .stream()
-                        .map(orderMapper::mapToOrderDTO)
-                        .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
+                try {
+                    // Consume a token from the token bucket.
+                    // If a token is not available this method will block until the refill adds one to the bucket.
+                    bucket.asScheduler().consume(1);
+                    return tradeService.getOpenOrders()
+                            .getOpenOrders()
+                            .stream()
+                            .map(orderMapper::mapToOrderDTO)
+                            .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
+                            .collect(Collectors.toCollection(LinkedHashSet::new));
+                } catch (NotAvailableFromExchangeException e) {
+                    // If the classical call to getOpenOrders() is not implemented, we use the specific parameters.
+                    Set<OrderDTO> orders = new LinkedHashSet<>();
+                    orderRepository.findAll()
+                            .stream()
+                            .map(orderMapper::mapToOrderDTO)
+                            .filter(orderDTO -> !orderDTO.isFulfilled())
+                            .map(OrderDTO::getCurrencyPair)
+                            .distinct()
+                            .forEach(currencyPairDTO -> {
+                                try {
+                                    // Consume a token from the token bucket.
+                                    // If a token is not available this method will block until the refill adds one to the bucket.
+                                    bucket.asScheduler().consume(1);
+                                    orders.addAll(tradeService.getOpenOrders(new DefaultOpenOrdersParamCurrencyPair(currencyMapper.mapToCurrencyPair(currencyPairDTO)))
+                                            .getOpenOrders()
+                                            .stream()
+                                            .map(orderMapper::mapToOrderDTO)
+                                            .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
+                                            .collect(Collectors.toCollection(LinkedHashSet::new)));
+                                } catch (IOException | InterruptedException specificOrderException) {
+                                    logger.error("Error retrieving orders: {}", specificOrderException.getMessage());
+                                }
+                            });
+                    return orders;
+                } catch (IOException e) {
+                    logger.error("Error retrieving orders: {}", e.getMessage());
+                    return Collections.emptySet();
+                }
             }
-        } catch (IOException e) {
-            logger.error("Error retrieving orders: {}", e.getMessage());
-            return Collections.emptySet();
         } catch (InterruptedException e) {
             return Collections.emptySet();
         }
-    }
+     }
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
