@@ -21,7 +21,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @SpringBootTest
 @DisplayName("Github issue 483")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/issue483.yaml")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/issues/issue483.yaml")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(Issue483TestMock.class)

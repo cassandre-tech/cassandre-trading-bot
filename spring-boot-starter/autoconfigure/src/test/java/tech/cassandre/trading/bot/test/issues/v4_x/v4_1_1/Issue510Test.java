@@ -29,7 +29,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest
 @DisplayName("Github issue 510")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/issue510.yaml")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/issues/issue510.yaml")
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)

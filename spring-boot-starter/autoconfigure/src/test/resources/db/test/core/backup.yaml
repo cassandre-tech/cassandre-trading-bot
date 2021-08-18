@@ -2,4 +2,4 @@ databaseChangeLog:
   - include:
       file: /db/changelog/db.changelog-master.yaml
   - include:
-      file: /db/issue509.sql
+      file: /db/test/core/backup.sql

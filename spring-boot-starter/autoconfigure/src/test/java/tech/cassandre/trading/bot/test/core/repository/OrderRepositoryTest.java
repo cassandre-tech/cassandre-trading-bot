@@ -28,7 +28,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 @SpringBootTest
 @DisplayName("Repository - Order")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)

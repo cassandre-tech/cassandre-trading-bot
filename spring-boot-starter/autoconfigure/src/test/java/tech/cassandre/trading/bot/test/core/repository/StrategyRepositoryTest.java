@@ -20,7 +20,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @SpringBootTest
 @DisplayName("Repository - Strategy")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)

@@ -56,7 +56,7 @@ import static tech.cassandre.trading.bot.test.core.util.junit.configuration.Conf
 @SpringBootTest
 @DisplayName("Domain - Position")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml"),
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/backup.yaml"),
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
 @ActiveProfiles("schedule-disabled")
