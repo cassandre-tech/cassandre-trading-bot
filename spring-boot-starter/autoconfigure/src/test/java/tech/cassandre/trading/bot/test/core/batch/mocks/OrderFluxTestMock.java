@@ -34,16 +34,16 @@ public class OrderFluxTestMock extends BaseMock {
         // Order creation mock.
 
         // Order ORDER_000001 (ASK, 1, ETH/BTC).
-        MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("1"), XCHANGE_ETH_BTC);
+        MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("1"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER_000001");
         // Order ORDER_000002 (BID, 2, ETH/USDT).
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("2"), XCHANGE_ETH_USDT);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("2"), XCHANGE_ETH_USDT, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER_000002");
         // Order ORDER_000003 (ASK, 3, ETH/BTC).
-        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("3"), XCHANGE_ETH_BTC);
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("3"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER_000003");
         // Order ORDER_000004 (BID, 4, ETH/USDT).
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("4"), XCHANGE_ETH_USDT);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("4"), XCHANGE_ETH_USDT, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER_000004");
 
         // =============================================================================================================

@@ -1,11 +1,13 @@
 package tech.cassandre.trading.bot.service;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.trade.params.TradeHistoryParamsAll;
 import org.knowm.xchange.service.trade.params.orders.DefaultOpenOrdersParamCurrencyPair;
+import org.springframework.beans.factory.annotation.Value;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -25,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +41,16 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
  * Trade service - XChange implementation.
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
+
+    /** Size of the random string generated. */
+    private static final int GENERATED_ORDER_SIZE = 32;
+
+    /** Okex broker id. */
+    private static final String OKEX_BROKER_ID = "3fba96c2a09c42BC";
+
+    /** Driver class name. */
+    @Value("${cassandre.trading.bot.exchange.driver-class-name}")
+    private String driverClassName;
 
     /** Order repository. */
     private final OrderRepository orderRepository;
@@ -77,7 +90,9 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // Making the order.
             MarketOrder m = new MarketOrder(utilMapper.mapToOrderType(orderTypeDTO),
                     amount,
-                    currencyMapper.mapToCurrencyPair(currencyPair));
+                    currencyMapper.mapToCurrencyPair(currencyPair),
+                    getGeneratedOrderId(),
+                    null);
             logger.debug("Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
 
             // Sending the order.
@@ -142,7 +157,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             LimitOrder l = new LimitOrder(utilMapper.mapToOrderType(orderTypeDTO),
                     amount,
                     currencyMapper.mapToCurrencyPair(currencyPair),
-                    null,
+                    getGeneratedOrderId(),
                     null,
                     limitPrice);
             logger.debug("Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
@@ -320,7 +335,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         } catch (InterruptedException e) {
             return Collections.emptySet();
         }
-     }
+    }
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
@@ -368,6 +383,20 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         }
         logger.debug("{} trade(s) found", results.size());
         return results;
+    }
+
+    /**
+     * Returns a local generated order id.
+     *
+     * @return generated order id
+     */
+    private String getGeneratedOrderId() {
+        if (driverClassName.toLowerCase(Locale.ROOT).contains("okex")) {
+            // If we are on Okex, we use Cassandre broker id to get a reward.
+            return OKEX_BROKER_ID + RandomStringUtils.random(GENERATED_ORDER_SIZE - OKEX_BROKER_ID.length(), true, true);
+        } else {
+            return null;
+        }
     }
 
 }
