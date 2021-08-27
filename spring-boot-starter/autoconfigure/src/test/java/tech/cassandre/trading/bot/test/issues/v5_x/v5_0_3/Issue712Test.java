@@ -7,9 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -31,11 +29,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class Issue712Test {
 
-    @Autowired
-    private OrderFlux orderFlux;
-
-    @Autowired
-    private OrderRepository orderRepository;
     @Autowired
     private TradeService tradeService;
 

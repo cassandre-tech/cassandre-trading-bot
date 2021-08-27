@@ -24,7 +24,7 @@ public class Issue712TestMock extends BaseMock {
 
     @Override
     public TradeService getXChangeTradeServiceMock() throws IOException {
-        final org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
+        final TradeService mock = mock(TradeService.class);
 
         // Usual getOpenOrders() doesn't work.
         given(mock.getOpenOrders()).willThrow(new NotAvailableFromExchangeException());
