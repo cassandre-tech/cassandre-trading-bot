@@ -10,10 +10,10 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.test.core.batch.mocks.TradeFluxTestMock;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.core.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.util.Iterator;
 import java.util.Map;

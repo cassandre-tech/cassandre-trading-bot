@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Import;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.test.core.batch.mocks.AccountFluxTestMock;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.core.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.test.core.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Batch - Account flux")

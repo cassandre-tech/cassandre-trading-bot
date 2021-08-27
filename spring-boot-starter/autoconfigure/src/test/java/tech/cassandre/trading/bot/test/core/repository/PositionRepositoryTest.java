@@ -9,8 +9,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.Iterator;

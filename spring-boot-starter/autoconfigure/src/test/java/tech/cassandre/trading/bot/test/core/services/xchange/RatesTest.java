@@ -11,9 +11,9 @@ import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.core.services.xchange.mocks.RatesTestMock;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,9 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-import static tech.cassandre.trading.bot.test.core.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_ACCOUNT;
-import static tech.cassandre.trading.bot.test.core.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_TICKER;
-import static tech.cassandre.trading.bot.test.core.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_TRADE;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_ACCOUNT;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_TICKER;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_RATE_TRADE;
 
 @SpringBootTest
 @DisplayName("Service - XChange - Rates")

@@ -878,7 +878,7 @@ public final class CurrencyDTO implements Serializable {
     /**
      * For builder.
      */
-    protected CurrencyDTO() {
+    private CurrencyDTO() {
         code = null;
         attributes = null;
     }

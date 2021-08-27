@@ -1,7 +1,11 @@
 package tech.cassandre.trading.bot.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.Hibernate;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.util.base.domain.BaseDomain;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -26,7 +30,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 /**
  * Trade.
  */
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "TRADES")
 public class Trade extends BaseDomain {
@@ -92,7 +99,7 @@ public class Trade extends BaseDomain {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
         final Trade that = (Trade) o;

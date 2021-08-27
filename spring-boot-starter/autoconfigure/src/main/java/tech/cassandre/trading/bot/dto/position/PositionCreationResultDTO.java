@@ -46,7 +46,7 @@ public class PositionCreationResultDTO {
      *
      * @return successful
      */
-    public final boolean isSuccessful() {
+    public boolean isSuccessful() {
         return position != null;
     }
 
