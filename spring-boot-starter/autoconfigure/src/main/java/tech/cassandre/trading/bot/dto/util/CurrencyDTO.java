@@ -938,7 +938,7 @@ public final class CurrencyDTO implements Serializable {
      *
      * @param commonCode       commonly used code for this currency: "BTC"
      * @param name             Name of the currency: "Bitcoin"
-     * @param unicode          Unicode symbol for the currency: "\u20BF" or "฿"
+     * @param unicode          Unicode symbols for the currency: "\u20BF" or "฿"
      * @param alternativeCodes Alternative codes for the currency: "XBT"
      * @return currency
      */
