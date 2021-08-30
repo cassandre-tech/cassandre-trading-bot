@@ -9,6 +9,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 import static lombok.AccessLevel.PRIVATE;
@@ -26,7 +27,7 @@ import static lombok.AccessLevel.PRIVATE;
  * BTC : 0.99963006
  * ETH : 10
  * <p>
- * - Buying 0.004 Bitcoin (should costs 0.05748 ether).
+ * - Buying 0.004 Bitcoin (should cost 0.05748 ether).
  * TradeDTO{currencyPair=ETH/BTC, originalAmount=0.004, price=0.034797}
  * <p>
  * - Account after buying
@@ -47,10 +48,10 @@ public class TradeDTO {
     /** An identifier set by the exchange that uniquely identifies the trade. */
     String tradeId;
 
-    /** Order type i.e. bid or ask. */
+    /** Order type i.e. bid (buy) or ask (sell). */
     OrderTypeDTO type;
 
-    /** The id of the order responsible for execution of this trade. */
+    /** The order responsible for this trade. */
     String orderId;
 
     /** Order. */
@@ -74,6 +75,45 @@ public class TradeDTO {
     /** The timestamp of the trade. */
     ZonedDateTime timestamp;
 
+    /**
+     * Returns amount value.
+     *
+     * @return amount value
+     */
+    public BigDecimal getAmountValue() {
+        if (amount == null) {
+            return null;
+        } else {
+            return amount.getValue();
+        }
+    }
+
+    /**
+     * Returns price value.
+     *
+     * @return price value
+     */
+    public BigDecimal getPriceValue() {
+        if (price == null) {
+            return null;
+        } else {
+            return price.getValue();
+        }
+    }
+
+    /**
+     * Returns fee value.
+     *
+     * @return fee value
+     */
+    public BigDecimal getFeeValue() {
+        if (fee == null) {
+            return null;
+        } else {
+            return fee.getValue();
+        }
+    }
+
     @Override
     public final boolean equals(final Object o) {
         if (this == o) {
@@ -91,7 +131,6 @@ public class TradeDTO {
                 .append(this.amount, that.amount)
                 .append(this.price, that.price)
                 .append(this.fee, that.fee)
-                .append(this.userReference, that.userReference)
                 .append(this.timestamp, that.timestamp)
                 .isEquals();
     }

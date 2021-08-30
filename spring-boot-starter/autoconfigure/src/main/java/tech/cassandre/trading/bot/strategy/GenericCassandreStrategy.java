@@ -1,6 +1,10 @@
 package tech.cassandre.trading.bot.strategy;
 
 import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import tech.cassandre.trading.bot.batch.PositionFlux;
+import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -33,7 +37,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
@@ -57,38 +62,41 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Position mapper. */
     protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
 
+    /** Logger. */
+    protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
+
     /** Strategy. */
-    private StrategyDTO strategy;
+    protected StrategyDTO strategy;
+
+    /** Position flux. */
+    protected PositionFlux positionFlux;
 
     /** Order repository. */
-    private OrderRepository orderRepository;
+    protected OrderRepository orderRepository;
 
     /** Trade repository. */
-    private TradeRepository tradeRepository;
+    protected TradeRepository tradeRepository;
 
     /** Position repository. */
-    private PositionRepository positionRepository;
+    protected PositionRepository positionRepository;
 
     /** Exchange service. */
-    private ExchangeService exchangeService;
+    protected ExchangeService exchangeService;
 
     /** Trade service. */
-    private TradeService tradeService;
+    protected TradeService tradeService;
 
     /** Position service. */
-    private PositionService positionService;
+    protected PositionService positionService;
 
     /** The accounts owned by the user. */
-    private final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
+    private final Map<String, AccountDTO> userAccounts = new LinkedHashMap<>();
 
-    /** Positions previous status. */
-    private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
-
-    /** Amounts locked by positions. */
-    private final Map<Long, CurrencyAmountDTO> amountsLockedByPosition = new ConcurrentHashMap<>();
-
-    /** Last ticker received. */
+    /** Last tickers received. */
     private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
+
+    /** Positions previous status - used for onPositionsStatusUpdates() - Internal use only. */
+    private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
     // =================================================================================================================
     // Internal methods to setup dependencies.
@@ -102,26 +110,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return strategy;
     }
 
-    @Override
-    public final void setStrategy(final StrategyDTO newStrategyDTO) {
-        this.strategy = newStrategyDTO;
-    }
-
-    @Override
-    public void initializeAccounts(final Map<String, AccountDTO> newAccounts) {
-        accounts.putAll(newAccounts);
-    }
-
-    @Override
-    public final void setPositionRepository(final PositionRepository newPositionRepository) {
-        this.positionRepository = newPositionRepository;
-    }
-
-    @Override
-    public final void setOrderRepository(final OrderRepository newOrderRepository) {
-        this.orderRepository = newOrderRepository;
-    }
-
     /**
      * Getter exchangeService.
      *
@@ -132,13 +120,35 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     @Override
-    public void setExchangeService(final ExchangeService newExchangeService) {
-        this.exchangeService = newExchangeService;
+    public final void setStrategy(final StrategyDTO newStrategyDTO) {
+        this.strategy = newStrategyDTO;
+    }
+
+    @Override
+    public void setPositionFlux(final PositionFlux newPositionFlux) {
+        positionFlux = newPositionFlux;
+    }
+
+    @Override
+    public final void setPositionRepository(final PositionRepository newPositionRepository) {
+        this.positionRepository = newPositionRepository;
+        // To manage onPositionsStatusUpdates, we retrieve the positions' status from our database.
+        this.positionRepository.findByStatusNot(CLOSED).forEach(position -> previousPositionsStatus.put(position.getId(), position.getStatus()));
+    }
+
+    @Override
+    public final void setOrderRepository(final OrderRepository newOrderRepository) {
+        this.orderRepository = newOrderRepository;
     }
 
     @Override
     public final void setTradeRepository(final TradeRepository newTradeRepository) {
         this.tradeRepository = newTradeRepository;
+    }
+
+    @Override
+    public void setExchangeService(final ExchangeService newExchangeService) {
+        this.exchangeService = newExchangeService;
     }
 
     @Override
@@ -149,72 +159,97 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setPositionService(final PositionService newPositionService) {
         this.positionService = newPositionService;
-        // We set the previous positions status from database.
-        this.positionService.getPositions()
-                .stream()
-                .filter(p -> p.getStatus() != CLOSED)
-                .forEach(p -> previousPositionsStatus.put(p.getId(), p.getStatus()));
-        // We set the locked amount from database.
-        this.positionService.getPositions()
-                .stream()
-                .filter(p -> p.getStatus() != CLOSED)
-                .forEach(p -> amountsLockedByPosition.put(p.getId(), p.getAmountToLock()));
+    }
+
+    @Override
+    public void initializeAccounts(final Map<String, AccountDTO> newAccounts) {
+        userAccounts.putAll(newAccounts);
     }
 
     // =================================================================================================================
     // Internal methods for event management.
-
     @Override
-    public void accountUpdate(final AccountDTO account) {
-        accounts.put(account.getAccountId(), account);
-        onAccountUpdate(account);
+    public void accountsUpdates(final Set<AccountDTO> accounts) {
+        // We notify the strategy.
+        final Map<String, AccountDTO> accountsUpdates = accounts.stream()
+                // We store the account values in the strategy.
+                .peek(accountDTO -> userAccounts.put(accountDTO.getAccountId(), accountDTO))
+                .collect(Collectors.toMap(AccountDTO::getAccountId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
+
+        // We notify the strategy.
+        onAccountsUpdates(accountsUpdates);
     }
 
     @Override
-    public void tickerUpdate(final TickerDTO ticker) {
-        // In multi strategies, all tickers are delivered to all strategies, so we filter in here.
-        if (getRequestedCurrencyPairs().contains(ticker.getCurrencyPair())) {
-            lastTickers.put(ticker.getCurrencyPair(), ticker);
-            onTickerUpdate(ticker);
-        }
+    public void tickersUpdates(final Set<TickerDTO> tickers) {
+        // We only retrieve the tickers requested by the strategy.
+        final Map<CurrencyPairDTO, TickerDTO> tickersUpdates = tickers.stream()
+                .filter(tickerDTO -> getRequestedCurrencyPairs().contains(tickerDTO.getCurrencyPair()))
+                // We update the values of the last tickers that can be found in the strategy.
+                .peek(tickerDTO -> lastTickers.put(tickerDTO.getCurrencyPair(), tickerDTO))
+                .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value) -> id, LinkedHashMap::new));
+
+        // We update the positions with tickers.
+        updatePositionsWithTickersUpdates(tickersUpdates);
+
+        // We notify the strategy.
+        onTickersUpdates(tickersUpdates);
     }
 
     @Override
-    public void orderUpdate(final OrderDTO order) {
-        if (order.getStrategy().getId().equals(strategy.getId())) {
-            onOrderUpdate(order);
-        }
+    public void ordersUpdates(final Set<OrderDTO> orders) {
+        // We only retrieve the orders created by this strategy.
+        final Map<String, OrderDTO> ordersUpdates = orders.stream()
+                .filter(orderDTO -> orderDTO.getStrategy().getId().equals(strategy.getId()))
+                .collect(Collectors.toMap(OrderDTO::getOrderId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
+
+        // We update the positions with orders.
+        updatePositionsWithOrdersUpdates(ordersUpdates);
+
+        // We notify the strategy.
+        onOrdersUpdates(ordersUpdates);
     }
 
     @Override
-    public void tradeUpdate(final TradeDTO trade) {
-        if (trade.getOrder().getStrategy().getStrategyId().equals(strategy.getStrategyId())) {
-            onTradeUpdate(trade);
-        }
+    public void tradesUpdates(final Set<TradeDTO> trades) {
+        // We only retrieve the trades created by this strategy.
+        final Map<String, TradeDTO> tradesUpdates = trades.stream()
+                .filter(tradeDTO -> tradeDTO.getOrder().getStrategy().getId().equals(strategy.getId()))
+                .collect(Collectors.toMap(TradeDTO::getTradeId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
+
+        // We update the positions with trades.
+        updatePositionsWithTradesUpdates(tradesUpdates);
+
+        // We notify the strategy.
+        onTradesUpdates(tradesUpdates);
     }
 
     @Override
-    public void positionUpdate(final PositionDTO position) {
-        // On every position update, we update the position locked.
-        amountsLockedByPosition.put(position.getId(), position.getAmountToLock());
-        if (position.getStatus() == CLOSED) {
-            amountsLockedByPosition.remove(position.getId());
-        }
+    public void positionsUpdates(final Set<PositionDTO> positions) {
+        final Map<Long, PositionDTO> positionsUpdates = new HashMap<>();
+        final Map<Long, PositionDTO> positionsStatusUpdates = new HashMap<>();
 
-        // For every position update.
-        if (position.getStrategy().getId().equals(strategy.getId())) {
-            onPositionUpdate(position);
+        positions.stream()
+                .filter(positionDTO -> positionDTO.getStrategy().getId().equals(strategy.getId()))
+                .forEach(positionDTO -> {
+                    positionsUpdates.put(positionDTO.getPositionId(), positionDTO);
 
-            // From positionUpdate(), we see if it's also a onPositionStatusUpdate().
-            if (previousPositionsStatus.get(position.getId()) != position.getStatus()) {
-                previousPositionsStatus.put(position.getId(), position.getStatus());
-                if (position.getStatus() == CLOSED) {
-                    // As CLOSED positions cannot change anymore, we don't need to store their previous positions.
-                    previousPositionsStatus.remove(position.getId());
-                }
-                onPositionStatusUpdate(position);
-            }
-        }
+                    // From positionUpdate(), we see if it's also a onPositionStatusUpdate().
+                    if (previousPositionsStatus.get(positionDTO.getId()) != positionDTO.getStatus()) {
+                        if (positionDTO.getStatus() == CLOSED) {
+                            // As CLOSED positions cannot change anymore, we don't need to store their previous positions.
+                            previousPositionsStatus.remove(positionDTO.getId());
+                        } else {
+                            // As we have a new status for this position, we update it in previousPositionsStatus.
+                            previousPositionsStatus.put(positionDTO.getId(), positionDTO.getStatus());
+                        }
+                        positionsStatusUpdates.put(positionDTO.getPositionId(), positionDTO);
+                    }
+                });
+
+        // We notify the strategy.
+        onPositionsUpdates(positionsUpdates);
+        onPositionsStatusUpdates(positionsStatusUpdates);
     }
 
     // =================================================================================================================
@@ -226,7 +261,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return accounts
      */
     public final Map<String, AccountDTO> getAccounts() {
-        return accounts;
+        return userAccounts;
     }
 
     /**
@@ -236,8 +271,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return account
      */
     public final Optional<AccountDTO> getAccountByAccountId(final String accountId) {
-        if (accounts.containsKey(accountId)) {
-            return Optional.of(accounts.get(accountId));
+        if (userAccounts.containsKey(accountId)) {
+            return Optional.of(userAccounts.get(accountId));
         } else {
             return Optional.empty();
         }
@@ -254,17 +289,18 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return amountsLockedByPosition
      */
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
-        return amountsLockedByPosition;
+        return positionService.getAmountsLockedByPosition();
     }
 
     /**
-     * Returns the amount locked by currency.
+     * Returns the amounts locked for a specific currency.
      *
      * @param currency currency
      * @return amount
      */
     public final BigDecimal getAmountsLockedByCurrency(final CurrencyDTO currency) {
-        return amountsLockedByPosition.values()
+        return getAmountsLockedByPosition()
+                .values()
                 .stream()
                 .filter(currencyAmount -> currencyAmount.getCurrency().equals(currency))
                 .map(CurrencyAmountDTO::getValue)
@@ -289,26 +325,22 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currencyPair currency pair
      * @return last ticker received
      */
-    public final Optional<TickerDTO> getLastTickerByCurrencyPair(final String currencyPair) {
-        if (currencyPair == null) {
-            return Optional.empty();
-        } else {
-            return getLastTickerByCurrencyPair(new CurrencyPairDTO(currencyPair));
-        }
-    }
-
-    /**
-     * Return the last ticker for a currency pair.
-     *
-     * @param currencyPair currency pair
-     * @return last ticker received
-     */
     public final Optional<TickerDTO> getLastTickerByCurrencyPair(final CurrencyPairDTO currencyPair) {
         if (currencyPair == null) {
             return Optional.empty();
         } else {
             return Optional.ofNullable(lastTickers.get(currencyPair));
         }
+    }
+
+    /**
+     * Returns the last price received for a currency pair.
+     *
+     * @param currencyPair currency pair
+     * @return last price
+     */
+    public final BigDecimal getLastPriceForCurrencyPair(final CurrencyPairDTO currencyPair) {
+        return getLastTickerByCurrencyPair(currencyPair).map(TickerDTO::getLast).orElse(null);
     }
 
     // =================================================================================================================
@@ -373,6 +405,66 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     // Related to positions.
 
     /**
+     * Update strategy positions with tickers updates.
+     *
+     * @param tickers tickers updates
+     */
+    void updatePositionsWithTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        // We check if any ticker updates a position, and we close if it's time.
+        positionRepository.findByStatusNot(CLOSED)
+                .stream()
+                .map(positionMapper::mapToPositionDTO)
+                // Only the positions of this strategy.
+                .filter(positionDTO -> positionDTO.getStrategy().getId().equals(strategy.getId()))
+                // Only if we received the ticker requested by the position.
+                .filter(positionDTO -> tickers.get(positionDTO.getCurrencyPair()) != null)
+                // We send the ticker corresponding to the currency pair of the position. If it returns true, we emit because price changed.
+                .filter(positionDTO -> positionDTO.tickerUpdate(tickers.get(positionDTO.getCurrencyPair())))
+                .peek(positionDTO -> logger.debug("Position {} updated with ticker {}", positionDTO.getPositionId(), tickers.get(positionDTO.getCurrencyPair())))
+                .peek(positionDTO -> positionFlux.emitValue(positionDTO))
+                // We check if the position should be closed, if true, we closed and position service will emit the position.
+                .filter(positionDTO -> positionDTO.isForceClosing() || positionDTO.shouldBeClosed())
+                .peek(positionDTO -> logger.debug("Closing position {}", positionDTO.getPositionId()))
+                .forEach(positionDTO -> positionService.closePosition(this, positionDTO.getId(), tickers.get(positionDTO.getCurrencyPair())));
+    }
+
+    /**
+     * Update strategy positions with orders updates.
+     *
+     * @param orders orders updates
+     */
+    void updatePositionsWithOrdersUpdates(final Map<String, OrderDTO> orders) {
+        // We check if any order updates a position.
+        orders.values().forEach(orderDTO -> {
+            logger.debug("Updating positions with order {}", orderDTO);
+            positionRepository.findByStatusNot(CLOSED).stream()
+                    .map(positionMapper::mapToPositionDTO)
+                    .filter(positionDTO -> positionDTO.getStrategy().getId().equals(strategy.getId()))
+                    .filter(positionDTO -> positionDTO.orderUpdate(orderDTO))
+                    .peek(positionDTO -> logger.debug("Position {} updated with order {}", positionDTO.getPositionId(), orderDTO))
+                    .forEach(positionFlux::emitValue);
+        });
+    }
+
+    /**
+     * Update strategy positions with trades updates.
+     *
+     * @param trades trades updates
+     */
+    void updatePositionsWithTradesUpdates(final Map<String, TradeDTO> trades) {
+        // We check if any trade updates a position.
+        trades.values().forEach(tradeDTO -> {
+            logger.debug("Updating positions with trade {}", tradeDTO);
+            positionRepository.findByStatusNot(CLOSED).stream()
+                    .map(positionMapper::mapToPositionDTO)
+                    .filter(positionDTO -> positionDTO.getStrategy().getId().equals(strategy.getId()))
+                    .filter(positionDTO -> positionDTO.tradeUpdate(tradeDTO))
+                    .peek(positionDTO -> logger.debug("Position {} updated with trade {}", positionDTO.getPositionId(), tradeDTO))
+                    .forEach(positionFlux::emitValue);
+        });
+    }
+
+    /**
      * Returns list of positions.
      *
      * @return positions
@@ -399,7 +491,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @return total gains
      */
-    public final HashMap<CurrencyDTO, GainDTO> getGains() {
+    public final Map<CurrencyDTO, GainDTO> getGains() {
         return positionService.getGains();
     }
 
@@ -415,7 +507,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public OrderCreationResultDTO createBuyMarketOrder(final CurrencyPairDTO currencyPair,
                                                        final BigDecimal amount) {
-        return tradeService.createBuyMarketOrder(strategy, currencyPair, amount);
+        return tradeService.createBuyMarketOrder(this, currencyPair, amount);
     }
 
     /**
@@ -427,7 +519,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public OrderCreationResultDTO createSellMarketOrder(final CurrencyPairDTO currencyPair,
                                                         final BigDecimal amount) {
-        return tradeService.createSellMarketOrder(strategy, currencyPair, amount);
+        return tradeService.createSellMarketOrder(this, currencyPair, amount);
     }
 
     /**
@@ -441,7 +533,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair,
                                                       final BigDecimal amount,
                                                       final BigDecimal limitPrice) {
-        return tradeService.createBuyLimitOrder(strategy, currencyPair, amount, limitPrice);
+        return tradeService.createBuyLimitOrder(this, currencyPair, amount, limitPrice);
     }
 
     /**
@@ -455,7 +547,28 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair,
                                                        final BigDecimal amount,
                                                        final BigDecimal limitPrice) {
-        return tradeService.createSellLimitOrder(strategy, currencyPair, amount, limitPrice);
+        return tradeService.createSellLimitOrder(this, currencyPair, amount, limitPrice);
+    }
+
+    /**
+     * Cancel order.
+     *
+     * @param id id
+     * @return true if cancelled
+     */
+    boolean cancelOrder(final long id) {
+        final Optional<Order> order = orderRepository.findById(id);
+        return order.filter(value -> cancelOrder(value.getOrderId())).isPresent();
+    }
+
+    /**
+     * Cancel order.
+     *
+     * @param orderId order id
+     * @return true if cancelled
+     */
+    boolean cancelOrder(final String orderId) {
+        return tradeService.cancelOrder(orderId);
     }
 
     /**
@@ -471,7 +584,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public PositionCreationResultDTO createLongPosition(final CurrencyPairDTO currencyPair,
                                                         final BigDecimal amount,
                                                         final PositionRulesDTO rules) {
-        return positionService.createLongPosition(strategy, currencyPair, amount, rules);
+        return positionService.createLongPosition(this, currencyPair, amount, rules);
     }
 
     /**
@@ -487,13 +600,13 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public PositionCreationResultDTO createShortPosition(final CurrencyPairDTO currencyPair,
                                                          final BigDecimal amount,
                                                          final PositionRulesDTO rules) {
-        return positionService.createShortPosition(strategy, currencyPair, amount, rules);
+        return positionService.createShortPosition(this, currencyPair, amount, rules);
     }
 
     /**
      * Update position rules.
      *
-     * @param id position id
+     * @param id       position id
      * @param newRules new rules
      */
     public void updatePositionRules(final long id, final PositionRulesDTO newRules) {
@@ -502,44 +615,44 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     /**
      * Close position (no matter the rules).
-     * The closing will happened when the next ticker arrives.
+     * The closing will happen when the next ticker arrives.
      *
      * @param id position id
      */
     public void closePosition(final long id) {
-        positionService.closePosition(id);
+        positionService.forcePositionClosing(id);
     }
 
     // =================================================================================================================
     // Methods that can be implemented by strategies.
 
     @Override
-    public void onAccountUpdate(final AccountDTO account) {
+    public void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
 
     }
 
     @Override
-    public void onTickerUpdate(final TickerDTO ticker) {
+    public void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
 
     }
 
     @Override
-    public void onOrderUpdate(final OrderDTO order) {
+    public void onOrdersUpdates(final Map<String, OrderDTO> orders) {
 
     }
 
     @Override
-    public void onTradeUpdate(final TradeDTO trade) {
+    public void onTradesUpdates(final Map<String, TradeDTO> trades) {
 
     }
 
     @Override
-    public void onPositionUpdate(final PositionDTO position) {
+    public void onPositionsUpdates(final Map<Long, PositionDTO> positions) {
 
     }
 
     @Override
-    public void onPositionStatusUpdate(final PositionDTO position) {
+    public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
 
     }
 
@@ -588,11 +701,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @param currencyPair currency pair
      * @param amount       amount
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final CurrencyPairDTO currencyPair,
                                 final BigDecimal amount) {
-        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(accounts.values()));
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(userAccounts.values()));
         return tradeAccount.filter(account -> canBuy(account, currencyPair, amount)).isPresent();
     }
 
@@ -602,12 +715,12 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currencyPair        currency pair
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after buying
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final CurrencyPairDTO currencyPair,
                                 final BigDecimal amount,
                                 final BigDecimal minimumBalanceAfter) {
-        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(accounts.values()));
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(userAccounts.values()));
         return tradeAccount.filter(account -> canBuy(account, currencyPair, amount, minimumBalanceAfter)).isPresent();
     }
 
@@ -617,7 +730,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param account      account
      * @param currencyPair currency pair
      * @param amount       amount
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final AccountDTO account,
                                 final CurrencyPairDTO currencyPair,
@@ -632,7 +745,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currencyPair        currency pair
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after buying
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final AccountDTO account,
                                 final CurrencyPairDTO currencyPair,
@@ -666,11 +779,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      *
      * @param currency currency
      * @param amount   amount
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final CurrencyDTO currency,
                                  final BigDecimal amount) {
-        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(accounts.values()));
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(userAccounts.values()));
         return tradeAccount.filter(account -> canSell(account, currency, amount)).isPresent();
     }
 
@@ -680,12 +793,12 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currency            currency
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after selling
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final CurrencyDTO currency,
                                  final BigDecimal amount,
                                  final BigDecimal minimumBalanceAfter) {
-        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(accounts.values()));
+        final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(userAccounts.values()));
         return tradeAccount.filter(account -> canSell(account, currency, amount, minimumBalanceAfter)).isPresent();
     }
 
@@ -695,7 +808,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param account  account
      * @param currency currency pair
      * @param amount   amount
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final AccountDTO account,
                                  final CurrencyDTO currency,
@@ -710,7 +823,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currency            currency
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after selling
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final AccountDTO account,
                                  final CurrencyDTO currency,

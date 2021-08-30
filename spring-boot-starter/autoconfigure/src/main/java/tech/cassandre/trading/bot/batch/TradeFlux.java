@@ -1,24 +1,23 @@
 package tech.cassandre.trading.bot.batch;
 
+import lombok.RequiredArgsConstructor;
 import tech.cassandre.trading.bot.domain.Trade;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.base.batch.BaseExternalFlux;
+import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * Trade flux - push {@link TradeDTO}.
  */
-public class TradeFlux extends BaseExternalFlux<TradeDTO> {
-
-    /** Trade service. */
-    private final TradeService tradeService;
+@RequiredArgsConstructor
+public class TradeFlux extends BaseFlux<TradeDTO> {
 
     /** Order repository. */
     private final OrderRepository orderRepository;
@@ -26,63 +25,62 @@ public class TradeFlux extends BaseExternalFlux<TradeDTO> {
     /** Trade repository. */
     private final TradeRepository tradeRepository;
 
-    /**
-     * Constructor.
-     *
-     * @param newTradeService    trade service
-     * @param newOrderRepository order repository
-     * @param newTradeRepository trade repository
-     */
-    public TradeFlux(final TradeService newTradeService,
-                     final OrderRepository newOrderRepository,
-                     final TradeRepository newTradeRepository) {
-        this.tradeRepository = newTradeRepository;
-        this.orderRepository = newOrderRepository;
-        this.tradeService = newTradeService;
-    }
+    /** Trade service. */
+    private final TradeService tradeService;
 
     @Override
     protected final Set<TradeDTO> getNewValues() {
-        logger.debug("TradeFlux - Retrieving new values");
+        logger.debug("Retrieving trades from exchange");
         Set<TradeDTO> newValues = new LinkedHashSet<>();
 
-        // Finding which trades has been updated.
+        // Finding which trades have been updated.
         tradeService.getTrades()
-                .stream().filter(t -> orderRepository.findByOrderId(t.getOrderId()).isPresent())    // We only accept trades with order present in database
+                .stream()
+                // Note: we only save trades when the order present in database.
+                .filter(t -> orderRepository.findByOrderId(t.getOrderId()).isPresent())
                 .forEach(trade -> {
-                    logger.debug("TradeFlux - Treating trade : {}", trade.getTradeId());
+                    logger.debug("Checking trade: {}", trade.getTradeId());
                     final Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId(trade.getTradeId());
-                    if (tradeInDatabase.isEmpty() || !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
-                        logger.debug("TradeFlux - Trade {} has changed : {}", trade.getTradeId(), trade);
+
+                    // The trade is not in database.
+                    if (tradeInDatabase.isEmpty()) {
+                        logger.debug("New trade from exchange: {}", trade);
+                        newValues.add(trade);
+                    }
+
+                    // The trade is in database but the trade values from the server changed.
+                    if (tradeInDatabase.isPresent() && !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
+                        logger.debug("Updated trade from exchange: {}", trade);
                         newValues.add(trade);
                     }
                 });
-        logger.debug("TradeFlux - {} trade(s) updated", newValues.size());
+
         return newValues;
     }
 
     @Override
-    public final Optional<TradeDTO> saveValue(final TradeDTO newValue) {
-        AtomicReference<Trade> valueToSave = new AtomicReference<>();
+    public final Set<TradeDTO> saveValues(final Set<TradeDTO> newValues) {
+        Set<Trade> trades = new LinkedHashSet<>();
 
-        tradeRepository.findByTradeId(newValue.getTradeId())
+        // We create or update every trade retrieved by the exchange.
+        newValues.forEach(newValue -> tradeRepository.findByTradeId(newValue.getTradeId())
                 .ifPresentOrElse(trade -> {
                     // Update trade.
                     tradeMapper.updateTrade(newValue, trade);
-                    orderRepository.findByOrderId(newValue.getOrderId())
-                            .ifPresent(trade::setOrder);
-                    valueToSave.set(trade);
-                    logger.debug("TradeFlux - Updating trade in database {}", trade);
+                    trades.add(tradeRepository.save(trade));
+                    logger.debug("Updating trade in database: {}", trade);
                 }, () -> {
                     // Create trade.
                     final Trade newTrade = tradeMapper.mapToTrade(newValue);
-                    orderRepository.findByOrderId(newValue.getOrderId())
-                            .ifPresent(newTrade::setOrder);
-                    valueToSave.set(newTrade);
-                    logger.debug("TradeFlux - Creating trade in database {}", newTrade);
-                });
+                    // Order is always present as we check it in getNewValues().
+                    orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(newTrade::setOrder);
+                    trades.add(tradeRepository.save(newTrade));
+                    logger.debug("Creating trade in database: {}", newTrade);
+                }));
 
-        return Optional.ofNullable(tradeMapper.mapToTradeDTO(tradeRepository.save(valueToSave.get())));
+        return trades.stream()
+                .map(tradeMapper::mapToTradeDTO)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 }

@@ -14,7 +14,6 @@ jobs:
     steps:
       # ================================================================================================================
       - name: GPG Setup
-        id: gpg
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
@@ -23,9 +22,9 @@ jobs:
 
       # ================================================================================================================
       - name: JDK 11 Setup
-        id: jdk
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'adopt'
           java-version: '11'
           server-id: ossrh
           server-username: MAVEN_USERNAME
@@ -33,18 +32,10 @@ jobs:
 
       # ================================================================================================================
       - name: Retrieve the sources
-        id: sources
-        uses: actions/checkout@v1
-
-      # ================================================================================================================
-      - name: Retrieve the version
-        id: version
-        run: |
-          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+        uses: actions/checkout@v2
 
       # ================================================================================================================
       - name: Build, run tests, package and deploy to Maven central
-        id: package
         env: # Environment variables.
           # GPG.
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -55,8 +46,20 @@ jobs:
           mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
 
       # ================================================================================================================
+      - name: Upload codacy coverage results
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
+          --project-token ${{ secrets.CODACY_API_TOKEN }} \
+          -r spring-boot-starter/autoconfigure/target/site/jacoco/jacoco.xml
+
+      # ================================================================================================================
+      - name: Retrieve the version from Maven pom
+        id: version
+        run: |
+          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+
+      # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic strategy
-        id: cassandre-trading-bot-spring-boot-starter-basic-archetype
         run: |
           mvn -B archetype:generate \
             -DarchetypeGroupId=tech.cassandre.trading.bot \
@@ -66,11 +69,10 @@ jobs:
             -DartifactId=archetype-test-basic \
             -Dversion=1.0-SNAPSHOT \
             -Dpackage=com.example
-          mvn -f archetype-test-basic/pom.xml compile
+          mvn -f archetype-test-basic/pom.xml test
 
       # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic ta4j strategy
-        id: cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype
         run: |
           mvn -B archetype:generate \
             -DarchetypeGroupId=tech.cassandre.trading.bot \
@@ -80,4 +82,4 @@ jobs:
             -DartifactId=archetype-test-ta4j-basic \
             -Dversion=1.0-SNAPSHOT \
             -Dpackage=com.example
-          mvn -f archetype-test-ta4j-basic/pom.xml compile
+          mvn -f archetype-test-ta4j-basic/pom.xml test

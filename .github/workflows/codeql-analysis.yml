@@ -2,40 +2,39 @@ name: "CodeQL"
 
 on:
   schedule:
-    - cron: '0 18 * * FRI'
+    - cron: '0 17 * * FRI'
 
 jobs:
   analyze:
+    # ==================================================================================================================
+    # Configuration.
     name: Analyze
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        # We must fetch at least the immediate parents so that if this is
-        # a pull request then we can checkout the head.
-        fetch-depth: 2
+      # ================================================================================================================
+      - name: JDK 11 Setup
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
 
-    # If this run was triggered by a pull request event, then checkout
-    # the head of the pull request instead of the merge commit.
-    - run: git checkout HEAD^2
-      if: ${{ github.event_name == 'pull_request' }}
+      # ================================================================================================================
+      - name: Retrieve the sources
+        uses: actions/checkout@v2
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: java
+      # ================================================================================================================
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1.0.7
+        with:
+          languages: java
 
-    - name: JDK 11 Setup
-      uses: actions/setup-java@v1
-      with:
-        java-version: '11'
+      # ================================================================================================================
+      - name: Build, run tests and package
+        run: |
+          mvn package
 
-    - name: Build, run tests, package and deploy to Maven central
-      run: |
-        mvn package
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      # ================================================================================================================
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1.0.7

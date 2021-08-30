@@ -20,11 +20,11 @@ import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
+import tech.cassandre.trading.bot.service.MarketServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
+import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.service.xchange.MarketServiceXChangeImplementation;
-import tech.cassandre.trading.bot.service.xchange.TradeServiceXChangeImplementation;
-import tech.cassandre.trading.bot.service.xchange.UserServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.UserServiceXChangeImplementation;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -43,11 +43,11 @@ import static org.mockito.Mockito.mock;
  */
 public class BaseMock extends BaseTest {
 
+    /** Service rate. */
+    private static final int SERVICE_RATE = 900;
+
     @Autowired
     private ApplicationContext applicationContext;
-
-    /** Service rate. */
-    public static final int SERVICE_RATE = 900;
 
     @Autowired
     protected OrderRepository orderRepository;
@@ -73,14 +73,14 @@ public class BaseMock extends BaseTest {
     @Bean
     @Primary
     public OrderFlux orderFlux() {
-        return new OrderFlux(tradeService(), orderRepository);
+        return new OrderFlux(orderRepository, tradeService());
     }
 
     @Bean
     @Primary
 
     public TradeFlux tradeFlux() {
-        return new TradeFlux(tradeService(), orderRepository,tradeRepository);
+        return new TradeFlux(orderRepository,tradeRepository, tradeService());
     }
 
     @Bean

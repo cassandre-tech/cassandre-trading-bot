@@ -5,7 +5,35 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
-      time: "20:00"
+      time: "18:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 10
+    target-branch: development
+  - package-ecosystem: maven
+    directory: "trading-bot-archetypes/basic-archetype/src/main/resources/archetype-resources"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "18:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 10
+    target-branch: development
+  - package-ecosystem: maven
+    directory: "trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "18:00"
+      timezone: Europe/Paris
+    open-pull-requests-limit: 10
+    target-branch: development
+
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "18:00"
       timezone: Europe/Paris
     open-pull-requests-limit: 10
     target-branch: development

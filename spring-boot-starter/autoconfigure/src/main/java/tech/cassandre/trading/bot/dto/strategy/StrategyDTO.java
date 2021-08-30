@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.dto.strategy;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.ToString;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -32,6 +33,7 @@ public class StrategyDTO {
     String name;
 
     /** Last position id used. */
+    @ToString.Exclude
     AtomicLong lastPositionIdUsed = new AtomicLong();
 
     /**
@@ -72,7 +74,6 @@ public class StrategyDTO {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
-                .append(strategyId)
                 .toHashCode();
     }
 

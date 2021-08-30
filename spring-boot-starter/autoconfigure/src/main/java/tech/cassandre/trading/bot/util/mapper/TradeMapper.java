@@ -27,6 +27,7 @@ public interface TradeMapper {
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapUserTradeToTradeDTOAmount")
     @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
     @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
+    @Mapping(target = "order", ignore = true)
     @Mapping(source = "orderUserReference", target = "userReference")
     @Mapping(source = "instrument", target = "currencyPair")
     TradeDTO mapToTradeDTO(UserTrade source);
@@ -36,19 +37,27 @@ public interface TradeMapper {
     @Mapping(target = "updatedOn", ignore = true)
     default CurrencyAmountDTO mapUserTradeToTradeDTOAmount(UserTrade source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
-        return CurrencyAmountDTO.builder()
-                .value(source.getOriginalAmount())
-                .currency(cp.getBaseCurrency())
-                .build();
+        if (source.getOriginalAmount() != null && source.getInstrument() != null) {
+            return CurrencyAmountDTO.builder()
+                    .value(source.getOriginalAmount())
+                    .currency(cp.getBaseCurrency())
+                    .build();
+        } else {
+            return null;
+        }
     }
 
     @Named("mapUserTradeToTradeDTOPrice")
     default CurrencyAmountDTO mapUserTradeToTradeDTOPrice(UserTrade source) {
         CurrencyPairDTO cp = new CurrencyPairDTO(source.getInstrument());
-        return CurrencyAmountDTO.builder()
-                .value(source.getPrice())
-                .currency(cp.getQuoteCurrency())
-                .build();
+        if (source.getPrice() != null && source.getInstrument() != null) {
+            return CurrencyAmountDTO.builder()
+                    .value(source.getPrice())
+                    .currency(cp.getQuoteCurrency())
+                    .build();
+        } else {
+            return null;
+        }
     }
 
     @Named("mapUserTradeToTradeDTOFee")
@@ -81,6 +90,7 @@ public interface TradeMapper {
     // Domain to DTO.
 
     @Mapping(target = "order.trades", ignore = true)
+    @Mapping(target = "orderId", source = "order.orderId")
     TradeDTO mapToTradeDTO(Trade source);
 
 }

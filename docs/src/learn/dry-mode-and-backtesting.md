@@ -31,7 +31,7 @@ You can use the dry mode to test your trading bot with real data, but you can al
 ## Backtesting
 In simple words, backtesting a strategy is the process of testing a trading strategy on prior time periods. Cassandre trading bot allows you to simulate your bots' reaction to historical data during tests. 
 
-The first step is to add [cassandre-trading-bot-spring-boot-starter-test](https://mvnrepository.com/artifact/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-starter-test) to your project dependency.
+The first step is to add [cassandre-trading-bot-spring-boot-starter-test](https://search.maven.org/search?q=a:cassandre-trading-bot-spring-boot-starter-test) to your project dependency.
 
 Edit your `pom.xml` file and add this dependency : 
 
@@ -70,5 +70,5 @@ Place this file in the `src/test/resources` folder of your project and add this 
 
 Now, during the tests, instead of receiving tickers from the exchange, you will receive tickers imported from the `tsv/csv` files you put in `src/test/resources`.
 
-You can see an example of dry mode and backtesting in the [Technical analysis chapter](src/learn/technical-analysis-backup/overview.md).
+You can see an example of dry mode and backtesting in the [Technical analysis chapter](./technical-analysis).
 

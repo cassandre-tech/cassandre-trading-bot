@@ -1,7 +1,11 @@
 package tech.cassandre.trading.bot.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.Hibernate;
 import tech.cassandre.trading.bot.dto.trade.OrderTypeDTO;
 import tech.cassandre.trading.bot.util.base.domain.BaseDomain;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -26,7 +30,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 /**
  * Trade.
  */
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "TRADES")
 public class Trade extends BaseDomain {
@@ -41,25 +48,21 @@ public class Trade extends BaseDomain {
     @Column(name = "TRADE_ID")
     private String tradeId;
 
-    /** Order type i.e. bid or ask. */
+    /** Trade type i.e. bid (buy) or ask (sell). */
     @Enumerated(STRING)
     @Column(name = "TYPE")
     private OrderTypeDTO type;
 
-    /** The id of the order responsible for execution of this trade. */
+    /** The order responsible for this trade. */
     @ManyToOne
     @JoinColumn(name = "FK_ORDER_ID", nullable = false)
     private Order order;
-
-    /** The id of the order responsible for execution of this trade. */
-    @Column(name = "ORDER_ID")
-    private String orderId;
 
     /** Currency pair. */
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
 
-    /** Amount that was ordered (currency). */
+    /** Amount that was ordered. */
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "value", column = @Column(name = "AMOUNT_VALUE")),
@@ -83,7 +86,7 @@ public class Trade extends BaseDomain {
     })
     private CurrencyAmount fee;
 
-    /** An identifier provided by the user on placement that uniquely identifies the order. */
+    /** An identifier provided by the user on placement that uniquely identifies the order of this trade. */
     @Column(name = "USER_REFERENCE")
     private String userReference;
 
@@ -96,7 +99,7 @@ public class Trade extends BaseDomain {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
         final Trade that = (Trade) o;
@@ -104,7 +107,6 @@ public class Trade extends BaseDomain {
                 .append(this.id, that.id)
                 .append(this.tradeId, that.tradeId)
                 .append(this.type, that.type)
-                .append(this.orderId, that.orderId)
                 .append(this.currencyPair, that.currencyPair)
                 .append(this.amount, that.amount)
                 .append(this.price, that.price)
@@ -117,7 +119,7 @@ public class Trade extends BaseDomain {
     @Override
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(tradeId)
                 .toHashCode();
     }
 

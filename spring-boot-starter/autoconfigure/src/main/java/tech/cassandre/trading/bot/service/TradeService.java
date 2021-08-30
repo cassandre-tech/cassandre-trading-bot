@@ -1,16 +1,16 @@
 package tech.cassandre.trading.bot.service;
 
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
 /**
- * Service giving information about orders and allowing you to create new orders.
+ * Service getting information about orders and allowing you to create new ones.
  */
 public interface TradeService {
 
@@ -22,7 +22,7 @@ public interface TradeService {
      * @param amount       amount
      * @return order result (order id or error)
      */
-    OrderCreationResultDTO createBuyMarketOrder(StrategyDTO strategy,
+    OrderCreationResultDTO createBuyMarketOrder(GenericCassandreStrategy strategy,
                                                 CurrencyPairDTO currencyPair,
                                                 BigDecimal amount);
 
@@ -34,7 +34,7 @@ public interface TradeService {
      * @param amount       amount
      * @return order result (order id or error)
      */
-    OrderCreationResultDTO createSellMarketOrder(StrategyDTO strategy,
+    OrderCreationResultDTO createSellMarketOrder(GenericCassandreStrategy strategy,
                                                  CurrencyPairDTO currencyPair,
                                                  BigDecimal amount);
 
@@ -47,7 +47,7 @@ public interface TradeService {
      * @param limitPrice   the highest acceptable price
      * @return order result (order id or error)
      */
-    OrderCreationResultDTO createBuyLimitOrder(StrategyDTO strategy,
+    OrderCreationResultDTO createBuyLimitOrder(GenericCassandreStrategy strategy,
                                                CurrencyPairDTO currencyPair,
                                                BigDecimal amount,
                                                BigDecimal limitPrice);
@@ -61,7 +61,7 @@ public interface TradeService {
      * @param limitPrice   the lowest acceptable price
      * @return order result (order id or error)
      */
-    OrderCreationResultDTO createSellLimitOrder(StrategyDTO strategy,
+    OrderCreationResultDTO createSellLimitOrder(GenericCassandreStrategy strategy,
                                                 CurrencyPairDTO currencyPair,
                                                 BigDecimal amount,
                                                 BigDecimal limitPrice);
@@ -73,15 +73,6 @@ public interface TradeService {
      * @return true if cancelled
      */
     boolean cancelOrder(String orderId);
-
-    /**
-     * Get open orders.
-     *
-     * @return list of open orders
-     * @deprecated use getOrders instead.
-     */
-    @Deprecated(since = "4.0")
-    Set<OrderDTO> getOpenOrders();
 
     /**
      * Get orders from exchange.

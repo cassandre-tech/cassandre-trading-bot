@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+**Release number**
+Cassandre release you are using.
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 

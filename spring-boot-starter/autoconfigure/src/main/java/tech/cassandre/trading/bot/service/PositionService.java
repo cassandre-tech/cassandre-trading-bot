@@ -4,20 +4,20 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
-import tech.cassandre.trading.bot.dto.trade.OrderDTO;
-import tech.cassandre.trading.bot.dto.trade.TradeDTO;
+import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
+import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * Service allowing to create and retrieve positions.
+ * Service allowing you to manage your positions.
  */
 public interface PositionService {
 
@@ -32,15 +32,15 @@ public interface PositionService {
      * @param rules        rules
      * @return position creation result
      */
-    PositionCreationResultDTO createLongPosition(StrategyDTO strategy,
+    PositionCreationResultDTO createLongPosition(GenericCassandreStrategy strategy,
                                                  CurrencyPairDTO currencyPair,
                                                  BigDecimal amount,
                                                  PositionRulesDTO rules);
 
     /**
-     * Creates a long position with its associated rules.
+     * Creates a short position with its associated rules.
      * Short position is nothing but selling share.
-     * If you are bearish (means you think that price of xyz share are going to fall) at that time you sell some amount of share is called taking Short Position in share.
+     * If you are bearish (means you think that price of X share are going to fall) at that time you sell some amount of share is called taking Short Position in share.
      *
      * @param strategy     strategy
      * @param currencyPair currency pair
@@ -48,7 +48,7 @@ public interface PositionService {
      * @param rules        rules
      * @return position creation result
      */
-    PositionCreationResultDTO createShortPosition(StrategyDTO strategy,
+    PositionCreationResultDTO createShortPosition(GenericCassandreStrategy strategy,
                                                   CurrencyPairDTO currencyPair,
                                                   BigDecimal amount,
                                                   PositionRulesDTO rules);
@@ -56,18 +56,27 @@ public interface PositionService {
     /**
      * Update position rules.
      *
-     * @param id position id
+     * @param id       position id
      * @param newRules new rules
      */
     void updatePositionRules(long id, PositionRulesDTO newRules);
 
     /**
-     * Close position (no matter the rules).
-     * The closing will happened when the next ticker arrives.
+     * Close a position - This method is used by Cassandre internally.
+     *
+     * @param strategy strategy
+     * @param id       position id
+     * @param ticker   ticker
+     * @return order creation result
+     */
+    OrderCreationResultDTO closePosition(GenericCassandreStrategy strategy, long id, TickerDTO ticker);
+
+    /**
+     * Force a position to close (no matter the rules) - This method can be use by user code.
      *
      * @param id position id
      */
-    void closePosition(long id);
+    void forcePositionClosing(long id);
 
     /**
      * Get positions.
@@ -85,31 +94,17 @@ public interface PositionService {
     Optional<PositionDTO> getPositionById(long id);
 
     /**
-     * Method called by streams at every order update.
+     * Returns the amounts locked by each position.
      *
-     * @param order order
+     * @return amounts locked by each position
      */
-    void orderUpdate(OrderDTO order);
-
-    /**
-     * Method called by streams on every trade update.
-     *
-     * @param trade trade
-     */
-    void tradeUpdate(TradeDTO trade);
-
-    /**
-     * Method called by streams at every ticker update.
-     *
-     * @param ticker ticker
-     */
-    void tickerUpdate(TickerDTO ticker);
+    Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition();
 
     /**
      * Return the gains made by all closed positions.
      *
      * @return gains by currency.
      */
-    HashMap<CurrencyDTO, GainDTO> getGains();
+    Map<CurrencyDTO, GainDTO> getGains();
 
 }

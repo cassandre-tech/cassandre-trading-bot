@@ -78,7 +78,7 @@ public class AccountDTO {
                 .append(this.name, that.name)
                 .append(this.balances.size(), that.balances.size())
                 .isEquals();
-        // Tests balances.
+        // Test balances.
         if (equals) {
             // Testing balances.
             for (Map.Entry<CurrencyDTO, BalanceDTO> balance : balances.entrySet()) {
@@ -102,7 +102,6 @@ public class AccountDTO {
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(accountId)
-                .append(name)
                 .toHashCode();
     }
 

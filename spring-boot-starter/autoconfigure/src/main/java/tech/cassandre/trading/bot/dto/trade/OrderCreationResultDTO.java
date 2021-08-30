@@ -8,9 +8,6 @@ import lombok.Getter;
 @Getter
 public final class OrderCreationResultDTO {
 
-    /** Order ID (filled if order creation is successful). */
-    private final String orderId;
-
     /** Order (filled if order creation is successful). */
     private OrderDTO order;
 
@@ -20,17 +17,12 @@ public final class OrderCreationResultDTO {
     /** Exception (filled if order creation failed). */
     private final Exception exception;
 
-    /** Indicates if the position creation was successful or not. */
-    private final boolean successful;
-
     /**
      * Constructor for successful order creation.
      *
      * @param newOrder order
      */
     public OrderCreationResultDTO(final OrderDTO newOrder) {
-        successful = true;
-        this.orderId = newOrder.getOrderId();
         this.order = newOrder;
         this.errorMessage = null;
         this.exception = null;
@@ -43,15 +35,35 @@ public final class OrderCreationResultDTO {
      * @param newException    exception
      */
     public OrderCreationResultDTO(final String newErrorMessage, final Exception newException) {
-        successful = false;
-        this.orderId = null;
         this.errorMessage = newErrorMessage;
         this.exception = newException;
     }
 
+    /**
+     * Getter successful.
+     *
+     * @return successful
+     */
+    public boolean isSuccessful() {
+        return order != null;
+    }
+
+    /**
+     * Getter orderId.
+     *
+     * @return orderId
+     */
+    public String getOrderId() {
+        if (getOrder() != null) {
+            return getOrder().getOrderId();
+        } else {
+            return "No order";
+        }
+    }
+
     @Override
     public String toString() {
-        if (successful) {
+        if (isSuccessful()) {
             return "OrderCreationResultDTO{"
                     + " order='" + order + '\''
                     + '}';

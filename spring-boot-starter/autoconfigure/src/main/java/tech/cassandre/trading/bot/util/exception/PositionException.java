@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.util.exception;
 
 /**
- * Position exception.
+ * Exception in cassandre position.
  */
 public class PositionException extends RuntimeException {
 

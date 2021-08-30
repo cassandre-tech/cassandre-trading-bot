@@ -1,6 +1,9 @@
 package tech.cassandre.trading.bot.util.base.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,9 +14,12 @@ import javax.persistence.MappedSuperclass;
 import java.time.ZonedDateTime;
 
 /**
- * Base domain.
+ * Base domain (manage createdOn and updatedOn fields).
  */
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseDomain {

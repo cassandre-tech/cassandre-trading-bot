@@ -1,7 +1,7 @@
-# Quickstart
+ # Quickstart
 
 ::: tip
-If you are new to trading, you can read our tutorial [Trading basics](../ressources/trading-basics.md).
+If you are new to trading, you can read our tutorial "[Trading basics](../ressources/trading-basics.md)".
 :::
 
 ## Create your project
@@ -17,7 +17,7 @@ mvn archetype:generate \
 
 It will ask for the following parameters:
 
-| Parameters | Description | Examples |
+| Parameters | Description | Example values |
 | :--- | :--- | :--- |
 | groupId | The id of the project's group | com.mycompany.app |
 | artifactId | The id of the artifact (project) | my-app |
@@ -61,7 +61,7 @@ Your bot configuration is located in `src/main/resources/application.properties`
 ```properties
 #
 # Exchange configuration.
-cassandre.trading.bot.exchange.name=kucoin
+cassandre.trading.bot.exchange.driver-class-name=kucoin
 cassandre.trading.bot.exchange.username=kucoin.cassandre.test@gmail.com
 cassandre.trading.bot.exchange.passphrase=cassandre
 cassandre.trading.bot.exchange.key=6054ad25365ac6000689a998
@@ -71,16 +71,16 @@ cassandre.trading.bot.exchange.secret=af080d55-afe3-47c9-8ec1-4b479fbcc5e7
 cassandre.trading.bot.exchange.modes.sandbox=true
 cassandre.trading.bot.exchange.modes.dry=false
 #
-# Exchange API calls rates (ms or standard ISO 8601 duration like 'PT5S').
+# Exchange API calls rates (In ms or standard ISO 8601 duration like 'PT5S').
 cassandre.trading.bot.exchange.rates.account=2000
 cassandre.trading.bot.exchange.rates.ticker=2000
 cassandre.trading.bot.exchange.rates.trade=2000
 #
 # Database configuration.
-cassandre.trading.bot.database.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver
-cassandre.trading.bot.database.datasource.url=jdbc:hsqldb:mem:cassandre
-cassandre.trading.bot.database.datasource.username=sa
-cassandre.trading.bot.database.datasource.password=
+spring.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver
+spring.datasource.url=jdbc:hsqldb:mem:cassandre
+spring.datasource.username=sa
+spring.datasource.password=
 ```
 
 ::: tip
@@ -134,55 +134,59 @@ import java.util.Set;
 @CassandreStrategy(strategyName = "Simple strategy")
 public final class SimpleStrategy extends BasicCassandreStrategy {
 
-	@Override
-	public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-		// We only ask about ETC/BTC (Base currency : BTC / Quote currency : USDT).
-		return Set.of(new CurrencyPairDTO(BTC, USDT));
-	}
+    @Override
+    public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
+        // We only ask about ETC/BTC (Base currency : BTC / Quote currency : USDT).
+        return Set.of(new CurrencyPairDTO(BTC, USDT));
+    }
 
-	@Override
-	public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-		// From all the accounts retrieved by the server, we return the one we used for trading.
-		return accounts.stream()
-				.filter(a -> "trade".equals(a.getName()))
-				.findFirst();
-	}
+    @Override
+    public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
+        // From all the accounts we have on the exchange, we must return the one we use for trading.
+        if (accounts.size() == 1) {
+            return accounts.stream().findAny();
+        } else {
+            return accounts.stream()
+                    .filter(a -> "trade".equals(a.getName()))
+                    .findFirst();
+        }
+    }
 
-	@Override
-	public void onAccountUpdate(final AccountDTO account) {
-		// Here, we will receive an AccountDTO each time there is a change on your account.
-		System.out.println("Received information about an account : " + account);
-	}
+    @Override
+    public final void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
+        // Here, we will receive an AccountDTO each time there is a change on your account.
+        accounts.values().forEach(account -> System.out.println("Received information about an account : " + account));
+    }
 
-	@Override
-	public void onTickerUpdate(final TickerDTO ticker) {
-		// Here we will receive a TickerDTO each time a new one is available.
-		System.out.println("Received information about a ticker : " + ticker);
-	}
+    @Override
+    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        // Here we will receive all tickers we required from the exchange.
+        tickers.values().forEach(ticker -> System.out.println("Received information about a ticker : " + ticker));
+    }
 
-	@Override
-	public void onOrderUpdate(final OrderDTO order) {
-		// Here, we will receive an OrderDTO each time order data has changed on the exchange.
-		System.out.println("Received information about an order : " + order);
-	}
+    @Override
+    public final void onOrdersUpdates(final Map<String, OrderDTO> orders) {
+        // Here, we will receive an OrderDTO each time order data has changed on the exchange.
+        orders.values().forEach(order -> System.out.println("Received information about an order : " + order));
+    }
 
-	@Override
-	public void onTradeUpdate(final TradeDTO trade) {
-		// Here, we will receive a TradeDTO each time trade data has changed on the exchange.
-		System.out.println("Received information about a trade : " + trade);
-	}
+    @Override
+    public void onTradesUpdates(final Map<String, TradeDTO> trades) {
+        // Here, we will receive a TradeDTO each time trade data has changed on the exchange.
+        trades.values().forEach(trade -> System.out.println("Received information about a trade : " + trade));
+    }
 
-	@Override
-	public void onPositionUpdate(final PositionDTO position) {
-		// Here, we will receive a PositionDTO each time a position has changed.
-		System.out.println("Received information about a position : " + position);
-	}
+    @Override
+    public void onPositionsUpdates(final Map<Long, PositionDTO> positions) {
+        // Here, we will receive a PositionDTO each time a position has changed.
+        positions.values().forEach(position -> System.out.println("Received information about a position : " + position));
+    }
 
-	@Override
-	public void onPositionStatusUpdate(final PositionDTO position) {
-		// Here, we will receive a PositionDTO each time a position status has changed.
-		System.out.println("Received information about a position status : " + position);
-	}	
+    @Override
+    public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
+        // Here, we will receive a PositionDTO each time a position status has changed.
+        positions.values().forEach(position -> System.out.println("Received information about a position status : " + position));
+    }
 
 }
 
@@ -192,21 +196,21 @@ A Cassandre strategy is a class annotated with [@CassandreStrategy](https://www.
 
 This is how it works :
 
-* In [getRequestedCurrencyPairs()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getRequestedCurrencyPairs%28%29), you have to return the list of currency pairs updates you want to receive from the exchange.
-* On the exchange, you usually have several accounts, and Cassandre needs to know which one of your accounts is the trading one. To do so, you have to implement the [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getTradeAccount%28java.util.Set%29) method, which gives you as a parameter the list of accounts you own, and from that list, you have to return only one.
-* If there is a change in your account data, [onAccountUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onAccountUpdate%28tech.cassandre.trading.bot.dto.user.AccountDTO%29) will be called.
-* When a new ticker is available, [onTickerUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickerUpdate%28tech.cassandre.trading.bot.dto.market.TickerDTO%29) will be called.
-* If there is a change in your orders, [onOrderUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onOrderUpdate%28tech.cassandre.trading.bot.dto.trade.OrderDTO%29) will be called.
-* If there is a change in your trades, [onTradeUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTradeUpdate%28tech.cassandre.trading.bot.dto.trade.TradeDTO%29) will be called.
-* If there is a change in your positions, [onPositionUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) will be called.
-* If there is a change in your position status, [onPositionStatusUpdate()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionStatusUpdate%28tech.cassandre.trading.bot.dto.position.PositionDTO%29) will be called.
+* In [getRequestedCurrencyPairs()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getRequestedCurrencyPairs%28%29), you give to Cassandre the list of currency pairs updates you want to receive from the exchange.
+* On the exchange, you usually have several accounts, and Cassandre needs to know which one of your accounts is the trading one. To do so, you have to implement the [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getTradeAccount%28java.util.Set%29) method, which gives you as a parameter the list of accounts you own, and from that list, you have to return the one you use for trading.
+* If there is a change in your account data, [onAccountsUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onAccountsUpdates(java.util.Map)) will be called.
+* When new tickers are available, [onTickersUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickersUpdates(java.util.Map)) will be called.
+* If there is a change in your orders, [onOrdersUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onOrdersUpdates(java.util.Map)) will be called.
+* If there is a change in your trades, [onTradesUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTradesUpdates(java.util.Map)) will be called.
+* If there is a change in your positions, [onPositionsUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionsUpdates(java.util.Map)) will be called.
+* If there is a change in your position status, [onPositionsStatusUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionsStatusUpdates(java.util.Map)) will be called.
 
 ## Manage orders and positions
 You can create an order like this :
 
 ```java
 @Override
-public void onTickerUpdate(final TickerDTO ticker) {
+public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
      createBuyMarketOrder(new CurrencyPairDTO(BTC, USDT), new BigDecimal("0,001"));
 }
 ```
@@ -221,21 +225,21 @@ This is the list of available methods :
 Inside your strategy, you can call [canBuy()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canBuy%28tech.cassandre.trading.bot.dto.user.AccountDTO,tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29) and [canSell()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canSell%28tech.cassandre.trading.bot.dto.util.CurrencyDTO,java.math.BigDecimal%29) methods to see if your account has enough money to buy or sell assets.
 :::
 
-Cassandre trading bot also provides positions to manage your trade automatically :
+Cassandre trading bot also provides positions to manage your trade automatically:
 
 ```java
 // Create rule.
 PositionRulesDTO rules = PositionRulesDTO.builder()
                 .stopGainPercentage(10)
                 .stopLossPercentage(5)
-                .create();
+                .build();
 // Create position.
 createLongPosition(new CurrencyPairDTO(BTC, USDT),
                 new BigDecimal("0,001"),
                 rules);
 ```
 
-First, we created a rule saying this position should be closed if the gain is more than 10% or if the loss is more than 5%. 
+First, we created a [rule](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionRulesDTO.html) saying this position should be closed if the gain is more than 10% or if the loss is more than 5%. 
 
 Then we called the [createLongPosition()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createLongPosition(tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO)) method. This will automatically create a buy order. From now, for every ticker received, Cassandre will check the gain or loss made on this position; if it triggers one of the rules, Cassandre will automatically create a sell order to close the position.
 

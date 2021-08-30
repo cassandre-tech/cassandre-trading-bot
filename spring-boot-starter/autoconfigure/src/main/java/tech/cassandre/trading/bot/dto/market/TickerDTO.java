@@ -94,7 +94,7 @@ public class TickerDTO {
      *
      * @return timestamp
      */
-    public final ZonedDateTime getTimestamp() {
+    public ZonedDateTime getTimestamp() {
         return Objects.requireNonNullElseGet(timestamp, ZonedDateTime::now);
     }
 

@@ -8,10 +8,10 @@ import java.text.DecimalFormat;
 
 /**
  * Position rules for {@link PositionDTO}.
- * It is used to know if cassandre should close a position.
+ * It is used to know when cassandre should close a position.
  * Supported rules :
- * - Stop gain with percentage.
- * - Stop loss with percentage.
+ * - Stop gain in percentage.
+ * - Stop loss in percentage.
  */
 @Getter
 public class PositionRulesDTO {

@@ -19,6 +19,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,9 +27,9 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
- * Simple strategy.
+ * Simple Ta4j strategy.
  * Please, create your own Kucoin sandbox account and do not make orders with this account.
- * How to do it : https://trading-bot.cassandre.tech/how-tos/how-to-create-a-kucoin-account
+ * How to do it : https://trading-bot.cassandre.tech/ressources/how-tos/how-to-create-a-kucoin-account.html
  */
 @CassandreStrategy(strategyName = "Simple ta4j strategy")
 public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
@@ -41,9 +42,8 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-        // From all the accounts retrieved by the server, we return the one we used for trading.
+        // From all the accounts we have on the exchange, we must return the one we use for trading.
         if (accounts.size() == 1) {
-            // Used for Gemini integration tests.
             return accounts.stream().findAny();
         } else {
             return accounts.stream()
@@ -73,15 +73,15 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
     }
 
     @Override
-    public void onTickerUpdate(TickerDTO ticker) {
-        // Display all received tickers.
-        System.out.println("New ticker " + ticker);
+    public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+        // Here we will receive all tickers we required from the exchange.
+        tickers.values().forEach(ticker -> System.out.println("Received information about a ticker : " + ticker));
     }
 
     @Override
-    public void onPositionStatusUpdate(PositionDTO position) {
+    public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
         // Here, we will receive a PositionDTO each time a position status has changed.
-        System.out.println(" > Position update : " + position);
+        positions.values().forEach(position -> System.out.println("Received information about a position status : " + position));
     }
 
     @Override

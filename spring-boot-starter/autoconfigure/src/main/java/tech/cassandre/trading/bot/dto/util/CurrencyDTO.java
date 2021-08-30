@@ -666,6 +666,9 @@ public final class CurrencyDTO implements Serializable {
     /** Tether USD Anchor. */
     public static final CurrencyDTO USDT = createCurrency("USDT", "Tether USD Anchor", null);
 
+    /** USD Coin. */
+    public static final CurrencyDTO USDC = createCurrency("USDC", "USD Coin", null);
+
     /** Unitary Status Dollar eCoin. */
     public static final CurrencyDTO USDE = createCurrency("USDE", "Unitary Status Dollar eCoin", null);
 
@@ -875,7 +878,7 @@ public final class CurrencyDTO implements Serializable {
     /**
      * For builder.
      */
-    protected CurrencyDTO() {
+    private CurrencyDTO() {
         code = null;
         attributes = null;
     }
@@ -935,7 +938,7 @@ public final class CurrencyDTO implements Serializable {
      *
      * @param commonCode       commonly used code for this currency: "BTC"
      * @param name             Name of the currency: "Bitcoin"
-     * @param unicode          Unicode symbol for the currency: "\u20BF" or "฿"
+     * @param unicode          Unicode symbols for the currency: "\u20BF" or "฿"
      * @param alternativeCodes Alternative codes for the currency: "XBT"
      * @return currency
      */

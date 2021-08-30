@@ -25,12 +25,13 @@ public interface PositionMapper {
     Position mapToPosition(PositionDTO source);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "strategy", ignore = true)
     @Mapping(target = "positionId", ignore = true)
     @Mapping(target = "stopGainPercentageRule", ignore = true)
     @Mapping(target = "stopLossPercentageRule", ignore = true)
+    @Mapping(target = "forceClosing", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
-    @Mapping(target = "strategy", ignore = true)
     void updatePosition(PositionDTO source, @MappingTarget Position target);
 
     // =================================================================================================================
@@ -50,13 +51,13 @@ public interface PositionMapper {
                     .stopLossPercentage(source.getStopLossPercentageRule())
                     .build();
         }
-        // Stop gain set.
+        // Only a stop gain set.
         if (stopGainRuleSet && !stopLossRuleSet) {
             rules = PositionRulesDTO.builder()
                     .stopGainPercentage(source.getStopGainPercentageRule())
                     .build();
         }
-        // Stop loss set.
+        // Only a stop loss set.
         if (!stopGainRuleSet && stopLossRuleSet) {
             rules = PositionRulesDTO.builder()
                     .stopLossPercentage(source.getStopLossPercentageRule())

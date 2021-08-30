@@ -1,7 +1,7 @@
 #set($symbol_pound='#')
-        #set($symbol_dollar='$')
-        #set($symbol_escape='\' )
-        package ${package};
+#set($symbol_dollar='$')
+#set($symbol_escape='\' )
+package ${package};
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,11 +12,12 @@ import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.test.mock.TickerFluxMock;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 
 /**
  * Basic Ta4j strategy test.
@@ -37,16 +38,23 @@ public class SimpleTa4jStrategyTest {
     public void gainTest() {
         await().forever().until(() -> tickerFluxMock.isFluxDone());
 
-        final HashMap<CurrencyDTO, GainDTO> gains = strategy.getGains();
+        final Map<CurrencyDTO, GainDTO> gains = strategy.getGains();
 
         System.out.println("Cumulated gains:");
         gains.forEach((currency, gain) -> System.out.println(currency + " : " + gain.getAmount()));
 
-        System.out.println("Position still opened :");
+        System.out.println("Position closed:");
         strategy.getPositions()
                 .values()
                 .stream()
-                .filter(p -> p.getStatus().equals(OPENED))
+                .filter(p -> p.getStatus().equals(CLOSED))
+                .forEach(p -> System.out.println(" - " + p.getDescription()));
+
+        System.out.println("Position not closed:");
+        strategy.getPositions()
+                .values()
+                .stream()
+                .filter(p -> !p.getStatus().equals(CLOSED))
                 .forEach(p -> System.out.println(" - " + p.getDescription()));
 
         assertTrue(gains.get(strategy.getRequestedCurrencyPair().getQuoteCurrency()).getPercentage() > 0);

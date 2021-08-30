@@ -1,12 +1,15 @@
 package tech.cassandre.trading.bot.util.jpa;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
@@ -14,7 +17,9 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 /**
  * Currency amount (amount value + currency).
  */
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @Embeddable
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class CurrencyAmount {
@@ -27,18 +32,28 @@ public class CurrencyAmount {
     String currency;
 
     @Override
+    public final String toString() {
+        if (value != null) {
+            return value + " " + currency;
+        } else {
+            return "Null";
+        }
+    }
+
+    @Override
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
-        final CurrencyAmount that = (CurrencyAmount) o;
-        return new EqualsBuilder()
-                .append(this.value, that.value)
-                .append(this.currency, that.currency)
-                .isEquals();
+        CurrencyAmount that = (CurrencyAmount) o;
+
+        if (!Objects.equals(value, that.value)) {
+            return false;
+        }
+        return Objects.equals(currency, that.currency);
     }
 
     @Override
@@ -47,15 +62,6 @@ public class CurrencyAmount {
                 .append(value)
                 .append(currency)
                 .toHashCode();
-    }
-
-    @Override
-    public final String toString() {
-        if (value != null) {
-            return value + " " + currency;
-        } else {
-            return "Not provided";
-        }
     }
 
 }

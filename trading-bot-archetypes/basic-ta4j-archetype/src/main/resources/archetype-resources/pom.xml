@@ -26,16 +26,14 @@
 	<dependencies>
 		<!-- Spring dependencies -->
 		<dependency>
-			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
-			<version>2.4.5</version>
+			<version>2.5.4</version>
 		</dependency>
 		<dependency>
-			<!-- https://mvnrepository.com/artifact/org.hsqldb/hsqldb -->
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>2.5.1</version>
+			<version>2.6.0</version>
 		</dependency>
 
 		<!-- Cassandre trading bot -->
@@ -45,19 +43,23 @@
 			<version>@project.version@</version>
 		</dependency>
 		<!-- Our archetype is using Kucoin exchange sanbox - Add here the dependency of the exchange you want to use -->
-		<!-- https://search.maven.org/search?q=g:org.knowm.xchange%20AND%20a:xchange-*%20AND%20NOT%20stream -->
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-kucoin</artifactId>
-			<version>5.0.7</version>
+			<version>@xchange.version@</version>
+		</dependency>
+		<dependency>
+			<groupId>org.knowm.xchange</groupId>
+			<artifactId>xchange-simulated</artifactId>
+			<version>@xchange.version@</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Tests -->
 		<dependency>
-			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<version>2.4.5</version>
+			<version>2.5.4</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -67,10 +69,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<!-- https://mvnrepository.com/artifact/org.awaitility/awaitility -->
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
-			<version>4.0.3</version>
+			<version>4.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -89,20 +90,17 @@
 		<plugins>
 			<!-- Spring boot -->
 			<plugin>
-				<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin -->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.4.5</version>
+				<version>2.5.4</version>
 			</plugin>
 			<!-- Surefire -->
 			<plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.2</version>
 			</plugin>
 			<plugin>
-				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-failsafe-plugin -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.22.2</version>

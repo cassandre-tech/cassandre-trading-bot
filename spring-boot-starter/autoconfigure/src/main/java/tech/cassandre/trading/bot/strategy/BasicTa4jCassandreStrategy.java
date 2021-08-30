@@ -9,16 +9,18 @@ import reactor.core.publisher.BaseSubscriber;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.ta4j.BarAggregator;
-import tech.cassandre.trading.bot.ta4j.DurationBarAggregator;
+import tech.cassandre.trading.bot.util.ta4j.BarAggregator;
+import tech.cassandre.trading.bot.util.ta4j.DurationBarAggregator;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Basic ta4j strategy.
@@ -96,14 +98,21 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     @Override
-    public final void tickerUpdate(final TickerDTO ticker) {
-        if (getRequestedCurrencyPairs().contains(ticker.getCurrencyPair())) { // filter only tickers for strategy instrument
+    public final void tickersUpdates(final Set<TickerDTO> tickers) {
+        // We only retrieve the ticker requested by the strategy (only one because it's a ta4j strategy).
+        final Map<CurrencyPairDTO, TickerDTO> tickersUpdates = tickers.stream()
+                .filter(ticker -> getRequestedCurrencyPair().equals(ticker.getCurrencyPair()))
+                .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity()));
+
+        tickersUpdates.values().forEach(ticker -> {
             getLastTickers().put(ticker.getCurrencyPair(), ticker);
-
             barAggregator.update(ticker.getTimestamp(), ticker.getLast(), ticker.getVolume());
+        });
 
-            onTickerUpdate(ticker);
-        }
+        // We update the positions with tickers.
+        updatePositionsWithTickersUpdates(tickersUpdates);
+
+        onTickersUpdates(tickersUpdates);
     }
 
     private Bar addBarAndCallStrategy(final Bar bar) {
@@ -124,7 +133,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      * Returns true if we have enough assets to buy.
      *
      * @param amount amount
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final BigDecimal amount) {
         final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
@@ -136,7 +145,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      *
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after buying
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final BigDecimal amount,
                                 final BigDecimal minimumBalanceAfter) {
@@ -149,7 +158,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      *
      * @param account account
      * @param amount  amount
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final AccountDTO account,
                                 final BigDecimal amount) {
@@ -162,7 +171,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      * @param account             account
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after buying
-     * @return true if we there is enough assets to buy
+     * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final AccountDTO account,
                                 final BigDecimal amount,
@@ -175,7 +184,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      *
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after buying
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final BigDecimal amount,
                                  final BigDecimal minimumBalanceAfter) {
@@ -187,7 +196,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      * Returns true if we have enough assets to sell.
      *
      * @param amount amount
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final BigDecimal amount) {
         final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
@@ -199,7 +208,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      *
      * @param account account
      * @param amount  amount
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final AccountDTO account,
                                  final BigDecimal amount) {
@@ -212,7 +221,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      * @param account             account
      * @param amount              amount
      * @param minimumBalanceAfter minimum balance that should be left after selling
-     * @return true if we there is enough assets to sell
+     * @return true if we have enough assets to sell
      */
     public final boolean canSell(final AccountDTO account,
                                  final BigDecimal amount,
@@ -221,12 +230,12 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     /**
-     * Called when your strategy says you should enter.
+     * Called when your strategy think you should enter.
      */
     public abstract void shouldEnter();
 
     /**
-     * Called when your strategy says your should exit.
+     * Called when your strategy think you should exit.
      */
     public abstract void shouldExit();
 

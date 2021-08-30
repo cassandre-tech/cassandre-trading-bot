@@ -25,7 +25,7 @@ On a chart, the horizontal axis is time, and the vertical axis is the price. The
 
 This is how it looks like :
 
-![Technical analysis chart](./technical_analysis_chart.png)
+![Technical analysis chart](./images/technical_analysis_chart.png)
 
 After adding bars to this chart, you can draw lines to forecast future prices. For example, you can draw a line connecting the highest prices, expecting other traders will sell at this point.
 
@@ -139,9 +139,14 @@ On the exchange, you usually have several accounts, and Cassandre needs to know 
 ```java
 @Override
 public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-    return accounts.stream()
-                    .filter(a -> "trade".equals(a.getName()))
-                    .findFirst();
+        // From all the accounts we have on the exchange, we must return the one we use for trading.
+        if (accounts.size() == 1) {
+            return accounts.stream().findAny();
+        } else {
+            return accounts.stream()
+                .filter(a -> "trade".equals(a.getName()))
+                .findFirst();
+        }
 }
 ```
 
@@ -166,7 +171,7 @@ public Duration getDelayBetweenTwoBars() {
 ```
 
 ::: tip
-This method allows you, for example, to receive tickers every second but only add one to the bar every day.
+This method allows you, for example, to receive tickers every second but only add one to your bar every day.
 :::
 
 ### Create your strategy
@@ -208,7 +213,7 @@ Cassandre provides positions to manage your trading automatically. First, we cre
 Then we called the [createLongPosition()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createLongPosition%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO%29) method. It will automatically create a buy order. From now, with every ticker received, Cassandre will check the gain or loss made on this position; if it triggers one of the rules, Cassandre will automatically create a sell order to close it.
 
 ::: tip
-You can learn more about positions in the [Position chapter](../position-management.md).
+You can learn more about positions in the [Position chapter](./position-management.md).
 :::
 
 ::: tip
@@ -268,15 +273,26 @@ Now we write the tests :
 @Test
 @DisplayName("Check gains")
 public void gainTest() {
+        await().forever().until(() -> tickerFluxMock.isFluxDone());
+
+        final Map<CurrencyDTO, GainDTO> gains = strategy.getGains();
+
         System.out.println("Cumulated gains:");
         gains.forEach((currency, gain) -> System.out.println(currency + " : " + gain.getAmount()));
 
-        System.out.println("Position still opened :");
+        System.out.println("Position closed:");
         strategy.getPositions()
-                .values()
-                .stream()
-                .filter(p -> p.getStatus().equals(OPENED))
-                .forEach(p -> System.out.println(" - " + p.getDescription()));
+            .values()
+            .stream()
+            .filter(p -> p.getStatus().equals(CLOSED))
+            .forEach(p -> System.out.println(" - " + p.getDescription()));
+
+        System.out.println("Position not closed:");
+        strategy.getPositions()
+            .values()
+            .stream()
+            .filter(p -> !p.getStatus().equals(CLOSED))
+            .forEach(p -> System.out.println(" - " + p.getDescription()));
 
         assertTrue(gains.get(strategy.getRequestedCurrencyPair().getQuoteCurrency()).getPercentage() > 0);
 }
@@ -284,4 +300,4 @@ public void gainTest() {
 
 The first thing we do with the `await()` method is to wait until all data from `btc-usdt.csv` are imported. Then, we calculate every closed position's gain, and we check that the profits are superior to zero.
 
-The last thing we do is display the list of open positions to see if there are things to improve.
+The last thing we do is display the list of opened positions to see if there are things to improve.
