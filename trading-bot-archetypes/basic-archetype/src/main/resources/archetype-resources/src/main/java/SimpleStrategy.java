@@ -35,7 +35,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-		// From all the accounts retrieved by the server, we return the one we used for trading.
+		// From all the accounts we have on the exchange, we must return the one we use for trading.
 		if (accounts.size() == 1) {
 			return accounts.stream().findAny();
 		} else {
@@ -53,7 +53,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
-		// Here we will receive tickers received.
+		// Here we will receive all tickers we required from the exchange.
 		tickers.values().forEach(ticker -> System.out.println("Received information about a ticker : " + ticker));
 	}
 

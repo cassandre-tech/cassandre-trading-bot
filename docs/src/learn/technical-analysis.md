@@ -139,7 +139,7 @@ On the exchange, you usually have several accounts, and Cassandre needs to know 
 ```java
 @Override
 public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
-        // From all the accounts retrieved by the server, we return the one we used for trading.
+        // From all the accounts we have on the exchange, we must return the one we use for trading.
         if (accounts.size() == 1) {
             return accounts.stream().findAny();
         } else {
