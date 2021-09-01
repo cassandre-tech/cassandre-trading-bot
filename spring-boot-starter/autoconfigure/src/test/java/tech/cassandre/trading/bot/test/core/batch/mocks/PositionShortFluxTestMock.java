@@ -5,7 +5,7 @@ import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.springframework.boot.test.context.TestConfiguration;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseMock;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -29,18 +29,18 @@ public class PositionShortFluxTestMock extends BaseMock {
 
         // Position 1.
         // Opening order creation result.
-        MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), XCHANGE_ETH_BTC);
+        MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00010");
         // Closing order creation result.
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("1000"), XCHANGE_ETH_BTC);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("1000"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00011");
 
         // Position 2.
         // Opening order creation result.
-        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("0.0002"), XCHANGE_ETH_USDT);
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("0.0002"), XCHANGE_ETH_USDT, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00020");
         // Closing order creation result.
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), XCHANGE_ETH_USDT);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), XCHANGE_ETH_USDT, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00021");
 
         return mock;

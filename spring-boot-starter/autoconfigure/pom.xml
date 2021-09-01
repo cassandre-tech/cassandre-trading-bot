@@ -53,14 +53,14 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.4.2</version>
+            <version>4.4.3</version>
         </dependency>
 
         <!-- XChange -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
-            <version>5.0.9</version>
+            <version>${xchange.version}</version>
         </dependency>
 
         <!-- Ta4j -->
@@ -121,41 +121,41 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-simulated</artifactId>
-            <version>5.0.9</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Kucoin integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>5.0.9</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Coinbase integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbase</artifactId>
-            <version>5.0.9</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-coinbasepro</artifactId>
-            <version>5.0.9</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Gemini integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-gemini</artifactId>
-            <version>5.0.9</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Binance integration tests -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-binance</artifactId>
-            <version>5.0.9</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -168,7 +168,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Dysprosium-SR21</version>
+                <version>Dysprosium-SR22</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -199,7 +199,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>8.45</version>
+                        <version>8.45.1</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -388,7 +388,7 @@
     <parent>
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
-        <version>5.0.2</version>
+        <version>5.0.3</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->

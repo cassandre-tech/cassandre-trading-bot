@@ -104,8 +104,7 @@ module.exports = {
                 text: 'Deploy & run',
                 ariaLabel: 'Deploy & run',
                 items: [
-                    {text: 'Using Docker', link: '/deploy-and-run/docker'},
-                    {text: 'Using Qovery', link: '/deploy-and-run/qovery'},
+                    {text: 'Using Docker', link: '/deploy-and-run/docker'}
                 ]
             },
             {
@@ -131,7 +130,6 @@ module.exports = {
                     {
                         text: 'How-tos', items: [
                             {text: 'Install development tools', link: '/ressources/how-tos/how-to-install-development-tools'},
-                            {text: 'Install terraform', link: '/ressources/how-tos/how-to-install-terraform'},
                             {text: 'Build from sources', link: '/ressources/how-tos/how-to-build-from-sources'},
                             {text: 'Create a release', link: '/ressources/how-tos/how-to-create-a-release'},
                             {text: 'Create a Kucoin account', link: '/ressources/how-tos/how-to-create-a-kucoin-account'},

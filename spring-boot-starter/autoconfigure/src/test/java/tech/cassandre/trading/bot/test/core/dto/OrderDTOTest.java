@@ -14,8 +14,8 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.test.core.util.junit.BaseTest.ETH_BTC;
-import static tech.cassandre.trading.bot.test.core.util.junit.BaseTest.ETH_USDT;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_USDT;
 
 @DisplayName("DTO - OrderDTO")
 public class OrderDTOTest {

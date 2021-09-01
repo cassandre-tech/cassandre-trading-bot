@@ -8,9 +8,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 @SpringBootTest
 @DisplayName("Repository - Order")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/backup.yaml")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/backup.yaml")
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)

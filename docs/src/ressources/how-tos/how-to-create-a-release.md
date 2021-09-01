@@ -3,9 +3,6 @@
 ## Prepare the release
 * Fix [Codacy](https://app.codacy.com/gh/cassandre-tech/cassandre-trading-bot/issues) & Intellij warnings.
 * Update [security.md](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/SECURITY.md).
-* Update libraries used by archetypes:
-  * [trading-bot-archetypes/basic-archetype/src/main/resources/archetype-resources/pom.xml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-archetypes/basic-archetype/src/main/resources/archetype-resources/pom.xml).
-  * [trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources/pom.xml](https://github.com/cassandre-tech/cassandre-trading-bot/blob/development/trading-bot-archetypes/basic-ta4j-archetype/src/main/resources/archetype-resources/pom.xml).
 
 ## Create the release with Maven
 You must be using `ssh` and not `https`. To switch to `ssh`, type : 

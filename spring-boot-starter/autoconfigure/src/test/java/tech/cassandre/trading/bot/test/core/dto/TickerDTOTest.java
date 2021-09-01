@@ -3,7 +3,7 @@ package tech.cassandre.trading.bot.test.core.dto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

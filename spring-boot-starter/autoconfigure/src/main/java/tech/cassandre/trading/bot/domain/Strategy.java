@@ -1,7 +1,11 @@
 package tech.cassandre.trading.bot.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.Hibernate;
 import tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO;
 import tech.cassandre.trading.bot.util.base.domain.BaseDomain;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -19,7 +23,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 /**
  * Strategy.
  */
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "STRATEGIES")
 public class Strategy extends BaseDomain {
@@ -48,7 +55,7 @@ public class Strategy extends BaseDomain {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
         final Strategy that = (Strategy) o;

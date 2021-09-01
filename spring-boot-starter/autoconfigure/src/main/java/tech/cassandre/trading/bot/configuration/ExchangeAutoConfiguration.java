@@ -198,6 +198,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 throw new ConfigurationException("Error while connecting to the exchange: " + e.getMessage());
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ConfigurationException("Unknown configuration error: " + e.getMessage());
         }
     }

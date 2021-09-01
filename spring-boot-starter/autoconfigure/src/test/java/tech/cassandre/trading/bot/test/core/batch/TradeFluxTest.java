@@ -10,10 +10,10 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.test.core.batch.mocks.TradeFluxTestMock;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.core.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -34,7 +34,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest
 @DisplayName("Batch - Trade flux")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/trade-test.yaml")
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/trade-test.yaml")
 })
 @Import(TradeFluxTestMock.class)
 public class TradeFluxTest extends BaseTest {

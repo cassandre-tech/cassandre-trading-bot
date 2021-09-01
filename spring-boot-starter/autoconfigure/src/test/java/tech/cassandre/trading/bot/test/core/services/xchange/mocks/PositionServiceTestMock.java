@@ -5,7 +5,7 @@ import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.service.trade.TradeService;
 import org.springframework.boot.test.context.TestConfiguration;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseMock;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -27,24 +27,24 @@ public class PositionServiceTestMock extends BaseMock {
         given(mock.getTradeHistory(any())).willReturn(new UserTrades(Collections.emptyList(), SortByTimestamp));
 
         // Position 1 creation reply (order ORDER00010).
-        MarketOrder m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0001"), XCHANGE_ETH_BTC);
+        MarketOrder m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0001"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00010");
 
         // Position 2 creation reply (order ORDER00020).
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), XCHANGE_ETH_USDT);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0002"), XCHANGE_ETH_USDT, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00020");
 
         // Position 3 creation reply (order ORDER00030).
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0003"), XCHANGE_ETH_BTC);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("0.0003"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willThrow(new RuntimeException("Error exception"));
 
         // For checkLowestHighestAndLatestGain().
         // Position 1.
         // Opening reply (order ORDER00010).
-        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("10"), XCHANGE_ETH_BTC);
+        m = new MarketOrder(Order.OrderType.BID, new BigDecimal("10"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00010");
         // Closing reply (order ORDER00011).
-        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), XCHANGE_ETH_BTC);
+        m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("10"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER00011");
 
         return mock;

@@ -38,7 +38,7 @@ public class GainDTO {
      *
      * @return netAmount
      */
-    public final CurrencyAmountDTO getNetAmount() {
+    public CurrencyAmountDTO getNetAmount() {
         if (amount != null && fees != null) {
             return CurrencyAmountDTO.builder()
                     .value(amount.getValue().subtract(fees.getValue()))

@@ -2,7 +2,7 @@ package tech.cassandre.trading.bot.test.issues.v4_x.v4_2_2;
 
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.test.context.TestConfiguration;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseMock;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import static org.mockito.Mockito.mock;
 

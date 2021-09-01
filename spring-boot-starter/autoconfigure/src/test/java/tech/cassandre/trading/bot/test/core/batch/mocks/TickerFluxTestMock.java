@@ -3,7 +3,7 @@ package tech.cassandre.trading.bot.test.core.batch.mocks;
 import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.test.context.TestConfiguration;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseMock;
+import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 
 import java.io.IOException;
 import java.math.BigDecimal;

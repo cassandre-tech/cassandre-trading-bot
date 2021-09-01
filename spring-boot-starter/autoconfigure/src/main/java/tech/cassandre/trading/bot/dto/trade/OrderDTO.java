@@ -81,7 +81,7 @@ public class OrderDTO {
      *
      * @param newStatus new status
      */
-    public final void updateStatus(final OrderStatusDTO newStatus) {
+    public void updateStatus(final OrderStatusDTO newStatus) {
         status = newStatus;
     }
 
@@ -91,7 +91,7 @@ public class OrderDTO {
      * @param tradeId trade id
      * @return trade
      */
-    public final Optional<TradeDTO> getTrade(final String tradeId) {
+    public Optional<TradeDTO> getTrade(final String tradeId) {
         return trades.stream()
                 .filter(t -> t.getTradeId().equals(tradeId))
                 .findFirst();
@@ -167,7 +167,7 @@ public class OrderDTO {
      *
      * @return true if order completed
      */
-    public final boolean isFulfilled() {
+    public boolean isFulfilled() {
         return getTrades()
                 .stream()
                 .map(TradeDTO::getAmountValue)

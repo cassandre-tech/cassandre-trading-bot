@@ -30,7 +30,7 @@ At this moment, Cassandre will create a buy order of 0.5 ETH (1 ETH costs 1500 U
 Note: if you want to check if you have enough funds available (at least 750 USDT in our case) before creating the position, you can use the [canBuy()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canBuy%28tech.cassandre.trading.bot.dto.user.AccountDTO,tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29) method.
 :::
 
-From now on, for every ticker received, Cassandre will automatically calculate, with the new price, if closing the position at that price would trigger one of our two rules (100% stop gain and 50% stop loss).
+From now on, for every ticker received, Cassandre will automatically calculate, with the new price (from the ticker), if closing the position at that price would trigger one of our two rules (100% stop gain and 50% stop loss).
 
 For example, if we receive a new price of 3000 USDT for 1 ETH, Cassandre will calculate that if we sell our position right now (meaning "closing the position"), we will get 1 500 USDT, a 100% gain. As our rule is triggered, Cassandre will automatically create a selling order of our 0.5 ETH. The position status will move to [CLOSING](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionStatusDTO.html#CLOSING), and when all the corresponding trades have arrived, the status will move to [CLOSED](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionStatusDTO.html#CLOSED).
 
@@ -52,9 +52,9 @@ Note: if you want to check if you have enough funds available (at 1 ETH in our c
 :::
 
 ## Gains
-On a position you can get the:
-* The lowest calculated gain with [getLowestPrice()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLowestCalculatedGain())
-* The highest calculated gain with [getHighestGainPrice()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getHighestGainPrice())
-* The latest calculated gain with [getLatestGainPrice](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLatestGainPrice())
+On Positions, you can get the:
+* The lowest calculated gain with [getLowestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLowestCalculatedGain())
+* The highest calculated gain with [getHighestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getHighestCalculatedGain())
+* The latest calculated gain with [getLatestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLatestCalculatedGain())
 
-Once the position is closed, you can get the final gain & fees with [getGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getGain())
+On a closed position, you can get the gain & fees with [getGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getGain())

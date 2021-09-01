@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.test.core.util.junit.BaseTest.ETH_BTC;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
 
 @DisplayName("DTO - TradeDTO")
 public class TradeDTOTest {

@@ -12,10 +12,10 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.test.core.services.dry.mocks.TradeServiceDryModeTestMock;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseTest;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Configuration;
-import tech.cassandre.trading.bot.test.core.util.junit.configuration.Property;
-import tech.cassandre.trading.bot.test.core.util.strategies.TestableCassandreStrategy;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
+import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
+import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -26,10 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
-import static tech.cassandre.trading.bot.test.core.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Service - Dry - Trade service")
@@ -116,7 +117,11 @@ public class TradeServiceTest extends BaseTest {
 
         // Testing the received order.
         with().await().until(() -> strategy.getOrdersUpdatesReceived().stream().anyMatch(o -> o.getOrderId().equals(orderId02)));
-        final Optional<OrderDTO> order02 = strategy.getOrdersUpdatesReceived().stream().filter(o -> o.getOrderId().equals(orderId02)).findFirst();
+        final Optional<OrderDTO> order02 = strategy.getOrdersUpdatesReceived()
+                .stream()
+                .filter(o -> o.getOrderId().equals(orderId02))
+                .filter(o -> o.getStatus().equals(FILLED))
+                .findFirst();
         assertTrue(order02.isPresent());
         assertEquals(2, order02.get().getId());
         assertEquals(orderId02, order02.get().getOrderId());
@@ -131,7 +136,7 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(ETH_BTC.getQuoteCurrency(), order02.get().getAveragePrice().getCurrency());
         assertNull(order02.get().getLimitPrice());
         assertNull(order02.get().getLeverage());
-        assertEquals(NEW, order02.get().getStatus());
+        assertEquals(FILLED, order02.get().getStatus());
         assertEquals(0, new BigDecimal("0.002").compareTo(order02.get().getCumulativeAmount().getValue()));
         assertEquals(ETH_BTC.getBaseCurrency(), order02.get().getCumulativeAmount().getCurrency());
         assertNull(order02.get().getUserReference());

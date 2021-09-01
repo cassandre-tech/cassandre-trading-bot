@@ -1,15 +1,11 @@
 package tech.cassandre.trading.bot.test.mock;
 
-import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -19,9 +15,11 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.BacktestingTickerRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
+import tech.cassandre.trading.bot.service.MarketServiceBacktestingImplementation;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,19 +29,10 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
-
-import static org.awaitility.Awaitility.await;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Ticker flux mock - Allows developers to simulate tickers via tsv files.
@@ -62,28 +51,26 @@ import static org.mockito.Mockito.when;
  */
 @SuppressWarnings("checkstyle:DesignForExtension")
 @TestConfiguration
-@EnableAspectJAutoProxy
+@RequiredArgsConstructor
 public class TickerFluxMock {
 
     /** Application context. */
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     /** Order repository. */
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
     /** Trade repository. */
-    @Autowired
-    private TradeRepository tradeRepository;
+    private final TradeRepository tradeRepository;
+
+    /** Backtesting tickers repository. */
+    private final BacktestingTickerRepository backtestingTickerRepository;
 
     /** Order flux. */
-    @Autowired
-    private OrderFlux orderFlux;
+    private final OrderFlux orderFlux;
 
     /** Trade flux. */
-    @Autowired
-    private TradeFlux tradeFlux;
+    private final TradeFlux tradeFlux;
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -97,8 +84,8 @@ public class TickerFluxMock {
     /** Tickers file suffix. */
     private static final String TICKERS_FILE_SUFFIX = ".*sv";
 
-    /** Flux status - true if the flux is over. */
-    private final HashMap<CurrencyPairDTO, Boolean> fluxTerminated = new LinkedHashMap<>();
+    /** Market service for backtesting. */
+    private MarketServiceBacktestingImplementation marketServiceBacktestingImplementation;
 
     @Bean
     @Primary
@@ -110,42 +97,28 @@ public class TickerFluxMock {
     @Primary
     public MarketService marketService() {
         // Creates the mock.
-        MarketService marketService = mock(MarketService.class);
-
-        // We don't use the getTickers method.
-        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in dry mode"));
+        marketServiceBacktestingImplementation = new MarketServiceBacktestingImplementation(
+                orderFlux,
+                tradeFlux,
+                orderRepository,
+                tradeRepository,
+                backtestingTickerRepository);
 
         // For every file.
         getFilesToLoad()
-                .stream().filter(resource -> resource.getFilename() != null)
+                .stream()
+                .filter(resource -> resource.getFilename() != null)
                 .forEach(resource -> {
-                    // Adding data.
-                    final CurrencyPairDTO cp = getCurrencyPairFromFileName(resource);
+                    // We add all the tickers of the currency pair.
+                    AtomicLong sequence = new AtomicLong(1);
                     logger.info("Adding tests data from {}", resource.getFilename().substring(resource.getFilename().indexOf(TICKERS_FILE_PREFIX)));
-                    fluxTerminated.put(cp, false);
-                    //noinspection rawtypes
-                    when(marketService.getTicker(cp)).thenAnswer(new Answer() {
-                        // Tickers to send.
-                        private final Iterator<TickerDTO> tickers = getTickersFromFile(resource).iterator();
-
-                        @Override
-                        public Object answer(final InvocationOnMock invocationOnMock) {
-                            await().until(() -> {
-                                orderFlux.update();
-                                tradeFlux.update();
-                                return orderRepository.count() == tradeRepository.count();
-                            });
-                            if (tickers.hasNext()) {
-                                return Optional.of(tickers.next());
-                            } else {
-                                fluxTerminated.put(cp, true);
-                                return Optional.empty();
-                            }
-                        }
+                    getTickersFromFile(resource).forEach(tickerDTO -> {
+                        // Adding each ticker in database.
+                        marketServiceBacktestingImplementation.addTickerToDatabase(sequence.getAndIncrement(), tickerDTO);
                     });
                 });
 
-        return marketService;
+        return marketServiceBacktestingImplementation;
     }
 
     /**
@@ -209,7 +182,7 @@ public class TickerFluxMock {
                         final String high = rowScanner.next().replaceAll("\"", "");
                         final String low = rowScanner.next().replaceAll("\"", "");
                         final String volume = rowScanner.next().replaceAll("\"", "");
-                        String turnover = null;
+                        String turnover;
                         if (rowScanner.hasNext()) {
                             turnover = rowScanner.next().replaceAll("\"", "");
                         } else {
@@ -248,7 +221,7 @@ public class TickerFluxMock {
      * @return true if the flux is done
      */
     public boolean isFluxDone(final CurrencyPairDTO currencyPair) {
-        return fluxTerminated.getOrDefault(currencyPair, false);
+        return marketServiceBacktestingImplementation.isFluxDone(currencyPair);
     }
 
     /**
@@ -257,7 +230,7 @@ public class TickerFluxMock {
      * @return true if all are done
      */
     public boolean isFluxDone() {
-        return !fluxTerminated.containsValue(false);
+        return marketServiceBacktestingImplementation.isFluxDone();
     }
 
 }

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
-import tech.cassandre.trading.bot.test.core.util.junit.BaseTest;
+import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
 import java.util.Optional;
 
