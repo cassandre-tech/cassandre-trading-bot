@@ -8,7 +8,7 @@
 	<!-- Project information -->
 	<groupId>tech.cassandre.trading.bot</groupId>
 	<artifactId>cassandre-trading-bot-project</artifactId>
-	<version>5.0.3</version>
+	<version>5.0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Cassandre trading bot</name>
 	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
