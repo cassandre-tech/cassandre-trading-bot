@@ -1,0 +1,12 @@
+type Query {
+    strategies: [Strategy]
+    strategy(strategyId: String): Strategy
+}
+
+type Strategy {
+    id: ID
+    strategyId: String
+    type: String
+    name: String
+}
+
