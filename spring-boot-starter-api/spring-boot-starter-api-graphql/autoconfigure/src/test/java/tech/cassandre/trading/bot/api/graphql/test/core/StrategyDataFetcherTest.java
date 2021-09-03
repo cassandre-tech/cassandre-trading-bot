@@ -13,7 +13,8 @@ import tech.cassandre.trading.bot.api.graphql.test.CassandreTradingBot;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 /**
@@ -34,18 +35,30 @@ public class StrategyDataFetcherTest {
         List<String> ids = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { strategies { strategyId }}",
                 "data.strategies[*].strategyId");
-        assertThat(ids).contains("001");
-        assertThat(ids).contains("002");
+        assertTrue(ids.contains("001"));
+        assertTrue(ids.contains("002"));
     }
 
     @Test
-    @DisplayName("Get strategy by its strategy Id")
-    void getStrategyByStrategyId() {
-        List<String> titles = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { strategy { strategyId name }}",
-                "data.strategy[*].name");
+    @DisplayName("Get strategy by Id")
+    void getStrategyById() {
+        String strategyName = dgsQueryExecutor.executeAndExtractJsonPath(
+                " { strategy(id: 2) { name } }",
+                "data.strategy.name");
+        assertEquals(strategyName, "Uniswap");
+    }
 
-        //assertThat(titles).contains("Ozark");
+    @Test
+    @DisplayName("Get strategy by strategy Id")
+    void getStrategyByStrategyId() {
+        System.out.println("=>" + dgsQueryExecutor.executeAndExtractJsonPath(
+                " { strategyByStrategyId(strategyId: \"002\") { name } }",
+                "data"));
+
+        String strategyName = dgsQueryExecutor.executeAndExtractJsonPath(
+                " { strategyByStrategyId(strategyId: \"002\") { name } }",
+                "data.strategyByStrategyId.name");
+        assertEquals(strategyName, "Uniswap");
     }
 
 }
