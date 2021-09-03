@@ -1,0 +1,7 @@
+type Query {
+    configuration: Configuration
+
+    strategies: [Strategy]
+    strategy(id: Int): Strategy
+    strategyByStrategyId(strategyId: String): Strategy
+}

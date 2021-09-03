@@ -31,7 +31,7 @@ public class StrategyDataFetcherTest {
 
     @Test
     @DisplayName("Get all strategies")
-    void getStrategies() {
+    void getAllStrategies() {
         List<String> ids = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { strategies { strategyId }}",
                 "data.strategies[*].strategyId");
@@ -51,10 +51,6 @@ public class StrategyDataFetcherTest {
     @Test
     @DisplayName("Get strategy by strategy Id")
     void getStrategyByStrategyId() {
-        System.out.println("=>" + dgsQueryExecutor.executeAndExtractJsonPath(
-                " { strategyByStrategyId(strategyId: \"002\") { name } }",
-                "data"));
-
         String strategyName = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { strategyByStrategyId(strategyId: \"002\") { name } }",
                 "data.strategyByStrategyId.name");

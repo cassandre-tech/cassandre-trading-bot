@@ -1,12 +1,11 @@
-type Query {
-    strategies: [Strategy]
-    strategy(id: Int): Strategy
-    strategyByStrategyId(strategyId: String): Strategy
-}
-
+"Strategies"
 type Strategy {
+    "Technical ID."
     id: ID!
+    "An identifier that uniquely identifies the strategy - Comes from the Java annotation."
     strategyId: String!
+    "Strategy type - Basic or Ta4j"
     type: String!
+    "Strategy name - Comes from the Java annotation."
     name: String
 }
