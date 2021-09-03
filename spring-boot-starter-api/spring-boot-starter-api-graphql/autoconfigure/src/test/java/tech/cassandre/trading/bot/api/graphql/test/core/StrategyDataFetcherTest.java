@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.api.graphql.data.StrategyDataFetcher;
 import tech.cassandre.trading.bot.api.graphql.test.CassandreTradingBot;
 
@@ -23,6 +24,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @ActiveProfiles("schedule-disabled")
 @DisplayName("Strategy data fetcher test")
 @SpringBootTest(classes = {CassandreTradingBot.class, DgsAutoConfiguration.class, StrategyDataFetcher.class})
+@TestPropertySource(properties = {"spring.liquibase.change-log = classpath:db/test/core/complete-database.yaml"})
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class StrategyDataFetcherTest {
 
