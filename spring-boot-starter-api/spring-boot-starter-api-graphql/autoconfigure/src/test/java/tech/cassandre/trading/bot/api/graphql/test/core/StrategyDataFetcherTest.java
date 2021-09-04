@@ -13,6 +13,7 @@ import tech.cassandre.trading.bot.api.graphql.data.StrategyDataFetcher;
 import tech.cassandre.trading.bot.api.graphql.test.CassandreTradingBot;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,19 +45,25 @@ public class StrategyDataFetcherTest {
     @Test
     @DisplayName("Get strategy by Id")
     void getStrategyById() {
-        String strategyName = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { strategy(id: 2) { name } }",
-                "data.strategy.name");
-        assertEquals(strategyName, "Uniswap");
+        Map result = dgsQueryExecutor.executeAndExtractJsonPath(
+                " { strategy(id: 2) { id strategyId type name } }",
+                "data.strategy");
+        assertEquals("2", result.get("id"));
+        assertEquals("002", result.get("strategyId"));
+        assertEquals("BASIC_TA4J_STRATEGY", result.get("type"));
+        assertEquals("Uniswap", result.get("name"));
     }
 
     @Test
     @DisplayName("Get strategy by strategy Id")
     void getStrategyByStrategyId() {
-        String strategyName = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { strategyByStrategyId(strategyId: \"002\") { name } }",
-                "data.strategyByStrategyId.name");
-        assertEquals(strategyName, "Uniswap");
+        Map result = dgsQueryExecutor.executeAndExtractJsonPath(
+                " { strategyByStrategyId(strategyId: \"002\") { id strategyId type name } }",
+                "data.strategyByStrategyId");
+        assertEquals("2", result.get("id"));
+        assertEquals("002", result.get("strategyId"));
+        assertEquals("BASIC_TA4J_STRATEGY", result.get("type"));
+        assertEquals("Uniswap", result.get("name"));
     }
 
 }

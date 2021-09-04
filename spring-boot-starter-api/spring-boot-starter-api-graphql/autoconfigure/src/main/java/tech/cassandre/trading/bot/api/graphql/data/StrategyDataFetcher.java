@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.api.graphql.data;
 
 import com.netflix.graphql.dgs.DgsComponent;
-import com.netflix.graphql.dgs.DgsData;
 import com.netflix.graphql.dgs.DgsQuery;
 import com.netflix.graphql.dgs.InputArgument;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class StrategyDataFetcher extends BaseDataFetcher {
      *
      * @return all strategies
      */
-    @DgsData(parentType = "Query", field = "strategies")
+    @DgsQuery
     public final List<StrategyDTO> strategies() {
         return strategyRepository.findAll()
                 .stream()
@@ -49,7 +48,7 @@ public class StrategyDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the strategy with the strategyId value.
+     * Returns the strategy with the corresponding strategyId value.
      *
      * @param strategyId strategy id
      * @return strategy

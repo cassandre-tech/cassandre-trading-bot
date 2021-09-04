@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.api.graphql.data;
 
 import com.netflix.graphql.dgs.DgsComponent;
-import com.netflix.graphql.dgs.DgsData;
+import com.netflix.graphql.dgs.DgsQuery;
 import tech.cassandre.trading.bot.api.graphql.util.base.BaseDataFetcher;
 import tech.cassandre.trading.bot.api.graphql.util.graphql.Configuration;
 
@@ -19,7 +19,7 @@ public class ConfigurationDataFetcher extends BaseDataFetcher {
      *
      * @return configuration
      */
-    @DgsData(parentType = "Query", field = "configuration")
+    @DgsQuery
     public final Configuration configuration() {
         return Configuration.builder()
                 .apiVersion(API_VERSION)    // GraphQL API version.

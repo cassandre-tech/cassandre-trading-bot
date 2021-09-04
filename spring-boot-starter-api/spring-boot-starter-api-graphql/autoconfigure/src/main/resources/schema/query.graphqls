@@ -1,7 +1,11 @@
 type Query {
+    "Returns configuration."
     configuration: Configuration
 
+    "Returns all the strategies."
     strategies: [Strategy]
+    "Returns the strategy with the corresponding id value."
     strategy(id: Int): Strategy
+    "Returns the strategy with the corresponding strategyId value."
     strategyByStrategyId(strategyId: String): Strategy
 }
