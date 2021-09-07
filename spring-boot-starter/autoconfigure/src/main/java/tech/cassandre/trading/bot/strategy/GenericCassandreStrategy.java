@@ -183,8 +183,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public void tickersUpdates(final Set<TickerDTO> tickers) {
         // We only retrieve the tickers requested by the strategy.
+        final Set<CurrencyPairDTO> desiredPairs = getRequestedCurrencyPairs();
         final Map<CurrencyPairDTO, TickerDTO> tickersUpdates = tickers.stream()
-                .filter(tickerDTO -> getRequestedCurrencyPairs().contains(tickerDTO.getCurrencyPair()))
+                .filter(tickerDTO -> desiredPairs.contains(tickerDTO.getCurrencyPair()))
                 // We update the values of the last tickers that can be found in the strategy.
                 .peek(tickerDTO -> lastTickers.put(tickerDTO.getCurrencyPair(), tickerDTO))
                 .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value) -> id, LinkedHashMap::new));
