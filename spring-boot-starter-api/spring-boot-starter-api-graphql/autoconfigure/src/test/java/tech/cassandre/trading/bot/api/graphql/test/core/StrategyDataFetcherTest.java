@@ -45,7 +45,7 @@ public class StrategyDataFetcherTest {
     @Test
     @DisplayName("Get strategy by Id")
     void getStrategyById() {
-        Map result = dgsQueryExecutor.executeAndExtractJsonPath(
+        Map<String, String> result = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { strategy(id: 2) { id strategyId type name } }",
                 "data.strategy");
         assertEquals("2", result.get("id"));
@@ -57,7 +57,7 @@ public class StrategyDataFetcherTest {
     @Test
     @DisplayName("Get strategy by strategy Id")
     void getStrategyByStrategyId() {
-        Map result = dgsQueryExecutor.executeAndExtractJsonPath(
+        Map<String, String> result = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { strategyByStrategyId(strategyId: \"002\") { id strategyId type name } }",
                 "data.strategyByStrategyId");
         assertEquals("2", result.get("id"));

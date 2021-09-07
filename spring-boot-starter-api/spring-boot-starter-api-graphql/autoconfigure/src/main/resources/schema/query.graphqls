@@ -8,4 +8,12 @@ type Query {
     strategy(id: Int): Strategy
     "Returns the strategy with the corresponding strategyId value."
     strategyByStrategyId(strategyId: String): Strategy
+
+    "Returns all the trades."
+    trades: [Trade]
+    "Returns the trade with the corresponding id value."
+    trade(id: Int): Trade
+    "Returns the trade with the corresponding tradeId value."
+    tradeByTradeId(tradeId: String): Trade
+
 }
