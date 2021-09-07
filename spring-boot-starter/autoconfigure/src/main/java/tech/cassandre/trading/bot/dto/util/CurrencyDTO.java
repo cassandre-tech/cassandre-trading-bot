@@ -851,6 +851,9 @@ public final class CurrencyDTO implements Serializable {
     /** Modum. */
     public static final CurrencyDTO MOD = createCurrency("MOD", "Modum", null);
 
+    /** Polkadot. */
+    public static final CurrencyDTO DOT = createCurrency("DOT", "Polkadot", null);
+
     /** Code. */
     private final String code;
 
