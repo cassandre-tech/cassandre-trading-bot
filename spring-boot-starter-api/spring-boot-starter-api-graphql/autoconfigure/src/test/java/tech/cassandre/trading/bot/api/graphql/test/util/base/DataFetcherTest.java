@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.api.graphql.test.util.base;
 
+import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -19,9 +20,22 @@ public abstract class DataFetcherTest {
     public static final CurrencyPairDTO BTC_USDT = new CurrencyPairDTO(BTC, USDT);
 
     /**
+     * Returns a strategy value from graphql result.
+     *
+     * @param graphqlResult graphql result
+     * @return StrategyDTO
+     */
+    public final StrategyDTO getStrategyValue(Object graphqlResult) {
+        Map<String, String> values = (Map<String, String>) graphqlResult;
+        return StrategyDTO.builder()
+                .strategyId(values.get("strategyId"))
+                .build();
+    }
+
+    /**
      * Returns a currency pair value from graphql result.
      *
-     * @param graphqlResult currency pair
+     * @param graphqlResult graphql result
      * @return CurrencyPairDTO
      */
     public final CurrencyPairDTO getCurrencyPairValue(Object graphqlResult) {
@@ -34,7 +48,7 @@ public abstract class DataFetcherTest {
     /**
      * Returnes a currency amount value from graphql result.
      *
-     * @param graphqlResult currency amount
+     * @param graphqlResult graphql result
      * @return CurrencyAmountDTO
      */
     public final CurrencyAmountDTO getCurrencyAmountValue(Object graphqlResult) {

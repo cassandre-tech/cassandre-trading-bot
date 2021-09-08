@@ -1,14 +1,15 @@
 "A trade is the action of buying and selling goods and services."
 type Trade {
     "Technical ID."
-    id: ID!
+    id: Int!
     "An identifier set by the exchange that uniquely identifies the trade."
     tradeId: String!
     "Trade type i.e. bid (buy) or ask (sell)."
     type: TradeType!
     "The order id of the order responsible for this trade."
     orderId: String!
-    # Order missing
+    "The order responsible for this trade."
+    order: Order
     "Currency pair."
     currencyPair: CurrencyPair!
     "Amount to be ordered / amount that was ordered."
@@ -29,5 +30,3 @@ enum TradeType {
     "Selling."
     ASK
 }
-
-scalar DateTime

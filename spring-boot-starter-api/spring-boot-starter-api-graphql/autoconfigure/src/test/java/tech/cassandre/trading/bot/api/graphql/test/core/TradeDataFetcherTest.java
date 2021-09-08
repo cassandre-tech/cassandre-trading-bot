@@ -44,8 +44,8 @@ public class TradeDataFetcherTest extends DataFetcherTest {
         List<String> ids = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { trades { tradeId }}",
                 "data.trades[*].tradeId");
-        assertTrue(ids.contains("60e447fc2e113d2923b995f6"));   // Real order.
-        assertFalse(ids.contains("60e47fc259_NOT_EXISTING"));   // Invented order.
+        assertTrue(ids.contains("60e447fc2e113d2923b995f6"));   // Real trade.
+        assertFalse(ids.contains("60e47fc259_NOT_EXISTING"));   // Invented trade.
         assertEquals(416, ids.size());
     }
 
@@ -58,6 +58,7 @@ public class TradeDataFetcherTest extends DataFetcherTest {
                         "tradeId " +
                         "type " +
                         "orderId " +
+                        "order {id orderId}" +
                         "currencyPair {baseCurrency{code} quoteCurrency{code}}" +
                         "amount {value currency{code}}" +
                         "price {value currency{code}}" +
@@ -65,10 +66,13 @@ public class TradeDataFetcherTest extends DataFetcherTest {
                         "timestamp" +
                         "} }",
                 "data.trade");
-        assertEquals("24", result.get("id"));
+        assertEquals(24, result.get("id"));
         assertEquals("60df231c2e113d2923052d18", result.get("tradeId"));
         assertEquals("ASK", result.get("type"));
         assertEquals("60df231c38ec01000687554e", result.get("orderId"));
+        Map<String, String> order = (Map<String, String>) result.get("order");
+        assertEquals(19, order.get("id"));
+        assertEquals("60df231c38ec01000687554e", order.get("orderId"));
         assertEquals(BTC_USDT, getCurrencyPairValue(result.get("currencyPair")));
         final CurrencyAmountDTO amount = getCurrencyAmountValue(result.get("amount"));
         assertEquals(0, new BigDecimal("0.001").compareTo(amount.getValue()));
@@ -90,8 +94,7 @@ public class TradeDataFetcherTest extends DataFetcherTest {
                         "id " +
                         "} }",
                 "data.tradeByTradeId");
-        System.out.println("==> " + result);
-        assertEquals("24", result.get("id"));
+        assertEquals(24, result.get("id"));
     }
 
 }

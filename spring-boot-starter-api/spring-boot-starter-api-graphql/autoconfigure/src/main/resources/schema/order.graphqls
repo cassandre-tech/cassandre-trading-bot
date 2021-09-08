@@ -1,0 +1,40 @@
+"An order is a request by an investor to buy or sell."
+type Order {
+    "Technical ID."
+    id: Int!
+    "An identifier set by the exchange that uniquely identifies the order."
+    orderId: String!
+    "Order type i.e. bid (buy) or ask (sell)."
+    type: OrderType!
+    "The strategy that created the order."
+    strategy: Strategy!
+    "Currency pair."
+    currencyPair: CurrencyPair!
+    "Amount to be ordered / amount that was ordered."
+    amount: CurrencyAmount!
+    "Weighted Average price of the fills in the order."
+    averagePrice: CurrencyAmount
+    "Limit price."
+    limitPrice: CurrencyAmount
+    "Market price - The price Cassandre had when the order was created."
+    marketPrice: CurrencyAmount
+    "The leverage to use for margin related to this order."
+    leverage: String
+    "Order status."
+    status: String
+    " Amount to be ordered / amount that has been matched against order on the order book/filled."
+    cumulativeAmount: CurrencyAmount
+    "An identifier provided by the user on placement that uniquely identifies the order."
+    userReference: String
+    "The timestamp of the order."
+    timestamp: DateTime
+    "All trades related to order."
+    trades: [Trade]
+}
+
+enum OrderType {
+    "Buying."
+    BID
+    "Selling."
+    ASK
+}

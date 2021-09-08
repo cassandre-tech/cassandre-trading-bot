@@ -9,6 +9,13 @@ type Query {
     "Returns the strategy with the corresponding strategyId value."
     strategyByStrategyId(strategyId: String): Strategy
 
+    "Returns all the orders."
+    orders: [Order]
+    "Returns the order with the corresponding id value."
+    order(id: Int): Order
+    "Returns the order with the corresponding orderId value."
+    orderByOrderId(orderId: String): Order
+
     "Returns all the trades."
     trades: [Trade]
     "Returns the trade with the corresponding id value."
@@ -17,3 +24,5 @@ type Query {
     tradeByTradeId(tradeId: String): Trade
 
 }
+
+scalar DateTime

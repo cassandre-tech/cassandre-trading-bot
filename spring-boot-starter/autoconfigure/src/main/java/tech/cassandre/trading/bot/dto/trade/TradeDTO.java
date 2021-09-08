@@ -60,7 +60,7 @@ public class TradeDTO {
     /** Currency pair. */
     CurrencyPairDTO currencyPair;
 
-    /** Amount to be ordered / amount that was ordered. */
+    /** Amount of the trade. */
     CurrencyAmountDTO amount;
 
     /** The price. */
