@@ -89,7 +89,7 @@ public class OrderDataFetcherTest extends DataFetcherTest {
         assertEquals("NEW", result.get("status"));
         final CurrencyAmountDTO cumulativeAmount = getCurrencyAmountValue(result.get("cumulativeAmount"));
         assertEquals(0, new BigDecimal("0.001").compareTo(cumulativeAmount.getValue()));
-        assertEquals("2021-07-01T19:30:42.054417+02:00", result.get("timestamp"));
+        assertTrue(result.get("timestamp").toString().contains("2021-07-01T19:30:42.054417"));
         JSONArray trades = (JSONArray) result.get("trades");
         assertEquals(2, trades.size());
     }
