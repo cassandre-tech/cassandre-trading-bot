@@ -5,5 +5,3 @@ type CurrencyAmount {
     "Currency."
     currency: Currency
 }
-
-scalar BigDecimal

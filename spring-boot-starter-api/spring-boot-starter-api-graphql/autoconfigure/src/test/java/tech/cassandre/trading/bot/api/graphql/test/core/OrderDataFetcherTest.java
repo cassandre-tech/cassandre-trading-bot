@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.api.graphql.data.OrderDataFetcher;
 import tech.cassandre.trading.bot.api.graphql.test.CassandreTradingBot;
-import tech.cassandre.trading.bot.api.graphql.test.util.base.DataFetcherTest;
+import tech.cassandre.trading.bot.api.graphql.test.util.base.BaseDataFetcherTest;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 
 import java.math.BigDecimal;
@@ -34,7 +34,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @SpringBootTest(classes = {CassandreTradingBot.class, DgsAutoConfiguration.class, OrderDataFetcher.class})
 @TestPropertySource(properties = {"spring.liquibase.change-log = classpath:db/test/core/complete-database.yaml"})
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-public class OrderDataFetcherTest extends DataFetcherTest {
+public class OrderDataFetcherTest extends BaseDataFetcherTest {
 
     @Autowired
     DgsQueryExecutor dgsQueryExecutor;
