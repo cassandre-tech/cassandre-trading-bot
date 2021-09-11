@@ -22,7 +22,6 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 @DisplayName("Version data fetcher test")
 @SpringBootTest(classes = {CassandreTradingBot.class, DgsAutoConfiguration.class, ConfigurationDataFetcher.class})
 @TestPropertySource(properties = {"spring.liquibase.change-log = classpath:db/test/core/complete-database.yaml"})
-
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class ConfigurationDataFetcherTest {
 

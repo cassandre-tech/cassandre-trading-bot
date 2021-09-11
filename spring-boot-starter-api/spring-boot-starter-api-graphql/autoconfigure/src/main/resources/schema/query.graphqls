@@ -2,6 +2,11 @@ type Query {
     "Returns configuration."
     configuration: Configuration
 
+    "Retours all the accounts."
+    accounts: [Account]
+    "Returns the account with the corresponding id."
+    accountByAccountId(accountId: String): Account
+
     "Returns all the strategies."
     strategies: [Strategy]
     "Returns the strategy with the corresponding id."

@@ -127,7 +127,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                             account.getAccountId(),
                             account.getName());
                         account.getBalances()
-                                .values()
                                 .stream()
                                 .filter(balance -> balance.getAvailable().compareTo(ZERO) != 0)
                                 .forEach(balance -> logger.info(" - {} {}.", balance.getAvailable(), balance.getCurrency()));

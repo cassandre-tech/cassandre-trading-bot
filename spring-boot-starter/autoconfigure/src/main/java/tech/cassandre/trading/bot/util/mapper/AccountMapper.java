@@ -9,9 +9,10 @@ import org.mapstruct.Mapping;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Account mapper.
@@ -30,7 +31,12 @@ public interface AccountMapper {
     @Mapping(target = "feature", ignore = true)
     AccountDTO mapToWalletDTO(Wallet source);
 
-    Map<CurrencyDTO, BalanceDTO> mapToCurrencyDTOAndBalanceDTO(Map<Currency, Balance> source);
+    default Set<BalanceDTO> mapToBalanceDTO(Map<Currency, Balance> source) {
+        return source.values()
+                .stream()
+                .map(this::mapToBalanceDTO)
+                .collect(Collectors.toSet());
+    }
 
     BalanceDTO mapToBalanceDTO(Balance source);
 

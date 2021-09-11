@@ -11,6 +11,8 @@ import tech.cassandre.trading.bot.util.java.EqualsBuilder;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -35,7 +37,7 @@ public class AccountDTO {
 
     /** Represents the different balances for each currency owned by the account. */
     @Singular
-    Map<CurrencyDTO, BalanceDTO> balances;
+    Set<BalanceDTO> balances;
 
     /**
      * Returns balance of a currency.
@@ -59,7 +61,9 @@ public class AccountDTO {
      * @return balance
      */
     public Optional<BalanceDTO> getBalance(final CurrencyDTO currency) {
-        return Optional.ofNullable(balances.get(currency));
+        return balances.stream()
+                .filter(balanceDTO -> balanceDTO.getCurrency().equals(currency))
+                .findFirst();
     }
 
     @Override
@@ -81,7 +85,9 @@ public class AccountDTO {
         // Test balances.
         if (equals) {
             // Testing balances.
-            for (Map.Entry<CurrencyDTO, BalanceDTO> balance : balances.entrySet()) {
+            // TODO: Optimise this.
+            Map<CurrencyDTO, BalanceDTO> values = balances.stream().collect(Collectors.toMap(BalanceDTO::getCurrency, Function.identity()));
+            for (Map.Entry<CurrencyDTO, BalanceDTO> balance : values.entrySet()) {
                 Optional<BalanceDTO> balanceValue = that.getBalance(balance.getKey());
                 // Checking that the list of currencies exists.
                 if (balanceValue.isEmpty()) {
