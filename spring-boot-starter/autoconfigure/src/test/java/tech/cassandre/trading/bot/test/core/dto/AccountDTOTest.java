@@ -75,8 +75,8 @@ public class AccountDTOTest {
 		balances.add(BalanceDTO.builder().build());
 		AccountDTO account5 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
-		assertNotEquals(account4, account5);
-		assertNotEquals(account5, account4);
+		assertEquals(account4, account5);
+		assertEquals(account5, account4);
 	}
 
 	@Test
