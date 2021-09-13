@@ -35,6 +35,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
 @TestConfiguration
@@ -117,9 +119,9 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         accounts.clear();
 
         // Account 03.
-        balances.add(BalanceDTO.builder().available(new BigDecimal("2")).build());
+        balances.add(BalanceDTO.builder().currency(BTC).available(new BigDecimal("2")).build());
         balances.add(BalanceDTO.builder().available(new BigDecimal("10")).build());
-        balances.add(BalanceDTO.builder().available(new BigDecimal("2000")).build());
+        balances.add(BalanceDTO.builder().currency(USDT).available(new BigDecimal("2000")).build());
         AccountDTO account03 = AccountDTO.builder().accountId("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().accounts(accounts).build();

@@ -29,6 +29,8 @@ public interface AccountMapper {
 
     @Mapping(source = "id", target = "accountId")
     @Mapping(target = "feature", ignore = true)
+    @Mapping(target = "balances", source = "balances")
+    @Mapping(target = "balance", ignore = true)
     AccountDTO mapToWalletDTO(Wallet source);
 
     default Set<BalanceDTO> mapToBalanceDTO(Map<Currency, Balance> source) {
@@ -38,6 +40,7 @@ public interface AccountMapper {
                 .collect(Collectors.toSet());
     }
 
+    @Mapping(source = "currency", target = "currency")
     BalanceDTO mapToBalanceDTO(Balance source);
 
 }
