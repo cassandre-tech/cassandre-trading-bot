@@ -43,7 +43,7 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
-          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE} -DskipTests
+          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
 
       # ================================================================================================================
       - name: Upload codacy coverage results

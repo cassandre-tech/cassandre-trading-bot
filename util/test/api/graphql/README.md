@@ -9,7 +9,7 @@ docker exec -t YOUR_PASSWORD pg_dump -U cassandre_trading_bot cassandre_trading_
 ̀```
 _note: if you just want the data in your dump, add the following options: --column-inserts --data-only._
 
-Then, with this command, we will run a postgres instance:
+Then, with this command, we will start a postgres instance:
 ̀```
 docker run -d \
         --name postgres \
@@ -49,21 +49,17 @@ mvn -f archetype-test-api-graphql/pom.xml spring-boot:run
 ̀```
 
 ## Tests.
-Tests are written and javascript and ran to see if the graphql API replies correctly.
+Tests are written and javascript and ran to see if the graphQL API replies correctly.
 
-
-We retrieve the tests from util:
+We retrieve the tests from util directory:
 ̀```
 cp util/test/api/graphql/package.json .
 cp util/test/api/graphql/*.js .
 ̀```
-
 We install the required libraries:
 ̀```
 npm install --save-dev jest isomorphic-fetch
 ̀```
-
-
 And we run the tests with the command:
 ̀```
 npm run test
