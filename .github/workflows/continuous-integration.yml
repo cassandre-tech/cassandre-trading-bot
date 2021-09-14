@@ -47,6 +47,7 @@ jobs:
 
       # ================================================================================================================
       - name: Upload codacy coverage results
+        continue-on-error: true
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --project-token ${{ secrets.CODACY_API_TOKEN }} \
@@ -83,7 +84,6 @@ jobs:
             -Dversion=1.0-SNAPSHOT \
             -Dpackage=com.example
           mvn -f archetype-test-ta4j-basic/pom.xml test
-
 
       # ================================================================================================================
       # Testing that the graphql starter is working correctly.
