@@ -199,7 +199,7 @@
             <dependency>
                 <groupId>com.netflix.graphql.dgs</groupId>
                 <artifactId>graphql-dgs-platform-dependencies</artifactId>
-                <version>4.7.0</version>
+                <version>4.7.6</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
