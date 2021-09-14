@@ -43,7 +43,7 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
-          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
+          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE} -DskipTests
 
       # ================================================================================================================
       - name: Upload codacy coverage results
@@ -83,3 +83,38 @@ jobs:
             -Dversion=1.0-SNAPSHOT \
             -Dpackage=com.example
           mvn -f archetype-test-ta4j-basic/pom.xml test
+
+
+      # ================================================================================================================
+      # Testing that the graphql starter is working correctly.
+      - name: Start a postgres server and restore a database from production
+        run: |
+          docker run -d \
+                  --name postgres \
+                  -p 5432:5432 \
+                  -e POSTGRES_DB=cassandre_trading_bot \
+                  -e POSTGRES_USER=cassandre_trading_bot \
+                  -e POSTGRES_PASSWORD=cassandre_trading_bot_password \
+                  library/postgres:13-alpine
+          docker exec -i postgres psql -U cassandre_trading_bot cassandre_trading_bot < util/test/api/graphql/dump_cassandre_trading_bot.sql
+
+      - name: Creating a trading bot and configure it for the postgres database
+        run: |
+          mvn -B archetype:generate \
+            -DarchetypeGroupId=tech.cassandre.trading.bot \
+            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
+            -DarchetypeVersion=${{ steps.version.outputs.version }} \
+            -DgroupId=com.example \
+            -DartifactId=archetype-test-api-graphql \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.example
+          cp util/test/api/graphql/application.properties archetype-test-api-graphql/src/main/resources/
+          cp util/test/api/graphql/user-trade.tsv archetype-test-api-graphql/src/main/resources/
+          mvn -f archetype-test-api-graphql/pom.xml spring-boot:run &
+
+      - name: Runs graphQL tests.
+        run: |
+          cp util/test/api/graphql/package.json .
+          cp util/test/api/graphql/*.js .
+          npm install --save-dev jest isomorphic-fetch
+          npm run test

@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "isomorphic-fetch": "^3.0.0",
+    "jest": "^27.2.0"
+  }
+}
