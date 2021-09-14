@@ -51,22 +51,22 @@ public class TradeDTO {
     /** Order type i.e. bid (buy) or ask (sell). */
     OrderTypeDTO type;
 
-    /** The order responsible for this trade. */
+    /** The order id of the order responsible for this trade. */
     String orderId;
 
-    /** Order. */
+    /** The order responsible for this trade. */
     Order order;
 
     /** Currency pair. */
     CurrencyPairDTO currencyPair;
 
-    /** Amount to be ordered / amount that was ordered. */
+    /** Amount of the trade. */
     CurrencyAmountDTO amount;
 
     /** The price. */
     CurrencyAmountDTO price;
 
-    /** The fee that was charged by the exchange for this trade. */
+    /** The fee that was charged by the exchange for this order. */
     CurrencyAmountDTO fee;
 
     /** An identifier provided by the user on placement that uniquely identifies the order. */

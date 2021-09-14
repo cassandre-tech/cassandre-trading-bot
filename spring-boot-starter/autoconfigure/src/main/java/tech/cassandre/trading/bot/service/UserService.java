@@ -21,8 +21,15 @@ public interface UserService {
     /**
      * Retrieve user accounts information from exchange.
      *
-     * @return account
+     * @return accounts
      */
     Map<String, AccountDTO> getAccounts();
+
+    /**
+     * Retrieve user accounts information from cache.
+     *
+     * @return accounts
+     */
+    Map<String, AccountDTO> getAccountsFromCache();
 
 }

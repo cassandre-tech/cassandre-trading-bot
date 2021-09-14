@@ -26,9 +26,12 @@ import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStr
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -340,7 +343,12 @@ public class UserServiceWithPositionsTest extends BaseTest {
      */
     private Map<CurrencyDTO, BalanceDTO> getBalances() {
         final Optional<UserDTO> user = userService.getUser();
-        return user.map(userDTO -> userDTO.getAccounts().get("trade").getBalances()).orElse(null);
+        return user.map(userDTO -> userDTO.getAccounts()
+                .get("trade")
+                .getBalances()
+                .stream()
+                .collect(Collectors.toMap(BalanceDTO::getCurrency, Function.identity())))
+                .orElse(Collections.emptyMap());
     }
 
 }

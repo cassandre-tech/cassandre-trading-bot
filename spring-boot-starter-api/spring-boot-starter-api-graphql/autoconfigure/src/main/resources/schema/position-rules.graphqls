@@ -1,0 +1,7 @@
+"Position rules is used to know when cassandre should close a position."
+type PositionRules {
+    "Stop gain percentage."
+    stopGainPercentage: Float
+    "Stop loss percentage."
+    stopLossPercentage: Float
+}

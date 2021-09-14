@@ -17,7 +17,6 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -90,7 +89,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     @Bean
     @Primary
     public UserService userService() {
-        Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
+        Set<BalanceDTO> balances = new LinkedHashSet<>();
         final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
         UserService userService = mock(UserService.class);
         // Returns three updates.
@@ -103,7 +102,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Account 01.
         BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
-        balances.put(BTC, account01Balance1);
+        balances.add(account01Balance1);
         AccountDTO account01 = AccountDTO.builder().accountId("01").name("trade").balances(balances).build();
         accounts.put("01", account01);
         UserDTO user01 = UserDTO.builder().accounts(accounts).build();
@@ -112,7 +111,7 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
 
         // Account 02.
         BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
-        balances.put(BTC, account02Balance1);
+        balances.add(account02Balance1);
         AccountDTO account02 = AccountDTO.builder().accountId("02").balances(balances).build();
         accounts.put("02", account02);
         UserDTO user02 = UserDTO.builder().accounts(accounts).build();
@@ -120,10 +119,10 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         accounts.clear();
 
         // Account 03.
-        BalanceDTO account03Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
-        balances.put(BTC, account03Balance1);
-        BalanceDTO account03Balance2 = BalanceDTO.builder().available(new BigDecimal("150")).build();
-        balances.put(USDT, account03Balance2);
+        BalanceDTO account03Balance1 = BalanceDTO.builder().currency(BTC).available(new BigDecimal("1")).build();
+        balances.add(account03Balance1);
+        BalanceDTO account03Balance2 = BalanceDTO.builder().currency(USDT).available(new BigDecimal("150")).build();
+        balances.add(account03Balance2);
         AccountDTO account03 = AccountDTO.builder().accountId("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
         UserDTO user03 = UserDTO.builder().accounts(accounts).build();

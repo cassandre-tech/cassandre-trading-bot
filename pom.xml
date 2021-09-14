@@ -82,6 +82,9 @@
 		<!-- Trading bot spring boot starter test -->
 		<module>spring-boot-starter-test/autoconfigure</module>
 		<module>spring-boot-starter-test/starter</module>
+		<!-- Trading bot spring boot starter API -->
+		<module>spring-boot-starter-api/spring-boot-starter-api-graphql/autoconfigure</module>
+		<module>spring-boot-starter-api/spring-boot-starter-api-graphql/starter</module>
 		<!-- Archetypes -->
 		<module>trading-bot-archetypes/basic-archetype</module>
 		<module>trading-bot-archetypes/basic-ta4j-archetype</module>
