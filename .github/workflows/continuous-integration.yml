@@ -96,6 +96,7 @@ jobs:
                   -e POSTGRES_USER=cassandre_trading_bot \
                   -e POSTGRES_PASSWORD=cassandre_trading_bot_password \
                   library/postgres:13-alpine
+          sleep 30
           docker exec -i postgres psql -U cassandre_trading_bot cassandre_trading_bot < util/test/api/graphql/dump_cassandre_trading_bot.sql
 
       - name: Creating a trading bot and configure it for the postgres database
@@ -117,4 +118,5 @@ jobs:
           cp util/test/api/graphql/package.json .
           cp util/test/api/graphql/*.js .
           npm install --save-dev jest isomorphic-fetch
+          sleep 30
           npm run test
