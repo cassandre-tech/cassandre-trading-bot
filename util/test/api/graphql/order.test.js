@@ -12,7 +12,7 @@ test('Getting an order', () => {
 	// The query of the GraphQL API server.
 	return fetch('http://localhost:8080/graphql', {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: { 'Content-Type': 'application/json', 'X-API-Key': '667341fd-d4c2-4bc2-99af-0a2a697aa134' },
 		body: JSON.stringify({ query: 
 			`query {
 				order(id:1){orderId}
