@@ -29,7 +29,7 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "BACKTESTING_TICKERS")
+@Table(name = "IMPORTED_TICKERS")
 public class ImportedTicker {
 
     /** Technical ID. */
