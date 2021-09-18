@@ -19,7 +19,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class GraphQLAPISecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /** API Key. */
-    @Value("${cassandre.trading.bot.api.graphql.key}")
+    @Value("${cassandre.trading.bot.api.graphql.key:}")
     private String key;
 
     @Override

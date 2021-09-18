@@ -1,4 +1,4 @@
- # Quickstart
+# Quickstart
 
 ::: tip
 If you are new to trading, you can read our tutorial "[Trading basics](../ressources/trading-basics.md)".

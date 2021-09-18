@@ -90,6 +90,7 @@ module.exports = {
                     {
                         text: 'Advanced', items: [
                             {text: 'Technical analysis', link: '/learn/technical-analysis'},
+                            {text: 'GraphQL API', link: '/learn/graphql-api'},
                         ]
                     },
                     {
