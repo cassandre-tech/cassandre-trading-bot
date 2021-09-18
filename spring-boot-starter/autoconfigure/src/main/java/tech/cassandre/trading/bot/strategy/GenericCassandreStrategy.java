@@ -628,6 +628,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     // Methods that can be implemented by strategies.
 
     @Override
+    public void initialize() {
+
+    }
+
+    @Override
     public void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
 
     }

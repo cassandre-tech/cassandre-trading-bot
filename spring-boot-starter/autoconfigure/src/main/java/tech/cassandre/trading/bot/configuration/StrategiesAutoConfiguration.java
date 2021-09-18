@@ -272,6 +272,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.setPositionService(positionService);
                     strategy.setPositionRepository(positionRepository);
 
+                    // Calling user defined initialize() method.
+                    strategy.initialize();
+
                     // Connecting flux to strategy.
                     connectableAccountFlux.subscribe(strategy::accountsUpdates);
                     connectablePositionFlux.subscribe(strategy::positionsUpdates);

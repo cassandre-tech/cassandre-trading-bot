@@ -69,6 +69,9 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     /** Requested currency pairs. */
     Set<CurrencyPairDTO> requestedCurrencyPairs = ConcurrentHashMap.newKeySet();
 
+    /** Initialize flag. */
+    private boolean initialized = false;
+
     /**
      * Constructor.
      */
@@ -102,6 +105,11 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
                     .filter(a -> "trade".equals(a.getName()))
                     .findFirst();
         }
+    }
+
+    @Override
+    public void initialize() {
+        initialized = true;
     }
 
     @Override

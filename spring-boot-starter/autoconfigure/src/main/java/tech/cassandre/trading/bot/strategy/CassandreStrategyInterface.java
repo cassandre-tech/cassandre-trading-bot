@@ -147,6 +147,12 @@ public interface CassandreStrategyInterface {
     Optional<AccountDTO> getTradeAccount();
 
     /**
+     * This method is called by Cassandre before flux are started.
+     * For example, you can implement this method to prepare your historical data.
+     */
+    void initialize();
+
+    /**
      * Method called by Cassandre when there are accounts updates.
      *
      * @param accounts accounts updates
