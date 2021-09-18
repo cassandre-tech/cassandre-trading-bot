@@ -25,10 +25,8 @@ public class GraphQLAPIKeyAuthenticationManager implements AuthenticationManager
     @Override
     public final Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         String principal = (String) authentication.getPrincipal();
-        if (key != null && !key.equals("")) {   // If we have a key set, we make the check.
-            if (!key.equals(principal)) {
-                throw new BadCredentialsException("The API key was not found or not the expected value.");
-            }
+        if (key != null && !key.equals(principal)) {
+            throw new BadCredentialsException("The API key was not found or not the expected value.");
         }
         authentication.setAuthenticated(true);
         return authentication;

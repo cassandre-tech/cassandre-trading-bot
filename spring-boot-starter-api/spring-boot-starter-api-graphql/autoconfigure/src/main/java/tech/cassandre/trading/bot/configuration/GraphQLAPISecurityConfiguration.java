@@ -24,14 +24,23 @@ public class GraphQLAPISecurityConfiguration extends WebSecurityConfigurerAdapte
 
     @Override
     protected final void configure(final HttpSecurity http) throws Exception {
-        GraphQLAPIKeyAuthenticationFilter filter = new GraphQLAPIKeyAuthenticationFilter();
-        filter.setAuthenticationManager(new GraphQLAPIKeyAuthenticationManager(key));
-        http.antMatcher("/graphql/**")
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(STATELESS)
-                .and()
-                .addFilter(filter).authorizeRequests().anyRequest().authenticated();
-
+        if (key == null || key.isBlank()) {
+            // if not key is set, no security at all. Everything is accessible.
+            http.antMatcher("/graphql/**")
+                    .csrf().disable()
+                    .sessionManagement().sessionCreationPolicy(STATELESS)
+                    .and()
+                    .authorizeRequests().anyRequest().permitAll();
+        } else {
+            // If a key is set, we ask for key on every request (X-API-Key header).
+            GraphQLAPIKeyAuthenticationFilter filter = new GraphQLAPIKeyAuthenticationFilter();
+            filter.setAuthenticationManager(new GraphQLAPIKeyAuthenticationManager(key));
+            http.antMatcher("/graphql/**")
+                    .csrf().disable()
+                    .sessionManagement().sessionCreationPolicy(STATELESS)
+                    .and()
+                    .addFilter(filter).authorizeRequests().anyRequest().authenticated();
+        }
     }
 
 }
