@@ -28,7 +28,7 @@ public class Issue735Test {
     public void testCurrencySerialization() {
         XmlMapper mapper = new XmlMapper();
         try {
-            String xml = mapper.writeValueAsString(BTC);
+            mapper.writeValueAsString(BTC);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             fail("Serialization fail " + e.getMessage());

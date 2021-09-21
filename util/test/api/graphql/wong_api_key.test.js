@@ -12,6 +12,6 @@ test("Accessing API with wrong API key", () => {
 			}`
 		}),
 	})
-	.then((res) => {res.json()})
-	.then((res) => {expect(res.error).toStrictEqual(`Forbidden`)});
+	.then((res) => {res.json();})
+	.then((res) => {expect(res.error).toStrictEqual(`Forbidden`);});
 });

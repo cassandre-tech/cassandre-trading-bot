@@ -1,6 +1,6 @@
-# Utils to test graphql during continuous integration.
+# Utils to test graphql during continuous integration
 
-## Database.
+## Database
 To test Cassandre GraphQL API, we will use existing data and run a postgres server. This way, we can check that the data in database are accessible throw GraphQL API calls.
 
 To retrieve a database on our production server, we use this command:
@@ -26,7 +26,7 @@ docker exec -i postgres psql -U cassandre_trading_bot cassandre_trading_bot < ut
 ̀```
 _note: you can access psql with the command:docker exec -it postgres psql -U cassandre_trading_bot_
 
-## Application.
+## Application
 We will create a Cassandre trading bot thanks to the basic archetype:
 ̀```
 mvn -B archetype:generate \
@@ -48,7 +48,7 @@ Then, we run the application with the following command:
 mvn -f archetype-test-api-graphql/pom.xml spring-boot:run
 ̀```
 
-## Tests.
+## Tests
 Tests are written and javascript and ran to see if the graphQL API replies correctly.
 
 We retrieve the tests from util directory:

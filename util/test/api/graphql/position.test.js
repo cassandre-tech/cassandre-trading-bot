@@ -19,6 +19,6 @@ test("Getting a position", () => {
 			}`
 		}),
 	})
-	.then((res) => {res.json()})
-	.then((res) => {expect(res.data).toStrictEqual(expectedReply)});
+	.then((res) => {res.json();})
+	.then((res) => {expect(res.data).toStrictEqual(expectedReply);});
 });
