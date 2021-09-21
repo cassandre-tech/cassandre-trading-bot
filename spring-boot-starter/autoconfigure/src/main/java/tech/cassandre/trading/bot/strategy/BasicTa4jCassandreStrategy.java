@@ -106,7 +106,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
         tickersUpdates.values().forEach(ticker -> {
             getLastTickers().put(ticker.getCurrencyPair(), ticker);
-            barAggregator.update(ticker.getTimestamp(), ticker.getLast(), ticker.getHigh(), ticker.getLow(), ticker.getVolume());
+            barAggregator.update(ticker.getTimestamp(), ticker.getLast());
         });
 
         // We update the positions with tickers.
