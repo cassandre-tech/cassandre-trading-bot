@@ -1,7 +1,7 @@
 # Import historical data
 
 ::: warning
-Available in 5.0.5 release.
+Available in 5.0.4 release.
 :::
 
 ## Overview
@@ -21,7 +21,7 @@ CURRENCY_PAIR,OPEN,LAST,BID,ASK,HIGH,LOW,VWAP,VOLUME,QUOTE_VOLUME,BID_SIZE,ASK_S
 ## When to initialize data?
 In you strategy, you should implement the `initialize()` method. This method is executed by Cassandre before any other data (tickers, orders, trades...) is pushed to the strategy.
 
-## Access your data in your strategy.
+## Access your data in your strategy
 In your strategy, you can access the data with two methods:
  * `List<TickerDTO> getImportedTickers()`.
  * `List<TickerDTO> getImportedTickers(CurrencyPairDTO currencyPairDTO)`.
