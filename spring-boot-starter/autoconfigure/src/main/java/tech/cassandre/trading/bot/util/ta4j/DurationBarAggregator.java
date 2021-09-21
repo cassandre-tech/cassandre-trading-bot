@@ -57,8 +57,9 @@ public class DurationBarAggregator implements BarAggregator {
 
     @Override
     public void update(ZonedDateTime timestamp, Number latestPrice) {
+        calculateHighestLowest(latestPrice);
         if (ctx == null) {
-            ctx = new BarContext(duration, timestamp, 0, 0, 0, 0, 0);
+            ctx = new BarContext(duration, timestamp, latestPrice, latestPrice, latestPrice, latestPrice, 0);
         } else if (ctx.isAfter(timestamp)) {
             // we have new bar starting - emit current ctx
             sink.next(new BaseBar(duration, ctx.getEndTime(), ctx.getOpen(), ctx.getHigh(),
@@ -68,8 +69,7 @@ public class DurationBarAggregator implements BarAggregator {
             highest = latestPrice;
             lowest = latestPrice;
         } else {
-            calculateHighestLowest(latestPrice);
-            ctx.update(lowest, highest, latestPrice,0);
+            ctx.update(lowest,highest,latestPrice,0);
         }
     }
 
@@ -83,11 +83,13 @@ public class DurationBarAggregator implements BarAggregator {
     }
 
     private void calculateHighestLowest(Number latestPrice) {
-        if (latestPrice.doubleValue() < lowest.doubleValue()){
+        if (lowest.doubleValue() == 0D) {
+            lowest = latestPrice;
             highest = latestPrice;
         }
-        if (latestPrice.doubleValue() > highest.doubleValue()){
-            highest = latestPrice;
+        else {
+            lowest = Math.min(lowest.doubleValue(),latestPrice.doubleValue());
+            highest = Math.max(highest.doubleValue(),latestPrice.doubleValue());
         }
     }
 }
