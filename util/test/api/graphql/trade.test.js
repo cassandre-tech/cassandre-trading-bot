@@ -19,6 +19,6 @@ test("Getting a trade", () => {
 			}`
 		}),
 	})
-	.then((res) => {res.json();})
+	.then((res) => res.json())
 	.then((res) => {expect(res.data).toStrictEqual(expectedReply);});
 });

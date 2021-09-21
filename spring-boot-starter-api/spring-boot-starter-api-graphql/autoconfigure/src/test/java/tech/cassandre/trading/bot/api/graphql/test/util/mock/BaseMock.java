@@ -90,12 +90,7 @@ public class BaseMock extends BaseTest {
     @Primary
     public MarketService marketService() {
         MarketDataService mock;
-        try {
-            mock = getXChangeMarketDataServiceMock();
-        } catch (IOException e) {
-            logger.error("Impossible to instantiate mocked market service");
-            return null;
-        }
+        mock = getXChangeMarketDataServiceMock();
         return new MarketServiceXChangeImplementation(SERVICE_RATE, mock);
     }
 
@@ -147,7 +142,7 @@ public class BaseMock extends BaseTest {
      */
     @Bean
     @Primary
-    public MarketDataService getXChangeMarketDataServiceMock() throws IOException {
+    public MarketDataService getXChangeMarketDataServiceMock() {
         return mock(MarketDataService.class);
     }
 

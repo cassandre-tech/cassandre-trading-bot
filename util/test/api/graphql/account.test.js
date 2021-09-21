@@ -20,6 +20,6 @@ test("Getting an account", () => {
 			}`
 		}),
 	})
-	.then((res) => {res.json();})
+	.then((res) => res.json())
 	.then((res) => {expect(res.data).toStrictEqual(expectedReply);});
 });

@@ -59,7 +59,7 @@ public abstract class BaseDataFetcherTest {
      * @return CurrencyAmountDTO
      */
     public final CurrencyAmountDTO getCurrencyAmountValue(Object graphqlResult) {
-        Map amountValue = (Map<String, Double>) graphqlResult;
+        Map<String, Double> amountValue = (Map<String, Double>) graphqlResult;
         Map<String, Map<String, String>> currencyValue = (Map<String, Map<String, String>>) graphqlResult;
         final BigDecimal value = new BigDecimal(String.valueOf(amountValue.get("value")));
         final CurrencyDTO quoteCurrency = new CurrencyDTO(currencyValue.get("currency").get("code"));
@@ -73,7 +73,7 @@ public abstract class BaseDataFetcherTest {
      * @return GainDTO
      */
     public final GainDTO getGainValue(Object graphqlResult) {
-        Map value = (Map<String, Object>) graphqlResult;
+        Map<String, Object> value = (Map<String, Object>) graphqlResult;
         return GainDTO.builder()
                 .percentage((Double) value.get("percentage"))
                 .amount(getCurrencyAmountValue(value.get("amount")))
