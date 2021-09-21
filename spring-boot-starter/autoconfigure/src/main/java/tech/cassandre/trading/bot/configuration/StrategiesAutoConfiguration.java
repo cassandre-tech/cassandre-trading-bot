@@ -1,15 +1,19 @@
 package tech.cassandre.trading.bot.configuration;
 
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import reactor.core.publisher.ConnectableFlux;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.domain.ImportedTicker;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -19,6 +23,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.repository.ImportedTickersRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
@@ -36,12 +41,16 @@ import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,6 +67,12 @@ import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J
 @RequiredArgsConstructor
 public class StrategiesAutoConfiguration extends BaseConfiguration {
 
+    /** Tickers file prefix. */
+    private static final String TICKERS_FILE_PREFIX = "tickers-to-import";
+
+    /** Tickers file suffix. */
+    private static final String TICKERS_FILE_SUFFIX = ".csv";
+
     /** Application context. */
     private final ApplicationContext applicationContext;
 
@@ -72,6 +87,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
     /** Position repository. */
     private final PositionRepository positionRepository;
+
+    /** Imported tickers repository. */
+    private final ImportedTickersRepository importedTickersRepository;
 
     /** Exchange service. */
     private final ExchangeService exchangeService;
@@ -124,8 +142,8 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     .values()
                     .forEach(account -> {
                         logger.info("- Account id / name: {} / {}.",
-                            account.getAccountId(),
-                            account.getName());
+                                account.getAccountId(),
+                                account.getName());
                         account.getBalances()
                                 .stream()
                                 .filter(balance -> balance.getAvailable().compareTo(ZERO) != 0)
@@ -210,6 +228,10 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         this.positionService = new PositionServiceCassandreImplementation(positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
+        // Loading imported tickers into database.
+        loadImportedTickers();
+
+        // =============================================================================================================
         // Creating flux.
         final ConnectableFlux<Set<AccountDTO>> connectableAccountFlux = accountFlux.getFlux().publish();
         final ConnectableFlux<Set<PositionDTO>> connectablePositionFlux = positionFlux.getFlux().publish();
@@ -267,10 +289,11 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.setPositionFlux(positionFlux);
                     strategy.setOrderRepository(orderRepository);
                     strategy.setTradeRepository(tradeRepository);
+                    strategy.setPositionRepository(positionRepository);
+                    strategy.setImportedTickersRepository(importedTickersRepository);
                     strategy.setExchangeService(exchangeService);
                     strategy.setTradeService(tradeService);
                     strategy.setPositionService(positionService);
-                    strategy.setPositionRepository(positionRepository);
 
                     // Calling user defined initialize() method.
                     strategy.initialize();
@@ -299,6 +322,58 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     @Bean
     public PositionService getPositionService() {
         return positionService;
+    }
+
+    /**
+     * Load imported tickers into database.
+     */
+    private void loadImportedTickers() {
+        // Deleting everything before import.
+        if (importedTickersRepository.count() > 0) {
+            importedTickersRepository.deleteAllInBatch();
+        }
+
+        // Getting the list of files to import and insert them in database.
+        AtomicLong counter = new AtomicLong(0);
+        logger.info("Importing tickers");
+        getFilesToLoad()
+                .parallelStream()
+                .filter(resource -> resource.getFilename() != null)
+                .peek(resource -> logger.info("Importing file {}", resource.getFilename()))
+                .forEach(resource -> {
+                    try {
+                        // Insert the tickers in database.
+                        new CsvToBeanBuilder<ImportedTicker>(Files.newBufferedReader(resource.getFile().toPath()))
+                                .withType(ImportedTicker.class)
+                                .withIgnoreLeadingWhiteSpace(true)
+                                .build()
+                                .parse()
+                                .forEach(importedTicker -> {
+                                    logger.debug("Importing ticker {}", importedTicker);
+                                    importedTicker.setId(counter.incrementAndGet());
+                                    importedTickersRepository.save(importedTicker);
+                                });
+                    } catch (IOException e) {
+                        logger.error("Impossible to load imported tickers: {}", e.getMessage());
+                    }
+                });
+        logger.info("{} tickers imported", importedTickersRepository.count());
+    }
+
+    /**
+     * Returns the list of files to import.
+     *
+     * @return files to import.
+     */
+    public List<Resource> getFilesToLoad() {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        try {
+            final Resource[] resources = resolver.getResources("classpath*:" + TICKERS_FILE_PREFIX + "*" + TICKERS_FILE_SUFFIX);
+            return Arrays.asList(resources);
+        } catch (IOException e) {
+            logger.error("Impossible to load imported tickers: {}", e.getMessage());
+        }
+        return Collections.emptyList();
     }
 
 }

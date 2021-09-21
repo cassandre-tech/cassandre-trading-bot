@@ -1,7 +1,7 @@
 # GraphQL API
 
 ::: warning
-GraphQL API is available in 5.0.4 release.
+Available in 5.0.4 release.
 :::
 
 ## Overview
