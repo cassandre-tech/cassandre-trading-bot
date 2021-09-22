@@ -71,7 +71,7 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
         assertEquals("ASK", result.get("type"));
         assertEquals("60df231c38ec01000687554e", result.get("orderId"));
         Map<String, String> order = (Map<String, String>) result.get("order");
-        assertEquals("19", order.get("id"));
+        assertEquals(19, order.get("id"));
         assertEquals("60df231c38ec01000687554e", order.get("orderId"));
         assertEquals(BTC_USDT, getCurrencyPairValue(result.get("currencyPair")));
         final CurrencyAmountDTO amount = getCurrencyAmountValue(result.get("amount"));

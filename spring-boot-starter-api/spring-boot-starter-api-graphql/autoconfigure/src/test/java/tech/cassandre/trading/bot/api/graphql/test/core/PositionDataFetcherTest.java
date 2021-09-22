@@ -86,9 +86,9 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
         assertEquals("CLOSED", result.get("status"));
         assertEquals(false, result.get("forceClosing"));
         Map<String, String> openingOrder = (Map<String, String>) result.get("openingOrder");
-        assertEquals("49", openingOrder.get("id"));
+        assertEquals(49, openingOrder.get("id"));
         Map<String, String> closingOrder = (Map<String, String>) result.get("closingOrder");
-        assertEquals("54", closingOrder.get("id"));
+        assertEquals(54, closingOrder.get("id"));
 
         GainDTO lowestCalculatedGain = getGainValue(result.get("lowestCalculatedGain"));
         assertEquals(-4.696751117706299, lowestCalculatedGain.getPercentage());
