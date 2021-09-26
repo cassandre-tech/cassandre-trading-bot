@@ -299,11 +299,21 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.initialize();
 
                     // Connecting flux to strategy.
-                    connectableAccountFlux.subscribe(strategy::accountsUpdates);
-                    connectablePositionFlux.subscribe(strategy::positionsUpdates);
-                    connectableOrderFlux.subscribe(strategy::ordersUpdates);
-                    connectableTradeFlux.subscribe(strategy::tradesUpdates);
-                    connectableTickerFlux.subscribe(strategy::tickersUpdates);
+                    connectableAccountFlux.subscribe(strategy::accountsUpdates, throwable -> {
+                        logger.error("AccountsUpdates failing: {}", throwable.getMessage());
+                    });
+                    connectablePositionFlux.subscribe(strategy::positionsUpdates, throwable -> {
+                        logger.error("PositionsUpdates failing: {}", throwable.getMessage());
+                    });
+                    connectableOrderFlux.subscribe(strategy::ordersUpdates, throwable -> {
+                        logger.error("OrdersUpdates failing: {}", throwable.getMessage());
+                    });
+                    connectableTradeFlux.subscribe(strategy::tradesUpdates, throwable -> {
+                        logger.error("TradesUpdates failing: {}", throwable.getMessage());
+                    });
+                    connectableTickerFlux.subscribe(strategy::tickersUpdates, throwable -> {
+                        logger.error("TickersUpdates failing: {}", throwable.getMessage());
+                    });
                 });
 
         // Start flux.
