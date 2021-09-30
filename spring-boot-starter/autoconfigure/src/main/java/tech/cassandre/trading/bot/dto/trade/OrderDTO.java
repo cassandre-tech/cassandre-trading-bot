@@ -21,7 +21,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 /**
  * DTO representing an order.
- * A market order is a request by an investor to buy or sell in the current market.
+ * An order is a request by an investor to buy or sell.
  */
 @Value
 @Builder
@@ -44,7 +44,7 @@ public class OrderDTO {
     /** Currency pair. */
     CurrencyPairDTO currencyPair;
 
-    /** Amount that was ordered. */
+    /** Amount to be ordered / amount that was ordered. */
     CurrencyAmountDTO amount;
 
     /** Weighted Average price of the fills in the order. */
@@ -72,7 +72,7 @@ public class OrderDTO {
     /** The timestamp of the order. */
     ZonedDateTime timestamp;
 
-    /** All trades related to order. */
+    /** All trades related to the order. */
     @Singular
     Set<TradeDTO> trades;
 

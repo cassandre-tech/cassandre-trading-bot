@@ -122,3 +122,4 @@ docs/yarn.lock
 /trading-bot-strategies/technical_analysis/ta4j-strategy/.idea/libraries/
 /archetype-test-basic/
 /archetype-test-ta4j-basic/
+/util/test/api/graphql/package.json

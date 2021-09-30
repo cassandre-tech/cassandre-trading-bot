@@ -35,6 +35,11 @@
 			<artifactId>hsqldb</artifactId>
 			<version>2.6.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.23</version>
+		</dependency>
 
 		<!-- Cassandre trading bot -->
 		<dependency>
@@ -52,7 +57,12 @@
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-simulated</artifactId>
 			<version>@xchange.version@</version>
-			<scope>test</scope>
+		</dependency>
+		<!-- QraphQL API -->
+		<dependency>
+			<groupId>tech.cassandre.trading.bot</groupId>
+			<artifactId>cassandre-trading-bot-spring-boot-starter-api-graphql</artifactId>
+			<version>@project.version@</version>
 		</dependency>
 
 		<!-- Tests -->

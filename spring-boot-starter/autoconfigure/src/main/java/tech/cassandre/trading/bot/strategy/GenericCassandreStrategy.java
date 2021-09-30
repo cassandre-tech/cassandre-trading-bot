@@ -20,6 +20,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
+import tech.cassandre.trading.bot.repository.ImportedTickersRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -29,12 +30,15 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
 import tech.cassandre.trading.bot.util.mapper.OrderMapper;
 import tech.cassandre.trading.bot.util.mapper.PositionMapper;
+import tech.cassandre.trading.bot.util.mapper.TickerMapper;
 import tech.cassandre.trading.bot.util.mapper.TradeMapper;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -62,6 +66,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Position mapper. */
     protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
 
+    /** Ticker mapper. */
+    protected final TickerMapper tickerMapper = Mappers.getMapper(TickerMapper.class);
+
     /** Logger. */
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -79,6 +86,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     /** Position repository. */
     protected PositionRepository positionRepository;
+
+    /** Imported tickers repository. */
+    protected ImportedTickersRepository importedTickersRepository;
 
     /** Exchange service. */
     protected ExchangeService exchangeService;
@@ -147,6 +157,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     @Override
+    public void setImportedTickersRepository(final ImportedTickersRepository newImportedTickersRepository) {
+        this.importedTickersRepository = newImportedTickersRepository;
+    }
+
+    @Override
     public void setExchangeService(final ExchangeService newExchangeService) {
         this.exchangeService = newExchangeService;
     }
@@ -183,8 +198,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public void tickersUpdates(final Set<TickerDTO> tickers) {
         // We only retrieve the tickers requested by the strategy.
+        final Set<CurrencyPairDTO> desiredPairs = getRequestedCurrencyPairs();
         final Map<CurrencyPairDTO, TickerDTO> tickersUpdates = tickers.stream()
-                .filter(tickerDTO -> getRequestedCurrencyPairs().contains(tickerDTO.getCurrencyPair()))
+                .filter(tickerDTO -> desiredPairs.contains(tickerDTO.getCurrencyPair()))
                 // We update the values of the last tickers that can be found in the strategy.
                 .peek(tickerDTO -> lastTickers.put(tickerDTO.getCurrencyPair(), tickerDTO))
                 .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value) -> id, LinkedHashMap::new));
@@ -341,6 +357,31 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public final BigDecimal getLastPriceForCurrencyPair(final CurrencyPairDTO currencyPair) {
         return getLastTickerByCurrencyPair(currencyPair).map(TickerDTO::getLast).orElse(null);
+    }
+
+    /**
+     * Return the list of imported tickers (ordered by timestamp).
+     *
+     * @return imported tickers
+     */
+    public final List<TickerDTO> getImportedTickers() {
+        return importedTickersRepository.findByOrderByTimestampAsc()
+                .stream()
+                .map(tickerMapper::mapToTickerDTO)
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Return the list of imported tickers for a specific currency pair (ordered by timestamp).
+     *
+     * @param currencyPair currency pair
+     * @return imported tickers
+     */
+    public final List<TickerDTO> getImportedTickers(final CurrencyPairDTO currencyPair) {
+        return importedTickersRepository.findByCurrencyPairOrderByTimestampAsc(currencyPair.toString())
+                .stream()
+                .map(tickerMapper::mapToTickerDTO)
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 
     // =================================================================================================================
@@ -625,6 +666,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     // =================================================================================================================
     // Methods that can be implemented by strategies.
+
+    @Override
+    public void initialize() {
+
+    }
 
     @Override
     public void onAccountsUpdates(final Map<String, AccountDTO> accounts) {

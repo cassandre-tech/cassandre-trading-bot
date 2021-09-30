@@ -85,7 +85,7 @@ public class UserServiceTest {
         assertTrue(tradeWallet.getBalance("BTC").isPresent());
         assertTrue(tradeWallet.getBalance("USD").isPresent());
         assertTrue(tradeWallet.getBalance("BAT").isPresent());
-        // Non existing balances.
+        // Non-existing balances.
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());
         // Values.
         assertEquals(1, tradeWallet.getBalance("BTC").get().getTotal().compareTo(ZERO));

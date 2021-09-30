@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * User service - XChange implementation.
@@ -16,6 +17,9 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
 
     /** XChange service. */
     private final org.knowm.xchange.service.account.AccountService xChangeAccountService;
+
+    /** Cached reply from Exchange. */
+    private final Map<String, AccountDTO> cachedReply = new ConcurrentHashMap<>();
 
     /**
      * Constructor.
@@ -39,6 +43,14 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             logger.debug("Retrieving account information");
             final UserDTO user = accountMapper.mapToUserDTO(xChangeAccountService.getAccountInfo());
             logger.debug("Account information retrieved " + user);
+            // Update the cached reply.
+            if (user != null && user.getAccounts() != null) {
+                user.getAccounts()
+                        .values()
+                        .stream()
+                        .filter(accountDTO -> accountDTO.getAccountId() != null)
+                        .forEach(accountDTO -> cachedReply.put(accountDTO.getAccountId(), accountDTO));
+            }
             return Optional.ofNullable(user);
         } catch (IOException e) {
             logger.error("Error retrieving account information: {}", e.getMessage());
@@ -56,6 +68,15 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             return user.get().getAccounts();
         } else {
             return Collections.emptyMap();
+        }
+    }
+
+    @Override
+    public final Map<String, AccountDTO> getAccountsFromCache() {
+        if (cachedReply.isEmpty()) {
+            return getAccounts();
+        } else {
+            return cachedReply;
         }
     }
 

@@ -100,7 +100,7 @@ public class UserServiceTest {
         assertTrue(tradeWallet.getBalance(ETH).isPresent());
         assertTrue(tradeWallet.getBalance("USDT").isPresent());
         assertTrue(tradeWallet.getBalance(USDT).isPresent());
-        // Non existing balances.
+        // Non-existing balances.
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());
         assertTrue(tradeWallet.getBalance(ANC).isEmpty());
         // Values.

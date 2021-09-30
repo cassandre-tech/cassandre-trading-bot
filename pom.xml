@@ -8,7 +8,7 @@
 	<!-- Project information -->
 	<groupId>tech.cassandre.trading.bot</groupId>
 	<artifactId>cassandre-trading-bot-project</artifactId>
-	<version>5.0.3</version>
+	<version>5.0.4</version>
 	<packaging>pom</packaging>
 	<name>Cassandre trading bot</name>
 	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
@@ -69,7 +69,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- XChange release -->
-		<xchange.version>5.0.10</xchange.version>
+		<xchange.version>5.0.11</xchange.version>
 	</properties>
 	<!-- =========================================================================================================== -->
 
@@ -82,6 +82,9 @@
 		<!-- Trading bot spring boot starter test -->
 		<module>spring-boot-starter-test/autoconfigure</module>
 		<module>spring-boot-starter-test/starter</module>
+		<!-- Trading bot spring boot starter API -->
+		<module>spring-boot-starter-api/spring-boot-starter-api-graphql/autoconfigure</module>
+		<module>spring-boot-starter-api/spring-boot-starter-api-graphql/starter</module>
 		<!-- Archetypes -->
 		<module>trading-bot-archetypes/basic-archetype</module>
 		<module>trading-bot-archetypes/basic-ta4j-archetype</module>

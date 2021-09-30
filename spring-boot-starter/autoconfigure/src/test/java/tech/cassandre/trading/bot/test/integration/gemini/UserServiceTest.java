@@ -79,7 +79,7 @@ public class UserServiceTest {
         // Existing balances.
         assertTrue(tradeWallet.getBalance("BTC").isPresent());
         assertTrue(tradeWallet.getBalance(BTC).isPresent());
-        // Non existing balances.
+        // Non-existing balances.
         assertTrue(tradeWallet.getBalance("ANC").isEmpty());
         assertTrue(tradeWallet.getBalance(ANC).isEmpty());
         // Values.

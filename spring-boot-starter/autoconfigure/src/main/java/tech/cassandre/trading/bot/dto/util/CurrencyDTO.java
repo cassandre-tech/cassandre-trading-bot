@@ -1,5 +1,7 @@
 package tech.cassandre.trading.bot.dto.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -849,6 +851,9 @@ public final class CurrencyDTO implements Serializable {
     /** Modum. */
     public static final CurrencyDTO MOD = createCurrency("MOD", "Modum", null);
 
+    /** Polkadot. */
+    public static final CurrencyDTO DOT = createCurrency("DOT", "Polkadot", null);
+
     /** Code. */
     private final String code;
 
@@ -994,11 +999,11 @@ public final class CurrencyDTO implements Serializable {
      *
      * @return currency
      */
+    @JsonIgnore
     public CurrencyDTO getIso4217Currency() {
         if (attributes.isoCode == null) {
             return this;
         }
-        // The logic for setting isoCode is in CurrencyAttributes
         return getCodeCurrency(attributes.isoCode);
     }
 
@@ -1007,6 +1012,7 @@ public final class CurrencyDTO implements Serializable {
      *
      * @return currency
      */
+    @JsonIgnore
     public CurrencyDTO getCommonlyUsedCurrency() {
         return getCodeCurrency(attributes.commonCode);
     }

@@ -62,7 +62,7 @@ public class PositionDTO {
     /** Currency pair. */
     private final CurrencyPairDTO currencyPair;
 
-    /** Amount that was ordered. */
+    /** Position amount. */
     private final CurrencyAmountDTO amount;
 
     /** Position rules. */
