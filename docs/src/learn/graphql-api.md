@@ -1,9 +1,5 @@
 # GraphQL API
 
-::: warning
-Available in 5.0.4 release.
-:::
-
 ## Overview
 Cassandre GraphQL API allows you to ONLY query your data (balances, strategies, orders, trades and positions).
 

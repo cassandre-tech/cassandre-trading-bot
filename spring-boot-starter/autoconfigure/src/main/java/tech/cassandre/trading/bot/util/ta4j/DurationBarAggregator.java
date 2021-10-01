@@ -14,32 +14,27 @@ import java.time.ZonedDateTime;
  */
 public class DurationBarAggregator implements BarAggregator {
 
-    /**
-     * Duration.
-     */
+    /** Duration. */
     private final Duration duration;
-    /**
-     * The bar context.
-     */
+
+    /** The bar context. */
     private BarContext ctx;
-    /**
-     * The processor.
-     */
+
+    /** The processor. */
     private final DirectProcessor<Bar> processor;
-    /**
-     * The sink.
-     */
+
+    /** The sink. */
     private final FluxSink<Bar> sink;
-    /**
-     * Highest price
-     */
+
+    /** Highest price. */
     private Number highest = 0;
-    /**
-     * Lowest price
-     */
+
+    /** Lowest price. */
     private Number lowest = 0;
+
     /**
      * Creates the Aggregator with the given {@link Duration}.
+     *
      * @param barDuration the duration
      */
     public DurationBarAggregator(final Duration barDuration) {
@@ -51,12 +46,13 @@ public class DurationBarAggregator implements BarAggregator {
 
     /**
      * Updates the bar data.
-     * @param timestamp time of the tick
+     *
+     * @param timestamp   time of the tick
      * @param latestPrice latest price
      */
 
     @Override
-    public void update(ZonedDateTime timestamp, Number latestPrice) {
+    public void update(final ZonedDateTime timestamp, final Number latestPrice) {
         calculateHighestLowest(latestPrice);
         if (ctx == null) {
             ctx = new BarContext(duration, timestamp, latestPrice, latestPrice, latestPrice, latestPrice, 0);
@@ -69,12 +65,13 @@ public class DurationBarAggregator implements BarAggregator {
             highest = latestPrice;
             lowest = latestPrice;
         } else {
-            ctx.update(lowest,highest,latestPrice,0);
+            ctx.update(lowest, highest, latestPrice, 0);
         }
     }
 
     /**
      * Gets the {@link Flux}.
+     *
      * @return flux of Bars
      */
     @Override
@@ -82,14 +79,18 @@ public class DurationBarAggregator implements BarAggregator {
         return processor;
     }
 
-    private void calculateHighestLowest(Number latestPrice) {
+    /**
+     * Calculate highest and lowest.
+     *
+     * @param latestPrice latest price
+     */
+    private void calculateHighestLowest(final Number latestPrice) {
         if (lowest.doubleValue() == 0D) {
             lowest = latestPrice;
             highest = latestPrice;
-        }
-        else {
-            lowest = Math.min(lowest.doubleValue(),latestPrice.doubleValue());
-            highest = Math.max(highest.doubleValue(),latestPrice.doubleValue());
+        } else {
+            lowest = Math.min(lowest.doubleValue(), latestPrice.doubleValue());
+            highest = Math.max(highest.doubleValue(), latestPrice.doubleValue());
         }
     }
 }
