@@ -65,6 +65,8 @@ class DurationBarAggregatorTest {
     public void shouldNotAggregateBars() {
         aggregator.update(getTime("2021-01-01 00:00:00"), 10);
         aggregator.update(getTime("2021-01-01 00:05:00"), 3);
+        aggregator.update(getTime("2021-01-01 00:06:00"), 5);
+        aggregator.update(getTime("2021-01-01 00:07:00"), 2);
         aggregator.update(getTime("2021-01-01 00:10:00"), 15);
         aggregator.update(getTime("2021-01-01 00:15:00"), 20);
 
@@ -74,17 +76,22 @@ class DurationBarAggregatorTest {
 
         assertEquals(3, testSubscriber.bars.size());
 
-        // TODO Fix those tests.
-//        assertEquals(15d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
-//        assertEquals(9d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
-//        assertEquals(10d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
-//        assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
-//        assertEquals(100d, testSubscriber.bars.get(0).getVolume().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
+
+        assertEquals(5d, testSubscriber.bars.get(1).getHighPrice().doubleValue());
+        assertEquals(2d, testSubscriber.bars.get(1).getLowPrice().doubleValue());
+        assertEquals(2d, testSubscriber.bars.get(1).getClosePrice().doubleValue());
+        assertEquals(3d, testSubscriber.bars.get(1).getOpenPrice().doubleValue());
+
     }
 
     ZonedDateTime getTime(String value){
         return LocalDateTime.parse(value, dateTimeFormatter).atZone(ZoneId.systemDefault());
     }
+
 
     private static class TestSubscriber extends BaseSubscriber<Bar> {
         boolean subscribed;
@@ -92,13 +99,13 @@ class DurationBarAggregatorTest {
 
 
         @Override
-        protected void hookOnNext(final Bar value) {
+        protected void hookOnNext(Bar value) {
             super.hookOnNext(value);
             bars.add(value);
         }
 
         @Override
-        protected void hookOnSubscribe(final Subscription subscription) {
+        protected void hookOnSubscribe(Subscription subscription) {
             super.hookOnSubscribe(subscription);
             subscribed = true;
         }
