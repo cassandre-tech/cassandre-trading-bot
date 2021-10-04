@@ -1,4 +1,4 @@
-"A trade is the action of buying and selling goods and services."
+"Currency."
 type Currency {
     "Code."
     code: ID!

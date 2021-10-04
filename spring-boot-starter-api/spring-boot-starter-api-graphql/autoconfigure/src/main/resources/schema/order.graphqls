@@ -22,7 +22,7 @@ type Order {
     leverage: String
     "Order status."
     status: String
-    " Amount to be ordered / amount that has been matched against order on the order book/filled."
+    "Amount to be ordered / amount that has been matched against order on the order book/filled."
     cumulativeAmount: CurrencyAmount
     "An identifier provided by the user on placement that uniquely identifies the order."
     userReference: String
