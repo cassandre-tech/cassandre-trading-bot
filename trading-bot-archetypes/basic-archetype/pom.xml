@@ -18,19 +18,19 @@
 			<extension>
 				<groupId>org.apache.maven.archetype</groupId>
 				<artifactId>archetype-packaging</artifactId>
-				<version>3.2.0</version>
+				<version>${maven.archetype-packaging.version}</version>
 			</extension>
 		</extensions>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<artifactId>maven-archetype-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>${maven.archetype-packaging.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>${maven.resources.plugin.version}</version>
 					<configuration>
 						<propertiesEncoding>${project.build.sourceEncoding}</propertiesEncoding>
 						<escapeString>\</escapeString>
@@ -40,7 +40,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>${maven.jar.plugin.version}</version>
 					<configuration>
 						<archive>
 							<manifestEntries>
@@ -52,7 +52,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.2.1</version>
+					<version>${maven.source.plugin.version}</version>
 					<executions>
 						<execution>
 							<id>attach-sources</id>
@@ -65,7 +65,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>${maven.javadoc.plugin.version}</version>
 					<configuration>
 						<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 					</configuration>
