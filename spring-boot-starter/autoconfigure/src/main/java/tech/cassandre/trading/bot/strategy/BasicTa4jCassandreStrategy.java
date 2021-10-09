@@ -28,29 +28,19 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrategy {
 
-    /**
-     * Timestamp of the last added bar.
-     */
+    /** Timestamp of the last added bar. */
     private ZonedDateTime lastAddedBarTimestamp;
 
-    /**
-     * Is historical data imported .
-     */
+    /** Is historical data imported. */
     private boolean isHistoricalImport;
 
-    /**
-     * Series.
-     */
+    /** Series. */
     private final BarSeries series;
 
-    /**
-     * Ta4j Strategy.
-     */
+    /** Ta4j Strategy. */
     private final Strategy strategy;
 
-    /**
-     * The bar aggregator.
-     */
+    /** The bar aggregator. */
     private final BarAggregator barAggregator = new DurationBarAggregator(getDelayBetweenTwoBars());
 
     /**

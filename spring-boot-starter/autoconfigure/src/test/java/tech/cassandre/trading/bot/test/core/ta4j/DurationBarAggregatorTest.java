@@ -23,21 +23,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DurationBarAggregatorTest {
 
+    /** Date time formatter. */
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
+    /** Aggregator. */
     DurationBarAggregator aggregator;
+
+    /** Test subscriber. */
     TestSubscriber testSubscriber;
 
-    @BeforeEach
-    public void setup(){
-        aggregator = new DurationBarAggregator(Duration.ofMinutes(5));
-        final Flux<Bar> barFlux = aggregator.getBarFlux();
-        testSubscriber = new TestSubscriber();
-        barFlux.subscribe(testSubscriber);
-    }
-
-    @DisplayName("Check intra bar aggregation")
     @Test
+    @DisplayName("Check intra bar aggregation")
     public void shouldAggregateBars() {
         aggregator.update(getTime("2021-01-01 10:00:00"), 10);
         aggregator.update(getTime("2021-01-01 10:01:00"), 3);
@@ -66,8 +62,16 @@ class DurationBarAggregatorTest {
 
     }
 
-    @DisplayName("Check that aggregation does not happen, when time between bars is equal to last timestamp + distance")
+    @BeforeEach
+    public void setup(){
+        aggregator = new DurationBarAggregator(Duration.ofMinutes(5));
+        final Flux<Bar> barFlux = aggregator.getBarFlux();
+        testSubscriber = new TestSubscriber();
+        barFlux.subscribe(testSubscriber);
+    }
+
     @Test
+    @DisplayName("Check that aggregation does not happen, when time between bars is equal to last timestamp + distance")
     public void shouldNotAggregateBars() {
         aggregator.update(getTime("2021-01-01 00:00:00"), 10);
         aggregator.update(getTime("2021-01-01 00:05:00"), 3);
@@ -75,7 +79,6 @@ class DurationBarAggregatorTest {
         aggregator.update(getTime("2021-01-01 00:07:00"), 2);
         aggregator.update(getTime("2021-01-01 00:10:00"), 15);
         aggregator.update(getTime("2021-01-01 00:15:00"), 20);
-
 
         assertTrue(testSubscriber.subscribed);
         testSubscriber.request(3);
@@ -121,5 +124,5 @@ class DurationBarAggregatorTest {
             subscribed = true;
         }
     }
-
+    
 }
