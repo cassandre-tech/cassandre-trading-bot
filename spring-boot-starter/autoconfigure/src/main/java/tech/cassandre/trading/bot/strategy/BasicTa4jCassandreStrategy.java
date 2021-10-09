@@ -28,13 +28,24 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrategy {
 
-    /** Timestamp of the last added bar. */
+    /**
+     * Timestamp of the last added bar.
+     */
     private ZonedDateTime lastAddedBarTimestamp;
 
-    /** Series. */
+    /**
+     * Is historical data imported .
+     */
+    private boolean isHistoricalImport;
+
+    /**
+     * Series.
+     */
     private final BarSeries series;
 
-    /** Ta4j Strategy. */
+    /**
+     * Ta4j Strategy.
+     */
     private final Strategy strategy;
 
     /**
@@ -46,6 +57,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      * Constructor.
      */
     public BasicTa4jCassandreStrategy() {
+
         // Build the series.
         series = new BaseBarSeriesBuilder()
                 .withNumTypeOf(DoubleNum.class)
@@ -106,7 +118,12 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
         tickersUpdates.values().forEach(ticker -> {
             getLastTickers().put(ticker.getCurrencyPair(), ticker);
-            barAggregator.update(ticker.getTimestamp(), ticker.getLast());
+            if (series.getEndIndex() > 0 && isHistoricalImport) {
+                barAggregator.update(series.getLastBar().getEndTime(), ticker.getLast());
+                isHistoricalImport = false;
+            } else {
+                barAggregator.update(ticker.getTimestamp(), ticker.getLast());
+            }
         });
 
         // We update the positions with tickers.
@@ -273,5 +290,4 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
             request(1);
         }
     }
-
 }

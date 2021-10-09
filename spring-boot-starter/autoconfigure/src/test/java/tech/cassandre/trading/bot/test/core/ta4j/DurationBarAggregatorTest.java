@@ -53,11 +53,17 @@ class DurationBarAggregatorTest {
         testSubscriber.request(1);
 
         assertEquals(2, testSubscriber.bars.size());
+
+        assertEquals(10d, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
         assertEquals(15d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
         assertEquals(3d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
         assertEquals(15d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
-        assertEquals(20, testSubscriber.bars.get(1).getOpenPrice().doubleValue());
-        //assertEquals(3400d, testSubscriber.bars.get(0).getVolume().doubleValue());
+
+        assertEquals(20d, testSubscriber.bars.get(1).getOpenPrice().doubleValue());
+        assertEquals(21d, testSubscriber.bars.get(1).getHighPrice().doubleValue());
+        assertEquals(18d, testSubscriber.bars.get(1).getLowPrice().doubleValue());
+        assertEquals(18d, testSubscriber.bars.get(1).getClosePrice().doubleValue());
+
     }
 
     @DisplayName("Check that aggregation does not happen, when time between bars is equal to last timestamp + distance")
@@ -85,6 +91,11 @@ class DurationBarAggregatorTest {
         assertEquals(2d, testSubscriber.bars.get(1).getLowPrice().doubleValue());
         assertEquals(2d, testSubscriber.bars.get(1).getClosePrice().doubleValue());
         assertEquals(3d, testSubscriber.bars.get(1).getOpenPrice().doubleValue());
+
+        assertEquals(15d, testSubscriber.bars.get(2).getHighPrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(2).getLowPrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(2).getClosePrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(2).getOpenPrice().doubleValue());
 
     }
 
