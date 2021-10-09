@@ -78,7 +78,7 @@
 		<xchange.version>5.0.11</xchange.version>
 		<bucket4j.version>6.3.0</bucket4j.version>
 		<liquibase.version>4.5.0</liquibase.version>
-		<opencsv.version>5.4</opencsv.version>
+		<opencsv.version>5.5.2</opencsv.version>
 
 		<!-- Core utils -->
 		<lombok.version>1.18.22</lombok.version>
