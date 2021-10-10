@@ -99,17 +99,9 @@ class DurationBarAggregatorTest {
 
     }
 
-    @DisplayName("Check that first bar after historical data import uses the correct timestamp from last historical ar ")
-    @Test
-    public void shouldAggregateCorrectTimestampBars() {
-
-
-    }
-
     ZonedDateTime getTime(String value) {
         return LocalDateTime.parse(value, dateTimeFormatter).atZone(ZoneId.systemDefault());
     }
-
 
     private static class TestSubscriber extends BaseSubscriber<Bar> {
         boolean subscribed;
