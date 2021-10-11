@@ -279,7 +279,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      *
      * @param historicalImport historicalImport
      */
-    public void setHistoricalImport(boolean historicalImport) {
+    public void setHistoricalImport(final boolean historicalImport) {
         isHistoricalImport = historicalImport;
     }
 
