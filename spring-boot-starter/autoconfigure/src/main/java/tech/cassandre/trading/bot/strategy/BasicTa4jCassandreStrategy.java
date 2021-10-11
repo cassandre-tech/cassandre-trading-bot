@@ -256,6 +256,24 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     /**
+     * Getter for historical data import.
+     *
+     * @return isHistoricalImport
+     */
+    public boolean isHistoricalImport() {
+        return isHistoricalImport;
+    }
+
+    /**
+     * Setter for historical data import.
+     *
+     * @param historicalImport historicalImport
+     */
+    public void setHistoricalImport(final boolean historicalImport) {
+        isHistoricalImport = historicalImport;
+    }
+
+    /**
      * Subscriber to the Bar series.
      */
     private static class AggregatedBarSubscriber extends BaseSubscriber<Bar> {

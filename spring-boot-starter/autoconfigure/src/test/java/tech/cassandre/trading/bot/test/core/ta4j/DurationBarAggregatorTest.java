@@ -102,10 +102,9 @@ class DurationBarAggregatorTest {
 
     }
 
-    ZonedDateTime getTime(String value){
+    ZonedDateTime getTime(String value) {
         return LocalDateTime.parse(value, dateTimeFormatter).atZone(ZoneId.systemDefault());
     }
-
 
     private static class TestSubscriber extends BaseSubscriber<Bar> {
         boolean subscribed;
