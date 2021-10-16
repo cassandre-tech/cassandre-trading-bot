@@ -1,4 +1,4 @@
-"Server configuration"
+"Server configuration."
 type Configuration {
     "API Version."
     apiVersion: String!

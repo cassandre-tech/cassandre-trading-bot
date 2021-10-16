@@ -1,4 +1,4 @@
-"A trade is the action of buying and selling goods and services."
+"A trade is the action of buying and selling (linked to an order)."
 type Trade {
     "Technical ID."
     id: Int!
@@ -14,7 +14,7 @@ type Trade {
     currencyPair: CurrencyPair!
     "Amount to be ordered / amount that was ordered."
     amount: CurrencyAmount!
-    "The price"
+    "The price."
     price: CurrencyAmount
     "The fee that was charged by the exchange for this trade."
     fee: CurrencyAmount

@@ -1,9 +1,5 @@
 # Import historical data
 
-::: warning
-Available in 5.0.4 release.
-:::
-
 ## Overview
 This feature allows you to import historical data (tickers you selected) in Cassandre database, so you can initialise your strategy.
 

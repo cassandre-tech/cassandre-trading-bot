@@ -23,10 +23,44 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DurationBarAggregatorTest {
 
+    /** Date time formatter. */
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
+    /** Aggregator. */
     DurationBarAggregator aggregator;
+
+    /** Test subscriber. */
     TestSubscriber testSubscriber;
+
+    @Test
+    @DisplayName("Check intra bar aggregation")
+    public void shouldAggregateBars() {
+        aggregator.update(getTime("2021-01-01 10:00:00"), 10);
+        aggregator.update(getTime("2021-01-01 10:01:00"), 3);
+        aggregator.update(getTime("2021-01-01 10:02:00"), 15);
+        aggregator.update(getTime("2021-01-01 10:05:00"), 20);
+        aggregator.update(getTime("2021-01-01 10:05:30"), 21);
+        aggregator.update(getTime("2021-01-01 10:06:00"), 19);
+        aggregator.update(getTime("2021-01-01 10:08:00"), 18);
+        aggregator.update(getTime("2021-01-01 10:10:00"), 17);
+
+
+        assertTrue(testSubscriber.subscribed);
+        testSubscriber.request(1);
+
+        assertEquals(2, testSubscriber.bars.size());
+
+        assertEquals(10d, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
+        assertEquals(3d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
+
+        assertEquals(20d, testSubscriber.bars.get(1).getOpenPrice().doubleValue());
+        assertEquals(21d, testSubscriber.bars.get(1).getHighPrice().doubleValue());
+        assertEquals(18d, testSubscriber.bars.get(1).getLowPrice().doubleValue());
+        assertEquals(18d, testSubscriber.bars.get(1).getClosePrice().doubleValue());
+
+    }
 
     @BeforeEach
     public void setup(){
@@ -36,51 +70,41 @@ class DurationBarAggregatorTest {
         barFlux.subscribe(testSubscriber);
     }
 
-    @DisplayName("Check intra bar aggregation")
     @Test
-    public void shouldAggregateBars() {
-        aggregator.update(getTime("2021-01-01 10:00:00"), 10, 15, 9, 100);
-        aggregator.update(getTime("2021-01-01 10:01:00"), 3, 10, 2, 300);
-        aggregator.update(getTime("2021-01-01 10:02:00"), 15, 16, 10, 3000);
-        aggregator.update(getTime("2021-01-01 10:05:00"), 20, 30, 16, 300);
-
-
-        assertTrue(testSubscriber.subscribed);
-        testSubscriber.request(1);
-
-        assertEquals(1, testSubscriber.bars.size());
-        assertEquals(16d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
-        assertEquals(2d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
-        assertEquals(15d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
-        assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
-        assertEquals(3400d, testSubscriber.bars.get(0).getVolume().doubleValue());
-    }
-
     @DisplayName("Check that aggregation does not happen, when time between bars is equal to last timestamp + distance")
-    @Test
     public void shouldNotAggregateBars() {
-        aggregator.update(getTime("2021-01-01 00:00:00"), 10, 15, 9, 100);
-        aggregator.update(getTime("2021-01-01 00:05:00"), 3, 10, 2, 300);
-        aggregator.update(getTime("2021-01-01 00:10:00"), 15, 16, 10, 3000);
-        aggregator.update(getTime("2021-01-01 00:15:00"), 20, 30, 16, 300);
-
+        aggregator.update(getTime("2021-01-01 00:00:00"), 10);
+        aggregator.update(getTime("2021-01-01 00:05:00"), 3);
+        aggregator.update(getTime("2021-01-01 00:06:00"), 5);
+        aggregator.update(getTime("2021-01-01 00:07:00"), 2);
+        aggregator.update(getTime("2021-01-01 00:10:00"), 15);
+        aggregator.update(getTime("2021-01-01 00:15:00"), 20);
 
         assertTrue(testSubscriber.subscribed);
         testSubscriber.request(3);
 
         assertEquals(3, testSubscriber.bars.size());
 
-        assertEquals(15d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
-        assertEquals(9d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getHighPrice().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getLowPrice().doubleValue());
         assertEquals(10d, testSubscriber.bars.get(0).getClosePrice().doubleValue());
-        assertEquals(0, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
-        assertEquals(100d, testSubscriber.bars.get(0).getVolume().doubleValue());
+        assertEquals(10d, testSubscriber.bars.get(0).getOpenPrice().doubleValue());
+
+        assertEquals(5d, testSubscriber.bars.get(1).getHighPrice().doubleValue());
+        assertEquals(2d, testSubscriber.bars.get(1).getLowPrice().doubleValue());
+        assertEquals(2d, testSubscriber.bars.get(1).getClosePrice().doubleValue());
+        assertEquals(3d, testSubscriber.bars.get(1).getOpenPrice().doubleValue());
+
+        assertEquals(15d, testSubscriber.bars.get(2).getHighPrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(2).getLowPrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(2).getClosePrice().doubleValue());
+        assertEquals(15d, testSubscriber.bars.get(2).getOpenPrice().doubleValue());
+
     }
 
-    ZonedDateTime getTime(String value){
+    ZonedDateTime getTime(String value) {
         return LocalDateTime.parse(value, dateTimeFormatter).atZone(ZoneId.systemDefault());
     }
-
 
     private static class TestSubscriber extends BaseSubscriber<Bar> {
         boolean subscribed;
@@ -99,5 +123,5 @@ class DurationBarAggregatorTest {
             subscribed = true;
         }
     }
-
+    
 }

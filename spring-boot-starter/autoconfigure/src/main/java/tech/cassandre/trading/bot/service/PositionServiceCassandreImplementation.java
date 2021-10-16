@@ -52,6 +52,9 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     /** Big decimal scale for division. */
     private static final int SCALE = 8;
 
+    /** Minimum amount for creating a position. */
+    private static final BigDecimal MINIMUM_AMOUNT_FOR_POSITION = new BigDecimal("0.000000001");
+
     /** Position repository. */
     private final PositionRepository positionRepository;
 
@@ -91,6 +94,12 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                 amount,
                 currencyPair,
                 rules);
+
+        // It's forbidden to create a position with a too small amount.
+        if (amount == null || MINIMUM_AMOUNT_FOR_POSITION.compareTo(amount) > 0) {
+            logger.error("Impossible to create a position for such a small amount");
+            return new PositionCreationResultDTO("Impossible to create a position for such a small amount: " + amount, null);
+        }
 
         // =============================================================================================================
         // Creates the order.

@@ -31,21 +31,23 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     /** Timestamp of the last added bar. */
     private ZonedDateTime lastAddedBarTimestamp;
 
+    /** Is historical data imported. */
+    private boolean isHistoricalImport;
+
     /** Series. */
     private final BarSeries series;
 
     /** Ta4j Strategy. */
     private final Strategy strategy;
 
-    /**
-     * The bar aggregator.
-     */
+    /** The bar aggregator. */
     private final BarAggregator barAggregator = new DurationBarAggregator(getDelayBetweenTwoBars());
 
     /**
      * Constructor.
      */
     public BasicTa4jCassandreStrategy() {
+
         // Build the series.
         series = new BaseBarSeriesBuilder()
                 .withNumTypeOf(DoubleNum.class)
@@ -106,7 +108,12 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
         tickersUpdates.values().forEach(ticker -> {
             getLastTickers().put(ticker.getCurrencyPair(), ticker);
-            barAggregator.update(ticker.getTimestamp(), ticker.getLast(), ticker.getHigh(), ticker.getLow(), ticker.getVolume());
+            if (series.getEndIndex() > 0 && isHistoricalImport) {
+                barAggregator.update(series.getLastBar().getEndTime(), ticker.getLast());
+                isHistoricalImport = false;
+            } else {
+                barAggregator.update(ticker.getTimestamp(), ticker.getLast());
+            }
         });
 
         // We update the positions with tickers.
@@ -249,6 +256,24 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     /**
+     * Getter for historical data import.
+     *
+     * @return isHistoricalImport
+     */
+    public boolean isHistoricalImport() {
+        return isHistoricalImport;
+    }
+
+    /**
+     * Setter for historical data import.
+     *
+     * @param historicalImport historicalImport
+     */
+    public void setHistoricalImport(final boolean historicalImport) {
+        isHistoricalImport = historicalImport;
+    }
+
+    /**
      * Subscriber to the Bar series.
      */
     private static class AggregatedBarSubscriber extends BaseSubscriber<Bar> {
@@ -273,5 +298,4 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
             request(1);
         }
     }
-
 }

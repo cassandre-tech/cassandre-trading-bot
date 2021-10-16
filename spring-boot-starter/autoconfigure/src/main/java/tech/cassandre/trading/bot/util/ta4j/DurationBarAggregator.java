@@ -14,25 +14,27 @@ import java.time.ZonedDateTime;
  */
 public class DurationBarAggregator implements BarAggregator {
 
-    /**
-     * Duration.
-     */
+    /** Duration. */
     private final Duration duration;
-    /**
-     * The bar context.
-     */
+
+    /** The bar context. */
     private BarContext ctx;
-    /**
-     * The processor.
-     */
+
+    /** The processor. */
     private final DirectProcessor<Bar> processor;
-    /**
-     * The sink.
-     */
+
+    /** The sink. */
     private final FluxSink<Bar> sink;
+
+    /** Highest price. */
+    private Number highest = 0;
+
+    /** Lowest price. */
+    private Number lowest = 0;
 
     /**
      * Creates the Aggregator with the given {@link Duration}.
+     *
      * @param barDuration the duration
      */
     public DurationBarAggregator(final Duration barDuration) {
@@ -44,34 +46,51 @@ public class DurationBarAggregator implements BarAggregator {
 
     /**
      * Updates the bar data.
-     * @param timestamp time of the tick
-     * @param close close price
-     * @param high high price
-     * @param low low price
-     * @param volume volume
+     *
+     * @param timestamp   time of the tick
+     * @param latestPrice latest price
      */
+
     @Override
-    public void update(final ZonedDateTime timestamp, final Number close, final Number high, final Number low,
-                       final Number volume) {
+    public void update(final ZonedDateTime timestamp, final Number latestPrice) {
+        calculateHighestLowest(latestPrice);
         if (ctx == null) {
-            ctx = new BarContext(duration, timestamp, low, high, 0, close, volume);
+            ctx = new BarContext(duration, timestamp, latestPrice, latestPrice, latestPrice, latestPrice, 0);
         } else if (ctx.isAfter(timestamp)) {
             // we have new bar starting - emit current ctx
             sink.next(new BaseBar(duration, ctx.getEndTime(), ctx.getOpen(), ctx.getHigh(),
                     ctx.getLow(), ctx.getClose(), ctx.getVolume()));
             // take the close and start counting new context
-            ctx = new BarContext(duration, timestamp, low, high, ctx.getClose(), close, volume);
+            ctx = new BarContext(duration, timestamp, latestPrice, latestPrice, latestPrice, latestPrice, 0);
+            highest = latestPrice;
+            lowest = latestPrice;
         } else {
-            ctx.update(low, high, close, volume);
+            ctx.update(lowest, highest, latestPrice, 0);
         }
     }
 
     /**
      * Gets the {@link Flux}.
+     *
      * @return flux of Bars
      */
     @Override
     public Flux<Bar> getBarFlux() {
         return processor;
+    }
+
+    /**
+     * Calculate highest and lowest.
+     *
+     * @param latestPrice latest price
+     */
+    private void calculateHighestLowest(final Number latestPrice) {
+        if (lowest.doubleValue() == 0D) {
+            lowest = latestPrice;
+            highest = latestPrice;
+        } else {
+            lowest = Math.min(lowest.doubleValue(), latestPrice.doubleValue());
+            highest = Math.max(highest.doubleValue(), latestPrice.doubleValue());
+        }
     }
 }

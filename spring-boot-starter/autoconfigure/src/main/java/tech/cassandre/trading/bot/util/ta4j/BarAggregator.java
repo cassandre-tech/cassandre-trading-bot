@@ -13,12 +13,9 @@ public interface BarAggregator {
     /**
      * Updates the dar data.
      * @param timestamp time of the tick
-     * @param close close price
-     * @param high high price
-     * @param low low price
-     * @param volume volume
+     * @param latestPrice latest price
      */
-    void update(ZonedDateTime timestamp, Number close, Number high, Number low, Number volume);
+    void update(ZonedDateTime timestamp, Number latestPrice);
 
     /**
      * Gets the {@link Flux}.

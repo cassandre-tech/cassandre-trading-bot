@@ -1,4 +1,4 @@
-"Gain"
+"Gain."
 type Gain {
     "Gain made (percentage)."
     percentage: Float
