@@ -50,63 +50,12 @@ jobs:
 
       # ================================================================================================================
       - name: Create the release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
-          tag_name: ${{ steps.package.outputs.version }}
-          release_name: ${{ steps.package.outputs.version }}
-          body: ${{ steps.package.outputs.version }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          title: ${{ steps.package.outputs.version }}
           draft: false
           prerelease: false
-
-      # ================================================================================================================
-      # Upload cassandre-trading-bot-spring-boot-autoconfigure assets to the release (jar, sources, javadoc).
-      - name: Upload cassandre-trading-bot-spring-boot-autoconfigure jar
-        continue-on-error: true
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: spring-boot-starter/autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}.jar
-          asset_name: cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}.jar
-          asset_content_type: application/java-archive
-
-      - name: Upload cassandre-trading-bot-spring-boot-autoconfigure sources
-        continue-on-error: true
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: spring-boot-starter/autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-sources.jar
-          asset_name: cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-sources.jar
-          asset_content_type: application/java-archive
-
-      - name: Upload cassandre-trading-bot-spring-boot-autoconfigure javadoc
-        continue-on-error: true
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: spring-boot-starter/autoconfigure/target/cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-javadoc.jar
-          asset_name: cassandre-trading-bot-spring-boot-autoconfigure-${{ steps.package.outputs.version }}-javadoc.jar
-          asset_content_type: application/java-archive
-
-      # ================================================================================================================
-      # Upload cassandre-trading-bot-spring-boot-starter assets to the release (jar).
-      - name: Upload cassandre-trading-bot-spring-boot-starter jar
-        continue-on-error: true
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: spring-boot-starter/starter/target/cassandre-trading-bot-spring-boot-starter-${{ steps.package.outputs.version }}.jar
-          asset_name: cassandre-trading-bot-spring-boot-starter-${{ steps.package.outputs.version }}.jar
-          asset_content_type: application/java-archive
 
       # ================================================================================================================
       - name: Publish the release announce on Twitter
@@ -118,7 +67,7 @@ jobs:
           TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
         with:
-          status: "Cassandre trading bot ${{ steps.package.outputs.version }} released - More information here : ${{ steps.create_release.outputs.html_url }}"
+          status: "Cassandre trading bot ${{ steps.package.outputs.version }} released - More information here: https://github.com/cassandre-tech/cassandre-trading-bot/releases/tag/${{ steps.package.outputs.version }}"
           consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
           consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
           access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
@@ -131,32 +80,4 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
-          args: "Cassandre trading bot ${{ steps.package.outputs.version }} released - More information here : ${{ steps.create_release.outputs.html_url }}"
-
-      # ================================================================================================================
-      - uses: pozetroninc/github-action-get-latest-release@master
-        id: getLatestRelease
-        with:
-          repository: ${{ github.repository }}
-
-      # ================================================================================================================
-      - name: Change release in website sources
-        run: find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.getLatestRelease.outputs.release }}/g' {} \;
-
-      # ================================================================================================================
-      - name: Install vuepress and build the documentation website
-        run: |
-          yarn add -D vuepress
-          cd docs
-          yarn install
-          cd ..
-          yarn --cwd docs build docs
-
-      # ================================================================================================================
-      - name: Deploy the documentation website
-        uses: JamesIves/github-pages-deploy-action@4.1.4
-        with:
-          branch: gh-pages
-          folder: docs/src/.vuepress/dist
-          commit-message: "Documentation website update"
-          clean: true
+          args: "Cassandre trading bot ${{ steps.package.outputs.version }} released - More information here: https://github.com/cassandre-tech/cassandre-trading-bot/releases/tag/${{ steps.package.outputs.version }}"
