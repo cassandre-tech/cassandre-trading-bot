@@ -95,7 +95,7 @@ jobs:
                   -e POSTGRES_DB=cassandre_trading_bot \
                   -e POSTGRES_USER=cassandre_trading_bot \
                   -e POSTGRES_PASSWORD=cassandre_trading_bot_password \
-                  -v util/test/api/graphql/dump_cassandre_trading_bot.sql:/docker-entrypoint-initdb.d/dump_cassandre_trading_bot.sql
+                  -v util/test/api/graphql/dump_cassandre_trading_bot.sql:/docker-entrypoint-initdb.d/dump_cassandre_trading_bot.sql \
                   library/postgres:13-alpine
 
       - name: Creating a trading bot and configure it for the postgres database
