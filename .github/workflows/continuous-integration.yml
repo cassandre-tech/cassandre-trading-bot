@@ -116,7 +116,7 @@ jobs:
 
       - name: Runs graphQL tests.
         run: |
-          sleep 30
+          sleep 60
           cp util/test/api/graphql/package.json .
           cp util/test/api/graphql/*.js .
           npm install --save-dev jest isomorphic-fetch
