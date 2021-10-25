@@ -97,6 +97,7 @@ jobs:
                   -e POSTGRES_PASSWORD=cassandre_trading_bot_password \
                   -v /util/test/api/graphql/dump_cassandre_trading_bot.sql:/docker-entrypoint-initdb.d/dump_cassandre_trading_bot.sql \
                   library/postgres:13-alpine
+          sleep 60
 
       - name: Creating a trading bot and configure it for the postgres database
         run: |
@@ -113,10 +114,10 @@ jobs:
           cp util/test/api/graphql/application.properties archetype-test-api-graphql/src/main/resources/
           cp util/test/api/graphql/user-trade.tsv archetype-test-api-graphql/src/main/resources/
           mvn -f archetype-test-api-graphql/pom.xml spring-boot:run &
+          sleep 60
 
       - name: Runs graphQL tests.
         run: |
-          sleep 60
           cp util/test/api/graphql/package.json .
           cp util/test/api/graphql/*.js .
           npm install --save-dev jest isomorphic-fetch
