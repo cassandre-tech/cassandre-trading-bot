@@ -89,6 +89,7 @@ jobs:
       # Testing that the graphql starter is working correctly.
       - name: Start a postgres server and restore a database from production
         run: |
+          docker pull library/postgres:13-alpine
           docker run -d \
                   --name postgres \
                   -p 5432:5432 \
@@ -97,7 +98,6 @@ jobs:
                   -e POSTGRES_PASSWORD=cassandre_trading_bot_password \
                   -v /util/test/api/graphql/dump_cassandre_trading_bot.sql:/docker-entrypoint-initdb.d/dump_cassandre_trading_bot.sql \
                   library/postgres:13-alpine
-          sleep 60
 
       - name: Creating a trading bot and configure it for the postgres database
         run: |
