@@ -3,10 +3,7 @@
 ## Tools
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
-echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-sudo apt update
-sudo apt-get -y install bash curl file libglu1-mesa unzip xz-utils zip nodejs npm yarn
+sudo apt-get install -y nodejs
 ```
 
 ## [Vuepress](https://vuepress.vuejs.org/) (Documentation)
