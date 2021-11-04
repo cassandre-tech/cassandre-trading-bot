@@ -37,7 +37,7 @@ jobs:
       # ================================================================================================================
       - name: Build, package and deploy
         id: package
-        env: # Environment variables.
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Ossrh credentials.
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
