@@ -12,6 +12,11 @@ git clone git@github.com:cassandre-tech/cassandre-trading-bot.git
 cd cassandre-trading-bot
 ```
 
+### Build & install without test
+```bash
+mvn install -Dgpg.skip -DskipTests
+```
+
 ### Build & install
 ```bash
 mvn install -Dgpg.skip

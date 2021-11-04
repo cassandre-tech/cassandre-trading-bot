@@ -116,7 +116,9 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(orderId02, buyMarketOrder02.getOrder().getOrderId());
 
         // Testing the received order.
-        with().await().until(() -> strategy.getOrdersUpdatesReceived().stream().anyMatch(o -> o.getOrderId().equals(orderId02)));
+        with().await().until(() -> strategy.getOrdersUpdatesReceived()
+                .stream()
+                .anyMatch(o -> o.getOrderId().equals(orderId02) && o.getStatus().equals(FILLED)));
         final Optional<OrderDTO> order02 = strategy.getOrdersUpdatesReceived()
                 .stream()
                 .filter(o -> o.getOrderId().equals(orderId02))
