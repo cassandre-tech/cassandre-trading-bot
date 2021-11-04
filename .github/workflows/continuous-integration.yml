@@ -65,6 +65,7 @@ jobs:
             -Dversion=1.0-SNAPSHOT \
             -Dpackage=com.example
           mvn -f archetype-test-basic/pom.xml test
+          rm archetype-test-basic/pom.xml
 
       # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic ta4j strategy
@@ -78,6 +79,7 @@ jobs:
             -Dversion=1.0-SNAPSHOT \
             -Dpackage=com.example
           mvn -f archetype-test-ta4j-basic/pom.xml test
+          rm archetype-test-ta4j-basic/pom.xml
 
       # ================================================================================================================
       # Testing that the graphql starter is working correctly.
@@ -108,6 +110,7 @@ jobs:
           cp util/test/api/graphql/application.properties archetype-test-api-graphql/src/main/resources/
           cp util/test/api/graphql/user-trade.tsv archetype-test-api-graphql/src/main/resources/
           mvn -f archetype-test-api-graphql/pom.xml spring-boot:run &
+          rm archetype-test-api-graphql/pom.xml
           sleep 60
 
       - name: Runs graphQL tests.
