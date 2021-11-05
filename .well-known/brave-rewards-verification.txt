@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: cassandre.tech
+Token: 9328f6ab18e09e5243cce1d8dd5f13d2df12394b7129fce537fbc6a0986a2850
