@@ -35,9 +35,15 @@ jobs:
         uses: actions/checkout@v2
 
       # ================================================================================================================
-      - name: Build, run tests, and install locally
+      - name: Build, run tests, package and deploy to Maven central
+        env:
+          # GPG.
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          # OSSRH credentials.
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
-          mvn install -Dgpg.skip
+          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE}
 
       # ================================================================================================================
       - name: Upload codacy coverage results
@@ -116,17 +122,3 @@ jobs:
           cp util/test/api/graphql/*.js .
           npm install --save-dev jest isomorphic-fetch
           npm run test
-
-      # ================================================================================================================
-      - name: Deploy to Maven central
-        env:
-          # GPG.
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          # OSSRH credentials.
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        run: |
-          rm archetype-test-basic/pom.xml
-          rm archetype-test-ta4j-basic/pom.xml
-          rm archetype-test-api-graphql/pom.xml
-          mvn deploy -B -Dgpg.passphrase=${GPG_PASSPHRASE} -Dmaven.test.skip=true
