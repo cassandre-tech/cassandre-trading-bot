@@ -36,6 +36,11 @@ jobs:
           yarn --cwd docs build docs
 
       # ================================================================================================================
+      - name: Brave verification
+        run: |
+          cp -R docs/.well-known/ docs/src/.vuepress/dist
+
+      # ================================================================================================================
       - name: Deploy the documentation website
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
