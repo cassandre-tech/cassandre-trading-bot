@@ -1,21 +1,11 @@
-const {description} = require('../../package')
+import {defineUserConfig} from 'vuepress'
+import type {DefaultThemeOptions} from 'vuepress'
 
-module.exports = {
-    /**
-     * Ref：https://v1.vuepress.vuejs.org/config/#title
-     */
+export default defineUserConfig<DefaultThemeOptions>({
+    lang: 'en-US',
     title: 'Cassandre',
+    description: 'Create your crypto trading bot in Java',
 
-    /**
-     * Ref：https://v1.vuepress.vuejs.org/config/#description
-     */
-    description: 'Cassandre makes it easy to create your Java crypto trading bot. Our Spring boot starter takes care of exchange connections, accounts, orders, trades, and positions',
-
-    /**
-     * Extra tags to be injected to the page HTML `<head>`
-     *
-     * ref：https://v1.vuepress.vuejs.org/config/#head
-     */
     head: [
         ['meta', {name: 'theme-color', content: '#3eaf7c'}],
         ['meta', {name: 'apple-mobile-web-app-capable', content: 'yes'}],
@@ -55,118 +45,115 @@ module.exports = {
         ['meta', {name: 'twitter:image:alt', content: 'Cassandre'}]
     ],
 
-    /**
-     * Theme configuration, here is the default theme configuration for VuePress.
-     *
-     * ref：https://v1.vuepress.vuejs.org/theme/default-theme-config.html
-     */
     themeConfig: {
-        repo: '',
-        editLinks: false,
-        docsDir: '',
-        editLinkText: '',
-        lastUpdated: false,
-        nav: [
+        logo: 'assets/images/logo/cassandre-trading-bot-without-text.png',
+        navbar: [
+            // =========================================================================================================
+            // Why Cassandre ?
             {
                 text: 'Why Cassandre ?',
-                ariaLabel: 'Why Cassandre',
-                items: [
+                children: [
                     {text: 'Overview', link: '/why-cassandre/overview'},
                     {text: 'Features & roadmap', link: '/why-cassandre/features-and-roadmap'},
-                    {text: 'Supported exchanges', link: '/why-cassandre/supported-cryptocurrency-exchanges'}
+                    {text: 'Supported exchanges', link: '/why-cassandre/supported-cryptocurrency-exchanges'},
                 ]
             },
+            // =========================================================================================================
+            // Learn
             {
                 text: 'Learn',
-                ariaLabel: 'Learn',
-                items: [
+                children: [
+                    // =================================================================================================
                     {
-                        text: 'Basics', items: [
+                        text: 'Basics',
+                        children: [
                             {text: 'Quickstart', link: '/learn/quickstart'},
                             {text: 'Position management', link: '/learn/position-management'},
-                            {text: 'Dry mode & backtesting', link: '/learn/dry-mode-and-backtesting'},
+                            {text: 'Dry mode & backtesting', link: '/learn/dry-mode-and-backtesting'}
                         ]
                     },
+                    // =================================================================================================
                     {
-                        text: 'Advanced', items: [
+                        text: 'Advanced',
+                        children: [
                             {text: 'Technical analysis', link: '/learn/technical-analysis'},
                             {text: 'Data importation', link: '/learn/import-historical-data'},
-                            {text: 'GraphQL API', link: '/learn/graphql-api'},
+                            {text: 'GraphQL API', link: '/learn/graphql-api'}
                         ]
                     },
+                    // =================================================================================================
                     {
-                        text: 'Structure', items: [
+                        text: 'Structure',
+                        children: [
                             {text: 'Database', link: '/learn/database-structure'},
                             {text: 'Architecture', link: '/learn/architecture'},
                         ]
                     }
                 ]
             },
+            // =========================================================================================================
+            // Deploy & run
             {
                 text: 'Deploy & run',
-                ariaLabel: 'Deploy & run',
-                items: [
-                    {text: 'Using Docker', link: '/deploy-and-run/docker'}
+                children: [
+                    {text: 'Using Docker', link: '/deploy-and-run/docker'},
                 ]
             },
+            // =========================================================================================================
+            // Ressources
             {
                 text: 'Ressources',
-                ariaLabel: 'Ressources',
-                items: [
+                children: [
+                    // =================================================================================================
                     {
                         text: 'Trading',
-                        ariaLabel: 'Trading',
-                        items: [
-                            {text: 'Trading basics', link: '/ressources/trading-basics'},
+                        children: [
+                            {text: 'Trading basics', link: '/ressources/trading-basics'}
                         ]
                     },
+                    // =================================================================================================
                     {
                         text: 'Things to read',
-                        ariaLabel: 'Things to read',
-                        items: [
-
+                        children: [
                             {text: 'Articles', link: '/ressources/articles'},
-                            {text: 'Books', link: '/ressources/books'},
+                            {text: 'Books', link: '/ressources/books'}
                         ]
                     },
+                    // =================================================================================================
                     {
-                        text: 'How-tos', items: [
+                        text: 'How-tos',
+                        children: [
                             {text: 'Install development tools', link: '/ressources/how-tos/how-to-install-development-tools'},
                             {text: 'Build from sources', link: '/ressources/how-tos/how-to-build-from-sources'},
                             {text: 'Create a release', link: '/ressources/how-tos/how-to-create-a-release'},
-                            {text: 'Create a Kucoin account', link: '/ressources/how-tos/how-to-create-a-kucoin-account'},
+                            {text: 'Create a Kucoin account', link: '/ressources/how-tos/how-to-create-a-kucoin-account'}
                         ]
-                    },
-                ],
+                    }
+                ]
             },
+            // =========================================================================================================
+            // Contact
             {
-                text: 'Contact / Support',
-                ariaLabel: 'Contact',
-                items: [
+                text: 'Contact / News',
+                children: [
                     {text: 'Email', link: 'mailto:contact@cassandre.tech'},
                     {text: 'Twitter', link: 'https://twitter.com/CassandreTech'},
                     {text: 'Discord', link: 'https://discord.gg/sv3VXuTgFS'},
-                    {text: 'Newsletter', link: 'https://cassandre.substack.com/'},
-                ],
+                    {text: 'Newsletter', link: 'https://cassandre.substack.com/'}
+                ]
             },
+            // =========================================================================================================
+            // Support us
             {
                 text: 'Support us',
                 link: 'https://opencollective.com/cassandre-tech'
             },
+            // =========================================================================================================
+            // Github
             {
                 text: 'Github',
                 link: 'https://github.com/cassandre-tech/cassandre-trading-bot'
             }
         ],
-        sidebar: 'auto'
     },
-
-    /**
-     * Apply plugins，ref：https://v1.vuepress.vuejs.org/zh/plugin/
-     */
-    plugins: [
-        ['@vuepress/plugin-back-to-top'],
-        ['@vuepress/plugin-medium-zoom'],
-        ['@vuepress/plugin-google-analytics', {'ga': 'UA-158255496-1'}]
-    ]
-}
+})

@@ -29,7 +29,7 @@ jobs:
       # ================================================================================================================
       - name: Install vuepress and build the documentation website
         run: |
-          yarn add -D vuepress
+          yarn add -D vuepress@next
           cd docs
           yarn install
           cd ..
@@ -40,6 +40,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           branch: gh-pages
-          folder: docs/src/.vuepress/dist
+          folder: docs/docs/.vuepress/dist
           commit-message: "Documentation website update"
           clean: true

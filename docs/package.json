@@ -1,22 +1,17 @@
 {
   "name": "cassandre-trading-bot-documentation",
-  "version": "0.0.1",
-  "description": "Cassandre trading bot documentation",
+  "version": "1.0.0",
   "main": "index.js",
   "authors": {
     "name": "Stéphane Traumat",
     "email": "contact@cassandre.tech"
   },
-  "repository": "https://github.com/cassandre-tech/cassandre-trading-bot-documentation/cassandre-trading-bot-documentation",
   "scripts": {
-    "dev": "vuepress dev src",
-    "build": "vuepress build src"
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "license": "MIT",
   "devDependencies": {
-    "@vuepress/plugin-back-to-top": "^1.8.2",
-    "@vuepress/plugin-google-analytics": "^1.8.2",
-    "@vuepress/plugin-medium-zoom": "^1.8.2",
-    "vuepress": "^1.8.2"
+    "vuepress": "^2.0.0-beta.27"
   }
 }
