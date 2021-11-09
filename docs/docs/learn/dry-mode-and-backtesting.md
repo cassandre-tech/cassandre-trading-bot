@@ -1,7 +1,12 @@
+---
+lang: en-US
+title: Dry mode & backtesting
+description: How to simulate a virtual exchange and import historical data to test your strategy gains
+---
 # Dry mode & backtesting
 
 ## Dry mode
-Cassandre provides a dry mode allowing you to simulate exchange interactions. You can enable it by setting the parameter `cassandre.trading.bot.exchange.modes.dry` to `true` in `src/main/resources/application.properties.`
+Cassandre provides a dry mode allowing you to simulate a virtual exchange and its replies. You can enable it by setting the parameter `cassandre.trading.bot.exchange.modes.dry` to `true` in `src/main/resources/application.properties.`
 
 Cassandre will emulate valid exchange replies to your orders and will increase/decrease your virtual account. This way, you can test your strategy, see the gains you will make, and validate you have the results you expect.
 
@@ -47,8 +52,6 @@ Edit your `pom.xml` file and add this dependency :
 		...
 	</dependencies>
 ```
-
-[![Maven Central](https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-starter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.cassandre.trading.bot%22%20AND%20a:%22cassandre-trading-bot-spring-boot-starter%22)
 
 Now, we need to generate the data we want to use during the JUnit tests. We can use the [Kucoin API](https://docs.kucoin.com/#get-klines); to do so, run this on the command line :
 
