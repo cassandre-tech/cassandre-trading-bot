@@ -1,9 +1,8 @@
 ---
 lang: en-US
 title: Overview
-description: Overview of Cassandre features (exchange connections, accounts management, orders, trades, and positions)
+description: Cassandre trading bot overview (exchange connections, accounts management, orders, trades, and positions)
 ---
-
 # Overview
 
 ## Introduction

@@ -4,7 +4,7 @@ import type {DefaultThemeOptions} from 'vuepress'
 export default defineUserConfig<DefaultThemeOptions>({
     lang: 'en-US',
     title: 'Cassandre trading bot',
-    description: 'Create your crypto trading bot with Java in minutes',
+    description: 'Create your Java crypto trading bot in minutes',
 
     // Head
     head: [
