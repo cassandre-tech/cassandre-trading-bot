@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Build Cassandre from sources
+description: how to build a Cassandre release (and its documentation) on your computer
+---
 # Build from sources
 
 ## Build Cassandre

@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Create a release
+description: How to create an official Cassandre release
+---
 # Create a release
 
 ## Prepare the release

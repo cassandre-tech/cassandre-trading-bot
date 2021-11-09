@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Create a Kucoin Account
+description: How to create a Kucoin account to use with Cassandre
+---
 # Create a Kucoin account
 
 ## Create a Kucoin account

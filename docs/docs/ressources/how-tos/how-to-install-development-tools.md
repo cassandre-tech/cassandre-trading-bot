@@ -1,9 +1,15 @@
+---
+lang: en-US
+title: Install development tools
+description: how to use install the development toosl to work on Cassandre and its website
+---
 # Install development tools
 
 ## Tools
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
+npm install --global yarn
 ```
 
 ## [Vuepress](https://vuepress.vuejs.org/) (Documentation)
