@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Articles
+description: Interesting articles on crypto, trading and bots
+---
 # Articles
 
 ## Trading

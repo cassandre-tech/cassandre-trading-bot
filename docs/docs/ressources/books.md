@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Books
+description: Interesting books on crypto, trading and bots
+---
 # Books
 
 ## Trading
