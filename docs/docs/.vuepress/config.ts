@@ -71,6 +71,7 @@ export default defineUserConfig<DefaultThemeOptions>({
                         text: 'Basics',
                         children: [
                             {text: 'Quickstart', link: '/learn/quickstart'},
+                            {text: 'Configure exchange', link: '/learn/configure-exchange-connection'},
                             {text: 'Position management', link: '/learn/position-management'},
                             {text: 'Dry mode & backtesting', link: '/learn/dry-mode-and-backtesting'}
                         ]

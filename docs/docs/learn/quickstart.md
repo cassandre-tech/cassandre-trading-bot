@@ -21,9 +21,7 @@ mvn archetype:generate \
 -Dversion=1.0-SNAPSHOT \
 -Dpackage=com.mycompany.app
 ```
-
 The created project will have the following structure and files:
-
 ```
 my-app/
 ├── pom.xml
