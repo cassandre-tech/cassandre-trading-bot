@@ -1,5 +1,10 @@
+---
+lang: en-US
+title: Position management
+description: Learn how to use Cassandre positions to manage your trades easily
+---
 # Position management
-Cassandre provides a class to manage your positions automatically.
+Cassandre provides a simple way to manage your positions automatically.
 
 ## Long position
 In your strategy, you can create a long position with the [createLongPosition()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createLongPosition%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO%29) method.

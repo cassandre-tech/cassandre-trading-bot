@@ -21,7 +21,6 @@ For example, for a Coinbase connection, you have to add this to your `pom.xml`:
 
 The second step is to update those properties in your `application.properties`:
 ```properties
-#
 # Exchange configuration.
 cassandre.trading.bot.exchange.driver-class-name=org.knowm.xchange.coinbasepro.CoinbaseProExchange
 cassandre.trading.bot.exchange.username=kucoin.cassandre.test@gmail.com
