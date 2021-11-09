@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Trading basics
+description: Learn the basics of trading (cryptocurrency, trading, exchange, account, ticker, market order, limit order...)
+---
 # Trading basics
 
 ## What is a cryptocurrency ?
