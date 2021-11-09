@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Deploy and run Cassandre with Docker
+description: Learn how to use Docker to deploy PostgreSQL and Cassandre easily
+---
 # Deploy & run with Docker
 
 ## Server installation
