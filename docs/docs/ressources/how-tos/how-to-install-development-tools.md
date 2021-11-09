@@ -1,7 +1,7 @@
 ---
 lang: en-US
 title: Install development tools
-description: how to use install the development toosl to work on Cassandre and its website
+description: How to use install the development toosl to work on Cassandre and its website
 ---
 # Install development tools
 

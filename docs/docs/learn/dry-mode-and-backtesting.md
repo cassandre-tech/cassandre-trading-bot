@@ -1,7 +1,7 @@
 ---
 lang: en-US
 title: Dry mode & backtesting
-description: How to simulate a virtual exchange and import historical data to test your strategy gains
+description: Learn how to simulate a virtual exchange and import historical data to test your strategy gains
 ---
 # Dry mode & backtesting
 

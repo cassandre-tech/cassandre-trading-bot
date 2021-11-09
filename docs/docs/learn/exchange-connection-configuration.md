@@ -1,7 +1,7 @@
 ---
 lang: en-US
 title: Configure exchange connection
-description: How to configure Cassandre to connect to a different exchange (kucoin, Binance, Coinbase...)
+description: Learn how to configure Cassandre to connect to a specific exchange (kucoin, Binance, Coinbase...)
 ---
 # Configure exchange connection
 

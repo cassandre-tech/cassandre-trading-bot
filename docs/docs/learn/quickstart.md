@@ -1,7 +1,7 @@
 ---
 lang: en-US
 title: Quickstart your trading bot
-description: How to create your own crypto trading bot in few simple steps
+description: Learn how to create your own crypto trading bot in few simple steps
 ---
 # Quickstart
 
