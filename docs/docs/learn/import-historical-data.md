@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Import historical data
+description: Learn how to use import historical data when your trading bot start and use them in your strategy
+---
 # Import historical data
 
 ## Overview
@@ -15,9 +20,9 @@ CURRENCY_PAIR,OPEN,LAST,BID,ASK,HIGH,LOW,VWAP,VOLUME,QUOTE_VOLUME,BID_SIZE,ASK_S
 ```
 
 ## When to initialize data?
-In you strategy, you should implement the `initialize()` method. This method is executed by Cassandre before any other data (tickers, orders, trades...) is pushed to the strategy.
+In you strategy, you should implement the [initialize()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#initialize()) method. This method is executed by Cassandre before any other data (tickers, orders, trades...) is pushed to the strategy.
 
 ## Access your data in your strategy
 In your strategy, you can access the data with two methods:
- * `List<TickerDTO> getImportedTickers()`.
- * `List<TickerDTO> getImportedTickers(CurrencyPairDTO currencyPairDTO)`.
+ * [getImportedTickers()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#getImportedTickers()).
+ * [getImportedTickers(CurrencyPairDTO currencyPairDTO)](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#getImportedTickers(tech.cassandre.trading.bot.dto.util.CurrencyPairDTO)).
