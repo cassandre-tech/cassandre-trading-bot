@@ -4,8 +4,9 @@ import type {DefaultThemeOptions} from 'vuepress'
 export default defineUserConfig<DefaultThemeOptions>({
     lang: 'en-US',
     title: 'Cassandre',
-    description: 'Create your crypto trading bot in Java',
+    description: 'Create your crypto trading bot with Java in minutes',
 
+    // Head
     head: [
         ['meta', {name: 'theme-color', content: '#3eaf7c'}],
         ['meta', {name: 'apple-mobile-web-app-capable', content: 'yes'}],
@@ -46,6 +47,8 @@ export default defineUserConfig<DefaultThemeOptions>({
     ],
 
     themeConfig: {
+        lastUpdated: false,
+        contributors: false,
         logo: 'assets/images/logo/cassandre-trading-bot-without-text.png',
         navbar: [
             // =========================================================================================================
@@ -123,10 +126,16 @@ export default defineUserConfig<DefaultThemeOptions>({
                     {
                         text: 'How-tos',
                         children: [
-                            {text: 'Install development tools', link: '/ressources/how-tos/how-to-install-development-tools'},
+                            {
+                                text: 'Install development tools',
+                                link: '/ressources/how-tos/how-to-install-development-tools'
+                            },
                             {text: 'Build from sources', link: '/ressources/how-tos/how-to-build-from-sources'},
                             {text: 'Create a release', link: '/ressources/how-tos/how-to-create-a-release'},
-                            {text: 'Create a Kucoin account', link: '/ressources/how-tos/how-to-create-a-kucoin-account'}
+                            {
+                                text: 'Create a Kucoin account',
+                                link: '/ressources/how-tos/how-to-create-a-kucoin-account'
+                            }
                         ]
                     }
                 ]
@@ -156,4 +165,22 @@ export default defineUserConfig<DefaultThemeOptions>({
             }
         ],
     },
+
+    // Plugins
+    plugins: [
+        // Google analytics
+        ['@vuepress/plugin-google-analytics', {'id': 'UA-158255496-1'}],
+        // Docsearch
+        [
+            '@vuepress/plugin-docsearch',
+            {
+                apiKey: '3a539aab83105f01761a137c61004d85',
+                indexName: 'vuepress',
+                searchParameters: {
+                    facetFilters: ['tags:v2'],
+                }
+            },
+        ],
+    ]
+
 })
