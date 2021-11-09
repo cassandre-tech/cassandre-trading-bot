@@ -1,10 +1,15 @@
+---
+lang: en-US
+title: GraphQL API
+description: Learn how to add our GraphQL API to your bot to query your data from third-party software
+---
 # GraphQL API
 
 ## Overview
-Cassandre GraphQL API allows you to ONLY query your data (balances, strategies, orders, trades and positions).
+Cassandre GraphQL API allows you to query your data (balances, strategies, orders, trades and positions).
 
 ## Installation
-To deploy the GraphQLAPI, just add this spring boot starter to your pom:
+To deploy the GraphQL API on your bot, just add this spring boot starter to your pom:
 ```xml
 <dependency>
     <groupId>tech.cassandre.trading.bot</groupId>
@@ -14,9 +19,9 @@ To deploy the GraphQLAPI, just add this spring boot starter to your pom:
 ```
 
 ## Access the API with GraphiQL
-Start the application and open a browser to [http://localhost:8080/graphiql](http://localhost:8080/graphiql). GraphiQL is a query editor that comes out of the box with the DGS framework.
+Start your bot and open a browser to [http://localhost:8080/graphiql](http://localhost:8080/graphiql). GraphiQL is a query editor that comes out of the box with the [DGS framework](https://netflix.github.io/dgs/) we are using.
 
-To start, you can try this query to display all your strategies:
+For example, you can try to enter this query to display all your strategies:
 ```
 query {
     strategies{ strategyId name }
@@ -24,4 +29,4 @@ query {
 ```
 
 ## Secure your API
-To protect the access to your API with a key, add this property: `cassandre.trading.bot.api.graphql.key` in your `applications.properties`.
+To secure your API with a key, add this property: `cassandre.trading.bot.api.graphql.key` in your `applications.properties`.
