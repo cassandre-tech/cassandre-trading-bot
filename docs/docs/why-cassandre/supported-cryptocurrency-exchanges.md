@@ -31,8 +31,7 @@ Add this dependency to your  ̀pom.xml`:
     <version>5.0.12</version>
 </dependency>
 ```
-
-and change your `application.properties`:
+and update your `application.properties`:
 ```properties
 cassandre.trading.bot.exchange.driver-class-name=kucoin
 ```
@@ -46,8 +45,7 @@ Add this dependency to your  ̀pom.xml`:
     <version>5.0.12</version>
 </dependency>
 ```
-
-and change your `application.properties`:
+and update your `application.properties`:
 ```properties
 cassandre.trading.bot.exchange.driver-class-name=org.knowm.xchange.coinbasepro.CoinbaseProExchange
 ```
@@ -61,8 +59,7 @@ Add this dependency to your  ̀pom.xml`:
     <version>5.0.12</version>
 </dependency>
 ```
-
-and change your `application.properties`:
+and update your `application.properties`:
 ```properties
 cassandre.trading.bot.exchange.driver-class-name=org.knowm.xchange.binance.BinanceExchange
 ```

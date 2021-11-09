@@ -1,3 +1,8 @@
+---
+lang: en-US
+title: Quickstart your trading bot
+description: How to create your own crypto trading bot in few simple steps
+---
 # Quickstart
 
 ::: tip
@@ -5,26 +10,19 @@ If you are new to trading, you can read our tutorial "[Trading basics](../ressou
 :::
 
 ## Create your project
-If you don't have an existing spring boot project, you can use our [maven archetype](https://search.maven.org/search?q=a:cassandre-trading-bot-spring-boot-starter-basic-archetype) to generate one :
+If you don't have an existing spring boot project, you can use our [maven archetype](https://search.maven.org/search?q=a:cassandre-trading-bot-spring-boot-starter-basic-archetype) to generate one:
 ```bash
 mvn archetype:generate \
 -DarchetypeGroupId=tech.cassandre.trading.bot \
 -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
--DarchetypeVersion=CASSANDRE_LATEST_RELEASE
+-DarchetypeVersion=CASSANDRE_LATEST_RELEASE \
+-DgroupId=com.mycompany.app \
+-DartifactId=my-app \
+-Dversion=1.0-SNAPSHOT \
+-Dpackage=com.mycompany.app
 ```
 
-[![Maven Central](https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-starter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.cassandre.trading.bot%22%20AND%20a:%22cassandre-trading-bot-spring-boot-starter%22)
-
-It will ask for the following parameters:
-
-| Parameters | Description | Example values |
-| :--- | :--- | :--- |
-| groupId | The id of the project's group | com.mycompany.app |
-| artifactId | The id of the artifact (project) | my-app |
-| version | The version of the artifact under the specified group | 1.0-SNAPSHOT |
-| package | The java package | com.mycompany.app |
-
-The created project will have the following structure and files :
+The created project will have the following structure and files:
 
 ```
 my-app/
@@ -56,7 +54,7 @@ my-app/
 ```
 
 ## Review configuration
-Your bot configuration is located in `src/main/resources/application.properties` : 
+Your bot configuration is located in `src/main/resources/application.properties`: 
 
 ```properties
 #
@@ -136,7 +134,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
     @Override
     public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-        // We only ask about ETC/BTC (Base currency : BTC / Quote currency : USDT).
+        // We only ask BTC/USDT tickers (Base currency : BTC / Quote currency : USDT).
         return Set.of(new CurrencyPairDTO(BTC, USDT));
     }
 
@@ -194,10 +192,9 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 A Cassandre strategy is a class annotated with [@CassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategy.html) and extending  [BasicCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.html) or [BasicTa4jCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicTa4jCassandreStrategy.html).
 
-This is how it works :
-
-* In [getRequestedCurrencyPairs()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getRequestedCurrencyPairs%28%29), you give to Cassandre the list of currency pairs updates you want to receive from the exchange.
-* On the exchange, you usually have several accounts, and Cassandre needs to know which one of your accounts is the trading one. To do so, you have to implement the [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getTradeAccount%28java.util.Set%29) method, which gives you as a parameter the list of accounts you own, and from that list, you have to return the one you use for trading.
+This is how it works:
+* In [getRequestedCurrencyPairs()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getRequestedCurrencyPairs%28%29), you return the list of currency pairs tickers you want to receive from the exchange.
+* On the exchange, you usually have several accounts, and Cassandre needs to know which one of your accounts is the trading one. To do so, you have to implement the [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getTradeAccount%28java.util.Set%29) method, which gives you as a parameter the list of accounts you own on the exchange, and from that list, you have to return the one you use for trading.
 * If there is a change in your account data, [onAccountsUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onAccountsUpdates(java.util.Map)) will be called.
 * When new tickers are available, [onTickersUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickersUpdates(java.util.Map)) will be called.
 * If there is a change in your orders, [onOrdersUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onOrdersUpdates(java.util.Map)) will be called.
@@ -206,7 +203,7 @@ This is how it works :
 * If there is a change in your position status, [onPositionsStatusUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionsStatusUpdates(java.util.Map)) will be called.
 
 ## Manage orders and positions
-You can create an order like this :
+You can create an order this way:
 
 ```java
 @Override
@@ -215,7 +212,7 @@ public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers
 }
 ```
 
-This is the list of available methods :
+This is the list of available methods to manage orders:
 * [createBuyMarketOrder()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createBuyMarketOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29).
 * [createSellMarketOrder()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createSellMarketOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29).
 * [createBuyLimitOrder()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createBuyLimitOrder%28tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,java.math.BigDecimal%29).
@@ -225,37 +222,37 @@ This is the list of available methods :
 Inside your strategy, you can call [canBuy()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canBuy%28tech.cassandre.trading.bot.dto.user.AccountDTO,tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29) and [canSell()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canSell%28tech.cassandre.trading.bot.dto.util.CurrencyDTO,java.math.BigDecimal%29) methods to see if your account has enough money to buy or sell assets.
 :::
 
-Cassandre trading bot also provides positions to manage your trade automatically:
+Cassandre trading bot also provides positions to manage your trading automatically:
 
 ```java
-// Create rule.
+// Create rules.
 PositionRulesDTO rules = PositionRulesDTO.builder()
                 .stopGainPercentage(10)
                 .stopLossPercentage(5)
                 .build();
-// Create position.
+// Create a position.
 createLongPosition(new CurrencyPairDTO(BTC, USDT),
                 new BigDecimal("0,001"),
                 rules);
 ```
 
-First, we created a [rule](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionRulesDTO.html) saying this position should be closed if the gain is more than 10% or if the loss is more than 5%. 
+First, we created a [rule](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionRulesDTO.html) saying this position should be closed if the calculated gain is more than 10% or if the loss is more than 5%. 
 
 Then we called the [createLongPosition()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#createLongPosition(tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal,tech.cassandre.trading.bot.dto.position.PositionRulesDTO)) method. This will automatically create a buy order. From now, for every ticker received, Cassandre will check the gain or loss made on this position; if it triggers one of the rules, Cassandre will automatically create a sell order to close the position.
 
 ::: tip
-You can learn more about positions in the [Position chapter](./position-management.md).
+You can learn more about positions in the [position chapter](./position-management.md).
 :::
 
 ## Run the bot and the strategy
 
-In the project folder, run :
+In the project folder, run:
 
 ```bash
 mvn spring-boot:run
 ```
 
-The logs should display something like this :
+The logs should display something like this:
 
 ```bash
   .   ____          _            __ _ _
@@ -332,3 +329,7 @@ Received information about an account : AccountDTO(accountId=main, name=main, fe
 Received information about an account : AccountDTO(accountId=trade, name=trade, features=[], balances={BTC=BalanceDTO(currency=BTC, total=null, available=1, frozen=null, loaned=null, borrowed=null, withdrawing=null, depositing=null), USDT=BalanceDTO(currency=USDT, total=null, available=100000, frozen=null, loaned=null, borrowed=null, withdrawing=null, depositing=null), ETH=BalanceDTO(currency=ETH, total=null, available=10, frozen=null, loaned=null, borrowed=null, withdrawing=null, depositing=null)})
 Received information about a ticker : TickerDTO(currencyPair=BTC/USDT, open=null, last=37072.9, bid=37070.3, ask=37072.9, high=37250.3, low=34400, vwap=null, volume=74075.19293933, quoteVolume=2677417785.328956311, bidSize=null, askSize=null, timestamp=2021-02-03T19:06:08.055+01:00[Europe/Paris])
 ```
+
+::: tip
+Kucoin sandbox is having some issues right now. You should create your own exchange account and configure Cassandre accordingly.
+:::
