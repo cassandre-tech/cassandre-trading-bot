@@ -1,9 +1,14 @@
+---
+lang: en-US
+title: Technical analysis with ta4j
+description: Learn how to use technical analysis in Cassandre with the ta4j library 
+---
 # Technical analysis
 
 ## Overview
 
 ::: tip
-We learned the basics of technical analysis thanks to [Technical Analysis For Dummies](https://amzn.to/38TWaQm).
+We learned the basics of technical analysis thanks to the book [technical Analysis For Dummies](https://amzn.to/38TWaQm).
 :::
 
 ### Introduction
@@ -87,8 +92,6 @@ mvn -B archetype:generate -DarchetypeGroupId=tech.cassandre.trading.bot \
 -Dversion=1.0-SNAPSHOT \
 -Dpackage=com.example
 ```
-
-[![Maven Central](https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-starter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.cassandre.trading.bot%22%20AND%20a:%22cassandre-trading-bot-spring-boot-starter%22)
 
 The created project is a spring boot project with the following structure :
 
@@ -240,8 +243,6 @@ Edit your `pom.xml` file and add :
 		...
 	</dependencies>
 ```
-
-[![Maven Central](https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-starter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.cassandre.trading.bot%22%20AND%20a:%22cassandre-trading-bot-spring-boot-starter%22)
 
 The second step is to set the Cassandre parameter`cassandre.trading.bot.exchange.modes.dry` to `true`: this will make Cassandre simulate the exchange (buying/selling orders, trades) and increase/decrease your account.
 
