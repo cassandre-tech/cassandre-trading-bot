@@ -33,7 +33,7 @@ jobs:
           cd docs
           yarn install
           cd ..
-          yarn --cwd docs build docs
+          yarn --cwd docs docs:build docs
 
       # ================================================================================================================
       - name: Deploy the documentation website
