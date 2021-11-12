@@ -20,11 +20,11 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 
 /**
- * Basic Ta4j strategy test.
+ * Simple Ta4J strategy test.
  */
 @SpringBootTest
 @Import(TickerFluxMock.class)
-@DisplayName("Simple ta4j strategy test")
+@DisplayName("Simple Ta4J strategy test")
 public class SimpleTa4jStrategyTest {
 
     @Autowired
