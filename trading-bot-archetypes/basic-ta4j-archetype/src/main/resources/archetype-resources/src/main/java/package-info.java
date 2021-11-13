@@ -2,6 +2,6 @@
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
 /**
- * Simple strategy.
+ * Simple Ta4j strategy.
  */
 package ${package};

@@ -36,7 +36,7 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public CurrencyPairDTO getRequestedCurrencyPair() {
-        // We only ask about ETC/BTC (Base currency : BTC / Quote currency : USDT).
+        // We only ask BTC/USDT tickers (Base currency : BTC / Quote currency : USDT).
         return new CurrencyPairDTO(BTC, USDT);
     }
 
@@ -44,10 +44,12 @@ public final class SimpleTa4jStrategy extends BasicTa4jCassandreStrategy {
     public Optional<AccountDTO> getTradeAccount(Set<AccountDTO> accounts) {
         // From all the accounts we have on the exchange, we must return the one we use for trading.
         if (accounts.size() == 1) {
-            return accounts.stream().findAny();
+            // If there is only one on the exchange, we choose this one.
+            return accounts.stream().findFirst();
         } else {
+            // If there are several accounts on the exchange, we choose the one with the name "trade".
             return accounts.stream()
-                    .filter(a -> "trade".equals(a.getName()))
+                    .filter(a -> "trade".equalsIgnoreCase(a.getName()))
                     .findFirst();
         }
     }

@@ -39,7 +39,7 @@ public class SimpleStrategyTest {
 	public void receivedData() {
 		await().forever().until(() -> tickerFluxMock.isFluxDone());
 
-		// Waiting to see if the strategy received the accounts update (we have two accounts).
+		// Waiting to see if the strategy received the accounts update.
 		await().untilAsserted(() -> assertEquals(strategy.getAccounts().size(), 2));
 	}
 
