@@ -50,6 +50,7 @@ export default defineUserConfig<DefaultThemeOptions>({
         lastUpdated: false,
         contributors: false,
         logo: 'assets/images/logo/cassandre-trading-bot-without-text.png',
+        logoDark: 'assets/images/logo/cassandre-trading-bot-without-text-dark-mode.png',
         navbar: [
             // =========================================================================================================
             // Why Cassandre ?
