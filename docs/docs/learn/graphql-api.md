@@ -30,6 +30,3 @@ query {
 
 ## Secure your API
 To secure your API with a key, add this property: `cassandre.trading.bot.api.graphql.key` in your `applications.properties`.
-
-## API Documentation
-You can view the API documentation at [this address](graphql-api-documentation).

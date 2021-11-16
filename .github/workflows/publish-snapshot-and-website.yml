@@ -57,14 +57,6 @@ jobs:
           cp spring-boot-starter-api/spring-boot-starter-api-graphql/autoconfigure/src/main/resources/schema/*.graphqls docs/docs/.vuepress/public/api/graphql/definition
 
       # ================================================================================================================
-      - name: Generate GraphQL documentation for the website
-        uses: Code-Hex/gqldoc-actions@v1.0.8
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          schema: spring-boot-starter-api/spring-boot-starter-api-graphql/autoconfigure/src/main/resources/schema/*.graphqls
-          output: docs/docs/learn/graphql-api-documentation
-
-      # ================================================================================================================
       - name: Install vuepress, set release number, and build the website
         run: |
           yarn add -D vuepress@next
