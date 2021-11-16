@@ -1,7 +1,0 @@
-"Currency amount (amount value and currency)."
-type CurrencyAmount {
-    "Amount value."
-    value: BigDecimal
-    "Currency."
-    currency: Currency
-}

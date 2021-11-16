@@ -1,5 +1,0 @@
-"Currency."
-type Currency {
-    "Code."
-    code: ID!
-}
