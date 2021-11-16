@@ -1,0 +1,19 @@
+"Balance of a user account."
+type Balance {
+    "Currency."
+    currency: Currency!
+    "Returns the total amount of the currency in this balance."
+    total: BigDecimal
+    "Returns the amount of the currency in this balance that is available to trade."
+    available: BigDecimal
+    "Returns the frozen amount of the currency in this balance that is locked in trading."
+    frozen: BigDecimal
+    "Returns the loaned amount of the total currency in this balance that will be returned."
+    loaned: BigDecimal
+    "Returns the borrowed amount of the available currency in this balance that must be repaid."
+    borrowed: BigDecimal
+    "Returns the amount of the currency in this balance that is locked in withdrawal."
+    withdrawing: BigDecimal
+    "Returns the amount of the currency in this balance that is locked in the deposit."
+    depositing: BigDecimal
+}
