@@ -1,0 +1,7 @@
+"Currency pair for trading."
+type CurrencyPair {
+    "The base currency is the first currency appearing in a currency pair quotation."
+    baseCurrency:Currency!
+    "The quote currency is the second currency appearing in a currency pair quotation."
+    quoteCurrency:Currency!
+}
