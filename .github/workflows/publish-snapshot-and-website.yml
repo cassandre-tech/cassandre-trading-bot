@@ -55,8 +55,7 @@ jobs:
       - name: Add the GraphQL schema and its documentation to the website
         run: |
           cp spring-boot-starter-api/spring-boot-starter-api-graphql/autoconfigure/src/main/resources/schema/*.graphqls docs/docs/.vuepress/public/api/graphql/definition
-          GOBIN=/usr/local/bin/
-          go install github.com/Code-Hex/gqldoc/cmd/gqldoc@latest
+          go install github.com/Code-Hex/gqldoc/cmd/gqldoc@v0.0.4
           gqldoc -s "docs/docs/.vuepress/public/api/graphql/definition/*.graphqls" -o ./docs/docs/learn/graphql-api-documentation
 
       # ================================================================================================================
