@@ -44,6 +44,7 @@
 - **Backtesting**: We provide a spring boot starter to backtest your bot on historical data. With this, during tests, Cassandre will import your data and push them to your strategy.
 - **Technical Analysis support**: Cassandre provides a specific class (BasicTa4jCassandreStrategy) to help you build a strategy based on the open source technical analysis library ta4j.
 
+
 <p align="center">
     <a href="https://trading-bot.cassandre.tech/learn/quickstart">Quick Start</a> | 
     <a href="https://trading-bot.cassandre.tech">Documentation</a> | 
