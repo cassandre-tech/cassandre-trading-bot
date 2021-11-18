@@ -178,10 +178,7 @@ export default defineUserConfig<DefaultThemeOptions>({
             {
                 appId: 'BH4D9OD16A',
                 apiKey: '94f09cface8844077df616a30863e73a',
-                indexName: 'cassandre',
-                searchParameters: {
-                    facetFilters: ['tags:v2'],
-                }
+                indexName: 'cassandre'
             },
         ],
     ]
