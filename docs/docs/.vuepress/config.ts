@@ -173,16 +173,17 @@ export default defineUserConfig<DefaultThemeOptions>({
         // Google analytics
         ['@vuepress/plugin-google-analytics', {'id': 'UA-158255496-1'}],
         // Docsearch
-        // [
-        //     '@vuepress/plugin-docsearch',
-        //     {
-        //         apiKey: '3a539aab83105f01761a137c61004d85',
-        //         indexName: 'vuepress',
-        //         searchParameters: {
-        //             facetFilters: ['tags:v2'],
-        //         }
-        //     },
-        // ],
+        [
+            '@vuepress/plugin-docsearch',
+            {
+                appId: 'BH4D9OD16A',
+                apiKey: '94f09cface8844077df616a30863e73a',
+                indexName: 'cassandre',
+                searchParameters: {
+                    facetFilters: ['tags:v2'],
+                }
+            },
+        ],
     ]
 
 })
