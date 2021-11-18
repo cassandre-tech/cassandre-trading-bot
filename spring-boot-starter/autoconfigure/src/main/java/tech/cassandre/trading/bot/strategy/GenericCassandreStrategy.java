@@ -46,6 +46,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.FLOOR;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 
 /**
@@ -53,6 +54,9 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
  */
 @SuppressWarnings("checkstyle:DesignForExtension")
 public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
+
+    /** Big integer scale. */
+    private static final int BIGINTEGER_SCALE = 8;
 
     /** Currency mapper. */
     protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);
@@ -704,6 +708,41 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
 
     // =================================================================================================================
     // Related to canBuy & canSell methods.
+
+    /**
+     * Returns the amount of a currency I can buy with a certain amount of another currency.
+     *
+     * @param amountToUse amount you want to use buy the currency you want
+     * @param currencyWanted the currency you want to buy
+     * @return amount of currencyWanted you can buy with amountToUse
+     */
+    public final Optional<BigDecimal> getEstimatedBuyableAmount(final CurrencyAmountDTO amountToUse, final CurrencyDTO currencyWanted) {
+        /*
+            symbol=BTC-USDT
+            {
+              "time": 1637270267065,
+              "sequence": "1622704211505",
+              "price": "58098.3",
+              "size": "0.00001747",
+              "bestBid": "58098.2",
+              "bestBidSize": "0.038",
+              "bestAsk": "60000",
+              "bestAskSize": "0.27476785"
+            }
+            This means 1 Bitcoin can be bought with 60000 USDT.
+         */
+        final TickerDTO ticker = lastTickers.get(new CurrencyPairDTO(currencyWanted, amountToUse.getCurrency()));
+        if (ticker == null) {
+            // No ticker for this currency pair.
+            return Optional.empty();
+        } else {
+            // Make the calculation.
+            // amountToUse: 150 000 USDT.
+            // CurrencyWanted: BTC.
+            // How much BTC I can buy ? amountToUse / last
+            return Optional.of(amountToUse.getValue().divide(ticker.getLast(), BIGINTEGER_SCALE, FLOOR));
+        }
+    }
 
     /**
      * Returns the cost of buying an amount of a currency pair.

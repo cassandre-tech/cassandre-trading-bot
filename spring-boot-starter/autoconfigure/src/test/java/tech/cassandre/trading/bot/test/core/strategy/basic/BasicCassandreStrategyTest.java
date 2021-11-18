@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -25,7 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
@@ -80,6 +83,14 @@ public class BasicCassandreStrategyTest extends BaseTest {
         // Check getEstimatedBuyingCost().
         assertTrue(strategy.getEstimatedBuyingCost(ETH_BTC, new BigDecimal(2)).isPresent());
         assertEquals(0, new BigDecimal("12").compareTo(strategy.getEstimatedBuyingCost(ETH_BTC, new BigDecimal(2)).get().getValue()));
+
+        // Check getEstimatedBuyableAmount()
+        // 1 ETH = 10000 USDT
+        final Optional<BigDecimal> buyableAmount = strategy.getEstimatedBuyableAmount(new CurrencyAmountDTO(new BigDecimal(5000), USDT), ETH);
+        assertTrue(buyableAmount.isPresent());
+        assertEquals(0, new BigDecimal("0.5").compareTo(buyableAmount.get()));
+        assertFalse(strategy.getEstimatedBuyableAmount(new CurrencyAmountDTO(new BigDecimal(260), EUR), ETH).isPresent());
+        assertFalse(strategy.getEstimatedBuyableAmount(new CurrencyAmountDTO(new BigDecimal(260), USDT), EUR).isPresent());
 
         // Check canBuy() & canSell().
         final AccountDTO account = strategy.getAccounts().get("03");
