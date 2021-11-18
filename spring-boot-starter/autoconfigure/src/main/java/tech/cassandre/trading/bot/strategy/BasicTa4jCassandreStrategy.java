@@ -38,7 +38,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     private final BarSeries series;
 
     /** Ta4j Strategy. */
-    private final Strategy strategy;
+    private Strategy strategy;
 
     /** The bar aggregator. */
     private final BarAggregator barAggregator = new DurationBarAggregator(getDelayBetweenTwoBars());
@@ -92,6 +92,26 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      * @return strategy
      */
     public abstract Strategy getStrategy();
+
+    /**
+     * Returns the executed strategy.
+     *
+     * @return strategy
+     */
+    public final Strategy getExecutedStrategy() {
+        return this.strategy;
+    }
+
+    /**
+     * Update the Ta4j strategy used by Cassandre strategy.
+     *
+     * @param newStrategy strategy
+     */
+    public void updateStrategy(final Strategy newStrategy) {
+        if (newStrategy != null) {
+            strategy = newStrategy;
+        }
+    }
 
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
@@ -289,6 +309,7 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
 
         /**
          * Invoke the given function and ask for next bar.
+         *
          * @param value the bar value
          */
         @Override

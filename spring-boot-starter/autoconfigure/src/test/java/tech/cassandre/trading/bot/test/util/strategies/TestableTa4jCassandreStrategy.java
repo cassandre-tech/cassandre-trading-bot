@@ -84,7 +84,7 @@ public class TestableTa4jCassandreStrategy extends BasicTa4jCassandreStrategy {
     public Strategy getStrategy() {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(getSeries());
         SMAIndicator sma = new SMAIndicator(closePrice, 3);
-        return new BaseStrategy(new UnderIndicatorRule(sma, closePrice), new OverIndicatorRule(sma, closePrice));
+        return new BaseStrategy("Initial strategy", new UnderIndicatorRule(sma, closePrice), new OverIndicatorRule(sma, closePrice));
     }
 
     @Override
