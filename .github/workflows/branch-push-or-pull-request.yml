@@ -26,6 +26,13 @@ jobs:
           echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
 
       # ================================================================================================================
+      - name: Upload codacy coverage results
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
+          --project-token ${{ secrets.CODACY_API_TOKEN }} \
+          -r spring-boot-starter/autoconfigure/target/site/jacoco/jacoco.xml
+
+      # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic strategy
         run: |
           mvn -B archetype:generate \
