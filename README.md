@@ -26,13 +26,13 @@
         <img    src="https://api.codacy.com/project/badge/Grade/f26dc41008a64bb18dcd404b46b69fc8"
                 alt="Cassandre trading bot on codacy" />
     </a>
-    <a href="https://search.maven.org/search?q=g:tech.cassandre.trading.bot">
-        <img    src="https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-project.svg?label=Maven%20Central"
-                alt="Cassandre trading bot on Maven Central repository" />
-    </a>
     <a href="https://github.com/cassandre-tech/cassandre-trading-bot/actions">
         <img    src="https://github.com/cassandre-tech/cassandre-trading-bot/workflows/Continuous%20integration/badge.svg"
                 alt="Cassandre trading bot continuous integration" />
+    </a>
+    <a href="https://search.maven.org/search?q=g:tech.cassandre.trading.bot">
+        <img    src="https://img.shields.io/maven-central/v/tech.cassandre.trading.bot/cassandre-trading-bot-project.svg?label=Maven%20Central"
+                alt="Cassandre trading bot on Maven Central repository" />
     </a>
 </p>
 
@@ -43,7 +43,6 @@
 - **Dry mode**: We provide a dry mode to simulate a virtual exchange replying to your orders, so you can easily test your strategy. This way, you can simulate your gains/loss over a period of time.
 - **Backtesting**: We provide a spring boot starter to backtest your bot on historical data. With this, during tests, Cassandre will import your data and push them to your strategy.
 - **Technical Analysis support**: Cassandre provides a specific class (BasicTa4jCassandreStrategy) to help you build a strategy based on the open source technical analysis library ta4j.
-
 
 <p align="center">
     <a href="https://trading-bot.cassandre.tech/learn/quickstart">Quick Start</a> | 
