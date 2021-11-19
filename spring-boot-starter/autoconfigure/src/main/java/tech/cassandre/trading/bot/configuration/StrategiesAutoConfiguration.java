@@ -178,7 +178,8 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         if (!strategiesWithoutTradeAccount.isEmpty()) {
             final String strategyList = String.join(",", strategiesWithoutTradeAccount);
             throw new ConfigurationException("Your strategies specifies a trading account that doesn't exist",
-                    "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result - Strategies in error : " + strategyList);
+                    "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result - Strategies in error : " + strategyList + "\r\n" +
+                    "See https://trading-bot.cassandre.tech/ressources/how-tos/how-to-fix-common-problems.html#your-strategies-specifies-a-trading-account-that-doesn-t-exist");
         }
 
         // Check that there is no duplicated strategy ids.

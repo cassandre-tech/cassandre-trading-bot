@@ -129,6 +129,10 @@ export default defineUserConfig<DefaultThemeOptions>({
                         text: 'How-tos',
                         children: [
                             {
+                                text: 'Fix common problems',
+                                link: '/ressources/how-tos/how-to-fix-common-problems.md'
+                            },
+                            {
                                 text: 'Install development tools',
                                 link: '/ressources/how-tos/how-to-install-development-tools'
                             },
