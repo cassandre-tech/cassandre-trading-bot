@@ -76,3 +76,9 @@ and update your `application.properties`:
 ```properties
 cassandre.trading.bot.exchange.driver-class-name=org.knowm.xchange.binance.BinanceExchange
 ```
+On Binance, you should not ask for data too often, or you will get a `Way too much request weight used` error, use those parameters in your `application.properties`:
+```properties
+cassandre.trading.bot.exchange.rates.account=PT30S
+cassandre.trading.bot.exchange.rates.ticker=PT30S
+cassandre.trading.bot.exchange.rates.trade=PT30S
+```
