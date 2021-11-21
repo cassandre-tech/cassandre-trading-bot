@@ -201,7 +201,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("Order creation result: {}", result);
             return result;
         } catch (Exception e) {
-            final String error = "TradeService - Error calling createLimitOrder for " + amount + " " + currencyPair + " : " + e.getMessage();
+            final String error = "TradeService - Error calling createLimitOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
             e.printStackTrace();
             logger.error(error);
             return new OrderCreationResultDTO(error, e);

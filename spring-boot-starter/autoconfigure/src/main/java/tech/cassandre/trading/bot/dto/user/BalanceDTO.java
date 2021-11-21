@@ -6,6 +6,7 @@ import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.math.BigDecimal;
 
@@ -66,6 +67,7 @@ public class BalanceDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(currency)

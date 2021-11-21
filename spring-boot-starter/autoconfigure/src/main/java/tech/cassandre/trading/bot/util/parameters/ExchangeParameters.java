@@ -25,8 +25,8 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "cassandre.trading.bot.exchange")
 public class ExchangeParameters {
 
-    /** Driver class name. For example : org.knowm.xchange.coinbasepro.CoinbaseProExchange, kraken, kucoin. */
-    @NotEmpty(message = "Driver class  name required, for example : org.knowm.xchange.coinbasepro.CoinbaseProExchange")
+    /** Driver class name. For example: org.knowm.xchange.coinbasepro.CoinbaseProExchange, kraken, kucoin. */
+    @NotEmpty(message = "Driver class  name required, for example: org.knowm.xchange.coinbasepro.CoinbaseProExchange")
     private String driverClassName;
 
     /** API username. */

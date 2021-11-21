@@ -90,6 +90,7 @@ public class PositionLongFluxTest extends BaseTest {
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENING, p.getStatus());
+        assertEquals("Long position n°1 (rules: 1000.0 % gain / 100.0 % loss) - Opening - Waiting for the trades of order ORDER00010", p.getDescription());
 
         // onPositionUpdate - Position 1 should arrive (OPENING).
         // 2 positions updates:
@@ -520,7 +521,7 @@ public class PositionLongFluxTest extends BaseTest {
                 .build());
 
         // onPositionStatusUpdate - Position should be closed.
-        await().untilAsserted(() -> assertEquals(6, getPositionsStatusUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(7, getPositionsStatusUpdatesCount()));
         p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
@@ -529,7 +530,7 @@ public class PositionLongFluxTest extends BaseTest {
         // onPosition for second trade arrival.
         // List of positions updates:
         // - Trade 000004 arrives. In one update we have one more trade and a status change.
-        await().untilAsserted(() -> assertEquals(19, getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(20, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());

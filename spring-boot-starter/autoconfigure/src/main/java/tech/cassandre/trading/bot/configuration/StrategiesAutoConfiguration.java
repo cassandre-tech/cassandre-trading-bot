@@ -178,7 +178,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         if (!strategiesWithoutTradeAccount.isEmpty()) {
             final String strategyList = String.join(",", strategiesWithoutTradeAccount);
             throw new ConfigurationException("Your strategies specifies a trading account that doesn't exist",
-                    "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result - Strategies in error : " + strategyList + "\r\n"
+                    "Check your getTradeAccount(Set<AccountDTO> accounts) method as it returns an empty result - Strategies in error: " + strategyList + "\r\n"
                             + "See https://trading-bot.cassandre.tech/ressources/how-tos/how-to-fix-common-problems.html#your-strategies-specifies-a-trading-account-that-doesn-t-exist");
         }
 
@@ -330,13 +330,11 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
      */
     private void loadImportedTickers() {
         // Deleting everything before import.
-        if (importedTickersRepository.count() > 0) {
-            importedTickersRepository.deleteAllInBatch();
-        }
+        importedTickersRepository.deleteAllInBatch();
 
         // Getting the list of files to import and insert them in database.
+        logger.info("Importing tickers...");
         AtomicLong counter = new AtomicLong(0);
-        logger.info("Importing tickers");
         getFilesToLoad()
                 .parallelStream()
                 .filter(resource -> resource.getFilename() != null)

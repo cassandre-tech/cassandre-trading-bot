@@ -917,7 +917,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         // We get the amount.
         final Optional<BalanceDTO> balance = account.getBalance(currency);
         // public int compareTo(BigDecimal bg) returns
-        // 1 : if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
+        // 1: if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
         // If the is no balance in this currency, we can't buy.
         return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).subtract(getAmountsLockedByCurrency(currency)).compareTo(ZERO) > 0
                 || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).subtract(getAmountsLockedByCurrency(currency)).compareTo(ZERO) == 0).isPresent();

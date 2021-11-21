@@ -3,13 +3,14 @@ package tech.cassandre.trading.bot.dto.position;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.text.DecimalFormat;
 
 /**
  * Position rules for {@link PositionDTO}.
  * It is used to know when cassandre should close a position.
- * Supported rules :
+ * Supported rules:
  * - Stop gain in percentage.
  * - Stop loss in percentage.
  */
@@ -67,6 +68,7 @@ public class PositionRulesDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(stopGainPercentageSet)

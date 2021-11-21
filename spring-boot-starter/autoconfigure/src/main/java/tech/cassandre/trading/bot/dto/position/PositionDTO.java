@@ -16,6 +16,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -214,9 +215,9 @@ public class PositionDTO {
             //  - Bought 5 ETH with my 50 USDT as the price raised to 10 USDT.
             //  Gain = ((5 - 10) / 10) * 100 = -50 % (I calculate evolution backward, from bought price to sold price).
             // --
-            // When sold : Ticker ETH/USDT : 1 ETH costs 5 USDT.
+            // When sold: Ticker ETH/USDT: 1 ETH costs 5 USDT.
             // The amount of USDT I can spend (amountGained) = amount * price in trade.
-            // When bought : Ticker ETH/USDT : 1 ETH costs 10 USDT.
+            // When bought: Ticker ETH/USDT: 1 ETH costs 10 USDT.
             // The amount of ETH I can buy (amountICanBuy) = amountIOwnInQuoteCurrency / price.
             // Gain = amountICanBuy - amount.
             if (this.type == SHORT) {
@@ -457,7 +458,7 @@ public class PositionDTO {
     public GainDTO getGain() {
         if (getStatus() == CLOSED) {
             if (this.type == LONG) {
-                // Gain calculation for currency pair : ETH-BTC
+                // Gain calculation for currency pair: ETH-BTC
                 // The first listed currency of a currency pair is called the base currency.
                 // The second currency is called the quote currency.
 
@@ -570,7 +571,7 @@ public class PositionDTO {
         try {
             String value = StringUtils.capitalize(type.toString().toLowerCase(Locale.ROOT)) + " position n°" + positionId;
             // Rules.
-            value += " (rules : ";
+            value += " (rules: ";
             if (!rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
                 value += "no rules";
             }
@@ -656,6 +657,7 @@ public class PositionDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)

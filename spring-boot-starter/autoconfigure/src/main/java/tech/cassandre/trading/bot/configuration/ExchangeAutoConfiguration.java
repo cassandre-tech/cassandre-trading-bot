@@ -192,7 +192,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             if (e.getHttpStatusCode() == UNAUTHORIZED_STATUS_CODE) {
                 // Authorization failure.
                 throw new ConfigurationException("Invalid credentials for " + exchangeParameters.getDriverClassName(),
-                        "Check your exchange credentials : " + e.getMessage() + " - login used : " + exchangeParameters.getUsername());
+                        "Check your exchange credentials: " + e.getMessage() + " - login used: " + exchangeParameters.getUsername());
             } else {
                 // Another HTTP failure.
                 throw new ConfigurationException("Error while connecting to the exchange: " + e.getMessage());

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -93,6 +94,7 @@ public class GainDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(amount)

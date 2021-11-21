@@ -89,7 +89,7 @@ public class TradeServiceDryModeAOP extends BaseService {
 
         // We check if we have enough assets to buy.
         // Buying order - we buy ETH with BTC.
-        // We are buying the following amount : ticker last price * amount
+        // We are buying the following amount: ticker last price * amount
         Optional<BalanceDTO> balance = tradeAccount.get().getBalance(currencyPair.getQuoteCurrency());
         final Optional<TickerDTO> ticker = strategy.getLastTickerByCurrencyPair(currencyPair);
 
@@ -97,7 +97,7 @@ public class TradeServiceDryModeAOP extends BaseService {
             BigDecimal ownedAssets = balance.get().getAvailable();
             BigDecimal cost = ticker.get().getLast().multiply(amount);
             if (cost.compareTo(ownedAssets) > 0) {
-                final String errorMessage = "Not enough assets (costs : " + cost + " " + currencyPair.getQuoteCurrency() + " - owned assets : " + ownedAssets + " " + currencyPair.getQuoteCurrency() + ")";
+                final String errorMessage = "Not enough assets (costs: " + cost + " " + currencyPair.getQuoteCurrency() + " - owned assets: " + ownedAssets + " " + currencyPair.getQuoteCurrency() + ")";
                 return new OrderCreationResultDTO(errorMessage, new RuntimeException());
             }
         } else {
@@ -138,7 +138,7 @@ public class TradeServiceDryModeAOP extends BaseService {
         if (balance.isPresent() && ticker.isPresent()) {
             BigDecimal ownedAssets = balance.get().getAvailable();
             if (amount.compareTo(ownedAssets) > 0) {
-                final String errorMessage = "Not enough assets (amount : " + amount + " " + currencyPair.getQuoteCurrency() + " - owned assets : " + ownedAssets + " " + currencyPair.getBaseCurrency();
+                final String errorMessage = "Not enough assets (amount: " + amount + " " + currencyPair.getQuoteCurrency() + " - owned assets: " + ownedAssets + " " + currencyPair.getBaseCurrency();
                 return new OrderCreationResultDTO(errorMessage, new RuntimeException());
             }
         } else {
@@ -229,9 +229,9 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
                                             // This means the stop gain won, and we should transform the price.
 
-                                            // Long position n°1 (rules : 200.0 % gain).
+                                            // Long position n°1 (rules: 200.0 % gain).
                                             //  Opening order: 20 000 USDT.
-                                            //  Closed with trade DRY_TRADE_000000007 : 70 000 USDT.
+                                            //  Closed with trade DRY_TRADE_000000007: 70 000 USDT.
                                             //  250 % evolution => ((70000 - 20000) / 20000) * 100 = 250 %
                                             //  How to calculate the new price.
                                             //  openingTrade market price * (( openingTrade market price * rules gain)/100)
@@ -244,7 +244,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
                                             // This means the stop gain won, and we should transform the price.
 
-                                            // Long position n°2 (rules : 20.0 % loss).
+                                            // Long position n°2 (rules: 20.0 % loss).
                                             //  Opening order: 50 000 USDT.
                                             //  Closed with trade DRY_TRADE_000000004: 30 000 USDT.
                                             //  -40 % evolution => ((30000 - 50000) / 50000) * 100 = -40 %
@@ -265,7 +265,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
                                             // This means the stop gain won, and we should transform the price.
 
-                                            // Short position n°4 (rules : 100.0 % gain)
+                                            // Short position n°4 (rules: 100.0 % gain)
                                             //  Opening order: 70 000 USDT.
                                             //  Closed with DRY_TRADE_000000009: 25 000 USDT.
                                             //  It's a shot position so:
@@ -274,7 +274,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  180 % evolution => ((2.8 - 1) / 1) * 100 = 180 %
                                             //  How to calculate the new price.
                                             //  Amount I gained = opening trade amount * 70 000 USDT.
-                                            //  To gain 100%, I should be able to by 2 bitcoins : opening trade amount * (opening trade amount * stop gain/100)
+                                            //  To gain 100%, I should be able to by 2 bitcoins: opening trade amount * (opening trade amount * stop gain/100)
                                             //  so the question is how much a bitcoin should cost, so I can buy 2 with 70 000 USDT
                                             //  2 * price = 70 000 USDT => price = 70 000/2 = 35 000
                                             final BigDecimal augmentation = openingTrade.getAmountValue()
@@ -288,7 +288,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             // If the position has a stop gain percentage and the real gain is superior to this percentage.
                                             // This means the stop gain won, and we should transform the price.
 
-                                            // Short position n°3 (rules : 10.0 % loss)
+                                            // Short position n°3 (rules: 10.0 % loss)
                                             //  Opening order: 40 000 USDT.
                                             //  Closed with trade DRY_TRADE_000000008: 70 000 USDT.
                                             //  It's a shot position so:
@@ -298,7 +298,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             //  -43 % evolution => ((0.57 - 1) / 1) * 100 = -43 %
                                             //  How to calculate the new price.
                                             //  Amount I gained = opening trade amount * 40 000 USDT.
-                                            //  To lose 10%, I should finish by only being able to buy 0,90 BTC : opening trade amount * (opening trade amount * stop gain/100)
+                                            //  To lose 10%, I should finish by only being able to buy 0,90 BTC: opening trade amount * (opening trade amount * stop gain/100)
                                             //  so the question is how much a bitcoin should cost, so I can buy 0,90 with 40 000 USDT
                                             //  0.9 * price = 40 000 USDT => price = 40 000/0.9
                                             final BigDecimal reduction = openingTrade.getAmountValue()
