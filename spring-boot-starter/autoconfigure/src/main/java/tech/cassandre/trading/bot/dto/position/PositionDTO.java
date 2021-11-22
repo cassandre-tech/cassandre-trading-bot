@@ -569,7 +569,7 @@ public class PositionDTO {
     @SuppressWarnings("unused")
     public final String getDescription() {
         try {
-            String value = StringUtils.capitalize(type.toString().toLowerCase(Locale.ROOT)) + " position n°" + positionId;
+            String value = StringUtils.capitalize(type.toString().toLowerCase(Locale.ROOT)) + " position n°" + positionId + " of " + amount;
             // Rules.
             value += " (rules: ";
             if (!rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
@@ -591,7 +591,7 @@ public class PositionDTO {
                     value += " - Opening - Waiting for the trades of order " + openingOrder.getOrderId();
                     break;
                 case OPENED:
-                    value += " on " + getCurrencyPair() + " - Opened";
+                    value += " - Opened";
                     final Optional<GainDTO> lastGain = getLatestCalculatedGain();
                     if (lastGain.isPresent() && getLatestCalculatedGain().isPresent()) {
                         value += " - Last gain calculated " + getFormattedValue(getLatestCalculatedGain().get().getPercentage()) + " %";
@@ -601,14 +601,14 @@ public class PositionDTO {
                     value = "Position " + getId() + " - Opening failure";
                     break;
                 case CLOSING:
-                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
+                    value += " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
                     break;
                 case CLOSING_FAILURE:
                     value = "Position " + getId() + " - Closing failure";
                     break;
                 case CLOSED:
                     final GainDTO gain = getGain();
-                    value += " on " + getCurrencyPair() + " - Closed - " + gain;
+                    value += " - Closed - " + gain;
                     break;
                 default:
                     value = "Incorrect state for position " + getId();

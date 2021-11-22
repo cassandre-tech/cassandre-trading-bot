@@ -82,6 +82,7 @@ public class PositionRulesDTO {
     public final String toString() {
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
+        df.setMinimumFractionDigits(0);
 
         if (isStopGainPercentageSet() && isStopLossPercentageSet()) {
             return "Stop gain at " + df.format(getStopGainPercentage()) + " % / Stop loss at " + df.format(getStopLossPercentage()) + " %";
