@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Order;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -49,6 +51,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
 @Import(PositionLongFluxTestMock.class)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionLongFluxTest extends BaseTest {
 
     @Autowired
@@ -521,7 +524,7 @@ public class PositionLongFluxTest extends BaseTest {
                 .build());
 
         // onPositionStatusUpdate - Position should be closed.
-        await().untilAsserted(() -> assertEquals(7, getPositionsStatusUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(6, getPositionsStatusUpdatesCount()));
         p = getLastPositionStatusUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
@@ -530,7 +533,7 @@ public class PositionLongFluxTest extends BaseTest {
         // onPosition for second trade arrival.
         // List of positions updates:
         // - Trade 000004 arrives. In one update we have one more trade and a status change.
-        await().untilAsserted(() -> assertEquals(20, getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(19, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
