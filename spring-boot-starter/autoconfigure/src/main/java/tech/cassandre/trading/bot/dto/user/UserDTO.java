@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Singular;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -40,15 +41,11 @@ public class UserDTO {
      * @param accountId account id
      * @return account
      */
-    public Optional<AccountDTO> getAccountById(final String accountId) {
-        if (accountId == null) {
-            return Optional.empty();
-        } else {
-            return accounts.values()
-                    .stream()
-                    .filter(accountDTO -> accountId.equals(accountDTO.getAccountId()))
-                    .findFirst();
-        }
+    public Optional<AccountDTO> getAccountById(@NonNull final String accountId) {
+        return accounts.values()
+                .stream()
+                .filter(accountDTO -> accountId.equals(accountDTO.getAccountId()))
+                .findFirst();
     }
 
     /**
@@ -61,6 +58,7 @@ public class UserDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;

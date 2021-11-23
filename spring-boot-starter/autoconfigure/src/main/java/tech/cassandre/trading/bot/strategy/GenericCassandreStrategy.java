@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.strategy;
 
+import lombok.NonNull;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -345,12 +346,8 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param currencyPair currency pair
      * @return last ticker received
      */
-    public final Optional<TickerDTO> getLastTickerByCurrencyPair(final CurrencyPairDTO currencyPair) {
-        if (currencyPair == null) {
-            return Optional.empty();
-        } else {
-            return Optional.ofNullable(lastTickers.get(currencyPair));
-        }
+    public final Optional<TickerDTO> getLastTickerByCurrencyPair(@NonNull final CurrencyPairDTO currencyPair) {
+        return Optional.ofNullable(lastTickers.get(currencyPair));
     }
 
     /**
@@ -712,7 +709,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /**
      * Returns the amount of a currency I can buy with a certain amount of another currency.
      *
-     * @param amountToUse amount you want to use buy the currency you want
+     * @param amountToUse    amount you want to use buy the currency you want
      * @param currencyWanted the currency you want to buy
      * @return amount of currencyWanted you can buy with amountToUse
      */

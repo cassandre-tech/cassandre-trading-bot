@@ -1066,6 +1066,7 @@ public final class CurrencyDTO implements Serializable {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
@@ -1163,6 +1164,7 @@ public final class CurrencyDTO implements Serializable {
         }
 
         @Override
+        @ExcludeFromCoverageGeneratedReport
         public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;

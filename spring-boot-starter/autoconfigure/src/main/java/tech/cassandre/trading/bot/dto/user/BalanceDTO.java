@@ -46,6 +46,7 @@ public class BalanceDTO {
     BigDecimal depositing;
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;

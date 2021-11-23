@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.util.csv;
 
 import com.opencsv.bean.AbstractBeanField;
+import lombok.NonNull;
 import tech.cassandre.trading.bot.domain.ImportedTicker;
 
 import java.time.ZoneId;
@@ -16,12 +17,8 @@ public class EpochToZonedDateTime extends AbstractBeanField<ImportedTicker, Impo
     public static final int MILLISECONDS = 1_000;
 
     @Override
-    protected final Object convert(final String value) {
-        if (value != null) {
-            return ZonedDateTime.ofInstant(new Date(Long.parseLong(value.trim()) * MILLISECONDS).toInstant(), ZoneId.systemDefault());
-        } else {
-            return null;
-        }
+    protected final Object convert(@NonNull final String value) {
+        return ZonedDateTime.ofInstant(new Date(Long.parseLong(value.trim()) * MILLISECONDS).toInstant(), ZoneId.systemDefault());
     }
 
 }
