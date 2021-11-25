@@ -8,7 +8,7 @@
 	<!-- Project information -->
 	<groupId>tech.cassandre.trading.bot</groupId>
 	<artifactId>cassandre-trading-bot-project</artifactId>
-	<version>5.0.5</version>
+	<version>5.0.6</version>
 	<packaging>pom</packaging>
 	<name>Cassandre trading bot</name>
 	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
@@ -55,7 +55,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.5</version>
+		<version>2.5.6</version>
 		<relativePath/>
 	</parent>
 	<!-- =========================================================================================================== -->
@@ -74,10 +74,10 @@
 
 		<!-- Core -->
 		<spring.version>2.5.5</spring.version>
-		<reactor.version>Dysprosium-SR24</reactor.version>
-		<xchange.version>5.0.11</xchange.version>
-		<bucket4j.version>6.3.0</bucket4j.version>
-		<liquibase.version>4.5.0</liquibase.version>
+		<reactor.version>Dysprosium-SR25</reactor.version>
+		<xchange.version>5.0.12</xchange.version>
+		<bucket4j.version>6.4.0</bucket4j.version>
+		<liquibase.version>4.6.1</liquibase.version>
 		<opencsv.version>5.5.2</opencsv.version>
 
 		<!-- Core utils -->
@@ -90,17 +90,17 @@
 		<ta4j.version>0.14</ta4j.version>
 
 		<!-- Tests -->
-		<junit-pioneer.version>1.4.2</junit-pioneer.version>
-		<awaitility.version>4.1.0</awaitility.version>
+		<junit-pioneer.version>1.5.0</junit-pioneer.version>
+		<awaitility.version>4.1.1</awaitility.version>
 		<hsqldb.version>2.6.0</hsqldb.version>
 		<jackson.version>2.12.5</jackson.version>
 
 		<!-- GraphQL API -->
-		<graphql-dgs.version>4.9.1</graphql-dgs.version>
+		<graphql-dgs.version>4.9.7</graphql-dgs.version>
 
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
-		<puppycrawl.checkstyle.version>9.0.1</puppycrawl.checkstyle.version>
+		<puppycrawl.checkstyle.version>9.1</puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>

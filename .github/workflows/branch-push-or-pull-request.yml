@@ -1,0 +1,96 @@
+name: Branch push or pull request
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ================================================================================================================
+      - name: JDK 11 Setup
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      # ================================================================================================================
+      - name: Retrieve the sources
+        uses: actions/checkout@v2
+
+      # ================================================================================================================
+      - name: Build, run tests and deploy locally
+        id: maven
+        run: |
+          mvn install -Dgpg.skip
+          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+
+      # ================================================================================================================
+      - name: Upload codacy coverage results
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
+          --project-token ${{ secrets.CODACY_API_TOKEN }} \
+          -r spring-boot-starter/autoconfigure/target/site/jacoco/jacoco.xml
+
+      # ================================================================================================================
+      - name: Test Cassandre trading bot maven archetype - basic strategy
+        run: |
+          mvn -B archetype:generate \
+            -DarchetypeGroupId=tech.cassandre.trading.bot \
+            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
+            -DarchetypeVersion=${{ steps.maven.outputs.version }} \
+            -DgroupId=com.example \
+            -DartifactId=archetype-test-basic \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.example
+          mvn -f archetype-test-basic/pom.xml test
+
+      # ================================================================================================================
+      - name: Test Cassandre trading bot maven archetype - basic ta4j strategy
+        run: |
+          mvn -B archetype:generate \
+            -DarchetypeGroupId=tech.cassandre.trading.bot \
+            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-ta4j-archetype \
+            -DarchetypeVersion=${{ steps.maven.outputs.version }} \
+            -DgroupId=com.example \
+            -DartifactId=archetype-test-ta4j-basic \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.example
+          mvn -f archetype-test-ta4j-basic/pom.xml test
+
+      # ================================================================================================================
+      # Testing that the graphql starter is working correctly.
+      - name: Start a postgres server and restore a database from production
+        run: |
+          docker pull library/postgres:13-alpine
+          docker run -d \
+                  --name postgres \
+                  -p 5432:5432 \
+                  -e POSTGRES_DB=cassandre_trading_bot \
+                  -e POSTGRES_USER=cassandre_trading_bot \
+                  -e POSTGRES_PASSWORD=cassandre_trading_bot_password \
+                  -v $(pwd)/util/test/api/graphql/dump_cassandre_trading_bot.sql:/docker-entrypoint-initdb.d/dump_cassandre_trading_bot.sql \
+                  library/postgres:13-alpine
+
+      - name: Creating a trading bot and configure it for the postgres database
+        run: |
+          mvn -B archetype:generate \
+            -DarchetypeGroupId=tech.cassandre.trading.bot \
+            -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
+            -DarchetypeVersion=${{ steps.maven.outputs.version }} \
+            -DgroupId=com.example \
+            -DartifactId=archetype-test-api-graphql \
+            -Dversion=1.0-SNAPSHOT \
+            -Dpackage=com.example
+          sed 's/<dependencies>/<dependencies>\r\n<!--Postgresql driver -->\r\n<dependency>\r\n<groupId>org.postgresql<\/groupId>\r\n<artifactId>postgresql<\/artifactId>\r\n<version>42.2.24<\/version>\r\n<\/dependency>\r\n<!-- Postgresql driver -->/g' archetype-test-api-graphql/pom.xml > archetype-test-api-graphql.xml
+          cat archetype-test-api-graphql.xml > archetype-test-api-graphql/pom.xml
+          cp util/test/api/graphql/application.properties archetype-test-api-graphql/src/main/resources/
+          cp util/test/api/graphql/user-trade.tsv archetype-test-api-graphql/src/main/resources/
+          mvn -f archetype-test-api-graphql/pom.xml spring-boot:run &
+          sleep 60
+
+      - name: Runs graphQL tests.
+        run: |
+          cd util/test/api/graphql
+          npm install --save-dev jest isomorphic-fetch
+          npm run test

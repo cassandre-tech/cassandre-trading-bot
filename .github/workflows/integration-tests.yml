@@ -2,12 +2,11 @@ name: Integration tests
 
 on:
   schedule:
-    - cron: '0 17 * * FRI'
+    - cron: '0 18 * * THU'
+    - cron: '0 18 * * SUN'
 
 jobs:
   build:
-    # ==================================================================================================================
-    # Configuration.
     runs-on: ubuntu-latest
 
     steps:
@@ -23,8 +22,8 @@ jobs:
         uses: actions/checkout@v2
 
       # ================================================================================================================
-      - name: Build, run tests, package and deploy to Maven central - Also sends Qase tests reports
-        env: # Environment variables.
+      - name: Build and run integration tests
+        env:
           # Kucoin credentials.
           KUCOIN_NAME: ${{ secrets.KUCOIN_NAME }}
           KUCOIN_USERNAME: ${{ secrets.KUCOIN_USERNAME }}
@@ -50,4 +49,4 @@ jobs:
           BINANCE_KEY: ${{ secrets.BINANCE_KEY }}
           BINANCE_SECRET: ${{ secrets.BINANCE_SECRET }}
         run: |
-          mvn -Pintegration package
+          mvn test -Pintegration
