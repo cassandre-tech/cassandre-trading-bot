@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.dto.util;
 
 import lombok.Builder;
-import lombok.NonNull;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -37,10 +36,14 @@ public class CurrencyAmountDTO {
      * @param newValue    amount value
      * @param newCurrency amount currency
      */
-    public CurrencyAmountDTO(@NonNull final String newValue,
-                             @NonNull final CurrencyDTO newCurrency) {
-        this.value = new BigDecimal(newValue);
-        this.currency = newCurrency;
+    public CurrencyAmountDTO(final String newValue, final CurrencyDTO newCurrency) {
+        if (newValue != null && newCurrency != null) {
+            this.value = new BigDecimal(newValue);
+            this.currency = newCurrency;
+        } else {
+            this.value = new BigDecimal(0);
+            this.currency = BTC;
+        }
     }
 
     /**
@@ -49,10 +52,14 @@ public class CurrencyAmountDTO {
      * @param newValue    amount value
      * @param newCurrency amount currency
      */
-    public CurrencyAmountDTO(@NonNull final BigDecimal newValue,
-                             @NonNull final CurrencyDTO newCurrency) {
-        this.value = newValue;
-        this.currency = newCurrency;
+    public CurrencyAmountDTO(final BigDecimal newValue, final CurrencyDTO newCurrency) {
+        if (newValue != null && newCurrency != null) {
+            this.value = newValue;
+            this.currency = newCurrency;
+        } else {
+            this.value = new BigDecimal(0);
+            this.currency = BTC;
+        }
     }
 
     @Override
