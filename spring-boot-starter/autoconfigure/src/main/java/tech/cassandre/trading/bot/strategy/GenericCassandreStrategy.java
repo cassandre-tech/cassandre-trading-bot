@@ -92,7 +92,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Position repository. */
     protected PositionRepository positionRepository;
 
-    /** Imported tickers repository. */
+    /** "Imported tickers" repository. */
     protected ImportedTickersRepository importedTickersRepository;
 
     /** Exchange service. */
