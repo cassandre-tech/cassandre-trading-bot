@@ -2,9 +2,11 @@ package tech.cassandre.trading.bot.dto.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -55,12 +57,8 @@ public class GainDTO {
      * @param other other gain
      * @return true if this gain is inferior to the gain passed as a parameter
      */
-    public boolean isInferiorTo(final GainDTO other) {
-        if (other != null) {
-            return getPercentage() < other.getPercentage();
-        } else {
-            return false;
-        }
+    public boolean isInferiorTo(@NonNull final GainDTO other) {
+        return getPercentage() < other.getPercentage();
     }
 
     /**
@@ -69,15 +67,12 @@ public class GainDTO {
      * @param other other gain
      * @return true if this gain is superior to the gain passed as a parameter
      */
-    public boolean isSuperiorTo(final GainDTO other) {
-        if (other != null) {
-            return getPercentage() > other.getPercentage();
-        } else {
-            return false;
-        }
+    public boolean isSuperiorTo(@NonNull final GainDTO other) {
+        return getPercentage() > other.getPercentage();
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -93,6 +88,7 @@ public class GainDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(amount)

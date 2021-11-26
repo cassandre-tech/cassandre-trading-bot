@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.dto.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -1059,11 +1060,13 @@ public final class CurrencyDTO implements Serializable {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public int hashCode() {
         return attributes.hashCode();
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
@@ -1155,11 +1158,13 @@ public final class CurrencyDTO implements Serializable {
         }
 
         @Override
+        @ExcludeFromCoverageGeneratedReport
         public int hashCode() {
             return commonCode.hashCode();
         }
 
         @Override
+        @ExcludeFromCoverageGeneratedReport
         public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;

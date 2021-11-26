@@ -5,7 +5,7 @@ description: How to fix common Cassandre problems
 ---
 # How to fix common Cassandre problems
 
-## "Your strategies specifies a trading account that doesn't exist"
+## Your strategies specifies a trading account that doesn't exist
 First thing to check: your configuration. If you are connecting to a real exchange (not a sandbox) with your real credentials, you must have those parameters to `false` in your `application.properties`:
 
 ```properties
@@ -30,3 +30,10 @@ To help you, when you start Cassandre, it will display ion the logs the accounts
 2021-11-18 - Account id / name: main / main.
 2021-11-18  - 1 BTC.
 ```
+
+## Way too much request weight used; IP banned until
+On Binance, you should not ask for data too often, or you will get a `Way too much request weight used` error, use those parameters in your `application.properties`:
+```properties
+cassandre.trading.bot.exchange.rates.account=PT30S
+cassandre.trading.bot.exchange.rates.ticker=PT30S
+cassandre.trading.bot.exchange.rates.trade=PT30S
