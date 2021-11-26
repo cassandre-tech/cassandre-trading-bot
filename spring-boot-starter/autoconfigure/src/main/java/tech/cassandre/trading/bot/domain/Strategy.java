@@ -9,6 +9,7 @@ import org.hibernate.Hibernate;
 import tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO;
 import tech.cassandre.trading.bot.util.base.domain.BaseDomain;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,6 +52,7 @@ public class Strategy extends BaseDomain {
     private String name;
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -67,6 +69,7 @@ public class Strategy extends BaseDomain {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)

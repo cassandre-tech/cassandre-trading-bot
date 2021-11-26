@@ -89,7 +89,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                                                           final CurrencyPairDTO currencyPair,
                                                           final BigDecimal amount,
                                                           final PositionRulesDTO rules) {
-        logger.debug("Creating a {} position for {} on {} with the rules : {}",
+        logger.debug("Creating a {} position for {} on {} with the rules: {}",
                 type.toString().toLowerCase(Locale.ROOT),
                 amount,
                 currencyPair,
@@ -133,7 +133,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
             positionFlux.emitValue(p);
             return new PositionCreationResultDTO(p);
         } else {
-            logger.error("Position creation failure : {}", orderCreationResult.getErrorMessage());
+            logger.error("Position creation failure: {}", orderCreationResult.getErrorMessage());
             return new PositionCreationResultDTO(orderCreationResult.getErrorMessage(), orderCreationResult.getException());
         }
     }
@@ -173,10 +173,10 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                 orderCreationResult = tradeService.createSellMarketOrder(strategy, ticker.getCurrencyPair(), positionDTO.getAmount().getValue());
             } else {
                 // Short - We buy back with the money we get from the original selling.
-                // On opening, we had :
-                // CP2 : ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH, and it will give us 10 USDT.
+                // On opening, we had:
+                // CP2: ETH/USDT - 1 ETH costs 10 USDT - We sold 1 ETH, and it will give us 10 USDT.
                 // We will use those 10 USDT to buy back ETH when the rule is triggered.
-                // CP2 : ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH, and it will cost us 10 USDT.
+                // CP2: ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH, and it will cost us 10 USDT.
                 // We can now use those 10 USDT to buy 5 ETH (amount sold / price).
                 final BigDecimal amountToBuy = positionDTO.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
                 orderCreationResult = tradeService.createBuyMarketOrder(strategy, ticker.getCurrencyPair(), amountToBuy);

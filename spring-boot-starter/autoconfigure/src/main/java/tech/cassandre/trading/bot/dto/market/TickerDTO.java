@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -99,6 +100,7 @@ public class TickerDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -114,6 +116,7 @@ public class TickerDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(currencyPair)

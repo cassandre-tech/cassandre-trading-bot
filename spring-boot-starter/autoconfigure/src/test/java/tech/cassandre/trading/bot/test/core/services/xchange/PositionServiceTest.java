@@ -372,6 +372,7 @@ public class PositionServiceTest extends BaseTest {
         orderFlux.emitValue(order00010);
         // The position should move to failure.
         await().untilAsserted(() -> assertEquals(OPENING_FAILURE, getPositionDTO(position1Id).getStatus()));
+        assertEquals("Position 1 - Opening failure", getPositionDTO(position1Id).getDescription());
     }
 
     @Test
@@ -459,6 +460,7 @@ public class PositionServiceTest extends BaseTest {
                 .build();
         orderFlux.emitValue(closingOrder01);
         await().untilAsserted(() -> assertEquals(CLOSING_FAILURE, getPositionDTO(position1Id).getStatus()));
+        assertEquals("Position 1 - Closing failure", getPositionDTO(position1Id).getDescription());
 
         // We check the type.
         final Optional<PositionDTO> p = positionService.getPositionById(position1Id);

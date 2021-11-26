@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Order;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
@@ -49,6 +51,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
 @Import(PositionShortFluxTestMock.class)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionShortFluxTest extends BaseTest {
 
     @Autowired
@@ -90,6 +93,7 @@ public class PositionShortFluxTest extends BaseTest {
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENING, p.getStatus());
+        assertEquals("Short position n°1 of 10 ETH (rules: 1000.0 % gain / 100.0 % loss) - Opening - Waiting for the trades of order ORDER00010", p.getDescription());
 
         // onPositionUpdate - Position 1 should arrive (OPENING).
         // 2 positions updates:
@@ -133,8 +137,8 @@ public class PositionShortFluxTest extends BaseTest {
         final PositionCreationResultDTO position2Result = strategy.createShortPosition(ETH_USDT,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder()
-                        .stopGainPercentage(10000000f)
-                        .stopLossPercentage(10000000f)
+                        .stopGainPercentage(10000f)
+                        .stopLossPercentage(10000f)
                         .build());
         assertEquals("ORDER00020", position2Result.getPosition().getOpeningOrder().getOrderId());
         long position2Id = position2Result.getPosition().getId();
@@ -146,6 +150,7 @@ public class PositionShortFluxTest extends BaseTest {
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
         assertEquals(OPENING, p.getStatus());
+        assertEquals("Short position n°2 of 0.0002 ETH (rules: 10000.0 % gain / 10000.0 % loss) - Opening - Waiting for the trades of order ORDER00020", p.getDescription());
 
         // onPositionUpdate - Position 2 should arrive (OPENING).
         // - Position created with the local order (status PENDING_NEW).
@@ -171,9 +176,9 @@ public class PositionShortFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.0002").compareTo(p2.get().getAmount().getValue()));
         assertEquals(ETH_USDT.getBaseCurrency(), p2.get().getAmount().getCurrency());
         assertTrue(p2.get().getRules().isStopGainPercentageSet());
-        assertEquals(10000000f, p2.get().getRules().getStopGainPercentage());
+        assertEquals(10000f, p2.get().getRules().getStopGainPercentage());
         assertTrue(p2.get().getRules().isStopLossPercentageSet());
-        assertEquals(10000000f, p2.get().getRules().getStopLossPercentage());
+        assertEquals(10000f, p2.get().getRules().getStopLossPercentage());
         assertEquals(OPENING, p2.get().getStatus());
         assertEquals("ORDER00020", p2.get().getOpeningOrder().getOrderId());
         assertTrue(p2.get().getOpeningOrder().getTrades().isEmpty());
@@ -235,6 +240,7 @@ public class PositionShortFluxTest extends BaseTest {
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(OPENED, p.getStatus());
+        assertEquals("Short position n°1 of 10 ETH (rules: 1000.0 % gain / 100.0 % loss) - Opened", p.getDescription());
 
         // onPositionUpdate - 2 trades emitted 2 times so 4 updates (+4 already received for position opening).
         await().untilAsserted(() -> assertEquals(8, getPositionsUpdatesCount()));
@@ -296,6 +302,7 @@ public class PositionShortFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.01").compareTo(p.getLowestGainPrice().getValue()));
         assertEquals(0, new BigDecimal("0.01").compareTo(p.getHighestGainPrice().getValue()));
         assertEquals(0, new BigDecimal("0.01").compareTo(p.getLatestGainPrice().getValue()));
+        assertEquals("Short position n°1 of 10 ETH (rules: 1000.0 % gain / 100.0 % loss) - Opened - Last gain calculated 200 %", p.getDescription());
 
         // We check the gain.
         Optional<GainDTO> latestCalculatedGain = p.getLatestCalculatedGain();
@@ -388,6 +395,7 @@ public class PositionShortFluxTest extends BaseTest {
         assertNotNull(p);
         assertEquals(position2Id, p.getId());
         assertEquals(OPENED, p.getStatus());
+        assertEquals("Short position n°2 of 0.0002 ETH (rules: 10000.0 % gain / 10000.0 % loss) - Opened", p.getDescription());
 
         // A ticker arrive for position 2.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("100")).build());
@@ -415,9 +423,9 @@ public class PositionShortFluxTest extends BaseTest {
         assertEquals(0, new BigDecimal("0.0002").compareTo(p2.get().getAmount().getValue()));
         assertEquals(ETH_USDT.getBaseCurrency(), p2.get().getAmount().getCurrency());
         assertTrue(p2.get().getRules().isStopGainPercentageSet());
-        assertEquals(10000000f, p2.get().getRules().getStopGainPercentage());
+        assertEquals(10000f, p2.get().getRules().getStopGainPercentage());
         assertTrue(p2.get().getRules().isStopLossPercentageSet());
-        assertEquals(10000000f, p2.get().getRules().getStopLossPercentage());
+        assertEquals(10000f, p2.get().getRules().getStopLossPercentage());
         assertEquals(OPENED, p2.get().getStatus());
         assertEquals("ORDER00020", p2.get().getOpeningOrder().getOrderId());
         openingTradesIterator = p2.get().getOpeningOrder().getTrades().iterator();
@@ -539,6 +547,7 @@ public class PositionShortFluxTest extends BaseTest {
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSED, p.getStatus());
+        assertEquals("Short position n°1 of 10 ETH (rules: 1000.0 % gain / 100.0 % loss) - Closed - Gains: 990 ETH (9900.0 %) / Fees: 0 BTC", p.getDescription());
 
         // onPosition for second trade arrival.
         p = getLastPositionUpdate();
