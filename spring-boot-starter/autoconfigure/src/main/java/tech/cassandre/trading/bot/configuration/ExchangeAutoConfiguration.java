@@ -1,7 +1,6 @@
 package tech.cassandre.trading.bot.configuration;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
@@ -11,13 +10,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import si.mazi.rescu.HttpStatusIOException;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -35,8 +34,6 @@ import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.time.Duration;
-import java.util.stream.Collectors;
 
 /**
  * ExchangeConfiguration configures the exchange connection.
@@ -153,24 +150,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             xChangeMarketDataService = xChangeExchange.getMarketDataService();
             xChangeTradeService = xChangeExchange.getTradeService();
 
-            // Retrieve rates from parameters.
-            long accountRate = getRateValue(exchangeParameters.getRates().getAccount());
-            long tickerRate = getRateValue(exchangeParameters.getRates().getTicker());
-            long tradeRate = getRateValue(exchangeParameters.getRates().getTrade());
-
-            // Creates Cassandre services.
-            this.exchangeService = new ExchangeServiceXChangeImplementation(getXChangeExchange());
-            this.userService = new UserServiceXChangeImplementation(accountRate, getXChangeAccountService());
-            this.marketService = new MarketServiceXChangeImplementation(tickerRate, getXChangeMarketDataService());
-            this.tradeService = new TradeServiceXChangeImplementation(tradeRate, orderRepository, getXChangeTradeService());
-
-            // Creates Cassandre flux.
-            accountFlux = new AccountFlux(getUserService());
-            tickerFlux = new TickerFlux(applicationContext, getMarketService());
-            orderFlux = new OrderFlux(orderRepository, getTradeService());
-            tradeFlux = new TradeFlux(orderRepository, tradeRepository, getTradeService());
-            positionFlux = new PositionFlux(positionRepository);
-
             // Force login to check credentials.
             logger.info("Exchange connection with {} driver.", exchangeParameters.getDriverClassName());
             xChangeAccountService.getAccountInfo();
@@ -178,13 +157,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                     exchangeParameters.getUsername(),
                     exchangeParameters.getModes().getDry(),
                     exchangeParameters.getModes().getSandbox());
-
-            // Prints all the supported currency pairs.
-            logger.info("Supported currency pairs by the exchange: {}.", exchangeService.getAvailableCurrencyPairs()
-                    .stream()
-                    .map(CurrencyPairDTO::toString)
-                    .collect(Collectors.joining(", ")));
-
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.
             throw new ConfigurationException("Impossible to find the exchange you requested: " + exchangeParameters.getDriverClassName(),
@@ -229,19 +201,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 .concat(xChangeCLassSuffix);                                                    // Adding exchange (Exchange).
     }
 
-    /**
-     * Return rate value in ms.
-     *
-     * @param stringValue string value
-     * @return long value (ms)
-     */
-    private static long getRateValue(final String stringValue) {
-        if (NumberUtils.isCreatable(stringValue)) {
-            return Long.parseLong(stringValue);
-        } else {
-            return Duration.parse(stringValue).toMillis();
-        }
-    }
+
 
     /**
      * Getter xChangeExchange.
@@ -289,7 +249,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return exchangeService
      */
     @Bean
+    @DependsOn("getXChangeExchange")
     public ExchangeService getExchangeService() {
+        if (exchangeService == null) {
+            exchangeService = new ExchangeServiceXChangeImplementation(getXChangeExchange());
+        }
         return exchangeService;
     }
 
@@ -299,7 +263,13 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return userService
      */
     @Bean
+    @DependsOn("getXChangeAccountService")
     public UserService getUserService() {
+        if (userService == null) {
+            userService = new UserServiceXChangeImplementation(
+                    exchangeParameters.getRates().getAccountValueInMs(),
+                    getXChangeAccountService());
+        }
         return userService;
     }
 
@@ -309,7 +279,13 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return marketService
      */
     @Bean
+    @DependsOn("getXChangeMarketDataService")
     public MarketService getMarketService() {
+        if (marketService == null) {
+            marketService = new MarketServiceXChangeImplementation(
+                    exchangeParameters.getRates().getTickerValueInMs(),
+                    getXChangeMarketDataService());
+        }
         return marketService;
     }
 
@@ -319,7 +295,14 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return tradeService
      */
     @Bean
+    @DependsOn("getXChangeTradeService")
     public TradeService getTradeService() {
+        if (tradeService == null) {
+            tradeService = new TradeServiceXChangeImplementation(
+                    exchangeParameters.getRates().getTradeValueInMs(),
+                    orderRepository,
+                    getXChangeTradeService());
+        }
         return tradeService;
     }
 
@@ -329,7 +312,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return accountFlux
      */
     @Bean
+    @DependsOn("getXChangeTradeService")
     public AccountFlux getAccountFlux() {
+        if (accountFlux == null) {
+            accountFlux = new AccountFlux(getUserService());
+        }
         return accountFlux;
     }
 
@@ -339,7 +326,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return tickerFlux
      */
     @Bean
+    @DependsOn("getMarketService")
     public TickerFlux getTickerFlux() {
+        if (tickerFlux == null) {
+            tickerFlux = new TickerFlux(applicationContext, getMarketService());
+        }
         return tickerFlux;
     }
 
@@ -349,7 +340,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return orderFlux
      */
     @Bean
+    @DependsOn("getTradeService")
     public OrderFlux getOrderFlux() {
+        if (orderFlux == null) {
+            orderFlux = new OrderFlux(orderRepository, getTradeService());
+        }
         return orderFlux;
     }
 
@@ -359,7 +354,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return tradeFlux
      */
     @Bean
+    @DependsOn("getTradeService")
     public TradeFlux getTradeFlux() {
+        if (tradeFlux == null) {
+            tradeFlux = new TradeFlux(orderRepository, tradeRepository, getTradeService());
+        }
         return tradeFlux;
     }
 
@@ -369,7 +368,11 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return positionFlux
      */
     @Bean
+    @DependsOn("getTradeService")
     public PositionFlux getPositionFlux() {
+        if (positionFlux == null) {
+            positionFlux = new PositionFlux(positionRepository);
+        }
         return positionFlux;
     }
 
