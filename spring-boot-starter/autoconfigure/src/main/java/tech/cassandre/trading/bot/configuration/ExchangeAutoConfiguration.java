@@ -34,6 +34,7 @@ import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.stream.Collectors;
 
@@ -197,9 +198,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 // Another HTTP failure.
                 throw new ConfigurationException("Error while connecting to the exchange: " + e.getMessage());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ConfigurationException("Unknown configuration error: " + e.getMessage());
+        } catch (IOException e) {
+            throw new ConfigurationException("IO error: " + e.getMessage());
         }
     }
 
