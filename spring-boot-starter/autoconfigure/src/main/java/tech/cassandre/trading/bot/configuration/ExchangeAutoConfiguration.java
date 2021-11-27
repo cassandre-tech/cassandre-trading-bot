@@ -201,8 +201,6 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                 .concat(xChangeCLassSuffix);                                                    // Adding exchange (Exchange).
     }
 
-
-
     /**
      * Getter xChangeExchange.
      *
