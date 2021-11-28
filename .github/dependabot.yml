@@ -4,16 +4,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "thursday"
-      time: "18:00"
-      timezone: Europe/Paris
-    open-pull-requests-limit: 9
-    target-branch: development
-
-  - package-ecosystem: maven
-    directory: "/"
-    schedule:
-      interval: "weekly"
       day: "sunday"
       time: "18:00"
       timezone: Europe/Paris
