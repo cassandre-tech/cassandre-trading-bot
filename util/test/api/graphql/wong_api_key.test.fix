@@ -1,5 +1,6 @@
 require("isomorphic-fetch");
 
+// TODO Don't work anymore on CI - Fix this before 5.0.7.
 test("Accessing API with wrong API key", () => {
 
 	// The query of the GraphQL API server.

@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.util.parameters;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,7 @@ import tech.cassandre.trading.bot.util.validator.Rate;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 
 /**
  * Exchange parameters from application.properties.
@@ -101,15 +103,56 @@ public class ExchangeParameters {
         @Rate(message = "Invalid account rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String account;
 
+        /**
+         * Returns account rate value in ms.
+         *
+         * @return account rate value in ms
+         */
+        public long getAccountValueInMs() {
+            return getRateValue(account);
+        }
+
         /** Delay between calls to ticker API. */
         @NotNull(message = "Delay between calls to ticker API is mandatory")
         @Rate(message = "Invalid ticker rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String ticker;
 
+        /**
+         * Returns ticker rate value in ms.
+         *
+         * @return ticker rate value in ms
+         */
+        public long getTickerValueInMs() {
+            return getRateValue(ticker);
+        }
+
         /** Delay between calls to trade API. */
         @NotNull(message = "Delay between calls to trade API is mandatory")
         @Rate(message = "Invalid trade rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String trade;
+
+        /**
+         * Returns trade rate value in ms.
+         *
+         * @return trade rate value in ms
+         */
+        public long getTradeValueInMs() {
+            return getRateValue(ticker);
+        }
+
+        /**
+         * Return rate value in ms.
+         *
+         * @param stringValue string value
+         * @return long value (ms)
+         */
+        private static long getRateValue(final String stringValue) {
+            if (NumberUtils.isCreatable(stringValue)) {
+                return Long.parseLong(stringValue);
+            } else {
+                return Duration.parse(stringValue).toMillis();
+            }
+        }
 
     }
 

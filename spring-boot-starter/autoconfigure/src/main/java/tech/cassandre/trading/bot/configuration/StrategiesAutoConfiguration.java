@@ -129,6 +129,12 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
         // =============================================================================================================
         // Check if everything is ok.
+        // Prints all the supported currency pairs.
+        logger.info("Supported currency pairs by the exchange: {}.",
+                exchangeService.getAvailableCurrencyPairs()
+                        .stream()
+                        .map(CurrencyPairDTO::toString)
+                        .collect(Collectors.joining(", ")));
 
         // Retrieve accounts information.
         final Optional<UserDTO> user = userService.getUser();
