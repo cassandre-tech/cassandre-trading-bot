@@ -23,15 +23,10 @@ import tech.cassandre.trading.bot.util.xchange.CancelOrderParams;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.math.RoundingMode.FLOOR;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
@@ -89,7 +84,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             MarketOrder m = new MarketOrder(utilMapper.mapToOrderType(orderTypeDTO),
-                    amount,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR),
                     currencyMapper.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null);

@@ -93,10 +93,10 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
         final OrderCreationResultDTO orderCreationResult;
         if (type == LONG) {
             // Long position - we buy.
-            orderCreationResult = tradeService.createBuyMarketOrder(strategy, currencyPair, amount.setScale(2, FLOOR));
+            orderCreationResult = tradeService.createBuyMarketOrder(strategy, currencyPair, amount);
         } else {
             // Short position - we sell.
-            orderCreationResult = tradeService.createSellMarketOrder(strategy, currencyPair, amount.setScale(2, FLOOR));
+            orderCreationResult = tradeService.createSellMarketOrder(strategy, currencyPair, amount);
         }
 
         // If it works, creates the position.
