@@ -37,7 +37,9 @@ import java.util.stream.Stream;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.FLOOR;
 import static java.math.RoundingMode.HALF_UP;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.*;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 
