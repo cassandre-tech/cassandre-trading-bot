@@ -125,7 +125,6 @@ public class CurrencyPairDTO {
         this.baseCurrencyPrecision = DEFAULT_CURRENCY_PRECISION;
         this.qouteCurrencyPrecision = DEFAULT_CURRENCY_PRECISION;
     }
-
     /**
      * Constructor from XChange instrument.
      *

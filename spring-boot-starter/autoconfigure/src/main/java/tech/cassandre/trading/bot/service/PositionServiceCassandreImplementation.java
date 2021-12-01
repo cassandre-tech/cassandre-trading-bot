@@ -19,27 +19,14 @@ import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.FLOOR;
 import static java.math.RoundingMode.HALF_UP;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
+import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.*;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
 
@@ -106,10 +93,10 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
         final OrderCreationResultDTO orderCreationResult;
         if (type == LONG) {
             // Long position - we buy.
-            orderCreationResult = tradeService.createBuyMarketOrder(strategy, currencyPair, amount);
+            orderCreationResult = tradeService.createBuyMarketOrder(strategy, currencyPair, amount.setScale(2, FLOOR));
         } else {
             // Short position - we sell.
-            orderCreationResult = tradeService.createSellMarketOrder(strategy, currencyPair, amount);
+            orderCreationResult = tradeService.createSellMarketOrder(strategy, currencyPair, amount.setScale(2, FLOOR));
         }
 
         // If it works, creates the position.
