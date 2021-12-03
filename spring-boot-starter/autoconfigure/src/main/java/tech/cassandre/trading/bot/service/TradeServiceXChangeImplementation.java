@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.math.RoundingMode.FLOOR;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
@@ -89,7 +90,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             MarketOrder m = new MarketOrder(utilMapper.mapToOrderType(orderTypeDTO),
-                    amount,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR),
                     currencyMapper.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null);
@@ -155,7 +156,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             LimitOrder l = new LimitOrder(utilMapper.mapToOrderType(orderTypeDTO),
-                    amount,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR),
                     currencyMapper.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null,
