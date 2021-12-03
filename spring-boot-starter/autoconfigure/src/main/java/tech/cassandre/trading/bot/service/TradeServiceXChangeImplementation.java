@@ -156,7 +156,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             LimitOrder l = new LimitOrder(utilMapper.mapToOrderType(orderTypeDTO),
-                    amount,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR),
                     currencyMapper.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null,
