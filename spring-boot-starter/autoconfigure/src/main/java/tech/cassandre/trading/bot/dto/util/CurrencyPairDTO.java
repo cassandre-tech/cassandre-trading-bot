@@ -18,9 +18,7 @@ import java.util.Objects;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class CurrencyPairDTO {
 
-    /**
-     * Currency pair separator.
-     */
+    /** Currency pair separator. */
     private static final String CURRENCY_PAIR_SEPARATOR = "/";
 
     /** Currency pair default precision. */
