@@ -33,8 +33,8 @@ public class CurrencyPairDTO {
     /** The base currency precision. */
     int baseCurrencyPrecision;
 
-    /** The qoute currency precision. */
-    int qouteCurrencyPrecision;
+    /** The quote currency precision. */
+    int quoteCurrencyPrecision;
 
     /**
      * Constructor.
@@ -70,10 +70,10 @@ public class CurrencyPairDTO {
      * @param newBaseCurrency           The base currency
      * @param newQuoteCurrency          The quote currency
      * @param newBaseCurrencyPrecision  the base currency precision
-     * @param newQouteCurrencyPrecision the qoute currency precision
+     * @param newQuoteCurrencyPrecision the quote currency precision
      */
-    public CurrencyPairDTO(final String newBaseCurrency, final String newQuoteCurrency, final int newBaseCurrencyPrecision, final int newQouteCurrencyPrecision) {
-        this(CurrencyDTO.getInstance(newBaseCurrency), CurrencyDTO.getInstance(newQuoteCurrency), newBaseCurrencyPrecision, newQouteCurrencyPrecision);
+    public CurrencyPairDTO(final String newBaseCurrency, final String newQuoteCurrency, final int newBaseCurrencyPrecision, final int newQuoteCurrencyPrecision) {
+        this(CurrencyDTO.getInstance(newBaseCurrency), CurrencyDTO.getInstance(newQuoteCurrency), newBaseCurrencyPrecision, newQuoteCurrencyPrecision);
     }
 
     /**
@@ -92,13 +92,13 @@ public class CurrencyPairDTO {
      * @param newBaseCurrency           The base currency
      * @param newQuoteCurrency          The quote currency
      * @param newBaseCurrencyPrecision  the base currency precision
-     * @param newQouteCurrencyPrecision the qoute currency precision
+     * @param newQuoteCurrencyPrecision the quote currency precision
      */
-    public CurrencyPairDTO(final CurrencyDTO newBaseCurrency, final CurrencyDTO newQuoteCurrency, final int newBaseCurrencyPrecision, final int newQouteCurrencyPrecision) {
+    public CurrencyPairDTO(final CurrencyDTO newBaseCurrency, final CurrencyDTO newQuoteCurrency, final int newBaseCurrencyPrecision, final int newQuoteCurrencyPrecision) {
         this.baseCurrency = newBaseCurrency;
         this.quoteCurrency = newQuoteCurrency;
         this.baseCurrencyPrecision = newBaseCurrencyPrecision;
-        this.qouteCurrencyPrecision = newQouteCurrencyPrecision;
+        this.quoteCurrencyPrecision = newQuoteCurrencyPrecision;
     }
 
     /**
@@ -111,21 +111,21 @@ public class CurrencyPairDTO {
         this.baseCurrency = new CurrencyDTO(cp.base.getCurrencyCode());
         this.quoteCurrency = new CurrencyDTO(cp.counter.getCurrencyCode());
         this.baseCurrencyPrecision = DEFAULT_CURRENCY_PRECISION;
-        this.qouteCurrencyPrecision = DEFAULT_CURRENCY_PRECISION;
+        this.quoteCurrencyPrecision = DEFAULT_CURRENCY_PRECISION;
     }
     /**
      * Constructor from XChange instrument.
      *
      * @param instrument                instrument
      * @param newBaseCurrencyPrecision  the base currency precision
-     * @param newQouteCurrencyPrecision the qoute currency precision
+     * @param newQuoteCurrencyPrecision the quote currency precision
      */
-    public CurrencyPairDTO(final Instrument instrument, final int newBaseCurrencyPrecision, final int newQouteCurrencyPrecision) {
+    public CurrencyPairDTO(final Instrument instrument, final int newBaseCurrencyPrecision, final int newQuoteCurrencyPrecision) {
         final CurrencyPair cp = (CurrencyPair) instrument;
         this.baseCurrency = new CurrencyDTO(cp.base.getCurrencyCode());
         this.quoteCurrency = new CurrencyDTO(cp.counter.getCurrencyCode());
         this.baseCurrencyPrecision = newBaseCurrencyPrecision;
-        this.qouteCurrencyPrecision = newQouteCurrencyPrecision;
+        this.quoteCurrencyPrecision = newQuoteCurrencyPrecision;
     }
 
     @Override
