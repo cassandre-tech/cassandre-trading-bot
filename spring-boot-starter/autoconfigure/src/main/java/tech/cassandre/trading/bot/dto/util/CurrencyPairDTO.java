@@ -23,29 +23,19 @@ public class CurrencyPairDTO {
      */
     private static final String CURRENCY_PAIR_SEPARATOR = "/";
 
-    /**
-     * Currency pair default precision.
-     */
+    /** Currency pair default precision. */
     private static final Integer DEFAULT_CURRENCY_PRECISION = 8;
 
-    /**
-     * The base currency is the first currency appearing in a currency pair quotation.
-     */
+    /** The base currency is the first currency appearing in a currency pair quotation. */
     CurrencyDTO baseCurrency;
 
-    /**
-     * The quote currency is the second currency appearing in a currency pair quotation.
-     */
+    /** The quote currency is the second currency appearing in a currency pair quotation. */
     CurrencyDTO quoteCurrency;
 
-    /**
-     * The base currency precision.
-     */
+    /** The base currency precision. */
     int baseCurrencyPrecision;
 
-    /**
-     * The qoute currency precision.
-     */
+    /** The qoute currency precision. */
     int qouteCurrencyPrecision;
 
     /**
