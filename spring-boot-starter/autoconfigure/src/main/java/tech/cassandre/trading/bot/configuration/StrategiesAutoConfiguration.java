@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.configuration;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,7 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
+import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -64,6 +66,7 @@ import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J
  * StrategyAutoConfiguration configures the strategies.
  */
 @Configuration
+@EnableConfigurationProperties(ExchangeParameters.class)
 @RequiredArgsConstructor
 public class StrategiesAutoConfiguration extends BaseConfiguration {
 
@@ -75,6 +78,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
 
     /** Application context. */
     private final ApplicationContext applicationContext;
+
+    /** Exchange parameters. */
+    private final ExchangeParameters exchangeParameters;
 
     /** Strategy repository. */
     private final StrategyRepository strategyRepository;
@@ -288,6 +294,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
                     });
+
+                    // Gives configuration information to the strategy.
+                    strategy.setDryModeIndicator(exchangeParameters.getModes().getDry());
 
                     // Initialize accounts values in strategy.
                     strategy.initializeAccounts(user.get().getAccounts());
