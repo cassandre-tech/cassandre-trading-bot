@@ -5,7 +5,7 @@ description: How to fix common Cassandre problems
 ---
 # How to fix common Cassandre problems
 
-## Your strategies specifies a trading account that doesn't exist
+## Your strategies specify a trading account that doesn't exist
 First thing to check: your configuration. If you are connecting to a real exchange (not a sandbox) with your real credentials, you must have those parameters to `false` in your `application.properties`:
 
 ```properties
@@ -37,3 +37,13 @@ On Binance, you should not ask for data too often, or you will get a `Way too mu
 cassandre.trading.bot.exchange.rates.account=PT30S
 cassandre.trading.bot.exchange.rates.ticker=PT30S
 cassandre.trading.bot.exchange.rates.trade=PT30S
+```
+
+## Requested bean is currently in creation: Is there an unresolvable circular reference?
+When you have this error message on startup:
+```
+̀Unknown configuration error: Error creating bean with name 'tech.cassandre.trading.bot.configuration.ExchangeAutoConfiguration': Requested bean is currently in creation: Is there an unresolvable circular reference?
+```
+
+Since Spring boot 2.6.0, circular references are prohibited by default and before Cassandre 5.0.7, we had an error circular references we did not notice. So, if you are using a spring boot 2.6.0, you have to use a Cassandre release superior to 5.0.7.
+
