@@ -26,7 +26,6 @@ public class GainDTOTest {
         final GainDTO gain1 = GainDTO.ZERO;
         assertEquals("No gain", gain1.toString());
 
-        // TODO Improve tests.
         final GainDTO gain2 = GainDTO.builder()
                 .percentage(1)
                 .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
