@@ -38,7 +38,7 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
-            bucket.asScheduler().consume(1);
+            bucket.tryConsume(1);
 
             logger.debug("Retrieving account information");
             final UserDTO user = accountMapper.mapToUserDTO(xChangeAccountService.getAccountInfo());
@@ -54,8 +54,6 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             return Optional.ofNullable(user);
         } catch (IOException e) {
             logger.error("Error retrieving account information: {}", e.getMessage());
-            return Optional.empty();
-        } catch (InterruptedException e) {
             return Optional.empty();
         }
     }

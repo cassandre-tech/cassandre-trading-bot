@@ -279,62 +279,58 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     @SuppressWarnings("checkstyle:DesignForExtension")
     public Set<OrderDTO> getOrders() {
         logger.debug("Getting orders from exchange");
-        try {
-            // We check if we have some local orders to push.
-            final Set<OrderDTO> localOrders = orderRepository.findByStatus(PENDING_NEW)
-                    .stream()
-                    .map(orderMapper::mapToOrderDTO)
-                    .sorted(Comparator.comparing(OrderDTO::getTimestamp))
-                    .peek(orderDTO -> logger.debug("Local order retrieved: {}", orderDTO))
-                    .peek(orderDTO -> orderDTO.updateStatus(NEW))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        // We check if we have some local orders to push.
+        final Set<OrderDTO> localOrders = orderRepository.findByStatus(PENDING_NEW)
+                .stream()
+                .map(orderMapper::mapToOrderDTO)
+                .sorted(Comparator.comparing(OrderDTO::getTimestamp))
+                .peek(orderDTO -> logger.debug("Local order retrieved: {}", orderDTO))
+                .peek(orderDTO -> orderDTO.updateStatus(NEW))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
-            // If we have local orders to push, we return them.
-            if (!localOrders.isEmpty()) {
-                return localOrders;
-            } else {
-                try {
-                    // Consume a token from the token bucket.
-                    // If a token is not available this method will block until the refill adds one to the bucket.
-                    bucket.asScheduler().consume(1);
-                    return tradeService.getOpenOrders()
-                            .getOpenOrders()
-                            .stream()
-                            .map(orderMapper::mapToOrderDTO)
-                            .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
-                            .collect(Collectors.toCollection(LinkedHashSet::new));
-                } catch (NotAvailableFromExchangeException e) {
-                    // If the classical call to getOpenOrders() is not implemented, we use the specific parameters.
-                    Set<OrderDTO> orders = new LinkedHashSet<>();
-                    orderRepository.findAll()
-                            .stream()
-                            .map(orderMapper::mapToOrderDTO)
-                            .filter(orderDTO -> !orderDTO.isFulfilled())
-                            .map(OrderDTO::getCurrencyPair)
-                            .distinct()
-                            .forEach(currencyPairDTO -> {
-                                try {
-                                    // Consume a token from the token bucket.
-                                    // If a token is not available this method will block until the refill adds one to the bucket.
-                                    bucket.asScheduler().consume(1);
-                                    orders.addAll(tradeService.getOpenOrders(new DefaultOpenOrdersParamCurrencyPair(currencyMapper.mapToCurrencyPair(currencyPairDTO)))
-                                            .getOpenOrders()
-                                            .stream()
-                                            .map(orderMapper::mapToOrderDTO)
-                                            .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
-                                            .collect(Collectors.toCollection(LinkedHashSet::new)));
-                                } catch (IOException | InterruptedException specificOrderException) {
-                                    logger.error("Error retrieving orders: {}", specificOrderException.getMessage());
-                                }
-                            });
-                    return orders;
-                } catch (IOException e) {
-                    logger.error("Error retrieving orders: {}", e.getMessage());
-                    return Collections.emptySet();
-                }
+        // If we have local orders to push, we return them.
+        if (!localOrders.isEmpty()) {
+            return localOrders;
+        } else {
+            try {
+                // Consume a token from the token bucket.
+                // If a token is not available this method will block until the refill adds one to the bucket.
+                bucket.tryConsume(1);
+                return tradeService.getOpenOrders()
+                        .getOpenOrders()
+                        .stream()
+                        .map(orderMapper::mapToOrderDTO)
+                        .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+            } catch (NotAvailableFromExchangeException e) {
+                // If the classical call to getOpenOrders() is not implemented, we use the specific parameters.
+                Set<OrderDTO> orders = new LinkedHashSet<>();
+                orderRepository.findAll()
+                        .stream()
+                        .map(orderMapper::mapToOrderDTO)
+                        .filter(orderDTO -> !orderDTO.isFulfilled())
+                        .map(OrderDTO::getCurrencyPair)
+                        .distinct()
+                        .forEach(currencyPairDTO -> {
+                            try {
+                                // Consume a token from the token bucket.
+                                // If a token is not available this method will block until the refill adds one to the bucket.
+                                bucket.tryConsume(1);
+                                orders.addAll(tradeService.getOpenOrders(new DefaultOpenOrdersParamCurrencyPair(currencyMapper.mapToCurrencyPair(currencyPairDTO)))
+                                        .getOpenOrders()
+                                        .stream()
+                                        .map(orderMapper::mapToOrderDTO)
+                                        .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
+                                        .collect(Collectors.toCollection(LinkedHashSet::new)));
+                            } catch (IOException specificOrderException) {
+                                logger.error("Error retrieving orders: {}", specificOrderException.getMessage());
+                            }
+                        });
+                return orders;
+            } catch (IOException e) {
+                logger.error("Error retrieving orders: {}", e.getMessage());
+                return Collections.emptySet();
             }
-        } catch (InterruptedException e) {
-            return Collections.emptySet();
         }
     }
 
@@ -366,7 +362,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 try {
                     // Consume a token from the token bucket.
                     // If a token is not available this method will block until the refill adds one to the bucket.
-                    bucket.asScheduler().consume(1);
+                    bucket.tryConsume(1);
                     results.addAll(
                             tradeService.getTradeHistory(params)
                                     .getUserTrades()
@@ -377,8 +373,6 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     );
                 } catch (IOException e) {
                     logger.error("Error retrieving trades: {}", e.getMessage());
-                } catch (InterruptedException e) {
-                    logger.error("InterruptedException: {}", e.getMessage());
                 }
             });
         }

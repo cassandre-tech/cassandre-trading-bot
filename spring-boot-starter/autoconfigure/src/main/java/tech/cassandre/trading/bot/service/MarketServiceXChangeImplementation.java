@@ -41,7 +41,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
         try {
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
-            bucket.asScheduler().consume(1);
+            bucket.tryConsume(1);
 
             logger.debug("Getting ticker for {} currency pair", currencyPair);
             TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)));
@@ -49,8 +49,6 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             return Optional.ofNullable(t);
         } catch (IOException e) {
             logger.error("Error retrieving ticker: {}", e.getMessage());
-            return Optional.empty();
-        } catch (InterruptedException e) {
             return Optional.empty();
         }
     }
@@ -67,7 +65,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
 
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.
-            bucket.asScheduler().consume(1);
+            bucket.tryConsume(1);
 
             logger.debug("Getting tickers for {} currency pairs", currencyPairs.size());
             final List<Ticker> tickers = marketDataService.getTickers(params);
@@ -77,8 +75,6 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (IOException e) {
             logger.error("Error retrieving tickers: {}", e.getMessage());
-            return Collections.emptySet();
-        } catch (InterruptedException e) {
             return Collections.emptySet();
         }
     }
