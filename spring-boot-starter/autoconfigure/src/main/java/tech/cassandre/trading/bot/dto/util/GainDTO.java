@@ -75,8 +75,8 @@ public class GainDTO {
      * @return fees
      * @Deprecated This method should not be used anymore as a bug was found in issue 850.
      * A gain is linked to a position and a position has an opening order and a closing order.
-     * the opening order trades and the closing order trades may have different currencies !
-     * So it's not possible to return only a CurrencyAmountDTO !
+     * the opening order trades and the closing order trades may have different currencies!
+     * So it's not possible to return only a CurrencyAmountDTO!
      * Only a HashMap of currency and amount.
      */
     @Deprecated

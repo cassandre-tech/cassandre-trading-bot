@@ -47,3 +47,7 @@ When you have this error message on startup:
 
 Since Spring boot 2.6.0, circular references are prohibited by default and before Cassandre 5.0.7, we had an error circular references we did not notice. So, if you are using a spring boot 2.6.0, you have to use a Cassandre release superior to 5.0.7.
 
+## Kucoin - Your strategies specifies a trading account that doesn't exist
+You have assets on your account, and `getTradeAccount(Set<AccountDTO> accounts)` is implemented but when your bot is starting, you get the following error `Your strategies specifies a trading account that doesn't exist`.
+
+You can try this solution: [https://github.com/cassandre-tech/cassandre-trading-bot/issues/786#issuecomment-999503117](https://github.com/cassandre-tech/cassandre-trading-bot/issues/786#issuecomment-999503117).

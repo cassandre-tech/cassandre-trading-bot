@@ -20,8 +20,10 @@ import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
@@ -393,7 +395,7 @@ public class PositionDTO {
         // Returns true if one of the rule is triggered.
         final Optional<GainDTO> latestCalculatedGain = getLatestCalculatedGain();
         return latestCalculatedGain.filter(gainDTO -> rules.isStopGainPercentageSet() && gainDTO.getPercentage() >= rules.getStopGainPercentage()
-                || rules.isStopLossPercentageSet() && gainDTO.getPercentage() <= -rules.getStopLossPercentage())
+                        || rules.isStopLossPercentageSet() && gainDTO.getPercentage() <= -rules.getStopLossPercentage())
                 .isPresent();
     }
 
@@ -489,17 +491,15 @@ public class PositionDTO {
                 BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(ONE_HUNDRED_BIG_DECIMAL);
 
                 // Calculate fees.
-                BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
-                        .filter(tradeDTO -> tradeDTO.getFee() != null)
-                        .map(TradeDTO::getFeeValue)
-                        .reduce(ZERO, BigDecimal::add);
-                CurrencyDTO feeCurrency;
-                final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
-                if (firstTrade.isPresent() && firstTrade.get().getFee() != null) {
-                    feeCurrency = firstTrade.get().getFee().getCurrency();
-                } else {
-                    feeCurrency = currencyPair.getQuoteCurrency();
-                }
+                final List<CurrencyAmountDTO> openingOrderFees = openingOrder.getTrades()
+                        .stream()
+                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
+                        .collect(Collectors.toList());
+
+                final List<CurrencyAmountDTO> closingOrderFees = closingOrder.getTrades()
+                        .stream()
+                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
+                        .collect(Collectors.toList());
 
                 // Return position gain.
                 return GainDTO.builder()
@@ -508,10 +508,8 @@ public class PositionDTO {
                                 .value(gainAmount)
                                 .currency(currencyPair.getQuoteCurrency())
                                 .build())
-                        .fees(CurrencyAmountDTO.builder()
-                                .value(fees)
-                                .currency(feeCurrency)
-                                .build())
+                        .openingOrderFees(openingOrderFees)
+                        .closingOrderFees(closingOrderFees)
                         .build();
             }
 

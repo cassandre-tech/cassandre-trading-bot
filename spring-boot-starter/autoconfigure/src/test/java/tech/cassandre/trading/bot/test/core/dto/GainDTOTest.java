@@ -49,9 +49,9 @@ public class GainDTOTest {
 
         // Global gain.
         assertEquals("Gains: 2 BTC (1.0 %)", gain2.toString());
-        // Opening order fees.
+        // Opening order fees list.
         assertEquals(4, gain2.getOpeningOrderFees().size());
-        // Closing order fees.
+        // Closing order fees list.
         assertEquals(3, gain2.getClosingOrderFees().size());
         // Global fees.
         final Map<CurrencyDTO, CurrencyAmountDTO> ordersFees = gain2.getOrdersFees();
