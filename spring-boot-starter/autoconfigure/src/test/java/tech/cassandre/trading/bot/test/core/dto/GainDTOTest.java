@@ -25,6 +25,7 @@ public class GainDTOTest {
     public void checkToString() {
         final GainDTO gain1 = GainDTO.ZERO;
         assertEquals("No gain", gain1.toString());
+        assertEquals(0, gain1.getOrdersFees().size());
 
         final GainDTO gain2 = GainDTO.builder()
                 .percentage(1)
