@@ -608,7 +608,11 @@ public class PositionDTO {
                     break;
                 case CLOSED:
                     final GainDTO gain = getGain();
-                    value += " - Closed - " + gain;
+                    if (gain != null) {
+                        value += " - Closed - " + gain;
+                    } else {
+                        value += " - Closed - Error during gain calculation";
+                    }
                     break;
                 default:
                     value = "Incorrect state for position " + getId();
