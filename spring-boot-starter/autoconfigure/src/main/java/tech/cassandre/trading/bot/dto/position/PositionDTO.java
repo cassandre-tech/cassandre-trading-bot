@@ -510,7 +510,7 @@ public class PositionDTO {
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
-                if (firstTrade.isPresent()) {
+                if (firstTrade.isPresent() && firstTrade.get().getFee() != null) {
                     feeCurrency = firstTrade.get().getFee().getCurrency();
                 } else {
                     feeCurrency = currencyPair.getQuoteCurrency();
@@ -569,7 +569,7 @@ public class PositionDTO {
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
-                if (firstTrade.isPresent()) {
+                if (firstTrade.isPresent() && firstTrade.get().getFee() != null) {
                     feeCurrency = firstTrade.get().getFee().getCurrency();
                 } else {
                     feeCurrency = currencyPair.getQuoteCurrency();
