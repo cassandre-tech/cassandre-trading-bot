@@ -73,7 +73,7 @@
 		<!-- Libraries releases -->
 
 		<!-- Core -->
-		<spring.version>2.5.5</spring.version>
+		<spring.version>2.6.1</spring.version>
 		<reactor.version>Dysprosium-SR25</reactor.version>
 		<xchange.version>5.0.12</xchange.version>
 		<bucket4j.version>6.4.1</bucket4j.version>
@@ -100,7 +100,7 @@
 
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
-		<puppycrawl.checkstyle.version>9.2</puppycrawl.checkstyle.version>
+		<maven.puppycrawl.checkstyle.version>9.2</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>

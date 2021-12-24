@@ -547,7 +547,7 @@ public class PositionShortFluxTest extends BaseTest {
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSED, p.getStatus());
-        assertEquals("Short position n°1 of 10 ETH (rules: 1000.0 % gain / 100.0 % loss) - Closed - Gains: 990 ETH (9900.0 %) / Fees: 0 BTC", p.getDescription());
+        assertEquals("Short position n°1 of 10 ETH (rules: 1000.0 % gain / 100.0 % loss) - Closed - Gains: 990 ETH (9900.0 %)", p.getDescription());
 
         // onPosition for second trade arrival.
         p = getLastPositionUpdate();

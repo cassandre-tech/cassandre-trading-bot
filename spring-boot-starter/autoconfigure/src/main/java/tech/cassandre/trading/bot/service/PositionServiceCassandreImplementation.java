@@ -230,6 +230,8 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
         HashMap<CurrencyDTO, BigDecimal> totalBefore = new LinkedHashMap<>();
         HashMap<CurrencyDTO, BigDecimal> totalAfter = new LinkedHashMap<>();
         List<CurrencyAmountDTO> totalFees = new LinkedList<>();
+        List<CurrencyAmountDTO> openingOrdersFees = new LinkedList<>();
+        List<CurrencyAmountDTO> closingOrdersFees = new LinkedList<>();
         HashMap<CurrencyDTO, GainDTO> gains = new LinkedHashMap<>();
 
         // We calculate, by currency, the amount bought & sold.
@@ -275,6 +277,14 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                     Stream.concat(p.getOpeningOrder().getTrades().stream(), p.getClosingOrder().getTrades().stream())
                             .filter(tradeDTO -> tradeDTO.getFee() != null)
                             .forEach(tradeDTO -> totalFees.add(tradeDTO.getFee()));
+                    p.getOpeningOrder().getTrades()
+                            .stream()
+                            .filter(tradeDTO -> tradeDTO.getFee() != null)
+                            .forEach(tradeDTO -> openingOrdersFees.add(tradeDTO.getFee()));
+                    p.getClosingOrder().getTrades()
+                            .stream()
+                            .filter(tradeDTO -> tradeDTO.getFee() != null)
+                            .forEach(tradeDTO -> closingOrdersFees.add(tradeDTO.getFee()));
                 });
 
         gains.keySet()
@@ -302,6 +312,8 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                                     .value(fees)
                                     .currency(currency)
                                     .build())
+                            .openingOrderFees(openingOrdersFees)
+                            .closingOrderFees(closingOrdersFees)
                             .build();
                     gains.put(currency, g);
                 });
