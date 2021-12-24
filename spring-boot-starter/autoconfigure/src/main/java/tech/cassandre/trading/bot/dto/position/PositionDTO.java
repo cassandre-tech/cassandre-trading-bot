@@ -506,7 +506,8 @@ public class PositionDTO {
                 // =====================================================================================================
                 // Old & incorrect way to calculate fees - will be deleted in later release.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
-                        .map(t -> t.getFee().getValue())
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
+                        .map(tradeDTO -> tradeDTO.getFee().getValue())
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
@@ -565,7 +566,7 @@ public class PositionDTO {
                 // Old & incorrect way to calculate fees - will be deleted in later release.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
                         .filter(tradeDTO -> tradeDTO.getFee() != null)
-                        .map(t -> t.getFee().getValue())
+                        .map(tradeDTO -> tradeDTO.getFee().getValue())
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
