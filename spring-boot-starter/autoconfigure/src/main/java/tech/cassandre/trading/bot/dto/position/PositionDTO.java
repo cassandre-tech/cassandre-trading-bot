@@ -490,6 +490,19 @@ public class PositionDTO {
                 BigDecimal gainAmount = sold.subtract(bought);
                 BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(ONE_HUNDRED_BIG_DECIMAL);
 
+                // Opening & closing order fees.
+                final List<CurrencyAmountDTO> openingOrderFees = openingOrder.getTrades()
+                        .stream()
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
+                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
+                        .collect(Collectors.toList());
+
+                final List<CurrencyAmountDTO> closingOrderFees = closingOrder.getTrades()
+                        .stream()
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
+                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
+                        .collect(Collectors.toList());
+
                 // =====================================================================================================
                 // Old & incorrect way to calculate fees - will be deleted in later release.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
@@ -503,19 +516,6 @@ public class PositionDTO {
                     feeCurrency = currencyPair.getQuoteCurrency();
                 }
                 // =====================================================================================================
-
-                // Opening & closing order fees.
-                final List<CurrencyAmountDTO> openingOrderFees = openingOrder.getTrades()
-                        .stream()
-                        .filter(tradeDTO -> tradeDTO.getFee() != null)
-                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
-                        .collect(Collectors.toList());
-
-                final List<CurrencyAmountDTO> closingOrderFees = closingOrder.getTrades()
-                        .stream()
-                        .filter(tradeDTO -> tradeDTO.getFee() != null)
-                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
-                        .collect(Collectors.toList());
 
                 // Return position gain.
                 return GainDTO.builder()
@@ -564,6 +564,7 @@ public class PositionDTO {
                 // =====================================================================================================
                 // Old & incorrect way to calculate fees - will be deleted in later release.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
                         .map(t -> t.getFee().getValue())
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
