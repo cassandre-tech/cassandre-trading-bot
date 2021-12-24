@@ -53,9 +53,9 @@ public class GainDTO {
 
     /**
      * Getter netAmount.
+     * This method cannot be used as fees are not necessary the same currency as value.
      *
      * @return netAmount
-     * @Deprecated this method cannot be used as fees are not necessary the same currency as value.
      */
     @Deprecated
     public CurrencyAmountDTO getNetAmount() {
@@ -71,13 +71,13 @@ public class GainDTO {
 
     /**
      * Getter fees.
-     *
-     * @return fees
-     * @Deprecated This method should not be used anymore as a bug was found in issue 850.
+     * This method should not be used anymore as a bug was found in issue 850.
      * A gain is linked to a position and a position has an opening order and a closing order.
      * the opening order trades and the closing order trades may have different currencies!
      * So it's not possible to return only a CurrencyAmountDTO!
      * Only a HashMap of currency and amount.
+     *
+     * @return fees
      */
     @Deprecated
     public final CurrencyAmountDTO getFees() {
