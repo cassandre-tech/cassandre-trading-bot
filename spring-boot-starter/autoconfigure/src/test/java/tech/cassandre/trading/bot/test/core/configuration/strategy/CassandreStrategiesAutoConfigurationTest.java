@@ -105,7 +105,7 @@ class CassandreStrategiesAutoConfigurationTest {
             fail("Exception not raised");
         } catch (Exception e) {
             assertTrue(e.getCause() instanceof ConfigurationException);
-            assertTrue(e.getCause().getMessage().contains("Your strategies specifies a trading account that doesn't exist"));
+            assertTrue(e.getCause().getMessage().contains("Your strategies specify a trading account that doesn't exist"));
         }
     }
 

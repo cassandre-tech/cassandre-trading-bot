@@ -534,7 +534,7 @@ public class PositionLongFluxTest extends BaseTest {
         assertNotNull(p);
         assertEquals(position1Id, p.getId());
         assertEquals(CLOSED, p.getStatus());
-        assertEquals("Long position n°1 of 10 ETH (rules: 1000.0 % gain / 100.0 % loss) - Closed - Gains: 9.7 BTC (3233.33 %) / Fees: 0 BTC", p.getDescription());
+        assertEquals("Long position n°1 of 10 ETH (rules: 1000.0 % gain / 100.0 % loss) - Closed - Gains: 9.7 BTC (3233.33 %)", p.getDescription());
 
         // onPosition for second trade arrival.
         // List of positions updates:

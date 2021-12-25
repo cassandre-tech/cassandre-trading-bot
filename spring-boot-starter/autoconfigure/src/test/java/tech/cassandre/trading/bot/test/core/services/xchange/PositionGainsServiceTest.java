@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.service.PositionService;
@@ -62,8 +63,11 @@ public class PositionGainsServiceTest {
         // Gain (percentage).
         assertEquals(30.09, gain1.getPercentage());
         // Gain (fees).
-        assertEquals(0, new BigDecimal("15").compareTo(gain1.getFees().getValue()));
-        assertEquals(USDT, gain1.getFees().getCurrency());
+        final Map<CurrencyDTO, CurrencyAmountDTO> gain1Fees = gain1.getOrdersFees();
+        assertEquals(1, gain1Fees.size());
+        assertNotNull(gain1Fees.get(USDT));
+        assertEquals(0, new BigDecimal("15").compareTo(gain1Fees.get(USDT).getValue()));
+        assertEquals(USDT, gain1Fees.get(USDT).getCurrency());
         // Net gain.
         assertEquals(0, new BigDecimal("19").compareTo(gain1.getNetAmount().getValue()));
         assertEquals(USDT, gain1.getNetAmount().getCurrency());
@@ -86,8 +90,12 @@ public class PositionGainsServiceTest {
         // Gain (percentage).
         assertEquals(-50, gain2.getPercentage());
         // Gain (fees).
-        assertEquals(0, new BigDecimal("10").compareTo(gain2.getFees().getValue()));
-        assertEquals(BTC, gain2.getFees().getCurrency());
+        final Map<CurrencyDTO, CurrencyAmountDTO> gain2Fees = gain2.getOrdersFees();
+        assertEquals(1, gain2Fees.size());
+        assertNotNull(gain2Fees.get(BTC));
+        assertEquals(0, new BigDecimal("10").compareTo(gain2Fees.get(BTC).getValue()));
+        assertEquals(BTC, gain2Fees.get(BTC).getCurrency());
+
         // Net gain.
         assertEquals(0, new BigDecimal("-1010").compareTo(gain2.getNetAmount().getValue()));
         assertEquals(BTC, gain2.getNetAmount().getCurrency());
@@ -112,6 +120,12 @@ public class PositionGainsServiceTest {
         // Gain (fees).
         assertEquals(0, new BigDecimal("11").compareTo(gain3.getFees().getValue()));
         assertEquals(USDT, gain3.getFees().getCurrency());
+        final Map<CurrencyDTO, CurrencyAmountDTO> gain3Fees = gain3.getOrdersFees();
+        assertEquals(1, gain3Fees.size());
+        assertNotNull(gain3Fees.get(USDT));
+        assertEquals(0, new BigDecimal("11").compareTo(gain3Fees.get(USDT).getValue()));
+        assertEquals(USDT, gain3Fees.get(USDT).getCurrency());
+
         // Net gain.
         assertEquals(0, new BigDecimal("139").compareTo(gain3.getNetAmount().getValue()));
         assertEquals(USDT, gain3.getNetAmount().getCurrency());
@@ -152,6 +166,12 @@ public class PositionGainsServiceTest {
         // Gain (fees).
         assertEquals(0, new BigDecimal("4").compareTo(gain7.getFees().getValue()));
         assertEquals(ETH, gain7.getFees().getCurrency());
+        final Map<CurrencyDTO, CurrencyAmountDTO> gain7Fees = gain7.getOrdersFees();
+        assertEquals(1, gain7Fees.size());
+        assertNotNull(gain7Fees.get(ETH));
+        assertEquals(0, new BigDecimal("4").compareTo(gain7Fees.get(ETH).getValue()));
+        assertEquals(ETH, gain7Fees.get(ETH).getCurrency());
+
         // Net gain.
         assertEquals(0, new BigDecimal("-9").compareTo(gain7.getNetAmount().getValue()));
         assertEquals(ETH, gain7.getNetAmount().getCurrency());
@@ -168,6 +188,12 @@ public class PositionGainsServiceTest {
         assertEquals(USDT, usdtGain.getAmount().getCurrency());
         assertEquals(0, new BigDecimal("26").compareTo(usdtGain.getFees().getValue()));
         assertEquals(USDT, usdtGain.getFees().getCurrency());
+
+        final Map<CurrencyDTO, CurrencyAmountDTO> usdtGainFees = usdtGain.getOrdersFees();
+        assertNotNull(usdtGainFees.get(USDT));
+        assertEquals(0, new BigDecimal("26").compareTo(usdtGainFees.get(USDT).getValue()));
+        assertEquals(USDT, usdtGainFees.get(USDT).getCurrency());
+
         // Net gain.
         assertEquals(0, new BigDecimal("158").compareTo(usdtGain.getNetAmount().getValue()));
         assertEquals(USDT, usdtGain.getNetAmount().getCurrency());
@@ -180,6 +206,12 @@ public class PositionGainsServiceTest {
         assertEquals(BTC, btcGain.getAmount().getCurrency());
         assertEquals(0, new BigDecimal("10").compareTo(btcGain.getFees().getValue()));
         assertEquals(BTC, btcGain.getFees().getCurrency());
+
+        final Map<CurrencyDTO, CurrencyAmountDTO> btcGainFees = btcGain.getOrdersFees();
+        assertNotNull(btcGainFees.get(BTC));
+        assertEquals(0, new BigDecimal("10").compareTo(btcGainFees.get(BTC).getValue()));
+        assertEquals(BTC, btcGainFees.get(BTC).getCurrency());
+
         // Net gain.
         assertEquals(0, new BigDecimal("-1010").compareTo(btcGain.getNetAmount().getValue()));
         assertEquals(BTC, btcGain.getNetAmount().getCurrency());
@@ -190,8 +222,10 @@ public class PositionGainsServiceTest {
         assertEquals(-50, ethGain.getPercentage());
         assertEquals(0, new BigDecimal("-5").compareTo(ethGain.getAmount().getValue()));
         assertEquals(ETH, ethGain.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("4").compareTo(ethGain.getFees().getValue()));
-        assertEquals(ETH, ethGain.getFees().getCurrency());
+        final Map<CurrencyDTO, CurrencyAmountDTO> ethGainFees = ethGain.getOrdersFees();
+        assertNotNull(ethGainFees.get(ETH));
+        assertEquals(0, new BigDecimal("4").compareTo(ethGainFees.get(ETH).getValue()));
+        assertEquals(ETH, ethGainFees.get(ETH).getCurrency());
     }
 
 }

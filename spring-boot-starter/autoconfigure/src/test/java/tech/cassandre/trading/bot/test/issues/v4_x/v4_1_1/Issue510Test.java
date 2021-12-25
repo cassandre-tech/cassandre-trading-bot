@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.service.PositionService;
@@ -21,6 +22,8 @@ import java.util.Optional;
 import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -49,11 +52,13 @@ public class Issue510Test extends BaseTest {
         // Check fees in position 6 (they must be in USDT in Kucoin data).
         final Optional<PositionDTO> position = strategy.getPositionByPositionId(6);
         assertTrue(position.isPresent());
+        System.out.println("==>" + position.get().getDescription());
+        final Map<CurrencyDTO, CurrencyAmountDTO> fees = position.get().getGain().getOrdersFees();
+        assertEquals(1, fees.size());
+        assertNull(position.get().getGain().getOrdersFees().get(BTC));
+        assertNotNull(position.get().getGain().getOrdersFees().get(USDT));
         assertEquals(USDT, position.get().getGain().getFees().getCurrency());
-
-        // CHeck that we have no fees in BTC (as kucoin only takes us USDT).
-        assertNotEquals(0, ZERO.compareTo(gains.get(USDT).getFees().getValue()));
-        assertEquals(0, ZERO.compareTo(gains.get(BTC).getFees().getValue()));
+        assertNotNull(position.get().getGain().getOrdersFees().get(USDT));
     }
 
 }
