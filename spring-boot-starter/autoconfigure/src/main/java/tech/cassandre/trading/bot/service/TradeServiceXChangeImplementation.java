@@ -94,7 +94,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     currencyMapper.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null);
-            logger.debug("Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            logger.debug("Sending market order: {} - {} - {}",
+                    orderTypeDTO,
+                    currencyPair,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR));
 
             // Sending the order.
             OrderDTO order = OrderDTO.builder()
@@ -161,7 +164,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     getGeneratedOrderId(),
                     null,
                     limitPrice);
-            logger.debug("Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            logger.debug("Sending limit order: {} - {} - {}",
+                    orderTypeDTO,
+                    currencyPair,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR));
 
             // Sending & creating the order.
             OrderDTO order = OrderDTO.builder()
