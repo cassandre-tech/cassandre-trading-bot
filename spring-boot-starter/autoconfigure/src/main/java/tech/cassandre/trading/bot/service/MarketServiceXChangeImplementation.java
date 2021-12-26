@@ -44,7 +44,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             bucket.asScheduler().consume(1);
 
             logger.debug("Getting ticker for {} currency pair", currencyPair);
-            TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)),currencyPair);
+            TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)), currencyPair);
             logger.debug(" - New ticker {}", t);
             return Optional.ofNullable(t);
         } catch (IOException e) {
@@ -72,7 +72,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             logger.debug("Getting tickers for {} currency pairs", currencyPairs.size());
             final List<Ticker> tickers = marketDataService.getTickers(params);
             return tickers.stream()
-                    .map(ticker -> tickerMapper.mapToTickerDTO(ticker,currencyPairs.stream().filter(currencyPair -> currencyPair.equals(new CurrencyPairDTO(ticker.getInstrument()))).findFirst().get()))
+                    .map(ticker -> tickerMapper.mapToTickerDTO(ticker, currencyPairs.stream().filter(currencyPair -> currencyPair.equals(new CurrencyPairDTO(ticker.getInstrument()))).findFirst().get()))
                     .peek(t -> logger.debug(" - New ticker: {}", t))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (IOException e) {
