@@ -44,7 +44,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             bucket.asScheduler().consume(1);
 
             logger.debug("Getting ticker for {} currency pair", currencyPair);
-            TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)));
+            TickerDTO t = tickerMapper.mapToTickerDTOWithCurrency(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)), currencyPair);
             logger.debug(" - New ticker {}", t);
             return Optional.ofNullable(t);
         } catch (IOException e) {
@@ -71,10 +71,14 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
 
             logger.debug("Getting tickers for {} currency pairs", currencyPairs.size());
             final List<Ticker> tickers = marketDataService.getTickers(params);
-            return tickers.stream()
-                    .map(tickerMapper::mapToTickerDTO)
-                    .peek(t -> logger.debug(" - New ticker: {}", t))
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            LinkedHashSet<TickerDTO> tickerDTO = new LinkedHashSet<>();
+            for (Ticker ticker : tickers) {
+                CurrencyPairDTO currencyPair = currencyPairs.stream().filter(item->item.equals(new CurrencyPairDTO(ticker.getInstrument()))).findFirst().get();
+                TickerDTO t = tickerMapper.mapToTickerDTOWithCurrency(ticker, currencyPair);
+                logger.debug(" - New ticker: {}", t);
+                tickerDTO.add(t);
+            }
+            return tickerDTO;
         } catch (IOException e) {
             logger.error("Error retrieving tickers: {}", e.getMessage());
             return Collections.emptySet();

@@ -5,6 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import tech.cassandre.trading.bot.domain.ImportedTicker;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 /**
  * Ticker mapper.
@@ -15,8 +16,8 @@ public interface TickerMapper {
     // =================================================================================================================
     // XChange to DTO.
 
-    @Mapping(source = "instrument", target = "currencyPair")
-    TickerDTO mapToTickerDTO(Ticker source);
+    @Mapping(source = "currencyPair", target = "currencyPair")
+    TickerDTO mapToTickerDTOWithCurrency(Ticker source, CurrencyPairDTO currencyPair);
 
     // =================================================================================================================
     // Domain to DTO.
