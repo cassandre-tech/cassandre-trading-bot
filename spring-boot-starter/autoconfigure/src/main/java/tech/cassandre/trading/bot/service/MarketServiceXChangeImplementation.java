@@ -73,10 +73,12 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             final List<Ticker> tickers = marketDataService.getTickers(params);
             LinkedHashSet<TickerDTO> tickerDTO = new LinkedHashSet<>();
             for (Ticker ticker : tickers) {
-                CurrencyPairDTO currencyPair = currencyPairs.stream().filter(item->item.equals(new CurrencyPairDTO(ticker.getInstrument()))).findFirst().get();
-                TickerDTO t = tickerMapper.mapToTickerDTOWithCurrency(ticker, currencyPair);
-                logger.debug(" - New ticker: {}", t);
-                tickerDTO.add(t);
+                CurrencyPairDTO currencyPair = currencyPairs.stream().filter(item->item.equals(new CurrencyPairDTO(ticker.getInstrument()))).findFirst().orElse(null);
+                if (null != currencyPair) {
+                    TickerDTO t = tickerMapper.mapToTickerDTOWithCurrency(ticker, currencyPair);
+                    logger.debug(" - New ticker: {}", t);
+                    tickerDTO.add(t);
+                }
             }
             return tickerDTO;
         } catch (IOException e) {
