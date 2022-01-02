@@ -170,7 +170,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
 
             if (positionDTO.getType() == LONG) {
                 // Long - We just sell.
-                orderCreationResult = tradeService.createSellMarketOrder(strategy, ticker.getCurrencyPair(), positionDTO.getAmount().getValue());
+                orderCreationResult = tradeService.createSellMarketOrder(strategy, positionDTO.getCurrencyPair(), positionDTO.getAmount().getValue());
             } else {
                 // Short - We buy back with the money we get from the original selling.
                 // On opening, we had:
@@ -179,7 +179,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                 // CP2: ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH, and it will cost us 10 USDT.
                 // We can now use those 10 USDT to buy 5 ETH (amount sold / price).
                 final BigDecimal amountToBuy = positionDTO.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
-                orderCreationResult = tradeService.createBuyMarketOrder(strategy, ticker.getCurrencyPair(), amountToBuy);
+                orderCreationResult = tradeService.createBuyMarketOrder(strategy, positionDTO.getCurrencyPair(), amountToBuy);
             }
 
             if (orderCreationResult.isSuccessful()) {
