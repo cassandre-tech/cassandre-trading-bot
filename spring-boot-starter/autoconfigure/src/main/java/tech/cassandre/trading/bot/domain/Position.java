@@ -66,6 +66,14 @@ public class Position extends BaseDomain {
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
 
+    /** Base currency precision (First part of the currency pair). */
+    @Column(name = "BASE_CURRENCY_PRECISION")
+    private Integer baseCurrencyPrecision;
+
+    /** Quote currency precision (Second part of the currency pair). */
+    @Column(name = "QUOTE_CURRENCY_PRECISION")
+    private Integer quoteCurrencyPrecision;
+
     /** Amount that was ordered. */
     @Embedded
     @AttributeOverrides({
