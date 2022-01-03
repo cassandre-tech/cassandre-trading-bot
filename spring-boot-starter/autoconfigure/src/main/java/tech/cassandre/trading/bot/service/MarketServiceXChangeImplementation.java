@@ -44,7 +44,11 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             bucket.asScheduler().consume(1);
 
             logger.debug("Getting ticker for {} currency pair", currencyPair);
-            TickerDTO t = tickerMapper.mapToTickerDTOWithCurrency(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)), currencyPair);
+            Ticker source = marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair));
+            TickerDTO t = null;
+            if (null != source) {
+                t = tickerMapper.mapToTickerDTOWithCurrency(source, currencyPair);
+            }
             logger.debug(" - New ticker {}", t);
             return Optional.ofNullable(t);
         } catch (IOException e) {
