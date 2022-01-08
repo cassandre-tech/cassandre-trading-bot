@@ -113,6 +113,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /** Positions previous status - used for onPositionsStatusUpdates() - Internal use only. */
     private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
+    /** Dry mode indicator. */
+    private boolean dryModeIndicator = false;
+
     // =================================================================================================================
     // Internal methods to setup dependencies.
 
@@ -124,7 +127,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public final StrategyDTO getStrategyDTO() {
         return strategy;
     }
-
     /**
      * Getter exchangeService.
      *
@@ -137,6 +139,16 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     @Override
     public final void setStrategy(final StrategyDTO newStrategyDTO) {
         this.strategy = newStrategyDTO;
+    }
+
+    @Override
+    public void setDryModeIndicator(final boolean newDryModeIndicator) {
+        this.dryModeIndicator = newDryModeIndicator;
+    }
+
+    @Override
+    public boolean isRunningInDryMode() {
+        return this.dryModeIndicator;
     }
 
     @Override

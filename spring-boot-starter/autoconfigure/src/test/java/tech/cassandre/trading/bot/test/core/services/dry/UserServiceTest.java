@@ -85,6 +85,8 @@ public class UserServiceTest extends BaseTest {
     @Test
     @DisplayName("Check imported user data")
     public void checkImportUserData() {
+        assertTrue(strategy.isRunningInDryMode());
+
         // Retrieve user.
         final Optional<UserDTO> user = userService.getUser();
         assertTrue(user.isPresent());
