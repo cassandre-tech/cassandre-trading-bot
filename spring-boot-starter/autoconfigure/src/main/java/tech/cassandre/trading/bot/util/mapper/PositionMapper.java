@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.util.mapper;
 
-import org.knowm.xchange.dto.trade.LimitOrder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -8,7 +7,6 @@ import org.mapstruct.Named;
 import tech.cassandre.trading.bot.domain.Position;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 
 import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
