@@ -6,6 +6,7 @@ import lombok.ToString;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -55,6 +56,7 @@ public class StrategyDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -71,6 +73,7 @@ public class StrategyDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)

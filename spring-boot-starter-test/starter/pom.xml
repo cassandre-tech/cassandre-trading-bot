@@ -46,7 +46,7 @@
 					<dependency>
 						<groupId>com.puppycrawl.tools</groupId>
 						<artifactId>checkstyle</artifactId>
-						<version>${puppycrawl.checkstyle.version}</version>
+						<version>${maven.puppycrawl.checkstyle.version}</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -116,7 +116,7 @@
 	<parent>
 		<groupId>tech.cassandre.trading.bot</groupId>
 		<artifactId>cassandre-trading-bot-project</artifactId>
-		<version>5.0.6</version>
+		<version>5.0.7</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<!-- =========================================================================================================== -->

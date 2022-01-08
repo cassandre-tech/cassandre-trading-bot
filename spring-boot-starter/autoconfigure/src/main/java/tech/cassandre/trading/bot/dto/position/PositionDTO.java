@@ -16,11 +16,14 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.util.exception.PositionException;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
@@ -214,9 +217,9 @@ public class PositionDTO {
             //  - Bought 5 ETH with my 50 USDT as the price raised to 10 USDT.
             //  Gain = ((5 - 10) / 10) * 100 = -50 % (I calculate evolution backward, from bought price to sold price).
             // --
-            // When sold : Ticker ETH/USDT : 1 ETH costs 5 USDT.
+            // When sold: Ticker ETH/USDT: 1 ETH costs 5 USDT.
             // The amount of USDT I can spend (amountGained) = amount * price in trade.
-            // When bought : Ticker ETH/USDT : 1 ETH costs 10 USDT.
+            // When bought: Ticker ETH/USDT: 1 ETH costs 10 USDT.
             // The amount of ETH I can buy (amountICanBuy) = amountIOwnInQuoteCurrency / price.
             // Gain = amountICanBuy - amount.
             if (this.type == SHORT) {
@@ -392,7 +395,7 @@ public class PositionDTO {
         // Returns true if one of the rule is triggered.
         final Optional<GainDTO> latestCalculatedGain = getLatestCalculatedGain();
         return latestCalculatedGain.filter(gainDTO -> rules.isStopGainPercentageSet() && gainDTO.getPercentage() >= rules.getStopGainPercentage()
-                || rules.isStopLossPercentageSet() && gainDTO.getPercentage() <= -rules.getStopLossPercentage())
+                        || rules.isStopLossPercentageSet() && gainDTO.getPercentage() <= -rules.getStopLossPercentage())
                 .isPresent();
     }
 
@@ -457,7 +460,7 @@ public class PositionDTO {
     public GainDTO getGain() {
         if (getStatus() == CLOSED) {
             if (this.type == LONG) {
-                // Gain calculation for currency pair : ETH-BTC
+                // Gain calculation for currency pair: ETH-BTC
                 // The first listed currency of a currency pair is called the base currency.
                 // The second currency is called the quote currency.
 
@@ -487,10 +490,24 @@ public class PositionDTO {
                 BigDecimal gainAmount = sold.subtract(bought);
                 BigDecimal gainPercentage = ((sold.subtract(bought)).divide(bought, HALF_UP)).multiply(ONE_HUNDRED_BIG_DECIMAL);
 
-                // Calculate fees.
+                // Opening & closing order fees.
+                final List<CurrencyAmountDTO> openingOrderFees = openingOrder.getTrades()
+                        .stream()
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
+                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
+                        .collect(Collectors.toList());
+
+                final List<CurrencyAmountDTO> closingOrderFees = closingOrder.getTrades()
+                        .stream()
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
+                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
+                        .collect(Collectors.toList());
+
+                // =====================================================================================================
+                // Old & incorrect way to calculate fees - will be deleted in later release.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
                         .filter(tradeDTO -> tradeDTO.getFee() != null)
-                        .map(TradeDTO::getFeeValue)
+                        .map(tradeDTO -> tradeDTO.getFee().getValue())
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
@@ -499,6 +516,7 @@ public class PositionDTO {
                 } else {
                     feeCurrency = currencyPair.getQuoteCurrency();
                 }
+                // =====================================================================================================
 
                 // Return position gain.
                 return GainDTO.builder()
@@ -511,6 +529,8 @@ public class PositionDTO {
                                 .value(fees)
                                 .currency(feeCurrency)
                                 .build())
+                        .openingOrderFees(openingOrderFees)
+                        .closingOrderFees(closingOrderFees)
                         .build();
             }
 
@@ -529,10 +549,24 @@ public class PositionDTO {
                 BigDecimal gainAmount = bought.subtract(sold);
                 BigDecimal gainPercentage = ((bought.subtract(sold)).divide(sold, HALF_UP)).multiply(ONE_HUNDRED_BIG_DECIMAL);
 
-                // Calculate fees.
+                // Opening & closing order fees.
+                final List<CurrencyAmountDTO> openingOrderFees = openingOrder.getTrades()
+                        .stream()
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
+                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
+                        .collect(Collectors.toList());
+
+                final List<CurrencyAmountDTO> closingOrderFees = closingOrder.getTrades()
+                        .stream()
+                        .filter(tradeDTO -> tradeDTO.getFee() != null)
+                        .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
+                        .collect(Collectors.toList());
+
+                // =====================================================================================================
+                // Old & incorrect way to calculate fees - will be deleted in later release.
                 BigDecimal fees = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream())
                         .filter(tradeDTO -> tradeDTO.getFee() != null)
-                        .map(TradeDTO::getFeeValue)
+                        .map(tradeDTO -> tradeDTO.getFee().getValue())
                         .reduce(ZERO, BigDecimal::add);
                 CurrencyDTO feeCurrency;
                 final Optional<TradeDTO> firstTrade = Stream.concat(openingOrder.getTrades().stream(), closingOrder.getTrades().stream()).findFirst();
@@ -541,6 +575,7 @@ public class PositionDTO {
                 } else {
                     feeCurrency = currencyPair.getQuoteCurrency();
                 }
+                // =====================================================================================================
 
                 // Return position gain.
                 return GainDTO.builder()
@@ -553,6 +588,8 @@ public class PositionDTO {
                                 .value(fees)
                                 .currency(feeCurrency)
                                 .build())
+                        .openingOrderFees(openingOrderFees)
+                        .closingOrderFees(closingOrderFees)
                         .build();
             }
         }
@@ -568,9 +605,9 @@ public class PositionDTO {
     @SuppressWarnings("unused")
     public final String getDescription() {
         try {
-            String value = StringUtils.capitalize(type.toString().toLowerCase(Locale.ROOT)) + " position n°" + positionId;
+            String value = StringUtils.capitalize(type.toString().toLowerCase(Locale.ROOT)) + " position n°" + positionId + " of " + amount;
             // Rules.
-            value += " (rules : ";
+            value += " (rules: ";
             if (!rules.isStopGainPercentageSet() && !rules.isStopLossPercentageSet()) {
                 value += "no rules";
             }
@@ -590,7 +627,7 @@ public class PositionDTO {
                     value += " - Opening - Waiting for the trades of order " + openingOrder.getOrderId();
                     break;
                 case OPENED:
-                    value += " on " + getCurrencyPair() + " - Opened";
+                    value += " - Opened";
                     final Optional<GainDTO> lastGain = getLatestCalculatedGain();
                     if (lastGain.isPresent() && getLatestCalculatedGain().isPresent()) {
                         value += " - Last gain calculated " + getFormattedValue(getLatestCalculatedGain().get().getPercentage()) + " %";
@@ -600,14 +637,18 @@ public class PositionDTO {
                     value = "Position " + getId() + " - Opening failure";
                     break;
                 case CLOSING:
-                    value += " on " + getCurrencyPair() + " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
+                    value += " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
                     break;
                 case CLOSING_FAILURE:
                     value = "Position " + getId() + " - Closing failure";
                     break;
                 case CLOSED:
                     final GainDTO gain = getGain();
-                    value += " on " + getCurrencyPair() + " - Closed - " + gain;
+                    if (gain != null) {
+                        value += " - Closed - " + gain;
+                    } else {
+                        value += " - Closed - Error during gain calculation";
+                    }
                     break;
                 default:
                     value = "Incorrect state for position " + getId();
@@ -615,6 +656,7 @@ public class PositionDTO {
             }
             return value;
         } catch (Exception e) {
+            e.printStackTrace();
             return "Position " + getId() + " (error in getDescription() method)";
         }
     }
@@ -631,6 +673,7 @@ public class PositionDTO {
 
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -656,6 +699,7 @@ public class PositionDTO {
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(id)

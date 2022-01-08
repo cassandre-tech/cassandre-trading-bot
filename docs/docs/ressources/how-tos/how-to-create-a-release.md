@@ -15,7 +15,13 @@ You must be using `ssh` and not `https`. To switch to `ssh`, type :
 git remote set-url origin git@github.com:cassandre-tech/cassandre-trading-bot.git
 ```
 
-Start the release with :
+Check that you are on the develop branch and that everything is committed:
+```bash
+git checkout development
+git status
+```
+
+Start the release with:
 ```bash
 mvn gitflow:release-start
 ```
@@ -28,3 +34,4 @@ mvn gitflow:release-finish
 ## Update
 * Close the corresponding [milestone in Github](https://github.com/cassandre-tech/cassandre-trading-bot/milestones?direction=asc&sort=due_date&state=open).
 * Write and send a [substack post](https://cassandre.substack.com/publish?utm_source=menu).
+* Update cassandre release number on production trading bots.

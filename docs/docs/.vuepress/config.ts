@@ -180,8 +180,8 @@ export default defineUserConfig<DefaultThemeOptions>({
         [
             '@vuepress/plugin-docsearch',
             {
-                appId: 'BH4D9OD16A',
-                apiKey: '94f09cface8844077df616a30863e73a',
+                appId: 'Z5EV5Y49BO',
+                apiKey: '92c15c16c728a530fc095a798081e674',
                 indexName: 'cassandre'
             },
         ],

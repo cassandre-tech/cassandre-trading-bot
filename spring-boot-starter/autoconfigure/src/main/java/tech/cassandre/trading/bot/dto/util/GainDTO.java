@@ -2,9 +2,19 @@ package tech.cassandre.trading.bot.dto.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
+import lombok.Singular;
 import lombok.Value;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
+import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -30,14 +40,24 @@ public class GainDTO {
     /** Gain made (amount). */
     CurrencyAmountDTO amount;
 
+    /** Opening order fees (list coming from trade fees). */
+    @Singular
+    List<CurrencyAmountDTO> openingOrderFees;
+
+    /** Closing order fees (list coming from trade fees). */
+    @Singular
+    List<CurrencyAmountDTO> closingOrderFees;
+
     /** Fees. */
     CurrencyAmountDTO fees;
 
     /**
      * Getter netAmount.
+     * This method cannot be used as fees are not necessary the same currency as value.
      *
      * @return netAmount
      */
+    @Deprecated
     public CurrencyAmountDTO getNetAmount() {
         if (amount != null && fees != null) {
             return CurrencyAmountDTO.builder()
@@ -50,17 +70,47 @@ public class GainDTO {
     }
 
     /**
+     * Getter fees.
+     * This method should not be used anymore as a bug was found in issue 850.
+     * A gain is linked to a position and a position has an opening order and a closing order.
+     * the opening order trades and the closing order trades may have different currencies!
+     * So it's not possible to return only a CurrencyAmountDTO!
+     * Only a HashMap of currency and amount.
+     *
+     * @return fees
+     */
+    @Deprecated
+    public final CurrencyAmountDTO getFees() {
+        return fees;
+    }
+
+    /**
+     * Returns the sum of fees from opening and closing orders.
+     *
+     * @return fees
+     */
+    public final Map<CurrencyDTO, CurrencyAmountDTO> getOrdersFees() {
+        return Stream.concat(openingOrderFees.stream(), closingOrderFees.stream())
+                .collect(Collectors.groupingBy(
+                        CurrencyAmountDTO::getCurrency,
+                        Collectors.reducing(
+                                BigDecimal.ZERO,
+                                CurrencyAmountDTO::getValue,
+                                BigDecimal::add)))
+                .entrySet()
+                .stream()
+                .map(currencyAmount -> new CurrencyAmountDTO(currencyAmount.getValue(), currencyAmount.getKey()))
+                .collect(Collectors.toMap(CurrencyAmountDTO::getCurrency, Function.identity()));
+    }
+
+    /**
      * Returns true if the current gain is inferior to the gain passed as a parameter.
      *
      * @param other other gain
      * @return true if this gain is inferior to the gain passed as a parameter
      */
-    public boolean isInferiorTo(final GainDTO other) {
-        if (other != null) {
-            return getPercentage() < other.getPercentage();
-        } else {
-            return false;
-        }
+    public boolean isInferiorTo(@NonNull final GainDTO other) {
+        return getPercentage() < other.getPercentage();
     }
 
     /**
@@ -69,15 +119,12 @@ public class GainDTO {
      * @param other other gain
      * @return true if this gain is superior to the gain passed as a parameter
      */
-    public boolean isSuperiorTo(final GainDTO other) {
-        if (other != null) {
-            return getPercentage() > other.getPercentage();
-        } else {
-            return false;
-        }
+    public boolean isSuperiorTo(@NonNull final GainDTO other) {
+        return getPercentage() > other.getPercentage();
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -88,15 +135,18 @@ public class GainDTO {
         final GainDTO that = (GainDTO) o;
         return new EqualsBuilder()
                 .append(this.amount, that.amount)
-                .append(this.fees, that.fees)
+                .append(this.openingOrderFees, that.openingOrderFees)
+                .append(this.closingOrderFees, that.closingOrderFees)
                 .isEquals();
     }
 
     @Override
+    @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
                 .append(amount)
-                .append(fees)
+                .append(openingOrderFees)
+                .append(closingOrderFees)
                 .toHashCode();
     }
 
@@ -105,7 +155,7 @@ public class GainDTO {
         if (percentage == 0) {
             return "No gain";
         } else {
-            return "Gains: " + amount + " (" + percentage + " %) / Fees: " + fees;
+            return "Gains: " + amount + " (" + percentage + " %)";
         }
     }
 

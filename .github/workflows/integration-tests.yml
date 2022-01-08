@@ -2,6 +2,7 @@ name: Integration tests
 
 on:
   schedule:
+    - cron: '0 18 * * MON'
     - cron: '0 18 * * THU'
     - cron: '0 18 * * SUN'
 

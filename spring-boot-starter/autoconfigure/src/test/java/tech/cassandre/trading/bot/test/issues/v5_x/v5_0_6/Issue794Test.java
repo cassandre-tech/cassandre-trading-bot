@@ -34,7 +34,7 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
         @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false")
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-public class Isue794Test extends BaseTest {
+public class Issue794Test extends BaseTest {
 
     @Autowired
     private TestableTa4jCassandreStrategy strategy;

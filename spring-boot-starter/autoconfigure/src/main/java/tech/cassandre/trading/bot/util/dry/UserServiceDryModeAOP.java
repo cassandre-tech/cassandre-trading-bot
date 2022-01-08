@@ -96,7 +96,7 @@ public class UserServiceDryModeAOP extends BaseService {
                 } catch (FileNotFoundException e) {
                     logger.error("{} not found !", file.getFilename());
                 } catch (IOException e) {
-                    logger.error("IOException : " + e);
+                    logger.error("IOException: " + e);
                 }
 
                 // Creating wallet.
@@ -179,7 +179,7 @@ public class UserServiceDryModeAOP extends BaseService {
             final Resource[] resources = resolver.getResources("classpath*:" + USER_FILE_PREFIX + "*" + USER_FILE_SUFFIX);
             return Arrays.asList(resources);
         } catch (IOException e) {
-            logger.error("UserServiceDryModeAOP encountered an error : " + e.getMessage());
+            logger.error("UserServiceDryModeAOP encountered an error: " + e.getMessage());
         }
         return Collections.emptyList();
     }

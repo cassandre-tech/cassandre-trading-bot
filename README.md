@@ -26,6 +26,10 @@
         <img    src="https://api.codacy.com/project/badge/Grade/f26dc41008a64bb18dcd404b46b69fc8"
                 alt="Cassandre trading bot on codacy" />
     </a>
+    <a href="https://www.codacy.com/gh/cassandre-tech/cassandre-trading-bot/dashboard?utm_source=github.com&utm_medium=referral&utm_content=cassandre-tech/cassandre-trading-bot&utm_campaign=Badge_Coverage">
+        <img    src="https://api.codacy.com/project/badge/Coverage/f26dc41008a64bb18dcd404b46b69fc8"
+                alt="Cassandre trading bot on codacy" />
+    </a>
     <a href="https://github.com/cassandre-tech/cassandre-trading-bot/actions">
         <img    src="https://github.com/cassandre-tech/cassandre-trading-bot/workflows/Continuous%20integration/badge.svg"
                 alt="Cassandre trading bot continuous integration" />

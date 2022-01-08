@@ -47,7 +47,6 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
      * Constructor.
      */
     public BasicTa4jCassandreStrategy() {
-
         // Build the series.
         series = new BaseBarSeriesBuilder()
                 .withNumTypeOf(DoubleNum.class)

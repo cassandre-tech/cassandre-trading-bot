@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.math.RoundingMode.FLOOR;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.PENDING_NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
@@ -89,11 +90,14 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             MarketOrder m = new MarketOrder(utilMapper.mapToOrderType(orderTypeDTO),
-                    amount,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR),
                     currencyMapper.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null);
-            logger.debug("Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            logger.debug("Sending market order: {} - {} - {}",
+                    orderTypeDTO,
+                    currencyPair,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR));
 
             // Sending the order.
             OrderDTO order = OrderDTO.builder()
@@ -155,12 +159,15 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         try {
             // Making the order.
             LimitOrder l = new LimitOrder(utilMapper.mapToOrderType(orderTypeDTO),
-                    amount,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR),
                     currencyMapper.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null,
                     limitPrice);
-            logger.debug("Sending market order: {} - {} - {}", orderTypeDTO, currencyPair, amount);
+            logger.debug("Sending limit order: {} - {} - {}",
+                    orderTypeDTO,
+                    currencyPair,
+                    amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR));
 
             // Sending & creating the order.
             OrderDTO order = OrderDTO.builder()
@@ -201,7 +208,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("Order creation result: {}", result);
             return result;
         } catch (Exception e) {
-            final String error = "TradeService - Error calling createLimitOrder for " + amount + " " + currencyPair + " : " + e.getMessage();
+            final String error = "TradeService - Error calling createLimitOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
             e.printStackTrace();
             logger.error(error);
             return new OrderCreationResultDTO(error, e);
