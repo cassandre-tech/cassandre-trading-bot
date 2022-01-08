@@ -140,26 +140,32 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         final Optional<UserDTO> user = userService.getUser();
         if (user.isEmpty()) {
             throw new ConfigurationException("Impossible to retrieve your user information",
-                    "Impossible to retrieve your user information - Check logs.");
+                    "Impossible to retrieve your user information - Check logs");
         } else {
-            logger.info("Available accounts on the exchange:");
-            user.get()
-                    .getAccounts()
-                    .values()
-                    .forEach(account -> {
-                        logger.info("- Account id / name: {} / {}.",
-                                account.getAccountId(),
-                                account.getName());
-                        account.getBalances()
-                                .stream()
-                                .filter(balance -> balance.getAvailable().compareTo(ZERO) != 0)
-                                .forEach(balance -> logger.info(" - {} {}.", balance.getAvailable(), balance.getCurrency()));
-                    });
+            if (user.get().getAccounts().isEmpty()) {
+                // We were able to retrieve the user from the exchange but no account was found.
+                throw new ConfigurationException("User information retrieved but no associated accounts found",
+                        "Check the permissions you set on the API you created");
+            } else {
+                logger.info("Available accounts on the exchange:");
+                user.get()
+                        .getAccounts()
+                        .values()
+                        .forEach(account -> {
+                            logger.info("- Account id / name: {} / {}.",
+                                    account.getAccountId(),
+                                    account.getName());
+                            account.getBalances()
+                                    .stream()
+                                    .filter(balance -> balance.getAvailable().compareTo(ZERO) != 0)
+                                    .forEach(balance -> logger.info(" - {} {}.", balance.getAvailable(), balance.getCurrency()));
+                        });
+            }
         }
 
         // Check that there is at least one strategy.
         if (strategies.isEmpty()) {
-            throw new ConfigurationException("No strategy found", "You must have one class with @CassandreStrategy annotation.");
+            throw new ConfigurationException("No strategy found", "You must have one class with @CassandreStrategy annotation");
         }
 
         // Check that all strategies extends CassandreStrategyInterface.
@@ -270,7 +276,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         final StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(existingStrategy);
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
-                        logger.debug("Strategy updated in database: {}", existingStrategy);
+                        logger.debug("Strategy updated in database: {}.", existingStrategy);
                     }, () -> {
                         // Creation.
                         Strategy newStrategy = new Strategy();
@@ -283,7 +289,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         if (strategy instanceof BasicTa4jCassandreStrategy) {
                             newStrategy.setType(BASIC_TA4J_STRATEGY);
                         }
-                        logger.debug("Strategy created in database: {}", newStrategy);
+                        logger.debug("Strategy created in database: {}.", newStrategy);
                         StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(strategyRepository.save(newStrategy));
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
@@ -306,11 +312,11 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     strategy.initialize();
 
                     // Connecting flux to strategy.
-                    connectableAccountFlux.subscribe(strategy::accountsUpdates, throwable -> logger.error("AccountsUpdates failing: {}", throwable.getMessage()));
-                    connectablePositionFlux.subscribe(strategy::positionsUpdates, throwable -> logger.error("PositionsUpdates failing: {}", throwable.getMessage()));
-                    connectableOrderFlux.subscribe(strategy::ordersUpdates, throwable -> logger.error("OrdersUpdates failing: {}", throwable.getMessage()));
-                    connectableTradeFlux.subscribe(strategy::tradesUpdates, throwable -> logger.error("TradesUpdates failing: {}", throwable.getMessage()));
-                    connectableTickerFlux.subscribe(strategy::tickersUpdates, throwable -> logger.error("TickersUpdates failing: {}", throwable.getMessage()));
+                    connectableAccountFlux.subscribe(strategy::accountsUpdates, throwable -> logger.error("AccountsUpdates failing: {}.", throwable.getMessage()));
+                    connectablePositionFlux.subscribe(strategy::positionsUpdates, throwable -> logger.error("PositionsUpdates failing: {}.", throwable.getMessage()));
+                    connectableOrderFlux.subscribe(strategy::ordersUpdates, throwable -> logger.error("OrdersUpdates failing: {}.", throwable.getMessage()));
+                    connectableTradeFlux.subscribe(strategy::tradesUpdates, throwable -> logger.error("TradesUpdates failing: {}.", throwable.getMessage()));
+                    connectableTickerFlux.subscribe(strategy::tickersUpdates, throwable -> logger.error("TickersUpdates failing: {}.", throwable.getMessage()));
                 });
 
         // Start flux.
@@ -344,7 +350,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         getFilesToLoad()
                 .parallelStream()
                 .filter(resource -> resource.getFilename() != null)
-                .peek(resource -> logger.info("Importing file {}", resource.getFilename()))
+                .peek(resource -> logger.info("Importing file {}.", resource.getFilename()))
                 .forEach(resource -> {
                     try {
                         // Insert the tickers in database.
@@ -354,15 +360,15 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                                 .build()
                                 .parse()
                                 .forEach(importedTicker -> {
-                                    logger.debug("Importing ticker {}", importedTicker);
+                                    logger.debug("Importing ticker {}.", importedTicker);
                                     importedTicker.setId(counter.incrementAndGet());
                                     importedTickersRepository.save(importedTicker);
                                 });
                     } catch (IOException e) {
-                        logger.error("Impossible to load imported tickers: {}", e.getMessage());
+                        logger.error("Impossible to load imported tickers: {}.", e.getMessage());
                     }
                 });
-        logger.info("{} tickers imported", importedTickersRepository.count());
+        logger.info("{} tickers imported.", importedTickersRepository.count());
     }
 
     /**
@@ -376,7 +382,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
             final Resource[] resources = resolver.getResources("classpath*:" + TICKERS_FILE_PREFIX + "*" + TICKERS_FILE_SUFFIX);
             return Arrays.asList(resources);
         } catch (IOException e) {
-            logger.error("Impossible to load imported tickers: {}", e.getMessage());
+            logger.error("Impossible to load imported tickers: {}.", e.getMessage());
         }
         return Collections.emptyList();
     }
