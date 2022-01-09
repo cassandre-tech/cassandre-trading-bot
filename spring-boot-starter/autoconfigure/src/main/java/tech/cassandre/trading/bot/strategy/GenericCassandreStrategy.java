@@ -476,8 +476,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
                 .filter(positionDTO -> positionDTO.tickerUpdate(tickers.get(positionDTO.getCurrencyPair())))
                 .peek(positionDTO -> logger.debug("Position {} updated with ticker {}", positionDTO.getPositionId(), tickers.get(positionDTO.getCurrencyPair())))
                 .peek(positionDTO -> positionFlux.emitValue(positionDTO))
+                // We only use tickers updates to close a position if position is set to autoclose.
+                .filter(PositionDTO::isAutoClose)
                 // We check if the position should be closed, if true, we closed and position service will emit the position.
-                .filter(positionDTO -> positionDTO.isForceClosing() || positionDTO.shouldBeClosed())
+                .filter(PositionDTO::shouldBeClosed)
                 .peek(positionDTO -> logger.debug("Closing position {}", positionDTO.getPositionId()))
                 .forEach(positionDTO -> positionService.closePosition(this, positionDTO.getId(), tickers.get(positionDTO.getCurrencyPair())));
     }
@@ -665,6 +667,18 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public void updatePositionRules(final long id, final PositionRulesDTO newRules) {
         positionService.updatePositionRules(id, newRules);
+    }
+
+    /**
+     * Set auto close value on a specific position.
+     * If true, Cassandre will close the position according to rules.
+     * if false, Cassandre will never close the position.
+     *
+     * @param id    position technical id
+     * @param value auto close value
+     */
+    public void setAutoClose(final long id, final boolean value) {
+        positionService.setAutoClose(id, value);
     }
 
     /**
