@@ -197,6 +197,12 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     }
 
     @Override
+    public final void setAutoClose(final long id, final boolean value) {
+        logger.debug("Set auto close to {} on position {}", value, id);
+        positionRepository.updateAutoClose(id, value);
+    }
+
+    @Override
     public final void forcePositionClosing(final long id) {
         logger.debug("Force position {} to close", id);
         positionRepository.updateForceClosing(id, true);

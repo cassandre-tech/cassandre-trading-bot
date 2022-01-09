@@ -20,5 +20,18 @@
             <column name="QUOTE_CURRENCY_PRECISION" valueNumeric="8"/>
         </update>
 
+        <!-- With issue 863, we add the ability to disable the automatic closing of positions -->
+        <addColumn tableName="POSITIONS">
+            <column name="AUTO_CLOSE" type="boolean" defaultValueBoolean="true"
+                    remarks="Indicates that, if true, cassandre should take care of closing this position">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- By default, auto close is true on existing positions -->
+        <update tableName="POSITIONS">
+            <column name="AUTO_CLOSE" valueBoolean="true"/>
+        </update>
+
     </changeSet>
 </databaseChangeLog>

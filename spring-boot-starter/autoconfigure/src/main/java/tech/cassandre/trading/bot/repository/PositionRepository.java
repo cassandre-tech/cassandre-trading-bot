@@ -91,6 +91,17 @@ public interface PositionRepository extends JpaRepository<Position, Long>, JpaSp
     void updateStopLossRule(@Param("id") Long id, @Param("value") Float value);
 
     /**
+     * Update autoclose.
+     *
+     * @param id    position id
+     * @param value true to allow autoclose.
+     */
+    @Transactional
+    @Modifying
+    @Query("update Position p set p.autoClose = :value where p.id = :id")
+    void updateAutoClose(@Param("id") Long id, @Param("value") boolean value);
+
+    /**
      * Update force closing.
      *
      * @param id    position id

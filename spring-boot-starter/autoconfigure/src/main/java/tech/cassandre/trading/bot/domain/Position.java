@@ -95,6 +95,10 @@ public class Position extends BaseDomain {
     @Column(name = "STATUS")
     private PositionStatusDTO status;
 
+    /** Indicates if the position should be closed automatically by Cassandre. */
+    @Column(name = "AUTO_CLOSE")
+    private boolean autoClose;
+
     /** Indicates that the position must be closed no matter the rules. */
     @Column(name = "FORCE_CLOSING")
     private boolean forceClosing;
@@ -152,6 +156,7 @@ public class Position extends BaseDomain {
                 .append(this.stopGainPercentageRule, that.stopGainPercentageRule)
                 .append(this.stopLossPercentageRule, that.stopLossPercentageRule)
                 .append(this.status, that.status)
+                .append(this.autoClose, that.autoClose)
                 .append(this.forceClosing, that.forceClosing)
                 .append(this.openingOrder, that.openingOrder)
                 .append(this.closingOrder, that.closingOrder)

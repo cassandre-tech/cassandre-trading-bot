@@ -71,6 +71,9 @@ public class PositionDTO {
     /** Position rules. */
     private final PositionRulesDTO rules;
 
+    /** Indicates if the position should be closed automatically by Cassandre. */
+    private boolean autoClose;
+
     /** Indicates that the position must be closed no matter the rules. */
     private final boolean forceClosing;
 
@@ -128,6 +131,7 @@ public class PositionDTO {
         this.openingOrder = newOpenOrder;
         this.rules = newRules;
         this.forceClosing = false;
+        this.autoClose = true;
     }
 
     /**
