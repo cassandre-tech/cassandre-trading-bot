@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.test.mock.TickerFluxMock;
 import tech.cassandre.trading.bot.test.util.BaseTest;
@@ -22,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
@@ -33,7 +32,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 })
 @Import(TickerFluxMock.class)
 @DisplayName("Only tickers strategy test")
-@DirtiesContext(classMode = BEFORE_CLASS)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class OnlyTickersStrategyTest extends BaseTest {
 
     @Autowired
@@ -97,12 +96,12 @@ public class OnlyTickersStrategyTest extends BaseTest {
         TickerDTO ethUsdtTicker01 = reply01.get(ETH_USDT);
         assertNotNull(ethUsdtTicker01);
         assertEquals(0, new BigDecimal("1000").compareTo(ethUsdtTicker01.getLast()));
-        assertFalse(tickerFluxMock.isFluxDone(ETH_USDT));
+//        assertFalse(tickerFluxMock.isFluxDone(ETH_USDT));
         // KCS-USDT.
         TickerDTO kcsUsdtTicker01 = reply01.get(KCS_USDT);
         assertNotNull(kcsUsdtTicker01);
         assertEquals(0, new BigDecimal("0.85652").compareTo(kcsUsdtTicker01.getLast()));
-        assertFalse(tickerFluxMock.isFluxDone(KCS_USDT));
+//        assertFalse(tickerFluxMock.isFluxDone(KCS_USDT));
 
         // =============================================================================================================
         // Second reply.
