@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
+import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.test.mock.TickerFluxMock;
 import tech.cassandre.trading.bot.test.util.BaseTest;
@@ -22,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest(properties = {
         "ONLY_TICKERS_STRATEGY_ENABLED=true",
@@ -38,6 +41,25 @@ public class OnlyTickersStrategyTest extends BaseTest {
 
     @Autowired
     private OnlyTickersStrategy strategy;
+
+    @Test
+    @DisplayName("Check received tickers with one flux")
+    public void checkReceivedTickersWithOneFlux() {
+        // There are four files and only three currency pairs are requested by the strategy.
+        // - tickers-BTC-USDT.tsv   -   Requested (7 lines).
+        // - tickers-ETH-BTC.tsv    -   Not requested.
+        // - tickers-ETH-USDT.tsv   -   Requested (5 lines).
+        // - tickers-KCS-USDT.csv   -   Requested (3 lines).
+
+        // Check if flux is not done.
+        assertFalse(tickerFluxMock.isFluxDone(new CurrencyPairDTO(ETH, USDT)));
+
+        // As tickers-BTC-USDT.tsv has the most line, we should wait to have 7 replies.
+        with().await().untilAsserted(() -> assertEquals(5, strategy.getTickersReceived().size()));
+
+        // Check if flux is done.
+        assertTrue(tickerFluxMock.isFluxDone(new CurrencyPairDTO(ETH, USDT)));
+    }
 
     @Test
     @DisplayName("Check received tickers")
