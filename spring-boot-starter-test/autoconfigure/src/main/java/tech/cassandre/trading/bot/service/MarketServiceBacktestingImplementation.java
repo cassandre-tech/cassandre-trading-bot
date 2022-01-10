@@ -113,8 +113,8 @@ public class MarketServiceBacktestingImplementation implements MarketService {
         if (size == null) {
             return true;
         } else {
-            // 7 calls <= 6 tickers => Flux done
-            return sequence.get() <= size;
+            // 7 calls >= 6 tickers => Flux done
+            return sequence.get() >= size;
         }
     }
 
