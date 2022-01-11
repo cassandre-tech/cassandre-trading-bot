@@ -2,7 +2,6 @@ package tech.cassandre.trading.bot.util.base.service;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
 import tech.cassandre.trading.bot.util.base.Base;
 
 import java.time.Duration;
@@ -20,7 +19,7 @@ public abstract class BaseService extends Base {
      */
     public BaseService() {
         Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(1));
-        bucket = Bucket4j.builder().addLimit(limit).build();
+        bucket = Bucket.builder().addLimit(limit).build();
     }
 
     /**
@@ -30,7 +29,7 @@ public abstract class BaseService extends Base {
      */
     public BaseService(final long rate) {
         Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(rate));
-        bucket = Bucket4j.builder().addLimit(limit).build();
+        bucket = Bucket.builder().addLimit(limit).build();
     }
 
 }

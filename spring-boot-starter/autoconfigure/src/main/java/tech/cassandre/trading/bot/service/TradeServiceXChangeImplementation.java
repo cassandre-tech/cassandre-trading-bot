@@ -302,7 +302,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 try {
                     // Consume a token from the token bucket.
                     // If a token is not available this method will block until the refill adds one to the bucket.
-                    bucket.asScheduler().consume(1);
+                    bucket.asBlocking().consume(1);
                     return tradeService.getOpenOrders()
                             .getOpenOrders()
                             .stream()
@@ -322,7 +322,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                                 try {
                                     // Consume a token from the token bucket.
                                     // If a token is not available this method will block until the refill adds one to the bucket.
-                                    bucket.asScheduler().consume(1);
+                                    bucket.asBlocking().consume(1);
                                     orders.addAll(tradeService.getOpenOrders(new DefaultOpenOrdersParamCurrencyPair(currencyMapper.mapToCurrencyPair(currencyPairDTO)))
                                             .getOpenOrders()
                                             .stream()
@@ -372,7 +372,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 try {
                     // Consume a token from the token bucket.
                     // If a token is not available this method will block until the refill adds one to the bucket.
-                    bucket.asScheduler().consume(1);
+                    bucket.asBlocking().consume(1);
                     results.addAll(
                             tradeService.getTradeHistory(params)
                                     .getUserTrades()
