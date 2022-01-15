@@ -30,7 +30,7 @@ public class StrategyDataFetcher extends BaseDataFetcher {
     public final List<StrategyDTO> strategies() {
         return strategyRepository.findAll()
                 .stream()
-                .map(strategyMapper::mapToStrategyDTO)
+                .map(STRATEGY_MAPPER::mapToStrategyDTO)
                 .collect(Collectors.toList());
     }
 
@@ -43,7 +43,7 @@ public class StrategyDataFetcher extends BaseDataFetcher {
     @DgsQuery
     public StrategyDTO strategy(@InputArgument final long id) {
         return strategyRepository.findById(id)
-                .map(strategyMapper::mapToStrategyDTO)
+                .map(STRATEGY_MAPPER::mapToStrategyDTO)
                 .orElse(null);
     }
 
@@ -56,7 +56,7 @@ public class StrategyDataFetcher extends BaseDataFetcher {
     @DgsQuery
     public StrategyDTO strategyByStrategyId(@InputArgument final String strategyId) {
         return strategyRepository.findByStrategyId(strategyId)
-                .map(strategyMapper::mapToStrategyDTO)
+                .map(STRATEGY_MAPPER::mapToStrategyDTO)
                 .orElse(null);
     }
 

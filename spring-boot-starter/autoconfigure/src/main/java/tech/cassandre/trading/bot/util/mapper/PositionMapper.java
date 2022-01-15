@@ -37,6 +37,8 @@ public interface PositionMapper {
     @Mapping(target = "forceClosing", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
+    @Mapping(target = "baseCurrencyPrecision", ignore = true)
+    @Mapping(target = "quoteCurrencyPrecision", ignore = true)
     void updatePosition(PositionDTO source, @MappingTarget Position target);
 
     // =================================================================================================================

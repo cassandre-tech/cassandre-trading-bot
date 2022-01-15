@@ -49,7 +49,7 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
                     }
 
                     // The trade is in database but the trade values from the server changed.
-                    if (tradeInDatabase.isPresent() && !tradeMapper.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
+                    if (tradeInDatabase.isPresent() && !TRADE_MAPPER.mapToTradeDTO(tradeInDatabase.get()).equals(trade)) {
                         logger.debug("Updated trade from exchange: {}", trade);
                         newValues.add(trade);
                     }
@@ -66,12 +66,12 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
         newValues.forEach(newValue -> tradeRepository.findByTradeId(newValue.getTradeId())
                 .ifPresentOrElse(trade -> {
                     // Update trade.
-                    tradeMapper.updateTrade(newValue, trade);
+                    TRADE_MAPPER.updateTrade(newValue, trade);
                     trades.add(tradeRepository.save(trade));
                     logger.debug("Updating trade in database: {}", trade);
                 }, () -> {
                     // Create trade.
-                    final Trade newTrade = tradeMapper.mapToTrade(newValue);
+                    final Trade newTrade = TRADE_MAPPER.mapToTrade(newValue);
                     // Order is always present as we check it in getNewValues().
                     orderRepository.findByOrderId(newValue.getOrderId()).ifPresent(newTrade::setOrder);
                     trades.add(tradeRepository.save(newTrade));
@@ -79,7 +79,7 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
                 }));
 
         return trades.stream()
-                .map(tradeMapper::mapToTradeDTO)
+                .map(TRADE_MAPPER::mapToTradeDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

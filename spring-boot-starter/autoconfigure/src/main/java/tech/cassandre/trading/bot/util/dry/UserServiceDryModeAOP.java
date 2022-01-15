@@ -159,7 +159,7 @@ public class UserServiceDryModeAOP extends BaseService {
             // Creates the account info.
             accountInfo = new AccountInfo(USER_ID, wallets);
             // Updates all strategies.
-            final UserDTO userDTO = accountMapper.mapToUserDTO(accountInfo);
+            final UserDTO userDTO = ACCOUNT_MAPPER.mapToUserDTO(accountInfo);
             applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
                     .values()  // We get the list of all required cp of all strategies.
                     .stream()

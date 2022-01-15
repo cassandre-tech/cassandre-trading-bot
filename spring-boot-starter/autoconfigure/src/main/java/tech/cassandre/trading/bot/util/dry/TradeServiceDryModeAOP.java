@@ -113,8 +113,8 @@ public class TradeServiceDryModeAOP extends BaseService {
         }
 
         // We update the account.
-        userService.addToBalance(strategy, currencyMapper.mapToCurrency(currencyPair.getBaseCurrency()), amount);
-        userService.addToBalance(strategy, currencyMapper.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()).multiply(new BigDecimal("-1")));
+        userService.addToBalance(strategy, CURRENCY_MAPPER.mapToCurrency(currencyPair.getBaseCurrency()), amount);
+        userService.addToBalance(strategy, CURRENCY_MAPPER.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()).multiply(new BigDecimal("-1")));
 
         return (OrderCreationResultDTO) result;
     }
@@ -154,8 +154,8 @@ public class TradeServiceDryModeAOP extends BaseService {
         }
 
         // We update the account.
-        userService.addToBalance(strategy, currencyMapper.mapToCurrency(currencyPair.getBaseCurrency()), amount.multiply(new BigDecimal("-1")));
-        userService.addToBalance(strategy, currencyMapper.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()));
+        userService.addToBalance(strategy, CURRENCY_MAPPER.mapToCurrency(currencyPair.getBaseCurrency()), amount.multiply(new BigDecimal("-1")));
+        userService.addToBalance(strategy, CURRENCY_MAPPER.mapToCurrency(currencyPair.getQuoteCurrency()), amount.multiply(ticker.get().getLast()));
 
         return (OrderCreationResultDTO) result;
     }
@@ -175,8 +175,8 @@ public class TradeServiceDryModeAOP extends BaseService {
         // For every new order in database, we send an update saying the order is filled.
         List<LimitOrder> orders = orderRepository.findByStatusNot(CLOSED)
                 .stream()
-                .map(orderMapper::mapToOrderDTO)
-                .map(orderDTO -> new LimitOrder.Builder(utilMapper.mapToOrderType(orderDTO.getType()), currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()))
+                .map(ORDER_MAPPER::mapToOrderDTO)
+                .map(orderDTO -> new LimitOrder.Builder(UTIL_MAPPER.mapToOrderType(orderDTO.getType()), CURRENCY_MAPPER.mapToCurrencyPair(orderDTO.getCurrencyPair()))
                         .id(orderDTO.getOrderId())
                         .originalAmount(orderDTO.getAmountValue())
                         .averagePrice(orderDTO.getAveragePriceValue())
@@ -199,7 +199,7 @@ public class TradeServiceDryModeAOP extends BaseService {
         orderRepository.findByOrderByTimestampAsc()
                 .stream()
                 .filter(order -> order.getStatus() == OrderStatusDTO.FILLED)
-                .map(orderMapper::mapToOrderDTO)
+                .map(ORDER_MAPPER::mapToOrderDTO)
                 .filter(orderDTO -> !orderDTO.isFulfilled())    // Only orders with trades not arrived
                 .forEach(orderDTO -> {
                             tradePrices.put(orderDTO.getOrderId(), orderDTO.getMarketPriceValue());
@@ -208,7 +208,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                     .stream()
                                     .filter(position -> position.getClosingOrder() != null)
                                     .filter(position -> position.getClosingOrder().getOrderId().equals(orderDTO.getOrderId()))
-                                    .map(positionMapper::mapToPositionDTO)
+                                    .map(POSITION_MAPPER::mapToPositionDTO)
                                     .findFirst();
 
                             // If this order is used to close position, we calculate a new price to match rules percentages.
@@ -317,14 +317,14 @@ public class TradeServiceDryModeAOP extends BaseService {
         // For every orders not fulfilled in database, we will simulate an equivalent trade to close it.
         List<UserTrade> trades = orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(orderMapper::mapToOrderDTO)
+                .map(ORDER_MAPPER::mapToOrderDTO)
                 .filter(orderDTO -> !orderDTO.isFulfilled())                        // Only orders without trade.
                 .filter(orderDTO -> tradePrices.get(orderDTO.getOrderId()) != null) // Only orders with price calculated.
                 .map(orderDTO -> UserTrade.builder()
                         .id(orderDTO.getOrderId().replace(DRY_ORDER_PREFIX, DRY_TRADE_PREFIX))
-                        .type(utilMapper.mapToOrderType(orderDTO.getType()))
+                        .type(UTIL_MAPPER.mapToOrderType(orderDTO.getType()))
                         .orderId(orderDTO.getOrderId())
-                        .currencyPair(currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()))
+                        .currencyPair(CURRENCY_MAPPER.mapToCurrencyPair(orderDTO.getCurrencyPair()))
                         .originalAmount(orderDTO.getAmountValue())
                         .price(tradePrices.get(orderDTO.getOrderId()))
                         .feeAmount(ZERO)
