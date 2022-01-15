@@ -238,8 +238,8 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         // positionService. Here we force the status recalculation, and we save it.
         positionRepository.findByStatusIn(Stream.of(OPENING, CLOSING).collect(Collectors.toSet()))
                 .stream()
-                .map(positionMapper::mapToPositionDTO)
-                .map(positionMapper::mapToPosition)
+                .map(POSITION_MAPPER::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPosition)
                 .forEach(positionRepository::save);
 
         // =============================================================================================================
@@ -279,7 +279,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         // Update.
                         existingStrategy.setName(annotation.strategyName());
                         strategyRepository.save(existingStrategy);
-                        final StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(existingStrategy);
+                        final StrategyDTO strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(existingStrategy);
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
                         logger.debug("Strategy updated in database: {}.", existingStrategy);
@@ -296,7 +296,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                             newStrategy.setType(BASIC_TA4J_STRATEGY);
                         }
                         logger.debug("Strategy created in database: {}.", newStrategy);
-                        StrategyDTO strategyDTO = strategyMapper.mapToStrategyDTO(strategyRepository.save(newStrategy));
+                        StrategyDTO strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(strategyRepository.save(newStrategy));
                         strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
                         strategy.setStrategy(strategyDTO);
                     });

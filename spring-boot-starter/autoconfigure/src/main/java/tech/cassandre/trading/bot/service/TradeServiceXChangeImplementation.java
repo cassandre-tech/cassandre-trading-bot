@@ -89,9 +89,9 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                                                      final BigDecimal amount) {
         try {
             // Making the order.
-            MarketOrder m = new MarketOrder(utilMapper.mapToOrderType(orderTypeDTO),
+            MarketOrder m = new MarketOrder(UTIL_MAPPER.mapToOrderType(orderTypeDTO),
                     amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR),
-                    currencyMapper.mapToCurrencyPair(currencyPair),
+                    CURRENCY_MAPPER.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null);
             logger.debug("Sending market order: {} - {} - {}",
@@ -128,9 +128,9 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // We save the order.
             Optional<Order> savedOrder = orderRepository.findByOrderId(order.getOrderId());
             if (savedOrder.isEmpty()) {
-                savedOrder = Optional.of(orderRepository.save(orderMapper.mapToOrder(order)));
+                savedOrder = Optional.of(orderRepository.save(ORDER_MAPPER.mapToOrder(order)));
             }
-            final OrderCreationResultDTO result = new OrderCreationResultDTO(orderMapper.mapToOrderDTO(savedOrder.get()));
+            final OrderCreationResultDTO result = new OrderCreationResultDTO(ORDER_MAPPER.mapToOrderDTO(savedOrder.get()));
             logger.debug("Order created: {}", result);
             return result;
         } catch (Exception e) {
@@ -158,9 +158,9 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                                                     final BigDecimal limitPrice) {
         try {
             // Making the order.
-            LimitOrder l = new LimitOrder(utilMapper.mapToOrderType(orderTypeDTO),
+            LimitOrder l = new LimitOrder(UTIL_MAPPER.mapToOrderType(orderTypeDTO),
                     amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR),
-                    currencyMapper.mapToCurrencyPair(currencyPair),
+                    CURRENCY_MAPPER.mapToCurrencyPair(currencyPair),
                     getGeneratedOrderId(),
                     null,
                     limitPrice);
@@ -202,9 +202,9 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // We save the order.
             Optional<Order> savedOrder = orderRepository.findByOrderId(order.getOrderId());
             if (savedOrder.isEmpty()) {
-                savedOrder = Optional.of(orderRepository.save(orderMapper.mapToOrder(order)));
+                savedOrder = Optional.of(orderRepository.save(ORDER_MAPPER.mapToOrder(order)));
             }
-            final OrderCreationResultDTO result = new OrderCreationResultDTO(orderMapper.mapToOrderDTO(savedOrder.get()));
+            final OrderCreationResultDTO result = new OrderCreationResultDTO(ORDER_MAPPER.mapToOrderDTO(savedOrder.get()));
             logger.debug("Order creation result: {}", result);
             return result;
         } catch (Exception e) {
@@ -258,13 +258,13 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 // We retrieve the order information.
                 final Optional<Order> order = orderRepository.findByOrderId(orderId);
                 if (order.isPresent()) {
-                    OrderDTO orderDTO = orderMapper.mapToOrderDTO(order.get());
+                    OrderDTO orderDTO = ORDER_MAPPER.mapToOrderDTO(order.get());
 
                     // Using a special object to specify which order to cancel.
                     final CancelOrderParams cancelOrderParams = new CancelOrderParams(
                             orderId,
-                            currencyMapper.mapToCurrencyPair(orderDTO.getCurrencyPair()),
-                            utilMapper.mapToOrderType(orderDTO.getType()));
+                            CURRENCY_MAPPER.mapToCurrencyPair(orderDTO.getCurrencyPair()),
+                            UTIL_MAPPER.mapToOrderType(orderDTO.getType()));
                     logger.debug("Canceling order {}", orderId);
                     return tradeService.cancelOrder(cancelOrderParams);
                 } else {
@@ -289,7 +289,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             // We check if we have some local orders to push.
             final Set<OrderDTO> localOrders = orderRepository.findByStatus(PENDING_NEW)
                     .stream()
-                    .map(orderMapper::mapToOrderDTO)
+                    .map(ORDER_MAPPER::mapToOrderDTO)
                     .sorted(Comparator.comparing(OrderDTO::getTimestamp))
                     .peek(orderDTO -> logger.debug("Local order retrieved: {}", orderDTO))
                     .peek(orderDTO -> orderDTO.updateStatus(NEW))
@@ -306,7 +306,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     return tradeService.getOpenOrders()
                             .getOpenOrders()
                             .stream()
-                            .map(orderMapper::mapToOrderDTO)
+                            .map(ORDER_MAPPER::mapToOrderDTO)
                             .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
                             .collect(Collectors.toCollection(LinkedHashSet::new));
                 } catch (NotAvailableFromExchangeException e) {
@@ -314,7 +314,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     Set<OrderDTO> orders = new LinkedHashSet<>();
                     orderRepository.findAll()
                             .stream()
-                            .map(orderMapper::mapToOrderDTO)
+                            .map(ORDER_MAPPER::mapToOrderDTO)
                             .filter(orderDTO -> !orderDTO.isFulfilled())
                             .map(OrderDTO::getCurrencyPair)
                             .distinct()
@@ -323,10 +323,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                                     // Consume a token from the token bucket.
                                     // If a token is not available this method will block until the refill adds one to the bucket.
                                     bucket.asBlocking().consume(1);
-                                    orders.addAll(tradeService.getOpenOrders(new DefaultOpenOrdersParamCurrencyPair(currencyMapper.mapToCurrencyPair(currencyPairDTO)))
+                                    orders.addAll(tradeService.getOpenOrders(new DefaultOpenOrdersParamCurrencyPair(CURRENCY_MAPPER.mapToCurrencyPair(currencyPairDTO)))
                                             .getOpenOrders()
                                             .stream()
-                                            .map(orderMapper::mapToOrderDTO)
+                                            .map(ORDER_MAPPER::mapToOrderDTO)
                                             .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
                                             .collect(Collectors.toCollection(LinkedHashSet::new)));
                                 } catch (IOException | InterruptedException specificOrderException) {
@@ -359,7 +359,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         // And we only choose the orders that are not fulfilled.
         final LinkedHashSet<CurrencyPairDTO> currencyPairs = orderRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(orderMapper::mapToOrderDTO)
+                .map(ORDER_MAPPER::mapToOrderDTO)
                 .filter(orderDTO -> !orderDTO.isFulfilled())
                 .map(OrderDTO::getCurrencyPair)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -368,7 +368,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         // We set currency pairs on each param (required for exchanges like Gemini or Binance).
         if (!currencyPairs.isEmpty()) {
             currencyPairs.forEach(pair -> {
-                params.setCurrencyPair(currencyMapper.mapToCurrencyPair(pair));
+                params.setCurrencyPair(CURRENCY_MAPPER.mapToCurrencyPair(pair));
                 try {
                     // Consume a token from the token bucket.
                     // If a token is not available this method will block until the refill adds one to the bucket.
@@ -377,7 +377,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                             tradeService.getTradeHistory(params)
                                     .getUserTrades()
                                     .stream()
-                                    .map(tradeMapper::mapToTradeDTO)
+                                    .map(TRADE_MAPPER::mapToTradeDTO)
                                     .sorted(Comparator.comparing(TradeDTO::getTimestamp))
                                     .collect(Collectors.toCollection(LinkedHashSet::new))
                     );

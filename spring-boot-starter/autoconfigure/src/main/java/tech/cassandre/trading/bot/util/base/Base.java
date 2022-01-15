@@ -21,27 +21,27 @@ public abstract class Base {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     /** Type mapper. */
-    protected final UtilMapper utilMapper = Mappers.getMapper(UtilMapper.class);
+    protected static final UtilMapper UTIL_MAPPER = Mappers.getMapper(UtilMapper.class);
 
     /** Currency mapper. */
-    protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);
+    protected static final CurrencyMapper CURRENCY_MAPPER = Mappers.getMapper(CurrencyMapper.class);
 
     /** Strategy mapper. */
-    protected final StrategyMapper strategyMapper = Mappers.getMapper(StrategyMapper.class);
+    protected static final StrategyMapper STRATEGY_MAPPER = Mappers.getMapper(StrategyMapper.class);
 
     /** Account mapper. */
-    protected final AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
+    protected static final AccountMapper ACCOUNT_MAPPER = Mappers.getMapper(AccountMapper.class);
 
     /** Ticker mapper. */
-    protected final TickerMapper tickerMapper = Mappers.getMapper(TickerMapper.class);
+    protected static final TickerMapper TICKER_MAPPER = Mappers.getMapper(TickerMapper.class);
 
     /** Order mapper. */
-    protected final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
+    protected static final OrderMapper ORDER_MAPPER = Mappers.getMapper(OrderMapper.class);
 
     /** Trade mapper. */
-    protected final TradeMapper tradeMapper = Mappers.getMapper(TradeMapper.class);
+    protected static final TradeMapper TRADE_MAPPER = Mappers.getMapper(TradeMapper.class);
 
     /** Position mapper. */
-    protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
+    protected static final PositionMapper POSITION_MAPPER = Mappers.getMapper(PositionMapper.class);
 
 }

@@ -32,7 +32,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
     public final List<PositionDTO> positions() {
         return positionRepository.findAll()
                 .stream()
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +45,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
     @DgsQuery
     public final PositionDTO position(@InputArgument final long id) {
         return positionRepository.findById(id)
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .orElse(null);
     }
 
@@ -60,7 +60,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
         return positionRepository.findAll()
                 .stream()
                 .filter(position -> position.getStrategy().getId() == id)
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toList());
     }
 
@@ -75,7 +75,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
         return positionRepository.findAll()
                 .stream()
                 .filter(position -> Objects.equals(position.getStrategy().getStrategyId(), strategyId))
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +92,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
         return positionRepository.findByStatus(status)
                 .stream()
                 .filter(position -> position.getStrategy().getId() == id)
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toList());
     }
 
@@ -109,7 +109,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
         return positionRepository.findByStatus(status)
                 .stream()
                 .filter(position -> Objects.equals(position.getStrategy().getStrategyId(), strategyId))
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toList());
     }
 

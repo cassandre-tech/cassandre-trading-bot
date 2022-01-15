@@ -44,7 +44,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             bucket.asBlocking().consume(1);
 
             logger.debug("Getting ticker for {} currency pair", currencyPair);
-            TickerDTO t = tickerMapper.mapToTickerDTO(marketDataService.getTicker(currencyMapper.mapToCurrencyPair(currencyPair)));
+            TickerDTO t = TICKER_MAPPER.mapToTickerDTO(marketDataService.getTicker(CURRENCY_MAPPER.mapToInstrument(currencyPair)));
             logger.debug(" - New ticker {}", t);
             return Optional.ofNullable(t);
         } catch (IOException e) {
@@ -62,7 +62,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             // We create the currency pairs parameters.
             CurrencyPairsParam params = () -> currencyPairs
                     .stream()
-                    .map(currencyMapper::mapToCurrencyPair)
+                    .map(CURRENCY_MAPPER::mapToCurrencyPair)
                     .collect(Collectors.toCollection(LinkedList::new));
 
             // Consume a token from the token bucket.
@@ -72,7 +72,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             logger.debug("Getting tickers for {} currency pairs", currencyPairs.size());
             final List<Ticker> tickers = marketDataService.getTickers(params);
             return tickers.stream()
-                    .map(tickerMapper::mapToTickerDTO)
+                    .map(TICKER_MAPPER::mapToTickerDTO)
                     .peek(t -> logger.debug(" - New ticker: {}", t))
                     .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (IOException e) {
