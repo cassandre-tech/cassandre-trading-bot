@@ -53,4 +53,4 @@ mvn gitflow:release-finish
   * Programming: [Java](https://www.reddit.com/r/java/), [Kotlin](https://www.reddit.com/r/Kotlin/).
   * Exchanges: [Kucoin](https://www.reddit.com/r/kucoin/), [Coinbase](https://www.reddit.com/r/CoinBase/), [Binance](https://www.reddit.com/r/binance/).
   * Trading: [Cryptotrading](https://www.reddit.com/r/cryptotrading/).
-  * Crypto currencies: .
+  * Crypto currencies: TODO.
