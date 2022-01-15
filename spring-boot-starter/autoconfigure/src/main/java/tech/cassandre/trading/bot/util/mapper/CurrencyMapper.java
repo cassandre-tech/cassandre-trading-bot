@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.util.mapper;
 
+import liquibase.pro.packaged.M;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.instrument.Instrument;
@@ -51,6 +52,8 @@ public interface CurrencyMapper {
 
     @Mapping(source = "base", target = "baseCurrency")
     @Mapping(source = "counter", target = "quoteCurrency")
+    @Mapping(target = "baseCurrencyPrecision", ignore = true)
+    @Mapping(target = "quoteCurrencyPrecision", ignore = true)
     CurrencyPairDTO mapToCurrencyPairDTO(CurrencyPair source);
 
     @Mapping(source = "value", target = "value")
@@ -70,6 +73,14 @@ public interface CurrencyMapper {
 
     default CurrencyPair mapToCurrencyPair(CurrencyPairDTO source) {
         return new CurrencyPair(source.getBaseCurrency().getCode(), source.getQuoteCurrency().getCode());
+    }
+
+    default Instrument mapToInstrument(CurrencyPairDTO source) {
+        return mapToCurrencyPair(source);
+    }
+
+    default Instrument mapToInstrument(CurrencyPair source) {
+        return mapToCurrencyPair(mapToCurrencyPairDTO(source));
     }
 
 }

@@ -3,6 +3,7 @@ package tech.cassandre.trading.bot.test.util.junit;
 import org.awaitility.Awaitility;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.instrument.Instrument;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
@@ -42,31 +43,31 @@ public class BaseTest extends Base {
     public static final CurrencyPairDTO ETH_BTC = new CurrencyPairDTO(ETH, BTC);
 
     /** XChange ETH/BTC. */
-    public static final CurrencyPair XCHANGE_ETH_BTC = new CurrencyPair(Currency.ETH, Currency.BTC);
+    public static final Instrument XCHANGE_ETH_BTC = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.ETH, Currency.BTC));
 
     /** ETH/USDT. */
     public static final CurrencyPairDTO ETH_USDT = new CurrencyPairDTO(ETH, USDT);
 
     /** XChange ETH/USDT. */
-    public static final CurrencyPair XCHANGE_ETH_USDT = new CurrencyPair(Currency.ETH, Currency.USDT);
+    public static final Instrument XCHANGE_ETH_USDT = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.ETH, Currency.USDT));
 
     /** BTC/USDT. */
     public static final CurrencyPairDTO BTC_USDT = new CurrencyPairDTO(BTC, USDT);
 
     /** XChange BTC/USDT. */
-    public static final CurrencyPair XCHANGE_BTC_USDT = new CurrencyPair(Currency.BTC, Currency.USDT);
+    public static final Instrument XCHANGE_BTC_USDT = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.BTC, Currency.USDT));
 
     /** KCS/USDT. */
     public static final CurrencyPairDTO KCS_USDT = new CurrencyPairDTO(KCS, USDT);
 
     /** XChange KCS/USDT. */
-    public static final CurrencyPair XCHANGE_KCS_USDT = new CurrencyPair(Currency.KCS, Currency.USDT);
+    public static final Instrument XCHANGE_KCS_USDT = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.KCS, Currency.USDT));
 
     /** BTC/ETH. */
     public static final CurrencyPairDTO BTC_ETH = new CurrencyPairDTO(BTC, ETH);
 
     /** XChange BTC/ETH. */
-    public static final CurrencyPair XCHANGE_BTC_ETH = new CurrencyPair(Currency.BTC, Currency.ETH);
+    public static final Instrument XCHANGE_BTC_ETH = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.BTC, Currency.ETH));
 
     /** Ten seconds wait. */
     protected static final long WAITING_TIME_IN_SECONDS = 5L;

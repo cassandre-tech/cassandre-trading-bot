@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.Date;
 
 import static org.knowm.xchange.currency.Currency.BTC;
+import static org.knowm.xchange.currency.Currency.ETH;
+import static org.knowm.xchange.currency.Currency.USDT;
 import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -74,7 +76,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000001",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_BTC.counter,                         // fee currency.
+                BTC,                         // fee currency.
                 "Ref TRADE_0000001"
         );
 
@@ -87,7 +89,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000002",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_BTC.counter,                         // fee currency.
+                BTC,                         // fee currency.
                 "Ref TRADE_0000002"
         );
 
@@ -114,7 +116,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000001",                                // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_BTC.counter,                         // fee currency.
+                BTC,                         // fee currency.
                 "Ref TRADE_0000001"
         );
 
@@ -127,7 +129,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000002",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_BTC.counter,                         // fee currency.
+                BTC,                         // fee currency.
                 "Ref TRADE_0000002"
         );
 
@@ -140,7 +142,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000003",                         // Trade id.
                 "ORDER_0000002",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_USDT.base,                            // fee currency.
+                ETH,                            // fee currency.
                 "Ref TRADE_0000003"
         );
 
@@ -153,7 +155,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000004",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_BTC.counter,                         // fee currency.
+                BTC,                         // fee currency.
                 "Ref TRADE_0000004"
         );
 
@@ -166,7 +168,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000005",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_BTC.counter,                         // fee currency.
+                BTC,                         // fee currency.
                 "Ref TRADE_0000005"
         );
 
@@ -197,7 +199,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000006",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_USDT.counter,                         // fee currency.
+                USDT,                         // fee currency.
                 "Ref TRADE_0000006"
         );
 
@@ -210,7 +212,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000002",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_BTC.counter,                         // fee currency.
+                BTC,                         // fee currency.
                 "Ref TRADE_0000002"
         );
 
@@ -236,7 +238,7 @@ public class TradeFluxTestMock extends BaseMock {
                 "TRADE_0000008",                         // Trade id.
                 "ORDER_0000001",                     // Order id.
                 new BigDecimal("3.300003"),             // fee.
-                XCHANGE_ETH_BTC.counter,                         // fee currency.
+                BTC,                         // fee currency.
                 "Ref TRADE_0000008"
         );
 

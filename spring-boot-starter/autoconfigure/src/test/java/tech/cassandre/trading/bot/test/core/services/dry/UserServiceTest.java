@@ -218,7 +218,7 @@ public class UserServiceTest extends BaseTest {
         });
         final Optional<TradeDTO> buyingTrade = tradeRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(tradeMapper::mapToTradeDTO)
+                .map(TRADE_MAPPER::mapToTradeDTO)
                 .filter(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())).findFirst();
         assertTrue(buyingTrade.isPresent());
         assertEquals(BID, buyingTrade.get().getType());
@@ -276,7 +276,7 @@ public class UserServiceTest extends BaseTest {
         });
         final Optional<TradeDTO> sellingTrade = tradeRepository.findByOrderByTimestampAsc()
                 .stream()
-                .map(tradeMapper::mapToTradeDTO)
+                .map(TRADE_MAPPER::mapToTradeDTO)
                 .filter(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())).findFirst();
         assertTrue(sellingTrade.isPresent());
         assertEquals(ASK, sellingTrade.get().getType());

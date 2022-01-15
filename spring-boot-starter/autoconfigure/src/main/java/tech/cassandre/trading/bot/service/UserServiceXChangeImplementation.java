@@ -41,7 +41,7 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
             bucket.asBlocking().consume(1);
 
             logger.debug("Retrieving account information");
-            final UserDTO user = accountMapper.mapToUserDTO(xChangeAccountService.getAccountInfo());
+            final UserDTO user = ACCOUNT_MAPPER.mapToUserDTO(xChangeAccountService.getAccountInfo());
             logger.debug("Account information retrieved " + user);
             // Update the cached reply.
             if (user != null && user.getAccounts() != null) {

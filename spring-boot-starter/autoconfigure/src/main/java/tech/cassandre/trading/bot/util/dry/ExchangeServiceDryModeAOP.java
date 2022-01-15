@@ -45,7 +45,7 @@ public class ExchangeServiceDryModeAOP extends BaseService {
                 .map(o -> (CassandreStrategyInterface) o)
                 .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
                 .flatMap(Set::stream)
-                .map(currencyMapper::mapToCurrencyPair)
+                .map(CURRENCY_MAPPER::mapToCurrencyPair)
                 .collect(HashMap::new, (map, cp) -> map.put(cp, null), Map::putAll);
 
         return new ExchangeMetaData(supportedCurrencyPairs,

@@ -30,7 +30,7 @@ public class OrderDataFetcher extends BaseDataFetcher {
     public final List<OrderDTO> orders() {
         return orderRepository.findAll()
                 .stream()
-                .map(orderMapper::mapToOrderDTO)
+                .map(ORDER_MAPPER::mapToOrderDTO)
                 .collect(Collectors.toList());
     }
 
@@ -43,7 +43,7 @@ public class OrderDataFetcher extends BaseDataFetcher {
     @DgsQuery
     public OrderDTO order(@InputArgument final long id) {
         return orderRepository.findById(id)
-                .map(orderMapper::mapToOrderDTO)
+                .map(ORDER_MAPPER::mapToOrderDTO)
                 .orElse(null);
     }
 
@@ -56,7 +56,7 @@ public class OrderDataFetcher extends BaseDataFetcher {
     @DgsQuery
     public OrderDTO orderByOrderId(@InputArgument final String orderId) {
         return orderRepository.findByOrderId(orderId)
-                .map(orderMapper::mapToOrderDTO)
+                .map(ORDER_MAPPER::mapToOrderDTO)
                 .orElse(null);
     }
 
