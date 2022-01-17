@@ -20,7 +20,6 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USD;
 
 @SpringBootTest
 @ActiveProfiles("schedule-disabled")
@@ -137,12 +137,12 @@ public class TradeServiceTest extends BaseTest {
     @Test
     @Tag("integration")
     @DisplayName("Check cancel an order")
-    @Disabled("Not supported by coinbase")
+    @Disabled("Not supported by Coinbase")
     public void checkCancelOrder() {
-        final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+        final CurrencyPairDTO cp = new CurrencyPairDTO(BTC, USD);
 
-        // Making a buy limit order (Buy 0.0001 ETH).
-        final OrderCreationResultDTO result1 = strategy.createSellLimitOrder(cp, new BigDecimal("0.01"), new BigDecimal("10000000"));
+        // Making a buy limit order.
+        final OrderCreationResultDTO result1 = strategy.createSellLimitOrder(cp, new BigDecimal("0.01"), new BigDecimal("100000"));
         assertNotNull(result1.getOrder().getOrderId());
 
         // The order must exist.
@@ -162,21 +162,16 @@ public class TradeServiceTest extends BaseTest {
     @Tag("integration")
     @DisplayName("Check get trades")
     public void checkGetTrades() {
-        final CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
+        final CurrencyPairDTO cp = new CurrencyPairDTO(BTC, USD);
 
         // Creates two orders of the same amount (one buy, one sell).
-        final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("1"));
-        final OrderCreationResultDTO result2 = strategy.createSellMarketOrder(cp, new BigDecimal("1"));
+        final OrderCreationResultDTO result1 = strategy.createBuyMarketOrder(cp, new BigDecimal("0.1"));
+        final OrderCreationResultDTO result2 = strategy.createSellMarketOrder(cp, new BigDecimal("0.1"));
 
         // Check that the two orders appears in the trade history.
         assertTrue(result1.isSuccessful());
-        try {
-            TimeUnit.SECONDS.sleep(30);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        assertTrue(result2.isSuccessful());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result1.getOrder().getOrderId()))));
-        assertNotNull(result2.getOrder().getOrderId());
         await().untilAsserted(() -> assertTrue(tradeService.getTrades().stream().anyMatch(t -> t.getOrderId().equals(result2.getOrder().getOrderId()))));
 
         // Retrieve trade & test values.
@@ -191,7 +186,7 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(result1.getOrderId(), t.get().getOrderId());
         assertEquals(cp, t.get().getCurrencyPair());
         assertNotNull(t.get().getAmount().getValue());
-        assertEquals(ETH, t.get().getAmount().getCurrency());
+        assertEquals(BTC, t.get().getAmount().getCurrency());
         assertNotNull(t.get().getPrice().getValue());
         assertNotNull(t.get().getFee().getValue());
         assertNotNull(t.get().getFee().getCurrency());

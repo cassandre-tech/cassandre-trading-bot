@@ -381,6 +381,9 @@
                             </properties>
                             <reuseForks>false</reuseForks>
                             <forkCount>1</forkCount>
+                            <includes>
+                                <include>**/integration/**</include>
+                            </includes>
                             <excludes>
                                 <exclude>**/core/**</exclude>
                                 <exclude>**/issues/**</exclude>
