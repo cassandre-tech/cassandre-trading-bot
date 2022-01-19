@@ -135,10 +135,10 @@
             <scope>test</scope>
         </dependency>
         <!-- For Kucoin integration tests -->
+        <!-- TODO Remove 5.0.13-SNAPSHOT when sandbox issue is fixed -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <!-- TODO Remove 5.0.13-SNAPSHOT when sandbox issue is fixed -->
             <version>5.0.13-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
