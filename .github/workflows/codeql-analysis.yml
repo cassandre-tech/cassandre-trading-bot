@@ -29,6 +29,13 @@ jobs:
           languages: java
 
       # ================================================================================================================
+      # TODO Remove this when my PR will be accepted by XChange team.
+      - name: Install xchange 5.0.13-SNAPSHOT
+        run: |
+          mvn install:install-file -Dfile=util/xchange/xchange-gemini/5.0.13-SNAPSHOT/xchange-gemini-5.0.13-SNAPSHOT.jar
+          mvn install:install-file -Dfile=util/xchange/xchange-gemini/5.0.13-SNAPSHOT/xchange-kucoin-5.0.13-SNAPSHOT.jar
+
+      # ================================================================================================================
       - name: Build and package
         run: |
           mvn package -DskipTests
