@@ -14,7 +14,9 @@ import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
 import static org.awaitility.Awaitility.await;
@@ -61,7 +63,8 @@ public class MarketServiceTest extends BaseTest {
     @DisplayName("Check get ticker")
     public void checkGetTicker() {
         CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
-        Optional<TickerDTO> t = marketService.getTicker(cp);
+        Set<TickerDTO> tickers = marketService.getTickers(Collections.singleton(cp));
+        final Optional<TickerDTO> t = tickers.stream().filter(tickerDTO -> tickerDTO.getCurrencyPair().equals(cp)).findFirst();
         assertTrue(t.isPresent());
         // currencyPair.
         assertNotNull(t.get().getCurrencyPair());
