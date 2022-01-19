@@ -25,7 +25,7 @@ jobs:
       - name: Install xchange 5.0.13-SNAPSHOT
         run: |
           mvn install:install-file -Dfile=util/xchange/xchange-gemini/5.0.13-SNAPSHOT/xchange-gemini-5.0.13-SNAPSHOT.jar
-          mvn install:install-file -Dfile=util/xchange/xchange-gemini/5.0.13-SNAPSHOT/xchange-kucoin-5.0.13-SNAPSHOT.jar
+          mvn install:install-file -Dfile=util/xchange/xchange-kucoin/5.0.13-SNAPSHOT/xchange-kucoin-5.0.13-SNAPSHOT.jar
 
       # ================================================================================================================
       # TODO, remove personnal xchange build
