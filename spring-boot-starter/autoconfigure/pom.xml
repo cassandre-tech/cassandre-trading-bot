@@ -139,7 +139,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>5.0.13-SNAPSHOT</version>
+            <version>5.0.13</version>
             <scope>test</scope>
         </dependency>
         <!-- For Coinbase integration tests -->
