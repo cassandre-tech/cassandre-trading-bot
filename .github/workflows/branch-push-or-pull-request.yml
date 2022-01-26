@@ -19,13 +19,6 @@ jobs:
         uses: actions/checkout@v2
 
       # ================================================================================================================
-      # TODO Remove this when my PR will be accepted by XChange team.
-      - name: Install xchange 5.0.13-SNAPSHOT
-        run: |
-          mvn install:install-file -Dfile=util/xchange/xchange-gemini/5.0.13-SNAPSHOT/xchange-gemini-5.0.13-SNAPSHOT.jar
-          mvn install:install-file -Dfile=util/xchange/xchange-kucoin/5.0.13-SNAPSHOT/xchange-kucoin-5.0.13-SNAPSHOT.jar
-
-      # ================================================================================================================
       - name: Build, run tests and deploy locally
         id: maven
         run: |
