@@ -1,8 +1,0 @@
-#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Wed Jan 19 19:00:00 CET 2022
-xchange-kucoin-5.0.13-SNAPSHOT.jar>=
-xchange-kucoin-5.0.13-20220113.114719-30.pom>oss.sonatype.org-snapshot=
-xchange-kucoin-5.0.13-SNAPSHOT.pom>=
-xchange-kucoin-5.0.13-SNAPSHOT-javadoc.jar>=
-xchange-kucoin-5.0.13-20220113.114719-30.jar>oss.sonatype.org-snapshot=
-xchange-kucoin-5.0.13-SNAPSHOT-sources.jar>=

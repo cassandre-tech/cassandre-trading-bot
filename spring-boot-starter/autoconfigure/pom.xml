@@ -135,11 +135,10 @@
             <scope>test</scope>
         </dependency>
         <!-- For Kucoin integration tests -->
-        <!-- TODO Remove 5.0.13-SNAPSHOT when sandbox issue is fixed -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>5.0.13-SNAPSHOT</version>
+            <version>5.0.13</version>
             <scope>test</scope>
         </dependency>
         <!-- For Coinbase integration tests -->
@@ -156,11 +155,10 @@
             <scope>test</scope>
         </dependency>
         <!-- For Gemini integration tests -->
-        <!-- TODO Remove 5.0.13-SNAPSHOT when getTicker(Instrument) issue is fixed. -->
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-gemini</artifactId>
-            <version>5.0.13-SNAPSHOT</version>
+            <version>5.0.13</version>
             <scope>test</scope>
         </dependency>
         <!-- For Binance integration tests -->
