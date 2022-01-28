@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.FLOOR;
@@ -186,7 +185,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                         .userReference(orderDTO.getUserReference())
                         .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
                         .build())
-                .collect(Collectors.toList());
+                .toList();
 
         return new OpenOrders(orders);
     }
@@ -330,7 +329,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                         .feeAmount(ZERO)
                         .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
                         .build())
-                .collect(Collectors.toList());
+                .toList();
         return new UserTrades(trades, SortByTimestamp);
     }
 

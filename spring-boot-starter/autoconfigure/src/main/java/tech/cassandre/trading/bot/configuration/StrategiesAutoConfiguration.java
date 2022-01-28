@@ -204,7 +204,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         final List<String> strategyIds = strategies.values()
                 .stream()
                 .map(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId())
-                .collect(Collectors.toList());
+                .toList();
         final Set<String> duplicatedStrategyIds = strategies.values()
                 .stream()
                 .map(o -> o.getClass().getAnnotation(CassandreStrategy.class).strategyId())

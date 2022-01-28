@@ -9,7 +9,6 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Order data fetcher.
@@ -31,7 +30,7 @@ public class OrderDataFetcher extends BaseDataFetcher {
         return orderRepository.findAll()
                 .stream()
                 .map(ORDER_MAPPER::mapToOrderDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

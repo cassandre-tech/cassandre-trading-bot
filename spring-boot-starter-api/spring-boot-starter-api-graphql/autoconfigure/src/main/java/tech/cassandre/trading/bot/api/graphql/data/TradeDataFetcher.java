@@ -9,7 +9,6 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Trade data fetcher.
@@ -31,7 +30,7 @@ public class TradeDataFetcher extends BaseDataFetcher {
         return tradeRepository.findAll()
                 .stream()
                 .map(TRADE_MAPPER::mapToTradeDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

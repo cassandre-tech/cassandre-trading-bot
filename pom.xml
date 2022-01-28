@@ -64,9 +64,9 @@
 	<!-- Project configuration -->
 	<properties>
 		<!-- Java build configuration -->
-		<java.version>11</java.version>
-		<maven.compiler.target>11</maven.compiler.target>
-		<maven.compiler.source>11</maven.compiler.source>
+		<java.version>17</java.version>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -106,7 +106,7 @@
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
 		<maven.jacoco.plugin.version>0.8.7</maven.jacoco.plugin.version>
 		<maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
-		<maven.lombok.plugin.version>1.18.20.0</maven.lombok.plugin.version>
+		<maven.lombok.plugin.version>1.18.20.1-SNAPSHOT</maven.lombok.plugin.version>
 		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
 		<maven.javadoc.plugin.version>3.3.1</maven.javadoc.plugin.version>
 		<maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>

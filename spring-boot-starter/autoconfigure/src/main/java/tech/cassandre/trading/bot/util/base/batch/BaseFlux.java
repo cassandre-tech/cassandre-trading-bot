@@ -93,6 +93,8 @@ public abstract class BaseFlux<T> extends Base {
      * @param newValue new value
      * @return the value saved
      */
-    protected abstract Set<T> saveValues(Set<T> newValue);
+    protected Set<T> saveValues(final Set<T> newValue) {
+        return newValue;
+    }
 
 }

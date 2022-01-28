@@ -177,7 +177,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!-- TODO Remove when the delombok issue is fixed https://github.com/awhitford/lombok.maven/issues/98 -->
+            <!--<plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>${maven.lombok.plugin.version}</version>
@@ -194,8 +195,9 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
+            </plugin>-->
+            <!-- TODO Remove when the delombok issue is fixed https://github.com/awhitford/lombok.maven/issues/98 -->
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
@@ -212,7 +214,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
     <!-- =========================================================================================================== -->

@@ -23,7 +23,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
@@ -499,13 +498,13 @@ public class PositionDTO {
                         .stream()
                         .filter(tradeDTO -> tradeDTO.getFee() != null)
                         .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 final List<CurrencyAmountDTO> closingOrderFees = closingOrder.getTrades()
                         .stream()
                         .filter(tradeDTO -> tradeDTO.getFee() != null)
                         .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 // =====================================================================================================
                 // Old & incorrect way to calculate fees - will be deleted in later release.
@@ -558,13 +557,13 @@ public class PositionDTO {
                         .stream()
                         .filter(tradeDTO -> tradeDTO.getFee() != null)
                         .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 final List<CurrencyAmountDTO> closingOrderFees = closingOrder.getTrades()
                         .stream()
                         .filter(tradeDTO -> tradeDTO.getFee() != null)
                         .map(tradeDTO -> new CurrencyAmountDTO(tradeDTO.getFee().getValue(), tradeDTO.getFee().getCurrency()))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 // =====================================================================================================
                 // Old & incorrect way to calculate fees - will be deleted in later release.

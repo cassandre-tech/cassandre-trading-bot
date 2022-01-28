@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.repository.PositionRepository;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Position data fetcher.
@@ -33,7 +32,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
         return positionRepository.findAll()
                 .stream()
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -61,7 +60,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
                 .stream()
                 .filter(position -> position.getStrategy().getId() == id)
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -76,7 +75,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
                 .stream()
                 .filter(position -> Objects.equals(position.getStrategy().getStrategyId(), strategyId))
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -93,7 +92,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
                 .stream()
                 .filter(position -> position.getStrategy().getId() == id)
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -110,7 +109,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
                 .stream()
                 .filter(position -> Objects.equals(position.getStrategy().getStrategyId(), strategyId))
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

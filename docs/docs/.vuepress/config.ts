@@ -137,6 +137,10 @@ export default defineUserConfig<DefaultThemeOptions>({
                                 link: '/ressources/how-tos/how-to-install-development-tools'
                             },
                             {text: 'Build from sources', link: '/ressources/how-tos/how-to-build-from-sources'},
+                            {
+                                text: 'Review code',
+                                link: '/ressources/how-tos/how-to-review-code'
+                            },
                             {text: 'Create a release', link: '/ressources/how-tos/how-to-create-a-release'},
                             {
                                 text: 'Create a Kucoin account',
