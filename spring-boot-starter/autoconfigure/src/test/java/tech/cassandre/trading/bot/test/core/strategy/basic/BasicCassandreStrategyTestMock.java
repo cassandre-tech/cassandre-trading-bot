@@ -130,6 +130,7 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
 
         // Mock replies.
         given(userService.getUser()).willReturn(Optional.of(tempUser), Optional.of(user01), Optional.of(user02), Optional.of(user03));
+        given(userService.getAccounts()).willReturn(tempUser.getAccounts(), user01.getAccounts(), user02.getAccounts(), user03.getAccounts());
         return userService;
     }
 

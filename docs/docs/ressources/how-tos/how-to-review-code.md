@@ -11,3 +11,4 @@ description: How to review Cassandre code
 * No new line between method start ({) and method end (}).
 * When a variable represents an id, say it in the name like 'carId'.
 * When a variable is DTO, say it in the name like `carDTO`.
+* Check logs texts.
