@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 
 /**
  * Account flux - push {@link AccountDTO}.
+ * Two methods override from super class:
+ * - getNewValues(): calling user service to retrieve accounts values from exchange.
+ * - saveValues(): not implemented as we don't store accounts data in database.
  * To get a deep understanding of how it works, read the documentation of {@link BaseFlux}.
  */
 @RequiredArgsConstructor

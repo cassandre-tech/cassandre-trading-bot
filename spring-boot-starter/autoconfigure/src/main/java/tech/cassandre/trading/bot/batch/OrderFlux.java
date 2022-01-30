@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 
 /**
  * Order flux - push {@link OrderDTO}.
+ * Two methods override from super class:
+ * - getNewValues(): calling trade service to retrieve orders from exchange.
+ * - saveValues(): saving/updating orders in database.
  * To get a deep understanding of how it works, read the documentation of {@link BaseFlux}.
  */
 @RequiredArgsConstructor

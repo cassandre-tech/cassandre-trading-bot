@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 
 /**
  * Ticker flux - push {@link TickerDTO}.
+ * Two methods override from super class:
+ * - getNewValues(): calling market service to retrieve tickers from exchange.
+ * - saveValues(): not implemented as we don't store tickers data in database.
  * To get a deep understanding of how it works, read the documentation of {@link BaseFlux}.
  */
 @RequiredArgsConstructor

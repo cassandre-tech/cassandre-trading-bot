@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 
 /**
  * Trade flux - push {@link TradeDTO}.
+ * Two methods override from super class:
+ * - getNewValues(): calling trade service to retrieve trades from exchange (only if orders exists already in database).
+ * - saveValues(): saving/updating trades in database.
  * To get a deep understanding of how it works, read the documentation of {@link BaseFlux}.
  */
 @RequiredArgsConstructor
@@ -66,7 +69,10 @@ public class TradeFlux extends BaseFlux<TradeDTO> {
                     if (tradeInDatabase.isEmpty()) {
                         // The trade does not exist in database, we create it.
                         logger.debug("Updating the trade: {}", tradeDTO);
-                        consumer.accept(TRADE_MAPPER.mapToTrade(tradeDTO));
+                        final Trade newTrade = TRADE_MAPPER.mapToTrade(tradeDTO);
+                        // Order is always present as we check it in getNewValues().
+                        orderRepository.findByOrderId(tradeDTO.getOrderId()).ifPresent(newTrade::setOrder);
+                        consumer.accept(newTrade);
                     } else {
                         // The trade exists in database, we update it.
                         logger.debug("Creating a new trade: {}", tradeDTO);
