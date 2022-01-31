@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Account mapper.
  */
-@Mapper(uses = CurrencyMapper.class)
+@Mapper(uses = {CurrencyMapper.class})
 public interface AccountMapper {
 
     // =================================================================================================================

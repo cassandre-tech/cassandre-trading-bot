@@ -24,7 +24,7 @@ sudo apt-get -y install git
 
 ## [Java](https://openjdk.java.net/install/)
 ```bash
-sudo apt-get -y install openjdk-11-jdk
+sudo apt-get -y install openjdk-17-jdk
 ```
 
 ## [Maven](https://maven.apache.org/)

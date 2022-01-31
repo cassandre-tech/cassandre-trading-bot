@@ -9,7 +9,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 /**
  * Ticker mapper.
  */
-@Mapper(uses = CurrencyMapper.class)
+@Mapper(uses = {CurrencyMapper.class})
 public interface TickerMapper {
 
     // =================================================================================================================

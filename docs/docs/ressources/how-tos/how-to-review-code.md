@@ -12,3 +12,4 @@ description: How to review Cassandre code
 * When a variable represents an id, say it in the name like 'carId'.
 * When a variable is DTO, say it in the name like `carDTO`.
 * Check logs texts.
+* No point at the end of logs texts.
