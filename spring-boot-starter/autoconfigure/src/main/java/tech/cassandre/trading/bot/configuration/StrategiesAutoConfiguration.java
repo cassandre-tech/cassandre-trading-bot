@@ -4,7 +4,6 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -31,7 +30,6 @@ import tech.cassandre.trading.bot.repository.StrategyRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.PositionServiceCassandreImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
@@ -101,7 +99,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     private final TradeService tradeService;
 
     /** Position service. */
-    private PositionService positionService;
+    private final PositionService positionService;
 
     /** Account flux. */
     private final AccountFlux accountFlux;
@@ -142,10 +140,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .map(POSITION_MAPPER::mapToPosition)
                 .forEach(positionRepository::save);
-
-        // =============================================================================================================
-        // Creating position service.
-        this.positionService = new PositionServiceCassandreImplementation(positionRepository, tradeService, positionFlux);
 
         // =============================================================================================================
         // Loading imported tickers into database.
@@ -393,16 +387,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
             logger.error("Impossible to load imported tickers: {}", e.getMessage());
         }
         return Collections.emptyList();
-    }
-
-    /**
-     * Getter for positionService.
-     *
-     * @return positionService
-     */
-    @Bean
-    public PositionService getPositionService() {
-        return positionService;
     }
 
 }
