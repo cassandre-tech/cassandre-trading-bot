@@ -29,7 +29,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Trade.
+ * Trade (map "TRADES" table).
  */
 @Getter
 @Setter

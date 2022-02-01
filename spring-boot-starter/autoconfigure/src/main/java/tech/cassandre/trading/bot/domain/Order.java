@@ -35,7 +35,7 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Order.
+ * Order (map "ORDERS" table).
  */
 @Getter
 @Setter

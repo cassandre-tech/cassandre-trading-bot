@@ -32,7 +32,7 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Position.
+ * Position (map "POSITIONS" table).
  */
 @Getter
 @Setter

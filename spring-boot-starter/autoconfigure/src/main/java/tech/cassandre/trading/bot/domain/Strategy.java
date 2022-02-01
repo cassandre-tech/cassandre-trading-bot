@@ -22,7 +22,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Strategy.
+ * Strategy (map "STRATEGIES" table).
  */
 @Getter
 @Setter
@@ -65,6 +65,7 @@ public class Strategy extends BaseDomain {
                 .append(this.id, that.id)
                 .append(this.strategyId, that.strategyId)
                 .append(this.type, that.type)
+                .append(this.name, that.name)
                 .isEquals();
     }
 

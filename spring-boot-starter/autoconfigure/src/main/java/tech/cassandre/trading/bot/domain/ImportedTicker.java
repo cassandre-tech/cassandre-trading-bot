@@ -24,7 +24,8 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
 
 /**
- * Imported tickers.
+ * Imported tickers (map "IMPORTED_TICKERS" table).
+ * Feature described here: https://trading-bot.cassandre.tech/learn/import-historical-data.html#overview
  */
 @Getter
 @Setter

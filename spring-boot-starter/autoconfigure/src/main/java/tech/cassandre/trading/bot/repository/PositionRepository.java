@@ -12,7 +12,6 @@ import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * {@link Position} repository.
@@ -57,7 +56,7 @@ public interface PositionRepository extends JpaRepository<Position, Long>, JpaSp
      * @param status list of status
      * @return positions
      */
-    List<Position> findByStatusIn(Set<PositionStatusDTO> status);
+    List<Position> findByStatusIn(List<PositionStatusDTO> status);
 
     /**
      * Returns the last position id used by a strategy.

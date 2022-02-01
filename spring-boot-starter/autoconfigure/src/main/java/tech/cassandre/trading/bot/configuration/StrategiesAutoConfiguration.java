@@ -134,15 +134,16 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         // Maintenance code.
         // If a position is blocked in OPENING or CLOSING, we send again the trades.
         // This could happen if cassandre crashes after saving a trade and did not have time to send it to
-        // positionService. Here we force the status recalculation, and we save it.
-        positionRepository.findByStatusIn(Stream.of(OPENING, CLOSING).collect(Collectors.toSet()))
+        // positionService. Here we force the status recalculation in PositionDTO, and we save it.
+        positionRepository.findByStatusIn(Stream.of(OPENING, CLOSING).toList())
                 .stream()
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .map(POSITION_MAPPER::mapToPosition)
                 .forEach(positionRepository::save);
 
         // =============================================================================================================
-        // Loading imported tickers into database.
+        // Importing user tickers into database.
+        // Feature documentation is here: https://trading-bot.cassandre.tech/learn/import-historical-data.html
         loadImportedTickers();
 
         // =============================================================================================================

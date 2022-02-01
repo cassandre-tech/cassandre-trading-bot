@@ -19,9 +19,7 @@ import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -226,7 +224,8 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     @Override
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
         // List of status that locks amounts.
-        return positionRepository.findByStatusIn(new HashSet<>(Arrays.asList(OPENING, OPENED))).stream()
+        return positionRepository.findByStatusIn(Stream.of(OPENING, OPENED).toList())
+                .stream()
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toMap(PositionDTO::getId, PositionDTO::getAmountToLock, (key, value) -> key, HashMap::new));
     }
