@@ -518,7 +518,7 @@ public class PositionShortFluxTest extends BaseTest {
 
         // onPosition for first trade arrival.
         // Two more updates because of two trades arriving (duplicated, but we use emit function).
-        await().untilAsserted(() -> assertEquals(17, getPositionsUpdatesCount()));
+        await().untilAsserted(() -> assertEquals(18, getPositionsUpdatesCount()));
         p = getLastPositionUpdate();
         assertNotNull(p);
         assertEquals(position1Id, p.getUid());
