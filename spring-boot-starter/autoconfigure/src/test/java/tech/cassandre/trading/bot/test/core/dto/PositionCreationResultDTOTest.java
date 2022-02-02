@@ -17,9 +17,9 @@ public class PositionCreationResultDTOTest {
     @DisplayName("Check successful position creation")
     public void checkSuccessfulPositionCreation() {
         OrderDTO o = OrderDTO.builder().orderId("2").build();
-        PositionDTO p = PositionDTO.builder().id(1).openingOrder(o).build();
+        PositionDTO p = PositionDTO.builder().uid(1).openingOrder(o).build();
         final PositionCreationResultDTO result = new PositionCreationResultDTO(p);
-        assertEquals(1, result.getPosition().getId());
+        assertEquals(1, result.getPosition().getUid());
         assertEquals("2", result.getPosition().getOpeningOrder().getOrderId());
         assertTrue(result.isSuccessful());
     }

@@ -36,12 +36,12 @@ public class TradeDataFetcher extends BaseDataFetcher {
     /**
      * Returns the trade with the corresponding id value.
      *
-     * @param id id
+     * @param uid uid
      * @return trade
      */
     @DgsQuery
-    public final TradeDTO trade(@InputArgument final long id) {
-        return tradeRepository.findById(id)
+    public final TradeDTO trade(@InputArgument final long uid) {
+        return tradeRepository.findById(uid)
                 .map(TRADE_MAPPER::mapToTradeDTO)
                 .orElse(null);
     }

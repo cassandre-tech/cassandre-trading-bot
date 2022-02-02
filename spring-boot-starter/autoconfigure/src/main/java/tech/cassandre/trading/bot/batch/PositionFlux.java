@@ -29,7 +29,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
         return newValues.stream()
                 .peek(positionDTO -> logger.debug("Checking position in database: {}", positionDTO))
                 .<Position>mapMulti((positionDTO, consumer) -> {
-                    final Optional<Position> position = positionRepository.findById(positionDTO.getId());
+                    final Optional<Position> position = positionRepository.findById(positionDTO.getUid());
 
                     // We update (the position creation can't be made here).
                     if (position.isPresent()) {

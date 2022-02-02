@@ -177,7 +177,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         existingStrategy.setName(annotation.strategyName());
                         strategyRepository.save(existingStrategy);
                         final StrategyDTO strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(existingStrategy);
-                        strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
+                        strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getUid()));
                         strategy.setStrategy(strategyDTO);
                         logger.debug("Strategy updated in database: {}", existingStrategy);
                     }, () -> {
@@ -192,7 +192,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                             newStrategy.setType(BASIC_TA4J_STRATEGY);
                         }
                         StrategyDTO strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(strategyRepository.save(newStrategy));
-                        strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getId()));
+                        strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getUid()));
                         strategy.setStrategy(strategyDTO);
                         logger.debug("Strategy created in database: {}", newStrategy);
                     });
@@ -364,7 +364,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                                 .parse()
                                 .forEach(importedTicker -> {
                                     logger.debug("Importing ticker {}", importedTicker);
-                                    importedTicker.setId(counter.incrementAndGet());
+                                    importedTicker.setUid(counter.incrementAndGet());
                                     importedTickersRepository.save(importedTicker);
                                 });
                     } catch (IOException e) {

@@ -28,11 +28,11 @@ public interface PositionRepository extends JpaRepository<Position, Long>, JpaSp
     Optional<Position> findByPositionId(long positionId);
 
     /**
-     * Retrieve all positions (sorted by id).
+     * Retrieve all positions (sorted by uid).
      *
      * @return positions
      */
-    List<Position> findByOrderById();
+    List<Position> findByOrderByUid();
 
     /**
      * Find positions with a specific status.
@@ -64,7 +64,7 @@ public interface PositionRepository extends JpaRepository<Position, Long>, JpaSp
      * @param strategyId strategy id
      * @return positions
      */
-    @Query("SELECT coalesce(max(p.positionId), 0) FROM Position p where p.strategy.id = :strategyId")
+    @Query("SELECT coalesce(max(p.positionId), 0) FROM Position p where p.strategy.uid = :strategyId")
     Long getLastPositionIdUsedByStrategy(@Param("strategyId") Long strategyId);
 
     /**
@@ -75,7 +75,7 @@ public interface PositionRepository extends JpaRepository<Position, Long>, JpaSp
      */
     @Transactional
     @Modifying
-    @Query("update Position p set p.stopGainPercentageRule = :value where p.id = :id")
+    @Query("update Position p set p.stopGainPercentageRule = :value where p.uid = :id")
     void updateStopGainRule(@Param("id") Long id, @Param("value") Float value);
 
     /**
@@ -86,7 +86,7 @@ public interface PositionRepository extends JpaRepository<Position, Long>, JpaSp
      */
     @Transactional
     @Modifying
-    @Query("update Position p set p.stopLossPercentageRule = :value where p.id = :id")
+    @Query("update Position p set p.stopLossPercentageRule = :value where p.uid = :id")
     void updateStopLossRule(@Param("id") Long id, @Param("value") Float value);
 
     /**
@@ -97,7 +97,7 @@ public interface PositionRepository extends JpaRepository<Position, Long>, JpaSp
      */
     @Transactional
     @Modifying
-    @Query("update Position p set p.autoClose = :value where p.id = :id")
+    @Query("update Position p set p.autoClose = :value where p.uid = :id")
     void updateAutoClose(@Param("id") Long id, @Param("value") boolean value);
 
     /**
@@ -108,7 +108,7 @@ public interface PositionRepository extends JpaRepository<Position, Long>, JpaSp
      */
     @Transactional
     @Modifying
-    @Query("update Position p set p.forceClosing = :value where p.id = :id")
+    @Query("update Position p set p.forceClosing = :value where p.uid = :id")
     void updateForceClosing(@Param("id") Long id, @Param("value") boolean value);
 
 }

@@ -47,9 +47,9 @@ public class Order extends BaseDomain {
 
     /** Technical ID. */
     @Id
-    @Column(name = "ID")
+    @Column(name = "UID")
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private Long uid;
 
     /** An identifier set by the exchange that uniquely identifies the order. */
     @Column(name = "ORDER_ID")
@@ -143,7 +143,7 @@ public class Order extends BaseDomain {
         }
         final Order that = (Order) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.uid, that.uid)
                 .append(this.orderId, that.orderId)
                 .append(this.type, that.type)
                 .append(this.currencyPair, that.currencyPair)

@@ -31,7 +31,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class OrderDTO {
 
     /** Technical id. */
-    Long id;
+    Long uid;
 
     /** An identifier set by the exchange that uniquely identifies the order. */
     String orderId;

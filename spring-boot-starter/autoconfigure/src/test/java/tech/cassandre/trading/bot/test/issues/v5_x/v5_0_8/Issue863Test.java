@@ -72,7 +72,7 @@ public class Issue863Test extends BaseTest {
         final PositionCreationResultDTO creationResult1 = strategy.createLongPosition(ETH_BTC,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
-        final long position1Id = creationResult1.getPosition().getId();
+        final long position1Id = creationResult1.getPosition().getUid();
         assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getOrderId());
 
         // =============================================================================================================
@@ -81,7 +81,7 @@ public class Issue863Test extends BaseTest {
         final PositionCreationResultDTO creationResult2 = strategy.createLongPosition(ETH_BTC,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
-        final long position2Id = creationResult2.getPosition().getId();
+        final long position2Id = creationResult2.getPosition().getUid();
         assertEquals("ORDER00020", creationResult2.getPosition().getOpeningOrder().getOrderId());
         strategy.setAutoClose(position2Id, false);
 

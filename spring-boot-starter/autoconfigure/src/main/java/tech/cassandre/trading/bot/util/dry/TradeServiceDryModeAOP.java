@@ -275,7 +275,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             final BigDecimal augmentation = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
                                                     .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
-                                            orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().add(augmentation));
+                                            orderRepository.updateAmount(orderDTO.getUid(), openingTrade.getAmountValue().add(augmentation));
                                             tradePrices.put(orderDTO.getOrderId(), positionDTO.get().getOpeningOrder().getMarketPriceValue().divide(openingTrade.getAmountValue().add(augmentation), BIGINTEGER_SCALE, FLOOR));
 
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
@@ -299,7 +299,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             final BigDecimal reduction = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))
                                                     .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
-                                            orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().subtract(reduction));
+                                            orderRepository.updateAmount(orderDTO.getUid(), openingTrade.getAmountValue().subtract(reduction));
                                             tradePrices.put(orderDTO.getOrderId(), positionDTO.get().getOpeningOrder().getMarketPriceValue().divide(openingTrade.getAmountValue().subtract(reduction), BIGINTEGER_SCALE, FLOOR));
                                         }
                                         // =====================================================================================

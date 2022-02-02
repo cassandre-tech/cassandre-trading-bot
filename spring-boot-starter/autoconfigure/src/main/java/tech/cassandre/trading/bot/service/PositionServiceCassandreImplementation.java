@@ -120,7 +120,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
 
             // =========================================================================================================
             // Creates the position dto.
-            PositionDTO p = new PositionDTO(position.getId(), type, strategy.getStrategyDTO(), currencyPair, amount, orderCreationResult.getOrder(), rules);
+            PositionDTO p = new PositionDTO(position.getUid(), type, strategy.getStrategyDTO(), currencyPair, amount, orderCreationResult.getOrder(), rules);
             positionRepository.save(POSITION_MAPPER.mapToPosition(p));
             logger.debug("Position {} opened with order {}",
                     p.getPositionId(),
@@ -209,7 +209,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     @Override
     public final Set<PositionDTO> getPositions() {
         logger.debug("Retrieving all positions");
-        return positionRepository.findByOrderById().stream()
+        return positionRepository.findByOrderByUid().stream()
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
@@ -227,7 +227,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
         return positionRepository.findByStatusIn(Stream.of(OPENING, OPENED).toList())
                 .stream()
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toMap(PositionDTO::getId, PositionDTO::getAmountToLock, (key, value) -> key, HashMap::new));
+                .collect(Collectors.toMap(PositionDTO::getUid, PositionDTO::getAmountToLock, (key, value) -> key, HashMap::new));
     }
 
     @Override

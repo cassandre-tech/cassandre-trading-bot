@@ -36,12 +36,12 @@ public class OrderDataFetcher extends BaseDataFetcher {
     /**
      * Returns the order with the corresponding id value.
      *
-     * @param id id
+     * @param uid uid
      * @return order
      */
     @DgsQuery
-    public OrderDTO order(@InputArgument final long id) {
-        return orderRepository.findById(id)
+    public OrderDTO order(@InputArgument final long uid) {
+        return orderRepository.findById(uid)
                 .map(ORDER_MAPPER::mapToOrderDTO)
                 .orElse(null);
     }

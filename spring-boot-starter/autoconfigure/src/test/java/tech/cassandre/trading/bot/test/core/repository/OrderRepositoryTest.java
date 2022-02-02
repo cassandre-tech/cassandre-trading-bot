@@ -46,11 +46,11 @@ public class OrderRepositoryTest extends BaseTest {
 
         // Order 1.
         Order o = orders.next();
-        assertEquals(1, o.getId());
+        assertEquals(1, o.getUid());
         assertEquals("BACKUP_ORDER_01", o.getOrderId());
         assertEquals(ASK, o.getType());
         assertNotNull(o.getStrategy());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals("ETH/BTC", o.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.000005").compareTo(o.getAmount().getValue()));
@@ -74,11 +74,11 @@ public class OrderRepositoryTest extends BaseTest {
 
         // Order 2.
         o = orders.next();
-        assertEquals(2, o.getId());
+        assertEquals(2, o.getUid());
         assertEquals("BACKUP_ORDER_02", o.getOrderId());
         assertEquals(BID, o.getType());
         assertNotNull(o.getStrategy());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals("USDT/BTC", o.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.000015").compareTo(o.getAmount().getValue()));

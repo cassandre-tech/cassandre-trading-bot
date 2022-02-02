@@ -83,7 +83,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 1.
         TradeDTO t = trades.next();
-        assertEquals(1, t.getId());
+        assertEquals(1, t.getUid());
         assertEquals("TRADE_0000001", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -96,7 +96,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 2.
         t = trades.next();
-        assertEquals(2, t.getId());
+        assertEquals(2, t.getUid());
         assertEquals("TRADE_0000002", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -109,7 +109,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 3.
         t = trades.next();
-        assertEquals(3, t.getId());
+        assertEquals(3, t.getUid());
         assertEquals("TRADE_0000003", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000002", t.getOrderId());
@@ -122,7 +122,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 4.
         t = trades.next();
-        assertEquals(4, t.getId());
+        assertEquals(4, t.getUid());
         assertEquals("TRADE_0000004", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -135,7 +135,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 5.
         t = trades.next();
-        assertEquals(5, t.getId());
+        assertEquals(5, t.getUid());
         assertEquals("TRADE_0000005", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -148,7 +148,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 6.
         t = trades.next();
-        assertEquals(6, t.getId());
+        assertEquals(6, t.getUid());
         assertEquals("TRADE_0000006", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -161,7 +161,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 7.
         t = trades.next();
-        assertEquals(7, t.getId());
+        assertEquals(7, t.getUid());
         assertEquals("TRADE_0000008", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -174,7 +174,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 8.
         t = trades.next();
-        assertEquals(3, t.getId());
+        assertEquals(3, t.getUid());
         assertEquals("TRADE_0000003", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000002", t.getOrderId());
@@ -201,7 +201,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000001.
         final Optional<TradeDTO> t1 = strategy.getTradeByTradeId("TRADE_0000001");
         assertTrue(t1.isPresent());
-        assertEquals(1, t1.get().getId());
+        assertEquals(1, t1.get().getUid());
         assertEquals("TRADE_0000001", t1.get().getTradeId());
         assertEquals(BID, t1.get().getType());
         assertEquals("ORDER_0000001", t1.get().getOrderId());
@@ -215,7 +215,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000002.
         final Optional<TradeDTO> t2 = strategy.getTradeByTradeId("TRADE_0000002");
         assertTrue(t2.isPresent());
-        assertEquals(2, t2.get().getId());
+        assertEquals(2, t2.get().getUid());
         assertEquals("TRADE_0000002", t2.get().getTradeId());
         assertEquals(BID, t2.get().getType());
         assertEquals("ORDER_0000001", t2.get().getOrderId());
@@ -229,7 +229,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000003 - The trade 3 was received two times so data have been updated.
         final Optional<TradeDTO> t3 = strategy.getTradeByTradeId("TRADE_0000003");
         assertTrue(t3.isPresent());
-        assertEquals(3, t3.get().getId());
+        assertEquals(3, t3.get().getUid());
         assertEquals("TRADE_0000003", t3.get().getTradeId());
         assertEquals(BID, t3.get().getType());
         assertEquals("ORDER_0000002", t3.get().getOrderId());
@@ -243,7 +243,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000004.
         final Optional<TradeDTO> t4 = strategy.getTradeByTradeId("TRADE_0000004");
         assertTrue(t4.isPresent());
-        assertEquals(4, t4.get().getId());
+        assertEquals(4, t4.get().getUid());
         assertEquals("TRADE_0000004", t4.get().getTradeId());
         assertEquals(BID, t4.get().getType());
         assertEquals("ORDER_0000001", t4.get().getOrderId());
@@ -257,7 +257,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000005.
         final Optional<TradeDTO> t5 = strategy.getTradeByTradeId("TRADE_0000005");
         assertTrue(t5.isPresent());
-        assertEquals(5, t5.get().getId());
+        assertEquals(5, t5.get().getUid());
         assertEquals("TRADE_0000005", t5.get().getTradeId());
         assertEquals(BID, t5.get().getType());
         assertEquals("ORDER_0000001", t5.get().getOrderId());
@@ -271,7 +271,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000006.
         final Optional<TradeDTO> t6 = strategy.getTradeByTradeId("TRADE_0000006");
         assertTrue(t6.isPresent());
-        assertEquals(6, t6.get().getId());
+        assertEquals(6, t6.get().getUid());
         assertEquals("TRADE_0000006", t6.get().getTradeId());
         assertEquals(BID, t6.get().getType());
         assertEquals("ORDER_0000001", t6.get().getOrderId());
@@ -285,7 +285,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000008.
         final Optional<TradeDTO> t8 = strategy.getTradeByTradeId("TRADE_0000008");
         assertTrue(t8.isPresent());
-        assertEquals(7, t8.get().getId());
+        assertEquals(7, t8.get().getUid());
         assertEquals("TRADE_0000008", t8.get().getTradeId());
         assertEquals(BID, t8.get().getType());
         assertEquals("ORDER_0000001", t8.get().getOrderId());

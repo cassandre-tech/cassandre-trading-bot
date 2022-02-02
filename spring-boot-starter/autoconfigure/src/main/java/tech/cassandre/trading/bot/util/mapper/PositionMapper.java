@@ -29,7 +29,7 @@ public interface PositionMapper {
     @Mapping(target = "updatedOn", ignore = true)
     Position mapToPosition(PositionDTO source);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "uid", ignore = true)
     @Mapping(target = "strategy", ignore = true)
     @Mapping(target = "positionId", ignore = true)
     @Mapping(target = "stopGainPercentageRule", ignore = true)

@@ -1,11 +1,11 @@
 -- =====================================================================================================================
 -- Insert strategies.
-INSERT INTO STRATEGIES (ID, STRATEGY_ID, TYPE, NAME)
+INSERT INTO STRATEGIES (UID, STRATEGY_ID, TYPE, NAME)
 VALUES (1, '01', 'BASIC_STRATEGY', 'My strategy');
 
 -- =====================================================================================================================
 -- Insert orders.
-INSERT INTO ORDERS (ID, ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS,
+INSERT INTO ORDERS (UID, ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS,
                     CUMULATIVE_AMOUNT_VALUE, CUMULATIVE_AMOUNT_CURRENCY, AVERAGE_PRICE_VALUE, AVERAGE_PRICE_CURRENCY,
                     LEVERAGE, LIMIT_PRICE_VALUE, LIMIT_PRICE_CURRENCY, MARKET_PRICE_VALUE, MARKET_PRICE_CURRENCY, FK_STRATEGY_ID)
 VALUES -- Order BACKUP_ORDER_01 (useless).
@@ -44,7 +44,7 @@ VALUES -- Order BACKUP_ORDER_01 (useless).
 
 -- =====================================================================================================================
 -- Insert positions.
-INSERT INTO POSITIONS (ID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY,
+INSERT INTO POSITIONS (UID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY,
                        RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, FK_OPENING_ORDER_ID,
                        FK_CLOSING_ORDER_ID, LOWEST_GAIN_PRICE_VALUE, LOWEST_GAIN_PRICE_CURRENCY,
                        HIGHEST_GAIN_PRICE_VALUE, HIGHEST_GAIN_PRICE_CURRENCY, LATEST_GAIN_PRICE_VALUE,
@@ -66,7 +66,7 @@ VALUES -- Position 1 : Opening, no rules, waiting for BACKUP_OPENING_ORDER_01 to
 
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO TRADES (ID, TRADE_ID, FK_ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR,
+INSERT INTO TRADES (UID, TRADE_ID, FK_ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR,
                     PRICE_VALUE, PRICE_CURRENCY, TIMESTAMP, FEE_VALUE, FEE_CURRENCY, USER_REFERENCE)
 VALUES -- note : No trade for order BACKUP_OPENING_ORDER_01 - This is why position 1 has the opening status.
        -- Order BACKUP_TRADE_01 - Trade from the order buying BACKUP_OPENING_ORDER_02.

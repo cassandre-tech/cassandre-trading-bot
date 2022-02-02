@@ -37,8 +37,8 @@ public class ImportedTicker {
 
     /** Technical ID. */
     @Id
-    @Column(name = "ID")
-    private Long id;
+    @Column(name = "UID")
+    private Long uid;
 
     /** The currency-pair. */
     @CsvBindByName(column = "CURRENCY_PAIR")
@@ -128,14 +128,14 @@ public class ImportedTicker {
             return false;
         }
         ImportedTicker that = (ImportedTicker) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(uid, that.uid);
     }
 
     @Override
     @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(uid)
                 .toHashCode();
     }
 

@@ -50,7 +50,7 @@ import static tech.cassandre.trading.bot.util.math.MathConstants.ONE_HUNDRED_BIG
 public class PositionDTO {
 
     /** Technical ID. */
-    private final long id;
+    private final long uid;
 
     /** An identifier that uniquely identifies the position. */
     private final long positionId;
@@ -109,7 +109,7 @@ public class PositionDTO {
                        final BigDecimal newAmount,
                        final OrderDTO newOpenOrder,
                        final PositionRulesDTO newRules) {
-        this.id = newId;
+        this.uid = newId;
         this.type = newType;
         this.positionId = newStrategy.getNextPositionId();
         this.strategy = newStrategy;
@@ -393,7 +393,7 @@ public class PositionDTO {
     public final void closePositionWithOrder(final OrderDTO newCloseOrder) {
         // This method should only be called when the position is in the OPENED status.
         if (getStatus() != OPENED) {
-            throw new PositionException("Impossible to close position " + id + " because of its status " + getStatus());
+            throw new PositionException("Impossible to close position " + uid + " because of its status " + getStatus());
         }
         closingOrder = newCloseOrder;
     }
@@ -581,13 +581,13 @@ public class PositionDTO {
                     }
                     break;
                 case OPENING_FAILURE:
-                    value = "Position " + getId() + " - Opening failure";
+                    value = "Position " + this.getUid() + " - Opening failure";
                     break;
                 case CLOSING:
                     value += " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
                     break;
                 case CLOSING_FAILURE:
-                    value = "Position " + getId() + " - Closing failure";
+                    value = "Position " + this.getUid() + " - Closing failure";
                     break;
                 case CLOSED:
                     final GainDTO gain = getGain();
@@ -598,12 +598,12 @@ public class PositionDTO {
                     }
                     break;
                 default:
-                    value = "Incorrect state for position " + getId();
+                    value = "Incorrect state for position " + this.getUid();
                     break;
             }
             return value;
         } catch (Exception e) {
-            return "Position " + getId() + " (error in getDescription() method)";
+            return "Position " + this.getUid() + " (error in getDescription() method)";
         }
     }
 
@@ -629,7 +629,7 @@ public class PositionDTO {
         }
         final PositionDTO that = (PositionDTO) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.uid, that.uid)
                 .append(this.positionId, that.positionId)
                 .append(this.type, that.type)
                 .append(this.currencyPair, that.currencyPair)
@@ -648,7 +648,7 @@ public class PositionDTO {
     @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(uid)
                 .toHashCode();
     }
 

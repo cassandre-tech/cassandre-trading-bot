@@ -21,7 +21,7 @@ public interface OrderMapper {
     // XChange to DTO.
 
     @Mapping(source = "id", target = "orderId")
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "uid", ignore = true)
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapLimitOrderToOrderDTOAmount")
     @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapLimitOrderToOrderDTOCumulativeAmount")
     @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapLimitOrderToOrderDTOAveragePrice")

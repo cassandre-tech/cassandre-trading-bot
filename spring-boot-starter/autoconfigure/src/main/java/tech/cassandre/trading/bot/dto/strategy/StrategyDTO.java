@@ -22,7 +22,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class StrategyDTO {
 
     /** Technical id. */
-    Long id;
+    Long uid;
 
     /** An identifier that uniquely identifies the strategy - Comes from the Java annotation. */
     String strategyId;
@@ -66,7 +66,7 @@ public class StrategyDTO {
         }
         final StrategyDTO that = (StrategyDTO) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.uid, that.uid)
                 .append(this.strategyId, that.strategyId)
                 .append(this.type, that.type)
                 .isEquals();
@@ -76,7 +76,7 @@ public class StrategyDTO {
     @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(uid)
                 .toHashCode();
     }
 

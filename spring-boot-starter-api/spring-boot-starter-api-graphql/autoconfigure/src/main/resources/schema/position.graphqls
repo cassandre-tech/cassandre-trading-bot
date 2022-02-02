@@ -1,7 +1,7 @@
 "A position is the amount of a security, commodity or currency which is owned by an individual, dealer, institution, or other fiscal entity."
 type Position {
-    "Technical ID."
-    id: Int!
+    "Position unique ID."
+    uid: Int!
     "An identifier that uniquely identifies the position."
     positionId: Int!
     "Position type (Long or Short)."

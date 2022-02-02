@@ -55,12 +55,12 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
      * Update order amount.
      * WARNING: Only used by the dry mode, please do not use.
      *
-     * @param id    order id
+     * @param uid    order uid
      * @param value new amount
      */
     @Transactional
     @Modifying
-    @Query("update Order o set o.amount.value = :value where o.id = :id")
-    void updateAmount(@Param("id") Long id, @Param("value") BigDecimal value);
+    @Query("update Order o set o.amount.value = :value where o.uid = :uid")
+    void updateAmount(@Param("uid") Long uid, @Param("value") BigDecimal value);
 
 }

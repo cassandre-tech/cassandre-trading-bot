@@ -179,7 +179,7 @@ public class TradeServiceTest extends BaseTest {
                 .filter(trade -> trade.getOrderId().equals(result1.getOrder().getOrderId()))
                 .findFirst();
         assertTrue(t.isPresent());
-        assertNull(t.get().getId());
+        assertNull(t.get().getUid());
         assertNotNull(t.get().getTradeId());
         assertEquals(BID, t.get().getType());
         assertEquals(result1.getOrderId(), t.get().getOrderId());

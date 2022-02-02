@@ -37,7 +37,7 @@ public class StrategyTest {
         // Test existing strategy.
         final Optional<Strategy> s = strategyRepository.findByStrategyId("01");
         assertTrue(s.isPresent());
-        assertEquals(1, s.get().getId());
+        assertEquals(1, s.get().getUid());
         assertEquals("01", s.get().getStrategyId());
         assertEquals("Testable strategy", s.get().getName());
 

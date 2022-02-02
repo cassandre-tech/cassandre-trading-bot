@@ -44,9 +44,9 @@ public class Position extends BaseDomain {
 
     /** Technical ID. */
     @Id
-    @Column(name = "ID")
+    @Column(name = "UID")
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private Long uid;
 
     /** An identifier that uniquely identifies the position for a strategy. */
     @Column(name = "POSITION_ID")
@@ -148,7 +148,7 @@ public class Position extends BaseDomain {
         }
         final Position that = (Position) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.uid, that.uid)
                 .append(this.positionId, that.positionId)
                 .append(this.type, that.type)
                 .append(this.currencyPair, that.currencyPair)
@@ -170,7 +170,7 @@ public class Position extends BaseDomain {
     @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(uid)
                 .toHashCode();
     }
 

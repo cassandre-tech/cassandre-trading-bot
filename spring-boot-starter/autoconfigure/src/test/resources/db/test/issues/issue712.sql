@@ -1,11 +1,11 @@
 -- =====================================================================================================================
 -- Insert strategies.
-INSERT INTO STRATEGIES (ID, STRATEGY_ID, TYPE, NAME)
+INSERT INTO STRATEGIES (uid, STRATEGY_ID, TYPE, NAME)
 VALUES (1, '01', 'BASIC_STRATEGY', 'My strategy');
 
 -- =====================================================================================================================
 -- Insert orders.
-INSERT INTO ORDERS (ID, ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS,
+INSERT INTO ORDERS (uid, ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS,
                     CUMULATIVE_AMOUNT_VALUE, CUMULATIVE_AMOUNT_CURRENCY, AVERAGE_PRICE_VALUE, AVERAGE_PRICE_CURRENCY,
                     LEVERAGE, LIMIT_PRICE_VALUE, LIMIT_PRICE_CURRENCY, FK_STRATEGY_ID)
 VALUES -- Order ORDER_0000001.

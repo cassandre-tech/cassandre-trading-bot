@@ -34,7 +34,7 @@ public class ConfigurationDataFetcherTest {
         String apiVersion = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { configuration { apiVersion } }",
                 "data.configuration.apiVersion");
-        assertEquals(apiVersion, "1.0");
+        assertEquals("1.1", apiVersion);
     }
 
 }

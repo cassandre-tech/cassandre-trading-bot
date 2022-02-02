@@ -43,7 +43,7 @@ public class TradeRepositoryTest extends BaseTest {
 
         // Trade 01.
         Trade t = trades.next();
-        assertEquals(1, t.getId());
+        assertEquals(1, t.getUid());
         assertEquals("BACKUP_TRADE_01", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("BACKUP_OPENING_ORDER_02", t.getOrder().getOrderId());
@@ -64,7 +64,7 @@ public class TradeRepositoryTest extends BaseTest {
 
         // Trade 02.
         t = trades.next();
-        assertEquals(2, t.getId());
+        assertEquals(2, t.getUid());
         assertEquals("BACKUP_TRADE_02", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("BACKUP_OPENING_ORDER_03", t.getOrder().getOrderId());
@@ -85,7 +85,7 @@ public class TradeRepositoryTest extends BaseTest {
 
         // Trade 03.
         t = trades.next();
-        assertEquals(3, t.getId());
+        assertEquals(3, t.getUid());
         assertEquals("BACKUP_TRADE_03", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("BACKUP_OPENING_ORDER_04", t.getOrder().getOrderId());
@@ -106,7 +106,7 @@ public class TradeRepositoryTest extends BaseTest {
 
         // Trade 04.
         t = trades.next();
-        assertEquals(4, t.getId());
+        assertEquals(4, t.getUid());
         assertEquals("BACKUP_TRADE_04", t.getTradeId());
         assertEquals(ASK, t.getType());
         assertEquals("BACKUP_CLOSING_ORDER_01", t.getOrder().getOrderId());
@@ -127,7 +127,7 @@ public class TradeRepositoryTest extends BaseTest {
 
         // Trade 05.
         t = trades.next();
-        assertEquals(5, t.getId());
+        assertEquals(5, t.getUid());
         assertEquals("BACKUP_TRADE_05", t.getTradeId());
         assertEquals(ASK, t.getType());
         assertEquals("BACKUP_CLOSING_ORDER_02", t.getOrder().getOrderId());

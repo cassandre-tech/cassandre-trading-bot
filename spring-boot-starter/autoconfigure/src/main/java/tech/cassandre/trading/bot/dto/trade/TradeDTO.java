@@ -45,7 +45,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class TradeDTO {
 
     /** Technical id. */
-    Long id;
+    Long uid;
 
     /** An identifier set by the exchange that uniquely identifies the trade. */
     String tradeId;
