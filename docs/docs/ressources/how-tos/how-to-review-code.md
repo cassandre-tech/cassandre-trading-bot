@@ -13,3 +13,5 @@ description: How to review Cassandre code
 * When a variable is DTO, say it in the name like `carDTO`.
 * Check logs texts.
 * No point at the end of logs texts.
+* Add @ExcludeFromCoverageGeneratedReport when it's required.
+* Use of Optional.ofNullable() instead of "if (x != null) return x.getAnyValue()".

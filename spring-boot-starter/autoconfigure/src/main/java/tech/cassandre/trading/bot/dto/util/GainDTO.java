@@ -31,7 +31,6 @@ public class GainDTO {
     public static final GainDTO ZERO = GainDTO.builder()
             .percentage(0)
             .amount(CurrencyAmountDTO.ZERO)
-            .fees(CurrencyAmountDTO.ZERO)
             .build();
 
     /** Gain made (percentage). */
@@ -47,42 +46,6 @@ public class GainDTO {
     /** Closing order fees (list coming from trade fees). */
     @Singular
     List<CurrencyAmountDTO> closingOrderFees;
-
-    /** Fees. */
-    CurrencyAmountDTO fees;
-
-    /**
-     * Getter netAmount.
-     * This method cannot be used as fees are not necessary the same currency as value.
-     *
-     * @return netAmount
-     */
-    @Deprecated
-    public CurrencyAmountDTO getNetAmount() {
-        if (amount != null && fees != null) {
-            return CurrencyAmountDTO.builder()
-                    .value(amount.getValue().subtract(fees.getValue()))
-                    .currency(amount.getCurrency())
-                    .build();
-        } else {
-            return CurrencyAmountDTO.ZERO;
-        }
-    }
-
-    /**
-     * Getter fees.
-     * This method should not be used anymore as a bug was found in issue 850.
-     * A gain is linked to a position and a position has an opening order and a closing order.
-     * the opening order trades and the closing order trades may have different currencies!
-     * So it's not possible to return only a CurrencyAmountDTO!
-     * Only a HashMap of currency and amount.
-     *
-     * @return fees
-     */
-    @Deprecated
-    public final CurrencyAmountDTO getFees() {
-        return fees;
-    }
 
     /**
      * Returns the sum of fees from opening and closing orders.

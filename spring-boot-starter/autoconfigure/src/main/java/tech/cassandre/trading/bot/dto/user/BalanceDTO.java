@@ -14,6 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 /**
  * DTO representing a balance in a {@link CurrencyDTO} for an {@link AccountDTO}.
+ * {@link UserDTO} can have several {@link AccountDTO} and each account can have several {@link BalanceDTO}.
  */
 @Value
 @Builder

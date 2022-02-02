@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.dto.strategy;
 
 /**
- * Order types for {@link StrategyDTO}.
+ * Strategy types for {@link StrategyDTO}.
  */
 public enum StrategyTypeDTO {
 

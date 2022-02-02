@@ -57,7 +57,6 @@ public class Issue510Test extends BaseTest {
         assertEquals(1, fees.size());
         assertNull(position.get().getGain().getOrdersFees().get(BTC));
         assertNotNull(position.get().getGain().getOrdersFees().get(USDT));
-        assertEquals(USDT, position.get().getGain().getFees().getCurrency());
         assertNotNull(position.get().getGain().getOrdersFees().get(USDT));
     }
 

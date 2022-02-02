@@ -4,6 +4,10 @@ import lombok.Getter;
 
 /**
  * Order creation result for {@link OrderDTO}.
+ * If successful (isSuccessful() == true), you can get the order with getOrder().
+ * if not successful (isSuccessful() == false), you can get:
+ * - The error message with getErrorMessage().
+ * - The exception causing the error with getException().
  */
 @Getter
 public final class OrderCreationResultDTO {
@@ -12,10 +16,10 @@ public final class OrderCreationResultDTO {
     private OrderDTO order;
 
     /** Error message (filled if order creation failed). */
-    private final String errorMessage;
+    private String errorMessage;
 
     /** Exception (filled if order creation failed). */
-    private final Exception exception;
+    private Exception exception;
 
     /**
      * Constructor for successful order creation.
@@ -24,8 +28,6 @@ public final class OrderCreationResultDTO {
      */
     public OrderCreationResultDTO(final OrderDTO newOrder) {
         this.order = newOrder;
-        this.errorMessage = null;
-        this.exception = null;
     }
 
     /**
@@ -49,11 +51,12 @@ public final class OrderCreationResultDTO {
     }
 
     /**
-     * Getter orderId.
+     * Getter order id.
      *
-     * @return orderId
+     * @return id
      */
     public String getOrderId() {
+        // TODO change to UID.
         if (getOrder() != null) {
             return getOrder().getOrderId();
         } else {

@@ -30,7 +30,6 @@ public class GainDTOTest {
         final GainDTO gain2 = GainDTO.builder()
                 .percentage(1)
                 .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
-                .fees(new CurrencyAmountDTO(new BigDecimal("3"), BTC))
                 // Opening order fees.
                 // 4.6 BTC
                 // 0.5 ETH
@@ -70,19 +69,16 @@ public class GainDTOTest {
         GainDTO gain = GainDTO.builder()
                 .percentage(2)
                 .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
-                .fees(new CurrencyAmountDTO(new BigDecimal("3"), BTC))
                 .build();
 
         GainDTO inferiorGain = GainDTO.builder()
                 .percentage(1)
                 .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
-                .fees(new CurrencyAmountDTO(new BigDecimal("3"), BTC))
                 .build();
 
         GainDTO superiorGain = GainDTO.builder()
                 .percentage(3)
                 .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
-                .fees(new CurrencyAmountDTO(new BigDecimal("3"), BTC))
                 .build();
 
         assertFalse(gain.isInferiorTo(inferiorGain));
@@ -95,19 +91,16 @@ public class GainDTOTest {
         GainDTO gain = GainDTO.builder()
                 .percentage(2)
                 .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
-                .fees(new CurrencyAmountDTO(new BigDecimal("3"), BTC))
                 .build();
 
         GainDTO inferiorGain = GainDTO.builder()
                 .percentage(1)
                 .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
-                .fees(new CurrencyAmountDTO(new BigDecimal("3"), BTC))
                 .build();
 
         GainDTO superiorGain = GainDTO.builder()
                 .percentage(3)
                 .amount(new CurrencyAmountDTO(new BigDecimal("2"), BTC))
-                .fees(new CurrencyAmountDTO(new BigDecimal("3"), BTC))
                 .build();
 
         assertTrue(gain.isSuperiorTo(inferiorGain));

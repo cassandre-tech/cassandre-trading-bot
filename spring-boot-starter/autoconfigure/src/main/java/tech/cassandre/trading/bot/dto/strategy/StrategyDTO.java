@@ -24,16 +24,16 @@ public class StrategyDTO {
     /** Technical id. */
     Long id;
 
-    /** An identifier that uniquely identifies the strategy. */
+    /** An identifier that uniquely identifies the strategy - Comes from the Java annotation. */
     String strategyId;
 
-    /** Strategy type. */
+    /** Strategy type - Comes from the Java strategy inheritence. */
     StrategyTypeDTO type;
 
-    /** Strategy name. */
+    /** Strategy name - Comes from the Java annotation. */
     String name;
 
-    /** Last position id used. */
+    /** Last strategyId used in database - Used to generate the next strategyId when there is a creation. */
     @ToString.Exclude
     AtomicLong lastPositionIdUsed = new AtomicLong();
 

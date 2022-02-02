@@ -41,6 +41,8 @@ import static org.knowm.xchange.dto.Order.OrderStatus.FILLED;
 import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.util.math.MathConstants.BIGINTEGER_SCALE;
+import static tech.cassandre.trading.bot.util.math.MathConstants.ONE_HUNDRED_BIG_DECIMAL;
 
 /**
  * AOP for trade service in dry mode.
@@ -50,9 +52,6 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.CLOSED;
 @ConditionalOnExpression("${cassandre.trading.bot.exchange.modes.dry:true}")
 @RequiredArgsConstructor
 public class TradeServiceDryModeAOP extends BaseService {
-
-    /** Big integer scale. */
-    private static final int BIGINTEGER_SCALE = 8;
 
     /** Dry order prefix. */
     private static final String DRY_ORDER_PREFIX = "DRY_ORDER_";
@@ -71,9 +70,6 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     /** User service - dry mode. */
     private final UserServiceDryModeAOP userService;
-
-    /** 100%. */
-    private static final BigDecimal ONE_HUNDRED_BIG_DECIMAL = new BigDecimal("100");
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createBuyMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
     public final OrderCreationResultDTO createBuyMarketOrder(final ProceedingJoinPoint pjp,

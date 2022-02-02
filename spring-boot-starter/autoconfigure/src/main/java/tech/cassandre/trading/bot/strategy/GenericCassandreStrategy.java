@@ -49,15 +49,13 @@ import java.util.stream.Collectors;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.FLOOR;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.util.math.MathConstants.BIGINTEGER_SCALE;
 
 /**
  * Generic Cassandre strategy implementation.
  */
 @SuppressWarnings("checkstyle:DesignForExtension")
 public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
-
-    /** Big integer scale. */
-    private static final int BIGINTEGER_SCALE = 8;
 
     /** Currency mapper. */
     protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);

@@ -6,32 +6,32 @@ package tech.cassandre.trading.bot.dto.position;
 public enum PositionStatusDTO {
 
     /**
-     * Opening - a position has been created, a buy order has been made but not yet completed.
+     * Opening - A position has been created, a buy order has been made but not yet completed.
      */
     OPENING,
 
     /**
-     * Opening failure - a position has been created, but the buy order did not succeed.
+     * Opening failure - A position has been created, but the buy order did not succeed.
      */
     OPENING_FAILURE,
 
     /**
-     * Opened - the buy order has been accepted.
+     * Opened - The buy order has been accepted.
      */
     OPENED,
 
     /**
-     * Closing - a sell order has been made but not yet completed.
+     * Closing - A sell order has been made but not yet completed.
      */
     CLOSING,
 
     /**
-     * Closing failure - the sell order did not succeed.
+     * Closing failure - The sell order did not succeed.
      */
     CLOSING_FAILURE,
 
     /**
-     * Closed - the sell order has been accepted.
+     * Closed - The sell order has been accepted.
      */
     CLOSED
 

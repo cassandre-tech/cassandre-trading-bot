@@ -596,8 +596,6 @@ public class PositionServiceTest extends BaseTest {
         assertEquals(50, gain.get().getPercentage());
         assertEquals(0, new BigDecimal("0.00001").compareTo(gain.get().getAmount().getValue()));
         assertEquals(BTC, gain.get().getAmount().getCurrency());
-        assertEquals(ZERO, gain.get().getFees().getValue());
-        assertEquals(BTC, gain.get().getFees().getCurrency());
     }
 
     @Test

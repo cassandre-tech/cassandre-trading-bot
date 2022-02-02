@@ -94,29 +94,21 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
         assertEquals(-4.696751117706299, lowestCalculatedGain.getPercentage());
         assertEquals(0, new BigDecimal("-0.9433000000000000").compareTo(lowestCalculatedGain.getAmount().getValue()));
         assertEquals(USDT, lowestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(lowestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, lowestCalculatedGain.getFees().getCurrency());
 
         GainDTO highestCalculatedGain = getGainValue(result.get("highestCalculatedGain"));
         assertEquals(5.908155918121338, highestCalculatedGain.getPercentage());
         assertEquals(0, new BigDecimal("1.1866").compareTo(highestCalculatedGain.getAmount().getValue()));
         assertEquals(USDT, highestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(highestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, highestCalculatedGain.getFees().getCurrency());
 
         GainDTO latestCalculatedGain = getGainValue(result.get("latestCalculatedGain"));
         assertEquals(6.002260208129883, latestCalculatedGain.getPercentage());
         assertEquals(0, new BigDecimal("1.2055").compareTo(latestCalculatedGain.getAmount().getValue()));
         assertEquals(USDT, latestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(latestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, latestCalculatedGain.getFees().getCurrency());
 
         GainDTO gain = getGainValue(result.get("gain"));
         assertEquals(5.93, gain.getPercentage());
         assertEquals(0, new BigDecimal("1.1911").compareTo(gain.getAmount().getValue()));
         assertEquals(USDT, gain.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("0.0413593").compareTo(gain.getFees().getValue()));
-        assertEquals(USDT, gain.getFees().getCurrency());
     }
 
     @Test

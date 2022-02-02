@@ -17,7 +17,8 @@ import java.util.Optional;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
- * DTO representing user information.
+ * DTO representing user information on the exchange.
+ * {@link UserDTO} can have several {@link AccountDTO} and each account can have several {@link BalanceDTO}.
  */
 @Value
 @Builder
@@ -25,7 +26,7 @@ import static lombok.AccessLevel.PRIVATE;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class UserDTO {
 
-    /** User ID (usually username). */
+    /** User ID (usually the exchange username). */
     String id;
 
     /** The accounts owned by the user. */
@@ -36,7 +37,7 @@ public class UserDTO {
     ZonedDateTime timestamp;
 
     /**
-     * Find an account with its id.
+     * Find an account by its id.
      *
      * @param accountId account id
      * @return account

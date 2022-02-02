@@ -313,10 +313,6 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                                     .value(gainAmount)
                                     .currency(currency)
                                     .build())
-                            .fees(CurrencyAmountDTO.builder()
-                                    .value(fees)
-                                    .currency(currency)
-                                    .build())
                             .openingOrderFees(openingOrdersFees)
                             .closingOrderFees(closingOrdersFees)
                             .build();
