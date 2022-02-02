@@ -54,7 +54,7 @@ public class PositionGainsServiceTest {
             Amount percentage : 30.08 % - ((147 - 113) / 113) * 100.
             Fees : 15 USDT.
         */
-        final Optional<PositionDTO> p1 = positionService.getPositionById(1L);
+        final Optional<PositionDTO> p1 = positionService.getPositionByUid(1L);
         assertTrue(p1.isPresent());
         final GainDTO gain1 = p1.get().getGain();
         // Gain (amount).
@@ -78,7 +78,7 @@ public class PositionGainsServiceTest {
             Amount percentage : -50 % - ((1 000 - 2 000) / 2 000) * 100.
             Fees : 10 BTC.
          */
-        final Optional<PositionDTO> p2 = positionService.getPositionById(2L);
+        final Optional<PositionDTO> p2 = positionService.getPositionByUid(2L);
         assertTrue(p2.isPresent());
         final GainDTO gain2 = p2.get().getGain();
         // Gain (amount).
@@ -102,7 +102,7 @@ public class PositionGainsServiceTest {
             Amount percentage : 25% - ((750 - 600) / 600) * 100.
             Fees : 11 USDT.
          */
-        final Optional<PositionDTO> p3 = positionService.getPositionById(3L);
+        final Optional<PositionDTO> p3 = positionService.getPositionByUid(3L);
         assertTrue(p3.isPresent());
         final GainDTO gain3 = p3.get().getGain();
         // Gain (amount).
@@ -118,15 +118,15 @@ public class PositionGainsServiceTest {
         assertEquals(USDT, gain3Fees.get(USDT).getCurrency());
 
         // There should be no gain for positions 4,5 & 6.
-        final Optional<PositionDTO> p4 = positionService.getPositionById(4L);
+        final Optional<PositionDTO> p4 = positionService.getPositionByUid(4L);
         assertTrue(p4.isPresent());
         assertEquals(0, p4.get().getGain().getPercentage());
         assertEquals(0, ZERO.compareTo(p4.get().getGain().getAmount().getValue()));
-        final Optional<PositionDTO> p5 = positionService.getPositionById(5L);
+        final Optional<PositionDTO> p5 = positionService.getPositionByUid(5L);
         assertTrue(p5.isPresent());
         assertEquals(0, p5.get().getGain().getPercentage());
         assertEquals(0, ZERO.compareTo(p5.get().getGain().getAmount().getValue()));
-        final Optional<PositionDTO> p6 = positionService.getPositionById(6L);
+        final Optional<PositionDTO> p6 = positionService.getPositionByUid(6L);
         assertTrue(p6.isPresent());
         assertEquals(0, p6.get().getGain().getPercentage());
         assertEquals(0, ZERO.compareTo(p6.get().getGain().getAmount().getValue()));
@@ -139,7 +139,7 @@ public class PositionGainsServiceTest {
             Amount percentage : -50%.
             Fees : 4 USDT.
          */
-        final Optional<PositionDTO> p7 = positionService.getPositionById(7L);
+        final Optional<PositionDTO> p7 = positionService.getPositionByUid(7L);
         assertTrue(p7.isPresent());
         final GainDTO gain7 = p7.get().getGain();
         // Gain (amount).

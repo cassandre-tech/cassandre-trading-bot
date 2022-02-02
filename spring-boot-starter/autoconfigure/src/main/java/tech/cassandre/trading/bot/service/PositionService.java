@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Service allowing you to manage your positions.
+ * Service managing positions.
  */
 public interface PositionService {
 
@@ -56,37 +56,45 @@ public interface PositionService {
     /**
      * Update position rules.
      *
-     * @param id       position id
-     * @param newRules new rules
+     * @param positionUid position uid
+     * @param newRules    new rules
      */
-    void updatePositionRules(long id, PositionRulesDTO newRules);
+    void updatePositionRules(long positionUid, PositionRulesDTO newRules);
 
     /**
-     * Close a position - This method is used by Cassandre internally.
+     * Close a position.
      *
-     * @param strategy strategy
-     * @param id       position id
-     * @param ticker   ticker
+     * @param strategy    strategy
+     * @param positionUid position uid
+     * @param ticker      ticker
      * @return order creation result
      */
-    OrderCreationResultDTO closePosition(GenericCassandreStrategy strategy, long id, TickerDTO ticker);
+    OrderCreationResultDTO closePosition(GenericCassandreStrategy strategy, long positionUid, TickerDTO ticker);
 
     /**
      * Set auto close value on a specific position.
      * If true, Cassandre will close the position according to rules.
-     * if false, Cassandre will never close the position.
+     * if false, Cassandre will never close the position itself.
      *
-     * @param id    position technical id
-     * @param value auto close value
+     * @param positionUid position uid
+     * @param value       auto close value
      */
-    void setAutoClose(long id, boolean value);
+    void setAutoClose(long positionUid, boolean value);
 
     /**
-     * Force a position to close (no matter the rules) - This method can be use by user code.
+     * Force a position to close (no matter the rules).
      *
-     * @param id position id
+     * @param positionUid position uid
      */
-    void forcePositionClosing(long id);
+    void forcePositionClosing(long positionUid);
+
+    /**
+     * Get position by position uid.
+     *
+     * @param positionUid position uid
+     * @return position
+     */
+    Optional<PositionDTO> getPositionByUid(long positionUid);
 
     /**
      * Get positions.
@@ -94,14 +102,6 @@ public interface PositionService {
      * @return position list
      */
     Set<PositionDTO> getPositions();
-
-    /**
-     * Get position by id.
-     *
-     * @param id id
-     * @return position
-     */
-    Optional<PositionDTO> getPositionById(long id);
 
     /**
      * Returns the amounts locked by each position.

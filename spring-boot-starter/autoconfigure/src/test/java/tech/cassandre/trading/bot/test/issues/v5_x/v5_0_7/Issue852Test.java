@@ -45,7 +45,7 @@ public class Issue852Test {
     @DisplayName("Base and quote precisions are not saved in database")
     public void baseAndQuotePrecisionManagementInPosition() {
         // Position 1 test (existing in database).
-        final Optional<PositionDTO> position1 = positionService.getPositionById(1);
+        final Optional<PositionDTO> position1 = positionService.getPositionByUid(1);
         assertTrue(position1.isPresent());
         assertEquals(new CurrencyDTO("SHIB"), position1.get().getCurrencyPair().getBaseCurrency());
         assertEquals(new CurrencyDTO("USDT"), position1.get().getCurrencyPair().getQuoteCurrency());
@@ -53,7 +53,7 @@ public class Issue852Test {
         assertEquals(2, position1.get().getCurrencyPair().getQuoteCurrencyPrecision());
 
         // Position 2 test (existing in database).
-        final Optional<PositionDTO> position2 = positionService.getPositionById(2);
+        final Optional<PositionDTO> position2 = positionService.getPositionByUid(2);
         assertTrue(position2.isPresent());
         assertEquals(new CurrencyDTO("ETH"), position2.get().getCurrencyPair().getBaseCurrency());
         assertEquals(new CurrencyDTO("BTC"), position2.get().getCurrencyPair().getQuoteCurrency());
@@ -71,7 +71,7 @@ public class Issue852Test {
                         .stopGainPercentage(1000f)   // 1 000% max gain.
                         .stopLossPercentage(100f)    // 100% max lost.
                         .build());
-        final Optional<PositionDTO> position3 = positionService.getPositionById(3);
+        final Optional<PositionDTO> position3 = positionService.getPositionByUid(3);
         assertTrue(position3.isPresent());
         assertEquals(new CurrencyDTO("EUR"), position3.get().getCurrencyPair().getBaseCurrency());
         assertEquals(new CurrencyDTO("SHIB"), position3.get().getCurrencyPair().getQuoteCurrency());

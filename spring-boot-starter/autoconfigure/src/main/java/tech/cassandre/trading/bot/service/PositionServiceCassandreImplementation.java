@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.service;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.domain.Position;
@@ -26,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,15 +40,14 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
+import static tech.cassandre.trading.bot.util.math.MathConstants.BIGINTEGER_SCALE;
+import static tech.cassandre.trading.bot.util.math.MathConstants.ONE_HUNDRED_BIG_DECIMAL;
 
 /**
  * Position service implementation.
  */
 @RequiredArgsConstructor
 public class PositionServiceCassandreImplementation extends BaseService implements PositionService {
-
-    /** Big decimal scale for division. */
-    private static final int SCALE = 8;
 
     /** Minimum amount for creating a position. */
     private static final BigDecimal MINIMUM_AMOUNT_FOR_POSITION = new BigDecimal("0.000000001");
@@ -63,12 +62,18 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     private final PositionFlux positionFlux;
 
     @Override
-    public final PositionCreationResultDTO createLongPosition(final GenericCassandreStrategy strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
+    public final PositionCreationResultDTO createLongPosition(@NonNull final GenericCassandreStrategy strategy,
+                                                              @NonNull final CurrencyPairDTO currencyPair,
+                                                              @NonNull final BigDecimal amount,
+                                                              @NonNull final PositionRulesDTO rules) {
         return createPosition(strategy, LONG, currencyPair, amount, rules);
     }
 
     @Override
-    public final PositionCreationResultDTO createShortPosition(final GenericCassandreStrategy strategy, final CurrencyPairDTO currencyPair, final BigDecimal amount, final PositionRulesDTO rules) {
+    public final PositionCreationResultDTO createShortPosition(@NonNull final GenericCassandreStrategy strategy,
+                                                               @NonNull final CurrencyPairDTO currencyPair,
+                                                               @NonNull final BigDecimal amount,
+                                                               @NonNull final PositionRulesDTO rules) {
         return createPosition(strategy, SHORT, currencyPair, amount, rules);
     }
 
@@ -82,11 +87,11 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
      * @param rules        rules
      * @return position creation result
      */
-    public final PositionCreationResultDTO createPosition(final GenericCassandreStrategy strategy,
-                                                          final PositionTypeDTO type,
-                                                          final CurrencyPairDTO currencyPair,
-                                                          final BigDecimal amount,
-                                                          final PositionRulesDTO rules) {
+    private PositionCreationResultDTO createPosition(final GenericCassandreStrategy strategy,
+                                                     final PositionTypeDTO type,
+                                                     final CurrencyPairDTO currencyPair,
+                                                     final BigDecimal amount,
+                                                     final PositionRulesDTO rules) {
         logger.debug("Creating a {} position for {} on {} with the rules: {}",
                 type.toString().toLowerCase(Locale.ROOT),
                 amount,
@@ -94,13 +99,13 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                 rules);
 
         // It's forbidden to create a position with a too small amount.
-        if (amount == null || MINIMUM_AMOUNT_FOR_POSITION.compareTo(amount) > 0) {
-            logger.error("Impossible to create a position for such a small amount");
+        if (MINIMUM_AMOUNT_FOR_POSITION.compareTo(amount) > 0) {
+            logger.error("Impossible to create a position for such a small amount ({})", amount);
             return new PositionCreationResultDTO("Impossible to create a position for such a small amount: " + amount, null);
         }
 
         // =============================================================================================================
-        // Creates the order.
+        // Creates the order on the exchange.
         final OrderCreationResultDTO orderCreationResult;
         if (type == LONG) {
             // Long position - we buy.
@@ -110,7 +115,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
             orderCreationResult = tradeService.createSellMarketOrder(strategy, currencyPair, amount);
         }
 
-        // If it works, creates the position.
+        // If it works, we create the position.
         if (orderCreationResult.isSuccessful()) {
             // =========================================================================================================
             // Creates the position in database.
@@ -127,7 +132,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                     orderCreationResult.getOrder().getOrderId());
 
             // =========================================================================================================
-            // Creates the result & emit the position.
+            // Emit the position, creates and return the position creation result.
             positionFlux.emitValue(p);
             return new PositionCreationResultDTO(p);
         } else {
@@ -137,35 +142,38 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     }
 
     @Override
-    public final void updatePositionRules(final long id, final PositionRulesDTO newRules) {
-        logger.debug("Update position {} with the rules: {}", id, newRules);
-        final Optional<Position> p = positionRepository.findById(id);
+    public final void updatePositionRules(final long positionUid, @NonNull final PositionRulesDTO newRules) {
+        logger.debug("Updating position {} with the rules: {}", positionUid, newRules);
+        final Optional<Position> p = positionRepository.findById(positionUid);
         // If position exists and position is not closed.
         if (p.isPresent() && p.get().getStatus() != CLOSED) {
             // Stop gain.
             if (newRules.isStopGainPercentageSet()) {
-                positionRepository.updateStopGainRule(id, newRules.getStopGainPercentage());
+                positionRepository.updateStopGainRule(positionUid, newRules.getStopGainPercentage());
             } else {
-                positionRepository.updateStopGainRule(id, null);
+                positionRepository.updateStopGainRule(positionUid, null);
             }
             // Stop loss.
             if (newRules.isStopLossPercentageSet()) {
-                positionRepository.updateStopLossRule(id, newRules.getStopLossPercentage());
+                positionRepository.updateStopLossRule(positionUid, newRules.getStopLossPercentage());
             } else {
-                positionRepository.updateStopLossRule(id, null);
+                positionRepository.updateStopLossRule(positionUid, null);
             }
         }
     }
 
     @Override
-    public final OrderCreationResultDTO closePosition(final GenericCassandreStrategy strategy, final long id, final TickerDTO ticker) {
-        final Optional<Position> position = positionRepository.findById(id);
+    public final OrderCreationResultDTO closePosition(@NonNull final GenericCassandreStrategy strategy,
+                                                      final long positionUid,
+                                                      @NonNull final TickerDTO ticker) {
+        logger.debug("Trying to close position {}.", positionUid);
+        final Optional<Position> position = positionRepository.findById(positionUid);
         if (position.isPresent()) {
             final PositionDTO positionDTO = POSITION_MAPPER.mapToPositionDTO(position.get());
-
             final OrderCreationResultDTO orderCreationResult;
-            // Here, we treat the order creation depending on the position type (Short or long).
 
+            // =========================================================================================================
+            // Here, we create the order creation depending on the position type (Short or long).
             if (positionDTO.getType() == LONG) {
                 // Long - We just sell.
                 orderCreationResult = tradeService.createSellMarketOrder(strategy, positionDTO.getCurrencyPair(), positionDTO.getAmount().getValue());
@@ -176,34 +184,39 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                 // We will use those 10 USDT to buy back ETH when the rule is triggered.
                 // CP2: ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH, and it will cost us 10 USDT.
                 // We can now use those 10 USDT to buy 5 ETH (amount sold / price).
-                final BigDecimal amountToBuy = positionDTO.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(SCALE, FLOOR);
+                final BigDecimal amountToBuy = positionDTO.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(BIGINTEGER_SCALE, FLOOR);
                 orderCreationResult = tradeService.createBuyMarketOrder(strategy, positionDTO.getCurrencyPair(), amountToBuy);
             }
 
+            // =========================================================================================================
+            // If the order is successful, we set the position as closed using closePositionWithOrder().
             if (orderCreationResult.isSuccessful()) {
                 positionDTO.closePositionWithOrder(orderCreationResult.getOrder());
                 logger.debug("Position {} closed with order {}", positionDTO.getPositionId(), orderCreationResult.getOrder().getOrderId());
             } else {
-                logger.error("Position {} not closed: {}", positionDTO.getPositionId(), orderCreationResult.getErrorMessage());
+                logger.error("Position {} not closed, failed to create order: {}", positionDTO.getPositionId(), orderCreationResult.getErrorMessage());
             }
+
+            // =========================================================================================================
+            // We emit the position to save it and send events to strategies.
             positionFlux.emitValue(positionDTO);
             return orderCreationResult;
         } else {
-            logger.error("Impossible to close position {} because we couldn't find it in database", id);
-            return new OrderCreationResultDTO("Impossible to close position " + id + " because we couldn't find it in database", null);
+            logger.error("Impossible to close position {} because we couldn't find it in database", positionUid);
+            return new OrderCreationResultDTO("Impossible to close position " + positionUid + " because we couldn't find it in database", null);
         }
     }
 
     @Override
-    public final void setAutoClose(final long id, final boolean value) {
-        logger.debug("Set auto close to {} on position {}", value, id);
-        positionRepository.updateAutoClose(id, value);
+    public final void setAutoClose(final long positionUid, final boolean value) {
+        logger.debug("Set auto close to {} on position {}", value, positionUid);
+        positionRepository.updateAutoClose(positionUid, value);
     }
 
     @Override
-    public final void forcePositionClosing(final long id) {
-        logger.debug("Force position {} to close", id);
-        positionRepository.updateForceClosing(id, true);
+    public final void forcePositionClosing(final long positionUid) {
+        logger.debug("Force position {} to close", positionUid);
+        positionRepository.updateForceClosing(positionUid, true);
     }
 
     @Override
@@ -215,15 +228,14 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     }
 
     @Override
-    public final Optional<PositionDTO> getPositionById(final long id) {
-        logger.debug("Retrieving position by id {}", id);
-        final Optional<Position> position = positionRepository.findById(id);
-        return position.map(POSITION_MAPPER::mapToPositionDTO);
+    public final Optional<PositionDTO> getPositionByUid(final long positionUid) {
+        logger.debug("Retrieving position by its uid {}", positionUid);
+        return positionRepository.findById(positionUid).map(POSITION_MAPPER::mapToPositionDTO);
     }
 
     @Override
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
-        // List of status that locks amounts.
+        logger.debug("Retrieving amounts locked by position");
         return positionRepository.findByStatusIn(Stream.of(OPENING, OPENED).toList())
                 .stream()
                 .map(POSITION_MAPPER::mapToPositionDTO)
@@ -232,9 +244,9 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
 
     @Override
     public final HashMap<CurrencyDTO, GainDTO> getGains() {
+        logger.debug("Retrieving gains for all positions");
         HashMap<CurrencyDTO, BigDecimal> totalBefore = new LinkedHashMap<>();
         HashMap<CurrencyDTO, BigDecimal> totalAfter = new LinkedHashMap<>();
-        List<CurrencyAmountDTO> totalFees = new LinkedList<>();
         List<CurrencyAmountDTO> openingOrdersFees = new LinkedList<>();
         List<CurrencyAmountDTO> closingOrdersFees = new LinkedList<>();
         HashMap<CurrencyDTO, GainDTO> gains = new LinkedHashMap<>();
@@ -279,9 +291,6 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                     }
 
                     // And now the fees.
-                    Stream.concat(p.getOpeningOrder().getTrades().stream(), p.getClosingOrder().getTrades().stream())
-                            .filter(tradeDTO -> tradeDTO.getFee() != null)
-                            .forEach(tradeDTO -> totalFees.add(tradeDTO.getFee()));
                     p.getOpeningOrder().getTrades()
                             .stream()
                             .filter(tradeDTO -> tradeDTO.getFee() != null)
@@ -298,14 +307,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                     BigDecimal before = totalBefore.get(currency);
                     BigDecimal after = totalAfter.get(currency);
                     BigDecimal gainAmount = after.subtract(before);
-                    BigDecimal gainPercentage = ((after.subtract(before)).divide(before, HALF_UP)).multiply(new BigDecimal("100"));
-
-                    // We calculate the fees for the currency.
-                    final BigDecimal fees = totalFees.stream()
-                            .filter(Objects::nonNull)
-                            .filter(amount -> amount.getCurrency().equals(currency))
-                            .map(CurrencyAmountDTO::getValue)
-                            .reduce(ZERO, BigDecimal::add);
+                    BigDecimal gainPercentage = ((after.subtract(before)).divide(before, HALF_UP)).multiply(ONE_HUNDRED_BIG_DECIMAL);
 
                     GainDTO g = GainDTO.builder()
                             .percentage(gainPercentage.setScale(2, HALF_UP).doubleValue())

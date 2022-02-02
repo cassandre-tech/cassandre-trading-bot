@@ -5,7 +5,6 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.batch.PositionFlux;
-import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -125,6 +124,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public final StrategyDTO getStrategyDTO() {
         return strategy;
     }
+
     /**
      * Getter exchangeService.
      *
@@ -607,22 +607,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     /**
      * Cancel order.
      *
-     * @param id id
+     * @param orderUid order uid
      * @return true if cancelled
      */
-    boolean cancelOrder(final long id) {
-        final Optional<Order> order = orderRepository.findById(id);
-        return order.filter(value -> cancelOrder(value.getOrderId())).isPresent();
-    }
-
-    /**
-     * Cancel order.
-     *
-     * @param orderId order id
-     * @return true if cancelled
-     */
-    boolean cancelOrder(final String orderId) {
-        return tradeService.cancelOrder(orderId);
+    boolean cancelOrder(final long orderUid) {
+        return tradeService.cancelOrder(orderUid);
     }
 
     /**

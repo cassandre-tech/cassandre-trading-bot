@@ -44,7 +44,7 @@ public class Issue850Test {
     @DisplayName("Fees can be in different currencies on one position")
     public void badFeesManagement() {
         // Position 1 - Data description is here: src/test/resources/db/test/issues/issue850.sql.
-        final Optional<PositionDTO> position1 = positionService.getPositionById(1);
+        final Optional<PositionDTO> position1 = positionService.getPositionByUid(1);
         assertTrue(position1.isPresent());
         final Map<CurrencyDTO, CurrencyAmountDTO> ordersFees = position1.get().getGain().getOrdersFees();
 

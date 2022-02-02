@@ -15,3 +15,4 @@ description: How to review Cassandre code
 * No point at the end of logs texts.
 * Add @ExcludeFromCoverageGeneratedReport when it's required.
 * Use of Optional.ofNullable() instead of "if (x != null) return x.getAnyValue()".
+* In services, first line of implementations is a log.

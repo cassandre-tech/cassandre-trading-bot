@@ -160,8 +160,8 @@ public class TradeServiceDryModeAOP extends BaseService {
         return DRY_ORDER_PREFIX.concat(String.format("%09d", orderCounter.getAndIncrement()));
     }
 
-    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.cancelOrder(..)) && args(orderId))", argNames = "pjp, orderId")
-    public final boolean cancelOrder(final ProceedingJoinPoint pjp, final String orderId) {
+    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.cancelOrder(..)) && args(orderUid))", argNames = "pjp, orderUid")
+    public final boolean cancelOrder(final ProceedingJoinPoint pjp, final long orderUid) {
         throw new DryModeException("Not supported");
     }
 
