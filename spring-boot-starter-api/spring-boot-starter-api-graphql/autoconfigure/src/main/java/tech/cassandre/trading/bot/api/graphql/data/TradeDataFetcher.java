@@ -30,7 +30,7 @@ public class TradeDataFetcher extends BaseDataFetcher {
     public final List<TradeDTO> trades() {
         return tradeRepository.findAll()
                 .stream()
-                .map(tradeMapper::mapToTradeDTO)
+                .map(TRADE_MAPPER::mapToTradeDTO)
                 .collect(Collectors.toList());
     }
 
@@ -43,7 +43,7 @@ public class TradeDataFetcher extends BaseDataFetcher {
     @DgsQuery
     public final TradeDTO trade(@InputArgument final long id) {
         return tradeRepository.findById(id)
-                .map(tradeMapper::mapToTradeDTO)
+                .map(TRADE_MAPPER::mapToTradeDTO)
                 .orElse(null);
     }
 
@@ -56,7 +56,7 @@ public class TradeDataFetcher extends BaseDataFetcher {
     @DgsQuery
     public final TradeDTO tradeByTradeId(@InputArgument final String tradeId) {
         return tradeRepository.findByTradeId(tradeId)
-                .map(tradeMapper::mapToTradeDTO)
+                .map(TRADE_MAPPER::mapToTradeDTO)
                 .orElse(null);
     }
 

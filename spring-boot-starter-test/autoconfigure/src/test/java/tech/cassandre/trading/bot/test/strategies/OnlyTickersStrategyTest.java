@@ -21,7 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SpringBootTest(properties = {
         "ONLY_TICKERS_STRATEGY_ENABLED=true",
@@ -30,7 +32,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 })
 @Import(TickerFluxMock.class)
 @DisplayName("Only tickers strategy test")
-@DirtiesContext(classMode = BEFORE_CLASS)
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class OnlyTickersStrategyTest extends BaseTest {
 
     @Autowired
@@ -38,6 +40,25 @@ public class OnlyTickersStrategyTest extends BaseTest {
 
     @Autowired
     private OnlyTickersStrategy strategy;
+
+    @Test
+    @DisplayName("Check received tickers with one flux")
+    public void checkReceivedTickersWithOneFlux() {
+        // There are four files and only three currency pairs are requested by the strategy.
+        // - tickers-BTC-USDT.tsv   -   Requested (7 lines).
+        // - tickers-ETH-BTC.tsv    -   Not requested.
+        // - tickers-ETH-USDT.tsv   -   Requested (5 lines).
+        // - tickers-KCS-USDT.csv   -   Requested (3 lines).
+
+        // Check if flux is not done.
+        assertFalse(tickerFluxMock.isFluxDone(new CurrencyPairDTO(ETH, USDT)));
+
+        // As tickers-BTC-USDT.tsv has the most line, we should wait to have 7 replies.
+        with().await().untilAsserted(() -> assertEquals(5, strategy.getTickersReceived().size()));
+
+        // Check if flux is done.
+        assertTrue(tickerFluxMock.isFluxDone(new CurrencyPairDTO(ETH, USDT)));
+    }
 
     @Test
     @DisplayName("Check received tickers")
@@ -75,12 +96,12 @@ public class OnlyTickersStrategyTest extends BaseTest {
         TickerDTO ethUsdtTicker01 = reply01.get(ETH_USDT);
         assertNotNull(ethUsdtTicker01);
         assertEquals(0, new BigDecimal("1000").compareTo(ethUsdtTicker01.getLast()));
-        assertFalse(tickerFluxMock.isFluxDone(ETH_USDT));
+//        assertFalse(tickerFluxMock.isFluxDone(ETH_USDT));
         // KCS-USDT.
         TickerDTO kcsUsdtTicker01 = reply01.get(KCS_USDT);
         assertNotNull(kcsUsdtTicker01);
         assertEquals(0, new BigDecimal("0.85652").compareTo(kcsUsdtTicker01.getLast()));
-        assertFalse(tickerFluxMock.isFluxDone(KCS_USDT));
+//        assertFalse(tickerFluxMock.isFluxDone(KCS_USDT));
 
         // =============================================================================================================
         // Second reply.

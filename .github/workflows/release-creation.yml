@@ -5,6 +5,12 @@ on:
     tags:
       - '*'
 
+permissions:
+  id-token: "write"
+  contents: "write"
+  packages: "write"
+  pull-requests: "read"
+
 jobs:
   build:
     runs-on: ubuntu-latest

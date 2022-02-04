@@ -48,6 +48,8 @@ public class AccountFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
+        assertFalse(strategy.isRunningInDryMode());
+
         // The mock will reply 7 times with data.
         final int numberOfRepliesExpected = 7;
 

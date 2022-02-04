@@ -58,6 +58,8 @@ public class OrderFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
+        assertFalse(strategy.isRunningInDryMode());
+
         // The mock will reply 3 times.
         final int numberOfUpdatesExpected = 8;
         final int numberOfServiceCallsExpected = 3;

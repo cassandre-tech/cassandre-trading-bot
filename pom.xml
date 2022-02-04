@@ -8,7 +8,7 @@
 	<!-- Project information -->
 	<groupId>tech.cassandre.trading.bot</groupId>
 	<artifactId>cassandre-trading-bot-project</artifactId>
-	<version>5.0.7</version>
+	<version>5.0.8</version>
 	<packaging>pom</packaging>
 	<name>Cassandre trading bot</name>
 	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
@@ -55,7 +55,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.2</version>
+		<version>2.6.3</version>
 		<relativePath/>
 	</parent>
 	<!-- =========================================================================================================== -->
@@ -75,9 +75,9 @@
 		<!-- Core -->
 		<spring.version>2.6.1</spring.version>
 		<reactor.version>Dysprosium-SR25</reactor.version>
-		<xchange.version>5.0.12</xchange.version>
-		<bucket4j.version>6.4.1</bucket4j.version>
-		<liquibase.version>4.6.2</liquibase.version>
+		<xchange.version>5.0.13</xchange.version>
+		<bucket4j.version>7.0.0</bucket4j.version>
+		<liquibase.version>4.7.1</liquibase.version>
 		<opencsv.version>5.5.2</opencsv.version>
 
 		<!-- Core utils -->
@@ -96,20 +96,20 @@
 		<jackson.version>2.12.6</jackson.version>
 
 		<!-- GraphQL API -->
-		<graphql-dgs.version>4.9.15</graphql-dgs.version>
+		<graphql-dgs.version>4.9.16</graphql-dgs.version>
 
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
 		<maven.puppycrawl.checkstyle.version>9.2.1</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
-		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+		<maven.compiler.plugin.version>3.9.0</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
 		<maven.jacoco.plugin.version>0.8.7</maven.jacoco.plugin.version>
 		<maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
 		<maven.lombok.plugin.version>1.18.20.0</maven.lombok.plugin.version>
 		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
 		<maven.javadoc.plugin.version>3.3.1</maven.javadoc.plugin.version>
-		<maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
+		<maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
 		<maven.archetype-packaging.version>3.2.1</maven.archetype-packaging.version>
 	</properties>
 	<!-- =========================================================================================================== -->

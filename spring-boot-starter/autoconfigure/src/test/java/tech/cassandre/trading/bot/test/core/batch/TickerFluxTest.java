@@ -2,6 +2,7 @@ package tech.cassandre.trading.bot.test.core.batch;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
@@ -42,6 +44,8 @@ public class TickerFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
+        assertFalse(strategy.isRunningInDryMode());
+
         // =============================================================================================================
         // Test asynchronous flux.
 
@@ -50,7 +54,7 @@ public class TickerFluxTest extends BaseTest {
         final int numberOfServiceCallsExpected = 9;
 
         // Waiting for the service to have been called with all the test data.
-        await().untilAsserted(() -> verify(marketDataService, atLeast(numberOfServiceCallsExpected)).getTicker(any()));
+        await().untilAsserted(() -> verify(marketDataService, atLeast(numberOfServiceCallsExpected)).getTicker((Instrument)any()));
 
         // Checking that somme data have already been treated.
         // but not all as the flux should be asynchronous and single thread and strategy method waits 1 second.

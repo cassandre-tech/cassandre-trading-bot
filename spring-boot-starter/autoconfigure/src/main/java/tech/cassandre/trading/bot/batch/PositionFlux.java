@@ -36,7 +36,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
             final Optional<Position> position = positionRepository.findById(positionDTO.getId());
             if (position.isPresent()) {
                 // If the position is in database (which should be always true), we update it.
-                positionMapper.updatePosition(positionDTO, position.get());
+                POSITION_MAPPER.updatePosition(positionDTO, position.get());
                 positions.add(positionRepository.save(position.get()));
                 logger.debug("Updating position in database: {}", positionDTO);
             } else {
@@ -45,7 +45,7 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
         });
 
         return positions.stream()
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

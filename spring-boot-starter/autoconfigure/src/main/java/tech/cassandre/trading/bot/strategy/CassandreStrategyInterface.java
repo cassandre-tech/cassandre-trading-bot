@@ -35,6 +35,20 @@ public interface CassandreStrategyInterface {
     void setStrategy(StrategyDTO newStrategyDTO);
 
     /**
+     * Indicates if Cassandre is in dry mode or not.
+     *
+     * @param dryModeIndicator dry mode indicator
+     */
+    void setDryModeIndicator(boolean dryModeIndicator);
+
+    /**
+     * Returns true cassandre is running in dry mode.
+     *
+     * @return true if dry mode is on
+     */
+    boolean isRunningInDryMode();
+
+    /**
      * Initialize strategy accounts with exchange accounts data.
      *
      * @param accounts accounts

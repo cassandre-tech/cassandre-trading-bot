@@ -66,6 +66,14 @@ public class Position extends BaseDomain {
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
 
+    /** Base currency precision (First part of the currency pair). */
+    @Column(name = "BASE_CURRENCY_PRECISION")
+    private Integer baseCurrencyPrecision;
+
+    /** Quote currency precision (Second part of the currency pair). */
+    @Column(name = "QUOTE_CURRENCY_PRECISION")
+    private Integer quoteCurrencyPrecision;
+
     /** Amount that was ordered. */
     @Embedded
     @AttributeOverrides({
@@ -86,6 +94,10 @@ public class Position extends BaseDomain {
     @Enumerated(STRING)
     @Column(name = "STATUS")
     private PositionStatusDTO status;
+
+    /** Indicates if the position should be closed automatically by Cassandre. */
+    @Column(name = "AUTO_CLOSE")
+    private boolean autoClose;
 
     /** Indicates that the position must be closed no matter the rules. */
     @Column(name = "FORCE_CLOSING")
@@ -144,6 +156,7 @@ public class Position extends BaseDomain {
                 .append(this.stopGainPercentageRule, that.stopGainPercentageRule)
                 .append(this.stopLossPercentageRule, that.stopLossPercentageRule)
                 .append(this.status, that.status)
+                .append(this.autoClose, that.autoClose)
                 .append(this.forceClosing, that.forceClosing)
                 .append(this.openingOrder, that.openingOrder)
                 .append(this.closingOrder, that.closingOrder)

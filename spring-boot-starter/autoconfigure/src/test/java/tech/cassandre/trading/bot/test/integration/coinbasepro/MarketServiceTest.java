@@ -11,7 +11,9 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,41 +54,36 @@ public class MarketServiceTest {
     @DisplayName("Check get ticker")
     public void checkGetTicker() {
         CurrencyPairDTO cp = new CurrencyPairDTO(ETH, BTC);
-        Optional<TickerDTO> t = marketService.getTicker(cp);
-        assertTrue(t.isPresent());
+        Set<TickerDTO> tickers = marketService.getTickers(Collections.singleton(cp));
+        assertEquals(7, tickers.size());
+
+        final Optional<TickerDTO> ethBtcTicker = tickers.stream().filter(tickerDTO -> tickerDTO.getCurrencyPair().equals(cp)).findFirst();
+        assertTrue(ethBtcTicker.isPresent());
+        System.out.println(ethBtcTicker);
         // currencyPair.
-        assertNotNull(t.get().getCurrencyPair());
-        assertEquals(t.get().getCurrencyPair(), cp);
-        // open.
-        assertNotNull(t.get().getOpen());
-        assertTrue(t.get().getOpen().compareTo(ZERO) > 0);
+        assertNotNull(ethBtcTicker.get().getCurrencyPair());
+        assertEquals(cp, ethBtcTicker.get().getCurrencyPair());
         // last.
-        assertNotNull(t.get().getLast());
-        assertTrue(t.get().getLast().compareTo(ZERO) > 0);
-        // bid.
-        assertNotNull(t.get().getBid());
-        assertTrue(t.get().getBid().compareTo(ZERO) > 0);
-        // ask.
-        assertNotNull(t.get().getAsk());
-        assertTrue(t.get().getAsk().compareTo(ZERO) > 0);
+        assertNotNull(ethBtcTicker.get().getLast());
+        assertTrue(ethBtcTicker.get().getLast().compareTo(ZERO) > 0);
         // high.
-        assertNotNull(t.get().getHigh());
-        assertTrue(t.get().getHigh().compareTo(ZERO) > 0);
+        assertNotNull(ethBtcTicker.get().getHigh());
+        assertTrue(ethBtcTicker.get().getHigh().compareTo(ZERO) > 0);
         // low.
-        assertNotNull(t.get().getLow());
-        assertTrue(t.get().getLow().compareTo(ZERO) > 0);
+        assertNotNull(ethBtcTicker.get().getLow());
+        assertTrue(ethBtcTicker.get().getLow().compareTo(ZERO) > 0);
         // volume.
-        assertNotNull(t.get().getVolume());
-        assertTrue(t.get().getVolume().compareTo(ZERO) > 0);
+        assertNotNull(ethBtcTicker.get().getVolume());
+        assertTrue(ethBtcTicker.get().getVolume().compareTo(ZERO) > 0);
         // quote volume.
-        assertNotNull(t.get().getQuoteVolume());
-        assertTrue(t.get().getQuoteVolume().compareTo(ZERO) > 0);
+        assertNotNull(ethBtcTicker.get().getQuoteVolume());
+        assertTrue(ethBtcTicker.get().getQuoteVolume().compareTo(ZERO) > 0);
         // bidSize.
-        assertNull(t.get().getBidSize());
+        assertNull(ethBtcTicker.get().getBidSize());
         // askSize.
-        assertNull(t.get().getAskSize());
+        assertNull(ethBtcTicker.get().getAskSize());
         // timestamp.
-        assertNotNull(t.get().getTimestamp());
+        assertNotNull(ethBtcTicker.get().getTimestamp());
     }
 
 }

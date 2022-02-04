@@ -19,7 +19,7 @@ import java.util.Objects;
 public class CurrencyPairDTO {
 
     /** Currency pair separator. */
-    private static final String CURRENCY_PAIR_SEPARATOR = "/";
+    public static final String CURRENCY_PAIR_SEPARATOR = "/";
 
     /** Currency pair default precision. */
     private static final Integer DEFAULT_CURRENCY_PRECISION = 8;

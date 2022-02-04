@@ -117,13 +117,13 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
             // =========================================================================================================
             // Creates the position in database.
             Position position = new Position();
-            position.setStrategy(strategyMapper.mapToStrategy(strategy.getStrategyDTO()));
+            position.setStrategy(STRATEGY_MAPPER.mapToStrategy(strategy.getStrategyDTO()));
             position = positionRepository.save(position);
 
             // =========================================================================================================
             // Creates the position dto.
             PositionDTO p = new PositionDTO(position.getId(), type, strategy.getStrategyDTO(), currencyPair, amount, orderCreationResult.getOrder(), rules);
-            positionRepository.save(positionMapper.mapToPosition(p));
+            positionRepository.save(POSITION_MAPPER.mapToPosition(p));
             logger.debug("Position {} opened with order {}",
                     p.getPositionId(),
                     orderCreationResult.getOrder().getOrderId());
@@ -163,7 +163,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     public final OrderCreationResultDTO closePosition(final GenericCassandreStrategy strategy, final long id, final TickerDTO ticker) {
         final Optional<Position> position = positionRepository.findById(id);
         if (position.isPresent()) {
-            final PositionDTO positionDTO = positionMapper.mapToPositionDTO(position.get());
+            final PositionDTO positionDTO = POSITION_MAPPER.mapToPositionDTO(position.get());
 
             final OrderCreationResultDTO orderCreationResult;
             // Here, we treat the order creation depending on the position type (Short or long).
@@ -197,6 +197,12 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     }
 
     @Override
+    public final void setAutoClose(final long id, final boolean value) {
+        logger.debug("Set auto close to {} on position {}", value, id);
+        positionRepository.updateAutoClose(id, value);
+    }
+
+    @Override
     public final void forcePositionClosing(final long id) {
         logger.debug("Force position {} to close", id);
         positionRepository.updateForceClosing(id, true);
@@ -206,7 +212,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     public final Set<PositionDTO> getPositions() {
         logger.debug("Retrieving all positions");
         return positionRepository.findByOrderById().stream()
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
@@ -214,14 +220,14 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     public final Optional<PositionDTO> getPositionById(final long id) {
         logger.debug("Retrieving position by id {}", id);
         final Optional<Position> position = positionRepository.findById(id);
-        return position.map(positionMapper::mapToPositionDTO);
+        return position.map(POSITION_MAPPER::mapToPositionDTO);
     }
 
     @Override
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
         // List of status that locks amounts.
         return positionRepository.findByStatusIn(new HashSet<>(Arrays.asList(OPENING, OPENED))).stream()
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toMap(PositionDTO::getId, PositionDTO::getAmountToLock, (key, value) -> key, HashMap::new));
     }
 
@@ -237,7 +243,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
         // We calculate, by currency, the amount bought & sold.
         positionRepository.findByStatus(CLOSED)
                 .stream()
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .forEach(p -> {
                     // We retrieve the currency and initiate the maps if they are empty
                     CurrencyDTO currency;

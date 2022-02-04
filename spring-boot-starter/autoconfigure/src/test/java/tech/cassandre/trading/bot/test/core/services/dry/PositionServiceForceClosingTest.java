@@ -58,6 +58,8 @@ public class PositionServiceForceClosingTest extends BaseTest {
     @Test
     @DisplayName("Check force closing")
     public void checkForceClosing() {
+        assertTrue(strategy.isRunningInDryMode());
+
         // First tickers (dry mode).
         // ETH/BTC - 0.2.
         // ETH/USDT - 0.3.
