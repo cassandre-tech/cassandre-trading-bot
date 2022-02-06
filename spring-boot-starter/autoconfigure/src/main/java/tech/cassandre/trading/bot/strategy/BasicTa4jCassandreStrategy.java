@@ -9,6 +9,7 @@ import reactor.core.publisher.BaseSubscriber;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategy;
 import tech.cassandre.trading.bot.util.ta4j.BarAggregator;
 import tech.cassandre.trading.bot.util.ta4j.DurationBarAggregator;
 
@@ -23,10 +24,19 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Basic ta4j strategy.
+ * BasicCassandreStrategy - User inherits this class this one to make a strategy with ta4j.
+ * <p>
+ * These are the classes used to manage a position.
+ * - CassandreStrategyInterface list the methods a strategy type must implement to be able to interact with the Cassandre framework.
+ * - CassandreStrategyDependencies contains all the dependencies required by a strategy and provided by the Cassandre framework.
+ * - CassandreStrategyImplementation is the default implementation of CassandreStrategyInterface, this code manages the interaction between Cassandre framework and a strategy.
+ * - CassandreStrategy (class) is the class that every strategy used by user ({@link BasicCassandreStrategy} or {@link BasicTa4jCassandreStrategy}) must extend. It contains methods to access data and manage orders, trades, positions.
+ * - CassandreStrategy (interface) is the annotation allowing you Cassandre to recognize a user strategy.
+ * - BasicCassandreStrategy - User inherits this class this one to make a basic strategy.
+ * - BasicCassandreStrategy - User inherits this class this one to make a strategy with ta4j.
  */
 @SuppressWarnings("unused")
-public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrategy {
+public abstract class BasicTa4jCassandreStrategy extends CassandreStrategy {
 
     /** Timestamp of the last added bar. */
     private ZonedDateTime lastAddedBarTimestamp;
@@ -156,6 +166,73 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
     }
 
     /**
+     * Called when your strategy think you should enter.
+     */
+    public abstract void shouldEnter();
+
+    /**
+     * Called when your strategy think you should exit.
+     */
+    public abstract void shouldExit();
+
+    /**
+     * Getter for series.
+     *
+     * @return series
+     */
+    public final BarSeries getSeries() {
+        return series;
+    }
+
+    /**
+     * Getter for historical data import.
+     *
+     * @return isHistoricalImport
+     */
+    public boolean isHistoricalImport() {
+        return isHistoricalImport;
+    }
+
+    /**
+     * Setter for historical data import.
+     *
+     * @param historicalImport historicalImport
+     */
+    public void setHistoricalImport(final boolean historicalImport) {
+        isHistoricalImport = historicalImport;
+    }
+
+    /**
+     * Subscriber to the Bar series.
+     */
+    private static class AggregatedBarSubscriber extends BaseSubscriber<Bar> {
+
+        /**
+         * The function to be called when the next bar arrives.
+         */
+        private final Function<Bar, Bar> theNextFunction;
+
+        AggregatedBarSubscriber(final Function<Bar, Bar> onNextFunction) {
+            this.theNextFunction = onNextFunction;
+        }
+
+        /**
+         * Invoke the given function and ask for next bar.
+         *
+         * @param value the bar value
+         */
+        @Override
+        protected void hookOnNext(final Bar value) {
+            super.hookOnNext(value);
+            theNextFunction.apply(value);
+            request(1);
+        }
+    }
+
+    // =================================================================================================================
+    // CanBuy & canSell methods.
+
+    /**
      * Returns true if we have enough assets to buy.
      *
      * @param amount amount
@@ -255,67 +332,4 @@ public abstract class BasicTa4jCassandreStrategy extends GenericCassandreStrateg
         return canSell(account, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceAfter);
     }
 
-    /**
-     * Called when your strategy think you should enter.
-     */
-    public abstract void shouldEnter();
-
-    /**
-     * Called when your strategy think you should exit.
-     */
-    public abstract void shouldExit();
-
-    /**
-     * Getter for series.
-     *
-     * @return series
-     */
-    public final BarSeries getSeries() {
-        return series;
-    }
-
-    /**
-     * Getter for historical data import.
-     *
-     * @return isHistoricalImport
-     */
-    public boolean isHistoricalImport() {
-        return isHistoricalImport;
-    }
-
-    /**
-     * Setter for historical data import.
-     *
-     * @param historicalImport historicalImport
-     */
-    public void setHistoricalImport(final boolean historicalImport) {
-        isHistoricalImport = historicalImport;
-    }
-
-    /**
-     * Subscriber to the Bar series.
-     */
-    private static class AggregatedBarSubscriber extends BaseSubscriber<Bar> {
-
-        /**
-         * The function to be called when the next bar arrives.
-         */
-        private final Function<Bar, Bar> theNextFunction;
-
-        AggregatedBarSubscriber(final Function<Bar, Bar> onNextFunction) {
-            this.theNextFunction = onNextFunction;
-        }
-
-        /**
-         * Invoke the given function and ask for next bar.
-         *
-         * @param value the bar value
-         */
-        @Override
-        protected void hookOnNext(final Bar value) {
-            super.hookOnNext(value);
-            theNextFunction.apply(value);
-            request(1);
-        }
-    }
 }

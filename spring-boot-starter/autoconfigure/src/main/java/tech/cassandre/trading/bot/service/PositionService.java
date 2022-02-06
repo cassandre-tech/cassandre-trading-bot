@@ -9,7 +9,8 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -32,7 +33,7 @@ public interface PositionService {
      * @param rules        rules
      * @return position creation result
      */
-    PositionCreationResultDTO createLongPosition(GenericCassandreStrategy strategy,
+    PositionCreationResultDTO createLongPosition(CassandreStrategy strategy,
                                                  CurrencyPairDTO currencyPair,
                                                  BigDecimal amount,
                                                  PositionRulesDTO rules);
@@ -48,7 +49,7 @@ public interface PositionService {
      * @param rules        rules
      * @return position creation result
      */
-    PositionCreationResultDTO createShortPosition(GenericCassandreStrategy strategy,
+    PositionCreationResultDTO createShortPosition(CassandreStrategy strategy,
                                                   CurrencyPairDTO currencyPair,
                                                   BigDecimal amount,
                                                   PositionRulesDTO rules);
@@ -69,7 +70,7 @@ public interface PositionService {
      * @param ticker      ticker
      * @return order creation result
      */
-    OrderCreationResultDTO closePosition(GenericCassandreStrategy strategy, long positionUid, TickerDTO ticker);
+    OrderCreationResultDTO closePosition(CassandreStrategyInterface strategy, long positionUid, TickerDTO ticker);
 
     /**
      * Set auto close value on a specific position.

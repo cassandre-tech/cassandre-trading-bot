@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * User service - XChange implementation.
+ * User service - XChange implementation of {@link UserService}.
  */
 public class UserServiceXChangeImplementation extends BaseService implements UserService {
 

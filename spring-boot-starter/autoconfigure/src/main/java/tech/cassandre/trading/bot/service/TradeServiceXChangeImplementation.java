@@ -17,7 +17,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 import tech.cassandre.trading.bot.util.xchange.CancelOrderParams;
 
@@ -40,7 +40,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
 /**
- * Trade service - XChange implementation.
+ * Trade service - XChange implementation of {@link TradeService}.
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
 
@@ -77,7 +77,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
-    public OrderCreationResultDTO createBuyMarketOrder(@NonNull final GenericCassandreStrategy strategy,
+    public OrderCreationResultDTO createBuyMarketOrder(@NonNull final CassandreStrategyInterface strategy,
                                                        @NonNull final CurrencyPairDTO currencyPair,
                                                        @NonNull final BigDecimal amount) {
         return createMarketOrder(strategy, BID, currencyPair, amount);
@@ -85,7 +85,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
-    public OrderCreationResultDTO createSellMarketOrder(@NonNull final GenericCassandreStrategy strategy,
+    public OrderCreationResultDTO createSellMarketOrder(@NonNull final CassandreStrategyInterface strategy,
                                                         @NonNull final CurrencyPairDTO currencyPair,
                                                         @NonNull final BigDecimal amount) {
         return createMarketOrder(strategy, ASK, currencyPair, amount);
@@ -93,7 +93,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
-    public OrderCreationResultDTO createBuyLimitOrder(@NonNull final GenericCassandreStrategy strategy,
+    public OrderCreationResultDTO createBuyLimitOrder(@NonNull final CassandreStrategyInterface strategy,
                                                       @NonNull final CurrencyPairDTO currencyPair,
                                                       @NonNull final BigDecimal amount,
                                                       @NonNull final BigDecimal limitPrice) {
@@ -102,7 +102,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
-    public OrderCreationResultDTO createSellLimitOrder(@NonNull final GenericCassandreStrategy strategy,
+    public OrderCreationResultDTO createSellLimitOrder(@NonNull final CassandreStrategyInterface strategy,
                                                        @NonNull final CurrencyPairDTO currencyPair,
                                                        @NonNull final BigDecimal amount,
                                                        @NonNull final BigDecimal limitPrice) {
@@ -118,7 +118,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
      * @param amount       amount
      * @return order creation result
      */
-    private OrderCreationResultDTO createMarketOrder(final GenericCassandreStrategy strategy,
+    private OrderCreationResultDTO createMarketOrder(final CassandreStrategyInterface strategy,
                                                      final OrderTypeDTO orderTypeDTO,
                                                      final CurrencyPairDTO currencyPair,
                                                      final BigDecimal amount) {
@@ -186,7 +186,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
      * @param limitPrice   In a BID this is the highest acceptable price, in an ASK this is the lowest acceptable price
      * @return order creation result
      */
-    private OrderCreationResultDTO createLimitOrder(final GenericCassandreStrategy strategy,
+    private OrderCreationResultDTO createLimitOrder(final CassandreStrategyInterface strategy,
                                                     final OrderTypeDTO orderTypeDTO,
                                                     final CurrencyPairDTO currencyPair,
                                                     final BigDecimal amount,

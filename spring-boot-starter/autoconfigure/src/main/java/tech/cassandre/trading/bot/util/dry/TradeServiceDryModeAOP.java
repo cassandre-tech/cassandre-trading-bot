@@ -23,7 +23,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 import tech.cassandre.trading.bot.util.exception.DryModeException;
 
@@ -73,7 +73,7 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createBuyMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
     public final OrderCreationResultDTO createBuyMarketOrder(final ProceedingJoinPoint pjp,
-                                                             final GenericCassandreStrategy strategy,
+                                                             final CassandreStrategy strategy,
                                                              final CurrencyPairDTO currencyPair,
                                                              final BigDecimal amount) {
         // We check that we have the trade account.
@@ -116,7 +116,7 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createSellMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
     public final OrderCreationResultDTO createSellMarketOrder(final ProceedingJoinPoint pjp,
-                                                              final GenericCassandreStrategy strategy,
+                                                              final CassandreStrategy strategy,
                                                               final CurrencyPairDTO currencyPair,
                                                               final BigDecimal amount) {
         // We check that we have the trade account.

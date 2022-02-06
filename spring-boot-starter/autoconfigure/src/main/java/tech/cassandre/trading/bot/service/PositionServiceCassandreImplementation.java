@@ -16,7 +16,8 @@ import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.math.BigDecimal;
@@ -44,7 +45,7 @@ import static tech.cassandre.trading.bot.util.math.MathConstants.BIGINTEGER_SCAL
 import static tech.cassandre.trading.bot.util.math.MathConstants.ONE_HUNDRED_BIG_DECIMAL;
 
 /**
- * Position service implementation.
+ * Position service - Implementation of {@link PositionService}.
  */
 @RequiredArgsConstructor
 public class PositionServiceCassandreImplementation extends BaseService implements PositionService {
@@ -62,7 +63,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     private final PositionFlux positionFlux;
 
     @Override
-    public final PositionCreationResultDTO createLongPosition(@NonNull final GenericCassandreStrategy strategy,
+    public final PositionCreationResultDTO createLongPosition(@NonNull final CassandreStrategy strategy,
                                                               @NonNull final CurrencyPairDTO currencyPair,
                                                               @NonNull final BigDecimal amount,
                                                               @NonNull final PositionRulesDTO rules) {
@@ -70,7 +71,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     }
 
     @Override
-    public final PositionCreationResultDTO createShortPosition(@NonNull final GenericCassandreStrategy strategy,
+    public final PositionCreationResultDTO createShortPosition(@NonNull final CassandreStrategy strategy,
                                                                @NonNull final CurrencyPairDTO currencyPair,
                                                                @NonNull final BigDecimal amount,
                                                                @NonNull final PositionRulesDTO rules) {
@@ -87,7 +88,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
      * @param rules        rules
      * @return position creation result
      */
-    private PositionCreationResultDTO createPosition(final GenericCassandreStrategy strategy,
+    private PositionCreationResultDTO createPosition(final CassandreStrategy strategy,
                                                      final PositionTypeDTO type,
                                                      final CurrencyPairDTO currencyPair,
                                                      final BigDecimal amount,
@@ -163,7 +164,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     }
 
     @Override
-    public final OrderCreationResultDTO closePosition(@NonNull final GenericCassandreStrategy strategy,
+    public final OrderCreationResultDTO closePosition(@NonNull final CassandreStrategyInterface strategy,
                                                       final long positionUid,
                                                       @NonNull final TickerDTO ticker) {
         logger.debug("Trying to close position {}.", positionUid);

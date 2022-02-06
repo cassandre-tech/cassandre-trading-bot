@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Exchange service - XChange implementation.
+ * Exchange service - XChange implementation of {@link ExchangeService}.
  */
 @RequiredArgsConstructor
 public class ExchangeServiceXChangeImplementation extends BaseService implements ExchangeService {

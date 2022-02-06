@@ -1,16 +1,9 @@
-package tech.cassandre.trading.bot.strategy;
+package tech.cassandre.trading.bot.strategy.internal;
 
-import lombok.NonNull;
-import org.mapstruct.factory.Mappers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.position.PositionRulesDTO;
-import tech.cassandre.trading.bot.dto.position.PositionStatusDTO;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -20,279 +13,47 @@ import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
-import tech.cassandre.trading.bot.repository.ImportedTickersRepository;
-import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.repository.TradeRepository;
-import tech.cassandre.trading.bot.service.ExchangeService;
-import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.TradeService;
-import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
-import tech.cassandre.trading.bot.util.mapper.OrderMapper;
-import tech.cassandre.trading.bot.util.mapper.PositionMapper;
-import tech.cassandre.trading.bot.util.mapper.TickerMapper;
-import tech.cassandre.trading.bot.util.mapper.TradeMapper;
+import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.FLOOR;
-import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.util.math.MathConstants.BIGINTEGER_SCALE;
 
 /**
- * Generic Cassandre strategy implementation.
+ * CassandreStrategy is the class that every strategy used by user ({@link BasicCassandreStrategy} or {@link BasicTa4jCassandreStrategy}) must extend.
+ * It contains methods to access data and manage orders, trades, positions.
+ * <p>
+ * These are the classes used to manage a position.
+ * - CassandreStrategyInterface list the methods a strategy type must implement to be able to interact with the Cassandre framework.
+ * - CassandreStrategyDependencies contains all the dependencies required by a strategy and provided by the Cassandre framework.
+ * - CassandreStrategyImplementation is the default implementation of CassandreStrategyInterface, this code manages the interaction between Cassandre framework and a strategy.
+ * - CassandreStrategy (class) is the class that every strategy used by user ({@link BasicCassandreStrategy} or {@link BasicTa4jCassandreStrategy}) must extend. It contains methods to access data and manage orders, trades, positions.
+ * - CassandreStrategy (interface) is the annotation allowing you Cassandre to recognize a user strategy.
+ * - BasicCassandreStrategy - User inherits this class this one to make a basic strategy.
+ * - BasicCassandreStrategy - User inherits this class this one to make a strategy with ta4j.
  */
 @SuppressWarnings("checkstyle:DesignForExtension")
-public abstract class GenericCassandreStrategy implements CassandreStrategyInterface {
-
-    /** Currency mapper. */
-    protected final CurrencyMapper currencyMapper = Mappers.getMapper(CurrencyMapper.class);
-
-    /** Order mapper. */
-    protected final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);
-
-    /** Trade mapper. */
-    protected final TradeMapper tradeMapper = Mappers.getMapper(TradeMapper.class);
-
-    /** Position mapper. */
-    protected final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
-
-    /** Ticker mapper. */
-    protected final TickerMapper tickerMapper = Mappers.getMapper(TickerMapper.class);
-
-    /** Logger. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-
-    /** Strategy. */
-    protected StrategyDTO strategy;
-
-    /** Position flux. */
-    protected PositionFlux positionFlux;
-
-    /** Order repository. */
-    protected OrderRepository orderRepository;
-
-    /** Trade repository. */
-    protected TradeRepository tradeRepository;
-
-    /** Position repository. */
-    protected PositionRepository positionRepository;
-
-    /** "Imported tickers" repository. */
-    protected ImportedTickersRepository importedTickersRepository;
-
-    /** Exchange service. */
-    protected ExchangeService exchangeService;
-
-    /** Trade service. */
-    protected TradeService tradeService;
-
-    /** Position service. */
-    protected PositionService positionService;
-
-    /** The accounts owned by the user. */
-    private final Map<String, AccountDTO> userAccounts = new LinkedHashMap<>();
-
-    /** Last tickers received. */
-    private final Map<CurrencyPairDTO, TickerDTO> lastTickers = new LinkedHashMap<>();
-
-    /** Positions previous status - used for onPositionsStatusUpdates() - Internal use only. */
-    private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
-
-    /** Dry mode indicator. */
-    private boolean dryModeIndicator = false;
+public abstract class CassandreStrategy extends CassandreStrategyImplementation {
 
     // =================================================================================================================
-    // Internal methods to setup dependencies.
+    // Methods to retrieve data related to accounts.
 
     /**
-     * Getter strategyDTO.
+     * Returns the trade account selected by the strategy developer.
      *
-     * @return strategyDTO
+     * @return trade account
      */
-    public final StrategyDTO getStrategyDTO() {
-        return strategy;
-    }
-
-    /**
-     * Getter exchangeService.
-     *
-     * @return exchangeService
-     */
-    public final ExchangeService getExchangeService() {
-        return exchangeService;
-    }
-
-    @Override
-    public final void setStrategy(final StrategyDTO newStrategyDTO) {
-        this.strategy = newStrategyDTO;
-    }
-
-    @Override
-    public void setDryModeIndicator(final boolean newDryModeIndicator) {
-        this.dryModeIndicator = newDryModeIndicator;
-    }
-
-    @Override
-    public boolean isRunningInDryMode() {
-        return this.dryModeIndicator;
-    }
-
-    @Override
-    public void setPositionFlux(final PositionFlux newPositionFlux) {
-        positionFlux = newPositionFlux;
-    }
-
-    @Override
-    public final void setPositionRepository(final PositionRepository newPositionRepository) {
-        this.positionRepository = newPositionRepository;
-        // To manage onPositionsStatusUpdates, we retrieve the positions' status from our database.
-        this.positionRepository.findByStatusNot(CLOSED).forEach(position -> previousPositionsStatus.put(position.getUid(), position.getStatus()));
-    }
-
-    @Override
-    public final void setOrderRepository(final OrderRepository newOrderRepository) {
-        this.orderRepository = newOrderRepository;
-    }
-
-    @Override
-    public final void setTradeRepository(final TradeRepository newTradeRepository) {
-        this.tradeRepository = newTradeRepository;
-    }
-
-    @Override
-    public void setImportedTickersRepository(final ImportedTickersRepository newImportedTickersRepository) {
-        this.importedTickersRepository = newImportedTickersRepository;
-    }
-
-    @Override
-    public void setExchangeService(final ExchangeService newExchangeService) {
-        this.exchangeService = newExchangeService;
-    }
-
-    @Override
-    public final void setTradeService(final TradeService newTradeService) {
-        this.tradeService = newTradeService;
-    }
-
-    @Override
-    public final void setPositionService(final PositionService newPositionService) {
-        this.positionService = newPositionService;
-    }
-
-    @Override
-    public void initializeAccounts(final Map<String, AccountDTO> newAccounts) {
-        userAccounts.putAll(newAccounts);
-    }
-
-    // =================================================================================================================
-    // Internal methods for event management.
-    @Override
-    public void accountsUpdates(final Set<AccountDTO> accounts) {
-        // We notify the strategy.
-        final Map<String, AccountDTO> accountsUpdates = accounts.stream()
-                // We store the account values in the strategy.
-                .peek(accountDTO -> userAccounts.put(accountDTO.getAccountId(), accountDTO))
-                .collect(Collectors.toMap(AccountDTO::getAccountId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
-
-        // We notify the strategy.
-        onAccountsUpdates(accountsUpdates);
-    }
-
-    @Override
-    public void tickersUpdates(final Set<TickerDTO> tickers) {
-        // We only retrieve the tickers requested by the strategy.
-        final Set<CurrencyPairDTO> desiredPairs = getRequestedCurrencyPairs();
-        final Map<CurrencyPairDTO, TickerDTO> tickersUpdates = tickers.stream()
-                .filter(tickerDTO -> desiredPairs.contains(tickerDTO.getCurrencyPair()))
-                // We update the values of the last tickers that can be found in the strategy.
-                .peek(tickerDTO -> lastTickers.put(tickerDTO.getCurrencyPair(), tickerDTO))
-                .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value) -> id, LinkedHashMap::new));
-
-        // We update the positions with tickers.
-        updatePositionsWithTickersUpdates(tickersUpdates);
-
-        // We notify the strategy.
-        onTickersUpdates(tickersUpdates);
-    }
-
-    @Override
-    public void ordersUpdates(final Set<OrderDTO> orders) {
-        // We only retrieve the orders created by this strategy.
-        final Map<String, OrderDTO> ordersUpdates = orders.stream()
-                .filter(orderDTO -> orderDTO.getStrategy().getUid().equals(strategy.getUid()))
-                .collect(Collectors.toMap(OrderDTO::getOrderId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
-
-        // We update the positions with orders.
-        updatePositionsWithOrdersUpdates(ordersUpdates);
-
-        // We notify the strategy.
-        onOrdersUpdates(ordersUpdates);
-    }
-
-    @Override
-    public void tradesUpdates(final Set<TradeDTO> trades) {
-        // We only retrieve the trades created by this strategy.
-        final Map<String, TradeDTO> tradesUpdates = trades.stream()
-                .filter(tradeDTO -> tradeDTO.getOrder().getStrategy().getUid().equals(strategy.getUid()))
-                .collect(Collectors.toMap(TradeDTO::getTradeId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
-
-        // We update the positions with trades.
-        updatePositionsWithTradesUpdates(tradesUpdates);
-
-        // We notify the strategy.
-        onTradesUpdates(tradesUpdates);
-    }
-
-    @Override
-    public void positionsUpdates(final Set<PositionDTO> positions) {
-        final Map<Long, PositionDTO> positionsUpdates = new HashMap<>();
-        final Map<Long, PositionDTO> positionsStatusUpdates = new HashMap<>();
-
-        positions.stream()
-                .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(strategy.getUid()))
-                .forEach(positionDTO -> {
-                    positionsUpdates.put(positionDTO.getPositionId(), positionDTO);
-
-                    // From positionUpdate(), we see if it's also a onPositionStatusUpdate().
-                    if (previousPositionsStatus.get(positionDTO.getUid()) != positionDTO.getStatus()) {
-                        if (positionDTO.getStatus() == CLOSED) {
-                            // As CLOSED positions cannot change anymore, we don't need to store their previous positions.
-                            previousPositionsStatus.remove(positionDTO.getUid());
-                        } else {
-                            // As we have a new status for this position, we update it in previousPositionsStatus.
-                            previousPositionsStatus.put(positionDTO.getUid(), positionDTO.getStatus());
-                        }
-                        positionsStatusUpdates.put(positionDTO.getPositionId(), positionDTO);
-                    }
-                });
-
-        // We notify the strategy.
-        onPositionsUpdates(positionsUpdates);
-        onPositionsStatusUpdates(positionsStatusUpdates);
-    }
-
-    // =================================================================================================================
-    // Related to accounts.
-
-    /**
-     * Returns list of accounts.
-     *
-     * @return accounts
-     */
-    public final Map<String, AccountDTO> getAccounts() {
-        return userAccounts;
+    public final Optional<AccountDTO> getTradeAccount() {
+        return getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
     }
 
     /**
@@ -309,18 +70,13 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         }
     }
 
-    @Override
-    public final Optional<AccountDTO> getTradeAccount() {
-        return getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
-    }
-
     /**
      * Getter amountsLockedByPosition.
      *
      * @return amountsLockedByPosition
      */
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
-        return positionService.getAmountsLockedByPosition();
+        return dependencies.getPositionService().getAmountsLockedByPosition();
     }
 
     /**
@@ -339,7 +95,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     // =================================================================================================================
-    // Related to tickers.
+    // Methods to retrieve data related to tickers.
 
     /**
      * Return last received tickers.
@@ -350,25 +106,6 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
         return lastTickers;
     }
 
-    /**
-     * Return the last ticker for a currency pair.
-     *
-     * @param currencyPair currency pair
-     * @return last ticker received
-     */
-    public final Optional<TickerDTO> getLastTickerByCurrencyPair(@NonNull final CurrencyPairDTO currencyPair) {
-        return Optional.ofNullable(lastTickers.get(currencyPair));
-    }
-
-    /**
-     * Returns the last price received for a currency pair.
-     *
-     * @param currencyPair currency pair
-     * @return last price
-     */
-    public final BigDecimal getLastPriceForCurrencyPair(final CurrencyPairDTO currencyPair) {
-        return getLastTickerByCurrencyPair(currencyPair).map(TickerDTO::getLast).orElse(null);
-    }
 
     /**
      * Return the list of imported tickers (ordered by timestamp).
@@ -376,9 +113,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return imported tickers
      */
     public final List<TickerDTO> getImportedTickers() {
-        return importedTickersRepository.findByOrderByTimestampAsc()
+        return dependencies.getImportedTickersRepository().findByOrderByTimestampAsc()
                 .stream()
-                .map(tickerMapper::mapToTickerDTO)
+                .map(TICKER_MAPPER::mapToTickerDTO)
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
@@ -389,14 +126,14 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return imported tickers
      */
     public final List<TickerDTO> getImportedTickers(final CurrencyPairDTO currencyPair) {
-        return importedTickersRepository.findByCurrencyPairOrderByTimestampAsc(currencyPair.toString())
+        return dependencies.getImportedTickersRepository().findByCurrencyPairOrderByTimestampAsc(currencyPair.toString())
                 .stream()
-                .map(tickerMapper::mapToTickerDTO)
+                .map(TICKER_MAPPER::mapToTickerDTO)
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
     // =================================================================================================================
-    // Related to orders.
+    // Methods to retrieve data related to orders.
 
     /**
      * Returns list of orders.
@@ -404,10 +141,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return orders
      */
     public final Map<String, OrderDTO> getOrders() {
-        return orderRepository.findByOrderByTimestampAsc()
+        return dependencies.getOrderRepository().findByOrderByTimestampAsc()
                 .stream()
-                .filter(order -> order.getStrategy().getStrategyId().equals(strategy.getStrategyId()))
-                .map(orderMapper::mapToOrderDTO)
+                .filter(order -> order.getStrategy().getStrategyId().equals(getStrategyDTO().getStrategyId()))
+                .map(ORDER_MAPPER::mapToOrderDTO)
                 .collect(Collectors.toMap(OrderDTO::getOrderId, orderDTO -> orderDTO));
     }
 
@@ -425,7 +162,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     // =================================================================================================================
-    // Related to trades.
+    // Methods to retrieve data related to trades.
 
     /**
      * Returns list of trades.
@@ -433,10 +170,10 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return trades
      */
     public final Map<String, TradeDTO> getTrades() {
-        return tradeRepository.findByOrderByTimestampAsc()
+        return dependencies.getTradeRepository().findByOrderByTimestampAsc()
                 .stream()
-                .filter(trade -> trade.getOrder().getStrategy().getStrategyId().equals(strategy.getStrategyId()))
-                .map(tradeMapper::mapToTradeDTO)
+                .filter(trade -> trade.getOrder().getStrategy().getStrategyId().equals(getStrategyDTO().getStrategyId()))
+                .map(TRADE_MAPPER::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getTradeId, tradeDTO -> tradeDTO));
     }
 
@@ -454,69 +191,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     }
 
     // =================================================================================================================
-    // Related to positions.
-
-    /**
-     * Update strategy positions with tickers updates.
-     *
-     * @param tickers tickers updates
-     */
-    void updatePositionsWithTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
-        // We check if any ticker updates a position, and we close if it's time.
-        positionRepository.findByStatusNot(CLOSED)
-                .stream()
-                .map(positionMapper::mapToPositionDTO)
-                // Only the positions of this strategy.
-                .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(strategy.getUid()))
-                // Only if we received the ticker requested by the position.
-                .filter(positionDTO -> tickers.get(positionDTO.getCurrencyPair()) != null)
-                // We send the ticker corresponding to the currency pair of the position. If it returns true, we emit because price changed.
-                .filter(positionDTO -> positionDTO.tickerUpdate(tickers.get(positionDTO.getCurrencyPair())))
-                .peek(positionDTO -> logger.debug("Position {} updated with ticker {}", positionDTO.getPositionId(), tickers.get(positionDTO.getCurrencyPair())))
-                .peek(positionDTO -> positionFlux.emitValue(positionDTO))
-                // We only use tickers updates to close a position if position is set to autoclose.
-                .filter(PositionDTO::isAutoClose)
-                // We check if the position should be closed, if true, we closed and position service will emit the position.
-                .filter(PositionDTO::shouldBeClosed)
-                .peek(positionDTO -> logger.debug("Closing position {}", positionDTO.getPositionId()))
-                .forEach(positionDTO -> positionService.closePosition(this, positionDTO.getUid(), tickers.get(positionDTO.getCurrencyPair())));
-    }
-
-    /**
-     * Update strategy positions with orders updates.
-     *
-     * @param orders orders updates
-     */
-    void updatePositionsWithOrdersUpdates(final Map<String, OrderDTO> orders) {
-        // We check if any order updates a position.
-        orders.values().forEach(orderDTO -> {
-            logger.debug("Updating positions with order {}", orderDTO);
-            positionRepository.findByStatusNot(CLOSED).stream()
-                    .map(positionMapper::mapToPositionDTO)
-                    .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(strategy.getUid()))
-                    .filter(positionDTO -> positionDTO.orderUpdate(orderDTO))
-                    .peek(positionDTO -> logger.debug("Position {} updated with order {}", positionDTO.getPositionId(), orderDTO))
-                    .forEach(positionFlux::emitValue);
-        });
-    }
-
-    /**
-     * Update strategy positions with trades updates.
-     *
-     * @param trades trades updates
-     */
-    void updatePositionsWithTradesUpdates(final Map<String, TradeDTO> trades) {
-        // We check if any trade updates a position.
-        trades.values().forEach(tradeDTO -> {
-            logger.debug("Updating positions with trade {}", tradeDTO);
-            positionRepository.findByStatusNot(CLOSED).stream()
-                    .map(positionMapper::mapToPositionDTO)
-                    .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(strategy.getUid()))
-                    .filter(positionDTO -> positionDTO.tradeUpdate(tradeDTO))
-                    .peek(positionDTO -> logger.debug("Position {} updated with trade {}", positionDTO.getPositionId(), tradeDTO))
-                    .forEach(positionFlux::emitValue);
-        });
-    }
+    // Methods to retrieve data related to positions.
 
     /**
      * Returns list of positions.
@@ -524,9 +199,9 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return positions
      */
     public final Map<Long, PositionDTO> getPositions() {
-        return positionRepository.findByOrderByUid()
+        return dependencies.getPositionRepository().findByOrderByUid()
                 .stream()
-                .map(positionMapper::mapToPositionDTO)
+                .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toMap(PositionDTO::getUid, positionDTO -> positionDTO));
     }
 
@@ -537,7 +212,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return position
      */
     public final Optional<PositionDTO> getPositionByPositionId(final long positionId) {
-        return positionRepository.findByPositionId(positionId).map(positionMapper::mapToPositionDTO);
+        return dependencies.getPositionRepository().findByPositionId(positionId).map(POSITION_MAPPER::mapToPositionDTO);
     }
 
     /**
@@ -546,11 +221,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return total gains
      */
     public final Map<CurrencyDTO, GainDTO> getGains() {
-        return positionService.getGains();
+        return dependencies.getPositionService().getGains();
     }
 
     // =================================================================================================================
-    // Methods related to creating of orders & positions.
+    // Methods to manage orders & positions (creation, cancellation, rules updates...).
 
     /**
      * Creates a buy market order.
@@ -561,7 +236,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public OrderCreationResultDTO createBuyMarketOrder(final CurrencyPairDTO currencyPair,
                                                        final BigDecimal amount) {
-        return tradeService.createBuyMarketOrder(this, currencyPair, amount);
+        return dependencies.getTradeService().createBuyMarketOrder(this, currencyPair, amount);
     }
 
     /**
@@ -573,7 +248,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      */
     public OrderCreationResultDTO createSellMarketOrder(final CurrencyPairDTO currencyPair,
                                                         final BigDecimal amount) {
-        return tradeService.createSellMarketOrder(this, currencyPair, amount);
+        return dependencies.getTradeService().createSellMarketOrder(this, currencyPair, amount);
     }
 
     /**
@@ -587,7 +262,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair,
                                                       final BigDecimal amount,
                                                       final BigDecimal limitPrice) {
-        return tradeService.createBuyLimitOrder(this, currencyPair, amount, limitPrice);
+        return dependencies.getTradeService().createBuyLimitOrder(this, currencyPair, amount, limitPrice);
     }
 
     /**
@@ -601,7 +276,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair,
                                                        final BigDecimal amount,
                                                        final BigDecimal limitPrice) {
-        return tradeService.createSellLimitOrder(this, currencyPair, amount, limitPrice);
+        return dependencies.getTradeService().createSellLimitOrder(this, currencyPair, amount, limitPrice);
     }
 
     /**
@@ -611,7 +286,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @return true if cancelled
      */
     boolean cancelOrder(final long orderUid) {
-        return tradeService.cancelOrder(orderUid);
+        return dependencies.getTradeService().cancelOrder(orderUid);
     }
 
     /**
@@ -627,7 +302,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public PositionCreationResultDTO createLongPosition(final CurrencyPairDTO currencyPair,
                                                         final BigDecimal amount,
                                                         final PositionRulesDTO rules) {
-        return positionService.createLongPosition(this, currencyPair, amount, rules);
+        return dependencies.getPositionService().createLongPosition(this, currencyPair, amount, rules);
     }
 
     /**
@@ -643,7 +318,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
     public PositionCreationResultDTO createShortPosition(final CurrencyPairDTO currencyPair,
                                                          final BigDecimal amount,
                                                          final PositionRulesDTO rules) {
-        return positionService.createShortPosition(this, currencyPair, amount, rules);
+        return dependencies.getPositionService().createShortPosition(this, currencyPair, amount, rules);
     }
 
     /**
@@ -653,7 +328,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param newRules new rules
      */
     public void updatePositionRules(final long id, final PositionRulesDTO newRules) {
-        positionService.updatePositionRules(id, newRules);
+        dependencies.getPositionService().updatePositionRules(id, newRules);
     }
 
     /**
@@ -665,7 +340,7 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param value auto close value
      */
     public void setAutoClose(final long id, final boolean value) {
-        positionService.setAutoClose(id, value);
+        dependencies.getPositionService().setAutoClose(id, value);
     }
 
     /**
@@ -675,49 +350,11 @@ public abstract class GenericCassandreStrategy implements CassandreStrategyInter
      * @param id position id
      */
     public void closePosition(final long id) {
-        positionService.forcePositionClosing(id);
+        dependencies.getPositionService().forcePositionClosing(id);
     }
 
     // =================================================================================================================
-    // Methods that can be implemented by strategies.
-
-    @Override
-    public void initialize() {
-
-    }
-
-    @Override
-    public void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
-
-    }
-
-    @Override
-    public void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
-
-    }
-
-    @Override
-    public void onOrdersUpdates(final Map<String, OrderDTO> orders) {
-
-    }
-
-    @Override
-    public void onTradesUpdates(final Map<String, TradeDTO> trades) {
-
-    }
-
-    @Override
-    public void onPositionsUpdates(final Map<Long, PositionDTO> positions) {
-
-    }
-
-    @Override
-    public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
-
-    }
-
-    // =================================================================================================================
-    // Related to canBuy & canSell methods.
+    // CanBuy & canSell methods.
 
     /**
      * Returns the amount of a currency I can buy with a certain amount of another currency.

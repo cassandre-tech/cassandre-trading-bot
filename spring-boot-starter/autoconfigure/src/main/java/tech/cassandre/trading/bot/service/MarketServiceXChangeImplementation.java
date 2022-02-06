@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Market service - XChange implementation.
+ * Market service - XChange implementation of {@link MarketService}.
  */
 public class MarketServiceXChangeImplementation extends BaseService implements MarketService {
 

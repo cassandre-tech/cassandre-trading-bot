@@ -35,7 +35,8 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
-import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyDependencies;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
@@ -163,25 +164,24 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     CassandreStrategyInterface strategy = (CassandreStrategyInterface) s;
                     CassandreStrategy annotation = s.getClass().getAnnotation(CassandreStrategy.class);
 
+                    // Retrieving strategy information from annotation.
+                    final String strategyId = annotation.strategyId();
+                    final String strategyName = annotation.strategyName();
+
                     // Displaying information about strategy.
                     logger.info("- Strategy '{}/{}' (requires {})",
-                            annotation.strategyId(),
-                            annotation.strategyName(),
+                            strategyId,
+                            strategyName,
                             strategy.getRequestedCurrencyPairs().stream()
                                     .map(CurrencyPairDTO::toString)
                                     .collect(Collectors.joining(", ")));
 
-                    // Saving or updating the strategy in database.
-                    strategyRepository.findByStrategyId(annotation.strategyId()).ifPresentOrElse(existingStrategy -> {
-                        // Updates strategy.
-                        existingStrategy.setName(annotation.strategyName());
-                        strategyRepository.save(existingStrategy);
-                        final StrategyDTO strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(existingStrategy);
-                        strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getUid()));
-                        strategy.setStrategy(strategyDTO);
-                        logger.debug("Strategy updated in database: {}", existingStrategy);
-                    }, () -> {
-                        // Creates strategy.
+                    // StrategyDTO : saving or updating the strategy in database.
+                    StrategyDTO strategyDTO;
+                    final Optional<Strategy> strategyInDatabase = strategyRepository.findByStrategyId(annotation.strategyId());
+                    if (strategyInDatabase.isEmpty()) {
+                        // =============================================================================================
+                        // If the strategy is NOT in database.
                         Strategy newStrategy = new Strategy();
                         newStrategy.setStrategyId(annotation.strategyId());
                         newStrategy.setName(annotation.strategyName());
@@ -191,11 +191,16 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         if (strategy instanceof BasicTa4jCassandreStrategy) {
                             newStrategy.setType(BASIC_TA4J_STRATEGY);
                         }
-                        StrategyDTO strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(strategyRepository.save(newStrategy));
-                        strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getUid()));
-                        strategy.setStrategy(strategyDTO);
+                        strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(strategyRepository.save(newStrategy));
                         logger.debug("Strategy created in database: {}", newStrategy);
-                    });
+                    } else {
+                        // =============================================================================================
+                        // If the strategy is in database.
+                        strategyInDatabase.get().setName(strategyName);
+                        strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(strategyRepository.save(strategyInDatabase.get()));
+                        logger.debug("Strategy updated in database: {}", strategyInDatabase.get());
+                    }
+                    strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getUid()));
 
                     // Gives configuration information to the strategy.
                     strategy.setDryModeIndicator(exchangeParameters.getModes().getDry());
@@ -203,15 +208,8 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     // Initialize accounts values in strategy.
                     strategy.initializeAccounts(user.getAccounts());
 
-                    // Setting services & repositories to strategy.
-                    strategy.setPositionFlux(positionFlux);
-                    strategy.setOrderRepository(orderRepository);
-                    strategy.setTradeRepository(tradeRepository);
-                    strategy.setPositionRepository(positionRepository);
-                    strategy.setImportedTickersRepository(importedTickersRepository);
-                    strategy.setExchangeService(exchangeService);
-                    strategy.setTradeService(tradeService);
-                    strategy.setPositionService(positionService);
+                    // Setting dependencies in strategy.
+                    strategy.setDependencies(getCassandreStrategyDependencies(strategyDTO));
 
                     // Calling user defined initialize() method.
                     strategy.initialize();
@@ -338,6 +336,30 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         }
 
         return user.get();
+    }
+
+    /**
+     * Returns cassandre strategy dependencies.
+     *
+     * @param strategyDTO strategy
+     * @return cassandre strategy dependencies
+     */
+    private CassandreStrategyDependencies getCassandreStrategyDependencies(final StrategyDTO strategyDTO) {
+        return CassandreStrategyDependencies.builder()
+                // Data.
+                .strategy(strategyDTO)
+                // Flux.
+                .positionFlux(positionFlux)
+                // Repositories.
+                .orderRepository(orderRepository)
+                .tradeRepository(tradeRepository)
+                .positionRepository(positionRepository)
+                .importedTickersRepository(importedTickersRepository)
+                // Services.
+                .exchangeService(exchangeService)
+                .tradeService(tradeService)
+                .positionService(positionService)
+                .build();
     }
 
     /**

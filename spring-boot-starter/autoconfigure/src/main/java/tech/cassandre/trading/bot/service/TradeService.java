@@ -4,7 +4,7 @@ import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -22,7 +22,7 @@ public interface TradeService {
      * @param amount       amount
      * @return order result (order id or error)
      */
-    OrderCreationResultDTO createBuyMarketOrder(GenericCassandreStrategy strategy,
+    OrderCreationResultDTO createBuyMarketOrder(CassandreStrategyInterface strategy,
                                                 CurrencyPairDTO currencyPair,
                                                 BigDecimal amount);
 
@@ -34,7 +34,7 @@ public interface TradeService {
      * @param amount       amount
      * @return order result (order id or error)
      */
-    OrderCreationResultDTO createSellMarketOrder(GenericCassandreStrategy strategy,
+    OrderCreationResultDTO createSellMarketOrder(CassandreStrategyInterface strategy,
                                                  CurrencyPairDTO currencyPair,
                                                  BigDecimal amount);
 
@@ -47,7 +47,7 @@ public interface TradeService {
      * @param limitPrice   the highest acceptable price
      * @return order result (order id or error)
      */
-    OrderCreationResultDTO createBuyLimitOrder(GenericCassandreStrategy strategy,
+    OrderCreationResultDTO createBuyLimitOrder(CassandreStrategyInterface strategy,
                                                CurrencyPairDTO currencyPair,
                                                BigDecimal amount,
                                                BigDecimal limitPrice);
@@ -61,7 +61,7 @@ public interface TradeService {
      * @param limitPrice   the lowest acceptable price
      * @return order result (order id or error)
      */
-    OrderCreationResultDTO createSellLimitOrder(GenericCassandreStrategy strategy,
+    OrderCreationResultDTO createSellLimitOrder(CassandreStrategyInterface strategy,
                                                 CurrencyPairDTO currencyPair,
                                                 BigDecimal amount,
                                                 BigDecimal limitPrice);
