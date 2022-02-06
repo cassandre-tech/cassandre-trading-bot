@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Three scheduled tasks:
  * - One calling account flux.
  * - One calling ticker flux.
- * - One calling order & trade flux.
+ * - One calling order and trade flux.
  */
 @Profile("!schedule-disabled")
 @Configuration

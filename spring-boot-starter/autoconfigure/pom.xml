@@ -324,11 +324,17 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- TODO Remove when the delombok issue is fixed https://github.com/awhitford/lombok.maven/issues/98 -->
-            <!--<plugin>
+            <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>${maven.lombok.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>${lombok.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
                     <outputDirectory>${project.build.directory}/delombok</outputDirectory>
@@ -342,9 +348,8 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>-->
-            <!-- TODO Remove when the delombok issue is fixed https://github.com/awhitford/lombok.maven/issues/98 -->
-            <!--<plugin>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
@@ -361,7 +366,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
     <!-- =========================================================================================================== -->
