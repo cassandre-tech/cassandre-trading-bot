@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.util.base.service.BaseService;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -64,7 +63,7 @@ public class MarketServiceXChangeImplementation extends BaseService implements M
             CurrencyPairsParam params = () -> currencyPairs
                     .stream()
                     .map(CURRENCY_MAPPER::mapToCurrencyPair)
-                    .collect(Collectors.toCollection(LinkedList::new));
+                    .toList();
 
             // Consume a token from the token bucket.
             // If a token is not available this method will block until the refill adds one to the bucket.

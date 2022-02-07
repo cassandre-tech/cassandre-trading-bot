@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import tech.cassandre.trading.bot.batch.PositionFlux;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.repository.ImportedTickersRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
@@ -22,6 +21,7 @@ import static lombok.AccessLevel.PRIVATE;
  * <p>
  * These are the classes used to manage a position.
  * - CassandreStrategyInterface list the methods a strategy type must implement to be able to interact with the Cassandre framework.
+ * - CassandreStrategyConfiguration contains the configuration of the strategy.
  * - CassandreStrategyDependencies contains all the dependencies required by a strategy and provided by the Cassandre framework.
  * - CassandreStrategyImplementation is the default implementation of CassandreStrategyInterface, this code manages the interaction between Cassandre framework and a strategy.
  * - CassandreStrategy (class) is the class that every strategy used by user ({@link BasicCassandreStrategy} or {@link BasicTa4jCassandreStrategy}) must extend. It contains methods to access data and manage orders, trades, positions.
@@ -34,12 +34,6 @@ import static lombok.AccessLevel.PRIVATE;
 @AllArgsConstructor(access = PRIVATE)
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class CassandreStrategyDependencies {
-
-    // =================================================================================================================
-    // Data.
-
-    /** Strategy. */
-    StrategyDTO strategy;
 
     // =================================================================================================================
     // Flux.

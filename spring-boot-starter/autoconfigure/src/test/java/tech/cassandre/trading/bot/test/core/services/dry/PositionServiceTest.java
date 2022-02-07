@@ -51,7 +51,7 @@ public class PositionServiceTest extends BaseTest {
     @Test
     @DisplayName("Check position lifecycle")
     public void checkPositionLifecycle() {
-        assertTrue(strategy.isRunningInDryMode());
+        assertTrue(strategy.getConfiguration().isDryMode());
 
         // First tickers - cp1 & cp2 (dry mode).
         // ETH/BTC - 0.2.

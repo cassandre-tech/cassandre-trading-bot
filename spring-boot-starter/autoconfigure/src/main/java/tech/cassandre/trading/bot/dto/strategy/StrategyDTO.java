@@ -27,7 +27,7 @@ public class StrategyDTO {
     /** An identifier that uniquely identifies the strategy - Comes from the Java annotation. */
     String strategyId;
 
-    /** Strategy type - Comes from the Java strategy inheritence. */
+    /** Strategy type - Comes from the Java strategy inheritance. */
     StrategyTypeDTO type;
 
     /** Strategy name - Comes from the Java annotation. */

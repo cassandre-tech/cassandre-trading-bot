@@ -56,7 +56,7 @@ public class Trade extends BaseDomain {
 
     /** The order responsible for this trade. */
     @ManyToOne
-    @JoinColumn(name = "FK_ORDER_ID", nullable = false)
+    @JoinColumn(name = "FK_ORDER_UID", nullable = false)
     private Order order;
 
     /** Currency pair. */

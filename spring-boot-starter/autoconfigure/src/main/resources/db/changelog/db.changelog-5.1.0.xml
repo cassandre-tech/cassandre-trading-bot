@@ -8,23 +8,45 @@
         <renameColumn tableName="STRATEGIES"
                       oldColumnName="ID"
                       newColumnName="UID"
-                      remarks="Strategy unique id"/>
+                      remarks="Strategy unique uid"/>
         <renameColumn tableName="POSITIONS"
                       oldColumnName="ID"
                       newColumnName="UID"
-                      remarks="Position unique id"/>
+                      remarks="Position unique uid"/>
         <renameColumn tableName="ORDERS"
                       oldColumnName="ID"
                       newColumnName="UID"
-                      remarks="Order unique id"/>
+                      remarks="Order unique uid"/>
         <renameColumn tableName="TRADES"
                       oldColumnName="ID"
                       newColumnName="UID"
-                      remarks="Trade unique id"/>
+                      remarks="Trade unique uid"/>
         <renameColumn tableName="IMPORTED_TICKERS"
                       oldColumnName="ID"
                       newColumnName="UID"
                       remarks="Imported tickers unique id"/>
+
+        <!-- And the corresponding foreign keys -->
+        <renameColumn tableName="POSITIONS"
+                      oldColumnName="FK_STRATEGY_ID"
+                      newColumnName="FK_STRATEGY_UID"
+                      remarks="The strategy of the position"/>
+        <renameColumn tableName="POSITIONS"
+                      oldColumnName="FK_OPENING_ORDER_ID"
+                      newColumnName="FK_OPENING_ORDER_UID"
+                      remarks="The opening order of the position"/>
+        <renameColumn tableName="POSITIONS"
+                      oldColumnName="FK_CLOSING_ORDER_ID"
+                      newColumnName="FK_CLOSING_ORDER_UID"
+                      remarks="The closing order of the position"/>
+        <renameColumn tableName="ORDERS"
+                      oldColumnName="FK_STRATEGY_ID"
+                      newColumnName="FK_STRATEGY_UID"
+                      remarks="The strategy of the order"/>
+        <renameColumn tableName="TRADES"
+                      oldColumnName="FK_ORDER_ID"
+                      newColumnName="FK_ORDER_UID"
+                      remarks="The order of the trade"/>
 
     </changeSet>
 </databaseChangeLog>

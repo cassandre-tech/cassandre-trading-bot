@@ -76,7 +76,7 @@ public class PositionLongFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertFalse(strategy.isRunningInDryMode());
+        assertFalse(strategy.getConfiguration().isDryMode());
 
         // =============================================================================================================
         // Creates position 1 - should be OPENING.

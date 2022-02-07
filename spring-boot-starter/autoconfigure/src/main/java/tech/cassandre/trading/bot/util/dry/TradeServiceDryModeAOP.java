@@ -79,7 +79,7 @@ public class TradeServiceDryModeAOP extends BaseService {
         // We check that we have the trade account.
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         if (tradeAccount.isEmpty()) {
-            throw new DryModeException("Trade account was not found");
+            throw new DryModeException("[Dry mode] Trade account was not found");
         }
 
         // We check if we have enough assets to buy.

@@ -121,12 +121,12 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
             // =========================================================================================================
             // Creates the position in database.
             Position position = new Position();
-            position.setStrategy(STRATEGY_MAPPER.mapToStrategy(strategy.getStrategyDTO()));
+            position.setStrategy(STRATEGY_MAPPER.mapToStrategy(strategy.getConfiguration().getStrategyDTO()));
             position = positionRepository.save(position);
 
             // =========================================================================================================
             // Creates the position dto.
-            PositionDTO p = new PositionDTO(position.getUid(), type, strategy.getStrategyDTO(), currencyPair, amount, orderCreationResult.getOrder(), rules);
+            PositionDTO p = new PositionDTO(position.getUid(), type, strategy.getConfiguration().getStrategyDTO(), currencyPair, amount, orderCreationResult.getOrder(), rules);
             positionRepository.save(POSITION_MAPPER.mapToPosition(p));
             logger.debug("Position {} opened with order {}",
                     p.getPositionId(),

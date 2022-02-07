@@ -35,6 +35,7 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyConfiguration;
 import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyDependencies;
 import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
@@ -202,14 +203,10 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                     }
                     strategyDTO.initializeLastPositionIdUsed(positionRepository.getLastPositionIdUsedByStrategy(strategyDTO.getUid()));
 
-                    // Gives configuration information to the strategy.
-                    strategy.setDryModeIndicator(exchangeParameters.getModes().getDry());
-
-                    // Initialize accounts values in strategy.
+                    // Setting up configuration, dependencies and accounts in strategy.
                     strategy.initializeAccounts(user.getAccounts());
-
-                    // Setting dependencies in strategy.
-                    strategy.setDependencies(getCassandreStrategyDependencies(strategyDTO));
+                    strategy.setConfiguration(getCassandreStrategyConfiguration(strategyDTO));
+                    strategy.setDependencies(getCassandreStrategyDependencies());
 
                     // Calling user defined initialize() method.
                     strategy.initialize();
@@ -339,15 +336,25 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Returns cassandre strategy dependencies.
+     * Returns cassandre strategy configuration.
      *
      * @param strategyDTO strategy
+     * @return cassandre strategy configuration
+     */
+    private CassandreStrategyConfiguration getCassandreStrategyConfiguration(final StrategyDTO strategyDTO) {
+        return CassandreStrategyConfiguration.builder()
+                .strategyDTO(strategyDTO)
+                .dryMode(exchangeParameters.getModes().getDry())
+                .build();
+    }
+
+    /**
+     * Returns cassandre strategy dependencies.
+     *
      * @return cassandre strategy dependencies
      */
-    private CassandreStrategyDependencies getCassandreStrategyDependencies(final StrategyDTO strategyDTO) {
+    private CassandreStrategyDependencies getCassandreStrategyDependencies() {
         return CassandreStrategyDependencies.builder()
-                // Data.
-                .strategy(strategyDTO)
                 // Flux.
                 .positionFlux(positionFlux)
                 // Repositories.

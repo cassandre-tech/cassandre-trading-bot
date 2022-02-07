@@ -34,9 +34,9 @@ public class AccountFlux extends BaseFlux<AccountDTO> {
                 .values()
                 .stream()
                 .peek(accountDTO -> logger.debug("Retrieved account from exchange: {}", accountDTO))
-                // We consider that we have a new value to send to strategies in those cases:
+                // We consider that we have a new value to send to strategies in two cases:
                 // - New value (AccountDTO) is already in previous values but balances are different.
-                // - New value (accountDTO) doesn't exist at all in previous values.
+                // - New value (AccountDTO) doesn't exist at all in previous values.
                 .filter(accountDTO -> !Objects.equals(accountDTO, previousValues.get(accountDTO.getAccountId())))
                 .peek(accountDTO -> logger.debug("Updated account: {}", accountDTO))
                 // We add or replace the new value in the previous values.

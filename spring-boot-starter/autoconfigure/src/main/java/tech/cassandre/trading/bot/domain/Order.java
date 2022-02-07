@@ -62,7 +62,7 @@ public class Order extends BaseDomain {
 
     /** The strategy that created the order. */
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
+    @JoinColumn(name = "FK_STRATEGY_UID", updatable = false)
     private Strategy strategy;
 
     /** Currency pair. */

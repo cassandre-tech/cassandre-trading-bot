@@ -59,7 +59,7 @@ public class Position extends BaseDomain {
 
     /** The strategy that created the position. */
     @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "FK_STRATEGY_ID", updatable = false)
+    @JoinColumn(name = "FK_STRATEGY_UID", updatable = false)
     private Strategy strategy;
 
     /** The currency-pair. */
@@ -105,12 +105,12 @@ public class Position extends BaseDomain {
 
     /** The order created to open the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
-    @JoinColumn(name = "FK_OPENING_ORDER_ID")
+    @JoinColumn(name = "FK_OPENING_ORDER_UID")
     private Order openingOrder;
 
     /** The order created to close the position. */
     @OneToOne(fetch = EAGER, cascade = ALL)
-    @JoinColumn(name = "FK_CLOSING_ORDER_ID")
+    @JoinColumn(name = "FK_CLOSING_ORDER_UID")
     private Order closingOrder;
 
     /** Price of the lowest gain reached by this position. */

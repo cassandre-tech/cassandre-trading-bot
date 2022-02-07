@@ -18,7 +18,6 @@ import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +33,7 @@ import static tech.cassandre.trading.bot.util.math.MathConstants.BIGINTEGER_SCAL
  * <p>
  * These are the classes used to manage a position.
  * - CassandreStrategyInterface list the methods a strategy type must implement to be able to interact with the Cassandre framework.
+ * - CassandreStrategyConfiguration contains the configuration of the strategy.
  * - CassandreStrategyDependencies contains all the dependencies required by a strategy and provided by the Cassandre framework.
  * - CassandreStrategyImplementation is the default implementation of CassandreStrategyInterface, this code manages the interaction between Cassandre framework and a strategy.
  * - CassandreStrategy (class) is the class that every strategy used by user ({@link BasicCassandreStrategy} or {@link BasicTa4jCassandreStrategy}) must extend. It contains methods to access data and manage orders, trades, positions.
@@ -106,17 +106,17 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
         return lastTickers;
     }
 
-
     /**
      * Return the list of imported tickers (ordered by timestamp).
      *
      * @return imported tickers
      */
     public final List<TickerDTO> getImportedTickers() {
-        return dependencies.getImportedTickersRepository().findByOrderByTimestampAsc()
+        return dependencies.getImportedTickersRepository()
+                .findByOrderByTimestampAsc()
                 .stream()
                 .map(TICKER_MAPPER::mapToTickerDTO)
-                .collect(Collectors.toCollection(LinkedList::new));
+                .toList();
     }
 
     /**
@@ -126,10 +126,11 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * @return imported tickers
      */
     public final List<TickerDTO> getImportedTickers(final CurrencyPairDTO currencyPair) {
-        return dependencies.getImportedTickersRepository().findByCurrencyPairOrderByTimestampAsc(currencyPair.toString())
+        return dependencies.getImportedTickersRepository()
+                .findByCurrencyPairOrderByTimestampAsc(currencyPair.toString())
                 .stream()
                 .map(TICKER_MAPPER::mapToTickerDTO)
-                .collect(Collectors.toCollection(LinkedList::new));
+                .toList();
     }
 
     // =================================================================================================================
@@ -143,7 +144,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     public final Map<String, OrderDTO> getOrders() {
         return dependencies.getOrderRepository().findByOrderByTimestampAsc()
                 .stream()
-                .filter(order -> order.getStrategy().getStrategyId().equals(getStrategyDTO().getStrategyId()))
+                .filter(order -> order.getStrategy().getStrategyId().equals(configuration.getStrategyId()))
                 .map(ORDER_MAPPER::mapToOrderDTO)
                 .collect(Collectors.toMap(OrderDTO::getOrderId, orderDTO -> orderDTO));
     }
@@ -172,7 +173,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     public final Map<String, TradeDTO> getTrades() {
         return dependencies.getTradeRepository().findByOrderByTimestampAsc()
                 .stream()
-                .filter(trade -> trade.getOrder().getStrategy().getStrategyId().equals(getStrategyDTO().getStrategyId()))
+                .filter(trade -> trade.getOrder().getStrategy().getStrategyId().equals(configuration.getStrategyId()))
                 .map(TRADE_MAPPER::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getTradeId, tradeDTO -> tradeDTO));
     }

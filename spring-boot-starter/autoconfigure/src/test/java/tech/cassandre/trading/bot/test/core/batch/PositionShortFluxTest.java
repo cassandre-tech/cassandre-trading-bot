@@ -76,7 +76,7 @@ public class PositionShortFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertFalse(strategy.isRunningInDryMode());
+        assertFalse(strategy.getConfiguration().isDryMode());
 
         // =============================================================================================================
         // Creates short position 1 of 10 ETH (for BTC) - should be OPENING.

@@ -58,7 +58,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
     @Test
     @DisplayName("Check force closing")
     public void checkForceClosing() {
-        assertTrue(strategy.isRunningInDryMode());
+        assertTrue(strategy.getConfiguration().isDryMode());
 
         // First tickers (dry mode).
         // ETH/BTC - 0.2.

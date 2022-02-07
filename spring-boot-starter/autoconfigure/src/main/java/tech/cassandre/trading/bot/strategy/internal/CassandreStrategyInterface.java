@@ -2,7 +2,6 @@ package tech.cassandre.trading.bot.strategy.internal;
 
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
@@ -20,6 +19,7 @@ import java.util.Set;
  * <p>
  * These are the classes used to manage a position.
  * - CassandreStrategyInterface list the methods a strategy type must implement to be able to interact with the Cassandre framework.
+ * - CassandreStrategyConfiguration contains the configuration of the strategy.
  * - CassandreStrategyDependencies contains all the dependencies required by a strategy and provided by the Cassandre framework.
  * - CassandreStrategyImplementation is the default implementation of CassandreStrategyInterface, this code manages the interaction between Cassandre framework and a strategy.
  * - CassandreStrategy (class) is the class that every strategy used by user ({@link BasicCassandreStrategy} or {@link BasicTa4jCassandreStrategy}) must extend. It contains methods to access data and manage orders, trades, positions.
@@ -31,7 +31,21 @@ import java.util.Set;
 public interface CassandreStrategyInterface {
 
     // =================================================================================================================
-    // Configuration set/used by Cassandre.
+    // Configuration & dependencies.
+
+    /**
+     * Set cassandre strategy configuration.
+     *
+     * @param cassandreStrategyConfiguration cassandre strategy configuration
+     */
+    void setConfiguration(CassandreStrategyConfiguration cassandreStrategyConfiguration);
+
+    /**
+     * Get strategy configuration.
+     *
+     * @return configuration
+     */
+    CassandreStrategyConfiguration getConfiguration();
 
     /**
      * Set cassandre strategy dependencies.
@@ -39,27 +53,6 @@ public interface CassandreStrategyInterface {
      * @param cassandreStrategyDependencies cassandre strategy dependencies
      */
     void setDependencies(CassandreStrategyDependencies cassandreStrategyDependencies);
-
-    /**
-     * Getter strategyDTO.
-     *
-     * @return strategy DTO
-     */
-    StrategyDTO getStrategyDTO();
-
-    /**
-     * Indicates if Cassandre is in dry mode (true) or not (false).
-     *
-     * @param dryModeIndicator dry mode indicator
-     */
-    void setDryModeIndicator(boolean dryModeIndicator);
-
-    /**
-     * Returns true cassandre is running in dry mode.
-     *
-     * @return true if dry mode is on
-     */
-    boolean isRunningInDryMode();
 
     // =================================================================================================================
     // Configuration called by Cassandre and set by the strategy developer.
@@ -85,7 +78,7 @@ public interface CassandreStrategyInterface {
 
     /**
      * Initialize strategy accounts with exchange accounts data retrieved at startup.
-     * TODO Can this be made throw accountUpdates?
+     * TODO Can this be made throw accountUpdates? (when it's empty?)
      *
      * @param accounts accounts
      */
@@ -146,7 +139,7 @@ public interface CassandreStrategyInterface {
      * @param accounts accounts updates
      */
     default void onAccountsUpdates(Map<String, AccountDTO> accounts) {
-        // Can be implemented by a strategy developer.
+        // Can be implemented by a strategy developer to receive events.
     }
 
     /**
@@ -155,7 +148,7 @@ public interface CassandreStrategyInterface {
      * @param tickers tickers updates
      */
     default void onTickersUpdates(Map<CurrencyPairDTO, TickerDTO> tickers) {
-        // Can be implemented by a strategy developer.
+        // Can be implemented by a strategy developer to receive events.
     }
 
     /**
@@ -164,7 +157,7 @@ public interface CassandreStrategyInterface {
      * @param orders orders updates
      */
     default void onOrdersUpdates(Map<String, OrderDTO> orders) {
-        // Can be implemented by a strategy developer.
+        // Can be implemented by a strategy developer to receive events.
     }
 
     /**
@@ -173,7 +166,7 @@ public interface CassandreStrategyInterface {
      * @param trades trades updates
      */
     default void onTradesUpdates(Map<String, TradeDTO> trades) {
-        // Can be implemented by a strategy developer.
+        // Can be implemented by a strategy developer to receive events.
     }
 
     /**
@@ -182,7 +175,7 @@ public interface CassandreStrategyInterface {
      * @param positions positions updates
      */
     default void onPositionsUpdates(Map<Long, PositionDTO> positions) {
-        // Can be implemented by a strategy developer.
+        // Can be implemented by a strategy developer to receive events.
     }
 
     /**
@@ -191,7 +184,7 @@ public interface CassandreStrategyInterface {
      * @param positions positions status updates
      */
     default void onPositionsStatusUpdates(Map<Long, PositionDTO> positions) {
-        // Can be implemented by a strategy developer.
+        // Can be implemented by a strategy developer to receive events.
     }
 
     // =================================================================================================================
