@@ -196,7 +196,7 @@ CREATE TABLE public.orders (
     id bigint NOT NULL,
     order_id character varying(255),
     type character varying(255),
-    fk_strategy_id bigint,
+    FK_STRATEGY_UID bigint,
     currency_pair character varying(255),
     amount_value numeric(16,8),
     amount_currency character varying(255),
@@ -241,10 +241,10 @@ COMMENT ON COLUMN public.orders.type IS 'Order type i.e. bid or ask';
 
 
 --
--- Name: COLUMN orders.fk_strategy_id; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
+-- Name: COLUMN orders.FK_STRATEGY_UID; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
 --
 
-COMMENT ON COLUMN public.orders.fk_strategy_id IS 'The strategy that created the order';
+COMMENT ON COLUMN public.orders.FK_STRATEGY_UID IS 'The strategy that created the order';
 
 
 --
@@ -395,15 +395,15 @@ CREATE TABLE public.positions (
     id bigint NOT NULL,
     position_id bigint,
     type character varying(255),
-    fk_strategy_id bigint,
+    FK_STRATEGY_UID bigint,
     currency_pair character varying(255),
     amount_value numeric(16,8),
     amount_currency character varying(255),
     rules_stop_gain_percentage double precision,
     rules_stop_loss_percentage double precision,
     status character varying(255),
-    fk_opening_order_id bigint,
-    fk_closing_order_id bigint,
+    FK_OPENING_ORDER_UID bigint,
+    FK_CLOSING_ORDER_UID bigint,
     lowest_gain_price_value numeric(16,8),
     lowest_gain_price_currency character varying(255),
     highest_gain_price_value numeric(16,8),
@@ -440,10 +440,10 @@ COMMENT ON COLUMN public.positions.type IS 'Position type';
 
 
 --
--- Name: COLUMN positions.fk_strategy_id; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
+-- Name: COLUMN positions.FK_STRATEGY_UID; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
 --
 
-COMMENT ON COLUMN public.positions.fk_strategy_id IS 'The strategy that created the position';
+COMMENT ON COLUMN public.positions.FK_STRATEGY_UID IS 'The strategy that created the position';
 
 
 --
@@ -489,17 +489,17 @@ COMMENT ON COLUMN public.positions.status IS 'Position status';
 
 
 --
--- Name: COLUMN positions.fk_opening_order_id; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
+-- Name: COLUMN positions.FK_OPENING_ORDER_UID; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
 --
 
-COMMENT ON COLUMN public.positions.fk_opening_order_id IS 'The order created to open the position';
+COMMENT ON COLUMN public.positions.FK_OPENING_ORDER_UID IS 'The order created to open the position';
 
 
 --
--- Name: COLUMN positions.fk_closing_order_id; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
+-- Name: COLUMN positions.FK_CLOSING_ORDER_UID; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
 --
 
-COMMENT ON COLUMN public.positions.fk_closing_order_id IS 'The order created to close the position';
+COMMENT ON COLUMN public.positions.FK_CLOSING_ORDER_UID IS 'The order created to close the position';
 
 
 --
@@ -673,7 +673,7 @@ CREATE TABLE public.trades (
     id bigint NOT NULL,
     trade_id character varying(255),
     type character varying(255),
-    fk_order_id bigint,
+    FK_ORDER_UID bigint,
     currency_pair character varying(255),
     amount_value numeric(16,8),
     amount_currency character varying(255),
@@ -712,10 +712,10 @@ COMMENT ON COLUMN public.trades.type IS 'Order type i.e. bid or ask';
 
 
 --
--- Name: COLUMN trades.fk_order_id; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
+-- Name: COLUMN trades.FK_ORDER_UID; Type: COMMENT; Schema: public; Owner: cassandre_trading_bot
 --
 
-COMMENT ON COLUMN public.trades.fk_order_id IS 'The id of the order responsible for execution of this trade';
+COMMENT ON COLUMN public.trades.FK_ORDER_UID IS 'The id of the order responsible for execution of this trade';
 
 
 --
@@ -878,7 +878,7 @@ COPY public.databasechangeloglock (id, locked, lockgranted, lockedby) FROM stdin
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: cassandre_trading_bot
 --
 
-COPY public.orders (id, order_id, type, fk_strategy_id, currency_pair, amount_value, amount_currency, average_price_value, average_price_currency, limit_price_value, limit_price_currency, leverage, status, cumulative_amount_value, cumulative_amount_currency, user_reference, "timestamp", created_on, updated_on, market_price_value, market_price_currency) FROM stdin;
+COPY public.orders (id, order_id, type, FK_STRATEGY_UID, currency_pair, amount_value, amount_currency, average_price_value, average_price_currency, limit_price_value, limit_price_currency, leverage, status, cumulative_amount_value, cumulative_amount_currency, user_reference, "timestamp", created_on, updated_on, market_price_value, market_price_currency) FROM stdin;
 1	60ddfbc11f8b45000696de3f	BID	1	BTC/USDT	0.00100000	BTC	33183.50000000	USDT	\N	\N	\N	NEW	0.00100000	BTC	\N	2021-07-01 19:30:42.054417+02	2021-07-01 19:30:42.12093+02	2021-07-01 19:30:46.086116+02	33183.50000000	USDT
 2	60ddfbc2614b0f00061f94d9	BID	2	UNI/USDT	1.00000000	UNI	17.64750000	USDT	\N	\N	\N	NEW	1.00000000	UNI	\N	2021-07-01 19:30:42.644773+02	2021-07-01 19:30:42.64654+02	2021-07-01 19:30:46.096879+02	17.64750000	USDT
 3	60de17e2b7939500065290f2	BID	1	BTC/USDT	0.00100000	BTC	33034.00000000	USDT	\N	\N	\N	NEW	0.00100000	BTC	\N	2021-07-01 21:30:42.542557+02	2021-07-01 21:30:42.544546+02	2021-07-01 21:30:46.975391+02	33034.00000000	USDT
@@ -1273,7 +1273,7 @@ COPY public.orders (id, order_id, type, fk_strategy_id, currency_pair, amount_va
 -- Data for Name: positions; Type: TABLE DATA; Schema: public; Owner: cassandre_trading_bot
 --
 
-COPY public.positions (id, position_id, type, fk_strategy_id, currency_pair, amount_value, amount_currency, rules_stop_gain_percentage, rules_stop_loss_percentage, status, fk_opening_order_id, fk_closing_order_id, lowest_gain_price_value, lowest_gain_price_currency, highest_gain_price_value, highest_gain_price_currency, latest_gain_price_value, latest_gain_price_currency, created_on, updated_on, force_closing) FROM stdin;
+COPY public.positions (id, position_id, type, FK_STRATEGY_UID, currency_pair, amount_value, amount_currency, rules_stop_gain_percentage, rules_stop_loss_percentage, status, FK_OPENING_ORDER_UID, FK_CLOSING_ORDER_UID, lowest_gain_price_value, lowest_gain_price_currency, highest_gain_price_value, highest_gain_price_currency, latest_gain_price_value, latest_gain_price_currency, created_on, updated_on, force_closing) FROM stdin;
 14	7	LONG	1	BTC/USDT	0.00100000	BTC	5	15	CLOSED	14	25	32775.10000000	USDT	34497.20000000	USDT	34593.70000000	USDT	2021-07-02 08:30:45.9797+02	2021-07-03 09:55:45.872881+02	f
 62	28	LONG	2	UNI/USDT	1.00000000	UNI	6	15	CLOSED	107	108	16.94920000	USDT	18.37360000	USDT	18.39360000	USDT	2021-07-23 14:08:38.779914+02	2021-07-24 01:17:45.498778+02	f
 76	37	LONG	1	BTC/USDT	0.00100000	BTC	5	15	CLOSED	145	150	36403.00000000	USDT	38326.00000000	USDT	38362.80000000	USDT	2021-07-27 04:58:32.455549+02	2021-07-27 14:41:31.39421+02	f
@@ -1490,7 +1490,7 @@ COPY public.strategies (id, strategy_id, type, name, created_on, updated_on) FRO
 -- Data for Name: trades; Type: TABLE DATA; Schema: public; Owner: cassandre_trading_bot
 --
 
-COPY public.trades (id, trade_id, type, fk_order_id, currency_pair, amount_value, amount_currency, price_value, price_currency, fee_value, fee_currency, user_reference, "timestamp", created_on, updated_on) FROM stdin;
+COPY public.trades (id, trade_id, type, FK_ORDER_UID, currency_pair, amount_value, amount_currency, price_value, price_currency, fee_value, fee_currency, user_reference, "timestamp", created_on, updated_on) FROM stdin;
 1	60ddfbc12e113d29238c57ea	BID	1	BTC/USDT	0.00050000	BTC	33181.80000000	USDT	0.01659090	USDT	\N	2021-07-01 19:30:42+02	2021-07-01 19:30:50.384136+02	\N
 2	60ddfbc12e113d29238c57e9	BID	1	BTC/USDT	0.00050000	BTC	33181.80000000	USDT	0.01659090	USDT	\N	2021-07-01 19:30:42+02	2021-07-01 19:30:50.406256+02	\N
 3	60ddfbc21eefb0218434f5d9	BID	2	UNI/USDT	1.00000000	UNI	17.66530000	USDT	0.01766530	USDT	\N	2021-07-01 19:30:42+02	2021-07-01 19:30:50.414531+02	\N
@@ -2120,7 +2120,7 @@ CREATE INDEX idx_trades_trade_id ON public.trades USING btree (trade_id DESC);
 --
 
 ALTER TABLE ONLY public.orders
-    ADD CONSTRAINT fk_orders_strategy_id FOREIGN KEY (fk_strategy_id) REFERENCES public.strategies(id);
+    ADD CONSTRAINT fk_orders_strategy_id FOREIGN KEY (FK_STRATEGY_UID) REFERENCES public.strategies(id);
 
 
 --
@@ -2128,7 +2128,7 @@ ALTER TABLE ONLY public.orders
 --
 
 ALTER TABLE ONLY public.positions
-    ADD CONSTRAINT fk_positions_close_order_id FOREIGN KEY (fk_closing_order_id) REFERENCES public.orders(id);
+    ADD CONSTRAINT fk_positions_close_order_id FOREIGN KEY (FK_CLOSING_ORDER_UID) REFERENCES public.orders(id);
 
 
 --
@@ -2136,7 +2136,7 @@ ALTER TABLE ONLY public.positions
 --
 
 ALTER TABLE ONLY public.positions
-    ADD CONSTRAINT fk_positions_open_order_id FOREIGN KEY (fk_opening_order_id) REFERENCES public.orders(id);
+    ADD CONSTRAINT fk_positions_open_order_id FOREIGN KEY (FK_OPENING_ORDER_UID) REFERENCES public.orders(id);
 
 
 --
@@ -2144,7 +2144,7 @@ ALTER TABLE ONLY public.positions
 --
 
 ALTER TABLE ONLY public.positions
-    ADD CONSTRAINT fk_positions_strategy_id FOREIGN KEY (fk_strategy_id) REFERENCES public.strategies(id);
+    ADD CONSTRAINT fk_positions_strategy_id FOREIGN KEY (FK_STRATEGY_UID) REFERENCES public.strategies(id);
 
 
 --
@@ -2152,7 +2152,7 @@ ALTER TABLE ONLY public.positions
 --
 
 ALTER TABLE ONLY public.trades
-    ADD CONSTRAINT fk_trades_order_id FOREIGN KEY (fk_order_id) REFERENCES public.orders(id);
+    ADD CONSTRAINT fk_trades_order_id FOREIGN KEY (FK_ORDER_UID) REFERENCES public.orders(id);
 
 
 --
