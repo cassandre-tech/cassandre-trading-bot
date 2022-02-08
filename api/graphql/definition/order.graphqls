@@ -1,7 +1,7 @@
 "An order is a request by an investor to buy or sell."
 type Order {
-    "Technical ID."
-    id: Int!
+    "Order unique ID."
+    uid: Int!
     "An identifier set by the exchange that uniquely identifies the order."
     orderId: String!
     "Order type i.e. bid (buy) or ask (sell)."
