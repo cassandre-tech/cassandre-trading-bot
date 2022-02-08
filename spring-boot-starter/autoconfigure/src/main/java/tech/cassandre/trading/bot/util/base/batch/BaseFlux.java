@@ -62,7 +62,6 @@ public abstract class BaseFlux<T> extends Base {
             emitValues(getNewValues());
         } catch (RuntimeException e) {
             logger.error("{} encountered and error {}", getClass().getSimpleName(), e.getMessage());
-            e.printStackTrace();
         }
     }
 

@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Duration;
 
 /**
- * Exchange parameters from application.properties.
+ * Parameters from application.properties.
  */
 @Validated
 @Getter
@@ -28,7 +28,7 @@ import java.time.Duration;
 public class ExchangeParameters {
 
     /** Driver class name. For example: org.knowm.xchange.coinbasepro.CoinbaseProExchange, kraken, kucoin. */
-    @NotEmpty(message = "Driver class  name required, for example: org.knowm.xchange.coinbasepro.CoinbaseProExchange")
+    @NotEmpty(message = "Driver class name required, for example: org.knowm.xchange.coinbasepro.CoinbaseProExchange")
     private String driverClassName;
 
     /** API username. */

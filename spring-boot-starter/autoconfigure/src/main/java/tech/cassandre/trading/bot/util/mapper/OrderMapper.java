@@ -100,12 +100,6 @@ public interface OrderMapper {
     // =================================================================================================================
     // Domain to DTO.
 
-    /**
-     * Map Order to OrderDTO.
-     *
-     * @param source order
-     * @return OrderDTO
-     */
     @Mapping(source = "trades", target = "trades")
     @Mapping(target = "trade", ignore = true)
     OrderDTO mapToOrderDTO(tech.cassandre.trading.bot.domain.Order source);

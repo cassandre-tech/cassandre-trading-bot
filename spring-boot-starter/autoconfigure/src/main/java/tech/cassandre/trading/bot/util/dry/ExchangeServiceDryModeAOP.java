@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
 import org.knowm.xchange.dto.meta.ExchangeMetaData;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.ApplicationContext;
@@ -38,7 +36,7 @@ public class ExchangeServiceDryModeAOP extends BaseService {
      */
     @Around("execution(* org.knowm.xchange.Exchange.getExchangeMetaData())")
     public final ExchangeMetaData getExchangeMetaData(final ProceedingJoinPoint pjp) {
-        Map<CurrencyPair, CurrencyPairMetaData> supportedCurrencyPairs = applicationContext
+        return new ExchangeMetaData(applicationContext
                 .getBeansWithAnnotation(CassandreStrategy.class)
                 .values()  // We get the list of all required cp of all strategies.
                 .stream()
@@ -46,9 +44,7 @@ public class ExchangeServiceDryModeAOP extends BaseService {
                 .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
                 .flatMap(Set::stream)
                 .map(CURRENCY_MAPPER::mapToCurrencyPair)
-                .collect(HashMap::new, (map, cp) -> map.put(cp, null), Map::putAll);
-
-        return new ExchangeMetaData(supportedCurrencyPairs,
+                .collect(HashMap::new, (map, cp) -> map.put(cp, null), Map::putAll),
                 null,
                 null,
                 null,

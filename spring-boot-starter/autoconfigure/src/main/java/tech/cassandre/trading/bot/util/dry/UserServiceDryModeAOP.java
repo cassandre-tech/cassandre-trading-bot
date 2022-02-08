@@ -145,7 +145,7 @@ public class UserServiceDryModeAOP extends BaseService {
                             }
                         });
 
-                        // if for the trading account, we don't have a balance for the currency we are trying to add/remove
+                        // If for the trading account, we don't have a balance for the currency we are trying to add/remove
                         // amounts, then we create a new balance.
                         if (name.equals(tradeAccount.get().getName()) && balances.get(currency) == null) {
                             balances.put(currency, new Balance(currency, amount));

@@ -79,7 +79,7 @@ public class TradeServiceDryModeAOP extends BaseService {
         // We check that we have the trade account.
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         if (tradeAccount.isEmpty()) {
-            throw new DryModeException("[Dry mode] Trade account was not found");
+            throw new DryModeException("Trade account was not found");
         }
 
         // We check if we have enough assets to buy.
@@ -167,8 +167,8 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around("execution(* org.knowm.xchange.service.trade.TradeService.getOpenOrders())")
     public final OpenOrders getOpenOrders(final ProceedingJoinPoint pjp) {
-        // For every new order in database, we send an update saying the order is filled.
-        List<LimitOrder> orders = orderRepository.findByStatusNot(CLOSED)
+        // For every new order created in Cassandre (in database), we reply with an updated order saying this same order is filled.
+        return new OpenOrders(orderRepository.findByStatusNot(CLOSED)
                 .stream()
                 .map(ORDER_MAPPER::mapToOrderDTO)
                 .map(orderDTO -> new LimitOrder.Builder(UTIL_MAPPER.mapToOrderType(orderDTO.getType()), CURRENCY_MAPPER.mapToCurrencyPair(orderDTO.getCurrencyPair()))
@@ -181,9 +181,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                         .userReference(orderDTO.getUserReference())
                         .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
                         .build())
-                .toList();
-
-        return new OpenOrders(orders);
+                .toList());
     }
 
     @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.getTradeHistory(..)) && args(params))", argNames = "pjp, params")
@@ -199,6 +197,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                 .forEach(orderDTO -> {
                             tradePrices.put(orderDTO.getOrderId(), orderDTO.getMarketPriceValue());
 
+                            // We search to see if the order is used to close a position.
                             final Optional<PositionDTO> positionDTO = positionRepository.findAll()
                                     .stream()
                                     .filter(position -> position.getClosingOrder() != null)
