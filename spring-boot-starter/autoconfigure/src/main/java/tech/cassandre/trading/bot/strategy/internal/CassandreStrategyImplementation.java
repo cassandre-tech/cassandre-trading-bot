@@ -54,7 +54,7 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
     private final Map<Long, PositionStatusDTO> previousPositionsStatus = new LinkedHashMap<>();
 
     // =================================================================================================================
-    // Configuration & dependencies.
+    // Configuration & dependencies set by Cassandre.
 
     @Override
     public final void setConfiguration(final CassandreStrategyConfiguration cassandreStrategyConfiguration) {
@@ -84,35 +84,32 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
     }
 
     // =================================================================================================================
-    // Internal methods called by Cassandre on data update.
+    // Internal methods called by Cassandre streams on data update.
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
     public void accountsUpdates(final Set<AccountDTO> accounts) {
         // We notify the strategy.
-        final Map<String, AccountDTO> accountsUpdates = accounts.stream()
+        onAccountsUpdates(accounts.stream()
                 // We store the account values in the strategy.
                 .peek(accountDTO -> userAccounts.put(accountDTO.getAccountId(), accountDTO))
-                .collect(Collectors.toMap(AccountDTO::getAccountId, Function.identity(), (id, value) -> id, LinkedHashMap::new));
-
-        // We notify the strategy.
-        onAccountsUpdates(accountsUpdates);
+                .collect(Collectors.toMap(AccountDTO::getAccountId, Function.identity(), (id, value) -> id, LinkedHashMap::new)));
     }
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
     public void tickersUpdates(final Set<TickerDTO> tickers) {
-        // We only retrieve the tickers requested by the strategy.
+        // We only retrieve the tickers requested by the strategy (in real time).
         final Set<CurrencyPairDTO> requestedCurrencyPairs = getRequestedCurrencyPairs();
 
         // We build the results.
         final Map<CurrencyPairDTO, TickerDTO> tickersUpdates = tickers.stream()
                 .filter(tickerDTO -> requestedCurrencyPairs.contains(tickerDTO.getCurrencyPair()))
-                // We update the values of the last tickers that can be found in the strategy.
+                // We also update the values of the last tickers received by the strategy.
                 .peek(tickerDTO -> lastTickers.put(tickerDTO.getCurrencyPair(), tickerDTO))
                 .collect(Collectors.toMap(TickerDTO::getCurrencyPair, Function.identity(), (id, value) -> id, LinkedHashMap::new));
 
-        // We update the positions with tickers.
+        // We update the opened positions with tickers.
         updatePositionsWithTickersUpdates(tickersUpdates);
 
         // We notify the strategy.
@@ -174,7 +171,7 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
                 .forEach(positionDTO -> {
                     positionsUpdates.put(positionDTO.getPositionId(), positionDTO);
 
-                    // From positionUpdate(), we see if it's also a onPositionStatusUpdate().
+                    // It's a position update, but we see if it's also a onPositionStatusUpdate().
                     if (previousPositionsStatus.get(positionDTO.getUid()) != positionDTO.getStatus()) {
                         if (positionDTO.getStatus() == CLOSED) {
                             // As CLOSED positions cannot change anymore, we don't need to store their previous positions.
@@ -190,16 +187,6 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
         // We notify the strategy (positions updates & positions status updates).
         onPositionsUpdates(positionsUpdates);
         onPositionsStatusUpdates(positionsStatusUpdates);
-    }
-
-    /**
-     * Returns list of accounts.
-     * TODO Maybe generate this with lombok?
-     *
-     * @return accounts
-     */
-    public final Map<String, AccountDTO> getAccounts() {
-        return userAccounts;
     }
 
     // =================================================================================================================
@@ -241,16 +228,14 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
      */
     void updatePositionsWithOrdersUpdates(final Map<String, OrderDTO> orders) {
         // We check if any order updates a position.
-        orders.values().forEach(orderDTO -> {
-            dependencies.getPositionRepository()
-                    .findByStatusNot(CLOSED)
-                    .stream()
-                    .map(POSITION_MAPPER::mapToPositionDTO)
-                    .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(configuration.getStrategyUid()))
-                    .filter(positionDTO -> positionDTO.orderUpdate(orderDTO))
-                    .peek(positionDTO -> logger.debug("Position {} updated with order {}", positionDTO.getPositionId(), orderDTO))
-                    .forEach(dependencies.getPositionFlux()::emitValue);
-        });
+        orders.values().forEach(orderDTO -> dependencies.getPositionRepository()
+                .findByStatusNot(CLOSED)
+                .stream()
+                .map(POSITION_MAPPER::mapToPositionDTO)
+                .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(configuration.getStrategyUid()))
+                .filter(positionDTO -> positionDTO.orderUpdate(orderDTO))
+                .peek(positionDTO -> logger.debug("Position {} updated with order {}", positionDTO.getPositionId(), orderDTO))
+                .forEach(dependencies.getPositionFlux()::emitValue));
     }
 
     /**
@@ -260,16 +245,14 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
      */
     void updatePositionsWithTradesUpdates(final Map<String, TradeDTO> trades) {
         // We check if any trade updates a position.
-        trades.values().forEach(tradeDTO -> {
-            dependencies.getPositionRepository()
-                    .findByStatusNot(CLOSED)
-                    .stream()
-                    .map(POSITION_MAPPER::mapToPositionDTO)
-                    .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(configuration.getStrategyUid()))
-                    .filter(positionDTO -> positionDTO.tradeUpdate(tradeDTO))
-                    .peek(positionDTO -> logger.debug("Position {} updated with trade {}", positionDTO.getPositionId(), tradeDTO))
-                    .forEach(dependencies.getPositionFlux()::emitValue);
-        });
+        trades.values().forEach(tradeDTO -> dependencies.getPositionRepository()
+                .findByStatusNot(CLOSED)
+                .stream()
+                .map(POSITION_MAPPER::mapToPositionDTO)
+                .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(configuration.getStrategyUid()))
+                .filter(positionDTO -> positionDTO.tradeUpdate(tradeDTO))
+                .peek(positionDTO -> logger.debug("Position {} updated with trade {}", positionDTO.getPositionId(), tradeDTO))
+                .forEach(dependencies.getPositionFlux()::emitValue));
     }
 
 }

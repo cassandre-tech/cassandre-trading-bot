@@ -43,13 +43,4 @@ public class CassandreStrategyConfiguration {
         return strategyDTO.getUid();
     }
 
-    /**
-     * Returns strategy id in annotation.
-     *
-     * @return strategy id
-     */
-    String getStrategyId() {
-        return strategyDTO.getStrategyId();
-    }
-
 }

@@ -231,7 +231,7 @@ public abstract class BasicTa4jCassandreStrategy extends CassandreStrategy {
     }
 
     // =================================================================================================================
-    // CanBuy & canSell methods.
+    // CanBuy & canSell methods (specialized as there is only currency pair in BasicTa4jCassandreStrategy.
 
     /**
      * Returns true if we have enough assets to buy.
@@ -247,14 +247,14 @@ public abstract class BasicTa4jCassandreStrategy extends CassandreStrategy {
     /**
      * Returns true if we have enough assets to buy.
      *
-     * @param amount              amount
-     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @param amount                  amount
+     * @param minimumBalanceLeftAfter minimum balance that should be left after buying
      * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final BigDecimal amount,
-                                final BigDecimal minimumBalanceAfter) {
+                                final BigDecimal minimumBalanceLeftAfter) {
         final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
-        return tradeAccount.filter(accountDTO -> canBuy(accountDTO, getRequestedCurrencyPair(), amount, minimumBalanceAfter)).isPresent();
+        return tradeAccount.filter(accountDTO -> canBuy(accountDTO, getRequestedCurrencyPair(), amount, minimumBalanceLeftAfter)).isPresent();
     }
 
     /**
@@ -272,28 +272,28 @@ public abstract class BasicTa4jCassandreStrategy extends CassandreStrategy {
     /**
      * Returns true if we have enough assets to buy and if minimumBalanceAfter is left on the account after.
      *
-     * @param account             account
-     * @param amount              amount
-     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @param account                 account
+     * @param amount                  amount
+     * @param minimumBalanceLeftAfter minimum balance that should be left after buying
      * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final AccountDTO account,
                                 final BigDecimal amount,
-                                final BigDecimal minimumBalanceAfter) {
-        return canBuy(account, getRequestedCurrencyPair(), amount, minimumBalanceAfter);
+                                final BigDecimal minimumBalanceLeftAfter) {
+        return canBuy(account, getRequestedCurrencyPair(), amount, minimumBalanceLeftAfter);
     }
 
     /**
      * Returns true if we have enough assets to sell.
      *
-     * @param amount              amount
-     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @param amount                  amount
+     * @param minimumBalanceLeftAfter minimum balance that should be left after buying
      * @return true if we have enough assets to sell
      */
     public final boolean canSell(final BigDecimal amount,
-                                 final BigDecimal minimumBalanceAfter) {
+                                 final BigDecimal minimumBalanceLeftAfter) {
         final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
-        return tradeAccount.filter(accountDTO -> canSell(accountDTO, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceAfter)).isPresent();
+        return tradeAccount.filter(accountDTO -> canSell(accountDTO, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceLeftAfter)).isPresent();
     }
 
     /**
@@ -322,15 +322,15 @@ public abstract class BasicTa4jCassandreStrategy extends CassandreStrategy {
     /**
      * Returns true if we have enough assets to sell and if minimumBalanceAfter is left on the account after.
      *
-     * @param account             account
-     * @param amount              amount
-     * @param minimumBalanceAfter minimum balance that should be left after selling
+     * @param account                 account
+     * @param amount                  amount
+     * @param minimumBalanceLeftAfter minimum balance that should be left after selling
      * @return true if we have enough assets to sell
      */
     public final boolean canSell(final AccountDTO account,
                                  final BigDecimal amount,
-                                 final BigDecimal minimumBalanceAfter) {
-        return canSell(account, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceAfter);
+                                 final BigDecimal minimumBalanceLeftAfter) {
+        return canSell(account, getRequestedCurrencyPair().getBaseCurrency(), amount, minimumBalanceLeftAfter);
     }
 
 }

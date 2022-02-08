@@ -2,7 +2,7 @@
 -- Data for Name: strategies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.strategies (uid, strategy_id, type, name, created_on, updated_on) VALUES (1, '001', 'BASIC_TA4J_STRATEGY', 'SMA strategy', '2021-03-10 11:27:16.649178', NULL);
+INSERT INTO public.strategies (uid, strategy_id, type, name, created_on, updated_on) VALUES (1, '01', 'BASIC_TA4J_STRATEGY', 'SMA strategy', '2021-03-10 11:27:16.649178', NULL);
 
 
 --

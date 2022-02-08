@@ -27,14 +27,13 @@ import java.util.Set;
  * - BasicCassandreStrategy - User inherits this class this one to make a basic strategy.
  * - BasicCassandreStrategy - User inherits this class this one to make a strategy with ta4j.
  */
-@SuppressWarnings("unused")
 public interface CassandreStrategyInterface {
 
     // =================================================================================================================
-    // Configuration & dependencies.
+    // Configuration & dependencies set by Cassandre.
 
     /**
-     * Set cassandre strategy configuration.
+     * Set strategy configuration.
      *
      * @param cassandreStrategyConfiguration cassandre strategy configuration
      */
@@ -43,19 +42,19 @@ public interface CassandreStrategyInterface {
     /**
      * Get strategy configuration.
      *
-     * @return configuration
+     * @return cassandre strategy configuration
      */
     CassandreStrategyConfiguration getConfiguration();
 
     /**
-     * Set cassandre strategy dependencies.
+     * Set strategy dependencies.
      *
      * @param cassandreStrategyDependencies cassandre strategy dependencies
      */
     void setDependencies(CassandreStrategyDependencies cassandreStrategyDependencies);
 
     // =================================================================================================================
-    // Configuration called by Cassandre and set by the strategy developer.
+    // Configuration set by the strategy developer.
 
     /**
      * Implements this method to tell the bot which currency pairs your strategy will receive.
@@ -66,7 +65,6 @@ public interface CassandreStrategyInterface {
 
     /**
      * Implements this method to tell the bot which account from the accounts you own is the one you use for trading.
-     * TODO Maybe not necessary in interface?
      *
      * @param accounts all your accounts
      * @return your trading account
@@ -77,8 +75,7 @@ public interface CassandreStrategyInterface {
     // Strategy initialization.
 
     /**
-     * Initialize strategy accounts with exchange accounts data retrieved at startup.
-     * TODO Can this be made throw accountUpdates? (when it's empty?)
+     * Initialize strategy accounts with exchange accounts data retrieved at Cassandre startup.
      *
      * @param accounts accounts
      */
@@ -93,7 +90,7 @@ public interface CassandreStrategyInterface {
     }
 
     // =================================================================================================================
-    // Internal methods called by streams on data update.
+    // Internal methods called by Cassandre streams on data update.
 
     /**
      * Method called by streams on accounts updates.
@@ -131,7 +128,7 @@ public interface CassandreStrategyInterface {
     void positionsUpdates(Set<PositionDTO> positions);
 
     // =================================================================================================================
-    // Methods that can be overwritten by the developer in its strategy that will be called on data update.
+    // Methods that can be overridden by the developer in its strategy to receive data updates.
 
     /**
      * Method called by Cassandre when there are accounts updates.
@@ -139,7 +136,7 @@ public interface CassandreStrategyInterface {
      * @param accounts accounts updates
      */
     default void onAccountsUpdates(Map<String, AccountDTO> accounts) {
-        // Can be implemented by a strategy developer to receive events.
+        // Can be overridden by a strategy developer to receive events.
     }
 
     /**
@@ -148,7 +145,7 @@ public interface CassandreStrategyInterface {
      * @param tickers tickers updates
      */
     default void onTickersUpdates(Map<CurrencyPairDTO, TickerDTO> tickers) {
-        // Can be implemented by a strategy developer to receive events.
+        // Can be overridden by a strategy developer to receive events.
     }
 
     /**
@@ -157,7 +154,7 @@ public interface CassandreStrategyInterface {
      * @param orders orders updates
      */
     default void onOrdersUpdates(Map<String, OrderDTO> orders) {
-        // Can be implemented by a strategy developer to receive events.
+        // Can be overridden by a strategy developer to receive events.
     }
 
     /**
@@ -166,7 +163,7 @@ public interface CassandreStrategyInterface {
      * @param trades trades updates
      */
     default void onTradesUpdates(Map<String, TradeDTO> trades) {
-        // Can be implemented by a strategy developer to receive events.
+        // Can be overridden by a strategy developer to receive events.
     }
 
     /**
@@ -175,7 +172,7 @@ public interface CassandreStrategyInterface {
      * @param positions positions updates
      */
     default void onPositionsUpdates(Map<Long, PositionDTO> positions) {
-        // Can be implemented by a strategy developer to receive events.
+        // Can be overridden by a strategy developer to receive events.
     }
 
     /**
@@ -184,7 +181,7 @@ public interface CassandreStrategyInterface {
      * @param positions positions status updates
      */
     default void onPositionsStatusUpdates(Map<Long, PositionDTO> positions) {
-        // Can be implemented by a strategy developer to receive events.
+        // Can be overridden by a strategy developer to receive events.
     }
 
     // =================================================================================================================

@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.strategy.internal;
 
+import lombok.NonNull;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -57,7 +58,16 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     }
 
     /**
-     * Search and return and account by its id.
+     * Returns list of accounts.
+     *
+     * @return accounts
+     */
+    public final Map<String, AccountDTO> getAccounts() {
+        return userAccounts;
+    }
+
+    /**
+     * Search and return an account by its id.
      *
      * @param accountId account id
      * @return account
@@ -71,9 +81,9 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     }
 
     /**
-     * Getter amountsLockedByPosition.
+     * Returns the amounts locked by position.
      *
-     * @return amountsLockedByPosition
+     * @return amounts locked
      */
     public final Map<Long, CurrencyAmountDTO> getAmountsLockedByPosition() {
         return dependencies.getPositionService().getAmountsLockedByPosition();
@@ -83,7 +93,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * Returns the amounts locked for a specific currency.
      *
      * @param currency currency
-     * @return amount
+     * @return amounts locked
      */
     public final BigDecimal getAmountsLockedByCurrency(final CurrencyDTO currency) {
         return getAmountsLockedByPosition()
@@ -125,7 +135,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * @param currencyPair currency pair
      * @return imported tickers
      */
-    public final List<TickerDTO> getImportedTickers(final CurrencyPairDTO currencyPair) {
+    public final List<TickerDTO> getImportedTickers(@NonNull final CurrencyPairDTO currencyPair) {
         return dependencies.getImportedTickersRepository()
                 .findByCurrencyPairOrderByTimestampAsc(currencyPair.toString())
                 .stream()
@@ -137,20 +147,20 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     // Methods to retrieve data related to orders.
 
     /**
-     * Returns list of orders.
+     * Returns list of orders (order id is key).
      *
      * @return orders
      */
     public final Map<String, OrderDTO> getOrders() {
         return dependencies.getOrderRepository().findByOrderByTimestampAsc()
                 .stream()
-                .filter(order -> order.getStrategy().getStrategyId().equals(configuration.getStrategyId()))
+                .filter(order -> order.getStrategy().getUid().equals(configuration.getStrategyUid()))
                 .map(ORDER_MAPPER::mapToOrderDTO)
                 .collect(Collectors.toMap(OrderDTO::getOrderId, orderDTO -> orderDTO));
     }
 
     /**
-     * Get an order by its id.
+     * Get an order by its order id.
      *
      * @param orderId order id
      * @return order
@@ -166,20 +176,20 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     // Methods to retrieve data related to trades.
 
     /**
-     * Returns list of trades.
+     * Returns list of trades (trade id is key).
      *
      * @return trades
      */
     public final Map<String, TradeDTO> getTrades() {
         return dependencies.getTradeRepository().findByOrderByTimestampAsc()
                 .stream()
-                .filter(trade -> trade.getOrder().getStrategy().getStrategyId().equals(configuration.getStrategyId()))
+                .filter(trade -> trade.getOrder().getStrategy().getUid().equals(configuration.getStrategyUid()))
                 .map(TRADE_MAPPER::mapToTradeDTO)
                 .collect(Collectors.toMap(TradeDTO::getTradeId, tradeDTO -> tradeDTO));
     }
 
     /**
-     * Get a trade by its id.
+     * Get a trade by its trade id.
      *
      * @param tradeId trade id
      * @return trade
@@ -195,15 +205,17 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     // Methods to retrieve data related to positions.
 
     /**
-     * Returns list of positions.
+     * Returns list of positions (position id the key).
      *
      * @return positions
      */
     public final Map<Long, PositionDTO> getPositions() {
-        return dependencies.getPositionRepository().findByOrderByUid()
+        return dependencies.getPositionRepository()
+                .findByOrderByUid()
                 .stream()
+                .filter(position -> position.getStrategy().getUid().equals(configuration.getStrategyUid()))
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toMap(PositionDTO::getUid, positionDTO -> positionDTO));
+                .collect(Collectors.toMap(PositionDTO::getPositionId, positionDTO -> positionDTO));
     }
 
     /**
@@ -213,11 +225,16 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * @return position
      */
     public final Optional<PositionDTO> getPositionByPositionId(final long positionId) {
-        return dependencies.getPositionRepository().findByPositionId(positionId).map(POSITION_MAPPER::mapToPositionDTO);
+        return getPositions()
+                .values()
+                .stream()
+                .filter(positionDTO -> positionDTO.getPositionId() == positionId)
+                .findFirst();
     }
 
     /**
      * Returns gains of all positions.
+     * TODO getGains has no meaning here if it's not filtered by strategy.
      *
      * @return total gains
      */
@@ -260,6 +277,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * @param limitPrice   the highest acceptable price
      * @return order result (order id or error)
      */
+    @SuppressWarnings("unused")
     public OrderCreationResultDTO createBuyLimitOrder(final CurrencyPairDTO currencyPair,
                                                       final BigDecimal amount,
                                                       final BigDecimal limitPrice) {
@@ -274,6 +292,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * @param limitPrice   the lowest acceptable price
      * @return order result (order id or error)
      */
+    @SuppressWarnings("unused")
     public OrderCreationResultDTO createSellLimitOrder(final CurrencyPairDTO currencyPair,
                                                        final BigDecimal amount,
                                                        final BigDecimal limitPrice) {
@@ -286,6 +305,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * @param orderUid order uid
      * @return true if cancelled
      */
+    @SuppressWarnings("unused")
     boolean cancelOrder(final long orderUid) {
         return dependencies.getTradeService().cancelOrder(orderUid);
     }
@@ -325,11 +345,11 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     /**
      * Update position rules.
      *
-     * @param id       position id
-     * @param newRules new rules
+     * @param positionUid position uid
+     * @param newRules    new rules
      */
-    public void updatePositionRules(final long id, final PositionRulesDTO newRules) {
-        dependencies.getPositionService().updatePositionRules(id, newRules);
+    public void updatePositionRules(final long positionUid, final PositionRulesDTO newRules) {
+        dependencies.getPositionService().updatePositionRules(positionUid, newRules);
     }
 
     /**
@@ -337,21 +357,21 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * If true, Cassandre will close the position according to rules.
      * if false, Cassandre will never close the position.
      *
-     * @param id    position technical id
-     * @param value auto close value
+     * @param positionUid position uid
+     * @param value       auto close value
      */
-    public void setAutoClose(final long id, final boolean value) {
-        dependencies.getPositionService().setAutoClose(id, value);
+    public void setAutoClose(final long positionUid, final boolean value) {
+        dependencies.getPositionService().setAutoClose(positionUid, value);
     }
 
     /**
      * Close position (no matter the rules).
      * The closing will happen when the next ticker arrives.
      *
-     * @param id position id
+     * @param positionUid position uid
      */
-    public void closePosition(final long id) {
-        dependencies.getPositionService().forcePositionClosing(id);
+    public void closePosition(final long positionUid) {
+        dependencies.getPositionService().forcePositionClosing(positionUid);
     }
 
     // =================================================================================================================
@@ -361,10 +381,11 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * Returns the amount of a currency I can buy with a certain amount of another currency.
      *
      * @param amountToUse    amount you want to use buy the currency you want
-     * @param currencyWanted the currency you want to buy
+     * @param targetCurrency the currency you want to buy
      * @return amount of currencyWanted you can buy with amountToUse
      */
-    public final Optional<BigDecimal> getEstimatedBuyableAmount(final CurrencyAmountDTO amountToUse, final CurrencyDTO currencyWanted) {
+    public final Optional<BigDecimal> getEstimatedBuyableAmount(final CurrencyAmountDTO amountToUse,
+                                                                final CurrencyDTO targetCurrency) {
         /*
             symbol=BTC-USDT
             {
@@ -379,7 +400,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
             }
             This means 1 Bitcoin can be bought with 60000 USDT.
          */
-        final TickerDTO ticker = lastTickers.get(new CurrencyPairDTO(currencyWanted, amountToUse.getCurrency()));
+        final TickerDTO ticker = lastTickers.get(new CurrencyPairDTO(targetCurrency, amountToUse.getCurrency()));
         if (ticker == null) {
             // No ticker for this currency pair.
             return Optional.empty();
@@ -399,7 +420,8 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * @param amount       amount
      * @return cost
      */
-    public final Optional<CurrencyAmountDTO> getEstimatedBuyingCost(final CurrencyPairDTO currencyPair, final BigDecimal amount) {
+    public final Optional<CurrencyAmountDTO> getEstimatedBuyingCost(final CurrencyPairDTO currencyPair,
+                                                                    final BigDecimal amount) {
         /*
             symbol=ETH-BTC
             {
@@ -445,16 +467,16 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     /**
      * Returns true if we have enough assets to buy.
      *
-     * @param currencyPair        currency pair
-     * @param amount              amount
-     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @param currencyPair            currency pair
+     * @param amount                  amount
+     * @param minimumBalanceLeftAfter minimum balance that should be left after buying
      * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final CurrencyPairDTO currencyPair,
                                 final BigDecimal amount,
-                                final BigDecimal minimumBalanceAfter) {
+                                final BigDecimal minimumBalanceLeftAfter) {
         final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(userAccounts.values()));
-        return tradeAccount.filter(account -> canBuy(account, currencyPair, amount, minimumBalanceAfter)).isPresent();
+        return tradeAccount.filter(account -> canBuy(account, currencyPair, amount, minimumBalanceLeftAfter)).isPresent();
     }
 
     /**
@@ -474,16 +496,16 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     /**
      * Returns true if we have enough assets to buy and if minimumBalanceAfter is left on the account after.
      *
-     * @param account             account
-     * @param currencyPair        currency pair
-     * @param amount              amount
-     * @param minimumBalanceAfter minimum balance that should be left after buying
+     * @param account                 account
+     * @param currencyPair            currency pair
+     * @param amount                  amount
+     * @param minimumBalanceLeftAfter minimum balance that should be left after buying
      * @return true if we have enough assets to buy
      */
     public final boolean canBuy(final AccountDTO account,
                                 final CurrencyPairDTO currencyPair,
                                 final BigDecimal amount,
-                                final BigDecimal minimumBalanceAfter) {
+                                final BigDecimal minimumBalanceLeftAfter) {
         // We get the amount.
         final Optional<BalanceDTO> balance = account.getBalance(currencyPair.getQuoteCurrency());
         if (balance.isPresent()) {
@@ -497,9 +519,9 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
             // Must be superior to zero
             // If there is no way to calculate the price for the moment (no ticker).
             return estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
-                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter).add(getAmountsLockedByCurrency(currencyAmountDTO.getCurrency())))
+                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceLeftAfter).add(getAmountsLockedByCurrency(currencyAmountDTO.getCurrency())))
                     .compareTo(ZERO) > 0).isPresent() || estimatedBuyingCost.filter(currencyAmountDTO -> balance.get().getAvailable()
-                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceAfter).add(getAmountsLockedByCurrency(currencyAmountDTO.getCurrency())))
+                    .subtract(currencyAmountDTO.getValue().add(minimumBalanceLeftAfter).add(getAmountsLockedByCurrency(currencyAmountDTO.getCurrency())))
                     .compareTo(ZERO) == 0).isPresent();
         } else {
             // If the is no balance in this currency, we can't buy.
@@ -523,16 +545,16 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     /**
      * Returns true if we have enough assets to sell.
      *
-     * @param currency            currency
-     * @param amount              amount
-     * @param minimumBalanceAfter minimum balance that should be left after selling
+     * @param currency                currency
+     * @param amount                  amount
+     * @param minimumBalanceLeftAfter minimum balance that should be left after selling
      * @return true if we have enough assets to sell
      */
     public final boolean canSell(final CurrencyDTO currency,
                                  final BigDecimal amount,
-                                 final BigDecimal minimumBalanceAfter) {
+                                 final BigDecimal minimumBalanceLeftAfter) {
         final Optional<AccountDTO> tradeAccount = getTradeAccount(new LinkedHashSet<>(userAccounts.values()));
-        return tradeAccount.filter(account -> canSell(account, currency, amount, minimumBalanceAfter)).isPresent();
+        return tradeAccount.filter(account -> canSell(account, currency, amount, minimumBalanceLeftAfter)).isPresent();
     }
 
     /**
@@ -552,23 +574,23 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     /**
      * Returns true if we have enough assets to sell and if minimumBalanceAfter is left on the account after.
      *
-     * @param account             account
-     * @param currency            currency
-     * @param amount              amount
-     * @param minimumBalanceAfter minimum balance that should be left after selling
+     * @param account                 account
+     * @param currency                currency
+     * @param amount                  amount
+     * @param minimumBalanceLeftAfter minimum balance that should be left after selling
      * @return true if we have enough assets to sell
      */
     public final boolean canSell(final AccountDTO account,
                                  final CurrencyDTO currency,
                                  final BigDecimal amount,
-                                 final BigDecimal minimumBalanceAfter) {
+                                 final BigDecimal minimumBalanceLeftAfter) {
         // We get the amount.
         final Optional<BalanceDTO> balance = account.getBalance(currency);
         // public int compareTo(BigDecimal bg) returns
         // 1: if value of this BigDecimal is greater than that of BigDecimal object passed as parameter.
         // If the is no balance in this currency, we can't buy.
-        return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).subtract(getAmountsLockedByCurrency(currency)).compareTo(ZERO) > 0
-                || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceAfter).subtract(getAmountsLockedByCurrency(currency)).compareTo(ZERO) == 0).isPresent();
+        return balance.filter(balanceDTO -> balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceLeftAfter).subtract(getAmountsLockedByCurrency(currency)).compareTo(ZERO) > 0
+                || balanceDTO.getAvailable().subtract(amount).subtract(minimumBalanceLeftAfter).subtract(getAmountsLockedByCurrency(currency)).compareTo(ZERO) == 0).isPresent();
     }
 
 }
