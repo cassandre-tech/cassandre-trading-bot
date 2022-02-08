@@ -46,7 +46,7 @@ jobs:
 
       # ================================================================================================================
       - name: Retrieve the latest release published on Github
-        uses: pozetroninc/github-action-get-latest-release@v0.5.0
+        uses: pozetroninc/github-action-get-latest-release@v0.6.0
         id: getLatestRelease
         with:
           repository: ${{ github.repository }}
