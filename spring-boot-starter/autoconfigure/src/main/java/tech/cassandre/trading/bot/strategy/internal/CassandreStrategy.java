@@ -233,13 +233,12 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     }
 
     /**
-     * Returns gains of all positions.
-     * TODO getGains has no meaning here if it's not filtered by strategy.
+     * Returns gains of all positions of the strategy.
      *
      * @return total gains
      */
     public final Map<CurrencyDTO, GainDTO> getGains() {
-        return dependencies.getPositionService().getGains();
+        return dependencies.getPositionService().getGains(configuration.getStrategyUid());
     }
 
     // =================================================================================================================

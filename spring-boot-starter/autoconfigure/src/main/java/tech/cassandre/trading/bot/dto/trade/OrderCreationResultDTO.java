@@ -51,12 +51,11 @@ public final class OrderCreationResultDTO {
     }
 
     /**
-     * Getter order id.
+     * Returns order id.
      *
      * @return id
      */
     public String getOrderId() {
-        // TODO change to UID.
         if (getOrder() != null) {
             return getOrder().getOrderId();
         } else {

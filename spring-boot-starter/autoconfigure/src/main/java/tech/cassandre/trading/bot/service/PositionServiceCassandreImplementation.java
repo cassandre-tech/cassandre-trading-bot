@@ -244,7 +244,7 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
     }
 
     @Override
-    public final HashMap<CurrencyDTO, GainDTO> getGains() {
+    public final Map<CurrencyDTO, GainDTO> getGains(final long strategyUid) {
         logger.debug("Retrieving gains for all positions");
         HashMap<CurrencyDTO, BigDecimal> totalBefore = new LinkedHashMap<>();
         HashMap<CurrencyDTO, BigDecimal> totalAfter = new LinkedHashMap<>();
@@ -255,6 +255,9 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
         // We calculate, by currency, the amount bought & sold.
         positionRepository.findByStatus(CLOSED)
                 .stream()
+                // If we have a strategyUid equals to 0, it means we calculate all gains on all closed positions.
+                // If we have a strategyUid different from 0, we only retrieved the position of a particular strategy.
+                .filter(position -> position.getUid() == strategyUid || strategyUid == 0)
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .forEach(p -> {
                     // We retrieve the currency and initiate the maps if they are empty
@@ -322,6 +325,11 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                     gains.put(currency, g);
                 });
         return gains;
+    }
+
+    @Override
+    public final Map<CurrencyDTO, GainDTO> getGains() {
+        return getGains(0);
     }
 
 }

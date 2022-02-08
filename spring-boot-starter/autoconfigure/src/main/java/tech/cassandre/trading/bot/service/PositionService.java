@@ -118,4 +118,13 @@ public interface PositionService {
      */
     Map<CurrencyDTO, GainDTO> getGains();
 
+    /**
+     * Return the gains made by all closed positions of a strategy.
+     * If strategyUid equals 0, returns all the gains.
+     *
+     * @param strategyUid strategy uid
+     * @return gains by currency.
+     */
+    Map<CurrencyDTO, GainDTO> getGains(long strategyUid);
+
 }
