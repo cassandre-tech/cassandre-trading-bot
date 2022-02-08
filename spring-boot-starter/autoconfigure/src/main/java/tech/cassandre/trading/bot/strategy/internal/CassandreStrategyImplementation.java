@@ -117,14 +117,12 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
     }
 
     @Override
-    public final BigDecimal getLastPriceForCurrencyPair(final CurrencyPairDTO currencyPair) {
-        // TODO Useful?
+    public final BigDecimal getLastPriceForCurrencyPair(@NonNull final CurrencyPairDTO currencyPair) {
         return getLastTickerByCurrencyPair(currencyPair).map(TickerDTO::getLast).orElse(null);
     }
 
     /**
      * Return the last ticker for a currency pair.
-     * TODO This method should maybe be removed. Instead, the current price should be passed to order creation methods
      *
      * @param currencyPair currency pair
      * @return last ticker received
@@ -216,9 +214,12 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
                 // We check if the position should be closed, if true, we closed and position service will emit the position.
                 .filter(PositionDTO::shouldBeClosed)
                 .peek(positionDTO -> logger.debug("Closing position {}", positionDTO.getPositionId()))
-                .forEach(positionDTO -> dependencies.getPositionService().closePosition(this,
+                .map(positionDTO -> dependencies.getPositionService().closePosition(this,
                         positionDTO.getUid(),
-                        tickers.get(positionDTO.getCurrencyPair())));
+                        tickers.get(positionDTO.getCurrencyPair())))
+                // Creation was not successful, we display a log.
+                .filter(orderCreationResultDTO -> !orderCreationResultDTO.isSuccessful())
+                .forEach(orderCreationResultDTO -> logger.error("Impossible to close position: {}", orderCreationResultDTO.getErrorMessage()));
     }
 
     /**

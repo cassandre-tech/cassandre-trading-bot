@@ -94,7 +94,8 @@ public class TickerDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -110,7 +111,8 @@ public class TickerDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
                 .append(currencyPair)
                 .append(timestamp)

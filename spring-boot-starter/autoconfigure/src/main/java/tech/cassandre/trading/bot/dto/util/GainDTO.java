@@ -52,7 +52,8 @@ public class GainDTO {
      *
      * @return fees
      */
-    public final Map<CurrencyDTO, CurrencyAmountDTO> getOrdersFees() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Map<CurrencyDTO, CurrencyAmountDTO> getOrdersFees() {
         return Stream.concat(openingOrderFees.stream(), closingOrderFees.stream())
                 .collect(Collectors.groupingBy(
                         CurrencyAmountDTO::getCurrency,
@@ -88,7 +89,8 @@ public class GainDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -105,7 +107,8 @@ public class GainDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
                 .append(amount)
                 .append(openingOrderFees)
@@ -114,7 +117,8 @@ public class GainDTO {
     }
 
     @Override
-    public final String toString() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public String toString() {
         if (percentage == 0) {
             return "No gain";
         } else {

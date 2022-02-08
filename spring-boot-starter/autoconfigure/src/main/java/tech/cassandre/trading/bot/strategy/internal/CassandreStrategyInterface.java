@@ -189,7 +189,6 @@ public interface CassandreStrategyInterface {
 
     /**
      * Returns the last price received for a currency pair.
-     * TODO This method should maybe be removed. Instead, the current price should be passed to order creation methods
      *
      * @param currencyPair currency pair
      * @return last price

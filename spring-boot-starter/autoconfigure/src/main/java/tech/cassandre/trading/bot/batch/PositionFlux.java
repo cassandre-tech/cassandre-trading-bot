@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 /**
  * Position flux - push {@link PositionDTO}.
  * Two methods override from super class:
- * - getNewValues(): positions are only created inside cassandre so we don't need to get new values from outside.
- * - saveValues(): update positions when they are send to this flux (they are not created in the flux).
+ * - getNewValues(): positions are only created inside cassandre, so we don't need to get new values from outside.
+ * - saveValues(): update positions when they are sent to this flux (they are not created in the flux).
  * To get a deep understanding of how it works, read the documentation of {@link BaseFlux}.
  */
 @RequiredArgsConstructor
