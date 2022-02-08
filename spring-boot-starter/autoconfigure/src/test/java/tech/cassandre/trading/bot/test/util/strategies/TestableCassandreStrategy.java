@@ -14,6 +14,7 @@ import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,22 +50,22 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     /** Accounts update received. */
-    private final List<AccountDTO> accountsUpdatesReceived = new LinkedList<>();
+    private final List<AccountDTO> accountsUpdatesReceived = Collections.synchronizedList(new LinkedList<>());
 
     /** Tickers update received. */
-    private final List<TickerDTO> tickersUpdatesReceived = new LinkedList<>();
+    private final List<TickerDTO> tickersUpdatesReceived = Collections.synchronizedList(new LinkedList<>());
 
     /** Orders update received. */
-    private final List<OrderDTO> ordersUpdatesReceived = new LinkedList<>();
+    private final List<OrderDTO> ordersUpdatesReceived = Collections.synchronizedList(new LinkedList<>());
 
     /** Trades update received. */
-    private final List<TradeDTO> tradesUpdatesReceived = new LinkedList<>();
+    private final List<TradeDTO> tradesUpdatesReceived = Collections.synchronizedList(new LinkedList<>());
 
     /** Positions update received. */
-    private final List<PositionDTO> positionsUpdatesReceived = new LinkedList<>();
+    private final List<PositionDTO> positionsUpdatesReceived = Collections.synchronizedList(new LinkedList<>());
 
     /** Positions status update received. */
-    private final List<PositionDTO> positionsStatusUpdatesReceived = new LinkedList<>();
+    private final List<PositionDTO> positionsStatusUpdatesReceived = Collections.synchronizedList(new LinkedList<>());
 
     /** Requested currency pairs. */
     Set<CurrencyPairDTO> requestedCurrencyPairs = ConcurrentHashMap.newKeySet();
