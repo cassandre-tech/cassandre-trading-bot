@@ -53,7 +53,7 @@ public class TradeServiceTest extends BaseTest {
     @Test
     @DisplayName("Check buy and sell order creation")
     public void checkCreateBuyAndSellOrder() {
-        assertTrue(strategy.isRunningInDryMode());
+        assertTrue(strategy.getConfiguration().isDryMode());
 
         tickerFlux.update();
 
@@ -76,11 +76,11 @@ public class TradeServiceTest extends BaseTest {
         with().await().until(() -> strategy.getOrdersUpdatesReceived().stream().anyMatch(o -> o.getOrderId().equals(orderId01)));
         final Optional<OrderDTO> order01 = strategy.getOrdersUpdatesReceived().stream().filter(o -> o.getOrderId().equals(orderId01)).findFirst();
         assertTrue(order01.isPresent());
-        assertEquals(1, order01.get().getId());
+        assertEquals(1, order01.get().getUid());
         assertEquals(orderId01, order01.get().getOrderId());
         assertEquals(BID, order01.get().getType());
         assertNotNull(order01.get().getStrategy());
-        assertEquals(1, order01.get().getStrategy().getId());
+        assertEquals(1, order01.get().getStrategy().getUid());
         assertEquals("01", order01.get().getStrategy().getStrategyId());
         assertEquals(ETH_BTC, order01.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.001").compareTo(order01.get().getAmount().getValue()));
@@ -99,7 +99,7 @@ public class TradeServiceTest extends BaseTest {
         with().await().until(() -> strategy.getTradesUpdatesReceived().stream().anyMatch(o -> o.getTradeId().equals(tradeId01)));
         final Optional<TradeDTO> trade01 = strategy.getTradesUpdatesReceived().stream().filter(o -> o.getTradeId().equals(tradeId01)).findFirst();
         assertTrue(trade01.isPresent());
-        assertEquals(1, trade01.get().getId());
+        assertEquals(1, trade01.get().getUid());
         assertEquals(tradeId01, trade01.get().getTradeId());
         assertEquals(BID, trade01.get().getType());
         assertEquals(orderId01, trade01.get().getOrderId());
@@ -127,11 +127,11 @@ public class TradeServiceTest extends BaseTest {
                 .filter(o -> o.getStatus().equals(FILLED))
                 .findFirst();
         assertTrue(order02.isPresent());
-        assertEquals(2, order02.get().getId());
+        assertEquals(2, order02.get().getUid());
         assertEquals(orderId02, order02.get().getOrderId());
         assertEquals(ASK, order02.get().getType());
         assertNotNull(order02.get().getStrategy());
-        assertEquals(1, order02.get().getStrategy().getId());
+        assertEquals(1, order02.get().getStrategy().getUid());
         assertEquals("01", order02.get().getStrategy().getStrategyId());
         assertEquals(ETH_BTC, order02.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.002").compareTo(order02.get().getAmount().getValue()));
@@ -150,7 +150,7 @@ public class TradeServiceTest extends BaseTest {
         with().await().until(() -> strategy.getTradesUpdatesReceived().stream().anyMatch(o -> o.getTradeId().equals(tradeId02)));
         final Optional<TradeDTO> trade02 = strategy.getTradesUpdatesReceived().stream().filter(o -> o.getTradeId().equals(tradeId02)).findFirst();
         assertTrue(trade02.isPresent());
-        assertEquals(2, trade02.get().getId());
+        assertEquals(2, trade02.get().getUid());
         assertEquals(tradeId02, trade02.get().getTradeId());
         assertEquals(ASK, trade02.get().getType());
         assertEquals(orderId02, trade02.get().getOrderId());

@@ -130,7 +130,8 @@ public class CurrencyPairDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -144,12 +145,14 @@ public class CurrencyPairDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return Objects.hash(getBaseCurrency().getCode(), getQuoteCurrency().getCode());
     }
 
     @Override
-    public final String toString() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public String toString() {
         return baseCurrency + CURRENCY_PAIR_SEPARATOR + quoteCurrency;
     }
 

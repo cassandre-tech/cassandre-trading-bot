@@ -59,6 +59,7 @@ public class BasicTa4jCassandreStrategyTest extends BaseTest {
         assertTrue(strategyInDatabase.isPresent());
         assertEquals(BASIC_TA4J_STRATEGY, strategyInDatabase.get().getType());
 
+        // TODO It's 4 because one getUser is called by configuration and the flux doesn't ask the same mock method - Make it more clear
         await().untilAsserted(() -> assertEquals(3, strategy.getAccounts().size()));
         await().untilAsserted(() -> assertEquals(4, strategy.getOrders().size()));
         await().untilAsserted(() -> assertEquals(3, strategy.getTrades().size()));

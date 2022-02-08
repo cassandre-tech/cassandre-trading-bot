@@ -58,7 +58,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
     @Test
     @DisplayName("Check force closing")
     public void checkForceClosing() {
-        assertTrue(strategy.isRunningInDryMode());
+        assertTrue(strategy.getConfiguration().isDryMode());
 
         // First tickers (dry mode).
         // ETH/BTC - 0.2.
@@ -75,7 +75,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());
         assertEquals("DRY_ORDER_000000001", position1Result.getPosition().getOpeningOrder().getOrderId());
-        final long position1Id = position1Result.getPosition().getId();
+        final long position1Id = position1Result.getPosition().getUid();
 
         // After position creation, its status is OPENING but order and trades arrives from dry mode.
         // One position status update because of OPENING, one position status update because of OPENED.
@@ -97,7 +97,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(position2Result.isSuccessful());
         assertEquals("DRY_ORDER_000000002", position2Result.getPosition().getOpeningOrder().getOrderId());
-        final long position2Id = position2Result.getPosition().getId();
+        final long position2Id = position2Result.getPosition().getUid();
 
         // After position creation, its status is OPENING
         // One position status update because of OPENING, one position status update because of OPENED.
@@ -168,7 +168,7 @@ public class PositionServiceForceClosingTest extends BaseTest {
      * @return position
      */
     private PositionDTO getPositionDTO(final long id) {
-        final Optional<PositionDTO> p = positionService.getPositionById(id);
+        final Optional<PositionDTO> p = positionService.getPositionByUid(id);
         if (p.isPresent()) {
             return p.get();
         } else {

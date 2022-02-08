@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.util.mapper;
 
-import liquibase.pro.packaged.M;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.instrument.Instrument;

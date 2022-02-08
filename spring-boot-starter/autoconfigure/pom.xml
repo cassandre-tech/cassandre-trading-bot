@@ -328,6 +328,13 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>${maven.lombok.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>${lombok.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
                     <outputDirectory>${project.build.directory}/delombok</outputDirectory>
@@ -362,38 +369,6 @@
             </plugin>
         </plugins>
     </build>
-    <!-- =========================================================================================================== -->
-
-    <!-- =========================================================================================================== -->
-    <!-- Profiles -->
-    <profiles>
-        <profile>
-            <id>integration</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <properties>
-                                <configurationParameters>
-                                    junit.jupiter.extensions.autodetection.enabled = true
-                                </configurationParameters>
-                            </properties>
-                            <reuseForks>false</reuseForks>
-                            <forkCount>1</forkCount>
-                            <includes>
-                                <include>**/integration/**</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/core/**</exclude>
-                                <exclude>**/issues/**</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <!-- =========================================================================================================== -->
 
     <!-- =========================================================================================================== -->

@@ -94,11 +94,11 @@ public class PositionTest extends BaseTest {
         // Check position 1 - OPENING.
         PositionDTO p = strategy.getPositions().get(1L);
         assertNotNull(p);
-        assertEquals(1L, p.getId());
+        assertEquals(1L, p.getUid());
         assertEquals(1L, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(p.getAmount().getValue()));
@@ -122,11 +122,11 @@ public class PositionTest extends BaseTest {
         // Check position 2 - OPENED.
         p = strategy.getPositions().get(2L);
         assertNotNull(p);
-        assertEquals(2L, p.getId());
+        assertEquals(2L, p.getUid());
         assertEquals(2L, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("20").compareTo(p.getAmount().getValue()));
@@ -150,11 +150,11 @@ public class PositionTest extends BaseTest {
         // Check position 3 - CLOSING.
         p = strategy.getPositions().get(3L);
         assertNotNull(p);
-        assertEquals(3L, p.getId());
+        assertEquals(3L, p.getUid());
         assertEquals(3L, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("30").compareTo(p.getAmount().getValue()));
@@ -180,11 +180,11 @@ public class PositionTest extends BaseTest {
         // Check position 4 - CLOSED.
         p = strategy.getPositions().get(4L);
         assertNotNull(p);
-        assertEquals(4L, p.getId());
+        assertEquals(4L, p.getUid());
         assertEquals(4L, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals(new CurrencyPairDTO("BTC/USDT"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("40").compareTo(p.getAmount().getValue()));
@@ -210,11 +210,11 @@ public class PositionTest extends BaseTest {
         // =============================================================================================================
         // Check position 5 - CLOSED with several trades.
         p = strategy.getPositions().get(5L);
-        assertEquals(5L, p.getId());
+        assertEquals(5L, p.getUid());
         assertEquals(5L, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals(new CurrencyPairDTO("ETH/USD"), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("50").compareTo(p.getAmount().getValue()));
@@ -274,7 +274,7 @@ public class PositionTest extends BaseTest {
         PositionRulesDTO rules = PositionRulesDTO.builder().stopGainPercentage(1f).stopLossPercentage(2f).build();
         PositionCreationResultDTO creationResult1 = strategy.createLongPosition(ETH_BTC, new BigDecimal("0.0001"), rules);
         assertTrue(creationResult1.isSuccessful());
-        assertEquals(6, creationResult1.getPosition().getId());
+        assertEquals(6, creationResult1.getPosition().getUid());
         assertEquals("DRY_ORDER_000000001", creationResult1.getPosition().getOpeningOrder().getOrderId());
 
         // Check that the position was correctly created.
@@ -282,11 +282,11 @@ public class PositionTest extends BaseTest {
         // In the meantime, the position should be in OPENING status.
         await().untilAsserted(() -> assertEquals(positionCount + 1, positionRepository.count()));
         Position p6 = getPosition(6L);
-        assertEquals(6L, p6.getId());
+        assertEquals(6L, p6.getUid());
         assertEquals(6L, p6.getPositionId());
         assertEquals(LONG, p6.getType());
         assertNotNull(p6.getStrategy());
-        assertEquals(1, p6.getStrategy().getId());
+        assertEquals(1, p6.getStrategy().getUid());
         assertEquals("01", p6.getStrategy().getStrategyId());
         assertEquals(ETH_BTC.toString(), p6.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0001").compareTo(p6.getAmount().getValue()));
@@ -306,11 +306,11 @@ public class PositionTest extends BaseTest {
         });
 
         p6 = getPosition(6L);
-        assertEquals(6L, p6.getId());
+        assertEquals(6L, p6.getUid());
         assertEquals(6L, p6.getPositionId());
         assertEquals(LONG, p6.getType());
         assertNotNull(p6.getStrategy());
-        assertEquals(1, p6.getStrategy().getId());
+        assertEquals(1, p6.getStrategy().getUid());
         assertEquals("01", p6.getStrategy().getStrategyId());
         assertEquals(ETH_BTC.toString(), p6.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0001").compareTo(p6.getAmount().getValue()));
@@ -331,11 +331,11 @@ public class PositionTest extends BaseTest {
         // Check the created position in database.
         await().untilAsserted(() -> assertEquals(positionCount + 2, positionRepository.count()));
         Position p7 = getPosition(7L);
-        assertEquals(7L, p7.getId());
+        assertEquals(7L, p7.getUid());
         assertEquals(7L, p7.getPositionId());
         assertEquals(LONG, p7.getType());
         assertNotNull(p7.getStrategy());
-        assertEquals(1, p7.getStrategy().getId());
+        assertEquals(1, p7.getStrategy().getUid());
         assertEquals("01", p7.getStrategy().getStrategyId());
         assertEquals(ETH_BTC.toString(), p7.getCurrencyPair());
         assertEquals(0, new BigDecimal("0.0002").compareTo(p7.getAmount().getValue()));
@@ -365,7 +365,7 @@ public class PositionTest extends BaseTest {
                         .stopLossPercentage(100f)    // 100% max lost.
                         .build());
         assertTrue(positionResult.isSuccessful());
-        final long positionId = positionResult.getPosition().getId();
+        final long positionId = positionResult.getPosition().getUid();
 
         // =============================================================================================================
         // Still "OPENING".
@@ -376,10 +376,10 @@ public class PositionTest extends BaseTest {
         // In the meantime, the position should be in OPENING status.
         await().untilAsserted(() -> assertEquals(OPENING, getPosition(positionId).getStatus()));
         Position p = getPosition(positionId);
-        assertEquals(positionId, p.getId());
+        assertEquals(positionId, p.getUid());
         assertEquals(positionId, p.getPositionId());
         assertEquals(LONG, p.getType());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals(ETH_BTC.toString(), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(p.getAmount().getValue()));
@@ -411,10 +411,10 @@ public class PositionTest extends BaseTest {
 
         // Check saved position in database.
         p = getPosition(positionId);
-        assertEquals(positionId, p.getId());
+        assertEquals(positionId, p.getUid());
         assertEquals(positionId, p.getPositionId());
         assertEquals(LONG, p.getType());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals(ETH_BTC.toString(), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(p.getAmount().getValue()));
@@ -521,10 +521,10 @@ public class PositionTest extends BaseTest {
         // Check saved position.
         await().until(() -> getPosition(positionId).getStatus().equals(CLOSED));
         p = getPosition(positionId);
-        assertEquals(positionId, p.getId());
+        assertEquals(positionId, p.getUid());
         assertEquals(positionId, p.getPositionId());
         assertEquals(LONG, p.getType());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals(ETH_BTC.toString(), p.getCurrencyPair());
         assertEquals(0, new BigDecimal("1").compareTo(p.getAmount().getValue()));
@@ -566,7 +566,7 @@ public class PositionTest extends BaseTest {
      * @return position
      */
     private PositionDTO getPositionDTO(final long id) {
-        final Optional<PositionDTO> p = positionService.getPositionById(id);
+        final Optional<PositionDTO> p = positionService.getPositionByUid(id);
         if (p.isPresent()) {
             return p.get();
         } else {

@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.repository.PositionRepository;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Position data fetcher.
@@ -33,18 +32,18 @@ public class PositionDataFetcher extends BaseDataFetcher {
         return positionRepository.findAll()
                 .stream()
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
-     * Returns the position with the corresponding id value.
+     * Returns the position with the corresponding uid value.
      *
-     * @param id id
+     * @param uid position uid
      * @return position
      */
     @DgsQuery
-    public final PositionDTO position(@InputArgument final long id) {
-        return positionRepository.findById(id)
+    public final PositionDTO position(@InputArgument final long uid) {
+        return positionRepository.findById(uid)
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .orElse(null);
     }
@@ -52,16 +51,16 @@ public class PositionDataFetcher extends BaseDataFetcher {
     /**
      * Returns the positions of a strategy.
      *
-     * @param id id of strategy the position
+     * @param uid uid of strategy the position
      * @return positions
      */
     @DgsQuery
-    public final List<PositionDTO> positionsByStrategy(@InputArgument final long id) {
+    public final List<PositionDTO> positionsByStrategy(@InputArgument final long uid) {
         return positionRepository.findAll()
                 .stream()
-                .filter(position -> position.getStrategy().getId() == id)
+                .filter(position -> position.getStrategy().getUid() == uid)
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -76,24 +75,24 @@ public class PositionDataFetcher extends BaseDataFetcher {
                 .stream()
                 .filter(position -> Objects.equals(position.getStrategy().getStrategyId(), strategyId))
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
      * Returns the positions of a strategy with a certain status.
      *
-     * @param id     id of strategy the position
+     * @param uid     uid of strategy the position
      * @param status position status
      * @return positions
      */
     @DgsQuery
-    public final List<PositionDTO> positionsByStrategyAndStatus(@InputArgument final long id,
+    public final List<PositionDTO> positionsByStrategyAndStatus(@InputArgument final long uid,
                                                                 @InputArgument final PositionStatusDTO status) {
         return positionRepository.findByStatus(status)
                 .stream()
-                .filter(position -> position.getStrategy().getId() == id)
+                .filter(position -> position.getStrategy().getUid() == uid)
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -110,7 +109,7 @@ public class PositionDataFetcher extends BaseDataFetcher {
                 .stream()
                 .filter(position -> Objects.equals(position.getStrategy().getStrategyId(), strategyId))
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

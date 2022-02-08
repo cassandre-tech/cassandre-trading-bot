@@ -76,7 +76,7 @@ public class TradeTest extends BaseTest {
         // Check trade 01.
         Optional<TradeDTO> t = strategy.getTradeByTradeId("BACKUP_TRADE_01");
         assertTrue(t.isPresent());
-        assertEquals(1, t.get().getId());
+        assertEquals(1, t.get().getUid());
         assertEquals("BACKUP_TRADE_01", t.get().getTradeId());
         assertEquals(BID, t.get().getType());
         assertEquals("BACKUP_OPENING_ORDER_02", t.get().getOrderId());
@@ -99,7 +99,7 @@ public class TradeTest extends BaseTest {
         // Check trade 02.
         t = strategy.getTradeByTradeId("BACKUP_TRADE_02");
         assertTrue(t.isPresent());
-        assertEquals(2, t.get().getId());
+        assertEquals(2, t.get().getUid());
         assertEquals("BACKUP_TRADE_02", t.get().getTradeId());
         assertEquals(BID, t.get().getType());
         assertEquals("BACKUP_OPENING_ORDER_03", t.get().getOrderId());
@@ -117,7 +117,7 @@ public class TradeTest extends BaseTest {
         // Check trade 03.
         t = strategy.getTradeByTradeId("BACKUP_TRADE_03");
         assertTrue(t.isPresent());
-        assertEquals(3, t.get().getId());
+        assertEquals(3, t.get().getUid());
         assertEquals("BACKUP_TRADE_03", t.get().getTradeId());
         assertEquals(BID, t.get().getType());
         assertEquals("BACKUP_OPENING_ORDER_04", t.get().getOrderId());
@@ -135,7 +135,7 @@ public class TradeTest extends BaseTest {
         // Check trade 04.
         t = strategy.getTradeByTradeId("BACKUP_TRADE_04");
         assertTrue(t.isPresent());
-        assertEquals(4, t.get().getId());
+        assertEquals(4, t.get().getUid());
         assertEquals("BACKUP_TRADE_04", t.get().getTradeId());
         assertEquals(ASK, t.get().getType());
         assertEquals("BACKUP_CLOSING_ORDER_01", t.get().getOrderId());
@@ -153,7 +153,7 @@ public class TradeTest extends BaseTest {
         // Check trade 05.
         t = strategy.getTradeByTradeId("BACKUP_TRADE_05");
         assertTrue(t.isPresent());
-        assertEquals(5, t.get().getId());
+        assertEquals(5, t.get().getUid());
         assertEquals("BACKUP_TRADE_05", t.get().getTradeId());
         assertEquals(ASK, t.get().getType());
         assertEquals("BACKUP_CLOSING_ORDER_02", t.get().getOrderId());
@@ -196,7 +196,7 @@ public class TradeTest extends BaseTest {
         // Trade - Check created order (domain).
         Optional<Trade> tradeInDatabase = tradeRepository.findByTradeId("BACKUP_TRADE_11");
         assertTrue(tradeInDatabase.isPresent());
-        assertEquals(11, tradeInDatabase.get().getId());
+        assertEquals(11, tradeInDatabase.get().getUid());
         assertEquals("BACKUP_TRADE_11", tradeInDatabase.get().getTradeId());
         assertEquals(BID, tradeInDatabase.get().getType());
         assertEquals("BACKUP_ORDER_01", tradeInDatabase.get().getOrder().getOrderId());
@@ -219,7 +219,7 @@ public class TradeTest extends BaseTest {
         // TradeDTO - Check created trade (dto).
         final TradeDTO tradeDTO = strategy.getTrades().get("BACKUP_TRADE_11");
         assertNotNull(tradeDTO);
-        assertEquals(11, tradeDTO.getId());
+        assertEquals(11, tradeDTO.getUid());
         assertEquals("BACKUP_TRADE_11", tradeDTO.getTradeId());
         assertEquals(BID, tradeDTO.getType());
         assertEquals("BACKUP_ORDER_01", tradeDTO.getOrderId());
@@ -282,7 +282,7 @@ public class TradeTest extends BaseTest {
     public void checkStrategyValueInTrade() {
         // =============================================================================================================
         // Loading strategy.
-        StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("01").build();
+        StrategyDTO strategyDTO = StrategyDTO.builder().uid(1L).strategyId("01").build();
 
         // =============================================================================================================
         // First, we have an order (NEW_ORDER) that arrives with a strategy.

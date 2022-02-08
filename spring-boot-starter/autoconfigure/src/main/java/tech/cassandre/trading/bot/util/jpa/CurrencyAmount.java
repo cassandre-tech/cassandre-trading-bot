@@ -52,7 +52,7 @@ public class CurrencyAmount {
         }
         CurrencyAmount that = (CurrencyAmount) o;
 
-        if (!Objects.equals(value, that.value)) {
+        if (value.compareTo(that.getValue()) != 0) {
             return false;
         }
         return Objects.equals(currency, that.currency);

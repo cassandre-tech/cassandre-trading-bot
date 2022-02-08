@@ -1,7 +1,7 @@
 "Strategies."
 type Strategy {
-    "Technical ID."
-    id: Int!
+    "Strategy unique ID."
+    uid: Int!
     "An identifier that uniquely identifies the strategy - Comes from the Java annotation."
     strategyId: String!
     "Strategy type - Basic or Ta4j."

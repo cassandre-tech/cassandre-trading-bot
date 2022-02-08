@@ -120,17 +120,17 @@ public class MultipleStrategiesTest extends BaseTest {
         assertEquals(3, strategyRepository.count());
         final Optional<Strategy> s1 = strategyRepository.findByStrategyId("01");
         assertTrue(s1.isPresent());
-        assertEquals(1, s1.get().getId());
+        assertEquals(1, s1.get().getUid());
         assertEquals("01", s1.get().getStrategyId());
         assertEquals("Strategy 1", s1.get().getName());
         final Optional<Strategy> s2 = strategyRepository.findByStrategyId("02");
         assertTrue(s2.isPresent());
-        assertEquals(2, s2.get().getId());
+        assertEquals(2, s2.get().getUid());
         assertEquals("02", s2.get().getStrategyId());
         assertEquals("Strategy 2", s2.get().getName());
         final Optional<Strategy> s3 = strategyRepository.findByStrategyId("03");
         assertTrue(s3.isPresent());
-        assertEquals(3, s3.get().getId());
+        assertEquals(3, s3.get().getUid());
         assertEquals("03", s3.get().getStrategyId());
         assertEquals("Strategy 3", s3.get().getName());
 
@@ -231,7 +231,7 @@ public class MultipleStrategiesTest extends BaseTest {
                 new BigDecimal("0.001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());
-        final long position1Id = position1Result.getPosition().getId();
+        final long position1Id = position1Result.getPosition().getUid();
         final long position1PositionId = position1Result.getPosition().getPositionId();
         await().untilAsserted(() -> {
             orderFlux.update();
@@ -298,7 +298,7 @@ public class MultipleStrategiesTest extends BaseTest {
                 new BigDecimal("0.02"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position2Result.isSuccessful());
-        final long position2Id = position2Result.getPosition().getId();
+        final long position2Id = position2Result.getPosition().getUid();
         final long position2PositionId = position2Result.getPosition().getPositionId();
         await().untilAsserted(() -> {
             orderFlux.update();
@@ -371,7 +371,7 @@ public class MultipleStrategiesTest extends BaseTest {
                 new BigDecimal("0.01"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position3Result.isSuccessful());
-        final long position3Id = position3Result.getPosition().getId();
+        final long position3Id = position3Result.getPosition().getUid();
         final long position3PositionId = position3Result.getPosition().getPositionId();
         await().untilAsserted(() -> {
             orderFlux.update();
@@ -384,7 +384,7 @@ public class MultipleStrategiesTest extends BaseTest {
                 new BigDecimal("0.1"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position4Result.isSuccessful());
-        final long position4Id = position4Result.getPosition().getId();
+        final long position4Id = position4Result.getPosition().getUid();
         final long position4PositionId = position4Result.getPosition().getPositionId();
         await().untilAsserted(() -> {
             orderFlux.update();
@@ -594,7 +594,7 @@ public class MultipleStrategiesTest extends BaseTest {
      * @return position
      */
     private PositionDTO getPositionDTO(final long id) {
-        final Optional<PositionDTO> p = positionService.getPositionById(id);
+        final Optional<PositionDTO> p = positionService.getPositionByUid(id);
         if (p.isPresent()) {
             return p.get();
         } else {

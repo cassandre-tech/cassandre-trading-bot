@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.core.repository;
 
-import com.google.common.collect.Sets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -45,16 +45,16 @@ public class PositionRepositoryTest {
     @DisplayName("Check imported data")
     public void checkImportedPositions() {
         // Positions.
-        final Iterator<Position> positions = positionRepository.findByOrderById().iterator();
+        final Iterator<Position> positions = positionRepository.findByOrderByUid().iterator();
         assertEquals(5, positionRepository.count());
 
         // Position 1.
         Position p = positions.next();
-        assertEquals(1, p.getId());
+        assertEquals(1, p.getUid());
         assertEquals(1, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals("BTC/USDT", p.getCurrencyPair());
         assertEquals(0, new BigDecimal("10").compareTo(p.getAmount().getValue()));
@@ -77,11 +77,11 @@ public class PositionRepositoryTest {
 
         // Position 2.
         p = positions.next();
-        assertEquals(2, p.getId());
+        assertEquals(2, p.getUid());
         assertEquals(2, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals("BTC/USDT", p.getCurrencyPair());
         assertEquals(0, new BigDecimal("20").compareTo(p.getAmount().getValue()));
@@ -107,11 +107,11 @@ public class PositionRepositoryTest {
 
         // Position 3.
         p = positions.next();
-        assertEquals(3, p.getId());
+        assertEquals(3, p.getUid());
         assertEquals(3, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals("BTC/USDT", p.getCurrencyPair());
         assertEquals(0, new BigDecimal("30").compareTo(p.getAmount().getValue()));
@@ -140,11 +140,11 @@ public class PositionRepositoryTest {
 
         // Position 4.
         p = positions.next();
-        assertEquals(4, p.getId());
+        assertEquals(4, p.getUid());
         assertEquals(4, p.getPositionId());
         assertEquals(LONG, p.getType());
         assertNotNull(p.getStrategy());
-        assertEquals(1, p.getStrategy().getId());
+        assertEquals(1, p.getStrategy().getUid());
         assertEquals("01", p.getStrategy().getStrategyId());
         assertEquals("BTC/USDT", p.getCurrencyPair());
         assertEquals(0, new BigDecimal("40").compareTo(p.getAmount().getValue()));
@@ -181,20 +181,20 @@ public class PositionRepositoryTest {
     public void checkFindByStatus() {
         final List<Position> openingPositions = positionRepository.findByStatus(OPENING);
         assertEquals(1, openingPositions.size());
-        assertEquals(1, openingPositions.get(0).getId());
+        assertEquals(1, openingPositions.get(0).getUid());
         final List<Position> openedPositions = positionRepository.findByStatus(OPENED);
         assertEquals(1, openedPositions.size());
-        assertEquals(2, openedPositions.get(0).getId());
+        assertEquals(2, openedPositions.get(0).getUid());
         final List<Position> closingPositions = positionRepository.findByStatus(CLOSING);
         assertEquals(1, closingPositions.size());
-        assertEquals(3, closingPositions.get(0).getId());
+        assertEquals(3, closingPositions.get(0).getUid());
         final List<Position> closedPositions = positionRepository.findByStatus(CLOSED);
         assertEquals(2, closedPositions.size());
-        assertEquals(4, closedPositions.get(0).getId());
-        assertEquals(5, closedPositions.get(1).getId());
+        assertEquals(4, closedPositions.get(0).getUid());
+        assertEquals(5, closedPositions.get(1).getUid());
 
         // Tests for findByStatusIn().
-        final List<Position> positions = positionRepository.findByStatusIn(Sets.newHashSet(CLOSING, CLOSED));
+        final List<Position> positions = positionRepository.findByStatusIn(Stream.of(CLOSING, CLOSED).toList());
         assertEquals(3, positions.size());
     }
 
@@ -203,10 +203,10 @@ public class PositionRepositoryTest {
     public void checkFindByStatusNot() {
         final List<Position> notClosingPositions = positionRepository.findByStatusNot(CLOSING);
         assertEquals(4, notClosingPositions.size());
-        assertEquals(1, notClosingPositions.get(0).getId());
-        assertEquals(2, notClosingPositions.get(1).getId());
-        assertEquals(4, notClosingPositions.get(2).getId());
-        assertEquals(5, notClosingPositions.get(3).getId());
+        assertEquals(1, notClosingPositions.get(0).getUid());
+        assertEquals(2, notClosingPositions.get(1).getUid());
+        assertEquals(4, notClosingPositions.get(2).getUid());
+        assertEquals(5, notClosingPositions.get(3).getUid());
     }
 
     @Test

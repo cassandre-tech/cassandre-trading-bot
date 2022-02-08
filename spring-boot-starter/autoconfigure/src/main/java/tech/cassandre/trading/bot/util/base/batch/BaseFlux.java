@@ -4,12 +4,19 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import tech.cassandre.trading.bot.util.base.Base;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static reactor.core.publisher.FluxSink.OverflowStrategy.LATEST;
 
 /**
  * Base flux.
+ * <p>
+ * update() method is called by schedulers, and it does two things:
+ * - Calls the getNewValues() method you implemented to retrieve new values from "outside" (for example: call the service to retrieve new tickers).
+ * - For each value retrieved previously, we call the saveValues() method you implemented to save all the data in the database.
+ * - Each value saved in database is then push to the flux to be consumed by strategies.
+ * note: you are not forced to implement getNewValues() or saveValues().
  *
  * @param <T> flux
  */
@@ -48,6 +55,17 @@ public abstract class BaseFlux<T> extends Base {
     }
 
     /**
+     * Method executed when values have to be retrieved (usually called by schedulers).
+     */
+    public final void update() {
+        try {
+            emitValues(getNewValues());
+        } catch (RuntimeException e) {
+            logger.error("{} encountered and error {}", getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    /**
      * Emit new value.
      *
      * @param newValue new value
@@ -69,23 +87,13 @@ public abstract class BaseFlux<T> extends Base {
     }
 
     /**
-     * Method executed when values have to be retrieved (usually called by schedulers).
-     */
-    public final void update() {
-        try {
-            emitValues(getNewValues());
-        } catch (RuntimeException e) {
-            logger.error("{} encountered and error {}", getClass().getSimpleName(), e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Implements this method to return all the new values. Those values will be sent to the strategy.
      *
      * @return list of new values
      */
-    protected abstract Set<T> getNewValues();
+    protected Set<T> getNewValues() {
+        return Collections.emptySet();
+    }
 
     /**
      * Implements this method to save values coming from flux.
@@ -93,6 +101,8 @@ public abstract class BaseFlux<T> extends Base {
      * @param newValue new value
      * @return the value saved
      */
-    protected abstract Set<T> saveValues(Set<T> newValue);
+    protected Set<T> saveValues(final Set<T> newValue) {
+        return newValue;
+    }
 
 }

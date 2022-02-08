@@ -22,7 +22,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Strategy.
+ * Strategy (map "STRATEGIES" table).
  */
 @Getter
 @Setter
@@ -34,9 +34,9 @@ public class Strategy extends BaseDomain {
 
     /** Technical ID. */
     @Id
-    @Column(name = "ID")
+    @Column(name = "UID")
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private Long uid;
 
     /** An identifier that uniquely identifies the strategy - Comes from the Java annotation. */
     @Column(name = "STRATEGY_ID")
@@ -62,9 +62,10 @@ public class Strategy extends BaseDomain {
         }
         final Strategy that = (Strategy) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.uid, that.uid)
                 .append(this.strategyId, that.strategyId)
                 .append(this.type, that.type)
+                .append(this.name, that.name)
                 .isEquals();
     }
 
@@ -72,7 +73,7 @@ public class Strategy extends BaseDomain {
     @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(uid)
                 .toHashCode();
     }
 

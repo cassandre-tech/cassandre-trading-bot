@@ -7,12 +7,12 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Service getting information about market price.
+ * Service getting information about market prices.
  */
 public interface MarketService {
 
     /**
-     * Returns a ticker for a currency pair.
+     * Get a ticker for a currency pair.
      *
      * @param currencyPair currency pair
      * @return ticker
@@ -20,7 +20,7 @@ public interface MarketService {
     Optional<TickerDTO> getTicker(CurrencyPairDTO currencyPair);
 
     /**
-     * Returns tickers for several currency pairs.
+     * Get tickers for several currency pairs.
      *
      * @param currencyPairs currency pairs
      * @return tickers

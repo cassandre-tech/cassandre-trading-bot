@@ -43,7 +43,7 @@ public class TickersFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertFalse(strategy.isRunningInDryMode());
+        assertFalse(strategy.getConfiguration().isDryMode());
 
         // =============================================================================================================
         // Test asynchronous flux.

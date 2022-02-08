@@ -26,7 +26,6 @@ public class RateValidator implements ConstraintValidator<Rate, String> {
                 return false;
             }
         }
-
     }
 
 }

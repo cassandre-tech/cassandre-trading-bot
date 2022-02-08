@@ -58,7 +58,7 @@ public class OrderFluxTest extends BaseTest {
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertFalse(strategy.isRunningInDryMode());
+        assertFalse(strategy.getConfiguration().isDryMode());
 
         // The mock will reply 3 times.
         final int numberOfUpdatesExpected = 8;
@@ -111,10 +111,10 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 1 - Result of ORDER_000001 creation.
         OrderDTO o = orders.next();
-        assertEquals(1, o.getId());
+        assertEquals(1, o.getUid());
         assertEquals("ORDER_000001", o.getOrderId());
         assertEquals(ASK, o.getType());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("1", ETH_BTC.getBaseCurrency()), o.getAmount());
@@ -128,10 +128,10 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 2 - Result of ORDER_000002 creation.
         o = orders.next();
-        assertEquals(2, o.getId());
+        assertEquals(2, o.getUid());
         assertEquals("ORDER_000002", o.getOrderId());
         assertEquals(BID, o.getType());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_USDT, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("2", ETH_USDT.getBaseCurrency()), o.getAmount());
@@ -145,10 +145,10 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 3 - Result of ORDER_000003 creation.
         o = orders.next();
-        assertEquals(3, o.getId());
+        assertEquals(3, o.getUid());
         assertEquals("ORDER_000003", o.getOrderId());
         assertEquals(ASK, o.getType());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("3", ETH_BTC.getBaseCurrency()), o.getAmount());
@@ -167,10 +167,10 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 4 - Received ORDER_000001 from server for the first time.
         o = orders.next();
-        assertEquals(1, o.getId());
+        assertEquals(1, o.getUid());
         assertEquals("ORDER_000001", o.getOrderId());
         assertEquals(ASK, o.getType());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("11", ETH_BTC.getBaseCurrency()), o.getAmount());
@@ -183,10 +183,10 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 5 - Received ORDER_000002 from server for the first time.
         o = orders.next();
-        assertEquals(2, o.getId());
+        assertEquals(2, o.getUid());
         assertEquals("ORDER_000002", o.getOrderId());
         assertEquals(BID, o.getType());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_USDT, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("22", ETH_USDT.getBaseCurrency()), o.getAmount());
@@ -199,10 +199,10 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 6 - Received ORDER_000003 from server for the first time.
         o = orders.next();
-        assertEquals(3, o.getId());
+        assertEquals(3, o.getUid());
         assertEquals("ORDER_000003", o.getOrderId());
         assertEquals(ASK, o.getType());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("33", ETH_BTC.getBaseCurrency()), o.getAmount());
@@ -221,10 +221,10 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 7 - Received ORDER_000003 from server because the original amount changed.
         o = orders.next();
-        assertEquals(3, o.getId());
+        assertEquals(3, o.getUid());
         assertEquals("ORDER_000003", o.getOrderId());
         assertEquals(ASK, o.getType());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("3333", ETH_BTC.getBaseCurrency()), o.getAmount());
@@ -243,10 +243,10 @@ public class OrderFluxTest extends BaseTest {
 
         // Check update 8 - Received ORDER_000002 from server because the average price changed.
         o = orders.next();
-        assertEquals(2, o.getId());
+        assertEquals(2, o.getUid());
         assertEquals("ORDER_000002", o.getOrderId());
         assertEquals(BID, o.getType());
-        assertEquals(1, o.getStrategy().getId());
+        assertEquals(1, o.getStrategy().getUid());
         assertEquals("01", o.getStrategy().getStrategyId());
         assertEquals(ETH_USDT, o.getCurrencyPair());
         assertEquals(new CurrencyAmountDTO("22", ETH_USDT.getBaseCurrency()), o.getAmount());
@@ -270,10 +270,10 @@ public class OrderFluxTest extends BaseTest {
         // Order ORDER_000001.
         final Optional<OrderDTO> o1 = strategy.getOrderByOrderId("ORDER_000001");
         assertTrue(o1.isPresent());
-        assertEquals(1, o1.get().getId());
+        assertEquals(1, o1.get().getUid());
         assertEquals("ORDER_000001", o1.get().getOrderId());
         assertEquals(ASK, o1.get().getType());
-        assertEquals(1, o1.get().getStrategy().getId());
+        assertEquals(1, o1.get().getStrategy().getUid());
         assertEquals("01", o1.get().getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o1.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("11").compareTo(o1.get().getAmount().getValue()));
@@ -292,10 +292,10 @@ public class OrderFluxTest extends BaseTest {
         // Order ORDER_000002.
         final Optional<OrderDTO> o2 = strategy.getOrderByOrderId("ORDER_000002");
         assertTrue(o2.isPresent());
-        assertEquals(2, o2.get().getId());
+        assertEquals(2, o2.get().getUid());
         assertEquals("ORDER_000002", o2.get().getOrderId());
         assertEquals(BID, o2.get().getType());
-        assertEquals(1, o2.get().getStrategy().getId());
+        assertEquals(1, o2.get().getStrategy().getUid());
         assertEquals("01", o2.get().getStrategy().getStrategyId());
         assertEquals(ETH_USDT, o2.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("22").compareTo(o2.get().getAmount().getValue()));
@@ -314,10 +314,10 @@ public class OrderFluxTest extends BaseTest {
         // Order ORDER_000003.
         final Optional<OrderDTO> o3 = strategy.getOrderByOrderId("ORDER_000003");
         assertTrue(o3.isPresent());
-        assertEquals(3, o3.get().getId());
+        assertEquals(3, o3.get().getUid());
         assertEquals("ORDER_000003", o3.get().getOrderId());
         assertEquals(ASK, o3.get().getType());
-        assertEquals(1, o3.get().getStrategy().getId());
+        assertEquals(1, o3.get().getStrategy().getUid());
         assertEquals("01", o3.get().getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o3.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("3333").compareTo(o3.get().getAmount().getValue()));

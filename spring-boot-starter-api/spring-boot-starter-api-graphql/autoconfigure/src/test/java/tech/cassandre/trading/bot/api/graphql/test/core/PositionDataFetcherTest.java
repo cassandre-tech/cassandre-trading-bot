@@ -51,11 +51,11 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get position by id")
+    @DisplayName("Get position by uid")
     void getPositionById() {
         Map<String, Object> result = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { position(id: 31) {" +
-                        "id " +
+                " { position(uid: 31) {" +
+                        "uid " +
                         "positionId " +
                         "type " +
                         "strategy {strategyId} " +
@@ -64,15 +64,15 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
                         "rules {stopGainPercentage stopLossPercentage} " +
                         "status " +
                         "forceClosing " +
-                        "openingOrder {id orderId}" +
-                        "closingOrder {id orderId}" +
+                        "openingOrder {uid orderId}" +
+                        "closingOrder {uid orderId}" +
                         "lowestCalculatedGain {percentage amount{value currency{code}} fees{value currency{code}}}" +
                         "highestCalculatedGain {percentage amount{value currency{code}} fees{value currency{code}}}" +
                         "latestCalculatedGain {percentage amount{value currency{code}} fees{value currency{code}}}" +
                         "gain {percentage amount{value currency{code}} fees{value currency{code}}}" +
                         "} }",
                 "data.position");
-        assertEquals(31, result.get("id"));
+        assertEquals(31, result.get("uid"));
         assertEquals(14, result.get("positionId"));
         assertEquals("LONG", result.get("type"));
         assertEquals("002", getStrategyValue(result.get("strategy")).getStrategyId());
@@ -86,52 +86,44 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
         assertEquals("CLOSED", result.get("status"));
         assertEquals(false, result.get("forceClosing"));
         Map<String, String> openingOrder = (Map<String, String>) result.get("openingOrder");
-        assertEquals(49, openingOrder.get("id"));
+        assertEquals(49, openingOrder.get("uid"));
         Map<String, String> closingOrder = (Map<String, String>) result.get("closingOrder");
-        assertEquals(54, closingOrder.get("id"));
+        assertEquals(54, closingOrder.get("uid"));
 
         GainDTO lowestCalculatedGain = getGainValue(result.get("lowestCalculatedGain"));
         assertEquals(-4.696751117706299, lowestCalculatedGain.getPercentage());
         assertEquals(0, new BigDecimal("-0.9433000000000000").compareTo(lowestCalculatedGain.getAmount().getValue()));
         assertEquals(USDT, lowestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(lowestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, lowestCalculatedGain.getFees().getCurrency());
 
         GainDTO highestCalculatedGain = getGainValue(result.get("highestCalculatedGain"));
         assertEquals(5.908155918121338, highestCalculatedGain.getPercentage());
         assertEquals(0, new BigDecimal("1.1866").compareTo(highestCalculatedGain.getAmount().getValue()));
         assertEquals(USDT, highestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(highestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, highestCalculatedGain.getFees().getCurrency());
 
         GainDTO latestCalculatedGain = getGainValue(result.get("latestCalculatedGain"));
         assertEquals(6.002260208129883, latestCalculatedGain.getPercentage());
         assertEquals(0, new BigDecimal("1.2055").compareTo(latestCalculatedGain.getAmount().getValue()));
         assertEquals(USDT, latestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(latestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, latestCalculatedGain.getFees().getCurrency());
 
         GainDTO gain = getGainValue(result.get("gain"));
         assertEquals(5.93, gain.getPercentage());
         assertEquals(0, new BigDecimal("1.1911").compareTo(gain.getAmount().getValue()));
         assertEquals(USDT, gain.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("0.0413593").compareTo(gain.getFees().getValue()));
-        assertEquals(USDT, gain.getFees().getCurrency());
     }
 
     @Test
     @DisplayName("Get positions by strategy (id)")
     void getPositionsByStrategy() {
         List<Integer> position1Strategies = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategy(id: 1) {" +
-                        "id " +
+                " { positionsByStrategy(uid: 1) {" +
+                        "uid " +
                         "} }",
                 "data.positionsByStrategy");
         assertEquals(90, position1Strategies.size());
 
         List<Integer> position2Strategies = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategy(id: 2) {" +
-                        "id " +
+                " { positionsByStrategy(uid: 2) {" +
+                        "uid " +
                         "} }",
                 "data.positionsByStrategy");
         assertEquals(92, position2Strategies.size());
@@ -142,14 +134,14 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     void getPositionsByStrategyId() {
         List<Integer> position1Strategies = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { positionsByStrategyId(strategyId: \"001\") {" +
-                        "id " +
+                        "uid " +
                         "} }",
                 "data.positionsByStrategyId");
         assertEquals(90, position1Strategies.size());
 
         List<Integer> position2Strategies = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { positionsByStrategyId(strategyId: \"002\") {" +
-                        "id " +
+                        "uid " +
                         "} }",
                 "data.positionsByStrategyId");
         assertEquals(92, position2Strategies.size());
@@ -160,15 +152,15 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     @DisplayName("Get positions by strategy (id) and status")
     void getPositionsByStrategyAndStatus() {
         List<Integer> closedPositions = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategyAndStatus(id: 1, status:CLOSED) {" +
-                        "id " +
+                " { positionsByStrategyAndStatus(uid: 1, status:CLOSED) {" +
+                        "uid " +
                         "} }",
                 "data.positionsByStrategyAndStatus");
         assertEquals(82, closedPositions.size());
 
         List<Integer> openedPositions = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategyAndStatus(id: 1, status:OPENED) {" +
-                        "id " +
+                " { positionsByStrategyAndStatus(uid: 1, status:OPENED) {" +
+                        "uid " +
                         "} }",
                 "data.positionsByStrategyAndStatus");
         assertEquals(8, openedPositions.size());
@@ -179,14 +171,14 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     void getPositionsByStrategyIdAndStatus() {
         List<Integer> closedPositions = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { positionsByStrategyIdAndStatus(strategyId: \"001\", status:CLOSED) {" +
-                        "id " +
+                        "uid " +
                         "} }",
                 "data.positionsByStrategyIdAndStatus");
         assertEquals(82, closedPositions.size());
 
         List<Integer> openedPositions = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { positionsByStrategyIdAndStatus(strategyId: \"001\", status:OPENED) {" +
-                        "id " +
+                        "uid " +
                         "} }",
                 "data.positionsByStrategyIdAndStatus");
         assertEquals(8, openedPositions.size());

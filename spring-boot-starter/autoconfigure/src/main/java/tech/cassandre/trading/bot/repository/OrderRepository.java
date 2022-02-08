@@ -37,7 +37,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     List<Order> findByStatus(OrderStatusDTO orderStatusDTO);
 
     /**
-     * Find orders without a specific status.
+     * Find orders with a status different from the one passed as a parameter.
      *
      * @param orderStatusDTO order status
      * @return orders
@@ -53,14 +53,14 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 
     /**
      * Update order amount.
-     * WARNING: Only used by the dry mode, please do not use.
+     * WARNING: Only used by the dry mode, please do not use it.
      *
-     * @param id    order id
+     * @param uid   order uid
      * @param value new amount
      */
     @Transactional
     @Modifying
-    @Query("update Order o set o.amount.value = :value where o.id = :id")
-    void updateAmount(@Param("id") Long id, @Param("value") BigDecimal value);
+    @Query("update Order o set o.amount.value = :value where o.uid = :uid")
+    void updateAmount(@Param("uid") Long uid, @Param("value") BigDecimal value);
 
 }

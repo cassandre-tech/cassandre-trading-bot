@@ -19,14 +19,14 @@ public interface UserService {
     Optional<UserDTO> getUser();
 
     /**
-     * Retrieve user accounts information from exchange.
+     * Retrieve user accounts information from exchange (accounts and balances).
      *
      * @return accounts
      */
     Map<String, AccountDTO> getAccounts();
 
     /**
-     * Retrieve user accounts information from cache.
+     * Retrieve user accounts information from cache - used by GraphQL API.
      *
      * @return accounts
      */

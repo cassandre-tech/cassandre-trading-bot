@@ -8,7 +8,7 @@ import tech.cassandre.trading.bot.domain.ImportedTicker;
 import java.util.List;
 
 /**
- * {@link tech.cassandre.trading.bot.domain.ImportedTicker} repository.
+ * {@link ImportedTicker} repository.
  */
 @Repository
 public interface ImportedTickersRepository extends JpaRepository<ImportedTicker, Long>, JpaSpecificationExecutor<ImportedTicker> {
@@ -21,7 +21,7 @@ public interface ImportedTickersRepository extends JpaRepository<ImportedTicker,
     List<ImportedTicker> findByOrderByTimestampAsc();
 
     /**
-     * Returns imported tickers with a specific currency pair (ordered by timestamp).
+     * Returns imported tickers of a specific currency pair (ordered by timestamp).
      *
      * @param currencyPair currency pair
      * @return imported tickers

@@ -70,11 +70,11 @@ public class OrderTest extends BaseTest {
         // Check order 1.
         Optional<OrderDTO> o = strategy.getOrderByOrderId("BACKUP_ORDER_01");
         assertTrue(o.isPresent());
-        assertEquals(1, o.get().getId());
+        assertEquals(1, o.get().getUid());
         assertEquals("BACKUP_ORDER_01", o.get().getOrderId());
         assertEquals(ASK, o.get().getType());
         assertNotNull(o.get().getStrategy());
-        assertEquals(1, o.get().getStrategy().getId());
+        assertEquals(1, o.get().getStrategy().getUid());
         assertEquals("01", o.get().getStrategy().getStrategyId());
         assertEquals(ETH_BTC, o.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.000005").compareTo(o.get().getAmount().getValue()));
@@ -103,11 +103,11 @@ public class OrderTest extends BaseTest {
         // Check order 2.
         o = strategy.getOrderByOrderId("BACKUP_ORDER_02");
         assertTrue(o.isPresent());
-        assertEquals(2, o.get().getId());
+        assertEquals(2, o.get().getUid());
         assertEquals("BACKUP_ORDER_02", o.get().getOrderId());
         assertEquals(BID, o.get().getType());
         assertNotNull(o.get().getStrategy());
-        assertEquals(1, o.get().getStrategy().getId());
+        assertEquals(1, o.get().getStrategy().getUid());
         assertEquals("01", o.get().getStrategy().getStrategyId());
         assertEquals(new CurrencyPairDTO("USDT/BTC"), o.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("0.000015").compareTo(o.get().getAmount().getValue()));
@@ -146,7 +146,7 @@ public class OrderTest extends BaseTest {
     public void checkSaveOrderInDatabase() {
         // =============================================================================================================
         // Loading strategy.
-        StrategyDTO strategyDTO = StrategyDTO.builder().id(1L).strategyId("001").build();
+        StrategyDTO strategyDTO = StrategyDTO.builder().uid(1L).strategyId("001").build();
 
         // =============================================================================================================
         // Add an order and check that it's correctly saved in database.
@@ -173,10 +173,10 @@ public class OrderTest extends BaseTest {
         // Order - Check created order (domain).
         final Optional<Order> orderInDatabase = orderRepository.findByOrderId("BACKUP_ORDER_03");
         assertTrue(orderInDatabase.isPresent());
-        assertEquals(11, orderInDatabase.get().getId());
+        assertEquals(11, orderInDatabase.get().getUid());
         assertEquals("BACKUP_ORDER_03", orderInDatabase.get().getOrderId());
         assertEquals(ASK, orderInDatabase.get().getType());
-        assertEquals(1, orderInDatabase.get().getStrategy().getId());
+        assertEquals(1, orderInDatabase.get().getStrategy().getUid());
         assertEquals("01", orderInDatabase.get().getStrategy().getStrategyId());
         assertEquals(ETH_BTC.toString(), orderInDatabase.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("1.00001").compareTo(orderInDatabase.get().getAmount().getValue()));
@@ -202,10 +202,10 @@ public class OrderTest extends BaseTest {
         // OrderDTO - Check created order (dto).
         Optional<OrderDTO> order = this.strategy.getOrderByOrderId("BACKUP_ORDER_03");
         assertTrue(order.isPresent());
-        assertEquals(11, order.get().getId());
+        assertEquals(11, order.get().getUid());
         assertEquals("BACKUP_ORDER_03", order.get().getOrderId());
         assertEquals(ASK, order.get().getType());
-        assertEquals(1, order.get().getStrategy().getId());
+        assertEquals(1, order.get().getStrategy().getUid());
         assertEquals("01", order.get().getStrategy().getStrategyId());
         assertEquals(ETH_BTC, order.get().getCurrencyPair());
         assertEquals(0, new BigDecimal("1.00001").compareTo(order.get().getAmount().getValue()));

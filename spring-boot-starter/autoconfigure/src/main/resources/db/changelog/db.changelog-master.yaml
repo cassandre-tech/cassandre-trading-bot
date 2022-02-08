@@ -15,3 +15,5 @@ databaseChangeLog:
       file: /db/changelog/db.changelog-5.0.7.xml
   - include:
       file: /db/changelog/db.changelog-5.0.8.xml
+  - include:
+      file: /db/changelog/db.changelog-5.1.0.xml

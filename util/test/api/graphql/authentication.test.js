@@ -8,7 +8,7 @@ test("Accessing API with wrong API key", () => {
 		headers: { "Content-Type": "application/json", "X-API-Key": "WRONG-API-KEY" },
 		body: JSON.stringify({ query:
 				`query {
-				strategy(id:1){ strategyId name }
+				strategy(uid:1){ strategyId name }
 			}`
 		}),
 	})

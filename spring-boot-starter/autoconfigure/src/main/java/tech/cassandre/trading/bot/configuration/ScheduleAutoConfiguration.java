@@ -19,9 +19,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * ScheduleAutoConfiguration configures the flux calls.
+ * Three scheduled tasks:
+ * - One calling account flux.
+ * - One calling ticker flux.
+ * - One calling order and trade flux.
  */
-@Configuration
 @Profile("!schedule-disabled")
+@Configuration
 @EnableScheduling
 @RequiredArgsConstructor
 public class ScheduleAutoConfiguration extends BaseConfiguration {
@@ -29,14 +33,11 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
     /** Scheduler pool size. */
     private static final int SCHEDULER_POOL_SIZE = 3;
 
-    /** Start delay in milliseconds. */
+    /** Start delay in milliseconds (1 000 ms = 1 second). */
     private static final int START_DELAY_IN_MILLISECONDS = 1_000;
 
-    /** Termination delay in milliseconds. */
+    /** Termination delay in milliseconds (10 000 ms = 10 seconds). */
     private static final int TERMINATION_DELAY_IN_MILLISECONDS = 10_000;
-
-    /** Thread prefix for schedulers. */
-    private static final String THREAD_NAME_PREFIX = "cassandre-flux-";
 
     /** Flux continues to run as long as enabled is set to true. */
     private final AtomicBoolean enabled = new AtomicBoolean(true);
@@ -52,28 +53,6 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
 
     /** Trade flux. */
     private final TradeFlux tradeFlux;
-
-    /**
-     * Configure the task scheduler.
-     *
-     * @return task scheduler
-     */
-    @Bean
-    public TaskScheduler taskScheduler() {
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setWaitForTasksToCompleteOnShutdown(true);
-        scheduler.setAwaitTerminationMillis(TERMINATION_DELAY_IN_MILLISECONDS);
-        scheduler.setThreadNamePrefix(THREAD_NAME_PREFIX);
-        scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
-        scheduler.setErrorHandler(t -> {
-            try {
-                logger.error("Error in scheduled tasks: {}", t.getMessage());
-            } catch (Exception e) {
-                logger.error("Error in scheduled tasks: {}", e.getMessage());
-            }
-        });
-        return scheduler;
-    }
 
     /**
      * Recurrent calls to the account flux.
@@ -108,11 +87,33 @@ public class ScheduleAutoConfiguration extends BaseConfiguration {
 
     /**
      * This method is called before the application shutdown.
-     * We stop the flux.
+     * We stop calling the flux.
      */
     @PreDestroy
     public void shutdown() {
         enabled.set(false);
+    }
+
+    /**
+     * Configure the task scheduler.
+     *
+     * @return task scheduler
+     */
+    @Bean
+    public TaskScheduler taskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setWaitForTasksToCompleteOnShutdown(true);
+        scheduler.setAwaitTerminationMillis(TERMINATION_DELAY_IN_MILLISECONDS);
+        scheduler.setThreadNamePrefix("cassandre-flux-");
+        scheduler.setPoolSize(SCHEDULER_POOL_SIZE);
+        scheduler.setErrorHandler(throwable -> {
+            try {
+                logger.error("Error in scheduled tasks: {}", throwable.getMessage());
+            } catch (Exception exception) {
+                logger.error("Error in scheduled tasks: {}", exception.getMessage());
+            }
+        });
+        return scheduler;
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * User service - XChange implementation.
+ * User service - XChange implementation of {@link UserService}.
  */
 public class UserServiceXChangeImplementation extends BaseService implements UserService {
 
@@ -73,6 +73,7 @@ public class UserServiceXChangeImplementation extends BaseService implements Use
 
     @Override
     public final Map<String, AccountDTO> getAccountsFromCache() {
+        // If cache is empty, we ask the exchange.
         if (cachedReply.isEmpty()) {
             return getAccounts();
         } else {

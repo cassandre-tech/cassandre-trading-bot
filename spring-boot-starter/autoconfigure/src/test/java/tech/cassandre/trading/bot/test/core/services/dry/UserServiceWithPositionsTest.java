@@ -78,7 +78,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
     @Test
     @DisplayName("Check user balances updates with positions")
     public void checkUserBalancesUpdatesWithPosition() throws InterruptedException {
-        assertTrue(strategy.isRunningInDryMode());
+        assertTrue(strategy.getConfiguration().isDryMode());
 
         final PositionRulesDTO rules = PositionRulesDTO.builder()
                 .stopGainPercentage(100f)
@@ -330,7 +330,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
      * @return position
      */
     private PositionDTO getPositionDTO(final long id) {
-        final Optional<PositionDTO> p = positionService.getPositionById(id);
+        final Optional<PositionDTO> p = positionService.getPositionByUid(id);
         if (p.isPresent()) {
             return p.get();
         } else {

@@ -51,23 +51,15 @@ public enum OrderStatusDTO {
     UNKNOWN;
 
     /**
-     * Returns true for final.
+     * Returns true when open.
      *
-     * @return Returns true for final
+     * @return Returns true when open
      */
-    public final boolean isFinal() {
-        switch (this) {
-            case FILLED:
-            case PARTIALLY_CANCELED: // Cancelled, partially-executed order is final status.
-            case CANCELED:
-            case REPLACED:
-            case STOPPED:
-            case REJECTED:
-            case EXPIRED:
-                return true;
-            default:
-                return false;
-        }
+    public final boolean isOpen() {
+        return switch (this) {
+            case PENDING_NEW, NEW, PARTIALLY_FILLED -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -76,32 +68,22 @@ public enum OrderStatusDTO {
      * @return Returns true for final
      */
     public final boolean isInError() {
-        switch (this) {
-            case CANCELED:
-            case REPLACED:
-            case STOPPED:
-            case REJECTED:
-            case EXPIRED:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case CANCELED, REPLACED, STOPPED, REJECTED, EXPIRED -> true;
+            default -> false;
+        };
     }
 
     /**
-     * Returns true when open.
+     * Returns true for final.
      *
-     * @return Returns true when open
+     * @return Returns true for final
      */
-    public final boolean isOpen() {
-        switch (this) {
-            case PENDING_NEW:
-            case NEW:
-            case PARTIALLY_FILLED:
-                return true;
-            default:
-                return false;
-        }
+    public final boolean isFinal() {
+        return switch (this) { // Cancelled, partially-executed order is final status.
+            case FILLED, PARTIALLY_CANCELED, CANCELED, REPLACED, STOPPED, REJECTED, EXPIRED -> true;
+            default -> false;
+        };
     }
 
 }

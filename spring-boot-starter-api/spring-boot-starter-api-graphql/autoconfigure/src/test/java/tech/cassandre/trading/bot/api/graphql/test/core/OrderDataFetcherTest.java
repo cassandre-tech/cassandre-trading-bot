@@ -51,11 +51,11 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get order by id")
-    void getOrderById() {
+    @DisplayName("Get order by uid")
+    void getOrderByUid() {
         Map<String, Object> result = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { order(id: 1) {" +
-                        "id " +
+                " { order(uid: 1) {" +
+                        "uid " +
                         "orderId " +
                         "type " +
                         "strategy {strategyId} " +
@@ -72,7 +72,7 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
                         "trades {tradeId}" +
                         "} }",
                 "data.order");
-        assertEquals(1, result.get("id"));
+        assertEquals(1, result.get("uid"));
         assertEquals("60ddfbc11f8b45000696de3f", result.get("orderId"));
         assertEquals("BID", result.get("type"));
         assertEquals("001", getStrategyValue(result.get("strategy")).getStrategyId());
@@ -99,10 +99,10 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
     void getOrderByOrderId() {
         Map<String, Object> result = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { orderByOrderId(orderId: \"60ddfbc11f8b45000696de3f\") {" +
-                        "id " +
+                        "uid " +
                         "} }",
                 "data.orderByOrderId");
-        assertEquals(1, result.get("id"));
+        assertEquals(1, result.get("uid"));
     }
 
 }

@@ -77,7 +77,6 @@ public abstract class BaseDataFetcherTest {
         return GainDTO.builder()
                 .percentage((Double) value.get("percentage"))
                 .amount(getCurrencyAmountValue(value.get("amount")))
-                .fees(getCurrencyAmountValue(value.get("fees")))
                 .build();
     }
 

@@ -12,7 +12,7 @@ public class EqualsBuilder {
     private boolean equals = true;
 
     /**
-     * Add a test with two objects.
+     * Add a test with two objects (dealing with BigDecimal and ZonedDateTime).
      *
      * @param object1 object 1
      * @param object2 object 2

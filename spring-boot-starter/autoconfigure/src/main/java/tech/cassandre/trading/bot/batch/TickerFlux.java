@@ -8,7 +8,7 @@ import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
-import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
 import java.util.LinkedHashSet;
@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 
 /**
  * Ticker flux - push {@link TickerDTO}.
+ * Two methods override from super class:
+ * - getNewValues(): calling market service to retrieve tickers from exchange.
+ * - saveValues(): not implemented as we don't store tickers data in database.
+ * To get a deep understanding of how it works, read the documentation of {@link BaseFlux}.
  */
 @RequiredArgsConstructor
 public class TickerFlux extends BaseFlux<TickerDTO> {
@@ -31,43 +35,34 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
 
     @Override
     protected final Set<TickerDTO> getNewValues() {
-        logger.debug("Retrieving tickers from exchange");
-        Set<TickerDTO> newValues = new LinkedHashSet<>();
-
         // We retrieve the list of currency pairs asked by all strategies.
+        // Some users coded a getRequestedCurrencyPairs() that returns different results.
         final LinkedHashSet<CurrencyPairDTO> requestedCurrencyPairs = applicationContext
                 .getBeansWithAnnotation(CassandreStrategy.class)
                 .values()
                 .stream()
-                .map(o -> (CassandreStrategyInterface) o)
+                .map(object -> (CassandreStrategyInterface) object)
                 .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
                 .flatMap(Set::stream)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
+        // We try to retrieve all tickers at once and if not working, one by one.
         try {
             // Get all tickers at once from market service if the method is implemented.
-            marketService.getTickers(requestedCurrencyPairs).stream()
+            return marketService.getTickers(requestedCurrencyPairs).stream()
                     .filter(Objects::nonNull)
-                    .peek(tickerDTO -> logger.debug("New ticker received: {}", tickerDTO))
-                    .forEach(newValues::add);
+                    .peek(tickerDTO -> logger.debug("Retrieved ticker from exchange: {}", tickerDTO))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         } catch (NotAvailableFromExchangeException | NotYetImplementedForExchangeException e) {
-            // If getAllTickers is not available, we retrieve tickers one bye one.
-            requestedCurrencyPairs.stream()
+            // If getAllTickers is not implemented, we retrieve tickers one bye one.
+            return requestedCurrencyPairs.stream()
                     .filter(Objects::nonNull)
                     .map(marketService::getTicker)
                     .filter(Optional::isPresent)
-                    .peek(tickerDTO -> logger.debug("New ticker received: {}", tickerDTO))
+                    .peek(tickerDTO -> logger.debug("Retrieved ticker from exchange: {}", tickerDTO))
                     .map(Optional::get)
-                    .forEach(newValues::add);
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
-
-        return newValues;
-    }
-
-    @Override
-    protected final Set<TickerDTO> saveValues(final Set<TickerDTO> newValues) {
-        // We don't save tickers in database.
-        return newValues;
     }
 
 }

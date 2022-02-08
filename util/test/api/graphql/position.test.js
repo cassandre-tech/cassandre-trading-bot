@@ -15,7 +15,7 @@ test("Getting a position", () => {
 		headers: { "Content-Type": "application/json", "X-API-Key": "667341fd-d4c2-4bc2-99af-0a2a697aa134" },
 		body: JSON.stringify({ query: 
 			`query {
-				position(id:3){positionId}
+				position(uid:3){positionId}
 			}`
 		}),
 	})

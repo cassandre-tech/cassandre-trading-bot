@@ -76,7 +76,8 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertEquals(0, new BigDecimal("6").compareTo(strategy.getLastTickers().get(ETH_BTC).getLast()));
 
         // Trading account test.
-        with().await().untilAsserted(() -> assertEquals(3, strategy.getAccountsUpdatesReceived().size()));
+        // TODO It's 4 because one getUser is called by configuration and the flux doesn't ask the same mock method - Make it more clear
+        with().await().untilAsserted(() -> assertEquals(4, strategy.getAccountsUpdatesReceived().size()));
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         assertTrue(tradeAccount.isPresent());
         assertEquals("03", tradeAccount.get().getAccountId());

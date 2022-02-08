@@ -5,7 +5,7 @@ test("Getting configuration", () => {
 	// The result we are expecting from the GraphQL API.
 	const expectedReply = {
 		"configuration": {
-			"apiVersion": "1.0"
+			"apiVersion": "1.1"
 		}
 	};
 

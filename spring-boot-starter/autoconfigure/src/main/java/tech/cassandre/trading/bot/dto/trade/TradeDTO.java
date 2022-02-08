@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -44,18 +45,18 @@ import static lombok.AccessLevel.PRIVATE;
 public class TradeDTO {
 
     /** Technical id. */
-    Long id;
+    Long uid;
 
     /** An identifier set by the exchange that uniquely identifies the trade. */
     String tradeId;
 
-    /** Order type i.e. bid (buy) or ask (sell). */
+    /** Trade type i.e. bid (buy) or ask (sell). */
     OrderTypeDTO type;
 
     /** The order id of the order responsible for this trade. */
     String orderId;
 
-    /** The order responsible for this trade. */
+    /** The order object responsible for this trade. */
     Order order;
 
     /** Currency pair. */
@@ -82,11 +83,7 @@ public class TradeDTO {
      * @return amount value
      */
     public BigDecimal getAmountValue() {
-        if (amount == null) {
-            return null;
-        } else {
-            return amount.getValue();
-        }
+        return Optional.ofNullable(amount).map(CurrencyAmountDTO::getValue).orElse(null);
     }
 
     /**
@@ -95,11 +92,7 @@ public class TradeDTO {
      * @return price value
      */
     public BigDecimal getPriceValue() {
-        if (price == null) {
-            return null;
-        } else {
-            return price.getValue();
-        }
+        return Optional.ofNullable(price).map(CurrencyAmountDTO::getValue).orElse(null);
     }
 
     /**
@@ -108,16 +101,13 @@ public class TradeDTO {
      * @return fee value
      */
     public BigDecimal getFeeValue() {
-        if (fee == null) {
-            return null;
-        } else {
-            return fee.getValue();
-        }
+        return Optional.ofNullable(fee).map(CurrencyAmountDTO::getValue).orElse(null);
     }
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -139,7 +129,8 @@ public class TradeDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
                 .append(tradeId)
                 .toHashCode();

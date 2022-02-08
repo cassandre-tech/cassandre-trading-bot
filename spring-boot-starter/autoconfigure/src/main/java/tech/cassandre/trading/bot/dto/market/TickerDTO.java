@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.util.test.ExcludeFromCoverageGeneratedReport;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -70,11 +71,7 @@ public class TickerDTO {
      * @return base currency
      */
     public CurrencyDTO getBaseCurrency() {
-        if (currencyPair != null) {
-            return currencyPair.getBaseCurrency();
-        } else {
-            return null;
-        }
+        return Optional.ofNullable(currencyPair).map(CurrencyPairDTO::getBaseCurrency).orElse(null);
     }
 
     /**
@@ -83,11 +80,7 @@ public class TickerDTO {
      * @return quote currency
      */
     public CurrencyDTO getQuoteCurrency() {
-        if (currencyPair != null) {
-            return currencyPair.getQuoteCurrency();
-        } else {
-            return null;
-        }
+        return Optional.ofNullable(currencyPair).map(CurrencyPairDTO::getQuoteCurrency).orElse(null);
     }
 
     /**
@@ -101,7 +94,8 @@ public class TickerDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -117,7 +111,8 @@ public class TickerDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
                 .append(currencyPair)
                 .append(timestamp)

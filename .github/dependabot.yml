@@ -6,7 +6,6 @@ updates:
       interval: "daily"
       time: "18:00"
       timezone: "Europe/Paris"
-    open-pull-requests-limit: 9
     target-branch: development
 
   - package-ecosystem: npm
@@ -15,5 +14,12 @@ updates:
       interval: "daily"
       time: "18:00"
       timezone: "Europe/Paris"
-    open-pull-requests-limit: 9
+    target-branch: development
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "18:00"
+      timezone: "Europe/Paris"
     target-branch: development

@@ -17,7 +17,8 @@ import java.util.Optional;
 import static lombok.AccessLevel.PRIVATE;
 
 /**
- * DTO representing user information.
+ * DTO representing user information on the exchange.
+ * {@link UserDTO} can have several {@link AccountDTO} and each account can have several {@link BalanceDTO}.
  */
 @Value
 @Builder
@@ -25,7 +26,7 @@ import static lombok.AccessLevel.PRIVATE;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class UserDTO {
 
-    /** User ID (usually username). */
+    /** User ID (usually the exchange username). */
     String id;
 
     /** The accounts owned by the user. */
@@ -36,7 +37,7 @@ public class UserDTO {
     ZonedDateTime timestamp;
 
     /**
-     * Find an account with its id.
+     * Find an account by its id.
      *
      * @param accountId account id
      * @return account
@@ -59,7 +60,8 @@ public class UserDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -74,7 +76,8 @@ public class UserDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
                 .append(id)
                 .toHashCode();

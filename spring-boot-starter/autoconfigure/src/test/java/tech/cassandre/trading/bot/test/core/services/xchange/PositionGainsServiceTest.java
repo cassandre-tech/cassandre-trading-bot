@@ -54,7 +54,7 @@ public class PositionGainsServiceTest {
             Amount percentage : 30.08 % - ((147 - 113) / 113) * 100.
             Fees : 15 USDT.
         */
-        final Optional<PositionDTO> p1 = positionService.getPositionById(1L);
+        final Optional<PositionDTO> p1 = positionService.getPositionByUid(1L);
         assertTrue(p1.isPresent());
         final GainDTO gain1 = p1.get().getGain();
         // Gain (amount).
@@ -68,9 +68,6 @@ public class PositionGainsServiceTest {
         assertNotNull(gain1Fees.get(USDT));
         assertEquals(0, new BigDecimal("15").compareTo(gain1Fees.get(USDT).getValue()));
         assertEquals(USDT, gain1Fees.get(USDT).getCurrency());
-        // Net gain.
-        assertEquals(0, new BigDecimal("19").compareTo(gain1.getNetAmount().getValue()));
-        assertEquals(USDT, gain1.getNetAmount().getCurrency());
 
         /*
             Position 2 - Bought 20 ETH with BTC.
@@ -81,7 +78,7 @@ public class PositionGainsServiceTest {
             Amount percentage : -50 % - ((1 000 - 2 000) / 2 000) * 100.
             Fees : 10 BTC.
          */
-        final Optional<PositionDTO> p2 = positionService.getPositionById(2L);
+        final Optional<PositionDTO> p2 = positionService.getPositionByUid(2L);
         assertTrue(p2.isPresent());
         final GainDTO gain2 = p2.get().getGain();
         // Gain (amount).
@@ -96,10 +93,6 @@ public class PositionGainsServiceTest {
         assertEquals(0, new BigDecimal("10").compareTo(gain2Fees.get(BTC).getValue()));
         assertEquals(BTC, gain2Fees.get(BTC).getCurrency());
 
-        // Net gain.
-        assertEquals(0, new BigDecimal("-1010").compareTo(gain2.getNetAmount().getValue()));
-        assertEquals(BTC, gain2.getNetAmount().getCurrency());
-
         /*
             Position 3 - Bought 30 BTC with USDT.
             TRADE_31 - Bought 30 BTC for 20 = 600.
@@ -109,7 +102,7 @@ public class PositionGainsServiceTest {
             Amount percentage : 25% - ((750 - 600) / 600) * 100.
             Fees : 11 USDT.
          */
-        final Optional<PositionDTO> p3 = positionService.getPositionById(3L);
+        final Optional<PositionDTO> p3 = positionService.getPositionByUid(3L);
         assertTrue(p3.isPresent());
         final GainDTO gain3 = p3.get().getGain();
         // Gain (amount).
@@ -118,34 +111,25 @@ public class PositionGainsServiceTest {
         // Gain (percentage).
         assertEquals(25, gain3.getPercentage());
         // Gain (fees).
-        assertEquals(0, new BigDecimal("11").compareTo(gain3.getFees().getValue()));
-        assertEquals(USDT, gain3.getFees().getCurrency());
         final Map<CurrencyDTO, CurrencyAmountDTO> gain3Fees = gain3.getOrdersFees();
         assertEquals(1, gain3Fees.size());
         assertNotNull(gain3Fees.get(USDT));
         assertEquals(0, new BigDecimal("11").compareTo(gain3Fees.get(USDT).getValue()));
         assertEquals(USDT, gain3Fees.get(USDT).getCurrency());
 
-        // Net gain.
-        assertEquals(0, new BigDecimal("139").compareTo(gain3.getNetAmount().getValue()));
-        assertEquals(USDT, gain3.getNetAmount().getCurrency());
-
         // There should be no gain for positions 4,5 & 6.
-        final Optional<PositionDTO> p4 = positionService.getPositionById(4L);
+        final Optional<PositionDTO> p4 = positionService.getPositionByUid(4L);
         assertTrue(p4.isPresent());
         assertEquals(0, p4.get().getGain().getPercentage());
         assertEquals(0, ZERO.compareTo(p4.get().getGain().getAmount().getValue()));
-        assertEquals(0, ZERO.compareTo(p4.get().getGain().getNetAmount().getValue()));
-        final Optional<PositionDTO> p5 = positionService.getPositionById(5L);
+        final Optional<PositionDTO> p5 = positionService.getPositionByUid(5L);
         assertTrue(p5.isPresent());
         assertEquals(0, p5.get().getGain().getPercentage());
         assertEquals(0, ZERO.compareTo(p5.get().getGain().getAmount().getValue()));
-        assertEquals(0, ZERO.compareTo(p5.get().getGain().getNetAmount().getValue()));
-        final Optional<PositionDTO> p6 = positionService.getPositionById(6L);
+        final Optional<PositionDTO> p6 = positionService.getPositionByUid(6L);
         assertTrue(p6.isPresent());
         assertEquals(0, p6.get().getGain().getPercentage());
         assertEquals(0, ZERO.compareTo(p6.get().getGain().getAmount().getValue()));
-        assertEquals(0, ZERO.compareTo(p6.get().getGain().getNetAmount().getValue()));
 
         /*
             Position 7 (SHORT) - Sold 10 ETH for USDT.
@@ -155,7 +139,7 @@ public class PositionGainsServiceTest {
             Amount percentage : -50%.
             Fees : 4 USDT.
          */
-        final Optional<PositionDTO> p7 = positionService.getPositionById(7L);
+        final Optional<PositionDTO> p7 = positionService.getPositionByUid(7L);
         assertTrue(p7.isPresent());
         final GainDTO gain7 = p7.get().getGain();
         // Gain (amount).
@@ -164,17 +148,11 @@ public class PositionGainsServiceTest {
         // Gain (percentage).
         assertEquals(-50, gain7.getPercentage());
         // Gain (fees).
-        assertEquals(0, new BigDecimal("4").compareTo(gain7.getFees().getValue()));
-        assertEquals(ETH, gain7.getFees().getCurrency());
         final Map<CurrencyDTO, CurrencyAmountDTO> gain7Fees = gain7.getOrdersFees();
         assertEquals(1, gain7Fees.size());
         assertNotNull(gain7Fees.get(ETH));
         assertEquals(0, new BigDecimal("4").compareTo(gain7Fees.get(ETH).getValue()));
         assertEquals(ETH, gain7Fees.get(ETH).getCurrency());
-
-        // Net gain.
-        assertEquals(0, new BigDecimal("-9").compareTo(gain7.getNetAmount().getValue()));
-        assertEquals(ETH, gain7.getNetAmount().getCurrency());
 
         // Check all gains.
         final Map<CurrencyDTO, GainDTO> gains = positionService.getGains();
@@ -186,17 +164,11 @@ public class PositionGainsServiceTest {
         assertEquals(25.81, usdtGain.getPercentage());
         assertEquals(0, new BigDecimal("184").compareTo(usdtGain.getAmount().getValue()));
         assertEquals(USDT, usdtGain.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("26").compareTo(usdtGain.getFees().getValue()));
-        assertEquals(USDT, usdtGain.getFees().getCurrency());
 
         final Map<CurrencyDTO, CurrencyAmountDTO> usdtGainFees = usdtGain.getOrdersFees();
         assertNotNull(usdtGainFees.get(USDT));
         assertEquals(0, new BigDecimal("26").compareTo(usdtGainFees.get(USDT).getValue()));
         assertEquals(USDT, usdtGainFees.get(USDT).getCurrency());
-
-        // Net gain.
-        assertEquals(0, new BigDecimal("158").compareTo(usdtGain.getNetAmount().getValue()));
-        assertEquals(USDT, usdtGain.getNetAmount().getCurrency());
 
         // Gains BTC.
         final GainDTO btcGain = gains.get(BTC);
@@ -204,17 +176,11 @@ public class PositionGainsServiceTest {
         assertEquals(-50, btcGain.getPercentage());
         assertEquals(0, new BigDecimal("-1000").compareTo(btcGain.getAmount().getValue()));
         assertEquals(BTC, btcGain.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("10").compareTo(btcGain.getFees().getValue()));
-        assertEquals(BTC, btcGain.getFees().getCurrency());
 
         final Map<CurrencyDTO, CurrencyAmountDTO> btcGainFees = btcGain.getOrdersFees();
         assertNotNull(btcGainFees.get(BTC));
         assertEquals(0, new BigDecimal("10").compareTo(btcGainFees.get(BTC).getValue()));
         assertEquals(BTC, btcGainFees.get(BTC).getCurrency());
-
-        // Net gain.
-        assertEquals(0, new BigDecimal("-1010").compareTo(btcGain.getNetAmount().getValue()));
-        assertEquals(BTC, btcGain.getNetAmount().getCurrency());
 
         // Gains ETH.
         final GainDTO ethGain = gains.get(ETH);

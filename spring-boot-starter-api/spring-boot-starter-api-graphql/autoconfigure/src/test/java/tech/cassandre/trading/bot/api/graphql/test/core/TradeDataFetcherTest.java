@@ -50,15 +50,15 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get trade by id")
+    @DisplayName("Get trade by uid")
     void getTradeById() {
         Map<String, Object> result = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { trade(id: 24) {" +
-                        "id " +
+                " { trade(uid: 24) {" +
+                        "uid " +
                         "tradeId " +
                         "type " +
                         "orderId " +
-                        "order {id orderId}" +
+                        "order {uid orderId}" +
                         "currencyPair {baseCurrency{code} quoteCurrency{code}}" +
                         "amount {value currency{code}}" +
                         "price {value currency{code}}" +
@@ -66,12 +66,12 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
                         "timestamp" +
                         "} }",
                 "data.trade");
-        assertEquals(24, result.get("id"));
+        assertEquals(24, result.get("uid"));
         assertEquals("60df231c2e113d2923052d18", result.get("tradeId"));
         assertEquals("ASK", result.get("type"));
         assertEquals("60df231c38ec01000687554e", result.get("orderId"));
         Map<String, String> order = (Map<String, String>) result.get("order");
-        assertEquals(19, order.get("id"));
+        assertEquals(19, order.get("uid"));
         assertEquals("60df231c38ec01000687554e", order.get("orderId"));
         assertEquals(BTC_USDT, getCurrencyPairValue(result.get("currencyPair")));
         final CurrencyAmountDTO amount = getCurrencyAmountValue(result.get("amount"));
@@ -91,10 +91,10 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
     void getTradeByTradeId() {
         Map<String, Object> result = dgsQueryExecutor.executeAndExtractJsonPath(
                 " { tradeByTradeId(tradeId: \"60df231c2e113d2923052d18\") {" +
-                        "id " +
+                        "uid " +
                         "} }",
                 "data.tradeByTradeId");
-        assertEquals(24, result.get("id"));
+        assertEquals(24, result.get("uid"));
     }
 
 }

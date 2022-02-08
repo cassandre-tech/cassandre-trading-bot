@@ -15,7 +15,7 @@ test("Getting a trade", () => {
 		headers: { "Content-Type": "application/json", "X-API-Key": "667341fd-d4c2-4bc2-99af-0a2a697aa134" },
 		body: JSON.stringify({ query: 
 			`query {
-				trade(id:1){tradeId}
+				trade(uid:1){tradeId}
 			}`
 		}),
 	})

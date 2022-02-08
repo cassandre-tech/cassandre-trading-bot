@@ -34,7 +34,7 @@ public class BaseTest extends Base {
 
     /** Default strategy. */
     protected final StrategyDTO strategyDTO = StrategyDTO.builder()
-            .id(1L)
+            .uid(1L)
             .strategyId("01")
             .type(BASIC_STRATEGY)
             .build();
