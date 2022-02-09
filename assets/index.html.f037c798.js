@@ -1,13 +1,13 @@
-import{r as n,o as c,c as p,a,w as t,F as l,b as s,d as e}from"./app.21805208.js";import{_ as u}from"./plugin-vue_export-helper.21dcd24c.js";const i={},m=s("h3",{id:"as-easy-as-1-2-3",tabindex:"-1"},[s("a",{class:"header-anchor",href:"#as-easy-as-1-2-3","aria-hidden":"true"},"#"),e(" As Easy as 1, 2, 3")],-1),b=s("div",{class:"language-bash ext-sh line-numbers-mode"},[s("pre",{class:"language-bash"},[s("code",null,[s("span",{class:"token comment"},"# Create a simple project with our archetype"),e(`
-mvn archetype:generate `),s("span",{class:"token punctuation"},"\\"),e(`
--DarchetypeGroupId`),s("span",{class:"token operator"},"="),e("tech.cassandre.trading.bot "),s("span",{class:"token punctuation"},"\\"),e(`
--DarchetypeArtifactId`),s("span",{class:"token operator"},"="),e("cassandre-trading-bot-spring-boot-starter-basic-archetype "),s("span",{class:"token punctuation"},"\\"),e(`
--DarchetypeVersion`),s("span",{class:"token operator"},"="),s("span",{class:"token number"},"5.0"),e(".8 "),s("span",{class:"token punctuation"},"\\"),e(`
--DgroupId`),s("span",{class:"token operator"},"="),e("com.example "),s("span",{class:"token punctuation"},"\\"),e(`
--DartifactId`),s("span",{class:"token operator"},"="),e("my-bot "),s("span",{class:"token punctuation"},"\\"),e(`
--Dversion`),s("span",{class:"token operator"},"="),s("span",{class:"token number"},"1.0"),e("-SNAPSHOT "),s("span",{class:"token punctuation"},"\\"),e(`
--Dpackage`),s("span",{class:"token operator"},"="),e(`com.example
+import{r as a,o as c,c as l,a as e,w as t,F as p,b as n,d as s}from"./app.21805208.js";import{_ as i}from"./plugin-vue_export-helper.21dcd24c.js";const u={},m=n("h3",{id:"as-easy-as-1-2-3",tabindex:"-1"},[n("a",{class:"header-anchor",href:"#as-easy-as-1-2-3","aria-hidden":"true"},"#"),s(" As Easy as 1, 2, 3")],-1),b=n("div",{class:"language-bash ext-sh line-numbers-mode"},[n("pre",{class:"language-bash"},[n("code",null,[n("span",{class:"token comment"},"# Create a simple project with our archetype"),s(`
+mvn archetype:generate `),n("span",{class:"token punctuation"},"\\"),s(`
+-DarchetypeGroupId`),n("span",{class:"token operator"},"="),s("tech.cassandre.trading.bot "),n("span",{class:"token punctuation"},"\\"),s(`
+-DarchetypeArtifactId`),n("span",{class:"token operator"},"="),s("cassandre-trading-bot-spring-boot-starter-basic-archetype "),n("span",{class:"token punctuation"},"\\"),s(`
+-DarchetypeVersion`),n("span",{class:"token operator"},"="),n("span",{class:"token number"},"5.0"),s(".8 "),n("span",{class:"token punctuation"},"\\"),s(`
+-DgroupId`),n("span",{class:"token operator"},"="),s("com.example "),n("span",{class:"token punctuation"},"\\"),s(`
+-DartifactId`),n("span",{class:"token operator"},"="),s("my-bot "),n("span",{class:"token punctuation"},"\\"),s(`
+-Dversion`),n("span",{class:"token operator"},"="),n("span",{class:"token number"},"1.0"),s("-SNAPSHOT "),n("span",{class:"token punctuation"},"\\"),s(`
+-Dpackage`),n("span",{class:"token operator"},"="),s(`com.example
 
-`),s("span",{class:"token comment"},"# Runs unit tests"),e(`
-mvn -f my-bot/pom.xml `),s("span",{class:"token builtin class-name"},"test"),e(`
-`)])]),s("div",{class:"line-numbers"},[s("span",{class:"line-number"},"1"),s("br"),s("span",{class:"line-number"},"2"),s("br"),s("span",{class:"line-number"},"3"),s("br"),s("span",{class:"line-number"},"4"),s("br"),s("span",{class:"line-number"},"5"),s("br"),s("span",{class:"line-number"},"6"),s("br"),s("span",{class:"line-number"},"7"),s("br"),s("span",{class:"line-number"},"8"),s("br"),s("span",{class:"line-number"},"9"),s("br"),s("span",{class:"line-number"},"10"),s("br"),s("span",{class:"line-number"},"11"),s("br"),s("span",{class:"line-number"},"12"),s("br")])],-1);function d(h,k){const o=n("CodeGroupItem"),r=n("CodeGroup");return c(),p(l,null,[m,a(r,null,{default:t(()=>[a(o,{title:"Command line",active:""},{default:t(()=>[b]),_:1})]),_:1})],64)}var g=u(i,[["render",d]]);export{g as default};
+`),n("span",{class:"token comment"},"# Runs unit tests"),s(`
+mvn -f my-bot/pom.xml `),n("span",{class:"token builtin class-name"},"test"),s(`
+`)])]),n("div",{class:"line-numbers"},[n("span",{class:"line-number"},"1"),n("br"),n("span",{class:"line-number"},"2"),n("br"),n("span",{class:"line-number"},"3"),n("br"),n("span",{class:"line-number"},"4"),n("br"),n("span",{class:"line-number"},"5"),n("br"),n("span",{class:"line-number"},"6"),n("br"),n("span",{class:"line-number"},"7"),n("br"),n("span",{class:"line-number"},"8"),n("br"),n("span",{class:"line-number"},"9"),n("br"),n("span",{class:"line-number"},"10"),n("br"),n("span",{class:"line-number"},"11"),n("br"),n("span",{class:"line-number"},"12"),n("br")])],-1);function d(k,h){const o=a("CodeGroupItem"),r=a("CodeGroup");return c(),l(p,null,[m,e(r,null,{default:t(()=>[e(o,{title:"Command line",active:""},{default:t(()=>[b]),_:1})]),_:1})],64)}var g=i(u,[["render",d]]);export{g as default};
