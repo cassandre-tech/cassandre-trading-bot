@@ -124,7 +124,7 @@ public class BaseMock extends BaseTest {
         try {
             mock = getXChangeTradeServiceMock();
         } catch (IOException e) {
-            logger.error("Impossible to instantiate mocked account service");
+            logger.error("Impossible to instantiate mocked trade service");
             return null;
         }
         return new TradeServiceXChangeImplementation(SERVICE_RATE, orderRepository, mock);

@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.test.util.strategies;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,7 +23,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.awaitility.Awaitility.await;
 import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
 import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_USDT;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
@@ -44,7 +44,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     public static final String PARAMETER_TESTABLE_STRATEGY_ENABLED = "testableStrategy.enabled";
 
     /** Waiting time during each method. */
-    public static final Duration MINIMUM_METHOD_DURATION = Duration.ofMillis(10);
+    public static final Duration MINIMUM_METHOD_DURATION = Duration.ofSeconds(1);
 
     /** Logger. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -114,6 +114,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
     }
 
     @Override
+    @SneakyThrows
     public final void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
         accounts.values()
                 .stream()
@@ -122,10 +123,11 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
                         accountDTO))
                 .forEach(accountsUpdatesReceived::add);
 
-        await().during(MINIMUM_METHOD_DURATION);
+        Thread.sleep(MINIMUM_METHOD_DURATION.toMillis());
     }
 
     @Override
+    @SneakyThrows
     public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
         tickers.values()
                 .stream()
@@ -134,10 +136,11 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
                         tickerDTO))
                 .forEach(tickersUpdatesReceived::add);
 
-        await().during(MINIMUM_METHOD_DURATION);
+        Thread.sleep(MINIMUM_METHOD_DURATION.toMillis());
     }
 
     @Override
+    @SneakyThrows
     public final void onOrdersUpdates(final Map<String, OrderDTO> orders) {
         orders.values()
                 .stream()
@@ -146,10 +149,11 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
                         orderDTO))
                 .forEach(ordersUpdatesReceived::add);
 
-        await().during(MINIMUM_METHOD_DURATION);
+        Thread.sleep(MINIMUM_METHOD_DURATION.toMillis());
     }
 
     @Override
+    @SneakyThrows
     public void onTradesUpdates(final Map<String, TradeDTO> trades) {
         trades.values()
                 .stream()
@@ -158,10 +162,11 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
                         tradeDTO))
                 .forEach(tradesUpdatesReceived::add);
 
-        await().during(MINIMUM_METHOD_DURATION);
+        Thread.sleep(MINIMUM_METHOD_DURATION.toMillis());
     }
 
     @Override
+    @SneakyThrows
     public void onPositionsUpdates(final Map<Long, PositionDTO> positions) {
         positions.values()
                 .stream()
@@ -170,10 +175,11 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
                         positionDTO))
                 .forEach(positionsUpdatesReceived::add);
 
-        await().during(MINIMUM_METHOD_DURATION);
+        Thread.sleep(MINIMUM_METHOD_DURATION.toMillis());
     }
 
     @Override
+    @SneakyThrows
     public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
         positions.values()
                 .stream()
@@ -182,7 +188,7 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
                         positionDTO))
                 .forEach(positionsStatusUpdatesReceived::add);
 
-        await().during(MINIMUM_METHOD_DURATION);
+        Thread.sleep(MINIMUM_METHOD_DURATION.toMillis());
     }
 
     /**
@@ -193,6 +199,42 @@ public class TestableCassandreStrategy extends BasicCassandreStrategy {
      */
     private String getUpdatesCount(final List<?> list) {
         return String.format("%03d", list.size() + 1);
+    }
+
+    /**
+     * Returns positions updates count.
+     *
+     * @return positions updates count
+     */
+    public int getPositionsUpdatesCount() {
+        return getPositionsUpdatesReceived().size();
+    }
+
+    /**
+     * Returns positions status updates count.
+     *
+     * @return positions status updates count
+     */
+    public int getPositionsStatusUpdatesCount() {
+        return getPositionsStatusUpdatesReceived().size();
+    }
+
+    /**
+     * Returns last position update.
+     *
+     * @return last position update
+     */
+    public PositionDTO getLastPositionUpdate() {
+        return getPositionsUpdatesReceived().get(getPositionsUpdatesReceived().size() - 1);
+    }
+
+    /**
+     * Returns last position status update.
+     *
+     * @return last position status update
+     */
+    public PositionDTO getLastPositionStatusUpdate() {
+        return getPositionsStatusUpdatesReceived().get(getPositionsStatusUpdatesReceived().size() - 1);
     }
 
 }

@@ -31,17 +31,16 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Batch - Trade flux")
 @Configuration({
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false"),
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/trade-test.yaml")
 })
 @Import(TradeFluxTestMock.class)
 public class TradeFluxTest extends BaseTest {
-
-    @Autowired
-    private TestableCassandreStrategy strategy;
 
     @Autowired
     private TradeRepository tradeRepository;
@@ -49,32 +48,24 @@ public class TradeFluxTest extends BaseTest {
     @Autowired
     private org.knowm.xchange.service.trade.TradeService xChangeTradeService;
 
+    @Autowired
+    private TestableCassandreStrategy strategy;
+
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertFalse(strategy.getConfiguration().isDryMode());
-
-        // =============================================================================================================
-        // Test asynchronous flux.
-
         // We will call the service 5 times with the first and third reply empty.
         // We receive:
         // First reply: TRADE_0000001, TRADE_0000002.
         // Second reply: TRADE_0000003, TRADE_0000004, TRADE_0000005.
-        // Third reply: TRADE_0000006, TRADE_0000002 ,TRADE_0000003, TRADE_0000008.
+        // Third reply: TRADE_0000006, TRADE_0000002 , TRADE_0000003, TRADE_0000008.
         // TRADE_0000003 is an update. TRADE_0000002 is the same.
         final int numberOfUpdatesExpected = 8;
         final int numberOfServiceCallsExpected = 3;
 
         // Waiting for the service to have been called with all the test data.
         await().untilAsserted(() -> verify(xChangeTradeService, atLeast(numberOfServiceCallsExpected)).getTradeHistory(any()));
-
-        // Checking that somme data have already been treated.
-        // but not all as the flux should be asynchronous and single thread and strategy method waits 1 second.
-        assertTrue(strategy.getTradesUpdatesReceived().size() > 0);
-        assertTrue(strategy.getTradesUpdatesReceived().size() <= numberOfUpdatesExpected);
-
-        // Wait for the strategy to have received all the test values.
+        // Waiting for the strategy to have received all the test values.
         await().untilAsserted(() -> assertTrue(strategy.getTradesUpdatesReceived().size() >= numberOfUpdatesExpected));
 
         // =============================================================================================================
@@ -297,7 +288,7 @@ public class TradeFluxTest extends BaseTest {
         assertTrue(createZonedDateTime("02-09-2020").isEqual(t8.get().getTimestamp()));
 
         // =============================================================================================================
-        // Check if all is ok with order links.
+        // Check that there is a correct link between order and trades.
         final Optional<OrderDTO> ORDER_0000001 = strategy.getOrderByOrderId("ORDER_0000001");
         assertTrue(ORDER_0000001.isPresent());
         assertEquals(6, ORDER_0000001.get().getTrades().size());

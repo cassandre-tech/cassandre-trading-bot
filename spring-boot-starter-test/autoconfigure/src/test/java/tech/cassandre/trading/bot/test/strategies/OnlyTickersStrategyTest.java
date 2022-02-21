@@ -54,7 +54,7 @@ public class OnlyTickersStrategyTest extends BaseTest {
         assertFalse(tickerFluxMock.isFluxDone(new CurrencyPairDTO(ETH, USDT)));
 
         // As tickers-BTC-USDT.tsv has the most line, we should wait to have 7 replies.
-        with().await().untilAsserted(() -> assertEquals(5, strategy.getTickersReceived().size()));
+        with().await().untilAsserted(() -> assertEquals(7, strategy.getTickersReceived().size()));
 
         // Check if flux is done.
         assertTrue(tickerFluxMock.isFluxDone(new CurrencyPairDTO(ETH, USDT)));

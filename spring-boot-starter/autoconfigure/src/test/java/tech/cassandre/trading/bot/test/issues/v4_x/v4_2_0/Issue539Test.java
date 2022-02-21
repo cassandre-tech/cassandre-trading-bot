@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -18,6 +19,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
+@ActiveProfiles("schedule-disabled")
 @DisplayName("Github issue 539")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
@@ -35,6 +37,7 @@ public class Issue539Test extends BaseTest {
     @Test
     @DisplayName("Check scheduled tasks continue to work after exception")
     public void checkExceptionInScheduledTasks() {
+        tickerFlux.update();
         tickerFlux.update();
         tickerFlux.update();
 

@@ -30,9 +30,9 @@ public class TradeFluxTestMock extends BaseMock {
         TradeService mock = mock(TradeService.class);
 
         given(mock.getOpenOrders()).willReturn(new OpenOrders(Collections.emptyList()));
+
         // =============================================================================================================
         // Trade mock.
-
         given(mock.getTradeHistory(any())).willReturn(
                 // =====================================================================================================
                 // Reply 01.
@@ -68,29 +68,29 @@ public class TradeFluxTestMock extends BaseMock {
      */
     private UserTrades getReply01() {
         UserTrade trade0000001 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.100001"),             // Original amount.
-                XCHANGE_ETH_BTC,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
-                Date.from(createZonedDateTime(1).toInstant()),   // Date.
-                "TRADE_0000001",                         // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                BTC,                         // fee currency.
-                "Ref TRADE_0000001"
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.100001"),                             // Original amount.
+                XCHANGE_ETH_BTC,                                            // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
+                Date.from(createZonedDateTime(1).toInstant()),          // Date.
+                "TRADE_0000001",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000001"                                         // Reference.
         );
 
         UserTrade trade0000002 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.100001"),             // Original amount.
-                XCHANGE_ETH_BTC,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.100001"),                             // Original amount.
+                XCHANGE_ETH_BTC,                                            // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
-                "TRADE_0000002",                         // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                BTC,                         // fee currency.
-                "Ref TRADE_0000002"
+                "TRADE_0000002",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000002"                                         // Reference.
         );
 
         return new UserTrades(Arrays.asList(trade0000001, trade0000002), SortByTimestamp);
@@ -108,68 +108,68 @@ public class TradeFluxTestMock extends BaseMock {
      */
     private UserTrades getReply02() {
         UserTrade trade0000001 = new UserTrade(
-                Order.OrderType.BID,                                // Order type.
-                new BigDecimal("1.100001"),                     // Original amount.
-                XCHANGE_ETH_BTC,                                    // Instrument.
-                new BigDecimal("2.200002"),                     // Price.
-                Date.from(createZonedDateTime(1).toInstant()),  // Date.
-                "TRADE_0000001",                                // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                BTC,                         // fee currency.
-                "Ref TRADE_0000001"
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.100001"),                             // Original amount.
+                XCHANGE_ETH_BTC,                                            // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
+                Date.from(createZonedDateTime(1).toInstant()),          // Date.
+                "TRADE_0000001",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000001"                                         // Reference.
         );
 
         UserTrade trade0000002 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.100001"),             // Original amount.
-                XCHANGE_ETH_BTC,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.100001"),                             // Original amount.
+                XCHANGE_ETH_BTC,                                            // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
-                "TRADE_0000002",                         // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                BTC,                         // fee currency.
-                "Ref TRADE_0000002"
+                "TRADE_0000002",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000002"                                         // Reference.
         );
 
         UserTrade trade0000003 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.100001"),             // Original amount.
-                XCHANGE_ETH_USDT,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.100001"),                             // Original amount.
+                XCHANGE_ETH_USDT,                                           // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
-                "TRADE_0000003",                         // Trade id.
-                "ORDER_0000002",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                ETH,                            // fee currency.
-                "Ref TRADE_0000003"
+                "TRADE_0000003",                                            // Trade id.
+                "ORDER_0000002",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                ETH,                                                        // Fee currency.
+                "Ref TRADE_0000003"                                         // Reference.
         );
 
         UserTrade trade0000004 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1"),                    // Original amount.
-                XCHANGE_ETH_BTC,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1"),                                    // Original amount.
+                XCHANGE_ETH_BTC,                                            // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
-                "TRADE_0000004",                         // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                BTC,                         // fee currency.
-                "Ref TRADE_0000004"
+                "TRADE_0000004",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000004"                                         // Reference.
         );
 
         UserTrade trade0000005 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1"),                    // Original amount.
-                XCHANGE_ETH_BTC,                                 // Instrument.
-                new BigDecimal("2.200002"),              // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1"),                                    // Original amount.
+                XCHANGE_ETH_BTC,                                            // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
-                "TRADE_0000005",                         // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                BTC,                         // fee currency.
-                "Ref TRADE_0000005"
+                "TRADE_0000005",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000005"                                         // Reference.
         );
 
         return new UserTrades(Arrays.asList(trade0000001,
@@ -191,55 +191,55 @@ public class TradeFluxTestMock extends BaseMock {
      */
     private UserTrades getReply03() {
         UserTrade trade0000006 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.100001"),             // Original amount.
-                XCHANGE_ETH_USDT,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.100001"),                             // Original amount.
+                XCHANGE_ETH_USDT,                                           // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
                 Date.from(createZonedDateTime("01-08-2018").toInstant()),   // Date.
-                "TRADE_0000006",                         // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                USDT,                         // fee currency.
-                "Ref TRADE_0000006"
+                "TRADE_0000006",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                USDT,                                                       // Fee currency.
+                "Ref TRADE_0000006"                                         // Reference.
         );
 
         UserTrade trade0000002 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.100001"),             // Original amount.
-                XCHANGE_ETH_BTC,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.100001"),                             // Original amount.
+                XCHANGE_ETH_BTC,                                            // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
                 Date.from(createZonedDateTime("01-09-2020").toInstant()),   // Date.
-                "TRADE_0000002",                         // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                BTC,                         // fee currency.
-                "Ref TRADE_0000002"
+                "TRADE_0000002",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000002"                                         // Reference.
         );
 
         UserTrade trade0000003 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.110001"),             // Original amount.
-                XCHANGE_ETH_USDT,                                 // Instrument.
-                new BigDecimal("2.220002"),             // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.110001"),                             // Original amount.
+                XCHANGE_ETH_USDT,                                           // Instrument.
+                new BigDecimal("2.220002"),                             // Price.
                 Date.from(createZonedDateTime("01-09-2021").toInstant()),   // Date.
-                "TRADE_0000003",                         // Trade id.
-                "ORDER_0000002",                     // Order id.
-                new BigDecimal("3.330003"),             // fee.
-                BTC,                                       // fee currency.
-                "Ref TRADE_0000003"
+                "TRADE_0000003",                                            // Trade id.
+                "ORDER_0000002",                                            // Order id.
+                new BigDecimal("3.330003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000003"                                         // Reference.
         );
 
         UserTrade trade0000008 = new UserTrade(
-                Order.OrderType.BID,                        // Order type.
-                new BigDecimal("1.100001"),             // Original amount.
-                XCHANGE_ETH_BTC,                                 // Instrument.
-                new BigDecimal("2.200002"),             // Price.
+                Order.OrderType.BID,                                        // Order type.
+                new BigDecimal("1.100001"),                             // Original amount.
+                XCHANGE_ETH_BTC,                                            // Instrument.
+                new BigDecimal("2.200002"),                             // Price.
                 Date.from(createZonedDateTime("02-09-2020").toInstant()),   // Date.
-                "TRADE_0000008",                         // Trade id.
-                "ORDER_0000001",                     // Order id.
-                new BigDecimal("3.300003"),             // fee.
-                BTC,                         // fee currency.
-                "Ref TRADE_0000008"
+                "TRADE_0000008",                                            // Trade id.
+                "ORDER_0000001",                                            // Order id.
+                new BigDecimal("3.300003"),                             // Fee.
+                BTC,                                                        // Fee currency.
+                "Ref TRADE_0000008"                                         // Reference.
         );
 
         return new UserTrades(Arrays.asList(trade0000006,

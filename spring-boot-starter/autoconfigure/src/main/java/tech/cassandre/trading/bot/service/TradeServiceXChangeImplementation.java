@@ -134,7 +134,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     currencyPair,
                     amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR));
 
-            // Sending the order.
+            // We create the order in database with the PENDING_NEW status.
             OrderDTO order = OrderDTO.builder()
                     .orderId(tradeService.placeMarketOrder(m))
                     .type(orderTypeDTO)
@@ -169,10 +169,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("Order created: {}", result);
             return result;
         } catch (Exception e) {
-            final String error = "Error calling createMarketOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
+            final String errorMessage = "Error calling createMarketOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
             e.printStackTrace();
-            logger.error(error);
-            return new OrderCreationResultDTO(error, e);
+            logger.error(errorMessage);
+            return new OrderCreationResultDTO(errorMessage, e);
         }
     }
 
@@ -204,7 +204,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     currencyPair,
                     amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR));
 
-            // Sending & creating the order.
+            // We create the order in database with the PENDING_NEW status.
             OrderDTO order = OrderDTO.builder()
                     .orderId(tradeService.placeLimitOrder(l))
                     .type(orderTypeDTO)
@@ -243,10 +243,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("Order creation result: {}", result);
             return result;
         } catch (Exception e) {
-            final String error = "Error calling createLimitOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
+            final String errorMessage = "Error calling createLimitOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
             e.printStackTrace();
-            logger.error(error);
-            return new OrderCreationResultDTO(error, e);
+            logger.error(errorMessage);
+            return new OrderCreationResultDTO(errorMessage, e);
         }
     }
 

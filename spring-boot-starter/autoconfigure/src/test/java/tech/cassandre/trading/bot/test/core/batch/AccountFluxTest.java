@@ -40,35 +40,25 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class AccountFluxTest extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private AccountService accountService;
 
     @Autowired
-    private AccountService accountService;
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertFalse(strategy.getConfiguration().isDryMode());
-
-        // The mock will reply 7 times with data.
+        // The mock has 7 replies configured - The first reply is used by configuration class.
         final int numberOfRepliesExpected = 7;
 
         // Waiting for the service to have been called 7 times.
         await().untilAsserted(() -> verify(accountService, atLeast(numberOfRepliesExpected)).getAccountInfo());
-
-        // Checking that some data have already been treated by strategy but not all !
-        // The flux should be asynchronous and a single thread in strategy is treating updates.
-        assertTrue(strategy.getAccountsUpdatesReceived().size() > 0);
-        assertTrue(strategy.getAccountsUpdatesReceived().size() <= numberOfRepliesExpected);
-
-        // Wait for the strategy to have received all the test values.
+        // Waiting for the strategy to have received all the test values.
         await().untilAsserted(() -> assertEquals(numberOfRepliesExpected, strategy.getAccountsUpdatesReceived().size()));
-
-        // Test all values received by the strategy with update methods.
-        final Iterator<AccountDTO> iterator = strategy.getAccountsUpdatesReceived().iterator();
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.
+        final Iterator<AccountDTO> iterator = strategy.getAccountsUpdatesReceived().iterator();
 
         // Check update 1.
         AccountDTO a = iterator.next();

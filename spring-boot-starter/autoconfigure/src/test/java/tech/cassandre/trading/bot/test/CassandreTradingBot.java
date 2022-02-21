@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Cassandre trading bot.
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages={"tech.cassandre.trading.bot"})
 public class CassandreTradingBot {
 
 }

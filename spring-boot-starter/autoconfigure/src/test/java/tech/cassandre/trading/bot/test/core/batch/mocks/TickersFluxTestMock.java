@@ -23,7 +23,10 @@ public class TickersFluxTestMock extends BaseMock {
     public MarketDataService getXChangeMarketDataServiceMock() throws IOException {
         MarketDataService marketService = mock(MarketDataService.class);
 
-        // We prepare the replies.
+        // We don't use the getTicker method.
+        given(marketService.getTicker(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
+
+        // We set the replies.
         final Date date = new Date();
         List<Ticker> reply01 = new LinkedList<>();
         reply01.add(getGeneratedTicker(XCHANGE_ETH_BTC, new BigDecimal("1")));
@@ -62,9 +65,6 @@ public class TickersFluxTestMock extends BaseMock {
                         reply08,
                         reply09,
                         new LinkedList<>());
-
-        // We don't use the getTicker method.
-        given(marketService.getTicker(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
 
         return marketService;
     }

@@ -5,6 +5,9 @@ description: How to review Cassandre code
 ---
 # How to review code
 
+## Common
+* Variables in package order (batch, domain, dto, repository, service...), then strategy.
+
 ## Core code (not tests & not archetypes)
 * Check class comment and see if there is a right usage of {@link}.
 * Instance variable should have the same name as its class like: `UserService userService`.
@@ -16,3 +19,8 @@ description: How to review Cassandre code
 * Add @ExcludeFromCoverageGeneratedReport when it's required.
 * Use of Optional.ofNullable() instead of "if (x != null) return x.getAnyValue()".
 * In services, first line of implementations is a log.
+
+## Test code
+* No comment on class.
+* Test class with Package - Class `@DisplayName("Batch - Account flux")`.
+* Method name and display name should declare with it tests `@DisplayName("Check received data")` 

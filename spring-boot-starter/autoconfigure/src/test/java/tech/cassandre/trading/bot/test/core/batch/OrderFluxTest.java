@@ -44,7 +44,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class OrderFluxTest extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private OrderRepository orderRepository;
 
     @Autowired
     private org.knowm.xchange.service.trade.TradeService xChangeTradeService;
@@ -53,19 +53,20 @@ public class OrderFluxTest extends BaseTest {
     private TradeService tradeService;
 
     @Autowired
-    private OrderRepository orderRepository;
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertFalse(strategy.getConfiguration().isDryMode());
-
-        // The mock will reply 3 times.
-        final int numberOfUpdatesExpected = 8;
-        final int numberOfServiceCallsExpected = 3;
-
         /// We will create 3 orders that will be in database. First we check the database is empty.
         assertEquals(0, orderRepository.count());
+
+        // The mock will reply 3 times (and have 8 updates).
+        final int numberOfServiceCallsExpected = 3;
+        final int numberOfUpdatesExpected = 8;
+
+        // =============================================================================================================
+        // Creating orders (with mock replies).
 
         // ORDER_000001 creation.
         final OrderCreationResultDTO order000001 = tradeService.createSellMarketOrder(strategy, ETH_BTC, new BigDecimal("1"));
@@ -82,7 +83,7 @@ public class OrderFluxTest extends BaseTest {
         assertTrue(order000003.isSuccessful());
         assertEquals("ORDER_000003", order000003.getOrderId());
 
-        // We wait for the orders to be created in database.
+        // We wait for the orders to be created in database (This will be done by batch).
         await().until(() -> orderRepository.count() == 3);
         assertTrue(strategy.getOrderByOrderId("ORDER_000001").isPresent());
         assertTrue(strategy.getOrderByOrderId("ORDER_000002").isPresent());
@@ -91,18 +92,12 @@ public class OrderFluxTest extends BaseTest {
 
         // Waiting for the service to have been called with all the test data.
         await().untilAsserted(() -> verify(xChangeTradeService, atLeast(numberOfServiceCallsExpected)).getOpenOrders());
-
-        // Checking that some data have already been treated by strategy but not all !
-        // The flux should be asynchronous and a single thread in strategy is treating updates.
-        assertTrue(strategy.getOrdersUpdatesReceived().size() > 0);
-        assertTrue(strategy.getOrdersUpdatesReceived().size() <= numberOfUpdatesExpected);
-
-        // Wait for the strategy to have received all the test values.
+        // Waiting for the strategy to have received all the test values.
         await().untilAsserted(() -> assertTrue(strategy.getOrdersUpdatesReceived().size() >= numberOfUpdatesExpected));
-        final Iterator<OrderDTO> orders = strategy.getOrdersUpdatesReceived().iterator();
 
         // =============================================================================================================
         // Test all values received by the strategy with update methods.
+        final Iterator<OrderDTO> orders = strategy.getOrdersUpdatesReceived().iterator();
 
         // First call : 3 orders retrieved from local.
         // - Order ORDER_000001.
@@ -262,10 +257,6 @@ public class OrderFluxTest extends BaseTest {
         assertEquals(3, orderRepository.count());
         final Map<String, OrderDTO> strategyOrders = strategy.getOrders();
         assertEquals(3, strategyOrders.size());
-        assertNotNull(strategyOrders.get("ORDER_000001"));
-        assertNotNull(strategyOrders.get("ORDER_000002"));
-        assertNotNull(strategyOrders.get("ORDER_000003"));
-        assertNull(strategyOrders.get("ORDER_000004"));
 
         // Order ORDER_000001.
         final Optional<OrderDTO> o1 = strategy.getOrderByOrderId("ORDER_000001");

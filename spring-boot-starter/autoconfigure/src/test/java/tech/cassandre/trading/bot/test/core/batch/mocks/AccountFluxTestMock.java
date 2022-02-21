@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.Date;
 
 import static java.math.BigDecimal.ZERO;
+import static org.knowm.xchange.currency.Currency.BTC;
+import static org.knowm.xchange.currency.Currency.ETH;
+import static org.knowm.xchange.currency.Currency.USDT;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -83,7 +86,7 @@ public class AccountFluxTestMock extends BaseMock {
      */
     private AccountInfo getReply01() {
         Balance account01Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -95,7 +98,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance2 = new Balance(
-                Currency.ETH,               // Currency.
+                ETH,                        // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -115,7 +118,7 @@ public class AccountFluxTestMock extends BaseMock {
                 ZERO);
 
         Balance account02Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -150,7 +153,7 @@ public class AccountFluxTestMock extends BaseMock {
      */
     private AccountInfo getReply02() {
         Balance account01Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -162,7 +165,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance2 = new Balance(
-                Currency.ETH,               // Currency.
+                ETH,                        // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -174,7 +177,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance3 = new Balance(
-                Currency.USDT,              // Currency.
+                USDT,                       // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -194,7 +197,7 @@ public class AccountFluxTestMock extends BaseMock {
                 ZERO);
 
         Balance account02Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -229,7 +232,7 @@ public class AccountFluxTestMock extends BaseMock {
      */
     private AccountInfo getReply03() {
         Balance account01Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -241,7 +244,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance2 = new Balance(
-                Currency.ETH,               // Currency.
+                ETH,                        // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -253,7 +256,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance3 = new Balance(
-                Currency.USDT,              // Currency.
+                USDT,                       // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -273,7 +276,7 @@ public class AccountFluxTestMock extends BaseMock {
                 ZERO);
 
         Balance account02Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -308,7 +311,7 @@ public class AccountFluxTestMock extends BaseMock {
      */
     private AccountInfo getReply04() {
         Balance account01Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -320,7 +323,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance2 = new Balance(
-                Currency.ETH,               // Currency.
+                ETH,                        // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -332,7 +335,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance3 = new Balance(
-                Currency.USDT,              // Currency.
+                USDT,                       // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -352,7 +355,7 @@ public class AccountFluxTestMock extends BaseMock {
                 ZERO);
 
         Balance account02Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -387,7 +390,7 @@ public class AccountFluxTestMock extends BaseMock {
      */
     private AccountInfo getReply05() {
         Balance account01Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -399,7 +402,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance2 = new Balance(
-                Currency.ETH,               // Currency.
+                ETH,                        // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -411,7 +414,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance3 = new Balance(
-                Currency.USDT,              // Currency.
+                USDT,                       // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -431,7 +434,7 @@ public class AccountFluxTestMock extends BaseMock {
                 ZERO);
 
         Balance account02Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("3"),    // Total.
                 new BigDecimal("3"),    // Available.
                 new BigDecimal("3"),    // Frozen.
@@ -466,7 +469,7 @@ public class AccountFluxTestMock extends BaseMock {
      */
     private AccountInfo getReply06() {
         Balance account01Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -478,7 +481,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance3 = new Balance(
-                Currency.USDT,              // Currency.
+                USDT,                       // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -498,7 +501,7 @@ public class AccountFluxTestMock extends BaseMock {
                 ZERO);
 
         Balance account02Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("3"),    // Total.
                 new BigDecimal("3"),    // Available.
                 new BigDecimal("3"),    // Frozen.
@@ -534,7 +537,7 @@ public class AccountFluxTestMock extends BaseMock {
      */
     private AccountInfo getReply07() {
         Balance account01Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("1"),    // Total.
                 new BigDecimal("1"),    // Available.
                 new BigDecimal("1"),    // Frozen.
@@ -546,7 +549,7 @@ public class AccountFluxTestMock extends BaseMock {
         );
 
         Balance account01Balance3 = new Balance(
-                Currency.USDT,              // Currency.
+                USDT,                       // Currency.
                 new BigDecimal("2"),    // Total.
                 new BigDecimal("2"),    // Available.
                 new BigDecimal("2"),    // Frozen.
@@ -566,7 +569,7 @@ public class AccountFluxTestMock extends BaseMock {
                 ZERO);
 
         Balance account02Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("3"),    // Total.
                 new BigDecimal("3"),    // Available.
                 new BigDecimal("3"),    // Frozen.
@@ -586,7 +589,7 @@ public class AccountFluxTestMock extends BaseMock {
                 ZERO);
 
         Balance account03Balance1 = new Balance(
-                Currency.BTC,               // Currency.
+                BTC,                        // Currency.
                 new BigDecimal("11"),   // Total.
                 new BigDecimal("12"),   // Available.
                 new BigDecimal("13"),   // Frozen.
