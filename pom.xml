@@ -77,8 +77,8 @@
 		<reactor.version>Dysprosium-SR25</reactor.version>
 		<xchange.version>5.0.13</xchange.version>
 		<bucket4j.version>7.2.0</bucket4j.version>
-		<liquibase.version>4.7.1</liquibase.version>
-		<opencsv.version>5.5.2</opencsv.version>
+		<liquibase.version>4.8.0</liquibase.version>
+		<opencsv.version>5.6</opencsv.version>
 
 		<!-- Core utils -->
 		<lombok.version>1.18.22</lombok.version>
@@ -90,7 +90,7 @@
 		<ta4j.version>0.14</ta4j.version>
 
 		<!-- Tests -->
-		<junit-pioneer.version>1.5.0</junit-pioneer.version>
+		<junit-pioneer.version>1.6.1</junit-pioneer.version>
 		<awaitility.version>4.1.1</awaitility.version>
 		<hsqldb.version>2.6.0</hsqldb.version>
 		<jackson.version>2.12.6</jackson.version>
@@ -141,7 +141,7 @@
 			<plugin>
 				<groupId>com.amashchenko.maven.plugin</groupId>
 				<artifactId>gitflow-maven-plugin</artifactId>
-				<version>1.17.0</version>
+				<version>1.18.0</version>
 				<configuration>
 					<gitFlowConfig>
 						<developmentBranch>development</developmentBranch>
@@ -162,7 +162,7 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.11</version>
+				<version>1.6.12</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>ossrh</serverId>
