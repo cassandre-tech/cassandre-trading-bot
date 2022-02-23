@@ -386,9 +386,9 @@ public class PositionDTO {
     }
 
     /**
-     * Close position with order id.
+     * Close position with order.
      *
-     * @param newCloseOrder the closeOrderId to set
+     * @param newCloseOrder the order closing the position
      */
     public final void closePositionWithOrder(final OrderDTO newCloseOrder) {
         // This method should only be called when the position is in the OPENED status.

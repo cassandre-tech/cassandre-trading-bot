@@ -10,7 +10,6 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.Order;
 import tech.cassandre.trading.bot.domain.Trade;
-import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
@@ -41,21 +40,17 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Domain - Order")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/backup.yaml")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true"),
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/backup.yaml"),
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class OrderTest extends BaseTest {
-
-    @Autowired
-    private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private OrderFlux orderFlux;
@@ -63,93 +58,95 @@ public class OrderTest extends BaseTest {
     @Autowired
     private TradeFlux tradeFlux;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private TestableCassandreStrategy strategy;
+
     @Test
     @DisplayName("Check load order from database")
     public void checkLoadOrderFromDatabase() {
         // =============================================================================================================
         // Check order 1.
-        Optional<OrderDTO> o = strategy.getOrderByOrderId("BACKUP_ORDER_01");
-        assertTrue(o.isPresent());
-        assertEquals(1, o.get().getUid());
-        assertEquals("BACKUP_ORDER_01", o.get().getOrderId());
-        assertEquals(ASK, o.get().getType());
-        assertNotNull(o.get().getStrategy());
-        assertEquals(1, o.get().getStrategy().getUid());
-        assertEquals("01", o.get().getStrategy().getStrategyId());
-        assertEquals(ETH_BTC, o.get().getCurrencyPair());
-        assertEquals(0, new BigDecimal("0.000005").compareTo(o.get().getAmount().getValue()));
-        assertEquals(ETH, o.get().getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("0.000003").compareTo(o.get().getAveragePrice().getValue()));
-        assertEquals(BTC, o.get().getAveragePrice().getCurrency());
-        assertEquals(0, new BigDecimal("0.000001").compareTo(o.get().getLimitPrice().getValue()));
-        assertEquals(BTC, o.get().getLimitPrice().getCurrency());
-        assertEquals(0, new BigDecimal("0.000033").compareTo(o.get().getMarketPrice().getValue()));
-        assertEquals(KCS, o.get().getMarketPrice().getCurrency());
-        assertEquals("LEVERAGE_1", o.get().getLeverage());
-        assertEquals(NEW, o.get().getStatus());
-        assertEquals(0, new BigDecimal("0.000004").compareTo(o.get().getCumulativeAmount().getValue()));
-        assertEquals(ETH, o.get().getCumulativeAmount().getCurrency());
-        assertEquals("My reference 1", o.get().getUserReference());
-        assertTrue(createZonedDateTime("18-11-2020").isEqual(o.get().getTimestamp()));
-
-        assertEquals(0, o.get().getTrades().size());
+        Optional<OrderDTO> order1 = strategy.getOrderByOrderId("BACKUP_ORDER_01");
+        assertTrue(order1.isPresent());
+        assertEquals(1, order1.get().getUid());
+        assertEquals("BACKUP_ORDER_01", order1.get().getOrderId());
+        assertEquals(ASK, order1.get().getType());
+        assertNotNull(order1.get().getStrategy());
+        assertEquals(1, order1.get().getStrategy().getUid());
+        assertEquals("01", order1.get().getStrategy().getStrategyId());
+        assertEquals(ETH_BTC, order1.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.000005").compareTo(order1.get().getAmount().getValue()));
+        assertEquals(ETH, order1.get().getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("0.000003").compareTo(order1.get().getAveragePrice().getValue()));
+        assertEquals(BTC, order1.get().getAveragePrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000001").compareTo(order1.get().getLimitPrice().getValue()));
+        assertEquals(BTC, order1.get().getLimitPrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000033").compareTo(order1.get().getMarketPrice().getValue()));
+        assertEquals(KCS, order1.get().getMarketPrice().getCurrency());
+        assertEquals("LEVERAGE_1", order1.get().getLeverage());
+        assertEquals(NEW, order1.get().getStatus());
+        assertEquals(0, new BigDecimal("0.000004").compareTo(order1.get().getCumulativeAmount().getValue()));
+        assertEquals(ETH, order1.get().getCumulativeAmount().getCurrency());
+        assertEquals("My reference 1", order1.get().getUserReference());
+        assertTrue(createZonedDateTime("18-11-2020").isEqual(order1.get().getTimestamp()));
+        assertEquals(0, order1.get().getTrades().size());
 
         // Test equals.
-        Optional<OrderDTO> oBis = strategy.getOrderByOrderId("BACKUP_ORDER_01");
-        assertTrue(oBis.isPresent());
-        assertEquals(o.get(), oBis.get());
+        Optional<OrderDTO> order1Bis = strategy.getOrderByOrderId("BACKUP_ORDER_01");
+        assertTrue(order1Bis.isPresent());
+        assertEquals(order1.get(), order1Bis.get());
 
         // =============================================================================================================
         // Check order 2.
-        o = strategy.getOrderByOrderId("BACKUP_ORDER_02");
-        assertTrue(o.isPresent());
-        assertEquals(2, o.get().getUid());
-        assertEquals("BACKUP_ORDER_02", o.get().getOrderId());
-        assertEquals(BID, o.get().getType());
-        assertNotNull(o.get().getStrategy());
-        assertEquals(1, o.get().getStrategy().getUid());
-        assertEquals("01", o.get().getStrategy().getStrategyId());
-        assertEquals(new CurrencyPairDTO("USDT/BTC"), o.get().getCurrencyPair());
-        assertEquals(0, new BigDecimal("0.000015").compareTo(o.get().getAmount().getValue()));
-        assertEquals(USDT, o.get().getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("0.000013").compareTo(o.get().getAveragePrice().getValue()));
-        assertEquals(BTC, o.get().getAveragePrice().getCurrency());
-        assertEquals(0, new BigDecimal("0.000011").compareTo(o.get().getLimitPrice().getValue()));
-        assertEquals(BTC, o.get().getLimitPrice().getCurrency());
-        assertEquals("LEVERAGE_2", o.get().getLeverage());
-        assertEquals(PENDING_NEW, o.get().getStatus());
-        assertEquals(0, new BigDecimal("0.000014").compareTo(o.get().getCumulativeAmount().getValue()));
-        assertEquals(USDT, o.get().getCumulativeAmount().getCurrency());
-        assertEquals("My reference 2", o.get().getUserReference());
-        assertTrue(createZonedDateTime("19-11-2020").isEqual(o.get().getTimestamp()));
-        assertEquals(0, o.get().getTrades().size());
+        Optional<OrderDTO> order2 = strategy.getOrderByOrderId("BACKUP_ORDER_02");
+        assertTrue(order2.isPresent());
+        assertEquals(2, order2.get().getUid());
+        assertEquals("BACKUP_ORDER_02", order2.get().getOrderId());
+        assertEquals(BID, order2.get().getType());
+        assertNotNull(order2.get().getStrategy());
+        assertEquals(1, order2.get().getStrategy().getUid());
+        assertEquals("01", order2.get().getStrategy().getStrategyId());
+        assertEquals(new CurrencyPairDTO("USDT/BTC"), order2.get().getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.000015").compareTo(order2.get().getAmount().getValue()));
+        assertEquals(USDT, order2.get().getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("0.000013").compareTo(order2.get().getAveragePrice().getValue()));
+        assertEquals(BTC, order2.get().getAveragePrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000011").compareTo(order2.get().getLimitPrice().getValue()));
+        assertEquals(BTC, order2.get().getLimitPrice().getCurrency());
+        assertEquals("LEVERAGE_2", order2.get().getLeverage());
+        assertEquals(PENDING_NEW, order2.get().getStatus());
+        assertEquals(0, new BigDecimal("0.000014").compareTo(order2.get().getCumulativeAmount().getValue()));
+        assertEquals(USDT, order2.get().getCumulativeAmount().getCurrency());
+        assertEquals("My reference 2", order2.get().getUserReference());
+        assertTrue(createZonedDateTime("19-11-2020").isEqual(order2.get().getTimestamp()));
+        assertEquals(0, order2.get().getTrades().size());
 
-        // Check trades of orders.
-        o = strategy.getOrderByOrderId("BACKUP_OPENING_ORDER_05");
-        assertTrue(o.isPresent());
-        assertEquals(2, o.get().getTrades().size());
-        Iterator<TradeDTO> tradesIterator = o.get().getTrades().iterator();
-        assertEquals("BACKUP_TRADE_06", tradesIterator.next().getTradeId());
-        assertEquals("BACKUP_TRADE_07", tradesIterator.next().getTradeId());
+        // =============================================================================================================
+        // Check order's trades.
+        Optional<OrderDTO> order3 = strategy.getOrderByOrderId("BACKUP_CLOSING_ORDER_03");
+        assertTrue(order3.isPresent());
+        assertEquals(3, order3.get().getTrades().size());
+        Iterator<TradeDTO> order3Trades = order3.get().getTrades().iterator();
+        assertEquals("BACKUP_TRADE_08", order3Trades.next().getTradeId());
+        assertEquals("BACKUP_TRADE_09", order3Trades.next().getTradeId());
+        assertEquals("BACKUP_TRADE_10", order3Trades.next().getTradeId());
 
-        o = strategy.getOrderByOrderId("BACKUP_CLOSING_ORDER_03");
-        assertTrue(o.isPresent());
-        assertEquals(3, o.get().getTrades().size());
-        tradesIterator = o.get().getTrades().iterator();
-        assertEquals("BACKUP_TRADE_08", tradesIterator.next().getTradeId());
-        assertEquals("BACKUP_TRADE_09", tradesIterator.next().getTradeId());
-        assertEquals("BACKUP_TRADE_10", tradesIterator.next().getTradeId());
+        Optional<OrderDTO> order4 = strategy.getOrderByOrderId("BACKUP_OPENING_ORDER_05");
+        assertTrue(order4.isPresent());
+        assertEquals(2, order4.get().getTrades().size());
+        Iterator<TradeDTO> order4Trades = order4.get().getTrades().iterator();
+        assertEquals("BACKUP_TRADE_06", order4Trades.next().getTradeId());
+        assertEquals("BACKUP_TRADE_07", order4Trades.next().getTradeId());
     }
 
     @Test
     @DisplayName("Check save order in database")
     public void checkSaveOrderInDatabase() {
         // =============================================================================================================
-        // Loading strategy.
-        StrategyDTO strategyDTO = StrategyDTO.builder().uid(1L).strategyId("001").build();
-
-        // =============================================================================================================
-        // Add an order and check that it's correctly saved in database.
+        // Emit an order to be saved in database.
         long orderCount = orderRepository.count();
         OrderDTO order01 = OrderDTO.builder()
                 .orderId("BACKUP_ORDER_03")
@@ -170,7 +167,7 @@ public class OrderTest extends BaseTest {
         await().untilAsserted(() -> assertEquals(orderCount + 1, orderRepository.count()));
 
         // =============================================================================================================
-        // Order - Check created order (domain).
+        // Order - Check the order created previously (domain).
         final Optional<Order> orderInDatabase = orderRepository.findByOrderId("BACKUP_ORDER_03");
         assertTrue(orderInDatabase.isPresent());
         assertEquals(11, orderInDatabase.get().getUid());
@@ -193,13 +190,12 @@ public class OrderTest extends BaseTest {
         assertEquals(ETH_BTC.getBaseCurrency().toString(), orderInDatabase.get().getCumulativeAmount().getCurrency());
         assertEquals("MY_REF_3", orderInDatabase.get().getUserReference());
         assertTrue(createZonedDateTime("01-01-2020").isEqual(orderInDatabase.get().getTimestamp()));
-        // Tests for created on and updated on fields.
         ZonedDateTime createdOn = orderInDatabase.get().getCreatedOn();
         assertNotNull(createdOn);
         assertNull(orderInDatabase.get().getUpdatedOn());
 
         // =============================================================================================================
-        // OrderDTO - Check created order (dto).
+        // Order - Check the order created previously (dto).
         Optional<OrderDTO> order = this.strategy.getOrderByOrderId("BACKUP_ORDER_03");
         assertTrue(order.isPresent());
         assertEquals(11, order.get().getUid());
@@ -224,7 +220,7 @@ public class OrderTest extends BaseTest {
         assertTrue(createZonedDateTime("01-01-2020").isEqual(order.get().getTimestamp()));
 
         // =============================================================================================================
-        // Updating the order and adding a trade - first time.
+        // Updating the order and also adding a trade - first time.
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("BACKUP_ORDER_03")
                 .type(ASK)
@@ -286,7 +282,7 @@ public class OrderTest extends BaseTest {
         assertNotNull(optionalOrder.get().getStrategy());
         assertEquals("01", optionalOrder.get().getStrategy().getStrategyId());
 
-        // We check if we still have the trade.
+        // We check if we still have the trade linked to the order.
         backupOrder03 = orderRepository.findByOrderId("BACKUP_ORDER_03");
         assertTrue(backupOrder03.isPresent());
         assertEquals(1, backupOrder03.get().getTrades().size());
