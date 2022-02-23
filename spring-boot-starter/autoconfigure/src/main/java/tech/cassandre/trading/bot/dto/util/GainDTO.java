@@ -27,7 +27,7 @@ import static lombok.AccessLevel.PRIVATE;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class GainDTO {
 
-    /** Zero constant. */
+    /** Zero gain constant. */
     public static final GainDTO ZERO = GainDTO.builder()
             .percentage(0)
             .amount(CurrencyAmountDTO.ZERO)

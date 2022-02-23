@@ -21,6 +21,8 @@ public class TickerDTOTest extends BaseTest {
 		ZonedDateTime date1 = createZonedDateTime("23-09-2017");
 		ZonedDateTime date2 = createZonedDateTime("02-10-2018");
 
+		// Rules: Ticker equality is based on currency pair and date only.
+
 		// Ticker 1 - ETH/BTC, date1, 1 BTC.
 		TickerDTO t01 = TickerDTO.builder().currencyPair(ETH_BTC).timestamp(date1).last(new BigDecimal("1")).build();
 

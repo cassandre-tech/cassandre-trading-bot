@@ -19,6 +19,7 @@ public class PositionCreationResultDTOTest {
         OrderDTO o = OrderDTO.builder().orderId("2").build();
         PositionDTO p = PositionDTO.builder().uid(1).openingOrder(o).build();
         final PositionCreationResultDTO result = new PositionCreationResultDTO(p);
+        // Testing result values.
         assertEquals(1, result.getPosition().getUid());
         assertEquals("2", result.getPosition().getOpeningOrder().getOrderId());
         assertTrue(result.isSuccessful());
@@ -27,11 +28,12 @@ public class PositionCreationResultDTOTest {
     @Test
     @DisplayName("Check unsuccessful position creation")
     public void checkUnsuccessfulPositionCreation() {
-        final PositionCreationResultDTO p = new PositionCreationResultDTO("Error message", new RuntimeException("Exception"));
-        assertEquals("Error message", p.getErrorMessage());
-        assertEquals(RuntimeException.class, p.getException().getClass());
-        assertEquals("Exception", p.getException().getMessage());
-        assertFalse(p.isSuccessful());
+        final PositionCreationResultDTO result = new PositionCreationResultDTO("Error message", new RuntimeException("Exception"));
+        // Testing result values.
+        assertEquals("Error message", result.getErrorMessage());
+        assertEquals(RuntimeException.class, result.getException().getClass());
+        assertEquals("Exception", result.getException().getMessage());
+        assertFalse(result.isSuccessful());
     }
 
 }
