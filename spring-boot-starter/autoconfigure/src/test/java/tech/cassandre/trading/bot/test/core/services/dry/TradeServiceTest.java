@@ -1,13 +1,11 @@
 package tech.cassandre.trading.bot.test.core.services.dry;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
@@ -23,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
-import static org.awaitility.Awaitility.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -42,8 +39,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(TradeServiceDryModeTestMock.class)
-@Disabled
-// TODO Set to enable when you find where the bug comes from
 public class TradeServiceTest extends BaseTest {
 
     @Autowired
@@ -60,7 +55,7 @@ public class TradeServiceTest extends BaseTest {
     public void checkCreateBuyAndSellOrder() {
         assertTrue(strategy.getConfiguration().isDryMode());
 
-        tickerFlux.update();
+        //tickerFlux.update();
 
         // What we expect.
         final String orderId01 = "DRY_ORDER_000000001";

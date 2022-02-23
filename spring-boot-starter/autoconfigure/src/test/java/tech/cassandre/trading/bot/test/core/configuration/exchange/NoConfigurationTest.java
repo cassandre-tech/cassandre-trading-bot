@@ -46,7 +46,6 @@ public class NoConfigurationTest extends BaseTest {
             fail("Exception not raised");
         } catch (Exception e) {
             final String message = ExceptionUtils.getRootCause(e).getMessage();
-            e.printStackTrace();
             assertTrue(message.contains("'driverClassName'"));
             assertTrue(message.contains("'username'"));
             assertTrue(message.contains("'key'"));
