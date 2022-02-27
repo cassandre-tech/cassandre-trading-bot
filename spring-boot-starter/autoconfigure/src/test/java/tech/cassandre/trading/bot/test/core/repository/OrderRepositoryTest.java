@@ -45,58 +45,58 @@ public class OrderRepositoryTest extends BaseTest {
         assertEquals(10, orderRepository.count());
 
         // Order 1.
-        Order o = orders.next();
-        assertEquals(1, o.getUid());
-        assertEquals("BACKUP_ORDER_01", o.getOrderId());
-        assertEquals(ASK, o.getType());
-        assertNotNull(o.getStrategy());
-        assertEquals(1, o.getStrategy().getUid());
-        assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals("ETH/BTC", o.getCurrencyPair());
-        assertEquals(0, new BigDecimal("0.000005").compareTo(o.getAmount().getValue()));
-        assertEquals("ETH", o.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("0.000003").compareTo(o.getAveragePrice().getValue()));
-        assertEquals("BTC", o.getAveragePrice().getCurrency());
-        assertEquals(0, new BigDecimal("0.000001").compareTo(o.getLimitPrice().getValue()));
-        assertEquals("BTC", o.getLimitPrice().getCurrency());
-        assertEquals(0, new BigDecimal("0.000033").compareTo(o.getMarketPrice().getValue()));
-        assertEquals("KCS", o.getMarketPrice().getCurrency());
-        assertEquals("LEVERAGE_1", o.getLeverage());
-        assertEquals(NEW, o.getStatus());
-        assertEquals(0, new BigDecimal("0.000004").compareTo(o.getCumulativeAmount().getValue()));
-        assertEquals("My reference 1", o.getUserReference());
-        assertTrue(createZonedDateTime("18-11-2020").isEqual(o.getTimestamp()));
+        Order order1 = orders.next();
+        assertEquals(1, order1.getUid());
+        assertEquals("BACKUP_ORDER_01", order1.getOrderId());
+        assertEquals(ASK, order1.getType());
+        assertNotNull(order1.getStrategy());
+        assertEquals(1, order1.getStrategy().getUid());
+        assertEquals("01", order1.getStrategy().getStrategyId());
+        assertEquals("ETH/BTC", order1.getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.000005").compareTo(order1.getAmount().getValue()));
+        assertEquals("ETH", order1.getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("0.000003").compareTo(order1.getAveragePrice().getValue()));
+        assertEquals("BTC", order1.getAveragePrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000001").compareTo(order1.getLimitPrice().getValue()));
+        assertEquals("BTC", order1.getLimitPrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000033").compareTo(order1.getMarketPrice().getValue()));
+        assertEquals("KCS", order1.getMarketPrice().getCurrency());
+        assertEquals("LEVERAGE_1", order1.getLeverage());
+        assertEquals(NEW, order1.getStatus());
+        assertEquals(0, new BigDecimal("0.000004").compareTo(order1.getCumulativeAmount().getValue()));
+        assertEquals("My reference 1", order1.getUserReference());
+        assertTrue(createZonedDateTime("18-11-2020").isEqual(order1.getTimestamp()));
 
         // Retrieving order 1 with findByOrderId().
-        Optional<Order> oBis = orderRepository.findByOrderId("BACKUP_ORDER_01");
-        assertTrue(oBis.isPresent());
-        assertEquals(o, oBis.get());
+        Optional<Order> order1Bis = orderRepository.findByOrderId("BACKUP_ORDER_01");
+        assertTrue(order1Bis.isPresent());
+        assertEquals(order1, order1Bis.get());
 
         // Order 2.
-        o = orders.next();
-        assertEquals(2, o.getUid());
-        assertEquals("BACKUP_ORDER_02", o.getOrderId());
-        assertEquals(BID, o.getType());
-        assertNotNull(o.getStrategy());
-        assertEquals(1, o.getStrategy().getUid());
-        assertEquals("01", o.getStrategy().getStrategyId());
-        assertEquals("USDT/BTC", o.getCurrencyPair());
-        assertEquals(0, new BigDecimal("0.000015").compareTo(o.getAmount().getValue()));
-        assertEquals("USDT", o.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("0.000013").compareTo(o.getAveragePrice().getValue()));
-        assertEquals("BTC", o.getAveragePrice().getCurrency());
-        assertEquals(0, new BigDecimal("0.000011").compareTo(o.getLimitPrice().getValue()));
-        assertEquals("BTC", o.getLimitPrice().getCurrency());
-        assertEquals("LEVERAGE_2", o.getLeverage());
-        assertEquals(PENDING_NEW, o.getStatus());
-        assertEquals(0, new BigDecimal("0.000014").compareTo(o.getCumulativeAmount().getValue()));
-        assertEquals("My reference 2", o.getUserReference());
-        assertTrue(createZonedDateTime("19-11-2020").isEqual(o.getTimestamp()));
+        Order order2 = orders.next();
+        assertEquals(2, order2.getUid());
+        assertEquals("BACKUP_ORDER_02", order2.getOrderId());
+        assertEquals(BID, order2.getType());
+        assertNotNull(order2.getStrategy());
+        assertEquals(1, order2.getStrategy().getUid());
+        assertEquals("01", order2.getStrategy().getStrategyId());
+        assertEquals("USDT/BTC", order2.getCurrencyPair());
+        assertEquals(0, new BigDecimal("0.000015").compareTo(order2.getAmount().getValue()));
+        assertEquals("USDT", order2.getAmount().getCurrency());
+        assertEquals(0, new BigDecimal("0.000013").compareTo(order2.getAveragePrice().getValue()));
+        assertEquals("BTC", order2.getAveragePrice().getCurrency());
+        assertEquals(0, new BigDecimal("0.000011").compareTo(order2.getLimitPrice().getValue()));
+        assertEquals("BTC", order2.getLimitPrice().getCurrency());
+        assertEquals("LEVERAGE_2", order2.getLeverage());
+        assertEquals(PENDING_NEW, order2.getStatus());
+        assertEquals(0, new BigDecimal("0.000014").compareTo(order2.getCumulativeAmount().getValue()));
+        assertEquals("My reference 2", order2.getUserReference());
+        assertTrue(createZonedDateTime("19-11-2020").isEqual(order2.getTimestamp()));
 
         // Retrieving order 2 with findByOrderId().
-        oBis = orderRepository.findByOrderId("BACKUP_ORDER_02");
-        assertTrue(oBis.isPresent());
-        assertEquals(o, oBis.get());
+        Optional<Order> order2Bis = orderRepository.findByOrderId("BACKUP_ORDER_02");
+        assertTrue(order2Bis.isPresent());
+        assertEquals(order2, order2Bis.get());
     }
 
 }
