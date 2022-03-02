@@ -41,6 +41,7 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
                 .getBeansWithAnnotation(CassandreStrategy.class)
                 .values()
                 .stream()
+                .filter(Objects::nonNull)
                 .map(object -> (CassandreStrategyInterface) object)
                 .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
                 .flatMap(Set::stream)
@@ -56,7 +57,6 @@ public class TickerFlux extends BaseFlux<TickerDTO> {
         } catch (NotAvailableFromExchangeException | NotYetImplementedForExchangeException e) {
             // If getAllTickers is not implemented, we retrieve tickers one bye one.
             return requestedCurrencyPairs.stream()
-                    .filter(Objects::nonNull)
                     .map(marketService::getTicker)
                     .filter(Optional::isPresent)
                     .peek(tickerDTO -> logger.debug("Retrieved ticker from exchange: {}", tickerDTO))

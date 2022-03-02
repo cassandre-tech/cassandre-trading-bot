@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 
@@ -16,9 +15,6 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @TestConfiguration
 public class PositionServiceDryModeTestMock extends BaseTest {
@@ -39,16 +35,13 @@ public class PositionServiceDryModeTestMock extends BaseTest {
         MarketService marketService = mock(MarketService.class);
 
         // We don't use the getTickers method.
-        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
+        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available during tests"));
+
         // Replies for ETH / BTC.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
-        given(marketService
-                .getTicker(cp1))
+        given(marketService.getTicker(ETH_BTC))
                 .willReturn(Optional.empty());
         // Replies for ETH / USDT.
-        final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
-        given(marketService
-                .getTicker(cp2))
+        given(marketService.getTicker(ETH_USDT))
                 .willReturn(Optional.empty());
         return marketService;
     }

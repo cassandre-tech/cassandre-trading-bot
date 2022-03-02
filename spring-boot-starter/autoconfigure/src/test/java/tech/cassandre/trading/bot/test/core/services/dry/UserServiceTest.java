@@ -18,7 +18,6 @@ import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.core.services.dry.mocks.TradeServiceDryModeTestMock;
@@ -59,15 +58,6 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreS
 public class UserServiceTest extends BaseTest {
 
     @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private TradeRepository tradeRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
     private TickerFlux tickerFlux;
 
     @Autowired
@@ -80,11 +70,17 @@ public class UserServiceTest extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Autowired
+    private TradeRepository tradeRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     private LargeTestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("Check imported user data")
-    public void checkImportUserData() {
+    @DisplayName("Check imported user accounts")
+    public void checkImportUserAccounts() {
         assertTrue(strategy.getConfiguration().isDryMode());
 
         // Retrieve user.
@@ -92,7 +88,11 @@ public class UserServiceTest extends BaseTest {
         assertTrue(user.isPresent());
         assertEquals(3, user.get().getAccounts().size());
 
+        // =============================================================================================================
+        // In dry mode, Cassandre simulates your accounts by loading files starting with "user-" and ending with "*sv".
+
         // Main account.
+        // Loaded from spring-boot-starter/autoconfigure/src/test/resources/user-main.tsv
         final AccountDTO mainAccount = user.get().getAccounts().get("main");
         assertEquals("main", mainAccount.getAccountId());
         assertEquals("main", mainAccount.getName());
@@ -102,6 +102,7 @@ public class UserServiceTest extends BaseTest {
         assertEquals(0, new BigDecimal("99.0001").compareTo(mainBTC.get().getAvailable()));
 
         // Trade account.
+        // Loaded from spring-boot-starter/autoconfigure/src/test/resources/user-trade.csv
         final AccountDTO tradeAccount = user.get().getAccounts().get("trade");
         assertEquals("trade", tradeAccount.getAccountId());
         assertEquals("trade", tradeAccount.getName());
@@ -117,6 +118,7 @@ public class UserServiceTest extends BaseTest {
         assertEquals(0, new BigDecimal("10").compareTo(tradeETH.get().getAvailable()));
 
         // Savings account.
+        // Loaded from: spring-boot-starter/autoconfigure/src/test/resources/user-savings.csv
         final AccountDTO savingsAccount = user.get().getAccounts().get("savings");
         assertEquals("savings", savingsAccount.getAccountId());
         assertEquals("savings", savingsAccount.getName());
@@ -143,7 +145,6 @@ public class UserServiceTest extends BaseTest {
         // =============================================================================================================
         // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032661 BTC.
         // last = 0.032661 (Last trade field is the price set during the last trade)
-        // TickerDTO{ currencyPair=ETH/BTC, open=null, last=0.032661, bid=0.032466, ask=0.032657, high=0.034441, low=0.032355, vwap=null, volume=33794.9795777, quoteVolume=1146.8453384314658, bidSize=null, askSize=null, timestamp=2020-09-21T14:55:54.047+02:00[Europe/Paris]}
         tickerFlux.emitValue(TickerDTO.builder()
                 .currencyPair(ETH_BTC)
                 .last(new BigDecimal("0.032666"))
@@ -158,6 +159,7 @@ public class UserServiceTest extends BaseTest {
 
         // =============================================================================================================
         // Account before buying.
+        // Loaded from spring-boot-starter/autoconfigure/src/test/resources/user-trade.csv
         // BTC => 0.99962937
         // ETH => 10
         Optional<UserDTO> user = userService.getUser();
@@ -174,15 +176,17 @@ public class UserServiceTest extends BaseTest {
         // Buying 0.02 ETH for 0.00065332 BTC.
         // Last price from ticker * amount ordered
         // 0.032666 * 0.02 = 0.00065332 BTC
-        // TradeDTO{ id='5f68a2dc12e82b0006be5f36', orderId='5f68a2dbc9b81a0007f51274', type=BID, originalAmount=0.02, currencyPair=ETH/BTC, price=0.032666, timestamp=2020-09-21T14:55:56.148+02:00[Europe/Paris], fee=4.57324E-7 BTC}
-        final OrderCreationResultDTO buyMarketOrder = strategy.createBuyMarketOrder(ETH_BTC, new BigDecimal("0.02"));
+        strategy.createBuyMarketOrder(ETH_BTC, new BigDecimal("0.02"));
+
+        // =============================================================================================================
+        // We expect one account update (with the new ETH and BTC balances).
         accountFlux.update();
         await().untilAsserted(() -> assertEquals(4, strategy.getAccountsUpdatesReceived().size()));
 
         // =============================================================================================================
-        // Account values in strategy should be :
+        // Account after buying (from strategy).
         // BTC => 0.99897605 (previous amount - amount bought = 0.99962937 - 0.00065332)
-        // ETH => 10.02
+        // ETH => 10.02 (we bought 0.02)
         tradeAccount = strategy.getAccounts().get("trade");
         assertNotNull(tradeAccount);
         tradeBTC = tradeAccount.getBalance(BTC);
@@ -193,7 +197,7 @@ public class UserServiceTest extends BaseTest {
         assertEquals(0, new BigDecimal("10.02").compareTo(tradeETH.get().getAvailable()));
 
         // =============================================================================================================
-        // Account after buying.
+        // Account after buying (from user service).
         // BTC => 0.99897605 (previous amount - amount bought = 0.99962937 - 0.00065332)
         // ETH => 10.02
         user = userService.getUser();
@@ -207,19 +211,15 @@ public class UserServiceTest extends BaseTest {
         assertEquals(0, new BigDecimal("10.02").compareTo(tradeETH.get().getAvailable()));
 
         // =============================================================================================================
-        // Testing the trade.
+        // Testing the trade received.
         // Amount => 0.02
         // Price => 0.032666
         await().untilAsserted(() -> {
             orderFlux.update();
             tradeFlux.update();
-            assertTrue(orderRepository.findByOrderId(buyMarketOrder.getOrder().getOrderId()).isPresent());
-            assertTrue(tradeRepository.findByOrderByTimestampAsc().stream().anyMatch(t -> t.getOrder().getOrderId().equals(buyMarketOrder.getOrder().getOrderId())));
+            assertEquals(1, tradeRepository.count());
         });
-        final Optional<TradeDTO> buyingTrade = tradeRepository.findByOrderByTimestampAsc()
-                .stream()
-                .map(TRADE_MAPPER::mapToTradeDTO)
-                .filter(t -> t.getOrderId().equals(buyMarketOrder.getOrder().getOrderId())).findFirst();
+        final Optional<TradeDTO> buyingTrade = tradeRepository.findByTradeId("DRY_TRADE_000000001").map(TRADE_MAPPER::mapToTradeDTO);
         assertTrue(buyingTrade.isPresent());
         assertEquals(BID, buyingTrade.get().getType());
         assertEquals(0, new BigDecimal("0.02").compareTo(buyingTrade.get().getAmount().getValue()));
@@ -246,15 +246,17 @@ public class UserServiceTest extends BaseTest {
         // Selling 0.02 ETH.
         // Amount * Last price from ticker
         // 0.02 * 0.032466 = 0.00064932 ETH
-        // TradeDTO{ id='5f68a2e812e82b0006be5fec', orderId='5f68a2e85c77b40006880392', type=ASK, originalAmount=0.02, currencyPair=ETH/BTC, price=0.032466, timestamp=2020-09-21T14:56:08.403+02:00[Europe/Paris], fee=4.54524E-7 BTC}
-        final OrderCreationResultDTO sellMarketOrder = strategy.createSellMarketOrder(ETH_BTC, new BigDecimal("0.02"));
+        strategy.createSellMarketOrder(ETH_BTC, new BigDecimal("0.02"));
+
+        // =============================================================================================================
+        // We expect one account update (with the new ETH and BTC balances).
         accountFlux.update();
         await().untilAsserted(() -> assertEquals(5, strategy.getAccountsUpdatesReceived().size()));
 
         // =============================================================================================================
         // Account values in strategy should be :
         // BTC => 0.99962537 (previous sold + amount sold = 0.99897605 + 0.00064932)
-        // ETH => 10
+        // ETH => 10 (0.02 sold)
         tradeAccount = strategy.getAccounts().get("trade");
         assertNotNull(tradeAccount);
         tradeBTC = tradeAccount.getBalance(BTC);
@@ -271,13 +273,9 @@ public class UserServiceTest extends BaseTest {
         await().untilAsserted(() -> {
             orderFlux.update();
             tradeFlux.update();
-            assertTrue(orderRepository.findByOrderId(sellMarketOrder.getOrder().getOrderId()).isPresent());
-            assertTrue(tradeRepository.findByOrderByTimestampAsc().stream().anyMatch(t -> t.getOrder().getOrderId().equals(sellMarketOrder.getOrder().getOrderId())));
+            assertEquals(2, tradeRepository.count());
         });
-        final Optional<TradeDTO> sellingTrade = tradeRepository.findByOrderByTimestampAsc()
-                .stream()
-                .map(TRADE_MAPPER::mapToTradeDTO)
-                .filter(t -> t.getOrderId().equals(sellMarketOrder.getOrder().getOrderId())).findFirst();
+        final Optional<TradeDTO> sellingTrade = tradeRepository.findByTradeId("DRY_TRADE_000000002").map(TRADE_MAPPER::mapToTradeDTO);
         assertTrue(sellingTrade.isPresent());
         assertEquals(ASK, sellingTrade.get().getType());
         assertEquals(0, new BigDecimal("0.02").compareTo(sellingTrade.get().getAmount().getValue()));
@@ -289,10 +287,8 @@ public class UserServiceTest extends BaseTest {
     @DisplayName("Check buying error")
     public void checkBuyingError() {
         // =============================================================================================================
-        // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032661 BTC.
-        // last = 0.032661 (Last trade field is the price set during the last trade)
-        // TickerDTO{ currencyPair=ETH/BTC, open=null, last=0.032661, bid=0.032466, ask=0.032657, high=0.034441, low=0.032355, vwap=null, volume=33794.9795777, quoteVolume=1146.8453384314658, bidSize=null, askSize=null, timestamp=2020-09-21T14:55:54.047+02:00[Europe/Paris]}
-        TickerDTO ticker = TickerDTO.builder()
+        // Ticker for ETH/BTC - It means 1 ETH can be bought with 0.032666 BTC.
+        tickerFlux.emitValue(TickerDTO.builder()
                 .currencyPair(ETH_BTC)
                 .last(new BigDecimal("0.032666"))
                 .bid(new BigDecimal("0.032466"))
@@ -301,13 +297,12 @@ public class UserServiceTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .build();
-        tickerFlux.emitValue(ticker);
+                .build());
         await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
         // =============================================================================================================
-        // Received ticker for ETH/EUR.
-        ticker = TickerDTO.builder()
+        // Ticker for ETH/EUR - It means 1 ETH can be bought with 0.032666 EUR.
+        tickerFlux.emitValue(TickerDTO.builder()
                 .currencyPair(new CurrencyPairDTO(ETH, EUR))
                 .last(new BigDecimal("0.032666"))
                 .bid(new BigDecimal("0.032466"))
@@ -316,8 +311,7 @@ public class UserServiceTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .build();
-        tickerFlux.emitValue(ticker);
+                .build());
         await().untilAsserted(() -> assertEquals(2, strategy.getLastTickers().size()));
 
         // =============================================================================================================
@@ -327,7 +321,7 @@ public class UserServiceTest extends BaseTest {
         assertTrue(buyMarketOrder1.getErrorMessage().contains("No assets (EUR)"));
 
         // =============================================================================================================
-        // Buying 1000 ether we can’t afford.
+        // Buying 1 000 ether but we don't have BTC.
         final OrderCreationResultDTO buyMarketOrder2 = strategy.createBuyMarketOrder(ETH_BTC, new BigDecimal("1000"));
         assertFalse(buyMarketOrder2.isSuccessful());
         assertTrue(buyMarketOrder2.getErrorMessage().contains("Not enough assets"));
@@ -337,10 +331,8 @@ public class UserServiceTest extends BaseTest {
     @DisplayName("Check selling error")
     public void checkSellingError() {
         // =============================================================================================================
-        // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032661 BTC.
-        // last = 0.032661 (Last trade field is the price set during the last trade)
-        // TickerDTO{ currencyPair=ETH/BTC, open=null, last=0.032661, bid=0.032466, ask=0.032657, high=0.034441, low=0.032355, vwap=null, volume=33794.9795777, quoteVolume=1146.8453384314658, bidSize=null, askSize=null, timestamp=2020-09-21T14:55:54.047+02:00[Europe/Paris]}
-        TickerDTO ticker = TickerDTO.builder()
+        // Received ticker for ETH/BTC - It means 1 ETH can be bought with 0.032666 BTC.
+        tickerFlux.emitValue(TickerDTO.builder()
                 .currencyPair(ETH_BTC)
                 .last(new BigDecimal("0.032666"))
                 .bid(new BigDecimal("0.032466"))
@@ -349,12 +341,12 @@ public class UserServiceTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .build();
-        tickerFlux.emitValue(ticker);
+                .build());
+        await().untilAsserted(() -> assertEquals(1, strategy.getLastTickers().size()));
 
         // =============================================================================================================
         // Received ticker for ETH/EUR.
-        ticker = TickerDTO.builder()
+        tickerFlux.emitValue(TickerDTO.builder()
                 .currencyPair(new CurrencyPairDTO(ETH, EUR))
                 .last(new BigDecimal("0.032666"))
                 .bid(new BigDecimal("0.032466"))
@@ -363,8 +355,7 @@ public class UserServiceTest extends BaseTest {
                 .low(new BigDecimal("0.032355"))
                 .volume(new BigDecimal("33794.9795777"))
                 .quoteVolume(new BigDecimal("1146.8453384314658"))
-                .build();
-        tickerFlux.emitValue(ticker);
+                .build());
         await().untilAsserted(() -> assertEquals(2, strategy.getLastTickers().size()));
 
         // =============================================================================================================
@@ -374,7 +365,7 @@ public class UserServiceTest extends BaseTest {
         assertTrue(sellMarketOrder1.getErrorMessage().contains("Not enough assets"));
 
         // =============================================================================================================
-        // Selling 1000 ether we don't have.
+        // Selling 1 000 ether we don't have.
         final OrderCreationResultDTO sellMarketOrder2 = strategy.createSellMarketOrder(ETH_BTC, new BigDecimal("1000"));
         assertFalse(sellMarketOrder2.isSuccessful());
         assertTrue(sellMarketOrder2.getErrorMessage().contains("Not enough assets"));

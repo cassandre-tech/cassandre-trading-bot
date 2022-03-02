@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.service.MarketService;
 
 import java.math.BigDecimal;
@@ -19,6 +17,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static tech.cassandre.trading.bot.test.util.junit.BaseTest.ETH_BTC;
 
 @TestConfiguration
 public class TradeServiceDryModeTestMock {
@@ -39,13 +38,14 @@ public class TradeServiceDryModeTestMock {
         MarketService marketService = mock(MarketService.class);
 
         // We don't use the getTickers method.
-        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
+        given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available during tests"));
 
         // Replies for ETH / BTC.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(CurrencyDTO.ETH, CurrencyDTO.BTC);
-        given(marketService
-                .getTicker(cp1))
-                .willReturn(Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(ZonedDateTime.now()).last(new BigDecimal("0.2")).build())
+        given(marketService.getTicker(ETH_BTC))
+                .willReturn(Optional.of(TickerDTO.builder().currencyPair(ETH_BTC)
+                        .timestamp(ZonedDateTime.now())
+                        .last(new BigDecimal("0.2"))
+                        .build())
                 );
         return marketService;
     }

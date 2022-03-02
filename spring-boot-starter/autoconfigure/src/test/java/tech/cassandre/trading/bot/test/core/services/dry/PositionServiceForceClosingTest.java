@@ -41,10 +41,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class PositionServiceForceClosingTest extends BaseTest {
 
     @Autowired
-    private PositionService positionService;
-
-    @Autowired
-    private TestableCassandreStrategy strategy;
+    private TickerFlux tickerFlux;
 
     @Autowired
     private OrderFlux orderFlux;
@@ -53,13 +50,17 @@ public class PositionServiceForceClosingTest extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Autowired
-    private TickerFlux tickerFlux;
+    private PositionService positionService;
+
+    @Autowired
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check force closing")
     public void checkForceClosing() {
         assertTrue(strategy.getConfiguration().isDryMode());
 
+        // =============================================================================================================
         // First tickers (dry mode).
         // ETH/BTC - 0.2.
         // ETH/USDT - 0.3.
@@ -75,19 +76,22 @@ public class PositionServiceForceClosingTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());
         assertEquals("DRY_ORDER_000000001", position1Result.getPosition().getOpeningOrder().getOrderId());
-        final long position1Id = position1Result.getPosition().getUid();
+        final long position1Uid = position1Result.getPosition().getUid();
 
-        // After position creation, its status is OPENING but order and trades arrives from dry mode.
-        // One position status update because of OPENING, one position status update because of OPENED.
-        // For position updates.
-        // First: because of position creation.
-        // Second: order update with status to NEW.
-        // Third: trade corresponding to the order arrives.
+        // After position creation, its status is OPENING but order and trades will arrive and set it to OPENED.
         await().untilAsserted(() -> {
             orderFlux.update();
             tradeFlux.update();
-            assertEquals(OPENED, getPositionDTO(position1Id).getStatus());
+            assertEquals(OPENED, getPositionDTO(position1Uid).getStatus());
         });
+        // One position status update when status is OPENING, another position status update when status is OPENED.
+        assertEquals(2, strategy.getPositionsStatusUpdatesCount());
+        // For position updates:
+        // 1st: position creation with an order having the PENDING_NEW status.
+        // 2nd: same order arrives but with a NEW status.
+        // 3rd: same order arrives but with a FILLED status.
+        // 4th: trade corresponding to the order arrives and the position is now OPENED.
+        assertEquals(4, strategy.getPositionsUpdatesCount());
 
         // =============================================================================================================
         // Step 2 - Creates position 2 (ETH_USDT, 0.0002, 20% stop loss, price of 0.3).
@@ -97,82 +101,106 @@ public class PositionServiceForceClosingTest extends BaseTest {
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(position2Result.isSuccessful());
         assertEquals("DRY_ORDER_000000002", position2Result.getPosition().getOpeningOrder().getOrderId());
-        final long position2Id = position2Result.getPosition().getUid();
+        final long position2Uid = position2Result.getPosition().getUid();
 
-        // After position creation, its status is OPENING
-        // One position status update because of OPENING, one position status update because of OPENED.
-        // For position updates.
-        // First: because of position creation.
-        // Second: order update with status to NEW.
-        // Third: trade corresponding to the order arrives.
+        // After position creation, its status is OPENING but order and trades will arrive and set it to OPENED.
         await().untilAsserted(() -> {
             orderFlux.update();
             tradeFlux.update();
-            assertEquals(OPENED, getPositionDTO(position2Id).getStatus());
+            assertEquals(OPENED, getPositionDTO(position2Uid).getStatus());
         });
+        // One position status update when status is OPENING, another position status update when status is OPENED.
+        assertEquals(4, strategy.getPositionsStatusUpdatesCount());
+        // For position updates:
+        // 1st: position creation with an order having the PENDING_NEW status.
+        // 2nd: same order arrives but with a NEW status.
+        // 3rd: same order arrives but with a FILLED status.
+        // 4th: trade corresponding to the order arrives and the position is now OPENED.
+        assertEquals(8, strategy.getPositionsUpdatesCount());
 
         // =============================================================================================================
         // Tickers are coming.
 
         // Position 1 (ETH/BTC, 0.0001, 100% stop gain, price of 0.2)
-        // Position 2 (ETH_USDT, 0.0002, 20% stop loss, price of 0.3)
-        // ETH/BTC - 0.3 - 50% gain.
-        // ETH/USDT - 0.3 - no gain.
-        // No change.
+        // Position 2 (ETH/USDT, 0.0002, 20% stop loss, price of 0.3)
+        // Ticker ETH/BTC - 0.31 - 50% gain.
+        // Ticker ETH/USDT - 0.31 - no gain.
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
+        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.3")).build());
+        // Two positions updates arrives because lowestGainPrice, highestGainPrice and latestGainPrice are updated.
+        await().untilAsserted(() -> {
+            orderFlux.update();
+            tradeFlux.update();
+            await().untilAsserted(() -> assertEquals(10, strategy.getPositionsUpdatesCount()));
+        });
+        PositionDTO position1 = getPositionDTO(position1Uid);
+        assertEquals(0, new BigDecimal("0.3").compareTo(position1.getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(position1.getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(position1.getLatestGainPrice().getValue()));
+        PositionDTO position2 = getPositionDTO(position2Uid);
+        assertEquals(0, new BigDecimal("0.3").compareTo(position2.getLowestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(position2.getHighestGainPrice().getValue()));
+        assertEquals(0, new BigDecimal("0.3").compareTo(position2.getLatestGainPrice().getValue()));
+
+        // We will force the closing of position 2.
+        strategy.closePosition(position2Uid);
+
+        // Two new tickers are emitted, they will be received by positions but will not trigger rules.
+        // Two positions updates arrives because lowestGainPrice, highestGainPrice and latestGainPrice are updated.
+        // But, as position 2 is marked as "force closing", the ticker updates will close one position.
+        // For position updates:
+        // 11: Position 1 updates with new lowestGainPrice, highestGainPrice and latestGainPrice.
+        // 12: Position 2 updates with new lowestGainPrice, highestGainPrice and latestGainPrice + close position change.
+        // 13: Position 2 now CLOSING with a PENDING_NEW order.
+        // 14: Position 2 still CLOSING with updated order (NEW_STATUS status).
+        // 15: Position 2 still CLOSING with updated order (FILLED status).
+        // 16: Position 2 now CLOSED. Order's trade has arrived.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.31")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.31")).build());
-        orderFlux.update();
-        tradeFlux.update();
-        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
+        await().untilAsserted(() -> {
+            orderFlux.update();
+            tradeFlux.update();
+            assertEquals(16, strategy.getPositionsUpdatesCount());
+        });
+        assertEquals(OPENED, getPositionDTO(position1Uid).getStatus());
+        assertEquals(CLOSED, getPositionDTO(position2Uid).getStatus());
 
-        // We will force closing of position 2.
-        strategy.closePosition(position2Id);
+        // We will force closing of position 1.
+        strategy.closePosition(position1Uid);
 
-        // New tickers will not trigger close.
+        // Two new tickers are emitted, they will be received by positions but will not trigger rules.
+        // Position1 updates arrives because lowestGainPrice, highestGainPrice and latestGainPrice are updated.
+        // But, as position 1 is marked as "force closing", the ticker updates will close one position.
+        // Position 2's lowestGainPrice, highestGainPrice and latestGainPrice will not be updated as the position is already closed.
+        // For position updates:
+        // 17: Position 1 updates with new lowestGainPrice, highestGainPrice and latestGainPrice + close position change.
+        // 18: Position 1 now CLOSING with a PENDING_NEW order.
+        // 19: Position 1 still CLOSING with updated order (NEW_STATUS status).
+        // 20: Position 1 still CLOSING with updated order (FILLED status).
+        // 21: Position 1 now CLOSED. Order's trade has arrived.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.32")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.32")).build());
         await().untilAsserted(() -> {
             orderFlux.update();
             tradeFlux.update();
-            assertEquals(OPENED, getPositionDTO(position1Id).getStatus());
+            assertEquals(21, strategy.getPositionsUpdatesCount());
         });
-        await().untilAsserted(() -> {
-            orderFlux.update();
-            tradeFlux.update();
-            assertEquals(CLOSED, getPositionDTO(position2Id).getStatus());
-        });
-
-        // We will force closing of position 1.
-        strategy.closePosition(position1Id);
-
-        // New tickers will trigger close.
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.33")).build());
-        tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.33")).build());
-        await().untilAsserted(() -> {
-            orderFlux.update();
-            tradeFlux.update();
-            assertEquals(CLOSED, getPositionDTO(position1Id).getStatus());
-        });
-        await().untilAsserted(() -> {
-            orderFlux.update();
-            tradeFlux.update();
-            assertEquals(CLOSED, getPositionDTO(position2Id).getStatus());
-        });
+        assertEquals(CLOSED, getPositionDTO(position1Uid).getStatus());
+        assertEquals(CLOSED, getPositionDTO(position2Uid).getStatus());
     }
 
     /**
      * Retrieve position from database.
      *
-     * @param id position id
+     * @param uid position uid
      * @return position
      */
-    private PositionDTO getPositionDTO(final long id) {
-        final Optional<PositionDTO> p = positionService.getPositionByUid(id);
+    private PositionDTO getPositionDTO(final long uid) {
+        final Optional<PositionDTO> p = positionService.getPositionByUid(uid);
         if (p.isPresent()) {
             return p.get();
         } else {
-            throw new PositionException("Position not found : " + id);
+            throw new PositionException("Position not found : " + uid);
         }
     }
 

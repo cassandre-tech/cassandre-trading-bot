@@ -1,13 +1,11 @@
 package tech.cassandre.trading.bot.test.core.services.dry;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.dto.trade.OrderCreationResultDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.trade.TradeDTO;
@@ -28,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.FILLED;
-import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
@@ -40,25 +37,21 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 })
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(TradeServiceDryModeTestMock.class)
-@Disabled("Strange problem to fix")
-// TODO Fix this test
 public class TradeServiceTest extends BaseTest {
-
-    @Autowired
-    private TestableCassandreStrategy strategy;
 
     @Autowired
     private TradeService tradeService;
 
     @Autowired
-    private TickerFlux tickerFlux;
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check buy and sell order creation")
     public void checkCreateBuyAndSellOrder() {
         assertTrue(strategy.getConfiguration().isDryMode());
 
-        //tickerFlux.update();
+        // To create an order in dry mode, we need an existing price for the position currency pair.
+        await().until(() -> strategy.getTickersUpdatesReceived().size() >= 1);
 
         // What we expect.
         final String orderId01 = "DRY_ORDER_000000001";
@@ -70,15 +63,21 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(0, tradeService.getOrders().size());
         assertEquals(0, tradeService.getTrades().size());
 
+        // =============================================================================================================
         // We create a buy order.
         final OrderCreationResultDTO buyMarketOrder01 = strategy.createBuyMarketOrder(ETH_BTC, new BigDecimal("0.001"));
-        System.out.println("=> " + buyMarketOrder01);
         assertTrue(buyMarketOrder01.isSuccessful());
         assertEquals(orderId01, buyMarketOrder01.getOrder().getOrderId());
 
         // Testing the received order.
-        await().until(() -> strategy.getOrdersUpdatesReceived().stream().anyMatch(o -> o.getOrderId().equals(orderId01)));
-        final Optional<OrderDTO> order01 = strategy.getOrdersUpdatesReceived().stream().filter(o -> o.getOrderId().equals(orderId01)).findFirst();
+        await().until(() -> strategy.getOrdersUpdatesReceived()
+                .stream()
+                .anyMatch(o -> o.getOrderId().equals(orderId01) && o.getStatus().equals(FILLED)));
+        final Optional<OrderDTO> order01 = strategy.getOrdersUpdatesReceived()
+                .stream()
+                .filter(o -> o.getOrderId().equals(orderId01))
+                .filter(o -> o.getStatus().equals(FILLED))
+                .findFirst();
         assertTrue(order01.isPresent());
         assertEquals(1, order01.get().getUid());
         assertEquals(orderId01, order01.get().getOrderId());
@@ -93,7 +92,7 @@ public class TradeServiceTest extends BaseTest {
         assertEquals(ETH_BTC.getQuoteCurrency(), order01.get().getAveragePrice().getCurrency());
         assertNull(order01.get().getLimitPrice());
         assertNull(order01.get().getLeverage());
-        assertEquals(NEW, order01.get().getStatus());
+        assertEquals(FILLED, order01.get().getStatus());
         assertEquals(0, new BigDecimal("0.001").compareTo(order01.get().getCumulativeAmount().getValue()));
         assertEquals(ETH_BTC.getBaseCurrency(), order01.get().getCumulativeAmount().getCurrency());
         assertNull(order01.get().getUserReference());
@@ -116,6 +115,7 @@ public class TradeServiceTest extends BaseTest {
         assertNull(trade01.get().getUserReference());
         assertNotNull(trade01.get().getTimestamp());
 
+        // =============================================================================================================
         // We create a sell order, so we could check order numbers and type.
         final OrderCreationResultDTO buyMarketOrder02 = strategy.createSellMarketOrder(ETH_BTC, new BigDecimal("0.002"));
         assertTrue(buyMarketOrder02.isSuccessful());
