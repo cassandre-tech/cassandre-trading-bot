@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.core.services.xchange.mocks;
 
-import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.UserTrades;
 import org.knowm.xchange.service.trade.TradeService;

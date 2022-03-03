@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import static graphql.Assert.assertFalse;
-import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;

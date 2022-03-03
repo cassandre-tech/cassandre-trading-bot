@@ -1,6 +1,5 @@
 package tech.cassandre.trading.bot.test.core.batch.mocks;
 
-import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;

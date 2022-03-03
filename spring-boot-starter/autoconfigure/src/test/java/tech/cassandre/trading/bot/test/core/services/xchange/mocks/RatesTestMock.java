@@ -2,10 +2,8 @@ package tech.cassandre.trading.bot.test.core.services.xchange.mocks;
 
 import org.knowm.xchange.dto.account.AccountInfo;
 import org.knowm.xchange.dto.account.Wallet;
-import org.knowm.xchange.dto.marketdata.Ticker;
 import org.knowm.xchange.dto.trade.OpenOrders;
 import org.knowm.xchange.dto.trade.UserTrades;
-import org.knowm.xchange.instrument.Instrument;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +26,7 @@ import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.UserServiceXChangeImplementation;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import static java.math.BigDecimal.ZERO;
 import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;

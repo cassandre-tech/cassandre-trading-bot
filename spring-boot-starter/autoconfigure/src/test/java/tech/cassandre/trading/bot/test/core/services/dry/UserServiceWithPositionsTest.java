@@ -16,7 +16,6 @@ import tech.cassandre.trading.bot.dto.user.BalanceDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.service.PositionService;
-import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.test.core.services.dry.mocks.PositionServiceDryModeTestMock;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -60,9 +59,6 @@ public class UserServiceWithPositionsTest extends BaseTest {
 
     @Autowired
     private AccountFlux accountFlux;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private PositionService positionService;
