@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Configuration (override applications.properties during tests).
+ * Configuration (Used to override applications.properties parameters during tests).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

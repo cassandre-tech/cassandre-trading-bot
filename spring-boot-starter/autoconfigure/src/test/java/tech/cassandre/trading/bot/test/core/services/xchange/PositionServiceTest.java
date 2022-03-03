@@ -585,7 +585,7 @@ public class PositionServiceTest extends BaseTest {
 
         // A first ticker arrives with a gain of 100% but for the wrong CP - so it must still be OPENED.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.5")).build());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        await().untilAsserted(() -> assertEquals(3, strategy.getPositionsUpdatesReceived().size()));
         PositionDTO p = getPositionDTO(position1Uid);
         assertEquals(OPENED, p.getStatus());
         // We check the last calculated gain - should be none.
@@ -595,7 +595,7 @@ public class PositionServiceTest extends BaseTest {
         // A second ticker arrives with a gain of 50%.
         // From 0.2 (trade) to 0.3 (ticker).
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.3")).build());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        await().untilAsserted(() -> assertEquals(4, strategy.getPositionsUpdatesReceived().size()));
         p = getPositionDTO(position1Uid);
         // We check the last calculated gain - should be 50%.
         gain = p.getLatestCalculatedGain();

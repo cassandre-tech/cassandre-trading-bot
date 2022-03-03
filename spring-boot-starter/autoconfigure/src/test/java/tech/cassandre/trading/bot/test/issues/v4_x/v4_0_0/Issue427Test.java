@@ -57,7 +57,7 @@ public class Issue427Test extends BaseTest {
         orderFlux.update();
 
         // We wait a bit, the order should not be here as the local order is not saved.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(0, orderRepository.count());
 
         // The local order is saved
@@ -77,7 +77,7 @@ public class Issue427Test extends BaseTest {
                 .build());
 
         // We wait a bit, the local order should be here.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(1, orderRepository.count());
         Optional<Order> o = orderRepository.findByOrderId("ORDER_000001");
         assertTrue(o.isPresent());
@@ -87,7 +87,7 @@ public class Issue427Test extends BaseTest {
         orderFlux.update();
 
         // We wait a bit, the order in database should be updated with the distant one.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(1, orderRepository.count());
         o = orderRepository.findByOrderId("ORDER_000001");
         assertTrue(o.isPresent());

@@ -69,19 +69,13 @@ public class BaseTest extends Base {
     /** XChange BTC/ETH. */
     public static final Instrument XCHANGE_BTC_ETH = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.BTC, Currency.ETH));
 
-    /** Ten seconds wait. */
-    protected static final long WAITING_TIME_IN_SECONDS = 5L;
-
-    /** How much we should wait for tests until it is declared as failed. */
-    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
-
     /**
      * Constructor.
      */
     public BaseTest() {
         // Default Configuration for Awaitility.
         Awaitility.setDefaultPollInterval(fibonacci(SECONDS));
-        Awaitility.setDefaultTimeout(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS);
+        Awaitility.setDefaultTimeout(60, SECONDS);
     }
 
     /**

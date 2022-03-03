@@ -25,7 +25,6 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,7 +64,7 @@ public class Issue863Test extends BaseTest {
 
     @Test
     @DisplayName("Check position auto close")
-    public void checkAutoClose() throws InterruptedException {
+    public void checkAutoClose() {
         // =============================================================================================================
         // Creates position 1 (ETH/BTC, 0.0001, 100% stop gain).
         // Autoclose = true (by default).
@@ -124,7 +123,6 @@ public class Issue863Test extends BaseTest {
         // =============================================================================================================
         // We now receive a ticker that should close all positions but not the second one as auto close is set to false.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("1")).build());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
 
         // Position 1 should be closing (autoclose to true).
         await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));

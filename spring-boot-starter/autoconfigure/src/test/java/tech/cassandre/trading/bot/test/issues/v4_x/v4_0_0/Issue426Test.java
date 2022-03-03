@@ -79,7 +79,7 @@ public class Issue426Test extends BaseTest {
         tradeFlux.update();
 
         // We wait a bit. Nothing should be saved.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(0, orderRepository.count());
         assertEquals(0, tradeRepository.count());
         assertEquals(0, positionRepository.count());
@@ -90,7 +90,7 @@ public class Issue426Test extends BaseTest {
         tradeFlux.update();
 
         // We wait a bit, the order and the trade should be here.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(1, orderRepository.count());
         assertEquals(2, tradeRepository.count());
         assertEquals(0, positionRepository.count());

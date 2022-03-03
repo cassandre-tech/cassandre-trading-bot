@@ -46,8 +46,8 @@ import static org.mockito.Mockito.mock;
  */
 public class BaseMock extends BaseTest {
 
-    /** Service rate. */
-    private static final int SERVICE_RATE = 900;
+    /** Default service rate. */
+    private static final int DEFAULT_SERVICE_RATE = 900;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -101,7 +101,7 @@ public class BaseMock extends BaseTest {
             logger.error("Impossible to instantiate mocked market service");
             return null;
         }
-        return new MarketServiceXChangeImplementation(SERVICE_RATE, mock);
+        return new MarketServiceXChangeImplementation(DEFAULT_SERVICE_RATE, mock);
     }
 
     @Bean
@@ -114,7 +114,7 @@ public class BaseMock extends BaseTest {
             logger.error("Impossible to instantiate mocked account service");
             return null;
         }
-        return new UserServiceXChangeImplementation(SERVICE_RATE, mock);
+        return new UserServiceXChangeImplementation(DEFAULT_SERVICE_RATE, mock);
     }
 
     @Bean
@@ -127,7 +127,7 @@ public class BaseMock extends BaseTest {
             logger.error("Impossible to instantiate mocked trade service");
             return null;
         }
-        return new TradeServiceXChangeImplementation(SERVICE_RATE, orderRepository, mock);
+        return new TradeServiceXChangeImplementation(DEFAULT_SERVICE_RATE, orderRepository, mock);
     }
 
     /**

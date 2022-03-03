@@ -112,29 +112,29 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         // Set default values.
 
         // Exchange parameters.
-        System.setProperty(PARAMETER_EXCHANGE_DRIVER_CLASS_NAME, PARAMETER_NAME_DEFAULT_VALUE);                                                          // Kucoin
-        System.setProperty(PARAMETER_EXCHANGE_SANDBOX, PARAMETER_SANDBOX_DEFAULT_VALUE);                                                    // true
-        System.setProperty(PARAMETER_EXCHANGE_DRY, PARAMETER_DRY_DEFAULT_VALUE);                                                            // false
-        System.setProperty(PARAMETER_EXCHANGE_USERNAME, PARAMETER_USERNAME_DEFAULT_VALUE);                                                  // cassandre.crypto.bot@gmail.com
-        System.setProperty(PARAMETER_EXCHANGE_PASSPHRASE, PARAMETER_PASSPHRASE_DEFAULT_VALUE);                                              // cassandre
-        System.setProperty(PARAMETER_EXCHANGE_KEY, PARAMETER_KEY_DEFAULT_VALUE);                                                            // 5df8eea30092f40009cb3c6a
-        System.setProperty(PARAMETER_EXCHANGE_SECRET, PARAMETER_SECRET_DEFAULT_VALUE);                                                      // 5f6e91e0-796b-4947-b75e-eaa5c06b6bed
-        System.setProperty(PARAMETER_EXCHANGE_RATE_ACCOUNT, PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE);                                          // 100
-        System.setProperty(PARAMETER_EXCHANGE_RATE_TICKER, PARAMETER_RATE_TICKER_DEFAULT_VALUE);                                            // 101
-        System.setProperty(PARAMETER_EXCHANGE_RATE_TRADE, PARAMETER_RATE_TRADE_DEFAULT_VALUE);                                              // 102
+        System.setProperty(PARAMETER_EXCHANGE_DRIVER_CLASS_NAME, PARAMETER_NAME_DEFAULT_VALUE);                                 // Kucoin
+        System.setProperty(PARAMETER_EXCHANGE_SANDBOX, PARAMETER_SANDBOX_DEFAULT_VALUE);                                        // true
+        System.setProperty(PARAMETER_EXCHANGE_DRY, PARAMETER_DRY_DEFAULT_VALUE);                                                // false
+        System.setProperty(PARAMETER_EXCHANGE_USERNAME, PARAMETER_USERNAME_DEFAULT_VALUE);                                      // cassandre.crypto.bot@gmail.com
+        System.setProperty(PARAMETER_EXCHANGE_PASSPHRASE, PARAMETER_PASSPHRASE_DEFAULT_VALUE);                                  // cassandre
+        System.setProperty(PARAMETER_EXCHANGE_KEY, PARAMETER_KEY_DEFAULT_VALUE);                                                // 5df8eea30092f40009cb3c6a
+        System.setProperty(PARAMETER_EXCHANGE_SECRET, PARAMETER_SECRET_DEFAULT_VALUE);                                          // 5f6e91e0-796b-4947-b75e-eaa5c06b6bed
+        System.setProperty(PARAMETER_EXCHANGE_RATE_ACCOUNT, PARAMETER_RATE_ACCOUNT_DEFAULT_VALUE);                              // 100
+        System.setProperty(PARAMETER_EXCHANGE_RATE_TICKER, PARAMETER_RATE_TICKER_DEFAULT_VALUE);                                // 101
+        System.setProperty(PARAMETER_EXCHANGE_RATE_TRADE, PARAMETER_RATE_TRADE_DEFAULT_VALUE);                                  // 102
         // Strategies configuration.
-        System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE);                                   // false
-        System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE);             // false
-        System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE);                                 // true
-        System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE, PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE);                 // false
-        System.setProperty(PARAMETER_STRATEGY_1_ENABLED, PARAMETER_STRATEGY_1_ENABLED_DEFAULT_VALUE);
-        System.setProperty(PARAMETER_STRATEGY_2_ENABLED, PARAMETER_STRATEGY_2_ENABLED_DEFAULT_VALUE);
-        System.setProperty(PARAMETER_STRATEGY_3_ENABLED, PARAMETER_STRATEGY_3_ENABLED_DEFAULT_VALUE);
-        System.setProperty(PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED, PARAMETER_LARGE_TESTABLE_STRATEGY_DEFAULT_VALUE);
+        System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE);                       // false
+        System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE); // false
+        System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE);                     // true
+        System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE, PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE);     // false
+        System.setProperty(PARAMETER_STRATEGY_1_ENABLED, PARAMETER_STRATEGY_1_ENABLED_DEFAULT_VALUE);                           // false
+        System.setProperty(PARAMETER_STRATEGY_2_ENABLED, PARAMETER_STRATEGY_2_ENABLED_DEFAULT_VALUE);                           // false
+        System.setProperty(PARAMETER_STRATEGY_3_ENABLED, PARAMETER_STRATEGY_3_ENABLED_DEFAULT_VALUE);                           // false
+        System.setProperty(PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED, PARAMETER_LARGE_TESTABLE_STRATEGY_DEFAULT_VALUE);         // false
         // Spring parameters.
         System.setProperty("spring.jpa.hibernate.ddl-auto", "validate");
 
-        // Retrieve all the properties set by the annotation.
+        // Retrieve all the properties set with the annotation.
         final Optional<Class<?>> testClass = context.getTestClass();
         if (testClass.isPresent()) {
             final Configuration configuration = testClass.get().getAnnotation(Configuration.class);
@@ -166,9 +166,13 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.clearProperty(PARAMETER_EXCHANGE_RATE_TRADE);
         // Strategies configuration.
         System.clearProperty(PARAMETER_INVALID_STRATEGY_ENABLED);
+        System.clearProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED);
         System.clearProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED);
         System.clearProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE);
-        System.clearProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED);
+        System.clearProperty(PARAMETER_STRATEGY_1_ENABLED);
+        System.clearProperty(PARAMETER_STRATEGY_2_ENABLED);
+        System.clearProperty(PARAMETER_STRATEGY_3_ENABLED);
+        System.clearProperty(PARAMETER_LARGE_TESTABLE_STRATEGY_ENABLED);
 
         // Remove all the properties set for this method.
         final Optional<Class<?>> testClass = context.getTestClass();
