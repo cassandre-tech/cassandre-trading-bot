@@ -18,6 +18,7 @@ import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,20 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      */
     public final Optional<AccountDTO> getTradeAccount() {
         return getTradeAccount(new LinkedHashSet<>(getAccounts().values()));
+    }
+
+    /**
+     * Returns trade account balances.
+     *
+     * @return trade account balances
+     */
+    public final Map<CurrencyDTO, BalanceDTO> getTradeAccountBalances() {
+        Map<CurrencyDTO, BalanceDTO> balances = new LinkedHashMap<>();
+        getTradeAccount().ifPresent(accountDTO ->
+                accountDTO.getBalances()
+                        .forEach(balanceDTO -> balances.put(balanceDTO.getCurrency(), balanceDTO))
+        );
+        return balances;
     }
 
     /**

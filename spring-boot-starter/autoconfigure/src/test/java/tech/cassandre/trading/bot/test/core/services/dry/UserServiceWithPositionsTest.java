@@ -25,11 +25,8 @@ import tech.cassandre.trading.bot.test.util.strategies.LargeTestableCassandreStr
 import tech.cassandre.trading.bot.util.exception.PositionException;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,7 +87,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         // ETH  10
         accountFlux.update();
         await().until(() -> !strategy.getAccountsUpdatesReceived().isEmpty());
-        Map<CurrencyDTO, BalanceDTO> balances = getBalances();
+        Map<CurrencyDTO, BalanceDTO> balances = strategy.getTradeAccountBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
         assertEquals(0, new BigDecimal("1000").compareTo(balances.get(USDT).getAvailable()));
         assertEquals(0, new BigDecimal("10").compareTo(balances.get(ETH).getAvailable()));
@@ -151,7 +148,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         long position1Id = position1.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(4, strategy.getAccountsUpdatesReceived().size()));
-        balances = getBalances();
+        balances = strategy.getTradeAccountBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
         assertEquals(0, new BigDecimal("250").compareTo(balances.get(USDT).getAvailable()));
         assertEquals(0, new BigDecimal("10.5").compareTo(balances.get(ETH).getAvailable()));
@@ -190,7 +187,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         long position2Id = position2.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
         await().untilAsserted(() -> assertEquals(5, strategy.getAccountsUpdatesReceived().size()));
-        balances = getBalances();
+        balances = strategy.getTradeAccountBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
         assertEquals(0, new BigDecimal("150").compareTo(balances.get(USDT).getAvailable()));
         assertEquals(0, new BigDecimal("20.5").compareTo(balances.get(ETH).getAvailable()));
@@ -227,7 +224,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         long position3Id = position3.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
         await().untilAsserted(() -> assertEquals(6, strategy.getAccountsUpdatesReceived().size()));
-        balances = getBalances();
+        balances = strategy.getTradeAccountBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
         assertEquals(0, new BigDecimal("70").compareTo(balances.get(USDT).getAvailable()));
         assertEquals(0, new BigDecimal("20.5").compareTo(balances.get(ETH).getAvailable()));
@@ -261,7 +258,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         long position4Id = position4.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position4Id).getStatus()));
         await().untilAsserted(() -> assertEquals(7, strategy.getAccountsUpdatesReceived().size()));
-        balances = getBalances();
+        balances = strategy.getTradeAccountBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
         assertEquals(0, new BigDecimal("80").compareTo(balances.get(USDT).getAvailable()));
         assertEquals(0, new BigDecimal("19.5").compareTo(balances.get(ETH).getAvailable()));
@@ -313,7 +310,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         // 19.5 ETH             =>  19.5 - 10 (position 2 sell) + 5 (position 4 buy)
         // 0 KCS                =>  20 KCS (20 lock in positions).
         await().untilAsserted(() -> assertEquals(9, strategy.getAccountsUpdatesReceived().size()));
-        balances = getBalances();
+        balances = strategy.getTradeAccountBalances();
         assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
         assertEquals(0, new BigDecimal("1070").compareTo(balances.get(USDT).getAvailable()));
         assertEquals(0, new BigDecimal("14.5").compareTo(balances.get(ETH).getAvailable()));
@@ -344,21 +341,6 @@ public class UserServiceWithPositionsTest extends BaseTest {
         } else {
             throw new PositionException("Position not found : " + uid);
         }
-    }
-
-    /**
-     * Returns the updated balances of the trade account.
-     *
-     * @return balances
-     */
-    private Map<CurrencyDTO, BalanceDTO> getBalances() {
-        return userService.getUser()
-                .map(userDTO -> userDTO.getAccounts()
-                .get("trade")
-                .getBalances()
-                .stream()
-                .collect(Collectors.toMap(BalanceDTO::getCurrency, Function.identity())))
-                .orElse(Collections.emptyMap());
     }
 
 }
