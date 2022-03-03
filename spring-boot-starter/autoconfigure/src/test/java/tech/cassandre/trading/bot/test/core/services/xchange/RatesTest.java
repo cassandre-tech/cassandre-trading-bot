@@ -39,10 +39,10 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class RatesTest extends BaseTest {
 
 	@Autowired
-	private UserService userService;
+	private MarketService marketService;
 
 	@Autowired
-	private MarketService marketService;
+	private UserService userService;
 
 	@Autowired
 	private TradeService tradeService;
@@ -77,8 +77,8 @@ public class RatesTest extends BaseTest {
 	}
 
 	@Test
-	@DisplayName("Check market service rate")
-	public void checkMarketServiceRate() throws InterruptedException {
+	@DisplayName("Check ticker service rate")
+	public void checkTickerServiceRate() throws InterruptedException {
 		AtomicInteger numberOfCalls = new AtomicInteger(0);
 
 		// Executing service calls in parallel.

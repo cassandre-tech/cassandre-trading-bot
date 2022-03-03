@@ -42,6 +42,7 @@ public class PositionGainsServiceTest {
     @Test
     @DisplayName("Check gains calculation")
     public void checkGainsCalculation() {
+        // =============================================================================================================
         /*
             Position 1 - Bought 10 BTC with USDT.
             TRADE_11 - Bought 7 for 11 = 77.
@@ -69,6 +70,7 @@ public class PositionGainsServiceTest {
         assertEquals(0, new BigDecimal("15").compareTo(gain1Fees.get(USDT).getValue()));
         assertEquals(USDT, gain1Fees.get(USDT).getCurrency());
 
+        // =============================================================================================================
         /*
             Position 2 - Bought 20 ETH with BTC.
             TRADE_21 - Bought 20 ETH for 100 = 2000.
@@ -93,6 +95,7 @@ public class PositionGainsServiceTest {
         assertEquals(0, new BigDecimal("10").compareTo(gain2Fees.get(BTC).getValue()));
         assertEquals(BTC, gain2Fees.get(BTC).getCurrency());
 
+        // =============================================================================================================
         /*
             Position 3 - Bought 30 BTC with USDT.
             TRADE_31 - Bought 30 BTC for 20 = 600.
@@ -131,6 +134,7 @@ public class PositionGainsServiceTest {
         assertEquals(0, p6.get().getGain().getPercentage());
         assertEquals(0, ZERO.compareTo(p6.get().getGain().getAmount().getValue()));
 
+        // =============================================================================================================
         /*
             Position 7 (SHORT) - Sold 10 ETH for USDT.
             TRADE_63 - Sold 10 ETH with a price of 5 = 50 USDT.
@@ -154,44 +158,46 @@ public class PositionGainsServiceTest {
         assertEquals(0, new BigDecimal("4").compareTo(gain7Fees.get(ETH).getValue()));
         assertEquals(ETH, gain7Fees.get(ETH).getCurrency());
 
+        // =============================================================================================================
         // Check all gains.
         final Map<CurrencyDTO, GainDTO> gains = positionService.getGains();
         assertEquals(3, gains.size());
 
-        // Gains USDT.
+        // USDT Gains.
         final GainDTO usdtGain = gains.get(USDT);
         assertNotNull(usdtGain);
         assertEquals(25.81, usdtGain.getPercentage());
         assertEquals(0, new BigDecimal("184").compareTo(usdtGain.getAmount().getValue()));
         assertEquals(USDT, usdtGain.getAmount().getCurrency());
 
-        final Map<CurrencyDTO, CurrencyAmountDTO> usdtGainFees = usdtGain.getOrdersFees();
-        assertNotNull(usdtGainFees.get(USDT));
-        assertEquals(0, new BigDecimal("26").compareTo(usdtGainFees.get(USDT).getValue()));
-        assertEquals(USDT, usdtGainFees.get(USDT).getCurrency());
-
-        // Gains BTC.
+        // BTC Gains.
         final GainDTO btcGain = gains.get(BTC);
         assertNotNull(btcGain);
         assertEquals(-50, btcGain.getPercentage());
         assertEquals(0, new BigDecimal("-1000").compareTo(btcGain.getAmount().getValue()));
         assertEquals(BTC, btcGain.getAmount().getCurrency());
 
-        final Map<CurrencyDTO, CurrencyAmountDTO> btcGainFees = btcGain.getOrdersFees();
-        assertNotNull(btcGainFees.get(BTC));
-        assertEquals(0, new BigDecimal("10").compareTo(btcGainFees.get(BTC).getValue()));
-        assertEquals(BTC, btcGainFees.get(BTC).getCurrency());
-
-        // Gains ETH.
+        // ETH Gains.
         final GainDTO ethGain = gains.get(ETH);
         assertNotNull(ethGain);
         assertEquals(-50, ethGain.getPercentage());
         assertEquals(0, new BigDecimal("-5").compareTo(ethGain.getAmount().getValue()));
         assertEquals(ETH, ethGain.getAmount().getCurrency());
-        final Map<CurrencyDTO, CurrencyAmountDTO> ethGainFees = ethGain.getOrdersFees();
-        assertNotNull(ethGainFees.get(ETH));
-        assertEquals(0, new BigDecimal("4").compareTo(ethGainFees.get(ETH).getValue()));
-        assertEquals(ETH, ethGainFees.get(ETH).getCurrency());
+
+        // ALl fees.
+        final Map<CurrencyDTO, CurrencyAmountDTO> fees = ethGain.getOrdersFees();
+        // USDT.
+        assertNotNull(fees.get(USDT));
+        assertEquals(0, new BigDecimal("26").compareTo(fees.get(USDT).getValue()));
+        assertEquals(USDT, fees.get(USDT).getCurrency());
+        // BTC.
+        assertNotNull(fees.get(BTC));
+        assertEquals(0, new BigDecimal("10").compareTo(fees.get(BTC).getValue()));
+        assertEquals(BTC, fees.get(BTC).getCurrency());
+        // ETH.
+        assertNotNull(fees.get(ETH));
+        assertEquals(0, new BigDecimal("4").compareTo(fees.get(ETH).getValue()));
+        assertEquals(ETH, fees.get(ETH).getCurrency());
     }
 
 }

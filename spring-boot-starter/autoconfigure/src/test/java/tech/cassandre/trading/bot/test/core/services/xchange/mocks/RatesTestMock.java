@@ -81,14 +81,6 @@ public class RatesTestMock {
 
     @Bean
     @Primary
-    public MarketService marketService() {
-        MarketDataService mock;
-        mock = getXChangeMarketDataServiceMock();
-        return new MarketServiceXChangeImplementation(15000, mock);
-    }
-
-    @Bean
-    @Primary
     public UserService userService() {
         AccountService mock;
         try {
@@ -97,6 +89,14 @@ public class RatesTestMock {
             return null;
         }
         return new UserServiceXChangeImplementation(10000, mock);
+    }
+
+    @Bean
+    @Primary
+    public MarketService marketService() {
+        MarketDataService mock;
+        mock = getXChangeMarketDataServiceMock();
+        return new MarketServiceXChangeImplementation(15000, mock);
     }
 
     @Bean
@@ -164,48 +164,6 @@ public class RatesTestMock {
                         Collections.emptySet(),
                         ZERO,
                         ZERO));
-    }
-
-    /**
-     * Util method to return a generated ticker.
-     *
-     * @param instrument instrument (currency pair)
-     * @param value      value for all fields
-     * @return ticket
-     */
-    protected static Ticker getGeneratedTicker(final Instrument instrument, final BigDecimal value) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return getGeneratedTicker(new Date(), instrument, value);
-    }
-
-    /**
-     * Util method to return a generated ticker.
-     *
-     * @param date       date
-     * @param instrument instrument (currency pair)
-     * @param value      value for all fields
-     * @return ticket
-     */
-    protected static Ticker getGeneratedTicker(Date date, final Instrument instrument, final BigDecimal value) {
-        return new Ticker.Builder()
-                .instrument(instrument) // currency pair.
-                .open(value)            // open.
-                .last(value)            // last.
-                .bid(value)             // bid.
-                .ask(value)             // ask.
-                .high(value)            // high.
-                .low(value)             // low.
-                .vwap(value)            // wmap.
-                .volume(value)          // value.
-                .quoteVolume(value)     // quote volume.
-                .timestamp(date)        // timestamp.
-                .bidSize(value)         // bid size.
-                .askSize(value)         // ask size.
-                .build();
     }
 
 }
