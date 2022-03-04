@@ -36,20 +36,18 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassan
 @SpringBootTest
 @DisplayName("Strategy - Basic ta4j cassandre strategy")
 @Configuration({
-        @Property(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "true"),
-        @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false")
 })
 @DirtiesContext(classMode = AFTER_CLASS)
 @Import(BasicTa4jCassandreStrategyTestMock.class)
 public class BasicTa4jCassandreStrategyTest extends BaseTest {
 
     @Autowired
-    private TestableTa4jCassandreStrategy strategy;
+    private StrategyRepository strategyRepository;
 
     @Autowired
-    private StrategyRepository strategyRepository;
+    private TestableTa4jCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check strategy behavior")

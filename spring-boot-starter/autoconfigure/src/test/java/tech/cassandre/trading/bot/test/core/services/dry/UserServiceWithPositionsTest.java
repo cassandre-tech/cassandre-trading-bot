@@ -143,11 +143,10 @@ public class UserServiceWithPositionsTest extends BaseTest {
         final PositionCreationResultDTO position1 = strategy.createLongPosition(ETH_USDT, new BigDecimal("0.5"), rules);
         long position1Id = position1.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position1Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(4, strategy.getAccountsUpdatesReceived().size()));
         balances = strategy.getTradeAccountBalances();
-        assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
-        assertEquals(0, new BigDecimal("250").compareTo(balances.get(USDT).getAvailable()));
-        assertEquals(0, new BigDecimal("10.5").compareTo(balances.get(ETH).getAvailable()));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.99962937").compareTo(strategy.getTradeAccountBalances().get(BTC).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("250").compareTo(strategy.getTradeAccountBalances().get(USDT).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("10.5").compareTo(strategy.getTradeAccountBalances().get(ETH).getAvailable())));
 
         // We check that the position locked amount is well stored.
         // Opened long position of 0.5 ETH (so we can't sell them).
@@ -182,11 +181,9 @@ public class UserServiceWithPositionsTest extends BaseTest {
         final PositionCreationResultDTO position2 = strategy.createLongPosition(ETH_USDT, new BigDecimal("10"), rules);
         long position2Id = position2.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position2Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(5, strategy.getAccountsUpdatesReceived().size()));
-        balances = strategy.getTradeAccountBalances();
-        assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
-        assertEquals(0, new BigDecimal("150").compareTo(balances.get(USDT).getAvailable()));
-        assertEquals(0, new BigDecimal("20.5").compareTo(balances.get(ETH).getAvailable()));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.99962937").compareTo(strategy.getTradeAccountBalances().get(BTC).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("150").compareTo(strategy.getTradeAccountBalances().get(USDT).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("20.5").compareTo(strategy.getTradeAccountBalances().get(ETH).getAvailable())));
 
         // We check that the position locked amount is well stored.
         // Opened long position of 0.5 ETH (so we can't sell them).
@@ -199,7 +196,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         assertEquals(ETH, currencyAmountForPosition2.getCurrency());
 
         // As we now have 20.5 ETH and 10.5 locked in positions, we should not be able to sell 10 ETH but not 10.1 ETH.
-        assertEquals(0, new BigDecimal("20.5").compareTo(balances.get(ETH).getAvailable()));
+        assertEquals(0, new BigDecimal("20.5").compareTo(strategy.getTradeAccountBalances().get(ETH).getAvailable()));
         assertTrue(strategy.canSell(ETH, new BigDecimal("10")));
         assertFalse(strategy.canSell(ETH, new BigDecimal("10.1")));
         assertFalse(strategy.canSell(ETH, new BigDecimal("20.5")));
@@ -219,12 +216,10 @@ public class UserServiceWithPositionsTest extends BaseTest {
         final PositionCreationResultDTO position3 = strategy.createLongPosition(KCS_USDT, new BigDecimal("20"), rules);
         long position3Id = position3.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position3Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(6, strategy.getAccountsUpdatesReceived().size()));
-        balances = strategy.getTradeAccountBalances();
-        assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
-        assertEquals(0, new BigDecimal("70").compareTo(balances.get(USDT).getAvailable()));
-        assertEquals(0, new BigDecimal("20.5").compareTo(balances.get(ETH).getAvailable()));
-        assertEquals(0, new BigDecimal("20").compareTo(balances.get(KCS).getAvailable()));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.99962937").compareTo(strategy.getTradeAccountBalances().get(BTC).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("70").compareTo(strategy.getTradeAccountBalances().get(USDT).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("20.5").compareTo(strategy.getTradeAccountBalances().get(ETH).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("20").compareTo(strategy.getTradeAccountBalances().get(KCS).getAvailable())));
 
         // We check that the position locked amount is well stored.
         // Opened long position of 0.5 ETH (so we can't sell them).
@@ -239,7 +234,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         assertEquals(KCS, currencyAmountForPosition3.getCurrency());
 
         // As we now have 20 KCS locked in positions, we should not be able to sell them.
-        assertEquals(0, new BigDecimal("20").compareTo(balances.get(KCS).getAvailable()));
+        assertEquals(0, new BigDecimal("20").compareTo(strategy.getTradeAccountBalances().get(KCS).getAvailable()));
         assertFalse(strategy.canSell(KCS, new BigDecimal("10")));
 
         // =============================================================================================================
@@ -253,12 +248,10 @@ public class UserServiceWithPositionsTest extends BaseTest {
         final PositionCreationResultDTO position4 = strategy.createShortPosition(ETH_USDT, new BigDecimal("1"), rules);
         long position4Id = position4.getPosition().getPositionId();
         await().untilAsserted(() -> assertEquals(OPENED, getPositionDTO(position4Id).getStatus()));
-        await().untilAsserted(() -> assertEquals(7, strategy.getAccountsUpdatesReceived().size()));
-        balances = strategy.getTradeAccountBalances();
-        assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
-        assertEquals(0, new BigDecimal("80").compareTo(balances.get(USDT).getAvailable()));
-        assertEquals(0, new BigDecimal("19.5").compareTo(balances.get(ETH).getAvailable()));
-        assertEquals(0, new BigDecimal("20").compareTo(balances.get(KCS).getAvailable()));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.99962937").compareTo(strategy.getTradeAccountBalances().get(BTC).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("80").compareTo(strategy.getTradeAccountBalances().get(USDT).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("19.5").compareTo(strategy.getTradeAccountBalances().get(ETH).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("20").compareTo(strategy.getTradeAccountBalances().get(KCS).getAvailable())));
 
         // We check that the position locked amount is well stored.
         // Opened long position of 0.5 ETH (so we can't sell them).
@@ -275,7 +268,7 @@ public class UserServiceWithPositionsTest extends BaseTest {
         assertEquals(USDT, currencyAmountForPosition4.getCurrency());
 
         // As we now have 10 USDT locked in positions, we should not be able to sell 80 but 70.
-        assertEquals(0, new BigDecimal("80").compareTo(balances.get(USDT).getAvailable()));
+        assertEquals(0, new BigDecimal("80").compareTo(strategy.getTradeAccountBalances().get(USDT).getAvailable()));
         assertFalse(strategy.canSell(USDT, new BigDecimal("80")));
         assertTrue(strategy.canSell(USDT, new BigDecimal("70")));
 
@@ -306,11 +299,10 @@ public class UserServiceWithPositionsTest extends BaseTest {
         // 19.5 ETH             =>  19.5 - 10 (position 2 sell) + 5 (position 4 buy)
         // 0 KCS                =>  20 KCS (20 lock in positions).
         await().untilAsserted(() -> assertEquals(9, strategy.getAccountsUpdatesReceived().size()));
-        balances = strategy.getTradeAccountBalances();
-        assertEquals(0, new BigDecimal("0.99962937").compareTo(balances.get(BTC).getAvailable()));
-        assertEquals(0, new BigDecimal("1070").compareTo(balances.get(USDT).getAvailable()));
-        assertEquals(0, new BigDecimal("14.5").compareTo(balances.get(ETH).getAvailable()));
-        assertEquals(0, new BigDecimal("20").compareTo(balances.get(KCS).getAvailable()));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.99962937").compareTo(strategy.getTradeAccountBalances().get(BTC).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("1070").compareTo(strategy.getTradeAccountBalances().get(USDT).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("14.5").compareTo(strategy.getTradeAccountBalances().get(ETH).getAvailable())));
+        await().untilAsserted(() -> assertEquals(0, new BigDecimal("20").compareTo(strategy.getTradeAccountBalances().get(KCS).getAvailable())));
 
         // We check that the position don't lock amount anymore.
         // 0.5 ETH locked because of position 1.
