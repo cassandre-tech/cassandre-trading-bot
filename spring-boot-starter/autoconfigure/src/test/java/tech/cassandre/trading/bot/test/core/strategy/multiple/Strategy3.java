@@ -7,6 +7,8 @@ import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static tech.cassandre.trading.bot.test.core.strategy.multiple.MultipleStrategiesTest.BTC_USDT;
 import static tech.cassandre.trading.bot.test.core.strategy.multiple.MultipleStrategiesTest.ETH_USDT;
@@ -30,10 +32,7 @@ public class Strategy3 extends Strategy {
 
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-        Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
-        requestedTickers.add(BTC_USDT);
-        requestedTickers.add(ETH_USDT);
-        return requestedTickers;
+        return Stream.of(BTC_USDT, ETH_USDT).collect(Collectors.toSet());
     }
 
 }

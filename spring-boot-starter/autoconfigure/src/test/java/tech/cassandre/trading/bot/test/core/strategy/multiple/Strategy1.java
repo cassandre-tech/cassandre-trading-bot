@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -29,9 +30,7 @@ public class Strategy1 extends Strategy {
 
     @Override
     public final Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-        Set<CurrencyPairDTO> requestedTickers = new LinkedHashSet<>();
-        requestedTickers.add(BTC_USDT);
-        return requestedTickers;
+        return Collections.singleton(BTC_USDT);
     }
 
 }
