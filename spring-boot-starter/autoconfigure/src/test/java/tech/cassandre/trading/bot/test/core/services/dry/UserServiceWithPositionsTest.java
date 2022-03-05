@@ -298,7 +298,6 @@ public class UserServiceWithPositionsTest extends BaseTest {
         // 80 USDT              =>  80 + 1 000 (position 2 sell) - 10 (position 4 buy)
         // 19.5 ETH             =>  19.5 - 10 (position 2 sell) + 5 (position 4 buy)
         // 0 KCS                =>  20 KCS (20 lock in positions).
-        await().untilAsserted(() -> assertEquals(9, strategy.getAccountsUpdatesReceived().size()));
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("0.99962937").compareTo(strategy.getTradeAccountBalances().get(BTC).getAvailable())));
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("1070").compareTo(strategy.getTradeAccountBalances().get(USDT).getAvailable())));
         await().untilAsserted(() -> assertEquals(0, new BigDecimal("14.5").compareTo(strategy.getTradeAccountBalances().get(ETH).getAvailable())));
