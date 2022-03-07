@@ -35,13 +35,13 @@ import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 public class Issue509Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
-
-    @Autowired
     private PositionRepository positionRepository;
 
+    @Autowired
+    private TestableCassandreStrategy strategy;
+
     @Test
-    @DisplayName("Fix empty openingOrder or closing order")
+    @DisplayName("Empty openingOrder or closing order")
     public void checkEmptyOrderFix() {
         with().await().untilAsserted(() -> assertEquals(0, positionRepository.findByStatus(OPENING).size()));
         with().await().untilAsserted(() -> assertEquals(0, positionRepository.findByStatus(CLOSING).size()));

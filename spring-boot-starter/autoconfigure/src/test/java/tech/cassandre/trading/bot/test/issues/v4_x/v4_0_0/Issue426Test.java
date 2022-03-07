@@ -34,17 +34,23 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
  * Issue : https://github.com/cassandre-tech/cassandre-trading-bot/issues/426
  */
 @SpringBootTest
-@ActiveProfiles("schedule-disabled")
 @DisplayName("Github issue 426")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
+@ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(Issue426TestMock.class)
 public class Issue426Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private TickerFlux tickerFlux;
+
+    @Autowired
+    private OrderFlux orderFlux;
+
+    @Autowired
+    private TradeFlux tradeFlux;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -56,16 +62,10 @@ public class Issue426Test extends BaseTest {
     private PositionRepository positionRepository;
 
     @Autowired
-    private TickerFlux tickerFlux;
-
-    @Autowired
-    private OrderFlux orderFlux;
-
-    @Autowired
-    private TradeFlux tradeFlux;
+    private TestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("Errors if trades arrives before order")
+    @DisplayName("Trades arrives before order")
     public void checkTradeBeforeOrder() throws InterruptedException {
         // First tickers - cp1 & cp2 (dry mode).
         // ETH, BTC - bid 0.2 / ask 0.2.

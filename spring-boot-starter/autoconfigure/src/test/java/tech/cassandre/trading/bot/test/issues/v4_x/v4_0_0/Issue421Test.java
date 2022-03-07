@@ -38,16 +38,16 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class Issue421Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
     private TickerFlux tickerFlux;
 
     @Autowired
     private OrderFlux orderFlux;
+
+    @Autowired
+    private TestableCassandreStrategy strategy;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("Duplicated orders in database")

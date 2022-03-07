@@ -37,6 +37,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
@@ -92,46 +94,67 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
         Set<BalanceDTO> balances = new LinkedHashSet<>();
         final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
         UserService userService = mock(UserService.class);
-        // Returns three updates.
 
         // =============================================================================================================
-        // Account retrieved by configuration.
+        // Account retrieved by configuration - Empty, just allowing the getTradeAccount() in configuration to work.
         AccountDTO tempAccount = AccountDTO.builder().accountId("03").name("trade").build();
-        accounts.put("trade", tempAccount);
+        accounts.put("03", tempAccount);
+        UserDTO tempUser = UserDTO.builder().accounts(accounts).build();
         accounts.clear();
 
-        // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
+        // =============================================================================================================
+        // Creating the response to the first call of the AccountFlux.
+        // User has three accounts:
+        // - Account 01 (No name with 1 BTC).
+        // - Account 02 (No name with 1 ETH).
+        // - Account 03 (Trade account with 2 BTC, 10 ETH, 2 000 USDT).
+
+        // User service response 01.
+        BalanceDTO account01Balance1 = BalanceDTO.builder().currency(BTC).available(new BigDecimal("1")).build();
         balances.add(account01Balance1);
-        AccountDTO account01 = AccountDTO.builder().accountId("01").name("trade").balances(balances).build();
+        AccountDTO account01 = AccountDTO.builder().accountId("01").balances(balances).build();
         accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().accounts(accounts).build();
+        UserDTO userResponse01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
-        // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
+        // User service response 02.
+        BalanceDTO account02Balance1 = BalanceDTO.builder().currency(ETH).available(new BigDecimal("1")).build();
         balances.add(account02Balance1);
         AccountDTO account02 = AccountDTO.builder().accountId("02").balances(balances).build();
         accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().accounts(accounts).build();
+        UserDTO userResponse02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
-        // Account 03.
-        BalanceDTO account03Balance1 = BalanceDTO.builder().currency(BTC).available(new BigDecimal("1")).build();
-        balances.add(account03Balance1);
-        BalanceDTO account03Balance2 = BalanceDTO.builder().currency(USDT).available(new BigDecimal("150")).build();
-        balances.add(account03Balance2);
+        // User service response 03.
+        balances.add(BalanceDTO.builder().currency(BTC).available(new BigDecimal("2")).build());
+        balances.add(BalanceDTO.builder().currency(ETH).available(new BigDecimal("10")).build());
+        balances.add(BalanceDTO.builder().currency(EUR).available(new BigDecimal("2000")).build());
         AccountDTO account03 = AccountDTO.builder().accountId("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().accounts(accounts).build();
+        UserDTO userResponse03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
-        // Mock replies.
-        given(userService.getUser()).willReturn(Optional.of(user01), Optional.of(user02), Optional.of(user03));
-        given(userService.getAccounts()).willReturn(user01.getAccounts(), user02.getAccounts(), user03.getAccounts());
+        // User service response 04.
+        balances.add(BalanceDTO.builder().currency(BTC).available(new BigDecimal("1")).build());
+        balances.add(BalanceDTO.builder().currency(ETH).available(new BigDecimal("10")).build());
+        balances.add(BalanceDTO.builder().currency(USDT).available(new BigDecimal("100")).build());
+        AccountDTO account04 = AccountDTO.builder().accountId("03").name("trade").balances(balances).build();
+        accounts.put("03", account04);
+        UserDTO userResponse04 = UserDTO.builder().accounts(accounts).build();
+        balances.clear();
+        accounts.clear();
+
+        // We have two different mock replies.
+        // StrategiesAutoConfiguration calls userService.getUser().
+        given(userService.getUser()).willReturn(Optional.of(tempUser));
+        // AccountFlux calls userService.getAccounts()
+        given(userService.getAccounts()).willReturn(userResponse01.getAccounts(),
+                userResponse02.getAccounts(),
+                userResponse03.getAccounts(),
+                userResponse04.getAccounts());
         return userService;
     }
 
@@ -271,19 +294,19 @@ public class BasicTa4jCassandreStrategyTestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        // Returns three values.
+        // Returns four values for getOrders().
         Set<OrderDTO> reply = new LinkedHashSet<>();
-        reply.add(OrderDTO.builder().orderId("000001").type(BID).strategy(strategyDTO).currencyPair(BTC_USDT).build());                // Order 01.
-        reply.add(OrderDTO.builder().orderId("000002").type(BID).strategy(strategyDTO).currencyPair(BTC_USDT).build());                // Order 02.
-        reply.add(OrderDTO.builder().orderId("000003").type(BID).strategy(strategyDTO).currencyPair(BTC_USDT).build());                // Order 03.
-        reply.add(OrderDTO.builder().orderId("000004").type(BID).strategy(strategyDTO).currencyPair(BTC_USDT).build());                // Order 04.
+        reply.add(OrderDTO.builder().orderId("000001").type(BID).strategy(strategyDTO).currencyPair(BTC_USDT).build());         // Order 01.
+        reply.add(OrderDTO.builder().orderId("000002").type(BID).strategy(strategyDTO).currencyPair(BTC_USDT).build());         // Order 02.
+        reply.add(OrderDTO.builder().orderId("000003").type(BID).strategy(strategyDTO).currencyPair(BTC_USDT).build());         // Order 03.
+        reply.add(OrderDTO.builder().orderId("000004").type(BID).strategy(strategyDTO).currencyPair(BTC_USDT).build());         // Order 04.
         given(service.getOrders()).willReturn(reply);
 
         // Returns three values for getTrades().
         Set<TradeDTO> replyGetTrades = new LinkedHashSet<>();
-        replyGetTrades.add(TradeDTO.builder().tradeId("0000001").orderId("000001").type(BID).currencyPair(BTC_USDT).build());      // Trade 01.
-        replyGetTrades.add(TradeDTO.builder().tradeId("0000002").orderId("000002").type(BID).currencyPair(BTC_USDT).build());      // Trade 02.
-        replyGetTrades.add(TradeDTO.builder().tradeId("0000003").orderId("000003").type(BID).currencyPair(BTC_USDT).build());      // Trade 03.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000001").orderId("000001").type(BID).currencyPair(BTC_USDT).build());   // Trade 01.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000002").orderId("000002").type(BID).currencyPair(BTC_USDT).build());   // Trade 02.
+        replyGetTrades.add(TradeDTO.builder().tradeId("0000003").orderId("000003").type(BID).currencyPair(BTC_USDT).build());   // Trade 03.
         given(service.getTrades()).willReturn(replyGetTrades);
 
         return service;

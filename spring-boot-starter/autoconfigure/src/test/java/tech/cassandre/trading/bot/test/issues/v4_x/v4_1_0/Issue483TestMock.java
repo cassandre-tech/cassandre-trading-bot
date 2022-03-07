@@ -1,7 +1,5 @@
 package tech.cassandre.trading.bot.test.issues.v4_x.v4_1_0;
 
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.test.context.TestConfiguration;
 import tech.cassandre.trading.bot.test.util.junit.BaseMock;
@@ -19,11 +17,10 @@ public class Issue483TestMock extends BaseMock {
     public MarketDataService getXChangeMarketDataServiceMock() throws IOException {
         MarketDataService marketService = mock(MarketDataService.class);
 
-        // Replies for BTC/USDT.
-        CurrencyPair cp = new CurrencyPair(Currency.ETH, Currency.BTC);
+        // Replies for ETH/BTC.
         given(marketService
-                .getTicker(cp))
-                .willReturn(getGeneratedTicker(cp, new BigDecimal("1")));
+                .getTicker(XCHANGE_ETH_BTC))
+                .willReturn(getGeneratedTicker(XCHANGE_ETH_BTC, new BigDecimal("1")));
         return marketService;
     }
 

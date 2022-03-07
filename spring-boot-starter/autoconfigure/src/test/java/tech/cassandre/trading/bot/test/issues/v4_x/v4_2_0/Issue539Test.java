@@ -19,20 +19,20 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
-@ActiveProfiles("schedule-disabled")
 @DisplayName("Github issue 539")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
+@ActiveProfiles("schedule-disabled")
 @Import(Issue539TestMock.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class Issue539Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private TickerFlux tickerFlux;
 
     @Autowired
-    private TickerFlux tickerFlux;
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check scheduled tasks continue to work after exception")

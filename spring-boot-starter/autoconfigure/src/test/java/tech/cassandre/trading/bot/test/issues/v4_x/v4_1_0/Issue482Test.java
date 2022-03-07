@@ -27,10 +27,10 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class Issue482Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private TickerFlux tickerFlux;
 
     @Autowired
-    private TickerFlux tickerFlux;
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Cannot retrieve binance tickers due to missing timestamp")

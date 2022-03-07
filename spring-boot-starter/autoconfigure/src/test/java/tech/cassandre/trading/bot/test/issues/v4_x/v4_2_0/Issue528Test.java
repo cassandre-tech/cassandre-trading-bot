@@ -28,8 +28,8 @@ public class Issue528Test extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("Check accounts are in strategy before flux")
-    public void checkAccountsInStrategyBeforeFlux() {
+    @DisplayName("Check accounts are in strategy before flux starts")
+    public void checkAccountsInStrategyBeforeFluxStarts() {
         assertEquals(3, strategy.getAccounts().size());
     }
 

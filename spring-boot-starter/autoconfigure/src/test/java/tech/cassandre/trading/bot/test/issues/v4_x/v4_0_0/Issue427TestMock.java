@@ -11,7 +11,6 @@ import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
@@ -28,9 +27,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.NEW;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
 @TestConfiguration
@@ -69,25 +65,23 @@ public class Issue427TestMock extends BaseTest {
         // Creates the mock.
         MarketService marketService = mock(MarketService.class);
 
-        // Replies for ETH / BTC.
-        final CurrencyPairDTO cp1 = new CurrencyPairDTO(ETH, BTC);
+        // Replies for ETH/BTC.
         given(marketService
-                .getTicker(cp1))
+                .getTicker(ETH_BTC))
                 .willReturn(
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.2")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(2)).last(new BigDecimal("0.3")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(3)).last(new BigDecimal("0.4")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp1).timestamp(createZonedDateTime(4)).last(new BigDecimal("0.4")).build())
+                        Optional.of(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(1)).last(new BigDecimal("0.2")).build()),
+                        Optional.of(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(2)).last(new BigDecimal("0.3")).build()),
+                        Optional.of(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(3)).last(new BigDecimal("0.4")).build()),
+                        Optional.of(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(4)).last(new BigDecimal("0.4")).build())
                 );
-        // Replies for ETH / USDT.
-        final CurrencyPairDTO cp2 = new CurrencyPairDTO(ETH, USDT);
+        // Replies for ETH/USDT.
         given(marketService
-                .getTicker(cp2))
+                .getTicker(ETH_USDT))
                 .willReturn(
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createZonedDateTime(5)).last(new BigDecimal("0.3")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createZonedDateTime(6)).last(new BigDecimal("0.3")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createZonedDateTime(7)).last(new BigDecimal("0.6")).build()),
-                        Optional.of(TickerDTO.builder().currencyPair(cp2).timestamp(createZonedDateTime(8)).last(new BigDecimal("0.1")).build())
+                        Optional.of(TickerDTO.builder().currencyPair(ETH_USDT).timestamp(createZonedDateTime(5)).last(new BigDecimal("0.3")).build()),
+                        Optional.of(TickerDTO.builder().currencyPair(ETH_USDT).timestamp(createZonedDateTime(6)).last(new BigDecimal("0.3")).build()),
+                        Optional.of(TickerDTO.builder().currencyPair(ETH_USDT).timestamp(createZonedDateTime(7)).last(new BigDecimal("0.6")).build()),
+                        Optional.of(TickerDTO.builder().currencyPair(ETH_USDT).timestamp(createZonedDateTime(8)).last(new BigDecimal("0.1")).build())
                 );
         return marketService;
     }
@@ -97,6 +91,7 @@ public class Issue427TestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
+        // getOrders() replies.
         LinkedHashSet<OrderDTO> orders = new LinkedHashSet<>();
         orders.add(OrderDTO.builder()
                 .orderId("ORDER_000001")
@@ -111,7 +106,6 @@ public class Issue427TestMock extends BaseTest {
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .build());
-
         orders.add(OrderDTO.builder()
                 .orderId("ORDER_000002")
                 .type(ASK)
@@ -125,7 +119,6 @@ public class Issue427TestMock extends BaseTest {
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .build());
-        // getOrders() replies.
         given(service.getOrders()).willReturn(orders);
 
         return service;

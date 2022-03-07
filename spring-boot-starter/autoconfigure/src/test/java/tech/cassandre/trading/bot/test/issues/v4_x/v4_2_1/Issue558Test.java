@@ -31,17 +31,17 @@ import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreS
 public class Issue558Test extends BaseTest {
 
     @Autowired
-    private LargeTestableCassandreStrategy strategy;
+    private TickerFlux tickerFlux;
 
     @Autowired
-    private TickerFlux tickerFlux;
+    private LargeTestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check getTickers() on marketService")
     public void checkGetTickers() {
         tickerFlux.update();
 
-        // We should receive three tickers with juste one call to getFlux.
+        // We only call ticker flux update() one time but should receive three tickers.
         await().untilAsserted(() -> assertEquals(3, strategy.getTickersUpdatesReceived().size()));
     }
 
