@@ -117,10 +117,20 @@ public abstract class BasicTa4jCassandreStrategy extends CassandreStrategy {
      *
      * @param newStrategy strategy
      */
-    public void updateStrategy(final Strategy newStrategy) {
+    public void updateTA4JStrategy(final Strategy newStrategy) {
         if (newStrategy != null) {
             strategy = newStrategy;
         }
+    }
+
+    /**
+     * Update the Ta4j strategy used by Cassandre strategy. Use updateTA4JStrategy().
+     *
+     * @param newStrategy strategy
+     */
+    @Deprecated
+    public void updateStrategy(final Strategy newStrategy) {
+        updateTA4JStrategy(newStrategy);
     }
 
     @Override

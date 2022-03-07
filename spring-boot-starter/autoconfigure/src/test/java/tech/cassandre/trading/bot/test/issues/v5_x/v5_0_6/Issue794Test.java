@@ -50,7 +50,7 @@ public class Issue794Test extends BaseTest {
         final BaseStrategy newStrategy = new BaseStrategy("New strategy", new UnderIndicatorRule(sma, closePrice), new OverIndicatorRule(sma, closePrice));
 
         // Updating the strategy and checking the change.
-        strategy.updateStrategy(newStrategy);
+        strategy.updateTA4JStrategy(newStrategy);
         assertEquals("New strategy", strategy.getExecutedStrategy().getName());
     }
 

@@ -30,8 +30,8 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false"),
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/issues/issue852.yaml")
 })
-@Import(Issue852TestMock.class)
 @ActiveProfiles("schedule-disabled")
+@Import(Issue852TestMock.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class Issue852Test {
 

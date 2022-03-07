@@ -32,8 +32,8 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false"),
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/issues/issue850.yaml")
 })
-@Import(Issue850TestMock.class)
 @ActiveProfiles("schedule-disabled")
+@Import(Issue850TestMock.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class Issue850Test {
 
@@ -41,7 +41,7 @@ public class Issue850Test {
     private PositionService positionService;
 
     @Test
-    @DisplayName("Fees can be in different currencies on one position")
+    @DisplayName("Fees can be in different currencies on a single position")
     public void badFeesManagement() {
         // Position 1 - Data description is here: src/test/resources/db/test/issues/issue850.sql.
         final Optional<PositionDTO> position1 = positionService.getPositionByUid(1);

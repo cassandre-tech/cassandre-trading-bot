@@ -42,13 +42,13 @@ public class Issue736Test {
     private TestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("initialize() method on strategy")
+    @DisplayName("Initialize() method on strategy")
     public void testCurrencySerialization() {
         await().untilAsserted(() -> assertTrue(strategy.isInitialized()));
     }
 
     @Test
-    @DisplayName("imported tickers")
+    @DisplayName("Imported tickers")
     public void testImportedTickers() {
         // We wait for initialized to be sure all data have been imported.
         await().untilAsserted(() -> assertTrue(strategy.isInitialized()));

@@ -48,10 +48,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class Issue863Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private PositionService positionService;
+    private TickerFlux tickerFlux;
 
     @Autowired
     private OrderFlux orderFlux;
@@ -60,7 +57,10 @@ public class Issue863Test extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Autowired
-    private TickerFlux tickerFlux;
+    private PositionService positionService;
+
+    @Autowired
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check position auto close")
@@ -133,15 +133,15 @@ public class Issue863Test extends BaseTest {
     /**
      * Retrieve position from database.
      *
-     * @param id position id
+     * @param uid position uid
      * @return position
      */
-    private PositionDTO getPositionDTO(final long id) {
-        final Optional<PositionDTO> p = positionService.getPositionByUid(id);
+    private PositionDTO getPositionDTO(final long uid) {
+        final Optional<PositionDTO> p = positionService.getPositionByUid(uid);
         if (p.isPresent()) {
             return p.get();
         } else {
-            throw new NoSuchElementException("Position not found : " + id);
+            throw new NoSuchElementException("Position not found : " + uid);
         }
     }
 
