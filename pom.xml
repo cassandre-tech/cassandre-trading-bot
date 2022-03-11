@@ -90,7 +90,7 @@
 		<ta4j.version>0.14</ta4j.version>
 
 		<!-- Tests -->
-		<junit-pioneer.version>1.6.1</junit-pioneer.version>
+		<junit-pioneer.version>1.6.2</junit-pioneer.version>
 		<awaitility.version>4.2.0</awaitility.version>
 		<hsqldb.version>2.6.1</hsqldb.version>
 		<jackson.version>2.12.6</jackson.version>
