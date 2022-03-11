@@ -24,7 +24,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
  */
 @ActiveProfiles("schedule-disabled")
 @DisplayName("Strategy data fetcher test")
-@SpringBootTest(classes = {CassandreTradingBot.class, DgsAutoConfiguration.class, StrategyDataFetcher.class})
+@SpringBootTest(classes = {DgsAutoConfiguration.class, CassandreTradingBot.class, DgsAutoConfiguration.class, StrategyDataFetcher.class})
 @TestPropertySource(properties = {"spring.liquibase.change-log = classpath:db/test/core/complete-database.yaml"})
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class StrategyDataFetcherTest {

@@ -178,10 +178,22 @@ public class BaseMock extends BaseTest {
                 new Date()                  // Timestamp.
         );
 
+        Balance account01Balance2 = new Balance(
+                Currency.ETH,               // Currency.
+                new BigDecimal("11"),    // Total.
+                new BigDecimal("22"),    // Available.
+                new BigDecimal("33"),    // Frozen.
+                new BigDecimal("44"),    // Borrowed
+                new BigDecimal("55"),    // Loaned.
+                new BigDecimal("66"),    // Withdrawing.
+                new BigDecimal("77"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
         return new AccountInfo(
                 new Wallet("trade",
                         "trade account name",
-                        List.of(account01Balance1),
+                        List.of(account01Balance1, account01Balance2),
                         Collections.emptySet(),
                         ZERO,
                         ZERO),

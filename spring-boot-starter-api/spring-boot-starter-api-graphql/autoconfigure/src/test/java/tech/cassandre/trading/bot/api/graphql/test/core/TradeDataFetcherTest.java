@@ -30,7 +30,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
  */
 @ActiveProfiles("schedule-disabled")
 @DisplayName("Trade data fetcher test")
-@SpringBootTest(classes = {CassandreTradingBot.class, DgsAutoConfiguration.class, TradeDataFetcher.class})
+@SpringBootTest(classes = {DgsAutoConfiguration.class, CassandreTradingBot.class, DgsAutoConfiguration.class, TradeDataFetcher.class})
 @TestPropertySource(properties = {"spring.liquibase.change-log = classpath:db/test/core/complete-database.yaml"})
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class TradeDataFetcherTest extends BaseDataFetcherTest {

@@ -2,7 +2,7 @@
 type Position {
     "Position unique ID."
     uid: Int!
-    "An identifier that uniquely identifies the position."
+    "An identifier that uniquely identifies this position for a strategy."
     positionId: Int!
     "Position type (Long or Short)."
     type: PositionType!
@@ -15,7 +15,8 @@ type Position {
     "Position rules."
     rules: PositionRules!
     "Position status."
-    status: PositionStatus
+    status: PositionStatus!
+    # TODO Add autoclose field.
     "Indicates that the position must be closed no matter the rules."
     forceClosing: Boolean!
     "The order created to open the position."

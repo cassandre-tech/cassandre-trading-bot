@@ -26,6 +26,8 @@ public abstract class BaseDataFetcherTest {
     /** UNI/USDT. */
     public static final CurrencyPairDTO UNI_USDT = new CurrencyPairDTO(UNI, USDT);
 
+    // TODO Delete all those ugly methods!
+
     /**
      * Returns a strategy value from graphql result.
      *

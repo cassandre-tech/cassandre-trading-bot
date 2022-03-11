@@ -1078,7 +1078,7 @@ public final class CurrencyDTO implements Serializable {
             return false;
         }
         CurrencyDTO other = (CurrencyDTO) obj;
-        return attributes.equals(other.attributes);
+        return code.equals(other.code);
     }
 
     /**

@@ -2,8 +2,9 @@
 type Gain {
     "Gain made (percentage)."
     percentage: Float
-    "Gain made (amount)."
+    "Gain made (currency amount)."
     amount: CurrencyAmount
+    # TODO Fees should be a list.
     "Fees."
     fees: CurrencyAmount
 }

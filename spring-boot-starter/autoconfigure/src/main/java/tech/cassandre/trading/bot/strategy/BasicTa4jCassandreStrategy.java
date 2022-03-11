@@ -97,7 +97,7 @@ public abstract class BasicTa4jCassandreStrategy extends CassandreStrategy {
     public abstract Duration getDelayBetweenTwoBars();
 
     /**
-     * Implements this method to tell the bot which strategy to apply.
+     * Implements this method to return the TA4 strategy to execute.
      *
      * @return strategy
      */

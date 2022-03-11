@@ -26,6 +26,31 @@
             <groupId>com.netflix.graphql.dgs</groupId>
             <artifactId>graphql-dgs-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.netflix.graphql.dgs</groupId>
+            <artifactId>graphql-dgs-client</artifactId>
+            <version>4.9.22</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.graphql.dgs.codegen</groupId>
+            <artifactId>graphql-dgs-codegen-core</artifactId>
+            <version>5.1.17</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.graphql.dgs.codegen</groupId>
+            <artifactId>graphql-dgs-codegen-client-core</artifactId>
+            <version>5.1.17</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.graphql.dgs</groupId>
+            <artifactId>graphql-dgs-mocking</artifactId>
+            <version>4.9.22</version>
+        </dependency>
+        <dependency>
+            <groupId>com.apollographql.federation</groupId>
+            <artifactId>federation-graphql-java-support</artifactId>
+            <version>0.9.0</version>
+        </dependency>
        <dependency>
             <groupId>com.netflix.graphql.dgs</groupId>
             <artifactId>graphql-dgs-extended-scalars</artifactId>
@@ -92,6 +117,60 @@
     <build>
         <!-- Plugins -->
         <plugins>
+            <!-- DGS Code Generation plugin generates code -->
+            <plugin>
+                <groupId>io.github.deweyjose</groupId>
+                <artifactId>graphqlcodegen-maven-plugin</artifactId>
+                <version>${maven.graphqlcodegen.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <typeMapping>
+                        <BigDecimal>java.math.BigDecimal</BigDecimal>
+                        <Date>java.time.ZonedDateTime</Date>
+                        <Currency>tech.cassandre.trading.bot.dto.util.CurrencyDTO</Currency>
+                    </typeMapping>
+                    <schemaPaths>
+                        <param>src/main/resources/schema/account.graphqls</param>
+                        <param>src/main/resources/schema/balance.graphqls</param>
+                        <param>src/main/resources/schema/configuration.graphqls</param>
+                        <param>src/main/resources/schema/currency.graphqls</param>
+                        <param>src/main/resources/schema/currency-amount.graphqls</param>
+                        <param>src/main/resources/schema/currency-pair.graphqls</param>
+                        <param>src/main/resources/schema/gain.graphqls</param>
+                        <param>src/main/resources/schema/order.graphqls</param>
+                        <param>src/main/resources/schema/position.graphqls</param>
+                        <param>src/main/resources/schema/position-rules.graphqls</param>
+                        <param>src/main/resources/schema/query.graphqls</param>
+                        <param>src/main/resources/schema/strategy.graphqls</param>
+                        <param>src/main/resources/schema/trade.graphqls</param>
+                    </schemaPaths>
+                    <packageName>tech.cassandre.trading.bot.api.graphql.client.generated</packageName>
+                    <generateClient>true</generateClient>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Checkstyle verification -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -114,6 +193,7 @@
                 </executions>
                 <configuration>
                     <excludes>**/mapper/**/*</excludes>
+                    <excludes>**/generated/**/*</excludes>
                     <consoleOutput>true</consoleOutput>
                     <configLocation>../../../checkstyle_configuration.xml</configLocation>
                     <failOnViolation>true</failOnViolation>

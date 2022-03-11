@@ -2,9 +2,9 @@ type Query {
     "Returns configuration."
     configuration: Configuration
 
-    "Retours all the accounts."
+    "Retours all user accounts."
     accounts: [Account]
-    "Returns the account with the corresponding id."
+    "Returns the account with the corresponding account id."
     accountByAccountId("Accound id" accountId: String): Account
 
     "Returns all the strategies."
@@ -18,13 +18,13 @@ type Query {
     positions: [Position]
     "Returns the position with the corresponding uid."
     position("Position uid" uid: Int): Position
-    "Returns all the positions of the specified strategy."
+    "Returns all the positions of the specified strategy uid."
     positionsByStrategy("Strategy uid" uid: Int): [Position]
-    "Returns all the positions of the specified strategy."
+    "Returns all the positions of the specified strategy id."
     positionsByStrategyId("Strategy id" strategyId: String): [Position]
-    "Returns all the positions of the specified strategy and a certain status."
+    "Returns all the positions of the specified strategy uid and a certain status."
     positionsByStrategyAndStatus("Strategy uid" uid: Int, "Position status" status: PositionStatus): [Position]
-    "Returns all the positions of the specified strategy and a certain status."
+    "Returns all the positions of the specified strategy id and a certain status."
     positionsByStrategyIdAndStatus("Strategy strategyId" strategyId: String, "Position status" status: PositionStatus): [Position]
 
     "Returns all the orders."
