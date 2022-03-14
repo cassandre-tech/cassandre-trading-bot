@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.api.graphql.test.util.base;
 
+import tech.cassandre.trading.bot.api.graphql.client.generated.types.CurrencyPair;
 import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
@@ -21,10 +22,10 @@ public abstract class BaseDataFetcherTest {
     public static final CurrencyDTO UNI = new CurrencyDTO("UNI");
 
     /** BTC/USDT. */
-    public static final CurrencyPairDTO BTC_USDT = new CurrencyPairDTO(BTC, USDT);
+    public static final CurrencyPair BTC_USDT = new CurrencyPair(BTC, USDT);
 
     /** UNI/USDT. */
-    public static final CurrencyPairDTO UNI_USDT = new CurrencyPairDTO(UNI, USDT);
+    public static final CurrencyPair UNI_USDT = new CurrencyPair(UNI, USDT);
 
     // TODO Delete all those ugly methods!
 
