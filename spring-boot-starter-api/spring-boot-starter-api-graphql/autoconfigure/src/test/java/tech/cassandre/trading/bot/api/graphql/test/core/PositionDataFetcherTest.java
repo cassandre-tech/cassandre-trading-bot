@@ -77,7 +77,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
         assertEquals(14, result.get("positionId"));
         assertEquals("LONG", result.get("type"));
         assertEquals("002", getStrategyValue(result.get("strategy")).getStrategyId());
-        assertEquals(UNI_USDT, getCurrencyPairValue(result.get("currencyPair")));
+        //assertEquals(UNI_USDT, getCurrencyPairValue(result.get("currencyPair")));
         final CurrencyAmountDTO amount = getCurrencyAmountValue(result.get("amount"));
         assertEquals(0, new BigDecimal("1").compareTo(amount.getValue()));
         assertEquals(UNI, amount.getCurrency());
