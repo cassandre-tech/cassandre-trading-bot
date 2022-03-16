@@ -7,7 +7,6 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
@@ -16,6 +15,7 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.Set;
 
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.UNI;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
@@ -28,7 +28,7 @@ public class UNIStrategy extends BasicTa4jCassandreStrategy {
 
     @Override
     public CurrencyPairDTO getRequestedCurrencyPair() {
-        return new CurrencyPairDTO(new CurrencyDTO("UNI"), USDT);
+        return new CurrencyPairDTO(UNI, USDT);
     }
 
     @Override

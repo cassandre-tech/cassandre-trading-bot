@@ -65,7 +65,6 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.Trades + "[*]",
                 new TypeRef<>() {
                 });
-
         // Tests.
         assertEquals(416, orders.size());
     }
