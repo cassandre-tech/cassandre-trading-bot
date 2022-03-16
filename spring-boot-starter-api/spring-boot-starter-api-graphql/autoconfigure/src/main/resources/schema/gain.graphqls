@@ -1,10 +1,9 @@
 "Gain."
 type Gain {
-    "Gain made (percentage)."
+    "Gain percentage."
     percentage: Float
-    "Gain made (currency amount)."
+    "Gain amount."
     amount: CurrencyAmount
-    # TODO Fees should be a list.
-    "Fees."
-    fees: CurrencyAmount
+    "Fees (from opening and closing orders)."
+    fees: [CurrencyAmount]
 }

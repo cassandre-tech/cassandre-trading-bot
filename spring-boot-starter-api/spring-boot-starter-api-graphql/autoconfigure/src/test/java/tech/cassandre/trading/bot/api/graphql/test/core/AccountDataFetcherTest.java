@@ -63,7 +63,6 @@ public class AccountDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.Accounts + "[*]",
                 new TypeRef<>() {
                 });
-
         // Tests.
         assertEquals(2, accounts.size());
 
@@ -73,7 +72,7 @@ public class AccountDataFetcherTest extends BaseDataFetcherTest {
         assertEquals("trade", tradeAccount.get().getAccountId());
         assertEquals("trade account name", tradeAccount.get().getName());
 
-        // Trade account tests.
+        // Savings account tests.
         final Optional<Account> savingsAccount = accounts.stream().filter(account -> "savings".equals(account.getAccountId())).findAny();
         assertTrue(savingsAccount.isPresent());
         assertEquals("savings", savingsAccount.get().getAccountId());
@@ -104,8 +103,7 @@ public class AccountDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.AccountByAccountId,
                 new TypeRef<>() {
                 });
-
-        // Testing account.
+        // Tests
         assertNotNull(account);
         assertEquals("trade", account.getAccountId());
         assertEquals("trade account name", account.getName());

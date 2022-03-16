@@ -46,7 +46,7 @@ public class Issue850Test {
         // Position 1 - Data description is here: src/test/resources/db/test/issues/issue850.sql.
         final Optional<PositionDTO> position1 = positionService.getPositionByUid(1);
         assertTrue(position1.isPresent());
-        final Map<CurrencyDTO, CurrencyAmountDTO> ordersFees = position1.get().getGain().getOrdersFees();
+        final Map<CurrencyDTO, CurrencyAmountDTO> ordersFees = position1.get().getGain().getFeesByCurrency();
 
         // ETH: 0.00002000+0.00003000+1.50000000+0.50002000 = 2.00007
         // BTC: 0.00004000+1.00002000 = 1.00006

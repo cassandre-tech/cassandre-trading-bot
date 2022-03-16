@@ -41,16 +41,6 @@ public class AccountDTO {
     /**
      * Returns balance of a currency.
      *
-     * @param currencyCode currency code
-     * @return balance
-     */
-    public Optional<BalanceDTO> getBalance(final String currencyCode) {
-        return getBalance(new CurrencyDTO(currencyCode));
-    }
-
-    /**
-     * Returns balance of a currency.
-     *
      * @param currency currency
      * @return balance
      */

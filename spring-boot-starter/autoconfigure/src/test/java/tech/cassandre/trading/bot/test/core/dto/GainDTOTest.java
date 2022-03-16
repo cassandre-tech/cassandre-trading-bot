@@ -26,7 +26,7 @@ public class GainDTOTest {
         // Testing zero gain constant toString().
         final GainDTO gain1 = GainDTO.ZERO;
         assertEquals("No gain", gain1.toString());
-        assertEquals(0, gain1.getOrdersFees().size());
+        assertEquals(0, gain1.getFeesByCurrency().size());
 
         // We create a complete complex gain.
         final GainDTO gain2 = GainDTO.builder()
@@ -50,7 +50,7 @@ public class GainDTOTest {
         // Closing order fees list.
         assertEquals(3, gain2.getClosingOrderFees().size());
         // Global fees.
-        final Map<CurrencyDTO, CurrencyAmountDTO> ordersFees = gain2.getOrdersFees();
+        final Map<CurrencyDTO, CurrencyAmountDTO> ordersFees = gain2.getFeesByCurrency();
         assertEquals(4, ordersFees.size());
         assertEquals(0, new BigDecimal("4.7").compareTo(ordersFees.get(BTC).getValue()));
         assertEquals(0, new BigDecimal("1.3").compareTo(ordersFees.get(ETH).getValue()));

@@ -29,6 +29,7 @@
         <dependency>
             <groupId>com.netflix.graphql.dgs</groupId>
             <artifactId>graphql-dgs-client</artifactId>
+            <!-- TODO Remove version in pom -->
             <version>4.9.22</version>
         </dependency>
         <dependency>

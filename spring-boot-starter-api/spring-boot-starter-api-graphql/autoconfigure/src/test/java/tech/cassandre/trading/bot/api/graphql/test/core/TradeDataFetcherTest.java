@@ -91,8 +91,7 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.Trade,
                 new TypeRef<>() {
                 });
-
-        // Testing the trade.
+        // Tests.
         assertNotNull(trade);
         assertEquals(24, trade.getUid());
         assertEquals("60df231c2e113d2923052d18", trade.getTradeId());
@@ -139,8 +138,7 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.TradeByTradeId,
                 new TypeRef<>() {
                 });
-
-        // Testing the trade.
+        // Tests.
         assertNotNull(trade);
         assertEquals(24, trade.getUid());
         assertEquals("60df231c2e113d2923052d18", trade.getTradeId());

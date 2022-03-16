@@ -43,11 +43,11 @@ public class Issue510Test extends BaseTest {
         // Check fees in position 6 (they must be in USDT in Kucoin data).
         final Optional<PositionDTO> position = strategy.getPositionByPositionId(6);
         assertTrue(position.isPresent());
-        final Map<CurrencyDTO, CurrencyAmountDTO> fees = position.get().getGain().getOrdersFees();
+        final Map<CurrencyDTO, CurrencyAmountDTO> fees = position.get().getGain().getFeesByCurrency();
         assertEquals(1, fees.size());
-        assertNull(position.get().getGain().getOrdersFees().get(BTC));
-        assertNotNull(position.get().getGain().getOrdersFees().get(USDT));
-        assertNotNull(position.get().getGain().getOrdersFees().get(USDT));
+        assertNull(position.get().getGain().getFeesByCurrency().get(BTC));
+        assertNotNull(position.get().getGain().getFeesByCurrency().get(USDT));
+        assertNotNull(position.get().getGain().getFeesByCurrency().get(USDT));
     }
 
 }

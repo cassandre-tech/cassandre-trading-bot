@@ -2,6 +2,6 @@
 type CurrencyAmount {
     "Amount value."
     value: BigDecimal
-    "Currency."
+    "Amount currency."
     currency: Currency
 }

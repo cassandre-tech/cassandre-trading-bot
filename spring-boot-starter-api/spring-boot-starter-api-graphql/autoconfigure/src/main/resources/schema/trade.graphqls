@@ -24,6 +24,7 @@ type Trade {
     timestamp: DateTime
 }
 
+"Trade type."
 enum TradeType {
     "Buying."
     BID

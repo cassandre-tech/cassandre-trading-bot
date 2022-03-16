@@ -48,12 +48,21 @@ public class GainDTO {
     List<CurrencyAmountDTO> closingOrderFees;
 
     /**
-     * Returns the sum of fees from opening and closing orders.
+     * Returns the fees from opening and closing orders.
+     *
+     * @return fees from opening and closing orders
+     */
+    public List<CurrencyAmountDTO> getFees() {
+        return getFeesByCurrency().values().stream().toList();
+    }
+
+    /**
+     * Returns the sum of fees from opening and closing orders by currency.
      *
      * @return fees
      */
     @SuppressWarnings("checkstyle:DesignForExtension")
-    public Map<CurrencyDTO, CurrencyAmountDTO> getOrdersFees() {
+    public Map<CurrencyDTO, CurrencyAmountDTO> getFeesByCurrency() {
         return Stream.concat(openingOrderFees.stream(), closingOrderFees.stream())
                 .collect(Collectors.groupingBy(
                         CurrencyAmountDTO::getCurrency,

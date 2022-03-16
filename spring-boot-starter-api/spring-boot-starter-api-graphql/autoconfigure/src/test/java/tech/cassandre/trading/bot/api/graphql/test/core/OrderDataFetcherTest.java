@@ -92,8 +92,7 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.Order,
                 new TypeRef<>() {
                 });
-
-        // Testing the order.
+        // Tests.
         assertNotNull(order);
         assertEquals(1, order.getUid());
         assertEquals("60ddfbc11f8b45000696de3f", order.getOrderId());
@@ -148,8 +147,7 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.OrderByOrderId,
                 new TypeRef<>() {
                 });
-
-        // Testing the order.
+        // Tests.
         assertNotNull(order);
         assertEquals(1, order.getUid());
         assertEquals("60ddfbc11f8b45000696de3f", order.getOrderId());

@@ -48,13 +48,13 @@ public class OrderDTO {
     /** Amount to be ordered / amount that was ordered. */
     CurrencyAmountDTO amount;
 
-    /** Weighted Average price of the fills in the order. */
+    /** Weighted average price of the fills in the order. */
     CurrencyAmountDTO averagePrice;
 
     /** Limit price. */
     CurrencyAmountDTO limitPrice;
 
-    /** Market price - The price Cassandre knew when the order was created. */
+    /** Market price - The price Cassandre had when the order was created. */
     CurrencyAmountDTO marketPrice;
 
     /** The leverage to use for margin related to this order. */
@@ -73,7 +73,7 @@ public class OrderDTO {
     /** The timestamp of the order. */
     ZonedDateTime timestamp;
 
-    /** All trades related to the order. */
+    /** All trades related to this order. */
     @Singular
     Set<TradeDTO> trades;
 

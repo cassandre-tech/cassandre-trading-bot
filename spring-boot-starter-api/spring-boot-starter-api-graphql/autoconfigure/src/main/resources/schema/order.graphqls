@@ -12,7 +12,7 @@ type Order {
     currencyPair: CurrencyPair!
     "Amount to be ordered / amount that was ordered."
     amount: CurrencyAmount!
-    "Weighted Average price of the fills in the order."
+    "Weighted average price of the fills in the order."
     averagePrice: CurrencyAmount
     "Limit price."
     limitPrice: CurrencyAmount
@@ -21,14 +21,14 @@ type Order {
     "The leverage to use for margin related to this order."
     leverage: String
     "Order status."
-    status: OrderStatus
+    status: OrderStatus!
     "Amount to be ordered / amount that has been matched against order on the order book/filled."
     cumulativeAmount: CurrencyAmount
     "An identifier provided by the user on placement that uniquely identifies the order."
     userReference: String
     "The timestamp of the order."
     timestamp: DateTime
-    "All trades related to order."
+    "All trades related to this order."
     trades: [Trade]
 }
 
@@ -40,6 +40,7 @@ enum OrderType {
     ASK
 }
 
+"Order status."
 enum OrderStatus {
     "Initial order when instantiated."
     PENDING_NEW

@@ -78,7 +78,6 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.Positions + "[*]",
                 new TypeRef<>() {
                 });
-
         // Tests.
         assertEquals(182, positions.size());
     }
@@ -97,6 +96,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
                         .amount().value().currency().code().getParent().getParent()
                         .rules().stopGainPercentage().stopLossPercentage().getParent()
                         .status().getParent()
+                        .autoClose()
                         .forceClosing()
                         .openingOrder().uid().orderId().getParent()
                         .closingOrder().uid().orderId().getParent()
@@ -110,8 +110,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.Position,
                 new TypeRef<>() {
                 });
-
-        // Testing the position values.
+        // Tests.
         assertNotNull(position);
         assertEquals(31, position.getUid());
         assertEquals(14, position.getPositionId());
@@ -127,6 +126,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
         assertEquals(6L, position.getRules().getStopGainPercentage());
         assertEquals(15L, position.getRules().getStopLossPercentage());
         assertEquals(CLOSED, position.getStatus());
+        assertTrue(position.getAutoClose());
         assertFalse(position.getForceClosing());
         assertEquals(49, position.getOpeningOrder().getUid());
         assertEquals(54, position.getClosingOrder().getUid());
@@ -158,7 +158,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.PositionsByStrategy,
                 new TypeRef<>() {
                 });
-        // Test.
+        // Tests.
         assertEquals(90, positions.size());
     }
 
@@ -175,7 +175,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.PositionsByStrategyId,
                 new TypeRef<>() {
                 });
-        // Test.
+        // Tests.
         assertEquals(92, positions.size());
     }
 
@@ -193,7 +193,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.PositionsByStrategyAndStatus,
                 new TypeRef<>() {
                 });
-        // Test.
+        // Tests.
         assertEquals(82, positions.size());
     }
 
@@ -210,7 +210,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.PositionsByStrategyIdAndStatus,
                 new TypeRef<>() {
                 });
-        // Test.
+        // Tests.
         assertEquals(8, positions.size());
     }
 

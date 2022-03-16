@@ -48,8 +48,7 @@ public class ConfigurationDataFetcherTest {
                 "data." + DgsConstants.QUERY.Configuration,
                 new TypeRef<>() {
                 });
-
-        // Testing configuration.
+        // Tests.
         assertNotNull(configuration);
         assertEquals("1.1", configuration.getApiVersion());
     }
