@@ -2,17 +2,17 @@ type Query {
     "Returns configuration."
     configuration: Configuration
 
-    "Retours all user accounts."
+    "Returns all user accounts."
     accounts: [Account]
     "Returns the account with the corresponding account id."
     accountByAccountId("Accound id" accountId: String): Account
 
     "Returns all the strategies."
     strategies: [Strategy]
-    "Returns the strategy with the corresponding uid."
+    "Returns the strategy with the corresponding strategy uid."
     strategy("Strategy uid" uid: Int): Strategy
-    "Returns the strategy with the corresponding strategyId."
-    strategyByStrategyId("Strategy strategyId" strategyId: String): Strategy
+    "Returns the strategy with the corresponding strategy id."
+    strategyByStrategyId("Strategy id" id: String): Strategy
 
     "Returns all the positions"
     positions: [Position]

@@ -23,7 +23,6 @@ import tech.cassandre.trading.bot.api.graphql.data.StrategyDataFetcher;
 import tech.cassandre.trading.bot.api.graphql.test.CassandreTradingBot;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,8 +42,8 @@ public class StrategyDataFetcherTest {
     DgsQueryExecutor dgsQueryExecutor;
 
     @Test
-    @DisplayName("Get all strategies")
-    void getAllStrategies() {
+    @DisplayName("Get all strategies - strategies: [Strategy]")
+    void strategies() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new StrategiesGraphQLQuery.Builder().build(),
@@ -60,12 +59,14 @@ public class StrategyDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get strategy by uid")
-    void getStrategyById() {
+    @DisplayName("Get strategy by strategy uid - strategy(uid: Int): Strategy")
+    void strategy() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new StrategyGraphQLQuery.Builder().uid(2).build(),
-                new StrategyProjectionRoot().uid().strategyId().name());
+                new StrategyProjectionRoot().uid()
+                        .strategyId()
+                        .name());
         // Query execution.
         Strategy strategy = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
                 graphQLQueryRequest.serialize(),
@@ -80,12 +81,14 @@ public class StrategyDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get strategy by strategy Id")
-    void getStrategyByStrategyId() {
+    @DisplayName("Get strategy by strategy id - strategyByStrategyId(id: String): Strategy")
+    void strategyByStrategyId() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
-                new StrategyByStrategyIdGraphQLQuery.Builder().strategyId("002").build(),
-                new StrategyByStrategyIdProjectionRoot().uid().strategyId().name());
+                new StrategyByStrategyIdGraphQLQuery.Builder().id("002").build(),
+                new StrategyByStrategyIdProjectionRoot().uid()
+                        .strategyId()
+                        .name());
         // Query execution.
         Strategy strategy = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
                 graphQLQueryRequest.serialize(),

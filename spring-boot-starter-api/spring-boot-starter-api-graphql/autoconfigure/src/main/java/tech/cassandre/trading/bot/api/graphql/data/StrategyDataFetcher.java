@@ -34,9 +34,9 @@ public class StrategyDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the strategy with the corresponding id value.
+     * Returns the strategy with the corresponding strategy uid value.
      *
-     * @param uid uid
+     * @param uid strategy uid
      * @return strategy
      */
     @DgsQuery
@@ -47,14 +47,14 @@ public class StrategyDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the strategy with the corresponding strategyId value.
+     * Returns the strategy with the corresponding strategy id value.
      *
-     * @param strategyId strategy id
+     * @param id strategy id
      * @return strategy
      */
     @DgsQuery
-    public StrategyDTO strategyByStrategyId(@InputArgument final String strategyId) {
-        return strategyRepository.findByStrategyId(strategyId)
+    public StrategyDTO strategyByStrategyId(@InputArgument final String id) {
+        return strategyRepository.findByStrategyId(id)
                 .map(STRATEGY_MAPPER::mapToStrategyDTO)
                 .orElse(null);
     }
