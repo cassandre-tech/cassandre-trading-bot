@@ -265,6 +265,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
                 <configuration>
+                    <excludePackageNames>tech.cassandre.trading.bot.api.graphql.client.*</excludePackageNames>
                     <detectOfflineLinks>false</detectOfflineLinks>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                 </configuration>

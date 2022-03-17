@@ -13,31 +13,22 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.api.graphql.client.generated.DgsConstants;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionGraphQLQuery;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyAndStatusGraphQLQuery;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyAndStatusProjectionRoot;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyGraphQLQuery;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyIdAndStatusGraphQLQuery;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyIdAndStatusProjectionRoot;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyIdGraphQLQuery;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyIdProjectionRoot;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyProjectionRoot;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsGraphQLQuery;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyUidAndStatusGraphQLQuery;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyUidAndStatusProjectionRoot;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyUidGraphQLQuery;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsProjectionRoot;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.TradesGraphQLQuery;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.TradesProjectionRoot;
-import tech.cassandre.trading.bot.api.graphql.client.generated.types.Order;
 import tech.cassandre.trading.bot.api.graphql.client.generated.types.Position;
 import tech.cassandre.trading.bot.api.graphql.client.generated.types.PositionType;
-import tech.cassandre.trading.bot.api.graphql.client.generated.types.Trade;
 import tech.cassandre.trading.bot.api.graphql.data.PositionDataFetcher;
 import tech.cassandre.trading.bot.api.graphql.test.CassandreTradingBot;
 import tech.cassandre.trading.bot.api.graphql.test.util.base.BaseDataFetcherTest;
-import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.dto.util.GainDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import static graphql.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.api.graphql.client.generated.types.PositionStatus.CLOSED;
 import static tech.cassandre.trading.bot.api.graphql.client.generated.types.PositionStatus.OPENED;
-import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.UNI;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
@@ -70,7 +60,7 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     void getAllPositions() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
-                new PositionsGraphQLQuery.Builder().build(),
+                new tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsGraphQLQuery.Builder().build(),
                 new PositionsProjectionRoot().uid());
         // Query execution.
         List<Position> positions = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
@@ -146,16 +136,16 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get positions by strategy (id)")
+    @DisplayName("Get positions by strategy (uid)")
     void getPositionsByStrategy() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
-                new PositionsByStrategyGraphQLQuery.Builder().uid(1).build(),
-                new PositionsByStrategyProjectionRoot().uid());
+                new PositionsByStrategyUidGraphQLQuery.Builder().strategyUid(1).build(),
+                new tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyUidProjectionRoot().uid());
         // Query execution.
         List<Position> positions = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
                 graphQLQueryRequest.serialize(),
-                "data." + DgsConstants.QUERY.PositionsByStrategy,
+                "data." + DgsConstants.QUERY.PositionsByStrategyUid,
                 new TypeRef<>() {
                 });
         // Tests.
@@ -185,12 +175,12 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     void getPositionsByStrategyAndStatus() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
-                new PositionsByStrategyAndStatusGraphQLQuery.Builder().uid(1).status(CLOSED).build(),
-                new PositionsByStrategyAndStatusProjectionRoot().uid());
+                new PositionsByStrategyUidAndStatusGraphQLQuery.Builder().strategyUid(1).status(CLOSED).build(),
+                new PositionsByStrategyUidAndStatusProjectionRoot().uid());
         // Query execution.
         List<Position> positions = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
                 graphQLQueryRequest.serialize(),
-                "data." + DgsConstants.QUERY.PositionsByStrategyAndStatus,
+                "data." + DgsConstants.QUERY.PositionsByStrategyUidAndStatus,
                 new TypeRef<>() {
                 });
         // Tests.

@@ -12,34 +12,34 @@ type Query {
     "Returns the strategy with the corresponding strategy uid."
     strategy("Strategy uid" uid: Int): Strategy
     "Returns the strategy with the corresponding strategy id."
-    strategyByStrategyId("Strategy id" id: String): Strategy
+    strategyByStrategyId("Strategy id" strategyId: String): Strategy
 
-    "Returns all the positions"
+    "Returns all the positions."
     positions: [Position]
     "Returns the position with the corresponding uid."
     position("Position uid" uid: Int): Position
     "Returns all the positions of the specified strategy uid."
-    positionsByStrategy("Strategy uid" uid: Int): [Position]
+    positionsByStrategyUid("Strategy uid" strategyUid: Int): [Position]
     "Returns all the positions of the specified strategy id."
     positionsByStrategyId("Strategy id" strategyId: String): [Position]
     "Returns all the positions of the specified strategy uid and a certain status."
-    positionsByStrategyAndStatus("Strategy uid" uid: Int, "Position status" status: PositionStatus): [Position]
+    positionsByStrategyUidAndStatus("Strategy uid" strategyUid: Int, "Position status" status: PositionStatus): [Position]
     "Returns all the positions of the specified strategy id and a certain status."
-    positionsByStrategyIdAndStatus("Strategy strategyId" strategyId: String, "Position status" status: PositionStatus): [Position]
+    positionsByStrategyIdAndStatus("Strategy id" strategyId: String, "Position status" status: PositionStatus): [Position]
 
     "Returns all the orders."
     orders: [Order]
     "Returns the order with the corresponding uid."
     order("Order uid" uid: Int): Order
-    "Returns the order with the corresponding orderId."
-    orderByOrderId("Order orderId" orderId: String): Order
+    "Returns the order with the corresponding order id."
+    orderByOrderId("Order id" orderId: String): Order
 
     "Returns all the trades."
     trades: [Trade]
     "Returns the trade with the corresponding uid."
     trade("Trade uid" uid: Int): Trade
-    "Returns the trade with the corresponding tradeId."
-    tradeByTradeId("Trade tradeId" tradeId: String): Trade
+    "Returns the trade with the corresponding trade id."
+    tradeByTradeId("Trade id" tradeId: String): Trade
 }
 
 scalar BigDecimal

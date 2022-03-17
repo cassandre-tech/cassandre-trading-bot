@@ -81,11 +81,11 @@ public class StrategyDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get strategy by strategy id - strategyByStrategyId(id: String): Strategy")
+    @DisplayName("Get strategy by strategy id - strategyByStrategyId(strategyId: String): Strategy")
     void strategyByStrategyId() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
-                new StrategyByStrategyIdGraphQLQuery.Builder().id("002").build(),
+                new StrategyByStrategyIdGraphQLQuery.Builder().strategyId("002").build(),
                 new StrategyByStrategyIdProjectionRoot().uid()
                         .strategyId()
                         .name());
