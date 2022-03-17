@@ -34,9 +34,9 @@ public class OrderDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the order with the corresponding id value.
+     * Returns the order with the corresponding uid value.
      *
-     * @param uid uid
+     * @param uid order uid
      * @return order
      */
     @DgsQuery
@@ -47,7 +47,7 @@ public class OrderDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the order with the corresponding orderId value.
+     * Returns the order with the corresponding order id value.
      *
      * @param orderId order id
      * @return trade

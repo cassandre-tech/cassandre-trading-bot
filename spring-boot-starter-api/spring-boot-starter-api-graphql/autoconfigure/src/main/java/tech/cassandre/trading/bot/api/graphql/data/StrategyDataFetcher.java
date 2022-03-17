@@ -34,7 +34,7 @@ public class StrategyDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the strategy with the corresponding strategy uid value.
+     * Returns the strategy with the corresponding uid value.
      *
      * @param uid strategy uid
      * @return strategy

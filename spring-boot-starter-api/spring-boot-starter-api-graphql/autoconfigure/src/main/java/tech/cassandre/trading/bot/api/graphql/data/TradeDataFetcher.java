@@ -34,9 +34,9 @@ public class TradeDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the trade with the corresponding id value.
+     * Returns the trade with the corresponding uid value.
      *
-     * @param uid uid
+     * @param uid trade uid
      * @return trade
      */
     @DgsQuery
@@ -47,7 +47,7 @@ public class TradeDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the trade with the corresponding tradeId value.
+     * Returns the trade with the corresponding trade id value.
      *
      * @param tradeId trade id
      * @return trade

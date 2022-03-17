@@ -15,7 +15,7 @@ public class ConfigurationDataFetcher extends BaseDataFetcher {
     private static final String API_VERSION = "1.1";
 
     /**
-     * Returns server configuration.
+     * Returns configuration.
      *
      * @return configuration
      */
