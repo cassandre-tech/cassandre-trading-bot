@@ -47,8 +47,8 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
     DgsQueryExecutor dgsQueryExecutor;
 
     @Test
-    @DisplayName("Get all orders")
-    void getAllOrders() {
+    @DisplayName("orders: [Order]")
+    void orders() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new OrdersGraphQLQuery.Builder().build(),
@@ -59,14 +59,13 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
                 "data." + DgsConstants.QUERY.Orders + "[*]",
                 new TypeRef<>() {
                 });
-
         // Tests.
         assertEquals(345, orders.size());
     }
 
     @Test
-    @DisplayName("Get order by uid")
-    void getOrderByUid() {
+    @DisplayName("order(uid: Int): Order")
+    void order() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new OrderGraphQLQuery.Builder().uid(1).build(),
@@ -120,8 +119,8 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get order by orderId")
-    void getOrderByOrderId() {
+    @DisplayName("orderByOrderId(orderId: String): Order")
+    void orderByOrderId() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new OrderByOrderIdGraphQLQuery.Builder().orderId("60ddfbc11f8b45000696de3f").build(),

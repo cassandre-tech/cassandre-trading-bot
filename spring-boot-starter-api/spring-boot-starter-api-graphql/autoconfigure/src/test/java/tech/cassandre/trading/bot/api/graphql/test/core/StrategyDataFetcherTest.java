@@ -42,7 +42,7 @@ public class StrategyDataFetcherTest {
     DgsQueryExecutor dgsQueryExecutor;
 
     @Test
-    @DisplayName("Get all strategies - strategies: [Strategy]")
+    @DisplayName("strategies: [Strategy]")
     void strategies() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
@@ -59,7 +59,7 @@ public class StrategyDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get strategy by strategy uid - strategy(uid: Int): Strategy")
+    @DisplayName("strategy(uid: Int): Strategy")
     void strategy() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
@@ -81,7 +81,7 @@ public class StrategyDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get strategy by strategy id - strategyByStrategyId(strategyId: String): Strategy")
+    @DisplayName("strategyByStrategyId(strategyId: String): Strategy")
     void strategyByStrategyId() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(

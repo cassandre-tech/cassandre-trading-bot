@@ -50,8 +50,8 @@ public class AccountDataFetcherTest extends BaseDataFetcherTest {
     DgsQueryExecutor dgsQueryExecutor;
 
     @Test
-    @DisplayName("Get all accounts")
-    public void getAllAccounts() {
+    @DisplayName("accounts: [Account]")
+    public void accounts() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new AccountsGraphQLQuery.Builder().build(),
@@ -80,8 +80,8 @@ public class AccountDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get account by accountId")
-    void getAccountByAccountId() {
+    @DisplayName("accountByAccountId(accountId: String): Account")
+    void accountByAccountId() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new AccountByAccountIdGraphQLQuery.Builder().accountId("trade").build(),

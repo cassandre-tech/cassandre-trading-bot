@@ -12,8 +12,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import tech.cassandre.trading.bot.api.graphql.client.generated.DgsConstants;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.OrdersGraphQLQuery;
-import tech.cassandre.trading.bot.api.graphql.client.generated.client.OrdersProjectionRoot;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.TradeByTradeIdGraphQLQuery;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.TradeByTradeIdProjectionRoot;
 import tech.cassandre.trading.bot.api.graphql.client.generated.client.TradeGraphQLQuery;
@@ -24,16 +22,12 @@ import tech.cassandre.trading.bot.api.graphql.client.generated.types.Trade;
 import tech.cassandre.trading.bot.api.graphql.data.TradeDataFetcher;
 import tech.cassandre.trading.bot.api.graphql.test.CassandreTradingBot;
 import tech.cassandre.trading.bot.api.graphql.test.util.base.BaseDataFetcherTest;
-import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
-import static graphql.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 import static tech.cassandre.trading.bot.api.graphql.client.generated.types.TradeType.ASK;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
@@ -53,8 +47,8 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
     DgsQueryExecutor dgsQueryExecutor;
 
     @Test
-    @DisplayName("Get all trades")
-    void getAllTrades() {
+    @DisplayName("trades: [Trade]")
+    void trades() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new TradesGraphQLQuery.Builder().build(),
@@ -70,8 +64,8 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get trade by uid")
-    void getTradeByUid() {
+    @DisplayName("trade(uid: Int): Trade")
+    void trade() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new TradeGraphQLQuery.Builder().uid(24).build(),
@@ -117,7 +111,7 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get trade by tradeId")
+    @DisplayName("tradeByTradeId(tradeId: String): Trade")
     void getTradeByTradeId() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(

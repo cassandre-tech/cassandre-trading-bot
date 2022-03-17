@@ -36,8 +36,8 @@ public class ConfigurationDataFetcherTest {
     DgsQueryExecutor dgsQueryExecutor;
 
     @Test
-    @DisplayName("Get configuration")
-    void getConfiguration() {
+    @DisplayName("configuration: Configuration")
+    void configuration() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new ConfigurationGraphQLQuery.Builder().build(),

@@ -56,8 +56,8 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     DgsQueryExecutor dgsQueryExecutor;
 
     @Test
-    @DisplayName("Get all positions")
-    void getAllPositions() {
+    @DisplayName("positions: [Position]")
+    void positions() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsGraphQLQuery.Builder().build(),
@@ -73,8 +73,8 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get position by uid")
-    void getPositionById() {
+    @DisplayName("position(uid: Int): Position")
+    void position() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new PositionGraphQLQuery.Builder().uid(31).build(),
@@ -136,8 +136,8 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get positions by strategy (uid)")
-    void getPositionsByStrategy() {
+    @DisplayName("positionsByStrategyUid(strategyUid: Int): [Position]")
+    void positionsByStrategyUid() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new PositionsByStrategyUidGraphQLQuery.Builder().strategyUid(1).build(),
@@ -153,8 +153,8 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get positions by strategyId (strategyId)")
-    void getPositionsByStrategyId() {
+    @DisplayName("positionsByStrategyId(strategyId: String): [Position]")
+    void positionsByStrategyId() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new PositionsByStrategyIdGraphQLQuery.Builder().strategyId("002").build(),
@@ -171,8 +171,8 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
 
 
     @Test
-    @DisplayName("Get positions by strategy (id) and status")
-    void getPositionsByStrategyAndStatus() {
+    @DisplayName("positionsByStrategyUidAndStatus(strategyUid: Int, status: PositionStatus): [Position]")
+    void positionsByStrategyUidAndStatus() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new PositionsByStrategyUidAndStatusGraphQLQuery.Builder().strategyUid(1).status(CLOSED).build(),
@@ -188,8 +188,8 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     }
 
     @Test
-    @DisplayName("Get positions by strategyId (strategyId) and status")
-    void getPositionsByStrategyIdAndStatus() {
+    @DisplayName("positionsByStrategyIdAndStatus(strategyId: String, status: PositionStatus): [Position]")
+    void positionsByStrategyIdAndStatus() {
         // Query and fields definition.
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
                 new PositionsByStrategyIdAndStatusGraphQLQuery.Builder().strategyId("001").status(OPENED).build(),
