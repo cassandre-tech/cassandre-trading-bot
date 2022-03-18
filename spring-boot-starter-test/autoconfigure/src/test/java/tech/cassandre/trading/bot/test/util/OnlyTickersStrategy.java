@@ -39,7 +39,7 @@ public class OnlyTickersStrategy extends BasicCassandreStrategy {
         list.add(BTC_USDT);
         list.add(ETH_USDT);
         list.add(KCS_USDT);
-        list.add(KCS_BTC);  // Currency pair not in the imported files.
+        list.add(KCS_BTC);  // This currency pair not in the imported files.
         return list;
     }
 

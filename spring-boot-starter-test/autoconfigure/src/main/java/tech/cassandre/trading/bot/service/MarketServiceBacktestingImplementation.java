@@ -38,7 +38,7 @@ public class MarketServiceBacktestingImplementation implements MarketService {
     /** Sequence - Which round of tickers are we treating. */
     private final AtomicLong sequence = new AtomicLong(1);
 
-    /** Flux size for each currency pair. */
+    /** Flux size of each currency pair. */
     private final Map<CurrencyPairDTO, Long> fluxSize = new LinkedHashMap<>();
 
     /** Order flux. */
