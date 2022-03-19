@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
-import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
@@ -36,7 +35,6 @@ public class BaseTest extends Base {
     protected final StrategyDTO strategyDTO = StrategyDTO.builder()
             .uid(1L)
             .strategyId("01")
-            .type(BASIC_STRATEGY)
             .build();
 
     /** ETH/BTC. */
@@ -59,9 +57,6 @@ public class BaseTest extends Base {
 
     /** KCS/USDT. */
     public static final CurrencyPairDTO KCS_USDT = new CurrencyPairDTO(KCS, USDT);
-
-    /** XChange KCS/USDT. */
-    public static final Instrument XCHANGE_KCS_USDT = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.KCS, Currency.USDT));
 
     /** BTC/ETH. */
     public static final CurrencyPairDTO BTC_ETH = new CurrencyPairDTO(BTC, ETH);

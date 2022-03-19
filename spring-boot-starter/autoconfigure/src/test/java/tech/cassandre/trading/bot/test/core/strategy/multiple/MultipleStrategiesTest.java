@@ -48,14 +48,12 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Strategy - Running multiple strategies")
 @Configuration({
         @Property(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
-        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "false"),
         // Using strategies 1, 2 & 3 in dry mode.
         @Property(key = PARAMETER_STRATEGY_1_ENABLED, value = "true"),

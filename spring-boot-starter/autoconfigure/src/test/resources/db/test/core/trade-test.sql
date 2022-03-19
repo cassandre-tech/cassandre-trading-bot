@@ -1,7 +1,7 @@
 -- =====================================================================================================================
 -- Insert strategies.
-INSERT INTO STRATEGIES (UID, STRATEGY_ID, TYPE, NAME)
-VALUES (1, '01', 'BASIC_STRATEGY', 'My strategy');
+INSERT INTO STRATEGIES (UID, STRATEGY_ID, NAME)
+VALUES (1, '01', 'My strategy');
 
 -- =====================================================================================================================
 -- Insert orders.

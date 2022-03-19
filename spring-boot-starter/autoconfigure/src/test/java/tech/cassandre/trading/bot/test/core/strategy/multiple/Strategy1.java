@@ -6,7 +6,6 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static tech.cassandre.trading.bot.test.core.strategy.multiple.MultipleStrategiesTest.BTC_USDT;

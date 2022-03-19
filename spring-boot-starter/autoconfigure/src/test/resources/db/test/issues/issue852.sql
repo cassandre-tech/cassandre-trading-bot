@@ -2,8 +2,8 @@
 -- Strategy.
 --
 
-INSERT INTO public.strategies   (uid, strategy_id, type, name, created_on, updated_on)
-VALUES                          (1, '001', 'BASIC_TA4J_STRATEGY', 'ETH', '2021-10-16 23:47:07.795914', NULL);
+INSERT INTO public.strategies   (uid, strategy_id, name, created_on, updated_on)
+VALUES                          (1, '001', 'ETH', '2021-10-16 23:47:07.795914', NULL);
 
 -- Orders for position 1.
 INSERT INTO public.orders   (uid, order_id, type, fk_strategy_uid, currency_pair, amount_value, amount_currency, average_price_value, average_price_currency, limit_price_value, limit_price_currency, leverage, status, cumulative_amount_value, cumulative_amount_currency, user_reference, timestamp, created_on, updated_on, market_price_value, market_price_currency)

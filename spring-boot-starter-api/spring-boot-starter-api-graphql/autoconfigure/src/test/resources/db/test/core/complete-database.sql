@@ -2,8 +2,8 @@
 -- Data for Name: strategies; Type: TABLE DATA; Schema: public; Owner: cassandre_trading_bot
 --
 
-INSERT INTO strategies (uid, strategy_id, type, name, created_on, updated_on) VALUES (1, '001', 'BASIC_TA4J_STRATEGY', 'Bitcoin', '2021-07-01 17:22:13.521677', NULL);
-INSERT INTO strategies (uid, strategy_id, type, name, created_on, updated_on) VALUES (2, '002', 'BASIC_TA4J_STRATEGY', 'Uniswap', '2021-07-01 17:22:14.097543', NULL);
+INSERT INTO strategies (uid, strategy_id, name, created_on, updated_on) VALUES (1, '001', 'Bitcoin', '2021-07-01 17:22:13.521677', NULL);
+INSERT INTO strategies (uid, strategy_id, name, created_on, updated_on) VALUES (2, '002', 'Uniswap', '2021-07-01 17:22:14.097543', NULL);
 
 --
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: cassandre_trading_bot

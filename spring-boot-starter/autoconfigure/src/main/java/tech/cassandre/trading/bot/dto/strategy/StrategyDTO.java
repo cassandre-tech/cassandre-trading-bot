@@ -27,9 +27,6 @@ public class StrategyDTO {
     /** An identifier that uniquely identifies the strategy - Comes from the Java annotation. */
     String strategyId;
 
-    /** Strategy type - Comes from the Java strategy inheritance. */
-    StrategyTypeDTO type;
-
     /** Strategy name - Comes from the Java annotation. */
     String name;
 
@@ -69,7 +66,6 @@ public class StrategyDTO {
         return new EqualsBuilder()
                 .append(this.uid, that.uid)
                 .append(this.strategyId, that.strategyId)
-                .append(this.type, that.type)
                 .isEquals();
     }
 

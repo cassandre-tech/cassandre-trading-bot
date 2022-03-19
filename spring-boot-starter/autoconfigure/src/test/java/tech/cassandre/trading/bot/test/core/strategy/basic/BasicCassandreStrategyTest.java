@@ -24,21 +24,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
-import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
-import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @SpringBootTest
 @DisplayName("Strategy - Basic cassandre strategy")
 @Configuration({
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "true"),
-        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "false"),
 })
 @DirtiesContext(classMode = BEFORE_CLASS)
 @Import(BasicCassandreStrategyTestMock.class)
@@ -60,7 +55,6 @@ public class BasicCassandreStrategyTest extends BaseTest {
         assertEquals(1, strategyInDatabase.get().getUid());
         assertEquals("01", strategyInDatabase.get().getStrategyId());
         assertEquals("Testable strategy", strategyInDatabase.get().getName());
-        assertEquals(BASIC_STRATEGY, strategyInDatabase.get().getType());
 
         // =============================================================================================================
         // We check accounts updates (4 replies : account 01, account 02, account 03 and again account 03).

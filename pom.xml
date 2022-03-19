@@ -77,7 +77,7 @@
 		<reactor.version>Dysprosium-SR25</reactor.version>
 		<xchange.version>5.0.13</xchange.version>
 		<bucket4j.version>7.3.0</bucket4j.version>
-		<liquibase.version>4.8.0</liquibase.version>
+		<liquibase.version>4.9.0</liquibase.version>
 		<opencsv.version>5.6</opencsv.version>
 
 		<!-- Core utils -->
@@ -85,9 +85,6 @@
 		<lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
 		<mapstruct.version>1.4.2.Final</mapstruct.version>
 		<guava.version>31.1-jre</guava.version>
-
-		<!-- Other -->
-		<ta4j.version>0.14</ta4j.version>
 
 		<!-- Tests -->
 		<junit-pioneer.version>1.6.2</junit-pioneer.version>
@@ -100,7 +97,7 @@
 
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
-		<maven.graphqlcodegen.plugin.version>1.14</maven.graphqlcodegen.plugin.version>
+		<maven.graphqlcodegen.plugin.version>1.17</maven.graphqlcodegen.plugin.version>
 		<maven.puppycrawl.checkstyle.version>10.0</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
@@ -129,7 +126,6 @@
 		<module>spring-boot-starter-api/spring-boot-starter-api-graphql/starter</module>
 		<!-- Archetypes -->
 		<module>trading-bot-archetypes/basic-archetype</module>
-		<module>trading-bot-archetypes/basic-ta4j-archetype</module>
 	</modules>
 	<!-- =========================================================================================================== -->
 

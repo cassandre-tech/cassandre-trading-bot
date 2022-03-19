@@ -63,13 +63,6 @@
             <version>${xchange.version}</version>
         </dependency>
 
-        <!-- Ta4j -->
-        <dependency>
-            <groupId>org.ta4j</groupId>
-            <artifactId>ta4j-core</artifactId>
-            <version>${ta4j.version}</version>
-        </dependency>
-
         <!-- Util -->
         <dependency>
             <groupId>com.github.vladimir-bukhtoyarov</groupId>

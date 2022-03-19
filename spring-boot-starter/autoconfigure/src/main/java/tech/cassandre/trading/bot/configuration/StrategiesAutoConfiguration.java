@@ -32,8 +32,6 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.UserService;
-import tech.cassandre.trading.bot.strategy.BasicCassandreStrategy;
-import tech.cassandre.trading.bot.strategy.BasicTa4jCassandreStrategy;
 import tech.cassandre.trading.bot.strategy.CassandreStrategy;
 import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyConfiguration;
 import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyDependencies;
@@ -59,8 +57,6 @@ import java.util.stream.Stream;
 import static java.math.BigDecimal.ZERO;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSING;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
-import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
-import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_TA4J_STRATEGY;
 
 /**
  * StrategyAutoConfiguration configures the strategies.
@@ -186,12 +182,6 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                         Strategy newStrategy = new Strategy();
                         newStrategy.setStrategyId(annotation.strategyId());
                         newStrategy.setName(annotation.strategyName());
-                        if (strategy instanceof BasicCassandreStrategy) {
-                            newStrategy.setType(BASIC_STRATEGY);
-                        }
-                        if (strategy instanceof BasicTa4jCassandreStrategy) {
-                            newStrategy.setType(BASIC_TA4J_STRATEGY);
-                        }
                         strategyDTO = STRATEGY_MAPPER.mapToStrategyDTO(strategyRepository.save(newStrategy));
                         logger.debug("Strategy created in database: {}", newStrategy);
                     } else {
@@ -283,8 +273,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .collect(Collectors.toSet());
         if (!strategiesWithoutExtends.isEmpty()) {
             final String list = String.join(",", strategiesWithoutExtends);
-            throw new ConfigurationException(list + " doesn't extend BasicCassandreStrategy or BasicTa4jCassandreStrategy",
-                    list + " must extend BasicCassandreStrategy or BasicTa4jCassandreStrategy");
+            throw new ConfigurationException(list + " doesn't extend BasicCassandreStrategy", list + " must extend BasicCassandreStrategy");
         }
 
         // Check that all strategies specifies an existing trade account.

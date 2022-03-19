@@ -59,9 +59,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
     /** Testable strategy enabled parameter default value. */
     public static final String PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE = "true";
 
-    /** Testable ta4j strategy enabled parameter default value. */
-    public static final String PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE = "false";
-
     /** Strategy without existing account enabled parameter default value. */
     public static final String PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE = "false";
 
@@ -126,7 +123,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.setProperty(PARAMETER_INVALID_STRATEGY_ENABLED, PARAMETER_INVALID_STRATEGY_DEFAULT_VALUE);                       // false
         System.setProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_DEFAULT_VALUE); // false
         System.setProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED, PARAMETER_TESTABLE_STRATEGY_DEFAULT_VALUE);                     // true
-        System.setProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE, PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE);     // false
         System.setProperty(PARAMETER_STRATEGY_1_ENABLED, PARAMETER_STRATEGY_1_ENABLED_DEFAULT_VALUE);                           // false
         System.setProperty(PARAMETER_STRATEGY_2_ENABLED, PARAMETER_STRATEGY_2_ENABLED_DEFAULT_VALUE);                           // false
         System.setProperty(PARAMETER_STRATEGY_3_ENABLED, PARAMETER_STRATEGY_3_ENABLED_DEFAULT_VALUE);                           // false
@@ -168,7 +164,6 @@ public class ConfigurationExtension implements BeforeAllCallback, AfterAllCallba
         System.clearProperty(PARAMETER_INVALID_STRATEGY_ENABLED);
         System.clearProperty(PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED);
         System.clearProperty(PARAMETER_TESTABLE_STRATEGY_ENABLED);
-        System.clearProperty(PARAMETER_TESTABLE_TA4J_STRATEGY_DEFAULT_VALUE);
         System.clearProperty(PARAMETER_STRATEGY_1_ENABLED);
         System.clearProperty(PARAMETER_STRATEGY_2_ENABLED);
         System.clearProperty(PARAMETER_STRATEGY_3_ENABLED);

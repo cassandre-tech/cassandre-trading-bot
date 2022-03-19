@@ -16,13 +16,11 @@ import static tech.cassandre.trading.bot.test.core.strategy.multiple.Strategy3.P
 import static tech.cassandre.trading.bot.test.util.strategies.InvalidStrategy.PARAMETER_INVALID_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.NoTradingAccountStrategy.PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED;
 import static tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy.PARAMETER_TESTABLE_STRATEGY_ENABLED;
-import static tech.cassandre.trading.bot.test.util.strategies.TestableTa4jCassandreStrategy.PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED;
 
 @DisplayName("Configuration - Strategy - Invalid trade account")
 @Configuration({
         @Property(key = PARAMETER_INVALID_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_TESTABLE_STRATEGY_ENABLED, value = "false"),
-        @Property(key = PARAMETER_TESTABLE_TA4J_STRATEGY_ENABLED, value = "false"),
         @Property(key = PARAMETER_NO_TRADING_ACCOUNT_STRATEGY_ENABLED, value = "true"),
         @Property(key = PARAMETER_STRATEGY_1_ENABLED, value = "true"),
         @Property(key = PARAMETER_STRATEGY_2_ENABLED, value = "true"),
