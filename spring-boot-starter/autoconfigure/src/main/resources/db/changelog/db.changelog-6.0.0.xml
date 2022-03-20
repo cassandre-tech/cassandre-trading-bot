@@ -8,5 +8,41 @@
         <dropColumn tableName="STRATEGIES"
                     columnName="TYPE"/>
 
+        <!-- Table used to store imported candles -->
+        <createTable tableName="IMPORTED_CANDLES">
+
+            <!-- Primary key -->
+            <column name="UID" type="BIGINT"
+                    remarks="Technical ID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="IMPORTED_CANDLES_PRIMARY_KEY"/>
+            </column>
+
+            <!-- Candles fields -->
+            <column name="CURRENCY_PAIR" type="VARCHAR(255)"
+                    remarks="Defines the currency pair"/>
+            <column name="OPEN" type="numeric(16, 8)"
+                    remarks="Opening price (first trade) in the bucket interval"/>
+            <column name="HIGH" type="numeric(16, 8)"
+                    remarks="Highest price during the bucket interval"/>
+            <column name="LOW" type="numeric(16, 8)"
+                    remarks="Lowest price during the bucket interval"/>
+            <column name="CLOSE" type="numeric(16, 8)"
+                    remarks="Closing price (last trade) in the bucket interval"/>
+            <column name="VOLUME" type="numeric(16, 8)"
+                    remarks="Volume of trading activity during the bucket interval"/>
+            <column name="TIMESTAMP" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Bucket start time"/>
+
+        </createTable>
+
+        <!-- Index on IMPORTED_CANDLES (CURRENCY_PAIR/TIMESTAMP) -->
+        <createIndex clustered="false"
+                     indexName="IDX_IMPORTED_CANDLES_CURRENCY_PAIR_AND_TIMESTAMP"
+                     tableName="IMPORTED_CANDLES"
+                     unique="false">
+            <column descending="true" name="CURRENCY_PAIR"/>
+            <column descending="true" name="TIMESTAMP"/>
+        </createIndex>
+
     </changeSet>
 </databaseChangeLog>

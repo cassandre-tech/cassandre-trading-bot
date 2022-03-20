@@ -25,15 +25,15 @@ import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration
 import static tech.cassandre.trading.bot.dto.util.CurrencyPairDTO.CURRENCY_PAIR_SEPARATOR;
 
 /**
- * Imported tickers (map "IMPORTED_TICKERS" table).
+ * Imported candles (map "IMPORTED_CANDLES" table).
  */
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "IMPORTED_TICKERS")
-public class ImportedTicker {
+@Table(name = "IMPORTED_CANDLES")
+public class ImportedCandle {
 
     /** Technical ID. */
     @Id
@@ -45,62 +45,32 @@ public class ImportedTicker {
     @Column(name = "CURRENCY_PAIR")
     private String currencyPair;
 
-    /** The opening price is the first trade price that was recorded during the day’s trading. */
+    /** Opening price (first trade) in the bucket interval. */
     @CsvBindByName(column = "OPEN")
     @Column(name = "OPEN", precision = PRECISION, scale = SCALE)
     private BigDecimal open;
 
-    /** Last trade field is the price set during the last trade. */
-    @CsvBindByName(column = "LAST")
-    @Column(name = "LAST", precision = PRECISION, scale = SCALE)
-    private BigDecimal last;
-
-    /** The bid price shown represents the highest bid price. */
-    @CsvBindByName(column = "BID")
-    @Column(name = "BID", precision = PRECISION, scale = SCALE)
-    private BigDecimal bid;
-
-    /** The ask price shown represents the lowest bid price. */
-    @CsvBindByName(column = "ASK")
-    @Column(name = "ASK", precision = PRECISION, scale = SCALE)
-    private BigDecimal ask;
-
-    /** The day’s high price. */
+    /** Highest price during the bucket interval. */
     @CsvBindByName(column = "HIGH")
     @Column(name = "HIGH", precision = PRECISION, scale = SCALE)
     private BigDecimal high;
 
-    /** The day’s low price. */
+    /** Lowest price during the bucket interval. */
     @CsvBindByName(column = "LOW")
     @Column(name = "LOW", precision = PRECISION, scale = SCALE)
     private BigDecimal low;
 
-    /** Volume-weighted average price (VWAP) is the ratio of the value traded to total volume traded over a particular time horizon (usually one day). */
-    @CsvBindByName(column = "VWAP")
-    @Column(name = "VWAP", precision = PRECISION, scale = SCALE)
-    private BigDecimal vwap;
+    /** Closing price (last trade) in the bucket interval. */
+    @CsvBindByName(column = "CLOSE")
+    @Column(name = "CLOSE", precision = PRECISION, scale = SCALE)
+    private BigDecimal close;
 
-    /** Volume is the number of shares or contracts traded. */
+    /** Volume of trading activity during the bucket interval. */
     @CsvBindByName(column = "VOLUME")
     @Column(name = "VOLUME", precision = PRECISION, scale = SCALE)
     private BigDecimal volume;
 
-    /** Quote volume. */
-    @CsvBindByName(column = "QUOTE_VOLUME")
-    @Column(name = "QUOTE_VOLUME", precision = PRECISION, scale = SCALE)
-    private BigDecimal quoteVolume;
-
-    /** The bid size represents the quantity of a security that investors are willing to purchase at a specified bid price. */
-    @CsvBindByName(column = "BID_SIZE")
-    @Column(name = "BID_SIZE", precision = PRECISION, scale = SCALE)
-    private BigDecimal bidSize;
-
-    /** The ask size represents the quantity of a security that investors are willing to sell at a specified selling price. */
-    @CsvBindByName(column = "ASK_SIZE")
-    @Column(name = "ASK_SIZE", precision = PRECISION, scale = SCALE)
-    private BigDecimal askSize;
-
-    /** Information timestamp. */
+    /** Bucket start time. */
     @CsvCustomBindByName(column = "TIMESTAMP", converter = EpochToZonedDateTime.class)
     @Column(name = "TIMESTAMP")
     private ZonedDateTime timestamp;
@@ -138,7 +108,7 @@ public class ImportedTicker {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
             return false;
         }
-        ImportedTicker that = (ImportedTicker) o;
+        ImportedCandle that = (ImportedCandle) o;
         return Objects.equals(uid, that.uid);
     }
 

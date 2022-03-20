@@ -13,6 +13,7 @@ import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
+import tech.cassandre.trading.bot.domain.ImportedCandle;
 import tech.cassandre.trading.bot.domain.ImportedTicker;
 import tech.cassandre.trading.bot.domain.Strategy;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
@@ -23,7 +24,8 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.ImportedTickersRepository;
+import tech.cassandre.trading.bot.repository.ImportedCandleRepository;
+import tech.cassandre.trading.bot.repository.ImportedTickerRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
@@ -84,8 +86,11 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     /** Position repository. */
     private final PositionRepository positionRepository;
 
+    /** Imported candles' repository. */
+    private final ImportedCandleRepository importedCandleRepository;
+
     /** Imported tickers' repository. */
-    private final ImportedTickersRepository importedTickersRepository;
+    private final ImportedTickerRepository importedTickerRepository;
 
     /** Exchange service. */
     private final ExchangeService exchangeService;
@@ -140,9 +145,10 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .forEach(positionRepository::save);
 
         // =============================================================================================================
-        // Importing user tickers into database.
+        // Importing tickers & candles into database.
         // Feature documentation is here: https://trading-bot.cassandre.tech/learn/import-historical-data.html
-        loadImportedTickers();
+        loadTickersFromFiles();
+        loadCandlesFromFiles();
 
         // =============================================================================================================
         // Creating flux.
@@ -350,7 +356,8 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                 .orderRepository(orderRepository)
                 .tradeRepository(tradeRepository)
                 .positionRepository(positionRepository)
-                .importedTickersRepository(importedTickersRepository)
+                .importedCandleRepository(importedCandleRepository)
+                .importedTickerRepository(importedTickerRepository)
                 // Services.
                 .exchangeService(exchangeService)
                 .tradeService(tradeService)
@@ -359,19 +366,53 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     }
 
     /**
-     * Load imported tickers into database.
+     * Load candles in database.
      */
-    private void loadImportedTickers() {
+    private void loadCandlesFromFiles() {
         // Deleting everything before import.
-        importedTickersRepository.deleteAllInBatch();
+        importedCandleRepository.deleteAllInBatch();
+
+        // Getting the list of files to import and insert them in database.
+        logger.info("Importing candles...");
+        AtomicLong counter = new AtomicLong(0);
+        getCandlesFilesToLoad()
+                .parallelStream()
+                .filter(resource -> resource.getFilename() != null)
+                .peek(resource -> logger.info("Importing candles from {}", resource.getFilename()))
+                .forEach(resource -> {
+                    try {
+                        // Insert the tickers in database.
+                        new CsvToBeanBuilder<ImportedCandle>(Files.newBufferedReader(resource.getFile().toPath()))
+                                .withType(ImportedCandle.class)
+                                .withIgnoreLeadingWhiteSpace(true)
+                                .build()
+                                .parse()
+                                .forEach(importedCandle -> {
+                                    logger.debug("Importing candle {}", importedCandle);
+                                    importedCandle.setUid(counter.incrementAndGet());
+                                    importedCandleRepository.save(importedCandle);
+                                });
+                    } catch (IOException e) {
+                        logger.error("Impossible to load imported candles: {}", e.getMessage());
+                    }
+                });
+        logger.info("{} candles imported", importedCandleRepository.count());
+    }
+
+    /**
+     * Load tickers in database.
+     */
+    private void loadTickersFromFiles() {
+        // Deleting everything before import.
+        importedTickerRepository.deleteAllInBatch();
 
         // Getting the list of files to import and insert them in database.
         logger.info("Importing tickers...");
         AtomicLong counter = new AtomicLong(0);
-        getFilesToLoad()
+        getTickersFilesToLoad()
                 .parallelStream()
                 .filter(resource -> resource.getFilename() != null)
-                .peek(resource -> logger.info("Importing file {}", resource.getFilename()))
+                .peek(resource -> logger.info("Importing tickers from {}", resource.getFilename()))
                 .forEach(resource -> {
                     try {
                         // Insert the tickers in database.
@@ -383,27 +424,43 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                                 .forEach(importedTicker -> {
                                     logger.debug("Importing ticker {}", importedTicker);
                                     importedTicker.setUid(counter.incrementAndGet());
-                                    importedTickersRepository.save(importedTicker);
+                                    importedTickerRepository.save(importedTicker);
                                 });
                     } catch (IOException e) {
                         logger.error("Impossible to load imported tickers: {}", e.getMessage());
                     }
                 });
-        logger.info("{} tickers imported", importedTickersRepository.count());
+        logger.info("{} tickers imported", importedTickerRepository.count());
     }
 
     /**
-     * Returns the list of files to import.
+     * Returns the list of tickers files to import.
      *
      * @return files to import.
      */
-    public List<Resource> getFilesToLoad() {
+    public List<Resource> getTickersFilesToLoad() {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
             final Resource[] resources = resolver.getResources("classpath*:tickers-to-import*csv");
             return Arrays.asList(resources);
         } catch (IOException e) {
             logger.error("Impossible to load imported tickers: {}", e.getMessage());
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns the list of candles files to import.
+     *
+     * @return files to import.
+     */
+    public List<Resource> getCandlesFilesToLoad() {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        try {
+            final Resource[] resources = resolver.getResources("classpath*:candles-to-import*csv");
+            return Arrays.asList(resources);
+        } catch (IOException e) {
+            logger.error("Impossible to load imported candles: {}", e.getMessage());
         }
         return Collections.emptyList();
     }

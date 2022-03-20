@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import tech.cassandre.trading.bot.batch.PositionFlux;
-import tech.cassandre.trading.bot.repository.ImportedTickersRepository;
+import tech.cassandre.trading.bot.repository.ImportedCandleRepository;
+import tech.cassandre.trading.bot.repository.ImportedTickerRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
@@ -52,8 +53,11 @@ public class CassandreStrategyDependencies {
     /** Position repository. */
     PositionRepository positionRepository;
 
+    /** "Imported candles" repository. */
+    ImportedCandleRepository importedCandleRepository;
+
     /** "Imported tickers" repository. */
-    ImportedTickersRepository importedTickersRepository;
+    ImportedTickerRepository importedTickerRepository;
 
     // =================================================================================================================
     // Services.

@@ -2,23 +2,18 @@ package tech.cassandre.trading.bot.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
-import tech.cassandre.trading.bot.domain.ImportedTicker;
+import tech.cassandre.trading.bot.domain.ImportedCandle;
 
 import java.util.List;
 
-/**
- * {@link ImportedTicker} repository.
- */
-@Repository
-public interface ImportedTickersRepository extends JpaRepository<ImportedTicker, Long>, JpaSpecificationExecutor<ImportedTicker> {
+public interface ImportedCandleRepository extends JpaRepository<ImportedCandle, Long>, JpaSpecificationExecutor<ImportedCandle> {
 
     /**
      * Returns imported tickers (ordered by timestamp).
      *
      * @return imported tickers
      */
-    List<ImportedTicker> findByOrderByTimestampAsc();
+    List<ImportedCandle> findByOrderByTimestampAsc();
 
     /**
      * Returns imported tickers of a specific currency pair (ordered by timestamp).
@@ -26,6 +21,6 @@ public interface ImportedTickersRepository extends JpaRepository<ImportedTicker,
      * @param currencyPair currency pair
      * @return imported tickers
      */
-    List<ImportedTicker> findByCurrencyPairOrderByTimestampAsc(String currencyPair);
+    List<ImportedCandle> findByCurrencyPairOrderByTimestampAsc(String currencyPair);
 
 }

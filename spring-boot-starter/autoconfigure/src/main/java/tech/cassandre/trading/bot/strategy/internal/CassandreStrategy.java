@@ -1,6 +1,7 @@
 package tech.cassandre.trading.bot.strategy.internal;
 
 import lombok.NonNull;
+import tech.cassandre.trading.bot.dto.market.CandleDTO;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.position.PositionCreationResultDTO;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
@@ -131,12 +132,39 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
     }
 
     /**
+     * Return the list of imported candles (ordered by timestamp).
+     *
+     * @return imported candles
+     */
+    public final List<CandleDTO> getImportedCandles() {
+        return dependencies.getImportedCandleRepository()
+                .findByOrderByTimestampAsc()
+                .stream()
+                .map(CANDLE_MAPPER::mapToCandleDTO)
+                .toList();
+    }
+
+    /**
+     * Return the list of imported candles for a specific currency pair (ordered by timestamp).
+     *
+     * @param currencyPair currency pair
+     * @return imported candles
+     */
+    public final List<CandleDTO> getImportedCandles(@NonNull final CurrencyPairDTO currencyPair) {
+        return dependencies.getImportedCandleRepository()
+                .findByCurrencyPairOrderByTimestampAsc(currencyPair.toString())
+                .stream()
+                .map(CANDLE_MAPPER::mapToCandleDTO)
+                .toList();
+    }
+
+    /**
      * Return the list of imported tickers (ordered by timestamp).
      *
      * @return imported tickers
      */
     public final List<TickerDTO> getImportedTickers() {
-        return dependencies.getImportedTickersRepository()
+        return dependencies.getImportedTickerRepository()
                 .findByOrderByTimestampAsc()
                 .stream()
                 .map(TICKER_MAPPER::mapToTickerDTO)
@@ -150,7 +178,7 @@ public abstract class CassandreStrategy extends CassandreStrategyImplementation 
      * @return imported tickers
      */
     public final List<TickerDTO> getImportedTickers(@NonNull final CurrencyPairDTO currencyPair) {
-        return dependencies.getImportedTickersRepository()
+        return dependencies.getImportedTickerRepository()
                 .findByCurrencyPairOrderByTimestampAsc(currencyPair.toString())
                 .stream()
                 .map(TICKER_MAPPER::mapToTickerDTO)
