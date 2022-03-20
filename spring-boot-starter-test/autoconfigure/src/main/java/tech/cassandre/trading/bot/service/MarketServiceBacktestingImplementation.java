@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.domain.BacktestingTicker;
-import tech.cassandre.trading.bot.domain.BacktestingTickerId;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.BacktestingTickerRepository;
+import tech.cassandre.trading.bot.repository.BacktestingCandleRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.util.exception.DryModeException;
@@ -39,7 +37,7 @@ public class MarketServiceBacktestingImplementation implements MarketService {
     private final AtomicLong sequence = new AtomicLong(1);
 
     /** Flux size of each currency pair. */
-    private final Map<CurrencyPairDTO, Long> fluxSize = new LinkedHashMap<>();
+    private final Map<CurrencyPairDTO, Integer> fluxSize = new LinkedHashMap<>();
 
     /** Order flux. */
     private final OrderFlux orderFlux;
@@ -54,10 +52,10 @@ public class MarketServiceBacktestingImplementation implements MarketService {
     private final TradeRepository tradeRepository;
 
     /** Backtesting tickers repository. */
-    private final BacktestingTickerRepository backtestingTickerRepository;
+    private final BacktestingCandleRepository backtestingCandleRepository;
 
     /** Backtesting mapper. */
-    private final BacktestingTickerMapper backtestingTickerMapper = Mappers.getMapper(BacktestingTickerMapper.class);
+    private static final BacktestingTickerMapper BACKTESTING_TICKER_MAPPER = Mappers.getMapper(BacktestingTickerMapper.class);
 
     @Override
     public final Optional<TickerDTO> getTicker(final CurrencyPairDTO currencyPair) {
@@ -74,32 +72,12 @@ public class MarketServiceBacktestingImplementation implements MarketService {
         });
 
         // We get the result for the corresponding sequence, and we only select the replies for the request currency pairs.
-        return backtestingTickerRepository
+        return backtestingCandleRepository
                 .findByIdTestSessionIdAndIdResponseSequenceId(testSessionId, sequence.getAndIncrement())
                 .stream()
                 .filter(ticker -> currencyPairs.contains(ticker.getCurrencyPairDTO()))
-                .map(backtestingTickerMapper::mapToTickerDTO)
+                .map(BACKTESTING_TICKER_MAPPER::mapToTickerDTO)
                 .collect(Collectors.toSet());
-    }
-
-    /**
-     * Add a ticker to load in database.
-     *
-     * @param tickerSequence sequence
-     * @param tickerDTO      ticker
-     */
-    public void addTickerToDatabase(final long tickerSequence, final TickerDTO tickerDTO) {
-        BacktestingTicker ticker = backtestingTickerMapper.mapToBacktestingTicker(tickerDTO);
-        // Specific fields in BacktestingTicker.
-        BacktestingTickerId id = new BacktestingTickerId();
-        id.setTestSessionId(testSessionId);
-        id.setResponseSequenceId(tickerSequence);
-        id.setCurrencyPair(tickerDTO.getCurrencyPair().toString());
-        ticker.setId(id);
-        // Save in database.
-        backtestingTickerRepository.save(ticker);
-        // Update the size of the currency pair flux.
-        fluxSize.put(tickerDTO.getCurrencyPair(), tickerSequence);
     }
 
     /**
@@ -109,7 +87,7 @@ public class MarketServiceBacktestingImplementation implements MarketService {
      * @return true if nothing left
      */
     public boolean isFluxDone(final CurrencyPairDTO currencyPair) {
-        final Long size = fluxSize.get(currencyPair);
+        final Integer size = fluxSize.get(currencyPair);
         if (size == null) {
             return true;
         } else {

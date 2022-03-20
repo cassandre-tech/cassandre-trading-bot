@@ -106,17 +106,6 @@ public class ImportedTicker {
     private ZonedDateTime timestamp;
 
     /**
-     * Setter currencyPair.
-     *
-     * @param newCurrencyPair the currencyPair to set
-     */
-    public void setCurrencyPair(final String newCurrencyPair) {
-        if (newCurrencyPair != null) {
-            currencyPair = newCurrencyPair.replaceAll("-", CURRENCY_PAIR_SEPARATOR);
-        }
-    }
-
-    /**
      * Returns currency pair DTO.
      *
      * @return currency pair DTO
@@ -126,6 +115,17 @@ public class ImportedTicker {
             return new CurrencyPairDTO(currencyPair.replaceAll("-", CURRENCY_PAIR_SEPARATOR));
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Setter currencyPair.
+     *
+     * @param newCurrencyPair the currencyPair to set
+     */
+    public void setCurrencyPair(final String newCurrencyPair) {
+        if (newCurrencyPair != null) {
+            currencyPair = newCurrencyPair.replaceAll("-", CURRENCY_PAIR_SEPARATOR);
         }
     }
 

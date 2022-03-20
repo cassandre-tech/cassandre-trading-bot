@@ -52,7 +52,7 @@ public class OnlyPositionsStrategyTest extends BaseTest {
         with().await().untilAsserted(() -> assertEquals(9, tradeRepository.count()));
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -130,7 +130,6 @@ public class OnlyPositionsStrategyTest extends BaseTest {
                 .getTrades()
                 .iterator().next()
                 .getPrice().getValue()));
-
     }
 
 }
