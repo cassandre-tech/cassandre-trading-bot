@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -37,6 +38,15 @@ public class AccountDTO {
     /** Represents the different balances for each currency owned by the account. */
     @Singular
     Set<BalanceDTO> balances;
+
+    /**
+     * Getter accountId.
+     *
+     * @return accountId
+     */
+    public String getAccountId() {
+        return ObjectUtils.firstNonNull(accountId, "DEFAULT_ACCOUNT");
+    }
 
     /**
      * Returns balance of a currency.
