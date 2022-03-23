@@ -1,5 +1,5 @@
 "Currency."
 type Currency {
-    "Code."
+    "Code (Example : ETH)."
     code: ID!
 }

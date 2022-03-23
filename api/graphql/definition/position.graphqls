@@ -2,7 +2,7 @@
 type Position {
     "Position unique ID."
     uid: Int!
-    "An identifier that uniquely identifies the position."
+    "An identifier that uniquely identifies this position for a strategy."
     positionId: Int!
     "Position type (Long or Short)."
     type: PositionType!
@@ -15,7 +15,9 @@ type Position {
     "Position rules."
     rules: PositionRules!
     "Position status."
-    status: PositionStatus
+    status: PositionStatus!
+    "Indicates if the position should be closed automatically by Cassandre."
+    autoClose: Boolean!
     "Indicates that the position must be closed no matter the rules."
     forceClosing: Boolean!
     "The order created to open the position."
@@ -32,6 +34,7 @@ type Position {
     gain: Gain
 }
 
+"Position type."
 enum PositionType {
     "Long position is nothing but buying share and selling them later for more."
     LONG
@@ -39,6 +42,7 @@ enum PositionType {
     SHORT
 }
 
+"Position status."
 enum PositionStatus {
     "Opening - a position has been created, a buy order has been made but not yet completed."
     OPENING

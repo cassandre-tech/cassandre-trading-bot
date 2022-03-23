@@ -1,9 +1,9 @@
 "Gain."
 type Gain {
-    "Gain made (percentage)."
+    "Gain percentage."
     percentage: Float
-    "Gain made (amount)."
+    "Gain amount."
     amount: CurrencyAmount
-    "Fees."
-    fees: CurrencyAmount
+    "Fees (from opening and closing orders)."
+    fees: [CurrencyAmount]
 }

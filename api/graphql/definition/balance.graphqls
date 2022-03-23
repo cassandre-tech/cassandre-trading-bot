@@ -1,4 +1,4 @@
-"Balance of a user account."
+"User's balance for a specific currency."
 type Balance {
     "Currency."
     currency: Currency!
