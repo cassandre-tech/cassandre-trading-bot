@@ -168,4 +168,23 @@ public class TickerFluxMock {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns true is a specific flux is done.
+     *
+     * @param currencyPair currency pair
+     * @return true if the flux is done
+     */
+    public boolean isFluxDone(final CurrencyPairDTO currencyPair) {
+        return marketServiceBacktestingImplementation.isFluxDone(currencyPair);
+    }
+
+    /**
+     * Returns true is all flux are done.
+     *
+     * @return true if all are done
+     */
+    public boolean isFluxDone() {
+        return marketServiceBacktestingImplementation.isFluxDone();
+    }
+
 }
