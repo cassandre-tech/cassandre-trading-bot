@@ -48,7 +48,7 @@ jobs:
           # GPG.
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mvn -v
+          mvn -version
           mvn deploy -B -DskipTests=true -Dgpg.passphrase=${GPG_PASSPHRASE}
 
       # ================================================================================================================
