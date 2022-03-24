@@ -14,12 +14,19 @@ public interface BacktestingTickerMapper {
 
     // =================================================================================================================
     // ImportedCandle to BacktestingCandle.
+    @Mapping(target = "id", ignore = true)
     BacktestingCandle mapToBacktestingCandle(ImportedCandle source);
 
     // =================================================================================================================
     // BacktestingTicker to TickerDTO.
     @Mapping(target = "currencyPair", source = "id.currencyPair")
     @Mapping(target = "last", source = "close")
+    @Mapping(target = "bid", ignore = true)
+    @Mapping(target = "ask", ignore = true)
+    @Mapping(target = "vwap", ignore = true)
+    @Mapping(target = "quoteVolume", ignore = true)
+    @Mapping(target = "bidSize", ignore = true)
+    @Mapping(target = "askSize", ignore = true)
     TickerDTO mapToTickerDTO(BacktestingCandle source);
 
 }

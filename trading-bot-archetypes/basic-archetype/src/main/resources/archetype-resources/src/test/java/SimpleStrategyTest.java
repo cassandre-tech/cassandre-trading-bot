@@ -5,7 +5,6 @@ package ${package};
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Simple strategy test.
  */
-@SpringBootTest(classes = {DgsAutoConfiguration.class})
+@SpringBootTest
 @Import(TickerFluxMock.class)
 @DisplayName("Simple strategy test")
 public class SimpleStrategyTest {

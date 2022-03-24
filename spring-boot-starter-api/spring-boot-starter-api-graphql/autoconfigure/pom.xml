@@ -29,28 +29,26 @@
         <dependency>
             <groupId>com.netflix.graphql.dgs</groupId>
             <artifactId>graphql-dgs-client</artifactId>
-            <!-- TODO Remove version in pom -->
-            <version>4.9.22</version>
         </dependency>
         <dependency>
             <groupId>com.netflix.graphql.dgs.codegen</groupId>
             <artifactId>graphql-dgs-codegen-core</artifactId>
             <version>5.1.17</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.netflix.graphql.dgs.codegen</groupId>
             <artifactId>graphql-dgs-codegen-client-core</artifactId>
             <version>5.1.17</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.netflix.graphql.dgs</groupId>
             <artifactId>graphql-dgs-mocking</artifactId>
-            <version>4.9.22</version>
         </dependency>
         <dependency>
             <groupId>com.apollographql.federation</groupId>
             <artifactId>federation-graphql-java-support</artifactId>
-            <version>0.9.0</version>
         </dependency>
        <dependency>
             <groupId>com.netflix.graphql.dgs</groupId>

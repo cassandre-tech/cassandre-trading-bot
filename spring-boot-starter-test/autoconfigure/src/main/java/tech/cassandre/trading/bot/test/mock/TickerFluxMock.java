@@ -60,12 +60,6 @@ public class TickerFluxMock {
     /** Application context. */
     private final ApplicationContext applicationContext;
 
-    /** Order flux. */
-    private final OrderFlux orderFlux;
-
-    /** Trade flux. */
-    private final TradeFlux tradeFlux;
-
     /** Order repository. */
     private final OrderRepository orderRepository;
 
@@ -74,6 +68,12 @@ public class TickerFluxMock {
 
     /** Backtesting tickers repository. */
     private final BacktestingCandleRepository backtestingCandleRepository;
+
+    /** Order flux. */
+    private final OrderFlux orderFlux;
+
+    /** Trade flux. */
+    private final TradeFlux tradeFlux;
 
     /** Market service for backtesting. */
     private MarketServiceBacktestingImplementation marketServiceBacktestingImplementation;
