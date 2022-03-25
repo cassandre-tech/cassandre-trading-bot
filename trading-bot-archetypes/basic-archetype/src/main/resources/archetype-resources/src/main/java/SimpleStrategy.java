@@ -40,7 +40,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 			// If there is only one on the exchange, we choose this one.
 			return accounts.stream().findFirst();
 		} else {
-			// If there are several accounts on the exchange, we choose the one with the name "trade".
+			// If there are several accounts on the exchange, we choose the one whose name is "trade".
 			return accounts.stream()
 					.filter(a -> "trade".equalsIgnoreCase(a.getName()))
 					.findFirst();
@@ -48,19 +48,19 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	}
 
 	@Override
-	public final void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
+	public void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
 		// Here, we will receive an AccountDTO each time there is a change on your account.
 		accounts.values().forEach(account -> System.out.println("Received information about an account : " + account));
 	}
 
 	@Override
-	public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+	public void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
 		// Here we will receive all tickers we required from the exchange.
 		tickers.values().forEach(ticker -> System.out.println("Received information about a ticker : " + ticker));
 	}
 
 	@Override
-	public final void onOrdersUpdates(final Map<String, OrderDTO> orders) {
+	public void onOrdersUpdates(final Map<String, OrderDTO> orders) {
 		// Here, we will receive an OrderDTO each time order data has changed on the exchange.
 		orders.values().forEach(order -> System.out.println("Received information about an order : " + order));
 	}

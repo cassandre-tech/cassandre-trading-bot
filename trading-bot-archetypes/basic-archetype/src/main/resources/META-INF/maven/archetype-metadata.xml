@@ -25,6 +25,7 @@
       <directory>src/test/resources</directory>
       <includes>
         <include>**/*.tsv</include>
+        <include>**/*.csv</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
