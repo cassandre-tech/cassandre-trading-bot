@@ -74,7 +74,6 @@ jobs:
           cat archetype-test-api-graphql.xml > archetype-test-api-graphql/pom.xml
           cp util/test/api/graphql/application.properties archetype-test-api-graphql/src/main/resources/
           cp util/test/api/graphql/user-trade.tsv archetype-test-api-graphql/src/main/resources/
-          mvn -f archetype-test-api-graphql/pom.xml test
           mvn -f archetype-test-api-graphql/pom.xml spring-boot:run &
           sleep 60
 
