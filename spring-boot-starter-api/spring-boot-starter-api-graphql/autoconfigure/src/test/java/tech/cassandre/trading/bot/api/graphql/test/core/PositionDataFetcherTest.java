@@ -50,8 +50,6 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionDataFetcherTest extends BaseDataFetcherTest {
 
-    // TODO Test gain fees.
-
     @Autowired
     DgsQueryExecutor dgsQueryExecutor;
 
@@ -106,7 +104,6 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
         assertEquals(14, position.getPositionId());
         assertEquals(PositionType.LONG, position.getType());
         assertEquals("002", position.getStrategy().getStrategyId());
-        // TODO It should not be DTO!
         assertEquals(UNI, position.getCurrencyPair().getBaseCurrency());
         assertEquals(USDT, position.getCurrencyPair().getQuoteCurrency());
         // Amount.

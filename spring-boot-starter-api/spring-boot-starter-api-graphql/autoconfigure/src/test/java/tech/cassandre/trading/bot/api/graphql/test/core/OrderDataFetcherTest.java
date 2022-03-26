@@ -112,7 +112,6 @@ public class OrderDataFetcherTest extends BaseDataFetcherTest {
         assertEquals(0,  new BigDecimal("0.001").compareTo(order.getCumulativeAmount().getValue()));
         assertEquals(BTC, order.getCumulativeAmount().getCurrency());
         assertEquals(NEW, order.getStatus());
-        // TODO Make a test with real timezone.
         assertNotNull(order.getTimestamp().toString());
         // Trades
         assertEquals(2, order.getTrades().size());

@@ -93,7 +93,6 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
         assertEquals("60df231c38ec01000687554e", trade.getOrderId());
         assertEquals(19, trade.getOrder().getUid());
         assertEquals("60df231c38ec01000687554e", trade.getOrder().getOrderId());
-        // TODO It should not be DTO!
         assertEquals(BTC, trade.getCurrencyPair().getBaseCurrency());
         assertEquals(USDT, trade.getCurrencyPair().getQuoteCurrency());
         // Amount.
@@ -103,8 +102,6 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
         assertEquals(0, new BigDecimal("33591.90000000").compareTo(trade.getPrice().getValue()));
         assertEquals(USDT, trade.getPrice().getCurrency());
         // Fee.
-        // TODO We should have a list of fees.
-        // TODO Test gains.
         assertEquals(0, new BigDecimal("0.03359190").compareTo(trade.getFee().getValue()));
         assertEquals(USDT, trade.getFee().getCurrency());
         assertNotNull(trade.getTimestamp().toString());
@@ -140,7 +137,6 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
         assertEquals("60df231c38ec01000687554e", trade.getOrderId());
         assertEquals(19, trade.getOrder().getUid());
         assertEquals("60df231c38ec01000687554e", trade.getOrder().getOrderId());
-        // TODO It should not be DTO!
         assertEquals(BTC, trade.getCurrencyPair().getBaseCurrency());
         assertEquals(USDT, trade.getCurrencyPair().getQuoteCurrency());
         // Amount.
@@ -150,8 +146,6 @@ public class TradeDataFetcherTest extends BaseDataFetcherTest {
         assertEquals(0, new BigDecimal("33591.90000000").compareTo(trade.getPrice().getValue()));
         assertEquals(USDT, trade.getPrice().getCurrency());
         // Fee.
-        // TODO We should have a list of fees.
-        // TODO Test gains.
         assertEquals(0, new BigDecimal("0.03359190").compareTo(trade.getFee().getValue()));
         assertEquals(USDT, trade.getFee().getCurrency());
         assertNotNull(trade.getTimestamp().toString());

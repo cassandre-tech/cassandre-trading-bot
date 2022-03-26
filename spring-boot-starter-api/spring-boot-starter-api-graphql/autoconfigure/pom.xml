@@ -138,9 +138,9 @@
                         <param>src/main/resources/schema/account.graphqls</param>
                         <param>src/main/resources/schema/balance.graphqls</param>
                         <param>src/main/resources/schema/configuration.graphqls</param>
-                        <param>src/main/resources/schema/currency.graphqls</param>
                         <param>src/main/resources/schema/currency-amount.graphqls</param>
                         <param>src/main/resources/schema/currency-pair.graphqls</param>
+                        <param>src/main/resources/schema/currency.graphqls</param>
                         <param>src/main/resources/schema/gain.graphqls</param>
                         <param>src/main/resources/schema/order.graphqls</param>
                         <param>src/main/resources/schema/position.graphqls</param>

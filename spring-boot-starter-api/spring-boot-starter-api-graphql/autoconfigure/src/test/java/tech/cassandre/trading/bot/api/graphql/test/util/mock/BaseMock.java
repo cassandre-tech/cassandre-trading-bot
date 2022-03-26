@@ -210,22 +210,6 @@ public class BaseMock extends BaseTest {
     /**
      * Util method to return a generated ticker.
      *
-     * @param instrument instrument (currency pair)
-     * @param value      value for all fields
-     * @return ticket
-     */
-    protected static Ticker getGeneratedTicker(final Instrument instrument, final BigDecimal value) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return getGeneratedTicker(new Date(), instrument, value);
-    }
-
-    /**
-     * Util method to return a generated ticker.
-     *
      * @param date       date
      * @param instrument instrument (currency pair)
      * @param value      value for all fields

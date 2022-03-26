@@ -58,7 +58,6 @@ public class PositionDataFetcher extends BaseDataFetcher {
     public final List<PositionDTO> positionsByStrategyUid(@InputArgument final long strategyUid) {
         return positionRepository.findAll()
                 .stream()
-                // TODO Could be improved with a specific query in the repository
                 .filter(position -> position.getStrategy().getUid() == strategyUid)
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .toList();
@@ -74,7 +73,6 @@ public class PositionDataFetcher extends BaseDataFetcher {
     public final List<PositionDTO> positionsByStrategyId(@InputArgument final String strategyId) {
         return positionRepository.findAll()
                 .stream()
-                // TODO Could be improved with a specific query in the repository
                 .filter(position -> Objects.equals(position.getStrategy().getStrategyId(), strategyId))
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .toList();
