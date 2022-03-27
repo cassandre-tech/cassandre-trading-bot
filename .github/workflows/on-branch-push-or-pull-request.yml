@@ -73,7 +73,7 @@ jobs:
           sed 's/<dependencies>/<dependencies>\r\n<!--Postgresql driver -->\r\n<dependency>\r\n<groupId>org.postgresql<\/groupId>\r\n<artifactId>postgresql<\/artifactId>\r\n<version>42.2.24<\/version>\r\n<\/dependency>\r\n<!-- Postgresql driver -->/g' archetype-test-api-graphql/pom.xml > archetype-test-api-graphql.xml
           cat archetype-test-api-graphql.xml > archetype-test-api-graphql/pom.xml
           cp util/test/api/graphql/application.properties archetype-test-api-graphql/src/main/resources/
-          cp util/test/api/graphql/user-trade.tsv archetype-test-api-graphql/src/main/resources/
+          cp util/test/api/graphql/user-trade.csv archetype-test-api-graphql/src/main/resources/
           mvn -f archetype-test-api-graphql/pom.xml spring-boot:run &
           sleep 60
 
