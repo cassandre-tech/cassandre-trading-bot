@@ -55,7 +55,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.5</version>
+		<version>2.6.6</version>
 		<relativePath/>
 	</parent>
 	<!-- =========================================================================================================== -->
@@ -77,7 +77,7 @@
 		<reactor.version>Dysprosium-SR25</reactor.version>
 		<xchange.version>5.0.13</xchange.version>
 		<bucket4j.version>7.3.0</bucket4j.version>
-		<liquibase.version>4.9.0</liquibase.version>
+		<liquibase.version>4.9.1</liquibase.version>
 		<opencsv.version>5.6</opencsv.version>
 
 		<!-- Core utils -->
@@ -98,7 +98,7 @@
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
 		<maven.graphqlcodegen.plugin.version>1.17</maven.graphqlcodegen.plugin.version>
-		<maven.puppycrawl.checkstyle.version>10.0</maven.puppycrawl.checkstyle.version>
+		<maven.puppycrawl.checkstyle.version>10.1</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
