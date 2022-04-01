@@ -105,7 +105,7 @@ public class TickerFluxMock {
         logger.info("Importing candles for backtesting...");
         Set<CurrencyPairDTO> currencyPairUsed = new HashSet<>();
         getCandlesFilesToLoad()
-                .parallelStream()
+                .stream()
                 .filter(resource -> resource.getFilename() != null)
                 .peek(resource -> logger.info("Backtesting candles for {}...", resource.getFilename()))
                 .forEach(resource -> {

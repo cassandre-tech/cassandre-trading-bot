@@ -257,49 +257,49 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                 .stream()
                 // If we have a strategyUid equals to 0, it means we calculate all gains on all closed positions.
                 // If we have a strategyUid different from 0, we only retrieved the position of a particular strategy.
-                .filter(position -> position.getUid() == strategyUid || strategyUid == 0)
+                .filter(position -> strategyUid == 0 || position.getStrategy().getUid() == strategyUid)
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                .forEach(p -> {
+                .forEach(positionDTO -> {
                     // We retrieve the currency and initiate the maps if they are empty
                     CurrencyDTO currency;
-                    if (p.getType() == LONG) {
+                    if (positionDTO.getType() == LONG) {
                         // LONG.
-                        currency = p.getCurrencyPair().getQuoteCurrency();
+                        currency = positionDTO.getCurrencyPair().getQuoteCurrency();
                     } else {
                         // SHORT.
-                        currency = p.getCurrencyPair().getBaseCurrency();
+                        currency = positionDTO.getCurrencyPair().getBaseCurrency();
                     }
                     gains.putIfAbsent(currency, null);
                     totalBefore.putIfAbsent(currency, ZERO);
                     totalAfter.putIfAbsent(currency, ZERO);
 
                     // We calculate the amounts bought and amount sold.
-                    if (p.getType() == LONG) {
-                        totalBefore.put(currency, p.getOpeningOrder().getTrades()
+                    if (positionDTO.getType() == LONG) {
+                        totalBefore.put(currency, positionDTO.getOpeningOrder().getTrades()
                                 .stream()
                                 .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                                 .reduce(totalBefore.get(currency), BigDecimal::add));
-                        totalAfter.put(currency, p.getClosingOrder().getTrades()
+                        totalAfter.put(currency, positionDTO.getClosingOrder().getTrades()
                                 .stream()
                                 .map(t -> t.getAmountValue().multiply(t.getPriceValue()))
                                 .reduce(totalAfter.get(currency), BigDecimal::add));
                     } else {
-                        totalBefore.put(currency, p.getOpeningOrder().getTrades()
+                        totalBefore.put(currency, positionDTO.getOpeningOrder().getTrades()
                                 .stream()
                                 .map(TradeDTO::getAmountValue)
                                 .reduce(totalBefore.get(currency), BigDecimal::add));
-                        totalAfter.put(currency, p.getClosingOrder().getTrades()
+                        totalAfter.put(currency, positionDTO.getClosingOrder().getTrades()
                                 .stream()
                                 .map(TradeDTO::getAmountValue)
                                 .reduce(totalAfter.get(currency), BigDecimal::add));
                     }
 
                     // And now the fees.
-                    p.getOpeningOrder().getTrades()
+                    positionDTO.getOpeningOrder().getTrades()
                             .stream()
                             .filter(tradeDTO -> tradeDTO.getFee() != null)
                             .forEach(tradeDTO -> openingOrdersFees.add(tradeDTO.getFee()));
-                    p.getClosingOrder().getTrades()
+                    positionDTO.getClosingOrder().getTrades()
                             .stream()
                             .filter(tradeDTO -> tradeDTO.getFee() != null)
                             .forEach(tradeDTO -> closingOrdersFees.add(tradeDTO.getFee()));
