@@ -35,8 +35,8 @@ public class SimpleStrategyTest {
 	 * Check data reception.
 	 */
 	@Test
-	@DisplayName("Check data reception")
-	public void receivedData() {
+	@DisplayName("Check strategy behavioir")
+	public void checkStrategy() {
 		await().forever().until(() -> tickerFluxMock.isFluxDone());
 
 		// Waiting to see if the strategy received the accounts update.

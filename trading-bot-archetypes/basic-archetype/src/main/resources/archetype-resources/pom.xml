@@ -42,7 +42,7 @@
 			<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
 			<version>@project.version@</version>
 		</dependency>
-		<!-- Our archetype is using Kucoin exchange sanbox - Add here the dependency of the exchange you want to use -->
+		<!-- Our archetype is using Kucoin exchange sandbox - Add here the dependency of the exchange you want to use -->
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-kucoin</artifactId>

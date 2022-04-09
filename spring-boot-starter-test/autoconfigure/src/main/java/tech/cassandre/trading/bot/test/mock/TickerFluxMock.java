@@ -107,7 +107,7 @@ public class TickerFluxMock {
         getCandlesFilesToLoad()
                 .stream()
                 .filter(resource -> resource.getFilename() != null)
-                .peek(resource -> logger.info("Backtesting candles for {}...", resource.getFilename()))
+                .peek(resource -> logger.info("Importing {}...", resource.getFilename()))
                 .forEach(resource -> {
                     try {
                         // Insert the tickers in database.
