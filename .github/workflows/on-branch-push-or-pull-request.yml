@@ -31,7 +31,8 @@ jobs:
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
           --project-token ${{ secrets.CODACY_API_TOKEN }} \
-          -r spring-boot-starter/autoconfigure/target/site/jacoco/jacoco.xml
+          --language Java \
+          $(find **/jacoco*.xml -printf '--coverage-reports %p ')
 
       # ================================================================================================================
       - name: Test Cassandre trading bot maven archetype - basic strategy
