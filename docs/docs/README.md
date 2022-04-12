@@ -1,2 +1,2 @@
 # Hello VuePress
-je suis arrivé !
+English release

@@ -5,9 +5,20 @@ export default defineUserConfig<DefaultThemeOptions>({
 
     // =================================================================================================================
     // Site configuration.
-    lang: 'en-US',
-    title: 'Cassandre trading bot',
-    description: 'Create your Java crypto trading bot in minutes',
+    locales: {
+        // English.
+        '/': {
+            lang: 'en-US',
+            title: 'Cassandre trading bot framework',
+            description: 'Create your Java crypto trading bot in minutes',
+        },
+        // French.
+        '/fr/': {
+            lang: 'fr-FR',
+            title: 'Cassandre trading bot framework',
+            description: 'Créer votre trading bot en java en quelques minutes',
+        },
+    },
 
     // =================================================================================================================
     // HTML Header.
@@ -60,6 +71,30 @@ export default defineUserConfig<DefaultThemeOptions>({
         title: 'Cassandre trading bot',
         logo: 'assets/images/logo/cassandre-trading-bot-without-text.png',
         logoDark: 'assets/images/logo/cassandre-trading-bot-without-text-dark-mode.png',
+        // =============================================================================================================
+        // Menus.
+        locales: {
+            // =========================================================================================================
+            // English.
+            '/': {
+                // Text for the language dropdown.
+                selectLanguageText: 'Languages',
+                selectText: 'Languages',
+                // Label for this locale in the language dropdown.
+                selectLanguageName: 'English',
+                label: 'English',
+            },
+            // =========================================================================================================
+            // French.
+            '/fr/': {
+                // Text for the language dropdown.
+                selectLanguageText: 'Langues',
+                selectText: 'Langues',
+                // Label for this locale in the language dropdown.
+                selectLanguageName: 'Français',
+                label: 'Français',
+            },
+        },
     },
 
     // =================================================================================================================
@@ -69,7 +104,7 @@ export default defineUserConfig<DefaultThemeOptions>({
         [
             '@vuepress/plugin-google-analytics',
             {
-                id: 'UA-158255496-1'
+                id: 'UA-158255496-1',
             }
         ],
         // Doc search.
@@ -78,7 +113,7 @@ export default defineUserConfig<DefaultThemeOptions>({
             {
                 appId: 'Z5EV5Y49BO',
                 apiKey: '92c15c16c728a530fc095a798081e674',
-                indexName: 'cassandre'
+                indexName: 'cassandre',
             },
         ],
     ]
