@@ -1,5 +1,7 @@
 import {defineUserConfig} from 'vuepress'
 import type {DefaultThemeOptions} from 'vuepress'
+import {navbarFR} from "./i18n/fr/navbar";
+import {sidebarFR} from "./i18n/fr/sidebar";
 
 export default defineUserConfig<DefaultThemeOptions>({
 
@@ -83,6 +85,8 @@ export default defineUserConfig<DefaultThemeOptions>({
                 // Label for this locale in the language dropdown.
                 selectLanguageName: 'English',
                 label: 'English',
+                // Menu.
+                navbar: []
             },
             // =========================================================================================================
             // French.
@@ -93,6 +97,9 @@ export default defineUserConfig<DefaultThemeOptions>({
                 // Label for this locale in the language dropdown.
                 selectLanguageName: 'Français',
                 label: 'Français',
+                // Menu.
+                navbar: navbarFR,
+                sidebar: sidebarFR,
             },
         },
     },

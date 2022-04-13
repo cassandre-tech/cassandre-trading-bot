@@ -1,2 +1,2 @@
-# Hello VuePress
+# Hello world
 English release

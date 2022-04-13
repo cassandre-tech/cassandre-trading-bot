@@ -1,2 +1,2 @@
-# Hello VuePress
-Versionf française
+# Bonjour VuePress
+Version française

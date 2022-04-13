@@ -179,7 +179,7 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
                                     .map(CurrencyPairDTO::toString)
                                     .collect(Collectors.joining(", ")));
 
-                    // StrategyDTO : saving or updating the strategy in database.
+                    // StrategyDTO: saving or updating the strategy in database.
                     StrategyDTO strategyDTO;
                     final Optional<Strategy> strategyInDatabase = strategyRepository.findByStrategyId(annotation.strategyId());
                     if (strategyInDatabase.isEmpty()) {
@@ -375,8 +375,8 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         // Getting the list of files to import and insert them in database.
         logger.info("Importing candles...");
         AtomicLong counter = new AtomicLong(0);
-        getCandlesFilesToLoad()
-                .parallelStream()
+        getFilesToLoad("classpath*:candles-to-import*csv")
+                .stream()
                 .filter(resource -> resource.getFilename() != null)
                 .peek(resource -> logger.info("Importing candles from {}", resource.getFilename()))
                 .forEach(resource -> {
@@ -409,8 +409,8 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         // Getting the list of files to import and insert them in database.
         logger.info("Importing tickers...");
         AtomicLong counter = new AtomicLong(0);
-        getTickersFilesToLoad()
-                .parallelStream()
+        getFilesToLoad("classpath*:tickers-to-import*csv")
+                .stream()
                 .filter(resource -> resource.getFilename() != null)
                 .peek(resource -> logger.info("Importing tickers from {}", resource.getFilename()))
                 .forEach(resource -> {
@@ -436,31 +436,14 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     /**
      * Returns the list of tickers files to import.
      *
+     * @param locationPattern the location pattern to resolve.
      * @return files to import.
      */
-    public List<Resource> getTickersFilesToLoad() {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    public List<Resource> getFilesToLoad(final String locationPattern) {
         try {
-            final Resource[] resources = resolver.getResources("classpath*:tickers-to-import*csv");
-            return Arrays.asList(resources);
+            return Arrays.asList(new PathMatchingResourcePatternResolver().getResources(locationPattern));
         } catch (IOException e) {
             logger.error("Impossible to load imported tickers: {}", e.getMessage());
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Returns the list of candles files to import.
-     *
-     * @return files to import.
-     */
-    public List<Resource> getCandlesFilesToLoad() {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        try {
-            final Resource[] resources = resolver.getResources("classpath*:candles-to-import*csv");
-            return Arrays.asList(resources);
-        } catch (IOException e) {
-            logger.error("Impossible to load imported candles: {}", e.getMessage());
         }
         return Collections.emptyList();
     }
