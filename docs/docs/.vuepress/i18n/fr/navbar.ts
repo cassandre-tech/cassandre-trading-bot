@@ -1,21 +1,33 @@
 import type {NavbarConfig} from 'vuepress-theme-mix'
 
 export const navbarFR: NavbarConfig = [
+
+    // =================================================================================================================
     // "Home".
     {text: 'Accueil', link: '/fr/'},
 
+    // =================================================================================================================
     // "Trading basics".
     {text: 'Bases du trading', link: '/fr/trading_basics/'},
 
+    // =================================================================================================================
     // "Cassandre basics".
-    {text: 'Bases de Cassandre', link: 'https://opencollective.com/cassandre-tech'},
+    {text: 'Bases de Cassandre', link: '/fr/cassandre_basics/'},
 
+    // =================================================================================================================
     // "Tutorial".
-    {text: 'Tutorial', link: 'https://opencollective.com/cassandre-tech'},
+    {text: 'Tutorial', link: '/fr/tutorial/'},
 
+    // =================================================================================================================
     // "How-tos".
-    {text: 'Guides', link: 'https://opencollective.com/cassandre-tech'},
+    {text: 'Guides', children: [
+            {text: 'Email', link: 'mailto:contact@cassandre.tech'},
+            {text: 'Single', link: '/fr/guides/contributor/'},
+            {text: 'Single page', link: '/fr/guides/exchange/'},
+        ]
+    },
 
+    // =================================================================================================================
     // "Contact & news".
     {
         text: 'Contact & news', children: [
@@ -26,6 +38,8 @@ export const navbarFR: NavbarConfig = [
         ]
     },
 
+    // =================================================================================================================
     // Github.
     {text: 'Github', link: 'https://github.com/cassandre-tech/cassandre-trading-bot'},
+
 ]
