@@ -1,13 +1,14 @@
-# What is an order ?
-An order is an instruction to the exchange to purchase or sell an asset for you.
+# Qu'est-ce qu'un ordre (order) ?
+Un ordre est une instruction que vous envoyez à l'exchange pour qu'il achète ou vende un actif pour vous.
 
-## Market Orders
-A market order is an order to buy or sell a specified quantity of the underlying security immediately.
-If you buy an asset, you will pay the price or higher than the ask price in the ticker. If you are going to sell an asset, you will receive an amount at or lower than the bid price in the ticker.
+## Ordre au marché
+Un ordre au marché est un ordre d'achat ou de vente immédiat d'une quantité déterminée d'un titre.
 
-## Limit Orders
-A limit order, sometimes referred to as a pending order, allows you to buy and sell assets at a specific price in the future.
+Si vous achetez un actif, vous paierez le prix ou plus que le prix demandé. Si vous vendez un actif, vous recevrez un montant égal ou inférieur au prix de l'offre.
 
-This type of order is used to execute a trade if the price reaches the price you decided. The order will not be filled if the price does not reach this level. In effect, a limit order sets the maximum or minimum price you are willing to buy or sell.
+## L'ordre à cours limité
+Un ordre à cours limité, parfois appelé ordre en attente, vous permet d'acheter et de vendre des actifs à un prix spécifique dans le futur.
 
-For example, you can create an order saying, “I want to buy one bitcoin when it reaches 4,000$”.
+Ce type d'ordre est utilisé pour exécuter une transaction si le prix atteint le prix que vous avez décidé. La commande ne sera pas remplie si le prix n'atteint pas ce niveau.
+
+Par exemple, vous pouvez créer une commande disant : « Je veux acheter un bitcoin lorsqu'il atteint 4 000 $ ».

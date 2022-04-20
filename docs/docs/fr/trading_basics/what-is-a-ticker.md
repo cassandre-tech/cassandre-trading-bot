@@ -1,13 +1,17 @@
-# What is a ticker ?
-A ticker, a synonym for a stock symbol, is the short form of full security \(asset\). A ticker has a stream of quotes \(AKA prices\) attached to it, continuously updated throughout a trading session by the various exchanges.
+# Qu'est-ce qu'un ticker ?
 
-For example, take `ETH-BTC` , if you have [curl](https://curl.haxx.se/) and [jq](https://stedolan.github.io/jq/) installed, you can get a ticker from Kucoin with this command
+Un ticker, synonyme de symbole boursier, est la forme abrégée d'un actif. Ses informations sont mises à jour en continu
+tout au long d'une séance de négociation par les différentes bourses.
+
+Par exemple, prenez `ETH-BTC`, si vous avez installé les outils [curl](https://curl.haxx.se/)
+et [jq](https://stedolan.github.io/jq/), vous pouvez obtenir un ticker de Kucoin avec cette commande:
+
 ```bash
-curl -s https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=ETH-BTC \
-| jq .data
+curl -s https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=ETH-BTC | jq .data
 ```
 
 The result will look like this :
+
 ```json
 {
   "time": 1597187421265,
@@ -21,22 +25,23 @@ The result will look like this :
 }
 ```
 
-The first listed currency of a currency pair is called the base currency \(ETH\), and the second currency is called the quote currency. A price at 0.033131 means 1 Ether can be bought with 0.033131 Bitcoin.
+La première devise répertoriée d'une paire de devises est appelée devise de base (ETH) et la deuxième devise est appelée
+devise de cotation (BTC). Un prix à 0,033131 signifie que 1 Ether peut être acheté avec 0,033131 Bitcoin.
 
-These are the fields you can find on a ticker quote:
+Voici les champs que vous pouvez trouver sur un ticker :
 
-| Field | Description |
-| :--- | :--- |
-| currencyPair | Currency pair |
-| open | The opening price is the first trade price that was recorded during the day’s trading. |
-| last | Last trade field is the price at which the last trade was executed. |
-| bid | The bid price shown represents the highest price. |
-| ask | The ask price shown represents the lowest price. |
-| high | The day’s high price. |
-| low | The day’s low price. |
-| vwap | Volume-weighted average price \(VWAP\) is the ratio of the value traded to total volume traded over a particular time horizon \(usually one day\). |
-| volume | Volume is the number of shares or contracts traded. |
-| quoteVolume | Quote volume |
-| bidSize | The bid size represents the quantity of a security that investors are willing to purchase at a specified bid price. |
-| askSize | The ask size represents the quantity of a security that investors are willing to sell at a specified selling price. |
-| timestamp | The moment at which the account information was retrieved. |
+| Field | Description                                                                                                                                      |
+| :--- |:-------------------------------------------------------------------------------------------------------------------------------------------------|
+| currencyPair | Currency pair (ETH-BTC for example)                                                                                                              |
+| open | The opening price is the first trade price that was recorded during the day’s trading                                                            |
+| last | Last trade field is the price at which the last trade was executed                                                                               |
+| bid | The bid price shown represents the highest price                                                                                                 |
+| ask | The ask price shown represents the lowest price                                                                                                  |
+| high | The day’s high price                                                                                                                             |
+| low | The day’s low price                                                                                                                              |
+| vwap | Volume-weighted average price (VWAP) is the ratio of the value traded to total volume traded over a particular time horizon (usually one day) |
+| volume | Volume is the number of shares or contracts traded                                                                                               |
+| quoteVolume | Quote volume                                                                                                                                     |
+| bidSize | The bid size represents the quantity of a security that investors are willing to purchase at a specified bid price                               |
+| askSize | The ask size represents the quantity of a security that investors are willing to sell at a specified selling price                               |
+| timestamp | The moment at which the account information was retrieved                                                                                        |

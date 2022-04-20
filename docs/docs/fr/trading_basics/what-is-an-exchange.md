@@ -1,10 +1,14 @@
-# What is an exchange ?
-[Cryptocurrency exchanges](https://coinmarketcap.com/rankings/exchanges/) like [Coinbase](https://www.kucoin.com/ucenter/signup?utm_source=Cassandre) or [Kucoin](https://www.kucoin.com/ucenter/signup?utm_source=Cassandre) are online platforms where you can exchange an asset for another one based on the market value.
+# Qu'est-ce qu'un exchange ?
+[Les exchanges](https://coinmarketcap.com/rankings/exchanges/) comme [Binance](https://www.binance.com/en/activity/referral/offers/claim?ref=CPA_00002V0XR4), [Coinbase](https://www.coinbase.com/join/straumat) ou [Kucoin](https://www.kucoin.com/ucenter/signup?rcode=2HMJtt1) sont des plateformes en ligne où vous pouvez échanger un actif contre un autre en fonction de leur valeur.
 
-To make it simple, after creating an account, the exchange will allow you to buy an amount of a cryptocurrency in exchange for your euros/dollars \(they usually take a fee for that\). Be careful; in reality, you don’t really “own” the cryptocurrency you will buy there: if you don’t own the private key, you have a “promise” that an exchange owes you some assets.
+Pour faire simple, après avoir créé un compte, l'exchange vous permettra d'acheter un montant d'une crypto-monnaie en échange de vos euros ou dollars (ils prennent généralement des frais pour cela). 
 
-Most exchanges also offer tools for trading cryptocurrency. For example, Coinbase provides [this tool](https://pro.coinbase.com/).
+La plupart vous proposent également des outils pour réaliser du trading de crypto-monnaies. Par exemple, Coinbase fournit [cet outil](https://pro.coinbase.com/).
 
-More interesting in our case, most exchanges offer API for trading like the [coinbase API](https://developers.coinbase.com/). Instead of spending hours trading in front of your computer, you can write a program that trades for you. That’s the goal of our bot.
+Plus intéressant dans notre cas, la plupart des exchanges proposent des API pour le trading comme l'[API coinbase](https://developers.coinbase.com/). Au lieu de passer des heures à trader devant votre ordinateur, vous pouvez écrire un programme qui trade pour vous. Cassandre a pour but de vous y aider.
 
-One last point, some exchanges offer a sandbox that allows you to trade on the “simulated platform” with fake assets. For example, [Kucoin](https://sandbox.kucoin.com/).
+Un dernier point, certaines exchanges proposent une « sandbox » qui permet de trader sur la « plateforme simulée » avec de faux actifs. Cela permet de voir en temps réel ce que ferait votre bot.
+
+::: warning
+Faites attention, vous ne « possédez » pas vraiment les crypto-monnaies que vous achetez sur la plupart des exchanges. En effet, si vous ne possédez pas la clé privée liée à vos actifs, vous avez simplement la « promesse » que l'exchange vous doit les actifs que vous avez achetés chez lui.
+:::

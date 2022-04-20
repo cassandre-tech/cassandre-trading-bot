@@ -1,6 +1,6 @@
-# What is a cryptocurrency ?
-A cryptocurrency is a digital asset designed to work as a medium of exchange that uses strong cryptography to secure financial transactions, control the creation of additional units, and verify assets' transfer.
+# Qu'est-ce qu'une crypto-monnaie ?
+Une crypto-monnaie est un actif numérique conçu pour fonctionner comme un moyen d'échange et qui utilise la cryptographie pour sécuriser les transactions financières, contrôler la création d'unités supplémentaires et vérifier le transfert des actifs.
 
-Cryptocurrencies use decentralized control as opposed to centralized digital currency and central banking systems.
+Les crypto-monnaies utilisent un contrôle décentralisé par opposition à une monnaie numérique centralisée et aux systèmes bancaires centraux.
 
-Bitcoin is the first decentralized cryptocurrency. Since the release of bitcoin, over 6,000 other cryptocurrencies have been created.
+Bitcoin est la première crypto-monnaie décentralisée. Depuis la sortie du bitcoin, plus de 6 000 autres crypto-monnaies ont été créées.

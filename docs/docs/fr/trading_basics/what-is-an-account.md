@@ -1,15 +1,18 @@
-# What is an account ?
-Usually, in an exchange, you can have several accounts with different usages \(Classical, trading, margin trading, future…\), and then you have a balance for each currency.
+# Qu'est-ce qu'un compte ?
 
-A balance is not merely the amount you have; it could be more complicated and can have the following values :
+Habituellement, sur un exchange, vous pouvez avoir plusieurs comptes avec des usages différents (Classique, trading,
+trading sur marge, future...), et, pour chacun d'entre eux, vous avez un solde pour chaque devise.
 
-| Field | Description |
-| :--- | :--- |
-| currency | Currency |
-| total | Returns the total amount of the currency in this balance |
-| available | Returns the amount of the currency in this balance that is available to trade |
-| frozen | Returns the frozen amount of the currency in this balance that is locked in a trading |
-| loaned | Returns the loaned amount of the total currency in this balance that will be returned |
-| borrowed | Returns the borrowed amount of the available currency in this balance that must be repaid |
-| withdrawing | Returns the amount of the currency in this balance that is locked in withdrawal |
-| depositing | Returns the amount of the currency in this balance that is locked in deposit |
+Un solde n'est pas simplement le montant que vous avez; il pourrait être plus compliqué et peut avoir les valeurs
+suivantes :
+
+| Champs      | Description                             |
+|:------------|:----------------------------------------|
+| currency    | Devise                                  |
+| total       | Renvoie le montant total pour la devise |
+| available   | Montant disponible pour le trading      |
+| frozen      | Montant gelé                            |
+| loaned      | Montant prêté                           |
+| borrowed    | Returns emprunté                        |
+| withdrawing | Montant verrouillé qui va être retiré   |
+| depositing  | Montant verrouillé qui va être déposé   |
