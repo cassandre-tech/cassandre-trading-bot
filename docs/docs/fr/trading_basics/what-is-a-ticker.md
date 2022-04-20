@@ -1,5 +1,10 @@
-# Qu'est-ce qu'un ticker ?
+---
+title: Qu'est-ce qu'un ticker ?
+lang: fr-FR
+toc: false
+---
 
+# Qu'est-ce qu'un ticker ?
 Un ticker, synonyme de symbole boursier, est la forme abrégée d'un actif. Ses informations sont mises à jour en continu
 tout au long d'une séance de négociation par les différentes bourses.
 

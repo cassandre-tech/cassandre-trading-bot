@@ -1,3 +1,9 @@
+---
+title: Qu'est-ce que le trading ?
+lang: fr-FR
+toc: false
+---
+
 # Qu'est-ce que le trading ?
 Trading signifie « échanger quelque chose contre autre chose ». Sur les marchés financiers, il s'agit d'acheter des actions, des contrats à terme, des options, des swaps, des obligations, etc... ou, comme dans notre cas, une quantité de crypto-monnaie.
 

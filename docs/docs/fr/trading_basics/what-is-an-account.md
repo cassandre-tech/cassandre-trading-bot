@@ -1,3 +1,9 @@
+---
+title: Qu'est-ce qu'un compte sur un exchange ?
+lang: fr-FR
+toc: false
+---
+
 # Qu'est-ce qu'un compte ?
 
 Habituellement, sur un exchange, vous pouvez avoir plusieurs comptes avec des usages différents (Classique, trading,

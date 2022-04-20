@@ -1,3 +1,9 @@
+---
+title: Qu'est-ce qu'un ordre (Ordre au marché ou ordre à cours limité)
+lang: fr-FR
+toc: false
+---
+
 # Qu'est-ce qu'un ordre (order) ?
 Un ordre est une instruction que vous envoyez à l'exchange pour qu'il achète ou vende un actif pour vous.
 

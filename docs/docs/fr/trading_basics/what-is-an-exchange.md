@@ -1,3 +1,9 @@
+---
+title: Qu'est-ce qu'un exchange de crypto-monnaies?
+lang: fr-FR
+toc: false
+---
+
 # Qu'est-ce qu'un exchange ?
 [Les exchanges](https://coinmarketcap.com/rankings/exchanges/) comme [Binance](https://www.binance.com/en/activity/referral/offers/claim?ref=CPA_00002V0XR4), [Coinbase](https://www.coinbase.com/join/straumat) ou [Kucoin](https://www.kucoin.com/ucenter/signup?rcode=2HMJtt1) sont des plateformes en ligne où vous pouvez échanger un actif contre un autre en fonction de leur valeur.
 
