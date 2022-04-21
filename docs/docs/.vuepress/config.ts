@@ -12,13 +12,13 @@ export default defineUserConfig<DefaultThemeOptions>({
         '/': {
             lang: 'en-US',
             title: 'Cassandre trading bot framework',
-            description: 'Create your Java crypto trading bot in minutes',
+            description: 'Create your Java crypto trading bot in minutes with our spring boot starter',
         },
         // French.
         '/fr/': {
             lang: 'fr-FR',
             title: 'Cassandre trading bot framework',
-            description: 'Créer votre trading bot en java en quelques minutes',
+            description: 'Créer votre trading bot en java en quelques minutes avec notre spring boot starter',
         },
     },
 
