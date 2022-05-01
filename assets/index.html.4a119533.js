@@ -1,1 +1,0 @@
-const e={key:"v-710972d0",path:"/learn/graphql-api-documentation/",title:"API Reference",lang:"en-US",frontmatter:{},excerpt:"",headers:[],filePathRelative:"learn/graphql-api-documentation/README.md"};export{e as data};
