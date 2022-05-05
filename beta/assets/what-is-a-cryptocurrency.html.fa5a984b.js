@@ -1,0 +1,1 @@
+const t={key:"v-5d4fc2ae",path:"/trading_basics/what-is-a-cryptocurrency.html",title:"What is a cryptocurrency ?",lang:"en-US",frontmatter:{title:"What is a cryptocurrency ?",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"trading_basics/what-is-a-cryptocurrency.md"};export{t as data};

@@ -1,0 +1,1 @@
+const t={key:"v-acb7d998",path:"/fr/trading_basics/what-is-trading.html",title:"Qu'est-ce que le trading ?",lang:"fr-FR",frontmatter:{title:"Qu'est-ce que le trading ?",lang:"fr-FR",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/trading_basics/what-is-trading.md"};export{t as data};

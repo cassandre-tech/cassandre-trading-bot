@@ -1,0 +1,1 @@
+const t={key:"v-df2c55b6",path:"/trading_basics/what-is-trading.html",title:"What is trading ?",lang:"en-US",frontmatter:{title:"What is trading ?",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"trading_basics/what-is-trading.md"};export{t as data};
