@@ -85,3 +85,33 @@ jobs:
           cd util/test/api/graphql
           npm install --save-dev jest isomorphic-fetch
           npm run test
+
+      # ================================================================================================================
+      - name: Install Go to generate the graphQL documentation with gqldoc
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^1.17.3'
+
+      # ================================================================================================================
+      - name: Add the GraphQL schema and its documentation to the website
+        run: |
+          cp spring-boot-starter-api/spring-boot-starter-api-graphql/autoconfigure/src/main/resources/schema/*.graphqls docs/docs/.vuepress/public/api/graphql/definition
+          go install github.com/Code-Hex/gqldoc/cmd/gqldoc@v0.0.6
+          gqldoc -s "docs/docs/.vuepress/public/api/graphql/definition/*.graphqls" -o ./docs/docs/learn/graphql-api-documentation
+
+      # ================================================================================================================
+      - name: Install vuepress, set release number, and build the website
+        run: |
+          yarn add -D vuepress@next
+          find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.maven.outputs.version }}/g' {} \;
+          yarn --cwd docs install
+          yarn --cwd docs docs:build docs
+
+      # ================================================================================================================
+      - name: Deploy the website to github pages
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          branch: gh-pages
+          target-folder: beta
+          folder: docs/docs/.vuepress/dist
+          commit-message: "Beta website deployment"
