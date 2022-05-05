@@ -6,7 +6,7 @@ export const navbarFR = [
 
     // =================================================================================================================
     // "Trading basics".
-    {text: 'Bases du trading', link: '/fr/trading_basics/'},
+    {text: 'Bases du trading', link: '/fr/trading_basics/what-is-trading'},
 
     // =================================================================================================================
     // "Cassandre basics".
