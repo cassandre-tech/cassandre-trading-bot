@@ -3,6 +3,8 @@ import type {DefaultThemeOptions} from 'vuepress'
 import { defaultTheme } from '@vuepress/theme-default'
 import {navbarFR} from "./i18n/fr/navbar";
 import {sidebarFR} from "./i18n/fr/sidebar";
+import {navbarEN} from "./i18n/en/navbar";
+import {sidebarEN} from "./i18n/en/sidebar";
 
 export default defineUserConfig<DefaultThemeOptions>({
 
@@ -86,7 +88,8 @@ export default defineUserConfig<DefaultThemeOptions>({
                 selectLanguageName: 'English',
                 label: 'English',
                 // Menu.
-                navbar: []
+                navbar: navbarEN,
+                sidebar: sidebarEN,
             },
             // =========================================================================================================
             // French.

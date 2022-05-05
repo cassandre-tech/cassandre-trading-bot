@@ -1,6 +1,4 @@
-import type { SidebarConfig } from 'vuepress-theme-mix'
-
-export const sidebarFR: SidebarConfig = {
+export const sidebarFR = {
 
     // =================================================================================================================
     // "Trading basics".
