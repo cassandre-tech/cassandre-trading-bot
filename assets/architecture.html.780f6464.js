@@ -1,0 +1,1 @@
+const e={key:"v-3af47d7c",path:"/learn/architecture.html",title:"Architecture",lang:"en-US",frontmatter:{lang:"en-US",title:"Architecture",description:"Learn Cassandre architecture"},excerpt:"",headers:[],git:{},filePathRelative:"learn/architecture.md"};export{e as data};
