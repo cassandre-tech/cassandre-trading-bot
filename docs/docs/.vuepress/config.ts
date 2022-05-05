@@ -1,4 +1,4 @@
-import {defineUserConfig} from 'vuepress'
+import {defaultTheme, defineUserConfig} from 'vuepress'
 import type {DefaultThemeOptions} from 'vuepress'
 
 export default defineUserConfig<DefaultThemeOptions>({
@@ -46,7 +46,7 @@ export default defineUserConfig<DefaultThemeOptions>({
         ['meta', {name: 'twitter:image:alt', content: 'Cassandre'}]
     ],
 
-    themeConfig: {
+    theme: defaultTheme({
         lastUpdated: false,
         contributors: false,
         logo: 'assets/images/logo/cassandre-trading-bot-without-text.png',
@@ -174,7 +174,7 @@ export default defineUserConfig<DefaultThemeOptions>({
                 link: 'https://github.com/cassandre-tech/cassandre-trading-bot'
             }
         ],
-    },
+    },),
 
     // Plugins
     plugins: [
