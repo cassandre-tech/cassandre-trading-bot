@@ -1,5 +1,6 @@
 import {defineUserConfig} from 'vuepress'
 import type {DefaultThemeOptions} from 'vuepress'
+import { defaultTheme } from '@vuepress/theme-default'
 import {navbarFR} from "./i18n/fr/navbar";
 import {sidebarFR} from "./i18n/fr/sidebar";
 
@@ -66,8 +67,7 @@ export default defineUserConfig<DefaultThemeOptions>({
 
     // =================================================================================================================
     // Theme and its configuration.
-    theme: 'vuepress-theme-mix',
-    themeConfig: {
+    theme: defaultTheme({
         lastUpdated: false,
         contributors: false,
         title: 'Cassandre trading bot',
@@ -102,7 +102,7 @@ export default defineUserConfig<DefaultThemeOptions>({
                 sidebar: sidebarFR,
             },
         },
-    },
+    }),
 
     // =================================================================================================================
     // Plugins.

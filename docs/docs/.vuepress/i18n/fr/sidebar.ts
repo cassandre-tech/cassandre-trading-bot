@@ -10,7 +10,7 @@ export const sidebarFR: SidebarConfig = {
             text: 'Les bases du trading',
             link: '',
             children: [
-                '',
+                'what-is-trading',
                 'what-is-a-cryptocurrency',
                 'what-is-an-exchange',
                 'what-is-an-account',

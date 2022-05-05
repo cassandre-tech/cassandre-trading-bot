@@ -1,6 +1,4 @@
-import type {NavbarConfig} from 'vuepress-theme-mix'
-
-export const navbarFR: NavbarConfig = [
+export const navbarFR = [
 
     // =================================================================================================================
     // "Home".
