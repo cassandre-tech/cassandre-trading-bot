@@ -1,1 +1,0 @@
-const a={key:"v-6613254d",path:"/fr/cassandre_basics/",title:"Les bases de Cassandre",lang:"fr-FR",frontmatter:{},excerpt:"",headers:[],git:{},filePathRelative:"fr/cassandre_basics/README.md"};export{a as data};

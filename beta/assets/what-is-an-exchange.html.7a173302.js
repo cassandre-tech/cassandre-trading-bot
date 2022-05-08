@@ -1,1 +1,0 @@
-const e={key:"v-68ab77d2",path:"/fr/trading_basics/what-is-an-exchange.html",title:"Qu'est-ce qu'un exchange de crypto-monnaies?",lang:"fr-FR",frontmatter:{title:"Qu'est-ce qu'un exchange de crypto-monnaies?",lang:"fr-FR",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/trading_basics/what-is-an-exchange.md"};export{e as data};

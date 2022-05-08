@@ -1,1 +1,0 @@
-const e={key:"v-93ef457c",path:"/fr/guides/contributor/",title:"Developer's guide",lang:"fr-FR",frontmatter:{},excerpt:"",headers:[],git:{},filePathRelative:"fr/guides/contributor/README.md"};export{e as data};

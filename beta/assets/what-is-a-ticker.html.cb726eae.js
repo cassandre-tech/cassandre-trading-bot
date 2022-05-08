@@ -1,1 +1,0 @@
-const t={key:"v-4332fd14",path:"/trading_basics/what-is-a-ticker.html",title:"What is a ticker ?",lang:"en-US",frontmatter:{title:"What is a ticker ?",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"trading_basics/what-is-a-ticker.md"};export{t as data};
