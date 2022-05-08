@@ -93,7 +93,7 @@
 		<jackson.version>2.12.6</jackson.version>
 
 		<!-- GraphQL API -->
-		<graphql-dgs.version>4.9.25</graphql-dgs.version>
+		<graphql-dgs.version>4.10.1</graphql-dgs.version>
 
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
