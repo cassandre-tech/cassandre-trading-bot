@@ -80,7 +80,7 @@ jobs:
 
       # ================================================================================================================
       - name: Deploy the website to github pages
-        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
           branch: gh-pages
           folder: docs/docs/.vuepress/dist
