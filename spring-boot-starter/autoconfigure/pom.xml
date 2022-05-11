@@ -131,7 +131,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-kucoin</artifactId>
-            <version>5.0.13</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Coinbase integration tests -->
@@ -151,7 +151,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-gemini</artifactId>
-            <version>5.0.13</version>
+            <version>${xchange.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- For Binance integration tests -->
@@ -160,6 +160,12 @@
             <artifactId>xchange-binance</artifactId>
             <version>${xchange.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.knowm.xchange</groupId>
+            <artifactId>xchange-stream-core</artifactId>
+            <version>${xchange.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <!-- =========================================================================================================== -->
