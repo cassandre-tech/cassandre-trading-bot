@@ -10,7 +10,7 @@ export const navbarFR = [
 
     // =================================================================================================================
     // "Cassandre basics".
-    {text: 'Bases de Cassandre', link: '/fr/cassandre_basics/'},
+    {text: 'Bases de Cassandre', link: '/fr/cassandre_basics/overview'},
 
     // =================================================================================================================
     // "Tutorial".
