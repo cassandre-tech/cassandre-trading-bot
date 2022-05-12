@@ -1,0 +1,1 @@
+const t={key:"v-60961375",path:"/fr/guides/contributor/how-to-install-development-tools.html",title:"Development tools",lang:"fr-FR",frontmatter:{},excerpt:"",headers:[],git:{},filePathRelative:"fr/guides/contributor/how-to-install-development-tools.md"};export{t as data};

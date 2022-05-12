@@ -1,0 +1,1 @@
+const t={key:"v-3f24cc10",path:"/fr/trading_basics/what-is-an-account.html",title:"Qu'est-ce qu'un compte sur un exchange ?",lang:"fr-FR",frontmatter:{title:"Qu'est-ce qu'un compte sur un exchange ?",lang:"fr-FR",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/trading_basics/what-is-an-account.md"};export{t as data};
