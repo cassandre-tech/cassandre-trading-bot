@@ -1,0 +1,1 @@
+const t={key:"v-f230d81a",path:"/fr/cassandre_basics/what-is-a-strategy.html",title:"Qu'est-ce qu'une strat\xE9gie ?",lang:"fr-FR",frontmatter:{title:"Qu'est-ce qu'une strat\xE9gie ?",lang:"fr-FR",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/cassandre_basics/what-is-a-strategy.md"};export{t as data};

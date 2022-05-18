@@ -1,0 +1,1 @@
+const a={key:"v-257e9df8",path:"/cassandre_basics/database-schema.html",title:"Database schema",lang:"en-US",frontmatter:{title:"Database schema",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"cassandre_basics/database-schema.md"};export{a as data};

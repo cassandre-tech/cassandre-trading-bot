@@ -1,0 +1,1 @@
+const t={key:"v-7e68f87f",path:"/trading_basics/what-is-an-account.html",title:"What is an account ?",lang:"en-US",frontmatter:{title:"What is an account ?",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"trading_basics/what-is-an-account.md"};export{t as data};
