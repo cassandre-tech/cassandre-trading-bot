@@ -18,4 +18,25 @@ export const sidebarEN = {
         },
     ],
 
+    // =================================================================================================================
+    // "Cassandre basics".
+    '/cassandre_basics/': [
+        {
+            type: 'group',
+            text: 'Cassandre basics',
+            link: '',
+            children: [
+                'overview',
+                'features-and-roadmap',
+                'what-is-a-strategy',
+                'strategy-events',
+                'strategy-orders-management',
+                'strategy-positions-management',
+                'strategy-configuration',
+                'architecture',
+                'database-schema',
+            ],
+        },
+    ],
+
 }

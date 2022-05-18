@@ -9,6 +9,10 @@ export const navbarEN = [
     {text: 'Trading basics', link: '/trading_basics/what-is-trading'},
 
     // =================================================================================================================
+    // "Cassandre basics".
+    {text: 'Cassandre basics', link: '/cassandre_basics/overview'},
+
+    // =================================================================================================================
     // "Contact & news".
     {
         text: 'Contact & news', children: [

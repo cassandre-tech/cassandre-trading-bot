@@ -18,5 +18,5 @@ TODO Refaire les liens
 * [Mode & backtesting](../learn/dry-mode-and-backtesting.md).
 * Fortement testé & documenté.
 
-## feuille de route
+## Feuille de route
 Notre feuille de route est sur [Github](https://github.com/cassandre-tech/cassandre-trading-bot/milestones?direction=asc&sort=due_date&state=open).
