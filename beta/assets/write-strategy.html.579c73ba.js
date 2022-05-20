@@ -1,0 +1,1 @@
+const t={key:"v-358727f1",path:"/fr/tutorial/write-strategy.html",title:"\xC9crivez votre strat\xE9gie",lang:"en-US",frontmatter:{title:"\xC9crivez votre strat\xE9gie",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/tutorial/write-strategy.md"};export{t as data};

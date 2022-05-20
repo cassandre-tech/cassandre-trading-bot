@@ -1,0 +1,1 @@
+const e={key:"v-5b31f3f6",path:"/fr/tutorial/retrieve-historical-data.html",title:"R\xE9cup\xE9rer un historique de donn\xE9es",lang:"en-US",frontmatter:{title:"R\xE9cup\xE9rer un historique de donn\xE9es",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/tutorial/retrieve-historical-data.md"};export{e as data};

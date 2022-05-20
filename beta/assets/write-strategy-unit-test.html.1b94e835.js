@@ -1,0 +1,1 @@
+const t={key:"v-1a4575fa",path:"/fr/tutorial/write-strategy-unit-test.html",title:"\xC9crivez le test de votre strat\xE9gie",lang:"en-US",frontmatter:{title:"\xC9crivez le test de votre strat\xE9gie",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/tutorial/write-strategy-unit-test.md"};export{t as data};

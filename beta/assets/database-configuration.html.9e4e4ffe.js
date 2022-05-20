@@ -1,0 +1,1 @@
+const t={key:"v-06800e4e",path:"/fr/tutorial/database-configuration.html",title:"Configuration base de donn\xE9es",lang:"en-US",frontmatter:{title:"Configuration base de donn\xE9es",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/tutorial/database-configuration.md"};export{t as data};

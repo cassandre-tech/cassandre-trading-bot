@@ -1,0 +1,1 @@
+const e={key:"v-97c4cca0",path:"/fr/tutorial/create-your-project.html",title:"Cr\xE9ez votre projet Cassandre",lang:"en-US",frontmatter:{title:"Cr\xE9ez votre projet Cassandre",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/tutorial/create-your-project.md"};export{e as data};
