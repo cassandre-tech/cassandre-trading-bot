@@ -39,4 +39,22 @@ export const sidebarEN = {
         },
     ],
 
+    // =================================================================================================================
+    // "Tutorial".
+    '/tutorial/': [
+        {
+            type: 'group',
+            text: 'Tutorial',
+            link: '',
+            children: [
+                'create-your-project',
+                'explore-generated-code',
+                'write-strategy',
+                'write-strategy-unit-test',
+                'exchange-configuration',
+                'database-configuration'
+            ],
+        },
+    ],
+
 }

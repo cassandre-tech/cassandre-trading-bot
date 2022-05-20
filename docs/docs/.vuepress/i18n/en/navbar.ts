@@ -13,6 +13,10 @@ export const navbarEN = [
     {text: 'Cassandre basics', link: '/cassandre_basics/overview'},
 
     // =================================================================================================================
+    // "Tutorial".
+    {text: 'Tutorial', link: '/tutorial/create-your-project'},
+
+    // =================================================================================================================
     // "Contact & news".
     {
         text: 'Contact & news', children: [

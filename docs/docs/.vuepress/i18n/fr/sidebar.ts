@@ -40,14 +40,21 @@ export const sidebarFR = {
     ],
 
     // =================================================================================================================
-    // "Cassandre basics".
+    // "Tutorial".
     '/fr/tutorial/': [
         {
             type: 'group',
-            text: 'Créez votre premier bot!',
+            text: 'Tutorial',
             link: '',
             children: [
-                '',
+                'create-your-project',
+                'explore-generated-code',
+                'write-strategy',
+                'write-strategy-unit-test',
+                'retrieve-historical-data',
+                'run-unit-tests',
+                'exchange-configuration',
+                'database-configuration'
             ],
         },
     ],
