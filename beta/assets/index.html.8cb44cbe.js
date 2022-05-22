@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as a,b as c,d as n}from"./app.ec957074.js";const o={},s={id:"exchange",tabindex:"-1"},_=c("a",{class:"header-anchor",href:"#exchange","aria-hidden":"true"},"#",-1),r=n(" exchange"),d=[_,r];function h(i,x){return t(),a("h1",s,d)}var l=e(o,[["render",h],["__file","index.html.vue"]]);export{l as default};
