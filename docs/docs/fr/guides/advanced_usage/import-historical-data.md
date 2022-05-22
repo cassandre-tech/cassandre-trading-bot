@@ -24,7 +24,7 @@ Voici comment vos données doivent être formatées :
 
 ## Quand pouvez vous initialisez vos données
 
-Dans votre stratégie, vous devez implémentez la
+Dans votre stratégie, vous devez implémenter la
 méthode [initialize()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#initialize())
 . Cette méthode est exécutée par Cassandre avant que n'importe quelle autre donnée ne soit poussée à vos stratégies.
 
