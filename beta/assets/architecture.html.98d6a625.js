@@ -1,1 +1,0 @@
-const e={key:"v-51f6eda8",path:"/cassandre_basics/architecture.html",title:"Architecture",lang:"en-US",frontmatter:{title:"Architecture",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"cassandre_basics/architecture.md"};export{e as data};

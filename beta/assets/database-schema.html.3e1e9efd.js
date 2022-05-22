@@ -1,1 +1,0 @@
-const a={key:"v-be38b15a",path:"/fr/cassandre_basics/database-schema.html",title:"Sch\xE9ma de base de donn\xE9es",lang:"fr-FR",frontmatter:{title:"Sch\xE9ma de base de donn\xE9es",lang:"fr-FR",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/cassandre_basics/database-schema.md"};export{a as data};

@@ -1,1 +1,0 @@
-const e={key:"v-6bcd76d3",path:"/fr/cassandre_basics/overview.html",title:"Un aper\xE7u de Cassandre",lang:"fr-FR",frontmatter:{title:"Un aper\xE7u de Cassandre",lang:"fr-FR",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/cassandre_basics/overview.md"};export{e as data};

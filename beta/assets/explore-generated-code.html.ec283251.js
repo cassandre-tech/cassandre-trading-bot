@@ -1,1 +1,0 @@
-const e={key:"v-a199dda6",path:"/fr/tutorial/explore-generated-code.html",title:"Explorez le code g\xE9n\xE9r\xE9",lang:"en-US",frontmatter:{title:"Explorez le code g\xE9n\xE9r\xE9",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/tutorial/explore-generated-code.md"};export{e as data};

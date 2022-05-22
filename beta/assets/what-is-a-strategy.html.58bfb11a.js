@@ -1,1 +1,0 @@
-const a={key:"v-05d260a2",path:"/cassandre_basics/what-is-a-strategy.html",title:"What is a strategy ?",lang:"en-US",frontmatter:{title:"What is a strategy ?",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"cassandre_basics/what-is-a-strategy.md"};export{a as data};
