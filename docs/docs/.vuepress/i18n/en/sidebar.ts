@@ -33,6 +33,7 @@ export const sidebarEN = {
                 'strategy-orders-management',
                 'strategy-positions-management',
                 'strategy-configuration',
+                'dry-mode-and-backtesting',
                 'architecture',
                 'database-schema',
             ],

@@ -17,11 +17,9 @@ export const navbarFR = [
     {text: 'Tutorial', link: '/fr/tutorial/create-your-project'},
 
     // =================================================================================================================
-    // "How-tos".
+    // "Guides".
     {text: 'Guides', children: [
-            {text: 'Email', link: 'mailto:contact@cassandre.tech'},
-            {text: 'Single', link: '/fr/guides/contributor/'},
-            {text: 'Single page', link: '/fr/guides/exchange/'},
+
         ]
     },
 
