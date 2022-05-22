@@ -59,4 +59,19 @@ export const sidebarEN = {
         },
     ],
 
+    // =================================================================================================================
+    // "Guides".
+    '/guides/contributor/': [
+        {
+            type: 'group',
+            text: 'Contributor',
+            link: '',
+            children: [
+                '/guides/contributor/how-to-install-development-tools',
+                '/guides/contributor/how-to-build-from-sources',
+                '/guides/contributor/how-to-create-a-release',
+            ],
+        },
+    ],
+
 }

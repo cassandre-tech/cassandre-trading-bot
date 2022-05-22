@@ -61,13 +61,15 @@ export const sidebarFR = {
 
     // =================================================================================================================
     // "Guides".
-    '/fr/guides/exchange': [
+    '/fr/guides/contributor/': [
         {
             type: 'group',
-            text: 'Guides',
+            text: 'Contributeur',
             link: '',
             children: [
-                '',
+                '/fr/guides/contributor/how-to-install-development-tools',
+                '/fr/guides/contributor/how-to-build-from-sources',
+                '/fr/guides/contributor/how-to-create-a-release',
             ],
         },
     ],

@@ -18,8 +18,16 @@ export const navbarEN = [
 
     // =================================================================================================================
     // "Guides".
-    {text: 'Guides', children: [
-
+    {
+        text: 'Guides', children: [
+            {
+                text: 'Contributor',
+                children: [
+                    {text: 'Install development tools', link: '/guides/contributor/how-to-install-development-tools'},
+                    {text: 'Build from sources', link: '/guides/contributor/how-to-build-from-sources'},
+                    {text: 'Create a release', link: '/guides/contributor/how-to-create-a-release'},
+                ]
+            },
         ]
     },
 

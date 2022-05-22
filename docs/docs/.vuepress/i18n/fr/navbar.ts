@@ -18,8 +18,16 @@ export const navbarFR = [
 
     // =================================================================================================================
     // "Guides".
-    {text: 'Guides', children: [
-
+    {
+        text: 'Guides', children: [
+            {
+                text: 'Contributeur',
+                children: [
+                    {text: 'Installer les outils de dev', link: '/fr/guides/contributor/how-to-install-development-tools'},
+                    {text: 'Construire les sources', link: '/fr/guides/contributor/how-to-build-from-sources'},
+                    {text: 'Créer une version', link: '/fr/guides/contributor/how-to-create-a-release'},
+                ]
+            },
         ]
     },
 
