@@ -18,7 +18,7 @@ There is three steps:
 - Download and import the historical data Cassandre will send to your strategy.
 - Write the unit tests that check the gains we made when all historical tickers will have been treated by your strategy.
 
-## Configure assets.
+## Configure assets
 
 To correctly simulate the behavior your strategy, you need tell Cassandre dry mode how much assets you will play with.
 
@@ -36,7 +36,7 @@ ETH,10
 With this file, when Cassandre will start in dry mode, your strategy will act as if it has 0.99962937 BTC, 1000 USDT and
 10 ETH. Of course, when your strategy will be tested, the assets will be updated at each buy/sell action.
 
-## Download historical data.
+## Download historical data
 
 As I said earlier, we will test your bot behavior on historical data. To do this, we have to put the data we want to use
 in a file starting with `candles-for-backtesting` and ending with `.csv` and located
@@ -68,7 +68,7 @@ curl -s "https://api.kucoin.com/api/v1/market/candles?type=15min&symbol=${SYMBOL
 You can add as many backtesting files as you want, Cassandre, will load them all before the tests starts.
 :::
 
-## Write your test.
+## Write your test
 
 The test code is quite easy to understand:
 

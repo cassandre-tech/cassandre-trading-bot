@@ -28,7 +28,7 @@ cassandre.trading.bot.exchange.key=61d0c8a041a5330001d0d59c
 cassandre.trading.bot.exchange.secret=79edb229-a9c8-449d-a476-04689eaf376b
 ```
 
-We also have to add the XChange library to our project `pom.xml` (the artifactId is github directory name corresponding to the exchange you chosed):
+We also have to add the XChange library to our project `pom.xml` (the artifactId is Github directory name corresponding to the exchange you chose):
 ```xml
 <dependency>
     <groupId>org.knowm.xchange</groupId>

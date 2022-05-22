@@ -51,10 +51,9 @@ export const sidebarFR = {
                 'explore-generated-code',
                 'write-strategy',
                 'write-strategy-unit-test',
-                'retrieve-historical-data',
-                'run-unit-tests',
                 'exchange-configuration',
-                'database-configuration'
+                'database-configuration',
+                'api-configuration',
             ],
         },
     ],

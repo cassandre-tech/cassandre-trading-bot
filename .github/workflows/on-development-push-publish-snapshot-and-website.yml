@@ -68,7 +68,8 @@ jobs:
         run: |
           cp spring-boot-starter-api/spring-boot-starter-api-graphql/autoconfigure/src/main/resources/schema/*.graphqls docs/docs/.vuepress/public/api/graphql/definition
           go install github.com/Code-Hex/gqldoc/cmd/gqldoc@v0.0.6
-          gqldoc -s "docs/docs/.vuepress/public/api/graphql/definition/*.graphqls" -o ./docs/docs/learn/graphql-api-documentation
+          gqldoc -s "docs/docs/.vuepress/public/api/graphql/definition/*.graphqls" -o ./docs/docs/tutorial/graphql-api-documentation
+          gqldoc -s "docs/docs/.vuepress/public/api/graphql/definition/*.graphqls" -o ./docs/docs/fr/tutorial/graphql-api-documentation
 
       # ================================================================================================================
       - name: Install vuepress, set release number, and build the website

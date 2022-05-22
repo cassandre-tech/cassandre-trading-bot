@@ -52,7 +52,8 @@ export const sidebarEN = {
                 'write-strategy',
                 'write-strategy-unit-test',
                 'exchange-configuration',
-                'database-configuration'
+                'database-configuration',
+                'api-configuration',
             ],
         },
     ],

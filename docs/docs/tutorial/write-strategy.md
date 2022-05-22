@@ -6,7 +6,7 @@ toc: false
 
 # Write your strategy
 
-## Writing a minimal strategy.
+## Writing a minimal strategy
 
 We start by editing `my-trading-bot/src/main/java/com/mycompany/bot/SimpleStrategy.java` to add some variables that we
 will need later: the currency pair we want to deal with, the amount we will order on each position and the rules
@@ -130,6 +130,8 @@ This is the corresponding code:
         }
     }
 ```
+
+For every new ticker, we also check if it's the moment to create the position (eg: if each of the three tickers stored are lower than the previous one).
 
 ## The whole strategy
 
