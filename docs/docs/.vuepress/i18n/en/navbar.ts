@@ -21,6 +21,19 @@ export const navbarEN = [
     {
         text: 'Guides', children: [
             {
+                text: 'Configuration',
+                children: [
+                    {text: 'Fix common problems', link: '/guides/configuration/how-to-fix-common-problems'},
+                    {text: 'Exchange configuration', link: '/guides/configuration/exchange-connection-configuration'},
+                ]
+            },
+            {
+                text: 'Advanced usage',
+                children: [
+                    {text: 'Loading data on startup', link: '/guides/advanced_usage/import-historical-data'},
+                ]
+            },
+            {
                 text: 'Contributor',
                 children: [
                     {text: 'Install development tools', link: '/guides/contributor/how-to-install-development-tools'},

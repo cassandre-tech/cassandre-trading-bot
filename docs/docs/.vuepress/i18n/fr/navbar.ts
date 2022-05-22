@@ -21,6 +21,19 @@ export const navbarFR = [
     {
         text: 'Guides', children: [
             {
+                text: 'Configuration',
+                children: [
+                    {text: 'Problèmes courants', link: '/fr/guides/configuration/how-to-fix-common-problems'},
+                    {text: 'Exchange configuration', link: '/fr/guides/configuration/exchange-connection-configuration'},
+                ]
+            },
+            {
+                text: 'Fonctionnalités avancées',
+                children: [
+                    {text: 'Import de données au démarrage', link: '/fr/guides/advanced_usage/import-historical-data'},
+                ]
+            },
+            {
                 text: 'Contributeur',
                 children: [
                     {text: 'Installer les outils de dev', link: '/fr/guides/contributor/how-to-install-development-tools'},
