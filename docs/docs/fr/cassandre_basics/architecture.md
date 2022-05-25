@@ -1,8 +1,9 @@
 ---
-title: Architecture
 lang: fr-FR
-toc: false
+title: Architecture
+description: Architecture logicielle de Cassandre
 ---
 
 # Architecture
-![Cassandre architecture](./images/cassandre-trading-bot-architecture.png)
+
+![Architecture de Cassandre](./images/cassandre-trading-bot-architecture.png)

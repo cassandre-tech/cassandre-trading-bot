@@ -1,21 +1,22 @@
 ---
-title: Qu'est-ce qu'un ticker ?
 lang: fr-FR
-toc: false
+title: Qu'est-ce qu'un ticker ?
+description: Trading - Qu'est-ce qu'un ticker ?
 ---
 
 # Qu'est-ce qu'un ticker ?
-Un ticker, synonyme de symbole boursier, est la forme abrégée d'un actif. Ses informations sont mises à jour en continu
-tout au long d'une séance de négociation par les différentes bourses.
 
-Par exemple, prenez `ETH-BTC`, si vous avez installé les outils [curl](https://curl.haxx.se/)
+Un ticker, synonyme de symbole boursier, est la forme abrégée d'un actif. Ses informations sont mises à jour en continu
+tout au long d'une séance de négociation.
+
+Par exemple, `ETH-BTC`, si vous avez installé les outils [curl](https://curl.haxx.se/)
 et [jq](https://stedolan.github.io/jq/), vous pouvez obtenir un ticker de Kucoin avec cette commande:
 
 ```bash
 curl -s https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=ETH-BTC | jq .data
 ```
 
-The result will look like this :
+Vous allez avoir un résultat ressemblant à cela :
 
 ```json
 {
@@ -30,8 +31,9 @@ The result will look like this :
 }
 ```
 
-La première devise répertoriée d'une paire de devises est appelée devise de base (ETH) et la deuxième devise est appelée
-devise de cotation (BTC). Un prix à 0,033131 signifie que 1 Ether peut être acheté avec 0,033131 Bitcoin.
+La première devise répertoriée d'une paire de devises est appelée devise de base (ETH dans notre exemple) et la deuxième
+devise est appelée devise de cotation (BTC dans notre exemple). Un prix à 0,033131 signifie que 1 Ether peut être acheté
+avec 0,033131 Bitcoin.
 
 Voici les champs que vous pouvez trouver sur un ticker :
 

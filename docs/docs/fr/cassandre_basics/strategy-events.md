@@ -1,14 +1,14 @@
 ---
-title: Gestion des évènements
 lang: fr-FR
-toc: false
+title: Gestion des évènements
+description: Gestion des évènements dans Cassandre
 ---
 
 # Gestion des évènements
 
 En implémentant certaines méthodes dans votre stratégie, vous allez pouvoir être prévenu des changements dans les
-données (par exemple : une commande vient d'être créée) ou de nouveaux évènements (par exemple : un nouveau ticker sur
-la paire de devis BTC/USDT).
+données (par exemple : une commande qui vient d'être créée) ou de nouveaux évènements (par exemple : un nouveau ticker
+sur la paire de devis BTC/USDT).
 
 ## Modification de vos comptes
 
@@ -73,7 +73,7 @@ méthode [onPositionsUpdates()](https://www.javadoc.io/doc/tech.cassandre.tradin
 de votre stratégie sera appelée.
 
 ```java
-    @Override
+@Override
 public void onPositionsUpdates(final Map<Long, PositionDTO> positions){
         // Here, we will receive a PositionDTO each time a position has changed.
         positions.values().forEach(position->System.out.println("Received information about a position: "+position));

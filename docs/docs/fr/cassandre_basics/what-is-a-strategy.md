@@ -1,7 +1,7 @@
 ---
-title: Qu'est-ce qu'une stratégie ?
 lang: fr-FR
-toc: false
+title: Qu'est-ce qu'une stratégie ?
+description: Qu'est-ce qu'une stratégie de trading ?
 ---
 
 # Qu'est-ce qu'une stratégie ?
@@ -13,20 +13,30 @@ arrivent) ou de toute autre information que vous irez chercher.
 Afin que votre stratégie soit reconnue et exécutée par Cassandre, elle doit avoir
 l'annotation [@CassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategy.html)
 et hériter
-de [BasicCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.html).
+de [BasicCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.html)
+.
 
-Vous devez ensuite implémenté les méthodes suivantes :
+Vous devez ensuite implémenter les méthodes suivantes :
 
 * [getRequestedCurrencyPairs()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getRequestedCurrencyPairs%28%29)
   pour indiquer la liste des paires de devises que vous souhaitez que votre stratégie reçoive.
 * [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getTradeAccount%28java.util.Set%29)
   pour indiquer, parmi la liste des comptes dont vous disposez sur l'exchange, lequel est celui qui sert au trading.
 
-Vous trouverez ci-dessous une stratégie minimale, il s'agit d'une simple classes avec :
-* L'Annotation [@CassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategy.html).
-* L'héritage de [BasicCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.html).
-* Une implémentation de [getRequestedCurrencyPairs()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getRequestedCurrencyPairs%28%29) qui indique que l'on souhaite que l'on souhaite recevoir les tickers pour la paire de devise `BTC/USDT`.
-* Une implémentation de [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getTradeAccount%28java.util.Set%29) qui indique que, parmi tous les que l'on a sur l'exchange, celui que l'on utilise pour le trading est celui dont le nom est `trade`.
+Vous trouverez ci-dessous une stratégie minimale, il s'agit d'une simple classe avec :
+
+* L'Annotation [@CassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategy.html)
+.
+* L'héritage
+  de [BasicCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.html)
+  .
+* Une implémentation
+  de [getRequestedCurrencyPairs()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getRequestedCurrencyPairs%28%29)
+  qui indique que l'on souhaite que l'on souhaite recevoir les tickers pour la paire de devise `BTC/USDT`.
+* Une implémentation
+  de [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getTradeAccount%28java.util.Set%29)
+  qui indique que, parmi tous les que l'on a sur l'exchange, celui que l'on utilise pour le trading est celui dont le
+  nom est `trade`.
 
 ```java
 package com.mycompany.app;
@@ -65,5 +75,6 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 ```
 
 ::: tip
-Dans un même trading bot, il est possible de faire fonctionner plusieurs stratégies! Par contre, elles seront toutes connectées au même exchange.
+Dans un même trading bot, il est possible de faire fonctionner plusieurs stratégies ! Par contre, elles seront toutes
+connectées au même exchange.
 :::

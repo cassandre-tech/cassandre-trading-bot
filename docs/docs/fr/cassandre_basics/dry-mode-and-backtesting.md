@@ -1,7 +1,7 @@
 ---
 lang: en-US
 title: Dry mode & backtesting
-description: Learn how to simulate a virtual exchange and import historical data to test your strategy gains
+description: Comment simuler un exchange virtuel et tester sa stratégie
 ---
 
 # Dry mode & backtesting
@@ -10,10 +10,11 @@ description: Learn how to simulate a virtual exchange and import historical data
 
 Cassandre propose un mode dry qui permet de simuler un exchange virtuel et ses réponses. Vous pouvez l'activer en
 mettant le paramètre `cassandre.trading.bot.exchange.modes.dry` à `true` dans le
-fichier `src/main/resources/application.properties`
+fichier `src/test/resources/application.properties`.
 
-Cassandre va émuler un exchange virtuel qui répondra à vos ordres et mettra à jour votre compte virtuel (où se trouvent
-vos assets virtuels). De cette façon, vous allez pouvoir tester votre strategy et voir les gains réalisés.
+Cassandre va alors émuler un exchange virtuel qui répondra à vos ordres et mettra à jour votre compte virtuel (où se
+trouvent vos assets virtuels). De cette façon, vous allez pouvoir tester votre strategy et voir les gains virtuels
+réalisés.
 
 La première étape est de configurer vos actifs. Cassandre va charger tous les fichiers commençant par  `user-` et
 finissant par `.tsv` ou `.csv` dans `src/test/resources`.
@@ -36,7 +37,7 @@ Lorsque vous démarrerez Cassandre, vous devriez voir :
 22:53:38 - - Adding balance 10 ETH
 ```
 
-Vous pouvez désormais créer des ordres et des positions, cela mettera à jours vos actifs.
+Vous pouvez désormais créer des ordres et des positions, vos actifs sur vos comptes virtuels seront mis à jour.
 
 ## Backtesting
 
@@ -44,7 +45,7 @@ Pour faire simple, "backtester" une stratégie est le process qui consiste à te
 temps précédente. Cassandre va vous permettre de simuler la réaction de vos stratégies à ces données.
 
 Le premier pas consiste à
-ajour [cassandre-trading-bot-spring-boot-starter-test](https://search.maven.org/search?q=a:cassandre-trading-bot-spring-boot-starter-test)
+ajouter [cassandre-trading-bot-spring-boot-starter-test](https://search.maven.org/search?q=a:cassandre-trading-bot-spring-boot-starter-test)
 à votre projet.
 
 Editez votre fichier `pom.xml` et ajoutez cette dépendance :
@@ -76,11 +77,12 @@ curl -s "https://api.kucoin.com/api/v1/market/candles?type=15min&symbol=${SYMBOL
 | tac $1 >> src/test/resources/candles-for-backtesting-btc-usdt.csv
 ```
 
-Ceci va créer un fichier nommé `candles-for-backtesting-btc-usdt.csv` avec les données historiques.
+Ceci va créer un fichier nommé `candles-for-backtesting-btc-usdt.csv` avec les données historiques qui sera importé par
+votre test si vous avez l'annotation suivante :
 
 ```java
 @Import(TickerFluxMock.class)
 ```
 
 Désormais, durant vos tests, au lieu de recevoir des tickers depuis l'exchange, vous receverez des tickers importé
-depuis les fichiers csv dans `src/test/resources`.
+depuis les fichiers csv se trouvant dans `src/test/resources`.

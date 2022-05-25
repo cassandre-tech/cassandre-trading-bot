@@ -1,11 +1,13 @@
 ---
-title: What is an account ?
 lang: en-US
-toc: false
+title: What is an account?
+description: Trading - What is an account?
 ---
 
 # What is an account ?
-Usually, in an exchange, you can have several accounts with different usages \(Classical, trading, margin trading, future…\), and then you have a balance for each currency.
+
+Usually, on the exchange, you can have several accounts with different usages (Classical, trading, margin trading,
+future...), and then you have a balance for each currency.
 
 A balance is not merely the amount you have; it could be more complicated and can have the following values :
 

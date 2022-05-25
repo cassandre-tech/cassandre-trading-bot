@@ -9,7 +9,7 @@ description: Learn how to simulate a virtual exchange and import historical data
 ## Dry mode
 
 Cassandre provides a dry mode allowing you to simulate a virtual exchange and its replies. You can enable it by setting
-the parameter `cassandre.trading.bot.exchange.modes.dry` to `true` in `src/main/resources/application.properties.`
+the parameter `cassandre.trading.bot.exchange.modes.dry` to `true` in `src/test/resources/application.properties`.
 
 Cassandre will emulate valid exchange replies to your orders and will increase/decrease your virtual account. This way,
 you can test your strategy, sees the gains you will make, and validate you have the results you expect.
@@ -37,8 +37,6 @@ When you start Cassandre, you will see this:
 
 Now you can create orders and positions, and this will increase/decrease your virtual account. Of course, Cassandre
 checks that you have enough assets before accepting your orders.
-
-You can use the dry mode to test your trading bot with real data, but you can also use it for backtesting.
 
 ## Backtesting
 
@@ -78,7 +76,8 @@ curl -s "https://api.kucoin.com/api/v1/market/candles?type=15min&symbol=${SYMBOL
 | tac $1 >> src/test/resources/candles-for-backtesting-btc-usdt.csv
 ```
 
-It will create a file named `candles-for-backtesting-btc-usdt.csv` with your historical data.
+It will create a file named `candles-for-backtesting-btc-usdt.csv` with your historical data, and this file will imported
+if your unit test has this annotation:
 
 ```java
 @Import(TickerFluxMock.class)

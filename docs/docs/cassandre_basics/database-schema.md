@@ -1,8 +1,9 @@
 ---
-title: Database schema
 lang: en-US
-toc: false
+title: Database schema
+description: Cassandre database schema
 ---
 
 # Database schema
+
 ![Database schema](./images/cassandre-trading-bot-database.png)

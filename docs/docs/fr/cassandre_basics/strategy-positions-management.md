@@ -1,7 +1,7 @@
 ---
-title: Gestion des positions
 lang: fr-FR
-toc: false
+title: Gestion des positions
+description: Gestion des positions dans Cassandre
 ---
 
 # Gestion des positions
@@ -16,10 +16,11 @@ méthode [createLongPosition()](https://www.javadoc.io/doc/tech.cassandre.tradin
 Cette méthode a trois paramètres :
 
 * La paire de devise (Par exemple : `ETH/USDT`).
-* Le montant (par exemple : `0.5 ETH`).
+* Le montant (par exemple : `0.5`).
 * Les règles (par exemple : `100% de gain ou 50% de perte`).
 
-Voici comment créer les règles d'une position avec l'objet `PositionRulesDTO` :
+Voici comment créer les règles d'une position avec l'
+objet [PositionRulesDTO](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionRulesDTO.html) :
 
 ```java
 PositionRulesDTO rules=PositionRulesDTO.builder()
@@ -36,22 +37,22 @@ createLongPosition(new CurrencyPairDTO(ETH,BTC),
         rules);
 ```
 
-À ce moment, Cassandre va créer un ordre d'achat de 0,5 ETH (1 ETH coûte 1500 USDT), et cela nous coûtera donc 750 USDT.
-Le statut de la position sera alors
+À ce moment, Cassandre va créer un ordre d'achat de 0,5 ETH qui nous coûtera 750 USDT (1 ETH coûtant 1 500 USDT). Le
+statut de la position sera alors
 [OPENING](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionStatusDTO.html#OPENING)
-, et lorsque tous les trades correspondants seront arrivés, le statut passera
+, et lorsque tous les trades correspondants à cet ordre seront arrivés, le statut passera
 à [OPENED](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionStatusDTO.html#OPENED)
 .
 
 ::: tip
-Si vous souhaitez vérifier si vous disposez de suffisamment de fonds (au moins 750 USDT dans notre cas) avant de créer
+Si vous souhaitez vérifier que vous disposez de suffisamment de fonds (au moins 750 USDT dans notre cas) avant de créer
 la position, vous pouvez utiliser la
 méthode [canBuy()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#canBuy%28tech.cassandre.trading.bot.dto.user.AccountDTO,tech.cassandre.trading.bot.dto.util.CurrencyPairDTO,java.math.BigDecimal%29)
 .
 :::
 
-Désormais, pour chaque ticker reçu, Cassandre calculera automatiquement, avec le nouveau prix (issu du ticker), si la
-clôture de la position à ce prix déclencherait l'une de nos deux règles (100% de gain et 50% de perte).
+Désormais, pour chaque ticker reçu, Cassandre calculera le gain de la position. Si ce gain correspond une des règles que
+l'on a fixées, elle sera automatiquement clôturée.
 
 Par exemple, si nous recevons un nouveau prix de 3 000 USDT pour 1 ETH, Cassandre calculera que si nous vendons notre
 position maintenant (ce que l'on appelle "fermer la position"), nous obtiendrons 1 500 USDT, soit un gain de 100%.
@@ -79,17 +80,22 @@ createShortPosition(new CurrencyPairDTO(ETH,BTC),
         rules);
 ```
 
-Cassandre vendra 1 ETH et obtiendra 1 500 USDT et attendra que le prix baisse suffisamment pour acheter 2 ETH avec 1 500
+Cassandre vendra 1 ETH, obtiendra 1 500 USDT et attendra que le prix baisse suffisamment pour acheter 2 ETH avec 1 500
 USDT.
 
 ## Gains
 
 Sur
-l'objet [Position](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html)
+l'objet [PositionDTO](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html)
 , vous pouvez obtenir :
 
-* Le gain calculé le plus bas avec [getLowestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLowestCalculatedGain())
-* Le gain calculé le plus élevé avec [getHighestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getHighestCalculatedGain())
-* Le dernier gain calculé avec [getLatestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLatestCalculatedGain())
+* Le gain calculé le plus bas
+  avec [getLowestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLowestCalculatedGain())
+* Le gain calculé le plus élevé
+  avec [getHighestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getHighestCalculatedGain())
+* Le dernier gain calculé
+  avec [getLatestCalculatedGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getLatestCalculatedGain())
 
-Sur une position fermée, vous pouvez obtenir le gain et les frais associés avec la méthode [getGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getGain()).
+Sur une position fermée, vous pouvez obtenir le gain et les frais associés avec la
+méthode [getGain()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/dto/position/PositionDTO.html#getGain())
+.

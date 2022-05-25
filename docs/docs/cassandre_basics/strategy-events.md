@@ -1,7 +1,7 @@
 ---
-title: Strategy events
 lang: en-US
-toc: false
+title: Strategy events
+description: Strategy events in Cassandre
 ---
 
 # Strategy events
@@ -20,7 +20,7 @@ will be called.
 public final void onAccountsUpdates(final Map<String, AccountDTO> accounts){
         // Here, we will receive an AccountDTO each time there is a change on your account.
         accounts.values().forEach(account->System.out.println("Received information about an account: "+account));
-        }
+}
 ```
 
 ## Tickers updates
@@ -34,7 +34,7 @@ will be called.
 public void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers){
         // Here we will receive all tickers we required from the exchange.
         tickers.values().forEach(ticker->System.out.println("Received information about a ticker: "+ticker));
-        }
+}
 ```
 
 ## Orders updates
@@ -48,7 +48,7 @@ will be called.
 public void onOrdersUpdates(final Map<String, OrderDTO> orders){
         // Here, we will receive an OrderDTO each time order data has changed on the exchange.
         orders.values().forEach(order->System.out.println("Received information about an order: "+order));
-        }
+}
 ```
 
 ## Trades updates
@@ -62,7 +62,7 @@ will be called.
 public void onTradesUpdates(final Map<String, TradeDTO> trades){
         // Here, we will receive a TradeDTO each time trade data has changed on the exchange.
         trades.values().forEach(trade->System.out.println("Received information about a trade: "+trade));
-        }
+}
 ```
 
 ## Positions updates
@@ -72,11 +72,11 @@ updated, [onPositionsUpdates()](https://www.javadoc.io/doc/tech.cassandre.tradin
 will be called.
 
 ```java
-    @Override
+@Override
 public void onPositionsUpdates(final Map<Long, PositionDTO> positions){
         // Here, we will receive a PositionDTO each time a position has changed.
         positions.values().forEach(position->System.out.println("Received information about a position: "+position));
-        }
+}
 ```
 
 ## Positions status updates
@@ -90,5 +90,5 @@ will be called.
 public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions){
         // Here, we will receive a PositionDTO each time a position status has changed.
         positions.values().forEach(position->System.out.println("Received information about a position status: "+position));
-        }
+}
 ```

@@ -1,7 +1,7 @@
 ---
-title: Cassandre configuration
 lang: en-US
-toc: false
+title: Cassandre configuration
+description: Cassandre configuration
 ---
 
 # Configuration
@@ -37,13 +37,13 @@ spring.datasource.password=
 
 ## Exchange configuration
 
-TODO ajouter la partie ajouter xchange lib
-TODO Ajouter un lien vers la doc des exchange
+The `Exchange configuration` part contains the parameters used by Cassandre to connect to the exchange you chose. The
+first parameter `driver-class-name` is the [XChange](https://github.com/knowm/XChange) class Cassandre should use to
+connect.
 
-The `Exchange configuration` part contains the parameters used by Cassandre to connect the exchange you chose. The first
-parameter `driver-class-name`, the XChange class Cassandre should use to connect.
+The other parameters are given by your exchange when you will create an API access.
 
-The other parameters are the one given by you exchange when you will create an API access there.
+You can learn more about exchange configuration [here](../guides/configuration/exchange-connection-configuration).
 
 ## Modes
 
@@ -56,9 +56,9 @@ Cassandre has two modes:
 
 ## Rates
 
-`rates` parameters tells Cassandre at which interval it should get data from the exchange.
+`rates` parameters tells Cassandre at which interval it should retrieve data from the exchange.
 
 ## Database configuration
 
-Those parameters indicate the database parameters to use to connect to the database used by Cassandre to save its
-information.
+Those parameters indicate the parameters Cassandre must use to connect to its database (Cassandre creates the database
+structure when it starts).

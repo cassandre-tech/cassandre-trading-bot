@@ -1,19 +1,24 @@
 ---
-title: What is a ticker ?
 lang: en-US
-toc: false
+title: What is a ticker?
+description: Trading - What is a ticker?
 ---
 
 # What is a ticker ?
-A ticker, a synonym for a stock symbol, is the short form of full security \(asset\). A ticker has a stream of quotes \(AKA prices\) attached to it, continuously updated throughout a trading session by the various exchanges.
 
-For example, take `ETH-BTC` , if you have [curl](https://curl.haxx.se/) and [jq](https://stedolan.github.io/jq/) installed, you can get a ticker from Kucoin with this command
+A ticker, a synonym for a stock symbol, is the short form of full security (asset). A ticker has a stream of quotes
+(AKA prices) attached to it, continuously updated throughout a trading session by the various exchanges.
+
+For example, take `ETH-BTC` , if you have [curl](https://curl.haxx.se/) and [jq](https://stedolan.github.io/jq/)
+installed, you can get a ticker from Kucoin with this command
+
 ```bash
 curl -s https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=ETH-BTC \
 | jq .data
 ```
 
 The result will look like this :
+
 ```json
 {
   "time": 1597187421265,
@@ -27,7 +32,9 @@ The result will look like this :
 }
 ```
 
-The first listed currency of a currency pair is called the base currency \(ETH\), and the second currency is called the quote currency. A price at 0.033131 means 1 Ether can be bought with 0.033131 Bitcoin.
+The first listed currency of a currency pair is called the base currency (ETH in our example), and the second currency
+is called the quote currency (BTC in our example). A price at 0.033131 means 1 Ether can be bought with 0.033131
+Bitcoin.
 
 These are the fields you can find on a ticker quote:
 

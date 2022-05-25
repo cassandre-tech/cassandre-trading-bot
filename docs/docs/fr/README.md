@@ -4,8 +4,8 @@ title: Cassandre
 heroImage: assets/images/logo/cassandre-trading-bot-without-text.png
 
 actions:
-- text: Commencer le tutorial
-  link: /learn/quickstart
+- text: Apprendre les bases
+  link: /fr/cassandre_basics/overview
   type: primary
 - text: Voir le code sur GitHub
   link: https://github.com/cassandre-tech/cassandre-trading-bot
@@ -14,9 +14,9 @@ actions:
 features:
 - title: Commencez le trading avec un minimum de tracas
   details: Disponible en tant que Spring Boot Starter, Cassandre s'occupe de la connexion à l'exchange, des comptes, des ordres, des transactions et des positions afin que vous puissiez vous concentrer sur l'élaboration de votre stratégie.
-- title: Créez votre propre stratégie en quelques minutes
-  details: En fonction de vos idées, il vous suffit de coder lorsque vous souhaitez créer des positions (courtes ou longues), de définir les règles et nous nous occupons de tout (achat, vente, gestion des règles, ordres, transactions et tickers).
-- title: Support de multiples exchanges grâce à XChange
+- title: Créez votre stratégie en quelques minutes
+  details: Coder simplement les conditions dans lesquelles vous souhaitez créer des positions (courtes ou longues), définissez les règles et nous nous occupons de tout (achat, vente, gestion des règles, ordres, transactions et tickers).
+- title: Fonctionne avec plusieurs exchanges
   details: Cassandre utilise la bibliothèque XChange pour se connecter à différents exchanges. Nous testons chaque nouvelle version de Cassandre avec Kucoin, Coinbase et Binance pour nous assurer que cela fonctionne pour vous.
 - title: Mode "dry"
   details: Nous disposons d'un mode "dry" qui simule un exchange virtuel répondant aux ordres de votre bot pendant les tests. Ainsi, vous pourrez facilement tester votre stratégie sans risquer vos actifs. 
@@ -34,7 +34,6 @@ footer: GPL-3.0 License | Copyright © Stéphane Traumat
   <CodeGroupItem title="Command line" active>
 
 ```bash
-# Crée simplement votre projet grâce à notre archetype Maven
 mvn archetype:generate \
 -DarchetypeGroupId=tech.cassandre.trading.bot \
 -DarchetypeArtifactId=cassandre-trading-bot-spring-boot-starter-basic-archetype \
@@ -44,7 +43,6 @@ mvn archetype:generate \
 -Dversion=1.0-SNAPSHOT \
 -Dpackage=com.example
 
-# Lancez les tests unitaires
 mvn -f my-bot/pom.xml test
 ```
 

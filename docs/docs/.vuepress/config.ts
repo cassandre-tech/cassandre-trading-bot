@@ -21,7 +21,7 @@ export default defineUserConfig<DefaultThemeOptions>({
         '/fr/': {
             lang: 'fr-FR',
             title: 'Cassandre trading bot framework',
-            description: 'Créer votre trading bot en java en quelques minutes avec notre spring boot starter',
+            description: 'Créer votre trading bot Java en quelques minutes grâce à notre spring boot starter',
         },
     },
 

@@ -1,7 +1,7 @@
 ---
-title: Configuration de Cassandre
 lang: fr-FR
-toc: false
+title: Configuration de Cassandre
+description: Configuration de Cassandre
 ---
 
 # Configuration
@@ -37,23 +37,21 @@ spring.datasource.password=
 
 ## Configuration de l'exchange
 
-TODO ajouter la partie ajouter xchange lib
-TODO Ajouter un lien vers la doc des exchange
-
 La section `Exchange configuration` contient les paramètres de connexion à l'exchange. Le premier, `driver-class-name`,
-correspond à la classe XChange que Cassandre doit utiliser pour se connecter.
+correspond à la classe [XChange](https://github.com/knowm/XChange) que Cassandre doit utiliser pour se connecter.
 
-Les autres paramètres décrivent les paramètres de connexion que votre exchange vous fournira.
+Les autres paramètres sont les paramètres de connexion que votre exchange vous fournira. Vous pouvez voir des exemples
+de configuration [ici](../guides/configuration/exchange-connection-configuration).
 
 ## Modes
 
-Cassandre dispose de deux modes spécifiques :
+Cassandre offre de deux modes :
 
 * Le mode `sandbox`, supporté seulement par certains exchanges, permet d'utiliser un 'faux compte' sur l'exchange et
   donc de travailler de manière simulée. Kucoin & Coinbase supportent cette fonctionnalité.
 * Le mode `dry` de Cassandre simule, à l'intérieur de Cassandre, un exchange. Ce mode permet de tester votre stratégie
-  en local sur des données historiques et de voir si elle génère des bénéfices ou non. Vous pouvez donc valider votre
-  code avec des tests unitaires avant de le lancer en production.
+  en local sur des données historiques et de voir si elle génère des bénéfices ou des pertes. Vous pourrez donc valider
+  vos idées avec des tests unitaires avant de vous lancer en production.
 
 ## Taux de rafraichissement
 
@@ -62,4 +60,5 @@ l'exchange.
 
 ## Configuration de la base de données.
 
-Ces paramètres indiquent à Cassandre dans quelle base de données Cassandre doit sauvegarder ses informations.
+Ces paramètres indiquent à Cassandre dans quelle base de données Cassandre doit sauvegarder ses informations (Cassandre
+se charge de créer la structure de la base au démarrage de votre application).

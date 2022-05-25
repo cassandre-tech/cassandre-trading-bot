@@ -1,8 +1,9 @@
 ---
-title: Schéma de base de données
 lang: fr-FR
-toc: false
+title: Schéma de base de données
+description: Schéma de la base de données Cassandre
 ---
 
 # Schéma de base de données
-![Database schema](./images/cassandre-trading-bot-database.png)
+
+![Schéma de base de données Cassandre](./images/cassandre-trading-bot-database.png)

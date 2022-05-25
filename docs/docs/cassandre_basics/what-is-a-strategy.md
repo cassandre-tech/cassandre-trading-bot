@@ -1,13 +1,13 @@
 ---
-title: What is a strategy ?
 lang: en-US
-toc: false
+title: What is a trading strategy?
+description: What is a trading strategy?
 ---
 
 # What is a strategy ?
 
-A strategy is a class you are writing to describe what your want to do (buy, sell, create position...) depending on the
-assets you own, the market data (tickers) or any other data you can or want to grab.
+A strategy is a class you write to describe what your want to do (buy, sell, create position...) depending on the assets
+you own, the market data (tickers) or any other data you can or want to grab.
 
 To be managed by Cassandre, your strategy must have
 the [@CassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategy.html)
@@ -32,7 +32,8 @@ You will find below the minimal strategy with:
 * [getRequestedCurrencyPairs()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getRequestedCurrencyPairs%28%29)
   implementation indicating that we want to receive one currency-pair : `BTC/USDT`.
 * [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategyInterface.html#getTradeAccount%28java.util.Set%29)
-  Implementation indicating that, from all the accounts we own on the exchange, the one we use for trading is the one having the name `trade`.
+  Implementation indicating that, from all the accounts we own on the exchange, the one we use for trading is the one
+  having the name `trade`.
 
 ```java
 package com.mycompany.app;
@@ -71,6 +72,5 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 ```
 
 ::: tip
-Dans un même trading bot, il est possible de faire fonctionner plusieurs stratégies! Par contre, elles seront toutes
-connectées au même exchange.
+You can run several strategies in a single bot, but they will all be connected to a single exchange.
 :::

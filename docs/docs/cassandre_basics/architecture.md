@@ -1,8 +1,9 @@
 ---
-title: Architecture
 lang: en-US
-toc: false
+title: Architecture
+description: Cassandre software architecture
 ---
 
 # Architecture
+
 ![Cassandre architecture](./images/cassandre-trading-bot-architecture.png)
