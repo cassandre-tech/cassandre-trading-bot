@@ -29,7 +29,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-		// We only ask BTC/USDT tickers (Base currency : BTC / Quote currency : USDT).
+		// We only ask for BTC/USDT tickers (Base currency : BTC / Quote currency : USDT).
 		return Set.of(new CurrencyPairDTO(BTC, USDT));
 	}
 

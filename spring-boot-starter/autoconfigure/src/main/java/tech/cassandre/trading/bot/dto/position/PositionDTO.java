@@ -549,7 +549,7 @@ public class PositionDTO {
      *
      * @return description
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "checkstyle:InnerAssignment"})
     public final String getDescription() {
         try {
             String value = StringUtils.capitalize(type.toString().toLowerCase(Locale.ROOT)) + " position n°" + positionId + " of " + amount;
@@ -570,53 +570,32 @@ public class PositionDTO {
             }
             value += ")";
             switch (getStatus()) {
-                case OPENING:
-                    value += " - Opening - Waiting for the trades of order " + openingOrder.getOrderId();
-                    break;
-                case OPENED:
+                case OPENING -> value += " - Opening - Waiting for the trades of order " + openingOrder.getOrderId();
+                case OPENED -> {
                     value += " - Opened";
                     final Optional<GainDTO> lastGain = getLatestCalculatedGain();
                     if (lastGain.isPresent() && getLatestCalculatedGain().isPresent()) {
-                        value += " - Last gain calculated " + getFormattedValue(getLatestCalculatedGain().get().getPercentage()) + " %";
+                        value += " - Last gain calculated " + new DecimalFormat("#0.##").format(getLatestCalculatedGain().get().getPercentage()) + " %";
                     }
-                    break;
-                case OPENING_FAILURE:
-                    value = "Position " + this.getUid() + " - Opening failure";
-                    break;
-                case CLOSING:
-                    value += " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
-                    break;
-                case CLOSING_FAILURE:
-                    value = "Position " + this.getUid() + " - Closing failure";
-                    break;
-                case CLOSED:
+                }
+                case OPENING_FAILURE -> value = "Position " + this.getUid() + " - Opening failure";
+                case CLOSING -> value += " - Closing - Waiting for the trades of order " + closingOrder.getOrderId();
+                case CLOSING_FAILURE -> value = "Position " + this.getUid() + " - Closing failure";
+                case CLOSED -> {
                     final GainDTO gain = getGain();
                     if (gain != null) {
                         value += " - Closed - " + gain;
                     } else {
                         value += " - Closed - Error during gain calculation";
                     }
-                    break;
-                default:
-                    value = "Incorrect state for position " + this.getUid();
-                    break;
+                }
+                default -> value = "Incorrect state for position " + this.getUid();
             }
             return value;
         } catch (Exception e) {
             return "Position " + this.getUid() + " (error in getDescription() method)";
         }
     }
-
-    /**
-     * Returns formatted value.
-     *
-     * @param value value
-     * @return formatted value
-     */
-    private String getFormattedValue(final double value) {
-        return new DecimalFormat("#0.##").format(value);
-    }
-
 
     @Override
     @ExcludeFromCoverageGeneratedReport
