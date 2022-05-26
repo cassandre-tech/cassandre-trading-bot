@@ -1,8 +1,7 @@
 ---
 lang: en-US
 title: API configuration
-description: Cassandre tutorial - Our GraphQL API allows you to query your data (balances, strategies, orders, trades
-and positions)
+description: Cassandre tutorial - Our GraphQL API allows you to query your data (balances, strategies, orders, trades and positions)
 ---
 
 # GraphQL API

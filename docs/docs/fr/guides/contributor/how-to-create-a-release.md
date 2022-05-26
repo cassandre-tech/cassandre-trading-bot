@@ -1,7 +1,7 @@
 ---
 lang: fr-FR
 title: Créer une version
-description: How to create an official Cassandre release
+description: Comment créer une version officielle de Cassandre
 ---
 
 # Créer une version
@@ -28,15 +28,15 @@ Démarrer la release avec :
 mvn gitflow:release-start
 ```
 
-Après avoir choisir le numéro de release, finissez le processus avec la commande :
+Après avoir choisi le numéro de release, finissez le processus avec la commande :
 ```bash
 mvn gitflow:release-finish
 ```
 
 ## À faire après la release
 * Fermez la [milestone sur Github](https://github.com/cassandre-tech/cassandre-trading-bot/milestones?direction=asc&sort=due_date&state=open).
-* Écrivez et poster un article sur [substack](https://cassandre.substack.com/publish?utm_source=menu).
-* Mettez à jour les bots de trading qui servent à la production.
+* Écrivez et postez un article sur [substack](https://cassandre.substack.com/publish?utm_source=menu).
+* Mettez à jour les bots de trading qui servent à la pré production.
 
 ## Textes à utiliser pour annoncer la sortie
 * English: "We've just released Cassandre 5.0.7, a Spring boot starter to create and run your java crypto trading bot in minutes. Details here: URL #trading #tradingbot #crypto #bitcoin #java"

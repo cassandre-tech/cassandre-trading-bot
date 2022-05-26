@@ -6,7 +6,7 @@ description: Comment installer les outils de développement et de documentation 
 
 # Installer les outils de développement
 
-## Tools
+## Outils
 
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -

@@ -8,8 +8,8 @@ description: Comment résoudre les problèmes les plus courants
 
 ## Your strategies specify a trading account that doesn't exist
 
-La première chose à faire est de vérifier votre configuration. Si vous vous connectez à un vrai exchange avec vos
-identifiants de production, le paramètre `application.properties` doit être à `false`.
+La première chose à faire est de vérifier votre configuration. Si vous souhaitez vous connecter à un exchange avec vos
+identifiants de production, les paramètres de mode doivent être à `false`.
 
 ```properties
 cassandre.trading.bot.exchange.modes.sandbox=false
@@ -25,8 +25,8 @@ méthode [getTradeAccount()](https://www.javadoc.io/doc/tech.cassandre.trading.b
 . Cette méthode sera appelée par Cassandre au démarrage et vous passera en paramètre la liste des comptes que vous avez
 sur l'exchange.
 
-Pour vous aider, lors du démarrage de Cassandre, vous devriez voir s'afficher dans les logs la liste des comptes
-découverts :
+Pour vous aider à savoir lequel est le bon, lors du démarrage de Cassandre, vous devriez voir s'afficher dans les logs
+la liste des comptes découverts et leur solde :
 
 ```
 2021-11-18 Available accounts on the exchange:
@@ -66,5 +66,6 @@ version 5.0.7.
 Vous avez des actifs sur votre compte, `getTradeAccount(Set<AccountDTO> accounts)` est correctement implémentée mais
 vous obtenez l'erreur `Your strategies specifies a trading account that doesn't exist`.
 
-Vous pouvez essayer cette solution : [https://github.com/cassandre-tech/cassandre-trading-bot/issues/786#issuecomment-999503117](https://github.com/cassandre-tech/cassandre-trading-bot/issues/786#issuecomment-999503117)
+Vous pouvez essayer cette
+solution : [https://github.com/cassandre-tech/cassandre-trading-bot/issues/786#issuecomment-999503117](https://github.com/cassandre-tech/cassandre-trading-bot/issues/786#issuecomment-999503117)
 .
