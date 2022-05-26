@@ -1,0 +1,69 @@
+name: Deployment
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+
+    # ==================================================================================================================
+    # Configuration.
+    runs-on: ubuntu-latest
+
+    steps:
+      # ================================================================================================================
+      - name: Retrieve the sources
+        uses: actions/checkout@v1
+
+      # ================================================================================================================
+      - name: JDK 11 Setup
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11.0.x
+
+      # ================================================================================================================
+      - name: Build with Maven and creates the docker image
+        run: mvn spring-boot:build-image
+
+      # ================================================================================================================
+      - name: Push image to docker hub
+        run: |
+          echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          docker push straumat/trading-bot:latest
+
+      # ================================================================================================================
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+            docker stop $(docker ps -aq --filter "label=trading-bot")
+            docker rm -f $(docker ps -aq --filter "label=trading-bot")
+            docker pull straumat/trading-bot:latest
+            docker run  -d \
+                        --security-opt apparmor=unconfined \
+                        --network="cassandre" \
+                        -e TZ=Europe/Paris \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_NAME='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_NAME }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_USERNAME='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_USERNAME }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_PASSPHRASE='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_PASSPHRASE }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_KEY='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_KEY }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_SECRET='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_SECRET }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_MODES_SANDBOX='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_MODES_SANDBOX }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_MODES_DRY='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_MODES_DRY }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_RATES_ACCOUNT='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_RATES_ACCOUNT }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_RATES_TICKER='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_RATES_TICKER }}' \
+                        -e CASSANDRE_TRADING_BOT_EXCHANGE_RATES_ORDER='${{ secrets.CASSANDRE_TRADING_BOT_EXCHANGE_RATES_ORDER }}' \
+                        -e CASSANDRE_TRADING_BOT_DATABASE_DATASOURCE_DRIVER-CLASS-NAME=${{ secrets.CASSANDRE_TRADING_BOT_DATABASE_DATASOURCE_DRIVER_CLASS_NAME }} \
+                        -e CASSANDRE_TRADING_BOT_DATABASE_DATASOURCE_URL=${{ secrets.CASSANDRE_TRADING_BOT_DATABASE_DATASOURCE_URL }} \
+                        -e CASSANDRE_TRADING_BOT_DATABASE_DATASOURCE_USERNAME=${{ secrets.CASSANDRE_TRADING_BOT_DATABASE_DATASOURCE_USERNAME }} \
+                        -e CASSANDRE_TRADING_BOT_DATABASE_DATASOURCE_PASSWORD=${{ secrets.CASSANDRE_TRADING_BOT_DATABASE_DATASOURCE_PASSWORD }} \
+                        -e CASSANDRE_TRADING_BOT_DATABASE_TABLE-PREFIX=${{ secrets.CASSANDRE_TRADING_BOT_DATABASE_TABLE_PREFIX }} \
+                        -l trading-bot \
+                        straumat/trading-bot:latest

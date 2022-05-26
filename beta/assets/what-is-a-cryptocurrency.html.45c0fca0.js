@@ -1,0 +1,1 @@
+const t={key:"v-1f08e57f",path:"/fr/trading_basics/what-is-a-cryptocurrency.html",title:"Qu'est-ce qu'une crypto-monnaie ?",lang:"fr-FR",frontmatter:{lang:"fr-FR",title:"Qu'est-ce qu'une crypto-monnaie ?",description:"Trading - Qu'est-ce qu'une crypto-monnaie ?"},excerpt:"",headers:[],git:{},filePathRelative:"fr/trading_basics/what-is-a-cryptocurrency.md"};export{t as data};
