@@ -1,0 +1,1 @@
+const e={key:"v-bdb4e548",path:"/tutorial/explore-generated-code.html",title:"Explore generated code",lang:"en-US",frontmatter:{lang:"en-US",title:"Explore generated code",description:"Cassandre tutorial - Explore generated code"},excerpt:"",headers:[],git:{},filePathRelative:"tutorial/explore-generated-code.md"};export{e as data};
