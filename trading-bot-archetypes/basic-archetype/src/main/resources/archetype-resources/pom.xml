@@ -13,9 +13,9 @@
 	<!-- =========================================================================================================== -->
 	<!-- Project configuration -->
 	<properties>
-		<maven.compiler.target>11</maven.compiler.target>
-		<maven.compiler.source>11</maven.compiler.source>
-		<java.version>11</java.version>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -42,7 +42,7 @@
 			<artifactId>cassandre-trading-bot-spring-boot-starter</artifactId>
 			<version>@project.version@</version>
 		</dependency>
-		<!-- Our archetype is using Kucoin exchange sanbox - Add here the dependency of the exchange you want to use -->
+		<!-- Our archetype is using Kucoin exchange sandbox - Add here the dependency of the exchange you want to use -->
 		<dependency>
 			<groupId>org.knowm.xchange</groupId>
 			<artifactId>xchange-kucoin</artifactId>

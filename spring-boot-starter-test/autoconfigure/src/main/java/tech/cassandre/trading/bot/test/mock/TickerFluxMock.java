@@ -1,6 +1,8 @@
 package tech.cassandre.trading.bot.test.mock;
 
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -12,33 +14,31 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
-import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
+import tech.cassandre.trading.bot.domain.BacktestingCandle;
+import tech.cassandre.trading.bot.domain.BacktestingCandleId;
+import tech.cassandre.trading.bot.domain.ImportedCandle;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
-import tech.cassandre.trading.bot.repository.BacktestingTickerRepository;
+import tech.cassandre.trading.bot.repository.BacktestingCandleRepository;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.MarketServiceBacktestingImplementation;
+import tech.cassandre.trading.bot.util.mapper.BacktestingTickerMapper;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Ticker flux mock - Allows developers to simulate tickers via tsv files.
- * Will read all files starting by "tickers-" and ending with ".tsv".
+ * Ticker flux mock - Allows developers to simulate tickers throw candles csv files importation.
+ * Will read all files starting with "candles-for-backtesting" and ending with ".csv".
  * <p>
- * The file has the following format :
+ * The file has the following columns:
  * Field    Description
  * =======================================
  * time     Start time of the candle cycle
@@ -54,6 +54,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 public class TickerFluxMock {
 
+    /** Logger. */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     /** Application context. */
     private final ApplicationContext applicationContext;
 
@@ -64,7 +67,7 @@ public class TickerFluxMock {
     private final TradeRepository tradeRepository;
 
     /** Backtesting tickers repository. */
-    private final BacktestingTickerRepository backtestingTickerRepository;
+    private final BacktestingCandleRepository backtestingCandleRepository;
 
     /** Order flux. */
     private final OrderFlux orderFlux;
@@ -72,20 +75,11 @@ public class TickerFluxMock {
     /** Trade flux. */
     private final TradeFlux tradeFlux;
 
-    /** Logger. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
-    /** To milliseconds. */
-    public static final int MILLISECONDS = 1_000;
-
-    /** Tickers file prefix. */
-    private static final String TICKERS_FILE_PREFIX = "tickers-";
-
-    /** Tickers file suffix. */
-    private static final String TICKERS_FILE_SUFFIX = ".*sv";
-
     /** Market service for backtesting. */
     private MarketServiceBacktestingImplementation marketServiceBacktestingImplementation;
+
+    /** Backtesting mapper. */
+    private final BacktestingTickerMapper backtestingTickerMapper = Mappers.getMapper(BacktestingTickerMapper.class);
 
     @Bean
     @Primary
@@ -96,122 +90,82 @@ public class TickerFluxMock {
     @Bean
     @Primary
     public MarketService marketService() {
+        // Removes everything from table.
+        backtestingCandleRepository.deleteAllInBatch();
+
         // Creates the mock.
         marketServiceBacktestingImplementation = new MarketServiceBacktestingImplementation(
                 orderFlux,
                 tradeFlux,
                 orderRepository,
                 tradeRepository,
-                backtestingTickerRepository);
+                backtestingCandleRepository);
 
-        // For every file.
-        getFilesToLoad()
+        // Getting the list of files to import and insert them in database.
+        logger.info("Importing candles for backtesting...");
+        Set<CurrencyPairDTO> currencyPairUsed = new HashSet<>();
+        getCandlesFilesToLoad()
                 .stream()
                 .filter(resource -> resource.getFilename() != null)
+                .peek(resource -> logger.info("Importing {}...", resource.getFilename()))
                 .forEach(resource -> {
-                    // We add all the tickers of the currency pair.
-                    AtomicLong sequence = new AtomicLong(1);
-                    logger.info("Adding tests data from {}", resource.getFilename().substring(resource.getFilename().indexOf(TICKERS_FILE_PREFIX)));
-                    getTickersFromFile(resource).forEach(tickerDTO -> {
-                        // Adding each ticker in database.
-                        marketServiceBacktestingImplementation.addTickerToDatabase(sequence.getAndIncrement(), tickerDTO);
-                    });
+                    try {
+                        // Insert the tickers in database.
+                        AtomicLong sequence = new AtomicLong(1);
+                        new CsvToBeanBuilder<ImportedCandle>(Files.newBufferedReader(resource.getFile().toPath()))
+                                .withType(ImportedCandle.class)
+                                .withIgnoreLeadingWhiteSpace(true)
+                                .build()
+                                .parse()
+                                .forEach(importedCandle -> {
+                                    logger.debug("Importing candle {}", importedCandle);
+                                    BacktestingCandle candle = backtestingTickerMapper.mapToBacktestingCandle(importedCandle);
+                                    // Specific fields in Backtesting candle.
+                                    BacktestingCandleId id = new BacktestingCandleId();
+                                    id.setTestSessionId(marketServiceBacktestingImplementation.getTestSessionId());
+                                    id.setResponseSequenceId(sequence.getAndIncrement());
+                                    id.setCurrencyPair(importedCandle.getCurrencyPair());
+                                    candle.setId(id);
+                                    // Save in database.
+                                    backtestingCandleRepository.save(candle);
+                                    // We build a list of currency pairs listed in files.
+                                    currencyPairUsed.add(id.getCurrencyPairDTO());
+                                });
+                    } catch (IOException e) {
+                        logger.error("Impossible to load candles for backtesting: {}", e.getMessage());
+                    }
                 });
+
+        // Setting the flux size of each currency pair.
+        currencyPairUsed.forEach(currencyPairDTO -> marketServiceBacktestingImplementation.getFluxSize()
+                .put(currencyPairDTO, backtestingCandleRepository.findByIdCurrencyPair(currencyPairDTO.toString()).size()));
 
         return marketServiceBacktestingImplementation;
     }
 
     /**
-     * Returns the list of files to import.
+     * Getter marketServiceBacktestingImplementation.
      *
-     * @return files to import.
+     * @return marketServiceBacktestingImplementation
      */
-    public List<Resource> getFilesToLoad() {
+    public final MarketServiceBacktestingImplementation getMarketServiceBacktestingImplementation() {
+        return marketServiceBacktestingImplementation;
+    }
+
+    /**
+     * Returns the list of candle files to import.
+     *
+     * @return candles to import.
+     */
+    public List<Resource> getCandlesFilesToLoad() {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
-            final Resource[] resources = resolver.getResources("classpath*:" + TICKERS_FILE_PREFIX + "*" + TICKERS_FILE_SUFFIX);
+            final Resource[] resources = resolver.getResources("classpath*:candles-for-backtesting*csv");
             return Arrays.asList(resources);
         } catch (IOException e) {
             logger.error("TickerFluxMock encountered an error: {}", e.getMessage());
         }
         return Collections.emptyList();
-    }
-
-    /**
-     * Returns the currency pair from a filename.
-     *
-     * @param file file
-     * @return currency pair
-     */
-    public CurrencyPairDTO getCurrencyPairFromFileName(final Resource file) {
-        // Getting the string value of currency pair.
-        if (file.getFilename() != null) {
-            final int currencyPairIndexStart = file.getFilename().indexOf(TICKERS_FILE_PREFIX) + TICKERS_FILE_PREFIX.length();
-            final int currencyPairIndexStop = file.getFilename().indexOf("sv") - 2;
-            final String currencyPairAsString = file.getFilename().substring(currencyPairIndexStart, currencyPairIndexStop);
-            final String[] currencyPairAsSplit = currencyPairAsString.split("-");
-            return new CurrencyPairDTO(new CurrencyDTO(currencyPairAsSplit[0].toUpperCase()), new CurrencyDTO(currencyPairAsSplit[1].toUpperCase()));
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns tickers loaded from a file.
-     *
-     * @param file file
-     * @return tickers
-     */
-    private List<TickerDTO> getTickersFromFile(final Resource file) {
-        final CurrencyPairDTO currencyPair = getCurrencyPairFromFileName(file);
-        final List<TickerDTO> tickers = new LinkedList<>();
-        // Replies from TSV files.
-        try (Scanner scanner = new Scanner(file.getFile())) {
-            while (scanner.hasNextLine()) {
-                try (Scanner rowScanner = new Scanner(scanner.nextLine())) {
-                    if (file.getFilename() != null && file.getFilename().endsWith("tsv")) {
-                        rowScanner.useDelimiter("\t");
-                    } else {
-                        rowScanner.useDelimiter(",");
-                    }
-                    while (rowScanner.hasNext()) {
-                        // Data retrieved from file.
-                        final String time = rowScanner.next().replaceAll("\"", "");
-                        final String open = rowScanner.next().replaceAll("\"", "");
-                        final String close = rowScanner.next().replaceAll("\"", "");
-                        final String high = rowScanner.next().replaceAll("\"", "");
-                        final String low = rowScanner.next().replaceAll("\"", "");
-                        final String volume = rowScanner.next().replaceAll("\"", "");
-                        String turnover;
-                        if (rowScanner.hasNext()) {
-                            turnover = rowScanner.next().replaceAll("\"", "");
-                        } else {
-                            turnover = "0";
-                        }
-
-                        // Creating the ticker.
-                        TickerDTO t = TickerDTO.builder()
-                                .currencyPair(currencyPair)
-                                .timestamp(ZonedDateTime.ofInstant(new Date(Long.parseLong(time) * MILLISECONDS).toInstant(), ZoneId.systemDefault()))
-                                .open(new BigDecimal(open))
-                                .last(new BigDecimal(close))
-                                .high(new BigDecimal(high))
-                                .low(new BigDecimal(low))
-                                .volume(new BigDecimal(volume))
-                                .quoteVolume(new BigDecimal(turnover))
-                                .build();
-
-                        // Add the ticker.
-                        tickers.add(t);
-                    }
-                }
-            }
-        } catch (FileNotFoundException e) {
-            logger.error("{} not found !", file.getFilename());
-        } catch (IOException e) {
-            logger.error("IOException : {}", e.getMessage());
-        }
-        return tickers;
     }
 
     /**

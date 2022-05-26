@@ -42,109 +42,109 @@ public class TradeRepositoryTest extends BaseTest {
         assertEquals(10, tradeRepository.count());
 
         // Trade 01.
-        Trade t = trades.next();
-        assertEquals(1, t.getId());
-        assertEquals("BACKUP_TRADE_01", t.getTradeId());
-        assertEquals(BID, t.getType());
-        assertEquals("BACKUP_OPENING_ORDER_02", t.getOrder().getOrderId());
-        assertEquals("BTC/USDT", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("20")));
-        assertEquals("BTC", t.getAmount().getCurrency());
-        assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("10")));
-        assertEquals("USDT", t.getPrice().getCurrency());
-        assertEquals(0, t.getFee().getValue().compareTo(new BigDecimal("1")));
-        assertEquals("USDT", t.getFee().getCurrency());
-        assertEquals("Trade 01", t.getUserReference());
-        assertTrue(createZonedDateTime("01-08-2020").isEqual(t.getTimestamp()));
+        Trade trade1 = trades.next();
+        assertEquals(1, trade1.getUid());
+        assertEquals("BACKUP_TRADE_01", trade1.getTradeId());
+        assertEquals(BID, trade1.getType());
+        assertEquals("BACKUP_OPENING_ORDER_02", trade1.getOrder().getOrderId());
+        assertEquals("BTC/USDT", trade1.getCurrencyPair());
+        assertEquals(0, trade1.getAmount().getValue().compareTo(new BigDecimal("20")));
+        assertEquals("BTC", trade1.getAmount().getCurrency());
+        assertEquals(0, trade1.getPrice().getValue().compareTo(new BigDecimal("10")));
+        assertEquals("USDT", trade1.getPrice().getCurrency());
+        assertEquals(0, trade1.getFee().getValue().compareTo(new BigDecimal("1")));
+        assertEquals("USDT", trade1.getFee().getCurrency());
+        assertEquals("Trade 01", trade1.getUserReference());
+        assertTrue(createZonedDateTime("01-08-2020").isEqual(trade1.getTimestamp()));
 
         // Retrieving order 1 with findByOrderId().
-        Optional<Trade> tBis = tradeRepository.findByTradeId("BACKUP_TRADE_01");
-        assertTrue(tBis.isPresent());
-        assertEquals(t, tBis.get());
+        Optional<Trade> trade1Bis = tradeRepository.findByTradeId("BACKUP_TRADE_01");
+        assertTrue(trade1Bis.isPresent());
+        assertEquals(trade1, trade1Bis.get());
 
         // Trade 02.
-        t = trades.next();
-        assertEquals(2, t.getId());
-        assertEquals("BACKUP_TRADE_02", t.getTradeId());
-        assertEquals(BID, t.getType());
-        assertEquals("BACKUP_OPENING_ORDER_03", t.getOrder().getOrderId());
-        assertEquals("BTC/USDT", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("20")));
-        assertEquals("BTC", t.getAmount().getCurrency());
-        assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("20")));
-        assertEquals("USDT", t.getPrice().getCurrency());
-        assertEquals(0, t.getFee().getValue().compareTo(new BigDecimal("2")));
-        assertEquals("USDT", t.getFee().getCurrency());
-        assertEquals("Trade 02", t.getUserReference());
-        assertTrue(createZonedDateTime("02-08-2020").isEqual(t.getTimestamp()));
+        Trade trade2 = trades.next();
+        assertEquals(2, trade2.getUid());
+        assertEquals("BACKUP_TRADE_02", trade2.getTradeId());
+        assertEquals(BID, trade2.getType());
+        assertEquals("BACKUP_OPENING_ORDER_03", trade2.getOrder().getOrderId());
+        assertEquals("BTC/USDT", trade2.getCurrencyPair());
+        assertEquals(0, trade2.getAmount().getValue().compareTo(new BigDecimal("20")));
+        assertEquals("BTC", trade2.getAmount().getCurrency());
+        assertEquals(0, trade2.getPrice().getValue().compareTo(new BigDecimal("20")));
+        assertEquals("USDT", trade2.getPrice().getCurrency());
+        assertEquals(0, trade2.getFee().getValue().compareTo(new BigDecimal("2")));
+        assertEquals("USDT", trade2.getFee().getCurrency());
+        assertEquals("Trade 02", trade2.getUserReference());
+        assertTrue(createZonedDateTime("02-08-2020").isEqual(trade2.getTimestamp()));
 
         // Retrieving order 2 with findByOrderId().
-        tBis = tradeRepository.findByTradeId("BACKUP_TRADE_02");
-        assertTrue(tBis.isPresent());
-        assertEquals(t, tBis.get());
+        Optional<Trade> trade2Bis = tradeRepository.findByTradeId("BACKUP_TRADE_02");
+        assertTrue(trade2Bis.isPresent());
+        assertEquals(trade2, trade2Bis.get());
 
         // Trade 03.
-        t = trades.next();
-        assertEquals(3, t.getId());
-        assertEquals("BACKUP_TRADE_03", t.getTradeId());
-        assertEquals(BID, t.getType());
-        assertEquals("BACKUP_OPENING_ORDER_04", t.getOrder().getOrderId());
-        assertEquals("BTC/USDT", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("40")));
-        assertEquals("BTC", t.getAmount().getCurrency());
-        assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("30")));
-        assertEquals("USDT", t.getPrice().getCurrency());
-        assertEquals(0, t.getFee().getValue().compareTo(new BigDecimal("3")));
-        assertEquals("USDT", t.getFee().getCurrency());
-        assertEquals("Trade 03", t.getUserReference());
-        assertTrue(createZonedDateTime("03-08-2020").isEqual(t.getTimestamp()));
+        Trade trade3 = trades.next();
+        assertEquals(3, trade3.getUid());
+        assertEquals("BACKUP_TRADE_03", trade3.getTradeId());
+        assertEquals(BID, trade3.getType());
+        assertEquals("BACKUP_OPENING_ORDER_04", trade3.getOrder().getOrderId());
+        assertEquals("BTC/USDT", trade3.getCurrencyPair());
+        assertEquals(0, trade3.getAmount().getValue().compareTo(new BigDecimal("40")));
+        assertEquals("BTC", trade3.getAmount().getCurrency());
+        assertEquals(0, trade3.getPrice().getValue().compareTo(new BigDecimal("30")));
+        assertEquals("USDT", trade3.getPrice().getCurrency());
+        assertEquals(0, trade3.getFee().getValue().compareTo(new BigDecimal("3")));
+        assertEquals("USDT", trade3.getFee().getCurrency());
+        assertEquals("Trade 03", trade3.getUserReference());
+        assertTrue(createZonedDateTime("03-08-2020").isEqual(trade3.getTimestamp()));
 
         // Retrieving order 3 with findByOrderId().
-        tBis = tradeRepository.findByTradeId("BACKUP_TRADE_03");
-        assertTrue(tBis.isPresent());
-        assertEquals(t, tBis.get());
+        Optional<Trade> trade3Bis = tradeRepository.findByTradeId("BACKUP_TRADE_03");
+        assertTrue(trade3Bis.isPresent());
+        assertEquals(trade3, trade3Bis.get());
 
         // Trade 04.
-        t = trades.next();
-        assertEquals(4, t.getId());
-        assertEquals("BACKUP_TRADE_04", t.getTradeId());
-        assertEquals(ASK, t.getType());
-        assertEquals("BACKUP_CLOSING_ORDER_01", t.getOrder().getOrderId());
-        assertEquals("BTC/USDT", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("20")));
-        assertEquals("BTC", t.getAmount().getCurrency());
-        assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("40")));
-        assertEquals("USDT", t.getPrice().getCurrency());
-        assertEquals(0, t.getFee().getValue().compareTo(new BigDecimal("4")));
-        assertEquals("USDT", t.getFee().getCurrency());
-        assertEquals("Trade 04", t.getUserReference());
-        assertTrue(createZonedDateTime("04-08-2020").isEqual(t.getTimestamp()));
+        Trade trade4 = trades.next();
+        assertEquals(4, trade4.getUid());
+        assertEquals("BACKUP_TRADE_04", trade4.getTradeId());
+        assertEquals(ASK, trade4.getType());
+        assertEquals("BACKUP_CLOSING_ORDER_01", trade4.getOrder().getOrderId());
+        assertEquals("BTC/USDT", trade4.getCurrencyPair());
+        assertEquals(0, trade4.getAmount().getValue().compareTo(new BigDecimal("20")));
+        assertEquals("BTC", trade4.getAmount().getCurrency());
+        assertEquals(0, trade4.getPrice().getValue().compareTo(new BigDecimal("40")));
+        assertEquals("USDT", trade4.getPrice().getCurrency());
+        assertEquals(0, trade4.getFee().getValue().compareTo(new BigDecimal("4")));
+        assertEquals("USDT", trade4.getFee().getCurrency());
+        assertEquals("Trade 04", trade4.getUserReference());
+        assertTrue(createZonedDateTime("04-08-2020").isEqual(trade4.getTimestamp()));
 
         // Retrieving order 4 with findByOrderId().
-        tBis = tradeRepository.findByTradeId("BACKUP_TRADE_04");
-        assertTrue(tBis.isPresent());
-        assertEquals(t, tBis.get());
+        Optional<Trade> trade4Bis = tradeRepository.findByTradeId("BACKUP_TRADE_04");
+        assertTrue(trade4Bis.isPresent());
+        assertEquals(trade4, trade4Bis.get());
 
         // Trade 05.
-        t = trades.next();
-        assertEquals(5, t.getId());
-        assertEquals("BACKUP_TRADE_05", t.getTradeId());
-        assertEquals(ASK, t.getType());
-        assertEquals("BACKUP_CLOSING_ORDER_02", t.getOrder().getOrderId());
-        assertEquals("ETH/USD", t.getCurrencyPair());
-        assertEquals(0, t.getAmount().getValue().compareTo(new BigDecimal("40")));
-        assertEquals("ETH", t.getAmount().getCurrency());
-        assertEquals(0, t.getPrice().getValue().compareTo(new BigDecimal("40")));
-        assertEquals("USD", t.getPrice().getCurrency());
-        assertEquals(0, t.getFee().getValue().compareTo(new BigDecimal("5")));
-        assertEquals("USD", t.getFee().getCurrency());
-        assertEquals("Trade 05", t.getUserReference());
-        assertTrue(createZonedDateTime("05-08-2020").isEqual(t.getTimestamp()));
+        Trade trade5 = trades.next();
+        assertEquals(5, trade5.getUid());
+        assertEquals("BACKUP_TRADE_05", trade5.getTradeId());
+        assertEquals(ASK, trade5.getType());
+        assertEquals("BACKUP_CLOSING_ORDER_02", trade5.getOrder().getOrderId());
+        assertEquals("ETH/USD", trade5.getCurrencyPair());
+        assertEquals(0, trade5.getAmount().getValue().compareTo(new BigDecimal("40")));
+        assertEquals("ETH", trade5.getAmount().getCurrency());
+        assertEquals(0, trade5.getPrice().getValue().compareTo(new BigDecimal("40")));
+        assertEquals("USD", trade5.getPrice().getCurrency());
+        assertEquals(0, trade5.getFee().getValue().compareTo(new BigDecimal("5")));
+        assertEquals("USD", trade5.getFee().getCurrency());
+        assertEquals("Trade 05", trade5.getUserReference());
+        assertTrue(createZonedDateTime("05-08-2020").isEqual(trade5.getTimestamp()));
 
         // Retrieving order 5 with findByOrderId().
-        tBis = tradeRepository.findByTradeId("BACKUP_TRADE_05");
-        assertTrue(tBis.isPresent());
-        assertEquals(t, tBis.get());
+        Optional<Trade> trade5Bis = tradeRepository.findByTradeId("BACKUP_TRADE_05");
+        assertTrue(trade5Bis.isPresent());
+        assertEquals(trade5, trade5Bis.get());
     }
 
 }

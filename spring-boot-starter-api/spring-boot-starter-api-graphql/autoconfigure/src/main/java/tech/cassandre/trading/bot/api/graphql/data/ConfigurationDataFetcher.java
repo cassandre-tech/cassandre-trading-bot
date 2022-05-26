@@ -12,10 +12,10 @@ import tech.cassandre.trading.bot.api.graphql.util.graphql.Configuration;
 public class ConfigurationDataFetcher extends BaseDataFetcher {
 
     /** API Version. */
-    private static final String API_VERSION = "1.0";
+    private static final String API_VERSION = "1.1";
 
     /**
-     * Returns server configuration.
+     * Returns configuration.
      *
      * @return configuration
      */

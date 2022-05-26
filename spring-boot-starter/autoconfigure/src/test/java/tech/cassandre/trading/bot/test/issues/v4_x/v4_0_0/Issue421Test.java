@@ -38,16 +38,16 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class Issue421Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
     private TickerFlux tickerFlux;
 
     @Autowired
     private OrderFlux orderFlux;
+
+    @Autowired
+    private TestableCassandreStrategy strategy;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("Duplicated orders in database")
@@ -60,7 +60,7 @@ public class Issue421Test extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("DRY_ORDER_000000001")
                 .type(BID)
-                .strategy(strategy.getStrategyDTO())
+                .strategy(strategy.getConfiguration().getStrategyDTO())
                 .currencyPair(ETH_BTC)
                 .amount(new CurrencyAmountDTO(new BigDecimal("0.0001"), ETH_BTC.getBaseCurrency()))
                 .status(NEW)
@@ -69,7 +69,7 @@ public class Issue421Test extends BaseTest {
         orderFlux.emitValue(OrderDTO.builder()
                 .orderId("DRY_ORDER_000000001")
                 .type(BID)
-                .strategy(strategy.getStrategyDTO())
+                .strategy(strategy.getConfiguration().getStrategyDTO())
                 .currencyPair(ETH_BTC)
                 .amount(new CurrencyAmountDTO(new BigDecimal("0.0001"), ETH_BTC.getBaseCurrency()))
                 .status(NEW)

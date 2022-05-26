@@ -27,11 +27,10 @@ import static lombok.AccessLevel.PRIVATE;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class GainDTO {
 
-    /** Zero constant. */
+    /** Zero gain constant. */
     public static final GainDTO ZERO = GainDTO.builder()
             .percentage(0)
             .amount(CurrencyAmountDTO.ZERO)
-            .fees(CurrencyAmountDTO.ZERO)
             .build();
 
     /** Gain made (percentage). */
@@ -48,48 +47,22 @@ public class GainDTO {
     @Singular
     List<CurrencyAmountDTO> closingOrderFees;
 
-    /** Fees. */
-    CurrencyAmountDTO fees;
-
     /**
-     * Getter netAmount.
-     * This method cannot be used as fees are not necessary the same currency as value.
+     * Returns the fees from opening and closing orders.
      *
-     * @return netAmount
+     * @return fees from opening and closing orders
      */
-    @Deprecated
-    public CurrencyAmountDTO getNetAmount() {
-        if (amount != null && fees != null) {
-            return CurrencyAmountDTO.builder()
-                    .value(amount.getValue().subtract(fees.getValue()))
-                    .currency(amount.getCurrency())
-                    .build();
-        } else {
-            return CurrencyAmountDTO.ZERO;
-        }
+    public List<CurrencyAmountDTO> getFees() {
+        return getFeesByCurrency().values().stream().toList();
     }
 
     /**
-     * Getter fees.
-     * This method should not be used anymore as a bug was found in issue 850.
-     * A gain is linked to a position and a position has an opening order and a closing order.
-     * the opening order trades and the closing order trades may have different currencies!
-     * So it's not possible to return only a CurrencyAmountDTO!
-     * Only a HashMap of currency and amount.
+     * Returns the sum of fees from opening and closing orders by currency.
      *
      * @return fees
      */
-    @Deprecated
-    public final CurrencyAmountDTO getFees() {
-        return fees;
-    }
-
-    /**
-     * Returns the sum of fees from opening and closing orders.
-     *
-     * @return fees
-     */
-    public final Map<CurrencyDTO, CurrencyAmountDTO> getOrdersFees() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public Map<CurrencyDTO, CurrencyAmountDTO> getFeesByCurrency() {
         return Stream.concat(openingOrderFees.stream(), closingOrderFees.stream())
                 .collect(Collectors.groupingBy(
                         CurrencyAmountDTO::getCurrency,
@@ -125,7 +98,8 @@ public class GainDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -142,7 +116,8 @@ public class GainDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
                 .append(amount)
                 .append(openingOrderFees)
@@ -151,7 +126,8 @@ public class GainDTO {
     }
 
     @Override
-    public final String toString() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public String toString() {
         if (percentage == 0) {
             return "No gain";
         } else {

@@ -25,7 +25,7 @@ public class GraphQLAPISecurityConfiguration extends WebSecurityConfigurerAdapte
     @Override
     protected final void configure(final HttpSecurity http) throws Exception {
         if (key == null || key.isBlank()) {
-            // if not key is set, no security at all. Everything is accessible.
+            // if key is not set, no security at all. Everything is accessible.
             http.antMatcher("/graphql/**")
                     .csrf().disable()
                     .sessionManagement().sessionCreationPolicy(STATELESS)
@@ -39,7 +39,8 @@ public class GraphQLAPISecurityConfiguration extends WebSecurityConfigurerAdapte
                     .csrf().disable()
                     .sessionManagement().sessionCreationPolicy(STATELESS)
                     .and()
-                    .addFilter(filter).authorizeRequests().anyRequest().authenticated();
+                    .addFilter(filter)
+                    .authorizeRequests().anyRequest().authenticated();
         }
     }
 

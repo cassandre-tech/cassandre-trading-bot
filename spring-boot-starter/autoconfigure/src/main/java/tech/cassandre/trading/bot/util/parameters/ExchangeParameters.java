@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Duration;
 
 /**
- * Exchange parameters from application.properties.
+ * Parameters from application.properties.
  */
 @Validated
 @Getter
@@ -28,7 +28,7 @@ import java.time.Duration;
 public class ExchangeParameters {
 
     /** Driver class name. For example: org.knowm.xchange.coinbasepro.CoinbaseProExchange, kraken, kucoin. */
-    @NotEmpty(message = "Driver class  name required, for example: org.knowm.xchange.coinbasepro.CoinbaseProExchange")
+    @NotEmpty(message = "Driver class name required, for example: org.knowm.xchange.coinbasepro.CoinbaseProExchange")
     private String driverClassName;
 
     /** API username. */
@@ -103,6 +103,16 @@ public class ExchangeParameters {
         @Rate(message = "Invalid account rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
         private String account;
 
+        /** Delay between calls to ticker API. */
+        @NotNull(message = "Delay between calls to ticker API is mandatory")
+        @Rate(message = "Invalid ticker rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
+        private String ticker;
+
+        /** Delay between calls to trade API. */
+        @NotNull(message = "Delay between calls to trade API is mandatory")
+        @Rate(message = "Invalid trade rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
+        private String trade;
+
         /**
          * Returns account rate value in ms.
          *
@@ -112,11 +122,6 @@ public class ExchangeParameters {
             return getRateValue(account);
         }
 
-        /** Delay between calls to ticker API. */
-        @NotNull(message = "Delay between calls to ticker API is mandatory")
-        @Rate(message = "Invalid ticker rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
-        private String ticker;
-
         /**
          * Returns ticker rate value in ms.
          *
@@ -125,11 +130,6 @@ public class ExchangeParameters {
         public long getTickerValueInMs() {
             return getRateValue(ticker);
         }
-
-        /** Delay between calls to trade API. */
-        @NotNull(message = "Delay between calls to trade API is mandatory")
-        @Rate(message = "Invalid trade rate - Enter a long value (ex: 123) or a standard ISO 8601 duration (ex: PT10H)")
-        private String trade;
 
         /**
          * Returns trade rate value in ms.

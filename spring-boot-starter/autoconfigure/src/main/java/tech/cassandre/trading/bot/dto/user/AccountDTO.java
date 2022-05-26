@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
 import tech.cassandre.trading.bot.util.java.EqualsBuilder;
@@ -16,6 +17,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 /**
  * DTO representing an account owned by a {@link UserDTO}.
+ * {@link UserDTO} can have several {@link AccountDTO} and each account can have several {@link BalanceDTO}.
  */
 @Value
 @Builder
@@ -26,7 +28,7 @@ public class AccountDTO {
     /** A unique identifier for this account. */
     String accountId;
 
-    /** A descriptive name for this account. Defaults to {@link #accountId}. */
+    /** A descriptive name for this account. Default value is {@link #accountId}. */
     String name;
 
     /** Account features. */
@@ -38,18 +40,12 @@ public class AccountDTO {
     Set<BalanceDTO> balances;
 
     /**
-     * Returns balance of a currency.
+     * Getter accountId.
      *
-     * @param currencyCode currency code
-     * @return balance
+     * @return accountId
      */
-    public Optional<BalanceDTO> getBalance(final String currencyCode) {
-        CurrencyDTO currency = CurrencyDTO.getInstanceNoCreate(currencyCode);
-        if (currency == null) {
-            return Optional.empty();
-        } else {
-            return getBalance(CurrencyDTO.getInstanceNoCreate(currencyCode));
-        }
+    public String getAccountId() {
+        return ObjectUtils.firstNonNull(accountId, "DEFAULT_ACCOUNT");
     }
 
     /**
@@ -67,7 +63,8 @@ public class AccountDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -97,7 +94,8 @@ public class AccountDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
                 .append(accountId)
                 .toHashCode();

@@ -7,8 +7,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * Cassandre trading bot.
  */
 @SuppressWarnings("unused")
-@SpringBootApplication
 @EnableAspectJAutoProxy
+@SpringBootApplication(scanBasePackages={"tech.cassandre.trading.bot"})
 public class CassandreTradingBot {
 
 }

@@ -68,7 +68,7 @@ public class Issue426TestMock extends BaseTest {
         // Creates the mock.
         MarketService marketService = mock(MarketService.class);
 
-        // Replies for ETH / BTC.
+        // Replies for ETH/BTC.
         given(marketService
                 .getTicker(ETH_BTC))
                 .willReturn(
@@ -77,7 +77,7 @@ public class Issue426TestMock extends BaseTest {
                         Optional.of(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(3)).last(new BigDecimal("0.4")).build()),
                         Optional.of(TickerDTO.builder().currencyPair(ETH_BTC).timestamp(createZonedDateTime(4)).last(new BigDecimal("0.4")).build())
                 );
-        // Replies for ETH / USDT.
+        // Replies for ETH/USDT.
         given(marketService
                 .getTicker(ETH_USDT))
                 .willReturn(
@@ -130,6 +130,7 @@ public class Issue426TestMock extends BaseTest {
                                 .build())
         );
 
+        // getOrders() replies.
         LinkedHashSet<OrderDTO> orders = new LinkedHashSet<>();
         orders.add(OrderDTO.builder()
                 .orderId("ORDER_000001")
@@ -159,8 +160,6 @@ public class Issue426TestMock extends BaseTest {
                 .userReference("MY_REF_1")
                 .timestamp(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")))
                 .build());
-
-        // getOrders() replies.
         given(service.getOrders()).willReturn(orders);
 
         return service;

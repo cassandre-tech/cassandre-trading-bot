@@ -1,7 +1,9 @@
 package tech.cassandre.trading.bot.api.graphql.test.core;
 
+import com.jayway.jsonpath.TypeRef;
 import com.netflix.graphql.dgs.DgsQueryExecutor;
 import com.netflix.graphql.dgs.autoconfig.DgsAutoConfiguration;
+import com.netflix.graphql.dgs.client.codegen.GraphQLQueryRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,21 +11,33 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import tech.cassandre.trading.bot.api.graphql.client.generated.DgsConstants;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionGraphQLQuery;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyIdAndStatusGraphQLQuery;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyIdAndStatusProjectionRoot;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyIdGraphQLQuery;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyIdProjectionRoot;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyUidAndStatusGraphQLQuery;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyUidAndStatusProjectionRoot;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyUidGraphQLQuery;
+import tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsProjectionRoot;
+import tech.cassandre.trading.bot.api.graphql.client.generated.types.Position;
+import tech.cassandre.trading.bot.api.graphql.client.generated.types.PositionType;
 import tech.cassandre.trading.bot.api.graphql.data.PositionDataFetcher;
 import tech.cassandre.trading.bot.api.graphql.test.CassandreTradingBot;
 import tech.cassandre.trading.bot.api.graphql.test.util.base.BaseDataFetcherTest;
-import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
-import tech.cassandre.trading.bot.dto.util.GainDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import static graphql.Assert.assertFalse;
-import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.api.graphql.client.generated.types.PositionStatus.CLOSED;
+import static tech.cassandre.trading.bot.api.graphql.client.generated.types.PositionStatus.OPENED;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.UNI;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 /**
@@ -31,7 +45,7 @@ import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
  */
 @ActiveProfiles("schedule-disabled")
 @DisplayName("Position data fetcher test")
-@SpringBootTest(classes = {CassandreTradingBot.class, DgsAutoConfiguration.class, PositionDataFetcher.class})
+@SpringBootTest(classes = {DgsAutoConfiguration.class, CassandreTradingBot.class, DgsAutoConfiguration.class, PositionDataFetcher.class})
 @TestPropertySource(properties = {"spring.liquibase.change-log = classpath:db/test/core/complete-database.yaml"})
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class PositionDataFetcherTest extends BaseDataFetcherTest {
@@ -40,156 +54,151 @@ public class PositionDataFetcherTest extends BaseDataFetcherTest {
     DgsQueryExecutor dgsQueryExecutor;
 
     @Test
-    @DisplayName("Get all positions")
-    void getAllPositions() {
-        List<Integer> ids = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positions { positionId }}",
-                "data.positions[*].positionId");
-        assertTrue(ids.contains(1));   // Real order.
-        assertFalse(ids.contains(999));   // Invented order.
-        assertEquals(182, ids.size());
+    @DisplayName("positions: [Position]")
+    void positions() {
+        // Query and fields definition.
+        GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
+                new tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsGraphQLQuery.Builder().build(),
+                new PositionsProjectionRoot().uid());
+        // Query execution.
+        List<Position> positions = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                graphQLQueryRequest.serialize(),
+                "data." + DgsConstants.QUERY.Positions + "[*]",
+                new TypeRef<>() {
+                });
+        // Tests.
+        assertEquals(182, positions.size());
     }
 
     @Test
-    @DisplayName("Get position by id")
-    void getPositionById() {
-        Map<String, Object> result = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { position(id: 31) {" +
-                        "id " +
-                        "positionId " +
-                        "type " +
-                        "strategy {strategyId} " +
-                        "currencyPair {baseCurrency{code} quoteCurrency{code}}" +
-                        "amount {value currency{code}} " +
-                        "rules {stopGainPercentage stopLossPercentage} " +
-                        "status " +
-                        "forceClosing " +
-                        "openingOrder {id orderId}" +
-                        "closingOrder {id orderId}" +
-                        "lowestCalculatedGain {percentage amount{value currency{code}} fees{value currency{code}}}" +
-                        "highestCalculatedGain {percentage amount{value currency{code}} fees{value currency{code}}}" +
-                        "latestCalculatedGain {percentage amount{value currency{code}} fees{value currency{code}}}" +
-                        "gain {percentage amount{value currency{code}} fees{value currency{code}}}" +
-                        "} }",
-                "data.position");
-        assertEquals(31, result.get("id"));
-        assertEquals(14, result.get("positionId"));
-        assertEquals("LONG", result.get("type"));
-        assertEquals("002", getStrategyValue(result.get("strategy")).getStrategyId());
-        assertEquals(UNI_USDT, getCurrencyPairValue(result.get("currencyPair")));
-        final CurrencyAmountDTO amount = getCurrencyAmountValue(result.get("amount"));
-        assertEquals(0, new BigDecimal("1").compareTo(amount.getValue()));
-        assertEquals(UNI, amount.getCurrency());
-        Map<String, Double> rules = (Map<String, Double>) result.get("rules");
-        assertEquals(6L, rules.get("stopGainPercentage"));
-        assertEquals(15L, rules.get("stopLossPercentage"));
-        assertEquals("CLOSED", result.get("status"));
-        assertEquals(false, result.get("forceClosing"));
-        Map<String, String> openingOrder = (Map<String, String>) result.get("openingOrder");
-        assertEquals(49, openingOrder.get("id"));
-        Map<String, String> closingOrder = (Map<String, String>) result.get("closingOrder");
-        assertEquals(54, closingOrder.get("id"));
-
-        GainDTO lowestCalculatedGain = getGainValue(result.get("lowestCalculatedGain"));
-        assertEquals(-4.696751117706299, lowestCalculatedGain.getPercentage());
-        assertEquals(0, new BigDecimal("-0.9433000000000000").compareTo(lowestCalculatedGain.getAmount().getValue()));
-        assertEquals(USDT, lowestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(lowestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, lowestCalculatedGain.getFees().getCurrency());
-
-        GainDTO highestCalculatedGain = getGainValue(result.get("highestCalculatedGain"));
-        assertEquals(5.908155918121338, highestCalculatedGain.getPercentage());
-        assertEquals(0, new BigDecimal("1.1866").compareTo(highestCalculatedGain.getAmount().getValue()));
-        assertEquals(USDT, highestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(highestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, highestCalculatedGain.getFees().getCurrency());
-
-        GainDTO latestCalculatedGain = getGainValue(result.get("latestCalculatedGain"));
-        assertEquals(6.002260208129883, latestCalculatedGain.getPercentage());
-        assertEquals(0, new BigDecimal("1.2055").compareTo(latestCalculatedGain.getAmount().getValue()));
-        assertEquals(USDT, latestCalculatedGain.getAmount().getCurrency());
-        assertEquals(0, ZERO.compareTo(latestCalculatedGain.getFees().getValue()));
-        assertEquals(USDT, latestCalculatedGain.getFees().getCurrency());
-
-        GainDTO gain = getGainValue(result.get("gain"));
-        assertEquals(5.93, gain.getPercentage());
-        assertEquals(0, new BigDecimal("1.1911").compareTo(gain.getAmount().getValue()));
-        assertEquals(USDT, gain.getAmount().getCurrency());
-        assertEquals(0, new BigDecimal("0.0413593").compareTo(gain.getFees().getValue()));
-        assertEquals(USDT, gain.getFees().getCurrency());
+    @DisplayName("position(uid: Int): Position")
+    void position() {
+        // Query and fields definition.
+        GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
+                new PositionGraphQLQuery.Builder().uid(31).build(),
+                new PositionsProjectionRoot().uid()
+                        .positionId()
+                        .type().getParent()
+                        .strategy().strategyId().getParent()
+                        .currencyPair().baseCurrency().code().getParent().quoteCurrency().code().getParent().getParent()
+                        .amount().value().currency().code().getParent().getParent()
+                        .rules().stopGainPercentage().stopLossPercentage().getParent()
+                        .status().getParent()
+                        .autoClose()
+                        .forceClosing()
+                        .openingOrder().uid().orderId().getParent()
+                        .closingOrder().uid().orderId().getParent()
+                        .lowestCalculatedGain().percentage().amount().value().currency().code().getParent().getParent().getParent()
+                        .highestCalculatedGain().percentage().amount().value().currency().code().getParent().getParent().getParent()
+                        .latestCalculatedGain().percentage().amount().value().currency().code().getParent().getParent().getParent()
+                        .gain().percentage().amount().value().currency().code());
+        // Query execution.
+        Position position = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                graphQLQueryRequest.serialize(),
+                "data." + DgsConstants.QUERY.Position,
+                new TypeRef<>() {
+                });
+        // Tests.
+        assertNotNull(position);
+        assertEquals(31, position.getUid());
+        assertEquals(14, position.getPositionId());
+        assertEquals(PositionType.LONG, position.getType());
+        assertEquals("002", position.getStrategy().getStrategyId());
+        assertEquals(UNI, position.getCurrencyPair().getBaseCurrency());
+        assertEquals(USDT, position.getCurrencyPair().getQuoteCurrency());
+        // Amount.
+        assertEquals(0, new BigDecimal("1").compareTo(position.getAmount().getValue()));
+        assertEquals(UNI, position.getAmount().getCurrency());
+        // Rules
+        assertEquals(6L, position.getRules().getStopGainPercentage());
+        assertEquals(15L, position.getRules().getStopLossPercentage());
+        assertEquals(CLOSED, position.getStatus());
+        assertTrue(position.getAutoClose());
+        assertFalse(position.getForceClosing());
+        assertEquals(49, position.getOpeningOrder().getUid());
+        assertEquals(54, position.getClosingOrder().getUid());
+        // Gains.
+        assertEquals(-4.696751117706299, position.getLowestCalculatedGain().getPercentage());
+        assertEquals(0, new BigDecimal("-0.9433000000000000").compareTo(position.getLowestCalculatedGain().getAmount().getValue()));
+        assertEquals(USDT, position.getLowestCalculatedGain().getAmount().getCurrency());
+        assertEquals(5.908155918121338, position.getHighestCalculatedGain().getPercentage());
+        assertEquals(0, new BigDecimal("1.1866").compareTo(position.getHighestCalculatedGain().getAmount().getValue()));
+        assertEquals(USDT, position.getHighestCalculatedGain().getAmount().getCurrency());
+        assertEquals(6.002260208129883, position.getLatestCalculatedGain().getPercentage());
+        assertEquals(0, new BigDecimal("1.2055").compareTo(position.getLatestCalculatedGain().getAmount().getValue()));
+        assertEquals(USDT, position.getLatestCalculatedGain().getAmount().getCurrency());
+        assertEquals(5.93, position.getGain().getPercentage());
+        assertEquals(0, new BigDecimal("1.1911").compareTo(position.getGain().getAmount().getValue()));
+        assertEquals(USDT, position.getGain().getAmount().getCurrency());
     }
 
     @Test
-    @DisplayName("Get positions by strategy (id)")
-    void getPositionsByStrategy() {
-        List<Integer> position1Strategies = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategy(id: 1) {" +
-                        "id " +
-                        "} }",
-                "data.positionsByStrategy");
-        assertEquals(90, position1Strategies.size());
-
-        List<Integer> position2Strategies = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategy(id: 2) {" +
-                        "id " +
-                        "} }",
-                "data.positionsByStrategy");
-        assertEquals(92, position2Strategies.size());
+    @DisplayName("positionsByStrategyUid(strategyUid: Int): [Position]")
+    void positionsByStrategyUid() {
+        // Query and fields definition.
+        GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
+                new PositionsByStrategyUidGraphQLQuery.Builder().strategyUid(1).build(),
+                new tech.cassandre.trading.bot.api.graphql.client.generated.client.PositionsByStrategyUidProjectionRoot().uid());
+        // Query execution.
+        List<Position> positions = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                graphQLQueryRequest.serialize(),
+                "data." + DgsConstants.QUERY.PositionsByStrategyUid,
+                new TypeRef<>() {
+                });
+        // Tests.
+        assertEquals(90, positions.size());
     }
 
     @Test
-    @DisplayName("Get positions by strategyId (strategyId)")
-    void getPositionsByStrategyId() {
-        List<Integer> position1Strategies = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategyId(strategyId: \"001\") {" +
-                        "id " +
-                        "} }",
-                "data.positionsByStrategyId");
-        assertEquals(90, position1Strategies.size());
-
-        List<Integer> position2Strategies = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategyId(strategyId: \"002\") {" +
-                        "id " +
-                        "} }",
-                "data.positionsByStrategyId");
-        assertEquals(92, position2Strategies.size());
+    @DisplayName("positionsByStrategyId(strategyId: String): [Position]")
+    void positionsByStrategyId() {
+        // Query and fields definition.
+        GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
+                new PositionsByStrategyIdGraphQLQuery.Builder().strategyId("002").build(),
+                new PositionsByStrategyIdProjectionRoot().uid());
+        // Query execution.
+        List<Position> positions = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                graphQLQueryRequest.serialize(),
+                "data." + DgsConstants.QUERY.PositionsByStrategyId,
+                new TypeRef<>() {
+                });
+        // Tests.
+        assertEquals(92, positions.size());
     }
 
 
     @Test
-    @DisplayName("Get positions by strategy (id) and status")
-    void getPositionsByStrategyAndStatus() {
-        List<Integer> closedPositions = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategyAndStatus(id: 1, status:CLOSED) {" +
-                        "id " +
-                        "} }",
-                "data.positionsByStrategyAndStatus");
-        assertEquals(82, closedPositions.size());
-
-        List<Integer> openedPositions = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategyAndStatus(id: 1, status:OPENED) {" +
-                        "id " +
-                        "} }",
-                "data.positionsByStrategyAndStatus");
-        assertEquals(8, openedPositions.size());
+    @DisplayName("positionsByStrategyUidAndStatus(strategyUid: Int, status: PositionStatus): [Position]")
+    void positionsByStrategyUidAndStatus() {
+        // Query and fields definition.
+        GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
+                new PositionsByStrategyUidAndStatusGraphQLQuery.Builder().strategyUid(1).status(CLOSED).build(),
+                new PositionsByStrategyUidAndStatusProjectionRoot().uid());
+        // Query execution.
+        List<Position> positions = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                graphQLQueryRequest.serialize(),
+                "data." + DgsConstants.QUERY.PositionsByStrategyUidAndStatus,
+                new TypeRef<>() {
+                });
+        // Tests.
+        assertEquals(82, positions.size());
     }
 
     @Test
-    @DisplayName("Get positions by strategyId (strategyId) and status")
-    void getPositionsByStrategyIdAndStatus() {
-        List<Integer> closedPositions = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategyIdAndStatus(strategyId: \"001\", status:CLOSED) {" +
-                        "id " +
-                        "} }",
-                "data.positionsByStrategyIdAndStatus");
-        assertEquals(82, closedPositions.size());
-
-        List<Integer> openedPositions = dgsQueryExecutor.executeAndExtractJsonPath(
-                " { positionsByStrategyIdAndStatus(strategyId: \"001\", status:OPENED) {" +
-                        "id " +
-                        "} }",
-                "data.positionsByStrategyIdAndStatus");
-        assertEquals(8, openedPositions.size());
+    @DisplayName("positionsByStrategyIdAndStatus(strategyId: String, status: PositionStatus): [Position]")
+    void positionsByStrategyIdAndStatus() {
+        // Query and fields definition.
+        GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
+                new PositionsByStrategyIdAndStatusGraphQLQuery.Builder().strategyId("001").status(OPENED).build(),
+                new PositionsByStrategyIdAndStatusProjectionRoot().uid());
+        // Query execution.
+        List<Position> positions = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
+                graphQLQueryRequest.serialize(),
+                "data." + DgsConstants.QUERY.PositionsByStrategyIdAndStatus,
+                new TypeRef<>() {
+                });
+        // Tests.
+        assertEquals(8, positions.size());
     }
 
 }

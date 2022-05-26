@@ -24,7 +24,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class Issue735Test {
 
     @Test
-    @DisplayName("CurrencyDTO serialization fail")
+    @DisplayName("CurrencyDTO serialization failure")
     public void testCurrencySerialization() {
         XmlMapper mapper = new XmlMapper();
         try {

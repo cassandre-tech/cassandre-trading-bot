@@ -31,7 +31,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class OrderDTO {
 
     /** Technical id. */
-    Long id;
+    Long uid;
 
     /** An identifier set by the exchange that uniquely identifies the order. */
     String orderId;
@@ -48,7 +48,7 @@ public class OrderDTO {
     /** Amount to be ordered / amount that was ordered. */
     CurrencyAmountDTO amount;
 
-    /** Weighted Average price of the fills in the order. */
+    /** Weighted average price of the fills in the order. */
     CurrencyAmountDTO averagePrice;
 
     /** Limit price. */
@@ -73,12 +73,12 @@ public class OrderDTO {
     /** The timestamp of the order. */
     ZonedDateTime timestamp;
 
-    /** All trades related to the order. */
+    /** All trades related to this order. */
     @Singular
     Set<TradeDTO> trades;
 
     /**
-     * Allows you to manually update order status.
+     * Manually update order status.
      *
      * @param newStatus new status
      */
@@ -104,11 +104,7 @@ public class OrderDTO {
      * @return amount value
      */
     public BigDecimal getAmountValue() {
-        if (amount == null) {
-            return null;
-        } else {
-            return amount.getValue();
-        }
+        return Optional.ofNullable(amount).map(CurrencyAmountDTO::getValue).orElse(null);
     }
 
     /**
@@ -117,11 +113,7 @@ public class OrderDTO {
      * @return average price value.
      */
     public BigDecimal getAveragePriceValue() {
-        if (averagePrice == null) {
-            return null;
-        } else {
-            return averagePrice.getValue();
-        }
+        return Optional.ofNullable(averagePrice).map(CurrencyAmountDTO::getValue).orElse(null);
     }
 
     /**
@@ -130,11 +122,7 @@ public class OrderDTO {
      * @return limit price value
      */
     public BigDecimal getLimitPriceValue() {
-        if (limitPrice == null) {
-            return null;
-        } else {
-            return limitPrice.getValue();
-        }
+        return Optional.ofNullable(limitPrice).map(CurrencyAmountDTO::getValue).orElse(null);
     }
 
     /**
@@ -143,11 +131,7 @@ public class OrderDTO {
      * @return market price value
      */
     public BigDecimal getMarketPriceValue() {
-        if (marketPrice == null) {
-            return null;
-        } else {
-            return marketPrice.getValue();
-        }
+        return Optional.ofNullable(marketPrice).map(CurrencyAmountDTO::getValue).orElse(null);
     }
 
     /**
@@ -156,11 +140,7 @@ public class OrderDTO {
      * @return cumulative amount.
      */
     public BigDecimal getCumulativeAmountValue() {
-        if (cumulativeAmount == null) {
-            return null;
-        } else {
-            return cumulativeAmount.getValue();
-        }
+        return Optional.ofNullable(cumulativeAmount).map(CurrencyAmountDTO::getValue).orElse(null);
     }
 
     /**
@@ -178,7 +158,8 @@ public class OrderDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -202,7 +183,8 @@ public class OrderDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
                 .append(orderId)
                 .toHashCode();

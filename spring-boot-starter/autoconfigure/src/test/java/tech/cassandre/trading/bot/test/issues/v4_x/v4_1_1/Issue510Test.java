@@ -9,8 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyDTO;
-import tech.cassandre.trading.bot.dto.util.GainDTO;
-import tech.cassandre.trading.bot.service.PositionService;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -19,9 +17,7 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 import java.util.Map;
 import java.util.Optional;
 
-import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,24 +37,17 @@ public class Issue510Test extends BaseTest {
     @Autowired
     private TestableCassandreStrategy strategy;
 
-    @Autowired
-    private PositionService positionService;
-
     @Test
     @DisplayName("Fix empty openingOrder or closing order")
     public void checkEmptyOrderFix() {
-        final Map<CurrencyDTO, GainDTO> gains = positionService.getGains();
-
         // Check fees in position 6 (they must be in USDT in Kucoin data).
         final Optional<PositionDTO> position = strategy.getPositionByPositionId(6);
         assertTrue(position.isPresent());
-        System.out.println("==>" + position.get().getDescription());
-        final Map<CurrencyDTO, CurrencyAmountDTO> fees = position.get().getGain().getOrdersFees();
+        final Map<CurrencyDTO, CurrencyAmountDTO> fees = position.get().getGain().getFeesByCurrency();
         assertEquals(1, fees.size());
-        assertNull(position.get().getGain().getOrdersFees().get(BTC));
-        assertNotNull(position.get().getGain().getOrdersFees().get(USDT));
-        assertEquals(USDT, position.get().getGain().getFees().getCurrency());
-        assertNotNull(position.get().getGain().getOrdersFees().get(USDT));
+        assertNull(position.get().getGain().getFeesByCurrency().get(BTC));
+        assertNotNull(position.get().getGain().getFeesByCurrency().get(USDT));
+        assertNotNull(position.get().getGain().getFeesByCurrency().get(USDT));
     }
 
 }

@@ -7,6 +7,7 @@ import tech.cassandre.trading.bot.test.util.junit.BaseMock;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
+@SuppressWarnings("unused")
 public class Issue576TestMock extends BaseMock {
 
     @Override

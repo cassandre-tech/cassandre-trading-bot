@@ -33,7 +33,7 @@ public class Issue712Test {
     private TradeService tradeService;
 
     @Test
-    @DisplayName("Okex get open orders specific implementation")
+    @DisplayName("Okex getOpenOrders() specific implementation")
     public void oKexGetOpenOrdersImplementation() {
         final Set<OrderDTO> orders = tradeService.getOrders();
         assertEquals(1, orders.size());

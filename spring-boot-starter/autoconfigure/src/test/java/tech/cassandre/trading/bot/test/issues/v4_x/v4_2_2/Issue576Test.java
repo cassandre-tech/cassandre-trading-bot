@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TickerFlux;
-import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
@@ -20,7 +19,8 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -38,9 +38,6 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class Issue576Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
-
-    @Autowired
     private TickerFlux tickerFlux;
 
     @Autowired
@@ -49,33 +46,27 @@ public class Issue576Test extends BaseTest {
     @Captor
     ArgumentCaptor<CurrencyPairsParam> paramCaptor;
 
-    @Test
-    @DisplayName("Check tickers with two currency pairs")
-    public void checkGetTickersForTwoCurrencyPairs() throws IOException {
-        // Requested currency pairs.
-        Set<CurrencyPairDTO> twoCurrencyPairs = ConcurrentHashMap.newKeySet();
-        twoCurrencyPairs.add(ETH_BTC);
-        twoCurrencyPairs.add(ETH_USDT);
-
-        // Our strategy asks for two currency pairs.
-        strategy.updateRequestedCurrencyPairs(twoCurrencyPairs);
-        tickerFlux.update();
-        verify(marketService).getTickers(paramCaptor.capture());
-        assertEquals(2, paramCaptor.getAllValues().get(0).getCurrencyPairs().size());
-    }
+    @Autowired
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check tickers with one currency pair")
     public void checkGetTickersForOneCurrencyPair() throws IOException {
-        // Requested currency pairs.
-        Set<CurrencyPairDTO> oneCurrencyPair = ConcurrentHashMap.newKeySet();
-        oneCurrencyPair.add(ETH_BTC);
-
         // Our strategy asks for one currency pair.
-        strategy.updateRequestedCurrencyPairs(oneCurrencyPair);
+        strategy.updateRequestedCurrencyPairs(Set.of(ETH_BTC));
         tickerFlux.update();
         verify(marketService).getTickers(paramCaptor.capture());
         assertEquals(1, paramCaptor.getAllValues().get(0).getCurrencyPairs().size());
+    }
+
+    @Test
+    @DisplayName("Check tickers with two currency pairs")
+    public void checkGetTickersForTwoCurrencyPairs() throws IOException {
+        // Our strategy asks for two currency pairs.
+        strategy.updateRequestedCurrencyPairs(Stream.of(ETH_BTC, ETH_USDT).collect(Collectors.toSet()));
+        tickerFlux.update();
+        verify(marketService).getTickers(paramCaptor.capture());
+        assertEquals(2, paramCaptor.getAllValues().get(0).getCurrencyPairs().size());
     }
 
 }

@@ -6,7 +6,6 @@ import tech.cassandre.trading.bot.dto.position.PositionDTO;
 import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.util.base.batch.BaseFlux;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -14,6 +13,10 @@ import java.util.stream.Collectors;
 
 /**
  * Position flux - push {@link PositionDTO}.
+ * Two methods override from super class:
+ * - getNewValues(): positions are only created inside cassandre, so we don't need to get new values from outside.
+ * - saveValues(): update positions when they are sent to this flux (they are not created in the flux).
+ * To get a deep understanding of how it works, read the documentation of {@link BaseFlux}.
  */
 @RequiredArgsConstructor
 public class PositionFlux extends BaseFlux<PositionDTO> {
@@ -22,29 +25,26 @@ public class PositionFlux extends BaseFlux<PositionDTO> {
     private final PositionRepository positionRepository;
 
     @Override
-    protected final Set<PositionDTO> getNewValues() {
-        // We return an empty set because positions updates only comes from inside cassandre.
-        return Collections.emptySet();
-    }
+    protected final Set<PositionDTO> saveValues(final Set<PositionDTO> newValues) {
+        return newValues.stream()
+                .peek(positionDTO -> logger.debug("Checking position in database: {}", positionDTO))
+                .<Position>mapMulti((positionDTO, consumer) -> {
+                    final Optional<Position> position = positionRepository.findById(positionDTO.getUid());
 
-    @Override
-    public final Set<PositionDTO> saveValues(final Set<PositionDTO> newValues) {
-        Set<Position> positions = new LinkedHashSet<>();
-
-        // We save every position sent to the flux.
-        newValues.forEach(positionDTO -> {
-            final Optional<Position> position = positionRepository.findById(positionDTO.getId());
-            if (position.isPresent()) {
-                // If the position is in database (which should be always true), we update it.
-                POSITION_MAPPER.updatePosition(positionDTO, position.get());
-                positions.add(positionRepository.save(position.get()));
-                logger.debug("Updating position in database: {}", positionDTO);
-            } else {
-                logger.error("Position {} not found in database:", positionDTO.getId());
-            }
-        });
-
-        return positions.stream()
+                    // We update (the position creation can't be made here).
+                    if (position.isPresent()) {
+                        // If the position is in database (which should be always true), we update it.
+                        POSITION_MAPPER.updatePosition(positionDTO, position.get());
+                        consumer.accept(positionRepository.save(position.get()));
+                        logger.debug("Updating the position: {}", positionDTO);
+                    } else {
+                        // This should NEVER append.
+                        logger.error("Position not found in database: {}", positionDTO);
+                    }
+                })
+                // We save the position in database.
+                .map(positionRepository::save)
+                // We transform it to PositionDTO in order to return it to Cassandre.
                 .map(POSITION_MAPPER::mapToPositionDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }

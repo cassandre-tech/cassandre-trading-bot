@@ -31,7 +31,7 @@ public class StrategyRepositoryTest {
 
     @Test
     @DisplayName("Check imported data")
-    public void checkImportedOrders() {
+    public void checkImportedStrategies() {
         // Testing an existing strategy.
         Optional<Strategy> strategy = strategyRepository.findByStrategyId("01");
         assertTrue(strategy.isPresent());

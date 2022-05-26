@@ -3,34 +3,41 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
     <changeSet author="straumat" id="changelog-4.1.0">
+        <validCheckSum>ANY</validCheckSum>
 
         <!-- Lowest gain. -->
         <renameColumn  newColumnName="LOWEST_GAIN_PRICE_VALUE"
                        oldColumnName="LOWEST_PRICE_VALUE"
+                       columnDataType="numeric(16, 8)"
                        remarks="Price of lowest gain price for this position (value)"
                        tableName="POSITIONS"/>
         <renameColumn  newColumnName="LOWEST_GAIN_PRICE_CURRENCY"
                        oldColumnName="LOWEST_PRICE_CURRENCY"
+                       columnDataType="numeric(16, 8)"
                        remarks="Price of lowest gain price for this position. (currency)"
                        tableName="POSITIONS"/>
 
         <!-- Highest gain. -->
         <renameColumn  newColumnName="HIGHEST_GAIN_PRICE_VALUE"
                        oldColumnName="HIGHEST_PRICE_VALUE"
+                       columnDataType="numeric(16, 8)"
                        remarks="Price of highest gain price for this position. (value)"
                        tableName="POSITIONS"/>
         <renameColumn  newColumnName="HIGHEST_GAIN_PRICE_CURRENCY"
                        oldColumnName="HIGHEST_PRICE_CURRENCY"
+                       columnDataType="numeric(16, 8)"
                        remarks="Price of highest gain price for this position. (currency)"
                        tableName="POSITIONS"/>
 
         <!-- Latest gain. -->
         <renameColumn  newColumnName="LATEST_GAIN_PRICE_VALUE"
                        oldColumnName="LATEST_PRICE_VALUE"
+                       columnDataType="numeric(16, 8)"
                        remarks="Price of latest gain price for this position. (value)"
                        tableName="POSITIONS"/>
         <renameColumn  newColumnName="LATEST_GAIN_PRICE_CURRENCY"
                        oldColumnName="LATEST_PRICE_CURRENCY"
+                       columnDataType="numeric(16, 8)"
                        remarks="Price of latest gain price for this position. (currency)"
                        tableName="POSITIONS"/>
 

@@ -36,6 +36,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
+import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.EUR;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
 
 @SuppressWarnings("unchecked")
@@ -91,45 +93,67 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         Set<BalanceDTO> balances = new LinkedHashSet<>();
         final Map<String, AccountDTO> accounts = new LinkedHashMap<>();
         UserService userService = mock(UserService.class);
-        // Returns three updates.
 
         // =============================================================================================================
-        // Account retrieved by configuration.
+        // Account retrieved by configuration - Empty, just allowing the getTradeAccount() in configuration to work.
         AccountDTO tempAccount = AccountDTO.builder().accountId("03").name("trade").build();
-        accounts.put("trade", tempAccount);
+        accounts.put("03", tempAccount);
         UserDTO tempUser = UserDTO.builder().accounts(accounts).build();
         accounts.clear();
 
-        // Account 01.
-        BalanceDTO account01Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
+        // =============================================================================================================
+        // Creating the response to the first call of the AccountFlux.
+        // User has three accounts:
+        // - Account 01 (No name with 1 BTC).
+        // - Account 02 (No name with 1 ETH).
+        // - Account 03 (Trade account with 2 BTC, 10 ETH, 2 000 USDT).
+
+        // User service response 01.
+        BalanceDTO account01Balance1 = BalanceDTO.builder().currency(BTC).available(new BigDecimal("1")).build();
         balances.add(account01Balance1);
         AccountDTO account01 = AccountDTO.builder().accountId("01").balances(balances).build();
         accounts.put("01", account01);
-        UserDTO user01 = UserDTO.builder().accounts(accounts).build();
+        UserDTO userResponse01 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
-        // Account 02.
-        BalanceDTO account02Balance1 = BalanceDTO.builder().available(new BigDecimal("1")).build();
+        // User service response 02.
+        BalanceDTO account02Balance1 = BalanceDTO.builder().currency(ETH).available(new BigDecimal("1")).build();
         balances.add(account02Balance1);
         AccountDTO account02 = AccountDTO.builder().accountId("02").balances(balances).build();
         accounts.put("02", account02);
-        UserDTO user02 = UserDTO.builder().accounts(accounts).build();
+        UserDTO userResponse02 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
-        // Account 03.
+        // User service response 03.
         balances.add(BalanceDTO.builder().currency(BTC).available(new BigDecimal("2")).build());
-        balances.add(BalanceDTO.builder().available(new BigDecimal("10")).build());
-        balances.add(BalanceDTO.builder().currency(USDT).available(new BigDecimal("2000")).build());
+        balances.add(BalanceDTO.builder().currency(ETH).available(new BigDecimal("10")).build());
+        balances.add(BalanceDTO.builder().currency(EUR).available(new BigDecimal("2000")).build());
         AccountDTO account03 = AccountDTO.builder().accountId("03").name("trade").balances(balances).build();
         accounts.put("03", account03);
-        UserDTO user03 = UserDTO.builder().accounts(accounts).build();
+        UserDTO userResponse03 = UserDTO.builder().accounts(accounts).build();
         balances.clear();
         accounts.clear();
 
-        // Mock replies.
-        given(userService.getUser()).willReturn(Optional.of(tempUser), Optional.of(user01), Optional.of(user02), Optional.of(user03));
+        // User service response 04.
+        balances.add(BalanceDTO.builder().currency(BTC).available(new BigDecimal("1")).build());
+        balances.add(BalanceDTO.builder().currency(ETH).available(new BigDecimal("10")).build());
+        balances.add(BalanceDTO.builder().currency(USDT).available(new BigDecimal("100")).build());
+        AccountDTO account04 = AccountDTO.builder().accountId("03").name("trade").balances(balances).build();
+        accounts.put("03", account04);
+        UserDTO userResponse04 = UserDTO.builder().accounts(accounts).build();
+        balances.clear();
+        accounts.clear();
+
+        // We have two different mock replies.
+        // StrategiesAutoConfiguration calls userService.getUser().
+        given(userService.getUser()).willReturn(Optional.of(tempUser));
+        // AccountFlux calls userService.getAccounts()
+        given(userService.getAccounts()).willReturn(userResponse01.getAccounts(),
+                                                    userResponse02.getAccounts(),
+                                                    userResponse03.getAccounts(),
+                                                    userResponse04.getAccounts());
         return userService;
     }
 
@@ -139,9 +163,9 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
         MarketService service = mock(MarketService.class);
 
         // We don't use the getTickers method.
-        given(service.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
+        given(service.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available during tests"));
 
-        // Returns three values.
+        // Returns three values for ETH/BTC.
         given(service.getTicker(ETH_BTC)).willReturn(
                 BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("1")),
                 BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("2")),
@@ -151,6 +175,7 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
                 BaseTest.getFakeTicker(ETH_BTC, new BigDecimal("6")),
                 Optional.empty()
         );
+        // Returns one value for ETH/USDT.
         given(service.getTicker(ETH_USDT)).willReturn(
                 BaseTest.getFakeTicker(ETH_USDT, new BigDecimal("10000")),
                 Optional.empty()
@@ -163,7 +188,7 @@ public class BasicCassandreStrategyTestMock extends BaseTest {
     public TradeService tradeService() {
         TradeService service = mock(TradeService.class);
 
-        // Returns three values for getOpenOrders.
+        // Returns three values for getOpenOrders().
         Set<OrderDTO> replyGetOpenOrders = new LinkedHashSet<>();
         replyGetOpenOrders.add(OrderDTO.builder().orderId("000001").type(BID).strategy(strategyDTO).currencyPair(ETH_BTC).timestamp(createZonedDateTime("01-01-2020")).build());   // Order 01.
         replyGetOpenOrders.add(OrderDTO.builder().orderId("000002").type(BID).strategy(strategyDTO).currencyPair(ETH_BTC).timestamp(createZonedDateTime("01-02-2020")).build());   // Order 02.

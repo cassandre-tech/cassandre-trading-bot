@@ -1,22 +1,25 @@
 package tech.cassandre.trading.bot.dto.position;
 
-import lombok.Value;
+import lombok.Getter;
 
 /**
  * Position creation result for {@link PositionDTO}.
+ * If successful (isSuccessful() == true), you can get the position with getPosition().
+ * if not successful (isSuccessful() == false), you can get:
+ * - The error message with getErrorMessage().
+ * - The exception causing the error with getException().
  */
-@Value
-@SuppressWarnings("checkstyle:VisibilityModifier")
-public class PositionCreationResultDTO {
+@Getter
+public final class PositionCreationResultDTO {
 
     /** Position (filled if position is successful). */
-    PositionDTO position;
+    private PositionDTO position;
 
     /** Error message (filled if position creation failed). */
-    String errorMessage;
+    private String errorMessage;
 
     /** Exception (filled if position creation failed). */
-    Exception exception;
+    private Exception exception;
 
     /**
      * Constructor for successful position creation.
@@ -25,8 +28,6 @@ public class PositionCreationResultDTO {
      */
     public PositionCreationResultDTO(final PositionDTO newPosition) {
         this.position = newPosition;
-        this.errorMessage = null;
-        this.exception = null;
     }
 
     /**
@@ -36,7 +37,6 @@ public class PositionCreationResultDTO {
      * @param newException    exception
      */
     public PositionCreationResultDTO(final String newErrorMessage, final Exception newException) {
-        this.position = null;
         this.errorMessage = newErrorMessage;
         this.exception = newException;
     }
@@ -48,6 +48,20 @@ public class PositionCreationResultDTO {
      */
     public boolean isSuccessful() {
         return position != null;
+    }
+
+    @Override
+    public String toString() {
+        if (isSuccessful()) {
+            return "PositionCreationResultDTO{"
+                    + " position='" + position + '\''
+                    + '}';
+        } else {
+            return "PositionCreationResultDTO{"
+                    + " errorMessage='" + errorMessage + '\''
+                    + ", exception=" + exception
+                    + '}';
+        }
     }
 
 }

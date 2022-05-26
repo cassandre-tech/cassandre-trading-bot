@@ -34,17 +34,23 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
  * Issue : https://github.com/cassandre-tech/cassandre-trading-bot/issues/426
  */
 @SpringBootTest
-@ActiveProfiles("schedule-disabled")
 @DisplayName("Github issue 426")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
+@ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(Issue426TestMock.class)
 public class Issue426Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private TickerFlux tickerFlux;
+
+    @Autowired
+    private OrderFlux orderFlux;
+
+    @Autowired
+    private TradeFlux tradeFlux;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -56,16 +62,10 @@ public class Issue426Test extends BaseTest {
     private PositionRepository positionRepository;
 
     @Autowired
-    private TickerFlux tickerFlux;
-
-    @Autowired
-    private OrderFlux orderFlux;
-
-    @Autowired
-    private TradeFlux tradeFlux;
+    private TestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("Errors if trades arrives before order")
+    @DisplayName("Trades arrives before order")
     public void checkTradeBeforeOrder() throws InterruptedException {
         // First tickers - cp1 & cp2 (dry mode).
         // ETH, BTC - bid 0.2 / ask 0.2.
@@ -79,7 +79,7 @@ public class Issue426Test extends BaseTest {
         tradeFlux.update();
 
         // We wait a bit. Nothing should be saved.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(0, orderRepository.count());
         assertEquals(0, tradeRepository.count());
         assertEquals(0, positionRepository.count());
@@ -90,7 +90,7 @@ public class Issue426Test extends BaseTest {
         tradeFlux.update();
 
         // We wait a bit, the order and the trade should be here.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(1, orderRepository.count());
         assertEquals(2, tradeRepository.count());
         assertEquals(0, positionRepository.count());

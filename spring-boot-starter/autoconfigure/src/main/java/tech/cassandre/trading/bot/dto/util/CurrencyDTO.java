@@ -663,6 +663,9 @@ public final class CurrencyDTO implements Serializable {
     /** Ugandan Shilling. */
     public static final CurrencyDTO UGX = createCurrency("UGX", "Ugandan Shilling", null);
 
+    /** Uniswap. */
+    public static final CurrencyDTO UNI = createCurrency("UNI", "Uniswap", null);
+
     /** United States Dollar. */
     public static final CurrencyDTO USD = createCurrency("USD", "United States Dollar", null);
 
@@ -1078,7 +1081,7 @@ public final class CurrencyDTO implements Serializable {
             return false;
         }
         CurrencyDTO other = (CurrencyDTO) obj;
-        return attributes.equals(other.attributes);
+        return code.equals(other.code);
     }
 
     /**

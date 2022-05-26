@@ -25,7 +25,6 @@ import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy
 import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,10 +48,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class Issue863Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
-
-    @Autowired
-    private PositionService positionService;
+    private TickerFlux tickerFlux;
 
     @Autowired
     private OrderFlux orderFlux;
@@ -61,18 +57,21 @@ public class Issue863Test extends BaseTest {
     private TradeFlux tradeFlux;
 
     @Autowired
-    private TickerFlux tickerFlux;
+    private PositionService positionService;
+
+    @Autowired
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check position auto close")
-    public void checkAutoClose() throws InterruptedException {
+    public void checkAutoClose() {
         // =============================================================================================================
         // Creates position 1 (ETH/BTC, 0.0001, 100% stop gain).
         // Autoclose = true (by default).
         final PositionCreationResultDTO creationResult1 = strategy.createLongPosition(ETH_BTC,
                 new BigDecimal("0.0001"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
-        final long position1Id = creationResult1.getPosition().getId();
+        final long position1Id = creationResult1.getPosition().getUid();
         assertEquals("ORDER00010", creationResult1.getPosition().getOpeningOrder().getOrderId());
 
         // =============================================================================================================
@@ -81,7 +80,7 @@ public class Issue863Test extends BaseTest {
         final PositionCreationResultDTO creationResult2 = strategy.createLongPosition(ETH_BTC,
                 new BigDecimal("0.0002"),
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
-        final long position2Id = creationResult2.getPosition().getId();
+        final long position2Id = creationResult2.getPosition().getUid();
         assertEquals("ORDER00020", creationResult2.getPosition().getOpeningOrder().getOrderId());
         strategy.setAutoClose(position2Id, false);
 
@@ -124,7 +123,6 @@ public class Issue863Test extends BaseTest {
         // =============================================================================================================
         // We now receive a ticker that should close all positions but not the second one as auto close is set to false.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("1")).build());
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
 
         // Position 1 should be closing (autoclose to true).
         await().untilAsserted(() -> assertEquals(CLOSING, getPositionDTO(position1Id).getStatus()));
@@ -135,15 +133,15 @@ public class Issue863Test extends BaseTest {
     /**
      * Retrieve position from database.
      *
-     * @param id position id
+     * @param uid position uid
      * @return position
      */
-    private PositionDTO getPositionDTO(final long id) {
-        final Optional<PositionDTO> p = positionService.getPositionById(id);
+    private PositionDTO getPositionDTO(final long uid) {
+        final Optional<PositionDTO> p = positionService.getPositionByUid(uid);
         if (p.isPresent()) {
             return p.get();
         } else {
-            throw new NoSuchElementException("Position not found : " + id);
+            throw new NoSuchElementException("Position not found : " + uid);
         }
     }
 

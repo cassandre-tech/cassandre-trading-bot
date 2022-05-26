@@ -9,7 +9,6 @@ import tech.cassandre.trading.bot.dto.strategy.StrategyDTO;
 import tech.cassandre.trading.bot.repository.StrategyRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Strategy data fetcher.
@@ -31,24 +30,24 @@ public class StrategyDataFetcher extends BaseDataFetcher {
         return strategyRepository.findAll()
                 .stream()
                 .map(STRATEGY_MAPPER::mapToStrategyDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
-     * Returns the strategy with the corresponding id value.
+     * Returns the strategy with the corresponding uid value.
      *
-     * @param id id
+     * @param uid strategy uid
      * @return strategy
      */
     @DgsQuery
-    public StrategyDTO strategy(@InputArgument final long id) {
-        return strategyRepository.findById(id)
+    public StrategyDTO strategy(@InputArgument final long uid) {
+        return strategyRepository.findById(uid)
                 .map(STRATEGY_MAPPER::mapToStrategyDTO)
                 .orElse(null);
     }
 
     /**
-     * Returns the strategy with the corresponding strategyId value.
+     * Returns the strategy with the corresponding strategy id value.
      *
      * @param strategyId strategy id
      * @return strategy

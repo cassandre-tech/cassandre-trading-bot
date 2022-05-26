@@ -9,7 +9,6 @@ import tech.cassandre.trading.bot.dto.trade.OrderDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Order data fetcher.
@@ -31,24 +30,24 @@ public class OrderDataFetcher extends BaseDataFetcher {
         return orderRepository.findAll()
                 .stream()
                 .map(ORDER_MAPPER::mapToOrderDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
-     * Returns the order with the corresponding id value.
+     * Returns the order with the corresponding uid value.
      *
-     * @param id id
+     * @param uid order uid
      * @return order
      */
     @DgsQuery
-    public OrderDTO order(@InputArgument final long id) {
-        return orderRepository.findById(id)
+    public OrderDTO order(@InputArgument final long uid) {
+        return orderRepository.findById(uid)
                 .map(ORDER_MAPPER::mapToOrderDTO)
                 .orElse(null);
     }
 
     /**
-     * Returns the order with the corresponding orderId value.
+     * Returns the order with the corresponding order id value.
      *
      * @param orderId order id
      * @return trade

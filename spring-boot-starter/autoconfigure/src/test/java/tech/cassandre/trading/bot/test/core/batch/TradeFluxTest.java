@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,17 +30,16 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.USDT;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Batch - Trade flux")
 @Configuration({
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false"),
         @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/trade-test.yaml")
 })
 @Import(TradeFluxTestMock.class)
 public class TradeFluxTest extends BaseTest {
-
-    @Autowired
-    private TestableCassandreStrategy strategy;
 
     @Autowired
     private TradeRepository tradeRepository;
@@ -49,32 +47,24 @@ public class TradeFluxTest extends BaseTest {
     @Autowired
     private org.knowm.xchange.service.trade.TradeService xChangeTradeService;
 
+    @Autowired
+    private TestableCassandreStrategy strategy;
+
     @Test
     @DisplayName("Check received data")
     public void checkReceivedData() {
-        assertFalse(strategy.isRunningInDryMode());
-
-        // =============================================================================================================
-        // Test asynchronous flux.
-
         // We will call the service 5 times with the first and third reply empty.
         // We receive:
         // First reply: TRADE_0000001, TRADE_0000002.
         // Second reply: TRADE_0000003, TRADE_0000004, TRADE_0000005.
-        // Third reply: TRADE_0000006, TRADE_0000002 ,TRADE_0000003, TRADE_0000008.
+        // Third reply: TRADE_0000006, TRADE_0000002 , TRADE_0000003, TRADE_0000008.
         // TRADE_0000003 is an update. TRADE_0000002 is the same.
         final int numberOfUpdatesExpected = 8;
         final int numberOfServiceCallsExpected = 3;
 
         // Waiting for the service to have been called with all the test data.
         await().untilAsserted(() -> verify(xChangeTradeService, atLeast(numberOfServiceCallsExpected)).getTradeHistory(any()));
-
-        // Checking that somme data have already been treated.
-        // but not all as the flux should be asynchronous and single thread and strategy method waits 1 second.
-        assertTrue(strategy.getTradesUpdatesReceived().size() > 0);
-        assertTrue(strategy.getTradesUpdatesReceived().size() <= numberOfUpdatesExpected);
-
-        // Wait for the strategy to have received all the test values.
+        // Waiting for the strategy to have received all the test values.
         await().untilAsserted(() -> assertTrue(strategy.getTradesUpdatesReceived().size() >= numberOfUpdatesExpected));
 
         // =============================================================================================================
@@ -83,7 +73,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 1.
         TradeDTO t = trades.next();
-        assertEquals(1, t.getId());
+        assertEquals(1, t.getUid());
         assertEquals("TRADE_0000001", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -96,7 +86,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 2.
         t = trades.next();
-        assertEquals(2, t.getId());
+        assertEquals(2, t.getUid());
         assertEquals("TRADE_0000002", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -109,7 +99,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 3.
         t = trades.next();
-        assertEquals(3, t.getId());
+        assertEquals(3, t.getUid());
         assertEquals("TRADE_0000003", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000002", t.getOrderId());
@@ -122,7 +112,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 4.
         t = trades.next();
-        assertEquals(4, t.getId());
+        assertEquals(4, t.getUid());
         assertEquals("TRADE_0000004", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -135,7 +125,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 5.
         t = trades.next();
-        assertEquals(5, t.getId());
+        assertEquals(5, t.getUid());
         assertEquals("TRADE_0000005", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -148,7 +138,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 6.
         t = trades.next();
-        assertEquals(6, t.getId());
+        assertEquals(6, t.getUid());
         assertEquals("TRADE_0000006", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -161,7 +151,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 7.
         t = trades.next();
-        assertEquals(7, t.getId());
+        assertEquals(7, t.getUid());
         assertEquals("TRADE_0000008", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000001", t.getOrderId());
@@ -174,7 +164,7 @@ public class TradeFluxTest extends BaseTest {
 
         // Check update 8.
         t = trades.next();
-        assertEquals(3, t.getId());
+        assertEquals(3, t.getUid());
         assertEquals("TRADE_0000003", t.getTradeId());
         assertEquals(BID, t.getType());
         assertEquals("ORDER_0000002", t.getOrderId());
@@ -201,7 +191,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000001.
         final Optional<TradeDTO> t1 = strategy.getTradeByTradeId("TRADE_0000001");
         assertTrue(t1.isPresent());
-        assertEquals(1, t1.get().getId());
+        assertEquals(1, t1.get().getUid());
         assertEquals("TRADE_0000001", t1.get().getTradeId());
         assertEquals(BID, t1.get().getType());
         assertEquals("ORDER_0000001", t1.get().getOrderId());
@@ -215,7 +205,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000002.
         final Optional<TradeDTO> t2 = strategy.getTradeByTradeId("TRADE_0000002");
         assertTrue(t2.isPresent());
-        assertEquals(2, t2.get().getId());
+        assertEquals(2, t2.get().getUid());
         assertEquals("TRADE_0000002", t2.get().getTradeId());
         assertEquals(BID, t2.get().getType());
         assertEquals("ORDER_0000001", t2.get().getOrderId());
@@ -229,7 +219,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000003 - The trade 3 was received two times so data have been updated.
         final Optional<TradeDTO> t3 = strategy.getTradeByTradeId("TRADE_0000003");
         assertTrue(t3.isPresent());
-        assertEquals(3, t3.get().getId());
+        assertEquals(3, t3.get().getUid());
         assertEquals("TRADE_0000003", t3.get().getTradeId());
         assertEquals(BID, t3.get().getType());
         assertEquals("ORDER_0000002", t3.get().getOrderId());
@@ -243,7 +233,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000004.
         final Optional<TradeDTO> t4 = strategy.getTradeByTradeId("TRADE_0000004");
         assertTrue(t4.isPresent());
-        assertEquals(4, t4.get().getId());
+        assertEquals(4, t4.get().getUid());
         assertEquals("TRADE_0000004", t4.get().getTradeId());
         assertEquals(BID, t4.get().getType());
         assertEquals("ORDER_0000001", t4.get().getOrderId());
@@ -257,7 +247,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000005.
         final Optional<TradeDTO> t5 = strategy.getTradeByTradeId("TRADE_0000005");
         assertTrue(t5.isPresent());
-        assertEquals(5, t5.get().getId());
+        assertEquals(5, t5.get().getUid());
         assertEquals("TRADE_0000005", t5.get().getTradeId());
         assertEquals(BID, t5.get().getType());
         assertEquals("ORDER_0000001", t5.get().getOrderId());
@@ -271,7 +261,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000006.
         final Optional<TradeDTO> t6 = strategy.getTradeByTradeId("TRADE_0000006");
         assertTrue(t6.isPresent());
-        assertEquals(6, t6.get().getId());
+        assertEquals(6, t6.get().getUid());
         assertEquals("TRADE_0000006", t6.get().getTradeId());
         assertEquals(BID, t6.get().getType());
         assertEquals("ORDER_0000001", t6.get().getOrderId());
@@ -285,7 +275,7 @@ public class TradeFluxTest extends BaseTest {
         // Trade TRADE_0000008.
         final Optional<TradeDTO> t8 = strategy.getTradeByTradeId("TRADE_0000008");
         assertTrue(t8.isPresent());
-        assertEquals(7, t8.get().getId());
+        assertEquals(7, t8.get().getUid());
         assertEquals("TRADE_0000008", t8.get().getTradeId());
         assertEquals(BID, t8.get().getType());
         assertEquals("ORDER_0000001", t8.get().getOrderId());
@@ -297,7 +287,7 @@ public class TradeFluxTest extends BaseTest {
         assertTrue(createZonedDateTime("02-09-2020").isEqual(t8.get().getTimestamp()));
 
         // =============================================================================================================
-        // Check if all is ok with order links.
+        // Check that there is a correct link between order and trades.
         final Optional<OrderDTO> ORDER_0000001 = strategy.getOrderByOrderId("ORDER_0000001");
         assertTrue(ORDER_0000001.isPresent());
         assertEquals(6, ORDER_0000001.get().getTrades().size());

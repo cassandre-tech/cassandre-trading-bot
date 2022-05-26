@@ -24,6 +24,8 @@ import tech.cassandre.trading.bot.service.ExchangeService;
 import tech.cassandre.trading.bot.service.ExchangeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.MarketServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.PositionServiceCassandreImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
@@ -42,12 +44,6 @@ import java.io.IOException;
 @EnableConfigurationProperties(ExchangeParameters.class)
 @RequiredArgsConstructor
 public class ExchangeAutoConfiguration extends BaseConfiguration {
-
-    /** XChange user sandbox parameter. */
-    private static final String USE_SANDBOX_PARAMETER = "Use_Sandbox";
-
-    /** XChange passphrase parameter. */
-    private static final String PASSPHRASE_PARAMETER = "passphrase";
 
     /** Unauthorized http status code. */
     private static final int UNAUTHORIZED_STATUS_CODE = 401;
@@ -91,6 +87,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Trade service. */
     private TradeService tradeService;
 
+    /** Position service. */
+    private PositionService positionService;
+
     /** Account flux. */
     private AccountFlux accountFlux;
 
@@ -112,34 +111,22 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     @PostConstruct
     public void configure() {
         try {
-            // Instantiate exchange.
+            // Instantiate exchange class.
             Class<? extends Exchange> exchangeClass = Class.forName(getExchangeClassName()).asSubclass(Exchange.class);
             ExchangeSpecification exchangeSpecification = new ExchangeSpecification(exchangeClass);
 
             // Exchange configuration.
-            exchangeSpecification.setExchangeSpecificParametersItem(USE_SANDBOX_PARAMETER, exchangeParameters.getModes().getSandbox());
             exchangeSpecification.setUserName(exchangeParameters.getUsername());
-            exchangeSpecification.setExchangeSpecificParametersItem(PASSPHRASE_PARAMETER, exchangeParameters.getPassphrase());
             exchangeSpecification.setApiKey(exchangeParameters.getKey());
             exchangeSpecification.setSecretKey(exchangeParameters.getSecret());
             exchangeSpecification.getResilience().setRateLimiterEnabled(true);
-
-            // Specific parameters.
-            if (exchangeParameters.getProxyHost() != null) {
-                exchangeSpecification.setProxyHost(exchangeParameters.getProxyHost());
-            }
-            if (exchangeParameters.getProxyPort() != null) {
-                exchangeSpecification.setProxyPort(exchangeParameters.getProxyPort());
-            }
-            if (exchangeParameters.getSslUri() != null) {
-                exchangeSpecification.setSslUri(exchangeParameters.getSslUri());
-            }
-            if (exchangeParameters.getPlainTextUri() != null) {
-                exchangeSpecification.setPlainTextUri(exchangeParameters.getPlainTextUri());
-            }
-            if (exchangeParameters.getHost() != null) {
-                exchangeSpecification.setHost(exchangeParameters.getHost());
-            }
+            exchangeSpecification.setExchangeSpecificParametersItem("Use_Sandbox", exchangeParameters.getModes().getSandbox());
+            exchangeSpecification.setExchangeSpecificParametersItem("passphrase", exchangeParameters.getPassphrase());
+            exchangeSpecification.setProxyHost(exchangeParameters.getProxyHost());
+            exchangeSpecification.setProxyPort(exchangeParameters.getProxyPort());
+            exchangeSpecification.setSslUri(exchangeParameters.getSslUri());
+            exchangeSpecification.setPlainTextUri(exchangeParameters.getPlainTextUri());
+            exchangeSpecification.setHost(exchangeParameters.getHost());
             if (exchangeParameters.getPort() != null) {
                 exchangeSpecification.setPort(Integer.parseInt(exchangeParameters.getPort()));
             }
@@ -151,16 +138,16 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             xChangeTradeService = xChangeExchange.getTradeService();
 
             // Force login to check credentials.
-            logger.info("Exchange connection with {} driver.", exchangeParameters.getDriverClassName());
+            logger.info("Exchange connection with driver {}", exchangeParameters.getDriverClassName());
             xChangeAccountService.getAccountInfo();
-            logger.info("Exchange connection with username {} successful (Dry mode: {} / Sandbox: {})",
+            logger.info("Exchange connection successful with username {} (Dry mode: {} / Sandbox: {})",
                     exchangeParameters.getUsername(),
                     exchangeParameters.getModes().getDry(),
                     exchangeParameters.getModes().getSandbox());
         } catch (ClassNotFoundException e) {
             // If we can't find the exchange class.
-            throw new ConfigurationException("Impossible to find the exchange you requested: " + exchangeParameters.getDriverClassName(),
-                    "Choose a valid exchange (https://github.com/knowm/XChange) and add the dependency to Cassandre");
+            throw new ConfigurationException("Impossible to find the exchange driver class you requested: " + exchangeParameters.getDriverClassName(),
+                    "Choose and configure a valid exchange (https://trading-bot.cassandre.tech/learn/exchange-connection-configuration.html#how-does-it-works)");
         } catch (HttpStatusIOException e) {
             if (e.getHttpStatusCode() == UNAUTHORIZED_STATUS_CODE) {
                 // Authorization failure.
@@ -182,23 +169,18 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
      * @return XChange class name
      */
     private String getExchangeClassName() {
-        // If the name contains a dot, it means that it's the XChange class name.
+        // If the name contains a dot, it means that the user set the complete XChange class name in the configuration.
         if (exchangeParameters.getDriverClassName() != null && exchangeParameters.getDriverClassName().contains(".")) {
             return exchangeParameters.getDriverClassName();
+        } else {
+            // Try to guess the XChange class package name from the exchange name parameter.
+            return "org.knowm.xchange."                                                                     // Package (org.knowm.xchange.).
+                    .concat(exchangeParameters.getDriverClassName().toLowerCase())                          // domain (kucoin).
+                    .concat(".")                                                                        // A dot (.)
+                    .concat(exchangeParameters.getDriverClassName().substring(0, 1).toUpperCase())          // First letter uppercase (K).
+                    .concat(exchangeParameters.getDriverClassName().substring(1).toLowerCase())   // The rest of the exchange name (ucoin).
+                    .concat("Exchange");                                                                // Adding exchange (Exchange).
         }
-
-        // XChange class package name and suffix.
-        final String xChangeClassPackage = "org.knowm.xchange.";
-        final String xChangeCLassSuffix = "Exchange";
-
-        // Returns the XChange package name from exchange name.
-        assert exchangeParameters.getDriverClassName() != null;
-        return xChangeClassPackage                                                              // Package (org.knowm.xchange.).
-                .concat(exchangeParameters.getDriverClassName().toLowerCase())                  // domain (kucoin).
-                .concat(".")                                                                    // A dot (.)
-                .concat(exchangeParameters.getDriverClassName().substring(0, 1).toUpperCase())  // First letter uppercase (K).
-                .concat(exchangeParameters.getDriverClassName().substring(1).toLowerCase())     // The rest of the exchange name (ucoin).
-                .concat(xChangeCLassSuffix);                                                    // Adding exchange (Exchange).
     }
 
     /**
@@ -372,6 +354,20 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             positionFlux = new PositionFlux(positionRepository);
         }
         return positionFlux;
+    }
+
+    /**
+     * Getter for positionService.
+     *
+     * @return positionService
+     */
+    @Bean
+    @DependsOn("getTradeService")
+    public PositionService getPositionService() {
+        if (positionService == null) {
+            positionService = new PositionServiceCassandreImplementation(positionRepository, getTradeService(), positionFlux);
+        }
+        return positionService;
     }
 
 }

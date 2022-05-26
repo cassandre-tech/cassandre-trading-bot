@@ -1,18 +1,9 @@
 "Strategies."
 type Strategy {
-    "Technical ID."
-    id: Int!
+    "Strategy unique ID."
+    uid: Int!
     "An identifier that uniquely identifies the strategy - Comes from the Java annotation."
     strategyId: String!
-    "Strategy type - Basic or Ta4j."
-    type: StrategyType!
     "Strategy name - Comes from the Java annotation."
     name: String
-}
-
-enum StrategyType {
-    "Basic strategy."
-    BASIC_STRATEGY
-    "Basic Ta4j strategy."
-    BASIC_TA4J_STRATEGY
 }

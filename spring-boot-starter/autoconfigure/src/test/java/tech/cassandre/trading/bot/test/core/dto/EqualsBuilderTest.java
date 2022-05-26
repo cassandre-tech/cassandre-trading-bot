@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class EqualsBuilderTest {
 
     @Test
-    @DisplayName("Check equals on strings")
+    @DisplayName("Check equals() on strings")
     public void checkStringEquals() {
         boolean result;
 
@@ -21,7 +21,7 @@ public class EqualsBuilderTest {
         result = new EqualsBuilder().append(null, null).isEquals();
         assertTrue(result);
 
-        // First object null and second is also not null -> Not equals.
+        // First object null and second is not null -> Not equals.
         result = new EqualsBuilder().append(null, "e").isEquals();
         assertFalse(result);
 
@@ -57,7 +57,7 @@ public class EqualsBuilderTest {
     }
 
     @Test
-    @DisplayName("Check equals on BigDecimal")
+    @DisplayName("Check equals() on BigDecimal")
     public void checkBigDecimalEquals() {
         boolean result;
 
@@ -65,8 +65,16 @@ public class EqualsBuilderTest {
         result = new EqualsBuilder().append(new BigDecimal("1.00000"), null).isEquals();
         assertFalse(result);
 
+        // BigDecimal & null.
+        result = new EqualsBuilder().append(null, new BigDecimal("1.00000")).isEquals();
+        assertFalse(result);
+
         // Same BigDecimal but with a different format.
         result = new EqualsBuilder().append(new BigDecimal("1.00000"), new BigDecimal("1")).isEquals();
+        assertTrue(result);
+
+        // Same BigDecimal but with a different format.
+        result = new EqualsBuilder().append(new BigDecimal("1.10000"), new BigDecimal("1.1")).isEquals();
         assertTrue(result);
 
         // Two different BigDecimals.

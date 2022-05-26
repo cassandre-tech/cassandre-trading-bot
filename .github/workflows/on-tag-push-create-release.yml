@@ -1,0 +1,87 @@
+name: Release creation
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  id-token: "write"
+  contents: "write"
+  packages: "write"
+  pull-requests: "read"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ================================================================================================================
+      - name: JDK 17 Setup
+        uses: actions/setup-java@v3.3.0
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      # ================================================================================================================
+      - name: Retrieve the sources
+        uses: actions/checkout@v3
+
+      # ================================================================================================================
+      - name: GPG Setup
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" > private.asc
+          gpg --import --batch private.asc
+
+      # ================================================================================================================
+      - name: Build, package and deploy to Maven central
+        id: maven
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Ossrh credentials.
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          # GPG.
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mvn deploy -DskipTests=true -B -Dgpg.passphrase=${GPG_PASSPHRASE}
+          echo "::set-output name=version::$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
+
+      # ================================================================================================================
+      - name: Create the release in GitHub
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          title: ${{ steps.maven.outputs.version }}
+          draft: false
+          prerelease: false
+
+      # ================================================================================================================
+      - name: Publish the announce on Twitter
+        continue-on-error: true
+        uses: ethomson/send-tweet-action@v1
+        env:
+          TWITTER_CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          TWITTER_CONSUMER_API_SECRET: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        with:
+          status: "Cassandre trading bot ${{ steps.maven.outputs.version }} released - More information here: https://github.com/cassandre-tech/cassandre-trading-bot/releases/tag/${{ steps.maven.outputs.version }}"
+          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+
+      # ================================================================================================================
+      - name: Publish the announce on Discord
+        continue-on-error: true
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: "Cassandre trading bot ${{ steps.maven.outputs.version }} released - More information here: https://github.com/cassandre-tech/cassandre-trading-bot/releases/tag/${{ steps.maven.outputs.version }}"

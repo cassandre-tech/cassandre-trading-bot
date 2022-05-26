@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
+import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.repository.OrderRepository;
@@ -21,6 +22,8 @@ import tech.cassandre.trading.bot.repository.PositionRepository;
 import tech.cassandre.trading.bot.repository.TradeRepository;
 import tech.cassandre.trading.bot.service.MarketService;
 import tech.cassandre.trading.bot.service.MarketServiceXChangeImplementation;
+import tech.cassandre.trading.bot.service.PositionService;
+import tech.cassandre.trading.bot.service.PositionServiceCassandreImplementation;
 import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
@@ -43,8 +46,8 @@ import static org.mockito.Mockito.mock;
  */
 public class BaseMock extends BaseTest {
 
-    /** Service rate. */
-    private static final int SERVICE_RATE = 900;
+    /** Default service rate. */
+    private static final int DEFAULT_SERVICE_RATE = 900;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -78,9 +81,14 @@ public class BaseMock extends BaseTest {
 
     @Bean
     @Primary
-
     public TradeFlux tradeFlux() {
         return new TradeFlux(orderRepository,tradeRepository, tradeService());
+    }
+
+    @Bean
+    @Primary
+    public PositionFlux positionFlux() {
+        return new PositionFlux(positionRepository);
     }
 
     @Bean
@@ -93,7 +101,7 @@ public class BaseMock extends BaseTest {
             logger.error("Impossible to instantiate mocked market service");
             return null;
         }
-        return new MarketServiceXChangeImplementation(SERVICE_RATE, mock);
+        return new MarketServiceXChangeImplementation(DEFAULT_SERVICE_RATE, mock);
     }
 
     @Bean
@@ -106,7 +114,7 @@ public class BaseMock extends BaseTest {
             logger.error("Impossible to instantiate mocked account service");
             return null;
         }
-        return new UserServiceXChangeImplementation(SERVICE_RATE, mock);
+        return new UserServiceXChangeImplementation(DEFAULT_SERVICE_RATE, mock);
     }
 
     @Bean
@@ -116,10 +124,10 @@ public class BaseMock extends BaseTest {
         try {
             mock = getXChangeTradeServiceMock();
         } catch (IOException e) {
-            logger.error("Impossible to instantiate mocked account service");
+            logger.error("Impossible to instantiate mocked trade service");
             return null;
         }
-        return new TradeServiceXChangeImplementation(SERVICE_RATE, orderRepository, mock);
+        return new TradeServiceXChangeImplementation(DEFAULT_SERVICE_RATE, orderRepository, mock);
     }
 
     /**
@@ -160,6 +168,13 @@ public class BaseMock extends BaseTest {
         given(mock.getOpenOrders()).willReturn(new OpenOrders(Collections.emptyList()));
         given(mock.getTradeHistory(any())).willReturn(new UserTrades(Collections.emptyList(), SortByTimestamp));
         return mock;
+    }
+
+
+    @Bean
+    @Primary
+    public PositionService positionService() {
+        return new PositionServiceCassandreImplementation(positionRepository, tradeService(), positionFlux());
     }
 
     /**

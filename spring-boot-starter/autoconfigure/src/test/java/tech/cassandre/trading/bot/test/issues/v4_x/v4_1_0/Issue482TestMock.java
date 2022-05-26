@@ -14,6 +14,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
+@SuppressWarnings("unused")
 public class Issue482TestMock extends BaseMock {
 
     @Override
@@ -23,8 +24,8 @@ public class Issue482TestMock extends BaseMock {
         // We don't use the getTickers method.
         given(marketService.getTickers(any())).willThrow(new NotAvailableFromExchangeException("Not available in test"));
 
+        // Replies for ETH/BTC.
         final BigDecimal value = new BigDecimal("1");
-        // Replies for BTC/USDT.
         given(marketService
                 .getTicker(XCHANGE_ETH_BTC))
                 .willReturn(

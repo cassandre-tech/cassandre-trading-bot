@@ -1,13 +1,13 @@
 -- =====================================================================================================================
 -- Insert strategies.
-INSERT INTO STRATEGIES (ID, STRATEGY_ID, TYPE, NAME)
-VALUES (1, '01', 'BASIC_STRATEGY', 'My strategy');
+INSERT INTO STRATEGIES (UID, STRATEGY_ID, NAME)
+VALUES (1, '01', 'My strategy');
 
 -- =====================================================================================================================
 -- Insert orders.
-INSERT INTO ORDERS (ID, ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS,
+INSERT INTO ORDERS (UID, ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR, USER_REFERENCE, TIMESTAMP, STATUS,
                     CUMULATIVE_AMOUNT_VALUE, CUMULATIVE_AMOUNT_CURRENCY, AVERAGE_PRICE_VALUE, AVERAGE_PRICE_CURRENCY,
-                    LEVERAGE, LIMIT_PRICE_VALUE, LIMIT_PRICE_CURRENCY, FK_STRATEGY_ID)
+                    LEVERAGE, LIMIT_PRICE_VALUE, LIMIT_PRICE_CURRENCY, fk_strategy_uid)
 values -- For position 1.
        (1, 'OPEN_ORDER_01', 'BID', 10, 'BTC', 'BTC/USDT', '', '2020-11-20', 'FILLED', 10, 'BTC', 1, 'USDT', '', 1,
         'USDT', 1),
@@ -46,10 +46,10 @@ values -- For position 1.
 
 -- =====================================================================================================================
 -- Insert positions.
-INSERT INTO POSITIONS (ID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY,
-                       RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, FK_OPENING_ORDER_ID, FK_CLOSING_ORDER_ID,
+INSERT INTO POSITIONS (UID, POSITION_ID, TYPE, STATUS, CURRENCY_PAIR, AMOUNT_VALUE, AMOUNT_CURRENCY,
+                       RULES_STOP_GAIN_PERCENTAGE, RULES_STOP_LOSS_PERCENTAGE, FK_OPENING_ORDER_UID, FK_CLOSING_ORDER_UID,
                        LOWEST_GAIN_PRICE_VALUE, HIGHEST_GAIN_PRICE_VALUE, LATEST_GAIN_PRICE_VALUE,
-                       LOWEST_GAIN_PRICE_CURRENCY, HIGHEST_GAIN_PRICE_CURRENCY, LATEST_GAIN_PRICE_CURRENCY, FK_STRATEGY_ID)
+                       LOWEST_GAIN_PRICE_CURRENCY, HIGHEST_GAIN_PRICE_CURRENCY, LATEST_GAIN_PRICE_CURRENCY, fk_strategy_uid)
 VALUES (1, 1, 'LONG', 'CLOSED', 'BTC/USDT', 10, 'BTC', null, null, 1, 2, null, null, null, null, null, null, 1),
        (2, 2, 'LONG', 'CLOSED', 'ETH/BTC', 20, 'ETH', null, null, 3, 4, null, null, null, null, null, null, 1),
        (3, 3, 'LONG', 'CLOSED', 'BTC/USDT', 30, 'BTC', null, null, 5, 6, null, null, null, null, null, null, 1),
@@ -60,7 +60,7 @@ VALUES (1, 1, 'LONG', 'CLOSED', 'BTC/USDT', 10, 'BTC', null, null, 1, 2, null, n
 
 -- =====================================================================================================================
 -- Insert trades.
-INSERT INTO TRADES (ID, TRADE_ID, FK_ORDER_ID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR,
+INSERT INTO TRADES (UID, TRADE_ID, FK_ORDER_UID, TYPE, AMOUNT_VALUE, AMOUNT_CURRENCY, CURRENCY_PAIR,
                     PRICE_VALUE, PRICE_CURRENCY, TIMESTAMP, FEE_VALUE, FEE_CURRENCY)
 values -- For position 1.
        (1, 'TRADE_11', 1, 'BID', 7, 'BTC', 'BTC/USDT', 11, 'USDT', DATE '2020-08-05', 1, 'USDT'),

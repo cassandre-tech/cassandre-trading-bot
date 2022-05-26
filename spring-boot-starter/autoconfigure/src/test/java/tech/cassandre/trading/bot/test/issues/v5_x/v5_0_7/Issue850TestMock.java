@@ -20,6 +20,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
+@SuppressWarnings("unused")
 public class Issue850TestMock extends BaseMock {
 
     @Override
@@ -29,21 +30,22 @@ public class Issue850TestMock extends BaseMock {
         // Usual getOpenOrders() doesn't work.
         given(mock.getOpenOrders()).willThrow(new NotAvailableFromExchangeException());
 
-        // getOpenOrders() requires a parameter.
+        // Using the getOpenOrders() that requires a parameter.
         given(mock.getOpenOrders(any())).willReturn(new OpenOrders(List.of(new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("11"),   // OriginalAmount.
                 XCHANGE_ETH_BTC,            // Instrument.
-                "ORDER_0000002",         // ID.
+                "ORDER_0000002",            // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
                 new BigDecimal("111"),  // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "Updated order !"  // Reference.
+                "Updated order !"           // Reference.
         ))));
 
         return mock;
     }
+
 }

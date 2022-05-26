@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.batch.TickerFlux;
 import tech.cassandre.trading.bot.test.util.junit.BaseTest;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
@@ -22,19 +23,21 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
 })
+@ActiveProfiles("schedule-disabled")
 @Import(Issue539TestMock.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class Issue539Test extends BaseTest {
 
     @Autowired
-    private TestableCassandreStrategy strategy;
+    private TickerFlux tickerFlux;
 
     @Autowired
-    private TickerFlux tickerFlux;
+    private TestableCassandreStrategy strategy;
 
     @Test
     @DisplayName("Check scheduled tasks continue to work after exception")
     public void checkExceptionInScheduledTasks() {
+        tickerFlux.update();
         tickerFlux.update();
         tickerFlux.update();
 

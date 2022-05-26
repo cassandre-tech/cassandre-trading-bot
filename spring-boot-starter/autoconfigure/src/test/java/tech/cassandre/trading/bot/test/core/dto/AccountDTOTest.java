@@ -20,22 +20,22 @@ public class AccountDTOTest {
 
 	@Test
 	@DisplayName("Check equals() on account id & name")
-	public void checkEqualToForAccountIdAndName() {
+	public void checkEqualsOnAccountIdAndName() {
 		// Account 1 (null).
 		AccountDTO account1 = AccountDTO.builder().accountId(null).name(null).build();
 		// Account 2.
 		AccountDTO account2 = AccountDTO.builder().accountId("01").name("01").build();
 		assertNotEquals(account2, account1);
 		assertNotEquals(account1, account2);
-		// Account 3 - Same.
+		// Account 3 - Same as account2.
 		AccountDTO account3 = AccountDTO.builder().accountId("01").name("01").build();
 		assertEquals(account2, account3);
 		assertEquals(account3, account2);
-		// Account 4 - id changed.
+		// Account 4 - id changed compared to account 2.
 		AccountDTO account4 = AccountDTO.builder().accountId("CHANGED").name("01").build();
 		assertNotEquals(account2, account4);
 		assertNotEquals(account4, account2);
-		// Account 5 - Name changed.
+		// Account 5 - Name changed compared to account 2.
 		AccountDTO account5 = AccountDTO.builder().accountId("01").name("CHANGED").build();
 		assertNotEquals(account2, account5);
 		assertNotEquals(account5, account2);
@@ -57,26 +57,26 @@ public class AccountDTOTest {
 		assertNotEquals(account2, account1);
 
 		// Account 3 - One ETH & one BTC.
-		balances.add(BalanceDTO.builder().build());
-		balances.add(BalanceDTO.builder().build());
+		balances.add(BalanceDTO.builder().currency(ETH).build());
+		balances.add(BalanceDTO.builder().currency(BTC).build());
 		AccountDTO account3 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 
 		// Account 4 - One BTC & one ETH (inverted compared to account 3).
-		balances.add(BalanceDTO.builder().build());
-		balances.add(BalanceDTO.builder().build());
+		balances.add(BalanceDTO.builder().currency(BTC).build());
+		balances.add(BalanceDTO.builder().currency(ETH).build());
 		AccountDTO account4 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
 		assertEquals(account3, account4);
 		assertEquals(account4, account3);
 
 		// Account 5 - One BTC & one USDT (inverted).
-		balances.add(BalanceDTO.builder().build());
-		balances.add(BalanceDTO.builder().build());
+		balances.add(BalanceDTO.builder().currency(BTC).build());
+		balances.add(BalanceDTO.builder().currency(USDT).build());
 		AccountDTO account5 = AccountDTO.builder().balances(balances).build();
 		balances.clear();
-		assertEquals(account4, account5);
-		assertEquals(account5, account4);
+		assertNotEquals(account4, account5);
+		assertNotEquals(account5, account4);
 	}
 
 	@Test

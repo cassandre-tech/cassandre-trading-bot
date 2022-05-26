@@ -21,7 +21,7 @@ public interface OrderMapper {
     // XChange to DTO.
 
     @Mapping(source = "id", target = "orderId")
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "uid", ignore = true)
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapLimitOrderToOrderDTOAmount")
     @Mapping(source = "source", target = "cumulativeAmount", qualifiedByName = "mapLimitOrderToOrderDTOCumulativeAmount")
     @Mapping(source = "source", target = "averagePrice", qualifiedByName = "mapLimitOrderToOrderDTOAveragePrice")
@@ -100,12 +100,6 @@ public interface OrderMapper {
     // =================================================================================================================
     // Domain to DTO.
 
-    /**
-     * Map Order to OrderDTO.
-     *
-     * @param source order
-     * @return OrderDTO
-     */
     @Mapping(source = "trades", target = "trades")
     @Mapping(target = "trade", ignore = true)
     OrderDTO mapToOrderDTO(tech.cassandre.trading.bot.domain.Order source);

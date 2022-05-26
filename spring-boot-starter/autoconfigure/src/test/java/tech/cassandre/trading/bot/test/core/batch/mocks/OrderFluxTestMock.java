@@ -22,6 +22,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
+@SuppressWarnings("unused")
 public class OrderFluxTestMock extends BaseMock {
 
     @Override
@@ -32,7 +33,6 @@ public class OrderFluxTestMock extends BaseMock {
 
         // =============================================================================================================
         // Order creation mock.
-
         // Order ORDER_000001 (ASK, 1, ETH/BTC).
         MarketOrder m = new MarketOrder(Order.OrderType.ASK, new BigDecimal("1"), XCHANGE_ETH_BTC, null, null);
         given(mock.placeMarketOrder(m)).willReturn("ORDER_000001");
@@ -48,7 +48,6 @@ public class OrderFluxTestMock extends BaseMock {
 
         // =============================================================================================================
         // Order creation mock.
-
         given(mock.getOpenOrders()).willReturn(
                 // =====================================================================================================
                 // Reply 01.
@@ -87,42 +86,42 @@ public class OrderFluxTestMock extends BaseMock {
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("11"),   // OriginalAmount.
                 XCHANGE_ETH_BTC,            // Instrument.
-                "ORDER_000001",         // ID.
+                "ORDER_000001",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
                 new BigDecimal("111"),  // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         LimitOrder order000002 = new LimitOrder(
                 Order.OrderType.BID,        // Type.
                 new BigDecimal("22"),   // OriginalAmount.
                 XCHANGE_ETH_USDT,           // Instrument.
-                "ORDER_000002",          // ID.
+                "ORDER_000002",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
                 new BigDecimal("222"),  // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         LimitOrder order000003 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("33"),   // OriginalAmount.
                 XCHANGE_ETH_BTC,            // Instrument.
-                "ORDER_000003",          // ID.
+                "ORDER_000003",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
                 new BigDecimal("333"),  // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         return new OpenOrders(Arrays.asList(order000001,
@@ -144,35 +143,35 @@ public class OrderFluxTestMock extends BaseMock {
         LimitOrder order000001 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("11"),   // OriginalAmount.
-                XCHANGE_ETH_BTC,                 // Instrument.
-                "ORDER_000001",         // ID.
+                XCHANGE_ETH_BTC,            // Instrument.
+                "ORDER_000001",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
                 new BigDecimal("111"),  // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         LimitOrder order000002 = new LimitOrder(
                 Order.OrderType.BID,        // Type.
                 new BigDecimal("22"),   // OriginalAmount.
-                XCHANGE_ETH_USDT,                 // Instrument.
-                "ORDER_000002",          // ID.
+                XCHANGE_ETH_USDT,           // Instrument.
+                "ORDER_000002",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
                 new BigDecimal("222"),  // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         LimitOrder order000003 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("3333"), // OriginalAmount.
-                XCHANGE_ETH_BTC,                 // Instrument.
+                XCHANGE_ETH_BTC,            // Instrument.
                 "ORDER_000003",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
@@ -186,15 +185,15 @@ public class OrderFluxTestMock extends BaseMock {
         LimitOrder order000004 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("444"),  // OriginalAmount.
-                XCHANGE_ETH_BTC,                 // Instrument.
-                "ORDER_000004",          // ID.
+                XCHANGE_ETH_BTC,            // Instrument.
+                "ORDER_000004",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
                 new BigDecimal("4444"), // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         return new OpenOrders(Arrays.asList(order000001,
@@ -217,35 +216,35 @@ public class OrderFluxTestMock extends BaseMock {
         LimitOrder order000001 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("11"),   // OriginalAmount.
-                XCHANGE_ETH_BTC,                 // Instrument.
-                "ORDER_000001",         // ID.
+                XCHANGE_ETH_BTC,            // Instrument.
+                "ORDER_000001",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("1"),    // Average price.
                 new BigDecimal("111"),  // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         LimitOrder order000002 = new LimitOrder(
                 Order.OrderType.BID,        // Type.
                 new BigDecimal("22"),   // OriginalAmount.
-                XCHANGE_ETH_USDT,                 // Instrument.
-                "ORDER_000002",          // ID.
+                XCHANGE_ETH_USDT,           // Instrument.
+                "ORDER_000002",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("2"),    // Average price.
                 new BigDecimal("222"),  // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         LimitOrder order000003 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("3333"), // OriginalAmount.
-                XCHANGE_ETH_BTC,                 // Instrument.
+                XCHANGE_ETH_BTC,            // Instrument.
                 "ORDER_000003",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
@@ -253,21 +252,21 @@ public class OrderFluxTestMock extends BaseMock {
                 new BigDecimal("33333"),// Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         LimitOrder order000004 = new LimitOrder(
                 Order.OrderType.ASK,        // Type.
                 new BigDecimal("444"),  // OriginalAmount.
-                XCHANGE_ETH_BTC,                 // Instrument.
-                "ORDER_000004",          // ID.
+                XCHANGE_ETH_BTC,            // Instrument.
+                "ORDER_000004",             // ID.
                 new Date(),                 // Date.
                 ZERO,                       // Limit price.
                 new BigDecimal("2"),    // Average price.
                 new BigDecimal("4444"), // Cumulative amount.
                 new BigDecimal("1"),    // Fee.
                 FILLED,                     // Status.
-                "My reference"  // Reference.
+                "My reference"              // Reference.
         );
 
         return new OpenOrders(Arrays.asList(order000001,

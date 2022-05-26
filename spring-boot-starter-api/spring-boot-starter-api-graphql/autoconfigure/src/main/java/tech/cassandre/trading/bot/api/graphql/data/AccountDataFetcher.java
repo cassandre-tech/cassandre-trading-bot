@@ -33,7 +33,7 @@ public class AccountDataFetcher extends BaseDataFetcher {
     }
 
     /**
-     * Returns the account with the corresponding accountId value.
+     * Returns the account with the corresponding account id value.
      *
      * @param accountId account id
      * @return account

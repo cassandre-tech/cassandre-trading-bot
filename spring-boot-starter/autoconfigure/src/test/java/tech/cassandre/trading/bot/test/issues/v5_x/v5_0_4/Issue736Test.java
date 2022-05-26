@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
-import tech.cassandre.trading.bot.repository.ImportedTickersRepository;
+import tech.cassandre.trading.bot.repository.ImportedTickerRepository;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Configuration;
 import tech.cassandre.trading.bot.test.util.junit.configuration.Property;
 import tech.cassandre.trading.bot.test.util.strategies.TestableCassandreStrategy;
@@ -36,25 +36,25 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class Issue736Test {
 
     @Autowired
-    private ImportedTickersRepository importedTickersRepository;
+    private ImportedTickerRepository importedTickerRepository;
 
     @Autowired
     private TestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("initialize() method on strategy")
+    @DisplayName("Initialize() method on strategy")
     public void testCurrencySerialization() {
         await().untilAsserted(() -> assertTrue(strategy.isInitialized()));
     }
 
     @Test
-    @DisplayName("imported tickers")
+    @DisplayName("Imported tickers")
     public void testImportedTickers() {
         // We wait for initialized to be sure all data have been imported.
         await().untilAsserted(() -> assertTrue(strategy.isInitialized()));
 
         // 5 tickers imported from tickers-to-import-1.csv & tickers-to-import-2.csv.
-        assertEquals(5, importedTickersRepository.count());
+        assertEquals(5, importedTickerRepository.count());
 
         // =============================================================================================================
         // BTC/USDT.

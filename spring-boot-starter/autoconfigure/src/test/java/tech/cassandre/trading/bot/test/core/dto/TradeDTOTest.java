@@ -19,7 +19,7 @@ public class TradeDTOTest {
     @Test
     @DisplayName("Check equals()")
     public void checkEqualToForTrades() {
-        // Test that only id is important when testing equality.
+        // Test that only tradeId is important when testing equality.
         TradeDTO t1 = TradeDTO.builder()
                 .tradeId("0000001")
                 .build();
@@ -36,20 +36,11 @@ public class TradeDTOTest {
                 .build();
         assertNotEquals(t1, t1Bis);
 
-        // Test that the id makes the trade different.
+        // Test that the tradeId makes the trade different.
         TradeDTO t2 = TradeDTO.builder()
                 .tradeId("0000002")
                 .build();
         assertNotEquals(t1, t2);
-    }
-
-    @Test
-    @DisplayName("Check null trades")
-    public void checkNullTrades() {
-        TradeDTO t1 = TradeDTO.builder().tradeId("0000001").build();
-        TradeDTO t2 = TradeDTO.builder().tradeId("0000002").build();
-        assertNotEquals(t1, t2);
-        assertNotEquals(t2, t1);
     }
 
 }

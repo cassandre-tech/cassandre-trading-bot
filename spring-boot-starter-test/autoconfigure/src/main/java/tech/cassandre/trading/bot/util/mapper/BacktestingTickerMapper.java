@@ -2,23 +2,31 @@ package tech.cassandre.trading.bot.util.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import tech.cassandre.trading.bot.domain.BacktestingTicker;
+import tech.cassandre.trading.bot.domain.BacktestingCandle;
+import tech.cassandre.trading.bot.domain.ImportedCandle;
 import tech.cassandre.trading.bot.dto.market.TickerDTO;
 
 /**
- * Backtesting ticker mapper.
+ * Backtesting candle mapper.
  */
 @Mapper(uses = CurrencyMapper.class)
 public interface BacktestingTickerMapper {
 
     // =================================================================================================================
-    // TickerDTO to BacktestingTicker.
+    // ImportedCandle to BacktestingCandle.
     @Mapping(target = "id", ignore = true)
-    BacktestingTicker mapToBacktestingTicker(TickerDTO source);
+    BacktestingCandle mapToBacktestingCandle(ImportedCandle source);
 
     // =================================================================================================================
-    // TickerDTO to BacktestingTicker.
+    // BacktestingTicker to TickerDTO.
     @Mapping(target = "currencyPair", source = "id.currencyPair")
-    TickerDTO mapToTickerDTO(BacktestingTicker source);
+    @Mapping(target = "last", source = "close")
+    @Mapping(target = "bid", ignore = true)
+    @Mapping(target = "ask", ignore = true)
+    @Mapping(target = "vwap", ignore = true)
+    @Mapping(target = "quoteVolume", ignore = true)
+    @Mapping(target = "bidSize", ignore = true)
+    @Mapping(target = "askSize", ignore = true)
+    TickerDTO mapToTickerDTO(BacktestingCandle source);
 
 }

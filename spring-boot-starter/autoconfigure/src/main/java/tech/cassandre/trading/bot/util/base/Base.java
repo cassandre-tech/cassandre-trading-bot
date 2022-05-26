@@ -4,6 +4,7 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.cassandre.trading.bot.util.mapper.AccountMapper;
+import tech.cassandre.trading.bot.util.mapper.CandleMapper;
 import tech.cassandre.trading.bot.util.mapper.CurrencyMapper;
 import tech.cassandre.trading.bot.util.mapper.OrderMapper;
 import tech.cassandre.trading.bot.util.mapper.PositionMapper;
@@ -31,6 +32,9 @@ public abstract class Base {
 
     /** Account mapper. */
     protected static final AccountMapper ACCOUNT_MAPPER = Mappers.getMapper(AccountMapper.class);
+
+    /** Candle mapper. */
+    protected static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
     /** Ticker mapper. */
     protected static final TickerMapper TICKER_MAPPER = Mappers.getMapper(TickerMapper.class);

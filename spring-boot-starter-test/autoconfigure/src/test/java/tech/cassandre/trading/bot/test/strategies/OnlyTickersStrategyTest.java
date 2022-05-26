@@ -45,38 +45,38 @@ public class OnlyTickersStrategyTest extends BaseTest {
     @DisplayName("Check received tickers with one flux")
     public void checkReceivedTickersWithOneFlux() {
         // There are four files and only three currency pairs are requested by the strategy.
-        // - tickers-BTC-USDT.tsv   -   Requested (7 lines).
-        // - tickers-ETH-BTC.tsv    -   Not requested.
-        // - tickers-ETH-USDT.tsv   -   Requested (5 lines).
-        // - tickers-KCS-USDT.csv   -   Requested (3 lines).
+        // - candles-for-backtesting-BTC-USDT.csv   -   Requested (7 lines).
+        // - candles-for-backtesting-ETH-BTC.csv    -   Not requested.
+        // - candles-for-backtesting-ETH-USDT.csv   -   Requested (5 lines).
+        // - candles-for-backtesting-KCS-USDT.csv   -   Requested (3 lines).
 
         // Check if flux is not done.
-        assertFalse(tickerFluxMock.isFluxDone(new CurrencyPairDTO(ETH, USDT)));
+        assertFalse(tickerFluxMock.getMarketServiceBacktestingImplementation().isFluxDone(new CurrencyPairDTO(ETH, USDT)));
 
         // As tickers-BTC-USDT.tsv has the most line, we should wait to have 7 replies.
-        with().await().untilAsserted(() -> assertEquals(5, strategy.getTickersReceived().size()));
+        with().await().untilAsserted(() -> assertEquals(7, strategy.getTickersReceived().size()));
 
         // Check if flux is done.
-        assertTrue(tickerFluxMock.isFluxDone(new CurrencyPairDTO(ETH, USDT)));
+        assertTrue(tickerFluxMock.getMarketServiceBacktestingImplementation().isFluxDone(new CurrencyPairDTO(ETH, USDT)));
     }
 
     @Test
     @DisplayName("Check received tickers")
     public void checkReceivedTickers() {
         // There are four files and only three currency pairs are requested by the strategy.
-        // - tickers-BTC-USDT.tsv   -   Requested (7 lines).
-        // - tickers-ETH-BTC.tsv    -   Not requested.
-        // - tickers-ETH-USDT.tsv   -   Requested (5 lines).
-        // - tickers-KCS-USDT.csv   -   Requested (3 lines).
+        // - candles-for-backtesting-BTC-USDT.csv   -   Requested (7 lines).
+        // - candles-for-backtesting-ETH-BTC.csv    -   Not requested.
+        // - candles-for-backtesting-ETH-USDT.csv   -   Requested (5 lines).
+        // - candles-for-backtesting-KCS-USDT.csv   -   Requested (3 lines).
 
         // Check if flux is not done.
-        assertFalse(tickerFluxMock.isFluxDone());
+        assertFalse(tickerFluxMock.getMarketServiceBacktestingImplementation().isFluxDone());
 
         // As tickers-BTC-USDT.tsv has the most line, we should wait to have 7 replies.
         with().await().untilAsserted(() -> assertEquals(7, strategy.getTickersReceived().size()));
 
         // Check if flux is done.
-        assertTrue(tickerFluxMock.isFluxDone());
+        assertTrue(tickerFluxMock.getMarketServiceBacktestingImplementation().isFluxDone());
 
         // =============================================================================================================
         // First reply.
@@ -87,6 +87,7 @@ public class OnlyTickersStrategyTest extends BaseTest {
         final Map<CurrencyPairDTO, TickerDTO> reply01 = strategy.getTickersReceived().get(1L);
         // BTC/USDT.
         TickerDTO btcUsdtTicker01 = reply01.get(BTC_USDT);
+        System.out.println("==> " + btcUsdtTicker01);
         assertNotNull(btcUsdtTicker01);
         assertEquals(0, new BigDecimal("10000").compareTo(btcUsdtTicker01.getLast()));
         // ETH-BTC.

@@ -23,7 +23,7 @@ import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.dto.util.GainDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 import tech.cassandre.trading.bot.util.exception.DryModeException;
 
@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.FLOOR;
@@ -42,6 +41,8 @@ import static org.knowm.xchange.dto.Order.OrderStatus.FILLED;
 import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.CLOSED;
+import static tech.cassandre.trading.bot.util.math.MathConstants.BIGINTEGER_SCALE;
+import static tech.cassandre.trading.bot.util.math.MathConstants.ONE_HUNDRED_BIG_DECIMAL;
 
 /**
  * AOP for trade service in dry mode.
@@ -51,9 +52,6 @@ import static tech.cassandre.trading.bot.dto.trade.OrderStatusDTO.CLOSED;
 @ConditionalOnExpression("${cassandre.trading.bot.exchange.modes.dry:true}")
 @RequiredArgsConstructor
 public class TradeServiceDryModeAOP extends BaseService {
-
-    /** Big integer scale. */
-    private static final int BIGINTEGER_SCALE = 8;
 
     /** Dry order prefix. */
     private static final String DRY_ORDER_PREFIX = "DRY_ORDER_";
@@ -73,12 +71,9 @@ public class TradeServiceDryModeAOP extends BaseService {
     /** User service - dry mode. */
     private final UserServiceDryModeAOP userService;
 
-    /** 100%. */
-    private static final BigDecimal ONE_HUNDRED_BIG_DECIMAL = new BigDecimal("100");
-
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createBuyMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
     public final OrderCreationResultDTO createBuyMarketOrder(final ProceedingJoinPoint pjp,
-                                                             final GenericCassandreStrategy strategy,
+                                                             final CassandreStrategy strategy,
                                                              final CurrencyPairDTO currencyPair,
                                                              final BigDecimal amount) {
         // We check that we have the trade account.
@@ -121,7 +116,7 @@ public class TradeServiceDryModeAOP extends BaseService {
 
     @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.createSellMarketOrder(..)) && args(strategy, currencyPair, amount)", argNames = "pjp, strategy, currencyPair, amount")
     public final OrderCreationResultDTO createSellMarketOrder(final ProceedingJoinPoint pjp,
-                                                              final GenericCassandreStrategy strategy,
+                                                              final CassandreStrategy strategy,
                                                               final CurrencyPairDTO currencyPair,
                                                               final BigDecimal amount) {
         // We check that we have the trade account.
@@ -165,15 +160,15 @@ public class TradeServiceDryModeAOP extends BaseService {
         return DRY_ORDER_PREFIX.concat(String.format("%09d", orderCounter.getAndIncrement()));
     }
 
-    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.cancelOrder(..)) && args(orderId))", argNames = "pjp, orderId")
-    public final boolean cancelOrder(final ProceedingJoinPoint pjp, final String orderId) {
+    @Around(value = "execution(* tech.cassandre.trading.bot.service.TradeService.cancelOrder(..)) && args(orderUid))", argNames = "pjp, orderUid")
+    public final boolean cancelOrder(final ProceedingJoinPoint pjp, final long orderUid) {
         throw new DryModeException("Not supported");
     }
 
     @Around("execution(* org.knowm.xchange.service.trade.TradeService.getOpenOrders())")
     public final OpenOrders getOpenOrders(final ProceedingJoinPoint pjp) {
-        // For every new order in database, we send an update saying the order is filled.
-        List<LimitOrder> orders = orderRepository.findByStatusNot(CLOSED)
+        // For every new order created in Cassandre (in database), we reply with an updated order saying this same order is filled.
+        return new OpenOrders(orderRepository.findByStatusNot(CLOSED)
                 .stream()
                 .map(ORDER_MAPPER::mapToOrderDTO)
                 .map(orderDTO -> new LimitOrder.Builder(UTIL_MAPPER.mapToOrderType(orderDTO.getType()), CURRENCY_MAPPER.mapToCurrencyPair(orderDTO.getCurrencyPair()))
@@ -186,9 +181,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                         .userReference(orderDTO.getUserReference())
                         .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
                         .build())
-                .collect(Collectors.toList());
-
-        return new OpenOrders(orders);
+                .toList());
     }
 
     @Around(value = "execution(* org.knowm.xchange.service.trade.TradeService.getTradeHistory(..)) && args(params))", argNames = "pjp, params")
@@ -204,6 +197,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                 .forEach(orderDTO -> {
                             tradePrices.put(orderDTO.getOrderId(), orderDTO.getMarketPriceValue());
 
+                            // We search to see if the order is used to close a position.
                             final Optional<PositionDTO> positionDTO = positionRepository.findAll()
                                     .stream()
                                     .filter(position -> position.getClosingOrder() != null)
@@ -280,7 +274,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             final BigDecimal augmentation = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopGainPercentage()))
                                                     .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
-                                            orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().add(augmentation));
+                                            orderRepository.updateAmount(orderDTO.getUid(), openingTrade.getAmountValue().add(augmentation));
                                             tradePrices.put(orderDTO.getOrderId(), positionDTO.get().getOpeningOrder().getMarketPriceValue().divide(openingTrade.getAmountValue().add(augmentation), BIGINTEGER_SCALE, FLOOR));
 
                                         } else if (positionDTO.get().getRules().isStopLossPercentageSet()
@@ -304,7 +298,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                                             final BigDecimal reduction = openingTrade.getAmountValue()
                                                     .multiply(BigDecimal.valueOf(positionDTO.get().getRules().getStopLossPercentage()))
                                                     .divide(ONE_HUNDRED_BIG_DECIMAL, BIGINTEGER_SCALE, FLOOR);
-                                            orderRepository.updateAmount(orderDTO.getId(), openingTrade.getAmountValue().subtract(reduction));
+                                            orderRepository.updateAmount(orderDTO.getUid(), openingTrade.getAmountValue().subtract(reduction));
                                             tradePrices.put(orderDTO.getOrderId(), positionDTO.get().getOpeningOrder().getMarketPriceValue().divide(openingTrade.getAmountValue().subtract(reduction), BIGINTEGER_SCALE, FLOOR));
                                         }
                                         // =====================================================================================
@@ -330,7 +324,7 @@ public class TradeServiceDryModeAOP extends BaseService {
                         .feeAmount(ZERO)
                         .timestamp(Timestamp.valueOf(orderDTO.getTimestamp().toLocalDateTime()))
                         .build())
-                .collect(Collectors.toList());
+                .toList();
         return new UserTrades(trades, SortByTimestamp);
     }
 

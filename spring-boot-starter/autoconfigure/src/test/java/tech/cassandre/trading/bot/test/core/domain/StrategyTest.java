@@ -22,7 +22,7 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 @SpringBootTest
 @DisplayName("Domain - Strategy")
 @Configuration({
-        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "false"),
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
@@ -33,18 +33,18 @@ public class StrategyTest {
 
     @Test
     @DisplayName("Check saved strategy in database")
-    public void checkLoadOrderFromDatabase() {
+    public void checkSavedStrategyFromDatabase() {
         // Test existing strategy.
-        final Optional<Strategy> s = strategyRepository.findByStrategyId("01");
-        assertTrue(s.isPresent());
-        assertEquals(1, s.get().getId());
-        assertEquals("01", s.get().getStrategyId());
-        assertEquals("Testable strategy", s.get().getName());
+        final Optional<Strategy> strategy = strategyRepository.findByStrategyId("01");
+        assertTrue(strategy.isPresent());
+        assertEquals(1, strategy.get().getUid());
+        assertEquals("01", strategy.get().getStrategyId());
+        assertEquals("Testable strategy", strategy.get().getName());
 
         // Test equals.
         final Optional<Strategy> sBis = strategyRepository.findByStrategyId("01");
         assertTrue(sBis.isPresent());
-        assertEquals(s.get(), sBis.get());
+        assertEquals(strategy.get(), sBis.get());
 
         // Test non-existing strategy.
         assertFalse(strategyRepository.findByStrategyId("NON_EXISTING").isPresent());

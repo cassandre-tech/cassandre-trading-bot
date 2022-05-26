@@ -29,7 +29,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 /**
- * Trade.
+ * Trade (map "TRADES" table).
  */
 @Getter
 @Setter
@@ -41,9 +41,9 @@ public class Trade extends BaseDomain {
 
     /** Technical ID. */
     @Id
-    @Column(name = "ID")
+    @Column(name = "UID")
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private Long uid;
 
     /** An identifier set by the exchange that uniquely identifies the trade. */
     @Column(name = "TRADE_ID")
@@ -56,7 +56,7 @@ public class Trade extends BaseDomain {
 
     /** The order responsible for this trade. */
     @ManyToOne
-    @JoinColumn(name = "FK_ORDER_ID", nullable = false)
+    @JoinColumn(name = "FK_ORDER_UID", nullable = false)
     private Order order;
 
     /** Currency pair. */
@@ -106,7 +106,7 @@ public class Trade extends BaseDomain {
         }
         final Trade that = (Trade) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.uid, that.uid)
                 .append(this.tradeId, that.tradeId)
                 .append(this.type, that.type)
                 .append(this.currencyPair, that.currencyPair)

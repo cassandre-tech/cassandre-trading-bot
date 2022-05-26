@@ -2,8 +2,6 @@ name: CodeQL analysis
 
 on:
   schedule:
-    - cron: '0 18 * * MON'
-    - cron: '0 18 * * THU'
     - cron: '0 18 * * SUN'
 
 jobs:
@@ -12,27 +10,27 @@ jobs:
 
     steps:
       # ================================================================================================================
-      - name: JDK 11 Setup
-        uses: actions/setup-java@v2
+      - name: JDK 17 Setup
+        uses: actions/setup-java@v3.3.0
         with:
-          distribution: 'adopt'
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '17'
 
       # ================================================================================================================
       - name: Retrieve the sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # ================================================================================================================
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1.0.22
+        uses: github/codeql-action/init@v2.1.11
         with:
           languages: java
 
       # ================================================================================================================
       - name: Build and package
         run: |
-          mvn package -DskipTests
+          mvn package -Dgpg.skip -Dmaven.test.skip=true
 
       # ================================================================================================================
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1.0.22
+        uses: github/codeql-action/analyze@v2.1.11

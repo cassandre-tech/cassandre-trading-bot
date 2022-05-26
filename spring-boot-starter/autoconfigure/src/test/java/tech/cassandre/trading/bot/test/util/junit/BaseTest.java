@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
-import static tech.cassandre.trading.bot.dto.strategy.StrategyTypeDTO.BASIC_STRATEGY;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.BTC;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.ETH;
 import static tech.cassandre.trading.bot.dto.util.CurrencyDTO.KCS;
@@ -34,9 +33,8 @@ public class BaseTest extends Base {
 
     /** Default strategy. */
     protected final StrategyDTO strategyDTO = StrategyDTO.builder()
-            .id(1L)
+            .uid(1L)
             .strategyId("01")
-            .type(BASIC_STRATEGY)
             .build();
 
     /** ETH/BTC. */
@@ -60,20 +58,11 @@ public class BaseTest extends Base {
     /** KCS/USDT. */
     public static final CurrencyPairDTO KCS_USDT = new CurrencyPairDTO(KCS, USDT);
 
-    /** XChange KCS/USDT. */
-    public static final Instrument XCHANGE_KCS_USDT = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.KCS, Currency.USDT));
-
     /** BTC/ETH. */
     public static final CurrencyPairDTO BTC_ETH = new CurrencyPairDTO(BTC, ETH);
 
     /** XChange BTC/ETH. */
     public static final Instrument XCHANGE_BTC_ETH = CURRENCY_MAPPER.mapToInstrument(new CurrencyPair(Currency.BTC, Currency.ETH));
-
-    /** Ten seconds wait. */
-    protected static final long WAITING_TIME_IN_SECONDS = 5L;
-
-    /** How much we should wait for tests until it is declared as failed. */
-    protected static final long MAXIMUM_RESPONSE_TIME_IN_SECONDS = 60;
 
     /**
      * Constructor.
@@ -81,7 +70,7 @@ public class BaseTest extends Base {
     public BaseTest() {
         // Default Configuration for Awaitility.
         Awaitility.setDefaultPollInterval(fibonacci(SECONDS));
-        Awaitility.setDefaultTimeout(MAXIMUM_RESPONSE_TIME_IN_SECONDS, SECONDS);
+        Awaitility.setDefaultTimeout(60, SECONDS);
     }
 
     /**

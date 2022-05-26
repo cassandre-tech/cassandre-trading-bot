@@ -8,7 +8,7 @@
 	<!-- Project information -->
 	<groupId>tech.cassandre.trading.bot</groupId>
 	<artifactId>cassandre-trading-bot-project</artifactId>
-	<version>5.0.8</version>
+	<version>6.0.0</version>
 	<packaging>pom</packaging>
 	<name>Cassandre trading bot</name>
 	<url>https://github.com/cassandre-tech/cassandre-trading-bot</url>
@@ -55,7 +55,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.3</version>
+		<version>2.6.6</version>
 		<relativePath/>
 	</parent>
 	<!-- =========================================================================================================== -->
@@ -64,51 +64,49 @@
 	<!-- Project configuration -->
 	<properties>
 		<!-- Java build configuration -->
-		<java.version>11</java.version>
-		<maven.compiler.target>11</maven.compiler.target>
-		<maven.compiler.source>11</maven.compiler.source>
+		<java.version>17</java.version>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Libraries releases -->
 
 		<!-- Core -->
-		<spring.version>2.6.1</spring.version>
+		<spring.version>2.6.6</spring.version>
 		<reactor.version>Dysprosium-SR25</reactor.version>
 		<xchange.version>5.0.13</xchange.version>
-		<bucket4j.version>7.0.0</bucket4j.version>
-		<liquibase.version>4.7.1</liquibase.version>
-		<opencsv.version>5.5.2</opencsv.version>
+		<bucket4j.version>7.4.0</bucket4j.version>
+		<liquibase.version>4.9.1</liquibase.version>
+		<opencsv.version>5.6</opencsv.version>
 
 		<!-- Core utils -->
 		<lombok.version>1.18.22</lombok.version>
 		<lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
 		<mapstruct.version>1.4.2.Final</mapstruct.version>
-		<guava.version>31.0.1-jre</guava.version>
-
-		<!-- Other -->
-		<ta4j.version>0.14</ta4j.version>
+		<guava.version>31.1-jre</guava.version>
 
 		<!-- Tests -->
-		<junit-pioneer.version>1.5.0</junit-pioneer.version>
-		<awaitility.version>4.1.1</awaitility.version>
-		<hsqldb.version>2.6.0</hsqldb.version>
+		<junit-pioneer.version>1.7.0</junit-pioneer.version>
+		<awaitility.version>4.2.0</awaitility.version>
+		<hsqldb.version>2.6.1</hsqldb.version>
 		<jackson.version>2.12.6</jackson.version>
 
 		<!-- GraphQL API -->
-		<graphql-dgs.version>4.9.16</graphql-dgs.version>
+		<graphql-dgs.version>4.9.25</graphql-dgs.version>
 
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
-		<maven.puppycrawl.checkstyle.version>9.2.1</maven.puppycrawl.checkstyle.version>
+		<maven.graphqlcodegen.plugin.version>1.18</maven.graphqlcodegen.plugin.version>
+		<maven.puppycrawl.checkstyle.version>10.2</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
-		<maven.compiler.plugin.version>3.9.0</maven.compiler.plugin.version>
+		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-		<maven.jacoco.plugin.version>0.8.7</maven.jacoco.plugin.version>
+		<maven.jacoco.plugin.version>0.8.8</maven.jacoco.plugin.version>
 		<maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
 		<maven.lombok.plugin.version>1.18.20.0</maven.lombok.plugin.version>
 		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
-		<maven.javadoc.plugin.version>3.3.1</maven.javadoc.plugin.version>
+		<maven.javadoc.plugin.version>3.4.0</maven.javadoc.plugin.version>
 		<maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
 		<maven.archetype-packaging.version>3.2.1</maven.archetype-packaging.version>
 	</properties>
@@ -128,7 +126,6 @@
 		<module>spring-boot-starter-api/spring-boot-starter-api-graphql/starter</module>
 		<!-- Archetypes -->
 		<module>trading-bot-archetypes/basic-archetype</module>
-		<module>trading-bot-archetypes/basic-ta4j-archetype</module>
 	</modules>
 	<!-- =========================================================================================================== -->
 
@@ -141,7 +138,7 @@
 			<plugin>
 				<groupId>com.amashchenko.maven.plugin</groupId>
 				<artifactId>gitflow-maven-plugin</artifactId>
-				<version>1.17.0</version>
+				<version>1.18.0</version>
 				<configuration>
 					<gitFlowConfig>
 						<developmentBranch>development</developmentBranch>
@@ -162,7 +159,7 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.8</version>
+				<version>1.6.13</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>ossrh</serverId>

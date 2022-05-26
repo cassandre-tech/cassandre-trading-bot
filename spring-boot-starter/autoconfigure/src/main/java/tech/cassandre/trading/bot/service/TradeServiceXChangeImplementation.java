@@ -1,5 +1,6 @@
 package tech.cassandre.trading.bot.service;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -16,7 +17,7 @@ import tech.cassandre.trading.bot.dto.trade.TradeDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyAmountDTO;
 import tech.cassandre.trading.bot.dto.util.CurrencyPairDTO;
 import tech.cassandre.trading.bot.repository.OrderRepository;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 import tech.cassandre.trading.bot.util.xchange.CancelOrderParams;
 
@@ -39,7 +40,7 @@ import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.ASK;
 import static tech.cassandre.trading.bot.dto.trade.OrderTypeDTO.BID;
 
 /**
- * Trade service - XChange implementation.
+ * Trade service - XChange implementation of {@link TradeService}.
  */
 public class TradeServiceXChangeImplementation extends BaseService implements TradeService {
 
@@ -74,6 +75,40 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         this.tradeService = newTradeService;
     }
 
+    @Override
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createBuyMarketOrder(@NonNull final CassandreStrategyInterface strategy,
+                                                       @NonNull final CurrencyPairDTO currencyPair,
+                                                       @NonNull final BigDecimal amount) {
+        return createMarketOrder(strategy, BID, currencyPair, amount);
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createSellMarketOrder(@NonNull final CassandreStrategyInterface strategy,
+                                                        @NonNull final CurrencyPairDTO currencyPair,
+                                                        @NonNull final BigDecimal amount) {
+        return createMarketOrder(strategy, ASK, currencyPair, amount);
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createBuyLimitOrder(@NonNull final CassandreStrategyInterface strategy,
+                                                      @NonNull final CurrencyPairDTO currencyPair,
+                                                      @NonNull final BigDecimal amount,
+                                                      @NonNull final BigDecimal limitPrice) {
+        return createLimitOrder(strategy, BID, currencyPair, amount, limitPrice);
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public OrderCreationResultDTO createSellLimitOrder(@NonNull final CassandreStrategyInterface strategy,
+                                                       @NonNull final CurrencyPairDTO currencyPair,
+                                                       @NonNull final BigDecimal amount,
+                                                       @NonNull final BigDecimal limitPrice) {
+        return createLimitOrder(strategy, ASK, currencyPair, amount, limitPrice);
+    }
+
     /**
      * Creates market order.
      *
@@ -83,7 +118,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
      * @param amount       amount
      * @return order creation result
      */
-    private OrderCreationResultDTO createMarketOrder(final GenericCassandreStrategy strategy,
+    private OrderCreationResultDTO createMarketOrder(final CassandreStrategyInterface strategy,
                                                      final OrderTypeDTO orderTypeDTO,
                                                      final CurrencyPairDTO currencyPair,
                                                      final BigDecimal amount) {
@@ -99,11 +134,11 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     currencyPair,
                     amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR));
 
-            // Sending the order.
+            // We create the order in database with the PENDING_NEW status.
             OrderDTO order = OrderDTO.builder()
                     .orderId(tradeService.placeMarketOrder(m))
                     .type(orderTypeDTO)
-                    .strategy(strategy.getStrategyDTO())
+                    .strategy(strategy.getConfiguration().getStrategyDTO())
                     .currencyPair(currencyPair)
                     .amount(CurrencyAmountDTO.builder()
                             .value(amount)
@@ -134,10 +169,10 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("Order created: {}", result);
             return result;
         } catch (Exception e) {
-            final String error = "TradeService - Error calling createMarketOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
+            final String errorMessage = "Error calling createMarketOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
             e.printStackTrace();
-            logger.error(error);
-            return new OrderCreationResultDTO(error, e);
+            logger.error(errorMessage);
+            return new OrderCreationResultDTO(errorMessage, e);
         }
     }
 
@@ -151,7 +186,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
      * @param limitPrice   In a BID this is the highest acceptable price, in an ASK this is the lowest acceptable price
      * @return order creation result
      */
-    private OrderCreationResultDTO createLimitOrder(final GenericCassandreStrategy strategy,
+    private OrderCreationResultDTO createLimitOrder(final CassandreStrategyInterface strategy,
                                                     final OrderTypeDTO orderTypeDTO,
                                                     final CurrencyPairDTO currencyPair,
                                                     final BigDecimal amount,
@@ -169,11 +204,11 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                     currencyPair,
                     amount.setScale(currencyPair.getBaseCurrencyPrecision(), FLOOR));
 
-            // Sending & creating the order.
+            // We create the order in database with the PENDING_NEW status.
             OrderDTO order = OrderDTO.builder()
                     .orderId(tradeService.placeLimitOrder(l))
                     .type(orderTypeDTO)
-                    .strategy(strategy.getStrategyDTO())
+                    .strategy(strategy.getConfiguration().getStrategyDTO())
                     .currencyPair(currencyPair)
                     .amount(CurrencyAmountDTO.builder()
                             .value(amount)
@@ -208,75 +243,36 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
             logger.debug("Order creation result: {}", result);
             return result;
         } catch (Exception e) {
-            final String error = "TradeService - Error calling createLimitOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
+            final String errorMessage = "Error calling createLimitOrder for " + amount + " " + currencyPair + ": " + e.getMessage();
             e.printStackTrace();
-            logger.error(error);
-            return new OrderCreationResultDTO(error, e);
+            logger.error(errorMessage);
+            return new OrderCreationResultDTO(errorMessage, e);
         }
     }
 
     @Override
     @SuppressWarnings("checkstyle:DesignForExtension")
-    public OrderCreationResultDTO createBuyMarketOrder(final GenericCassandreStrategy strategy,
-                                                       final CurrencyPairDTO currencyPair,
-                                                       final BigDecimal amount) {
-        return createMarketOrder(strategy, BID, currencyPair, amount);
-    }
+    public boolean cancelOrder(final long orderUid) {
+        logger.debug("Canceling order with uid {}", orderUid);
+        try {
+            // We retrieve the order information.
+            final Optional<Order> order = orderRepository.findById(orderUid);
+            if (order.isPresent()) {
+                OrderDTO orderDTO = ORDER_MAPPER.mapToOrderDTO(order.get());
 
-    @Override
-    @SuppressWarnings("checkstyle:DesignForExtension")
-    public OrderCreationResultDTO createSellMarketOrder(final GenericCassandreStrategy strategy,
-                                                        final CurrencyPairDTO currencyPair,
-                                                        final BigDecimal amount) {
-        return createMarketOrder(strategy, ASK, currencyPair, amount);
-    }
-
-    @Override
-    @SuppressWarnings("checkstyle:DesignForExtension")
-    public OrderCreationResultDTO createBuyLimitOrder(final GenericCassandreStrategy strategy,
-                                                      final CurrencyPairDTO currencyPair,
-                                                      final BigDecimal amount,
-                                                      final BigDecimal limitPrice) {
-        return createLimitOrder(strategy, BID, currencyPair, amount, limitPrice);
-    }
-
-    @Override
-    @SuppressWarnings("checkstyle:DesignForExtension")
-    public OrderCreationResultDTO createSellLimitOrder(final GenericCassandreStrategy strategy,
-                                                       final CurrencyPairDTO currencyPair,
-                                                       final BigDecimal amount,
-                                                       final BigDecimal limitPrice) {
-        return createLimitOrder(strategy, ASK, currencyPair, amount, limitPrice);
-    }
-
-    @Override
-    @SuppressWarnings("checkstyle:DesignForExtension")
-    public boolean cancelOrder(final String orderId) {
-        logger.debug("Canceling order {}", orderId);
-        if (orderId != null) {
-            try {
-                // We retrieve the order information.
-                final Optional<Order> order = orderRepository.findByOrderId(orderId);
-                if (order.isPresent()) {
-                    OrderDTO orderDTO = ORDER_MAPPER.mapToOrderDTO(order.get());
-
-                    // Using a special object to specify which order to cancel.
-                    final CancelOrderParams cancelOrderParams = new CancelOrderParams(
-                            orderId,
-                            CURRENCY_MAPPER.mapToCurrencyPair(orderDTO.getCurrencyPair()),
-                            UTIL_MAPPER.mapToOrderType(orderDTO.getType()));
-                    logger.debug("Canceling order {}", orderId);
-                    return tradeService.cancelOrder(cancelOrderParams);
-                } else {
-                    logger.error(" Error canceling order {}: order not found in database", orderId);
-                    return false;
-                }
-            } catch (Exception e) {
-                logger.error("Error canceling order {}: {}", orderId, e.getMessage());
+                // Using a special object to specify which order to cancel.
+                final CancelOrderParams cancelOrderParams = new CancelOrderParams(
+                        order.get().getOrderId(),
+                        CURRENCY_MAPPER.mapToCurrencyPair(orderDTO.getCurrencyPair()),
+                        UTIL_MAPPER.mapToOrderType(orderDTO.getType()));
+                logger.debug("Canceling order {}", order.get().getOrderId());
+                return tradeService.cancelOrder(cancelOrderParams);
+            } else {
+                logger.error("Error canceling order with uid {}: order not found in database", orderUid);
                 return false;
             }
-        } else {
-            logger.error("Error canceling order, order id provided is null");
+        } catch (Exception e) {
+            logger.error("Error canceling order {}: {}", orderUid, e.getMessage());
             return false;
         }
     }
@@ -287,6 +283,9 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
         logger.debug("Getting orders from exchange");
         try {
             // We check if we have some local orders to push.
+            // When we create them in local, they have the PENDING_NEW status.
+            // We retrieve them all to return them in localOrders.
+            // And for each, we update their status to NEW.
             final Set<OrderDTO> localOrders = orderRepository.findByStatus(PENDING_NEW)
                     .stream()
                     .map(ORDER_MAPPER::mapToOrderDTO)
@@ -310,11 +309,12 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                             .peek(orderDTO -> logger.debug("Remote order retrieved: {}", orderDTO))
                             .collect(Collectors.toCollection(LinkedHashSet::new));
                 } catch (NotAvailableFromExchangeException e) {
-                    // If the classical call to getOpenOrders() is not implemented, we use the specific parameters.
+                    // If the classical call to getOpenOrders() is not implemented, we use the specific parameters that asks for currency pair.
                     Set<OrderDTO> orders = new LinkedHashSet<>();
                     orderRepository.findAll()
                             .stream()
                             .map(ORDER_MAPPER::mapToOrderDTO)
+                            // We only ask for currency pairs of the non fulfilled orders.
                             .filter(orderDTO -> !orderDTO.isFulfilled())
                             .map(OrderDTO::getCurrencyPair)
                             .distinct()
@@ -348,6 +348,7 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
     @SuppressWarnings("checkstyle:DesignForExtension")
     public Set<TradeDTO> getTrades() {
         logger.debug("Getting trades from exchange");
+
         // Query trades from the last 24 jours (24 hours is the maximum because of Binance limitations).
         TradeHistoryParamsAll params = new TradeHistoryParamsAll();
         Date now = new Date();
@@ -364,8 +365,8 @@ public class TradeServiceXChangeImplementation extends BaseService implements Tr
                 .map(OrderDTO::getCurrencyPair)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        Set<TradeDTO> results = new LinkedHashSet<>();
         // We set currency pairs on each param (required for exchanges like Gemini or Binance).
+        Set<TradeDTO> results = new LinkedHashSet<>();
         if (!currencyPairs.isEmpty()) {
             currencyPairs.forEach(pair -> {
                 params.setCurrencyPair(CURRENCY_MAPPER.mapToCurrencyPair(pair));

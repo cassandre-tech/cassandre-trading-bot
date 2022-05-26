@@ -23,7 +23,7 @@ public interface TradeMapper {
     // XChange to DTO.
 
     @Mapping(source = "id", target = "tradeId")
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "uid", ignore = true)
     @Mapping(source = "source", target = "amount", qualifiedByName = "mapUserTradeToTradeDTOAmount")
     @Mapping(source = "source", target = "price", qualifiedByName = "mapUserTradeToTradeDTOPrice")
     @Mapping(source = "source", target = "fee", qualifiedByName = "mapUserTradeToTradeDTOFee")
@@ -75,7 +75,7 @@ public interface TradeMapper {
     // =================================================================================================================
     // DTO to domain.
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "uid", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "updatedOn", ignore = true)
     @Mapping(target = "order", ignore = true)

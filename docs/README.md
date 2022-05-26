@@ -1,8 +1,4 @@
-# Web site management.
-[https://trading-bot.cassandre.tech/](https://trading-bot.cassandre.tech/)
+# Cassandre trading bot
 
-## Run the website
-```
-cd docs
-yarn docs:dev
-```
+## How to run documentation
+`yarn docs:dev`

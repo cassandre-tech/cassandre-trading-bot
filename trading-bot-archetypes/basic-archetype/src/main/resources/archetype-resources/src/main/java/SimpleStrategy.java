@@ -29,7 +29,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 	@Override
 	public Set<CurrencyPairDTO> getRequestedCurrencyPairs() {
-		// We only ask BTC/USDT tickers (Base currency : BTC / Quote currency : USDT).
+		// We only ask for BTC/USDT tickers (Base currency : BTC / Quote currency : USDT).
 		return Set.of(new CurrencyPairDTO(BTC, USDT));
 	}
 
@@ -40,7 +40,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 			// If there is only one on the exchange, we choose this one.
 			return accounts.stream().findFirst();
 		} else {
-			// If there are several accounts on the exchange, we choose the one with the name "trade".
+			// If there are several accounts on the exchange, we choose the one whose name is "trade".
 			return accounts.stream()
 					.filter(a -> "trade".equalsIgnoreCase(a.getName()))
 					.findFirst();
@@ -48,39 +48,39 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 	}
 
 	@Override
-	public final void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
+	public void onAccountsUpdates(final Map<String, AccountDTO> accounts) {
 		// Here, we will receive an AccountDTO each time there is a change on your account.
-		accounts.values().forEach(account -> System.out.println("Received information about an account : " + account));
+		accounts.values().forEach(account -> System.out.println("Received information about an account: " + account));
 	}
 
 	@Override
-	public final void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
+	public void onTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
 		// Here we will receive all tickers we required from the exchange.
-		tickers.values().forEach(ticker -> System.out.println("Received information about a ticker : " + ticker));
+		tickers.values().forEach(ticker -> System.out.println("Received information about a ticker: " + ticker));
 	}
 
 	@Override
-	public final void onOrdersUpdates(final Map<String, OrderDTO> orders) {
+	public void onOrdersUpdates(final Map<String, OrderDTO> orders) {
 		// Here, we will receive an OrderDTO each time order data has changed on the exchange.
-		orders.values().forEach(order -> System.out.println("Received information about an order : " + order));
+		orders.values().forEach(order -> System.out.println("Received information about an order: " + order));
 	}
 
 	@Override
 	public void onTradesUpdates(final Map<String, TradeDTO> trades) {
 		// Here, we will receive a TradeDTO each time trade data has changed on the exchange.
-		trades.values().forEach(trade -> System.out.println("Received information about a trade : " + trade));
+		trades.values().forEach(trade -> System.out.println("Received information about a trade: " + trade));
 	}
 
 	@Override
 	public void onPositionsUpdates(final Map<Long, PositionDTO> positions) {
 		// Here, we will receive a PositionDTO each time a position has changed.
-		positions.values().forEach(position -> System.out.println("Received information about a position : " + position));
+		positions.values().forEach(position -> System.out.println("Received information about a position: " + position));
 	}
 
 	@Override
 	public void onPositionsStatusUpdates(final Map<Long, PositionDTO> positions) {
 		// Here, we will receive a PositionDTO each time a position status has changed.
-		positions.values().forEach(position -> System.out.println("Received information about a position status : " + position));
+		positions.values().forEach(position -> System.out.println("Received information about a position status: " + position));
 	}
 
 }

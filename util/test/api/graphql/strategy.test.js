@@ -16,7 +16,7 @@ test("Getting a strategy", () => {
 		headers: { "Content-Type": "application/json", "X-API-Key": "667341fd-d4c2-4bc2-99af-0a2a697aa134" },
 		body: JSON.stringify({ query: 
 			`query {
-				strategy(id:1){ strategyId name }
+				strategy(uid:1){ strategyId name }
 			}`
 		}),
 	})

@@ -14,9 +14,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 import tech.cassandre.trading.bot.dto.user.AccountDTO;
 import tech.cassandre.trading.bot.dto.user.UserDTO;
-import tech.cassandre.trading.bot.strategy.CassandreStrategy;
-import tech.cassandre.trading.bot.strategy.CassandreStrategyInterface;
-import tech.cassandre.trading.bot.strategy.GenericCassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategy;
 import tech.cassandre.trading.bot.util.base.service.BaseService;
 
 import java.io.FileNotFoundException;
@@ -120,7 +119,7 @@ public class UserServiceDryModeAOP extends BaseService {
      * @param currency currency
      * @param amount   amount
      */
-    public void addToBalance(final GenericCassandreStrategy strategy, final Currency currency, final BigDecimal amount) {
+    public void addToBalance(final CassandreStrategy strategy, final Currency currency, final BigDecimal amount) {
         final Optional<AccountDTO> tradeAccount = strategy.getTradeAccount();
         if (tradeAccount.isEmpty()) {
             logger.error("Trading account not found!");
@@ -146,7 +145,7 @@ public class UserServiceDryModeAOP extends BaseService {
                             }
                         });
 
-                        // if for the trading account, we don't have a balance for the currency we are trying to add/remove
+                        // If for the trading account, we don't have a balance for the currency we are trying to add/remove
                         // amounts, then we create a new balance.
                         if (name.equals(tradeAccount.get().getName()) && balances.get(currency) == null) {
                             balances.put(currency, new Balance(currency, amount));
@@ -160,7 +159,7 @@ public class UserServiceDryModeAOP extends BaseService {
             accountInfo = new AccountInfo(USER_ID, wallets);
             // Updates all strategies.
             final UserDTO userDTO = ACCOUNT_MAPPER.mapToUserDTO(accountInfo);
-            applicationContext.getBeansWithAnnotation(CassandreStrategy.class)
+            applicationContext.getBeansWithAnnotation(tech.cassandre.trading.bot.strategy.CassandreStrategy.class)
                     .values()  // We get the list of all required cp of all strategies.
                     .stream()
                     .map(o -> (CassandreStrategyInterface) o)

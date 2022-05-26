@@ -151,6 +151,26 @@
                     <forkCount>1</forkCount>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${maven.jacoco.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- attached to Maven test phase -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Jar (classes, sources & documentation)-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -181,6 +201,13 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>${maven.lombok.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>${lombok.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
                     <outputDirectory>${project.build.directory}/delombok</outputDirectory>
@@ -222,7 +249,7 @@
     <parent>
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
-        <version>5.0.8</version>
+        <version>6.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->

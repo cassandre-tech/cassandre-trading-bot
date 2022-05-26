@@ -22,9 +22,10 @@ import java.util.Objects;
 
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.PRECISION;
 import static tech.cassandre.trading.bot.configuration.DatabaseAutoConfiguration.SCALE;
+import static tech.cassandre.trading.bot.dto.util.CurrencyPairDTO.CURRENCY_PAIR_SEPARATOR;
 
 /**
- * Imported tickers.
+ * Imported tickers (map "IMPORTED_TICKERS" table).
  */
 @Getter
 @Setter
@@ -36,8 +37,8 @@ public class ImportedTicker {
 
     /** Technical ID. */
     @Id
-    @Column(name = "ID")
-    private Long id;
+    @Column(name = "UID")
+    private Long uid;
 
     /** The currency-pair. */
     @CsvBindByName(column = "CURRENCY_PAIR")
@@ -111,9 +112,20 @@ public class ImportedTicker {
      */
     public CurrencyPairDTO getCurrencyPairDTO() {
         if (currencyPair != null) {
-            return new CurrencyPairDTO(currencyPair);
+            return new CurrencyPairDTO(currencyPair.replaceAll("-", CURRENCY_PAIR_SEPARATOR));
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Setter currencyPair.
+     *
+     * @param newCurrencyPair the currencyPair to set
+     */
+    public void setCurrencyPair(final String newCurrencyPair) {
+        if (newCurrencyPair != null) {
+            currencyPair = newCurrencyPair.replaceAll("-", CURRENCY_PAIR_SEPARATOR);
         }
     }
 
@@ -127,14 +139,14 @@ public class ImportedTicker {
             return false;
         }
         ImportedTicker that = (ImportedTicker) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(uid, that.uid);
     }
 
     @Override
     @ExcludeFromCoverageGeneratedReport
     public final int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(uid)
                 .toHashCode();
     }
 

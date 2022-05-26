@@ -17,11 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
+import static tech.cassandre.trading.bot.test.util.junit.configuration.ConfigurationExtension.PARAMETER_EXCHANGE_DRY;
 
 @SpringBootTest
 @DisplayName("Domain - Strategy - After restart")
 @Configuration({
-        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/backup.yaml")
+        @Property(key = PARAMETER_EXCHANGE_DRY, value = "true"),
+        @Property(key = "spring.liquibase.change-log", value = "classpath:db/test/core/backup.yaml"),
 })
 @ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
@@ -32,11 +34,11 @@ public class StrategyExistingTest {
 
     @Test
     @DisplayName("Check saved strategy in database when bot restarted")
-    public void checkLoadOrderFromDatabase() {
+    public void checkSavedStrategyAfterRestart() {
         // Test existing strategy.
         final Optional<Strategy> strategy = strategyRepository.findByStrategyId("01");
         assertTrue(strategy.isPresent());
-        assertEquals(1, strategy.get().getId());
+        assertEquals(1, strategy.get().getUid());
         assertEquals("01", strategy.get().getStrategyId());
         assertEquals("Testable strategy", strategy.get().getName());
 

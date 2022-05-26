@@ -17,13 +17,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @TestConfiguration
+@SuppressWarnings("unused")
 public class PositionLongFluxTestMock extends BaseMock {
 
     @Override
     public org.knowm.xchange.service.trade.TradeService getXChangeTradeServiceMock() throws IOException {
         org.knowm.xchange.service.trade.TradeService mock = mock(org.knowm.xchange.service.trade.TradeService.class);
 
-        // No trades or orders returned - they will be directly emitted by the test.
+        // No trades or orders returned - they will be directly emitted during the test.
         given(mock.getTradeHistory(any())).willReturn(new UserTrades(Collections.emptyList(), SortByTimestamp));
         given(mock.getOpenOrders()).willReturn(new OpenOrders(Collections.emptyList()));
 

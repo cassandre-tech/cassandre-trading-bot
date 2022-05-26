@@ -244,7 +244,7 @@ public class OrderDTOTest {
 		assertNotEquals(order01, order13);
 		assertNotEquals(order13, order01);
 
-		// Tests for null objects.
+		// Tests for empty objects.
 		OrderDTO order15 = OrderDTO.builder().build();
 		OrderDTO order16 = OrderDTO.builder().build();
 		assertEquals(order15, order16);

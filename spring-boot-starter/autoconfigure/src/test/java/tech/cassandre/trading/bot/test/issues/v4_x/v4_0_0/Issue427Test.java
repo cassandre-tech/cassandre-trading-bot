@@ -33,23 +33,23 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
  * Issue : https://github.com/cassandre-tech/cassandre-trading-bot/issues/427
  */
 @SpringBootTest
-@ActiveProfiles("schedule-disabled")
 @DisplayName("Github issue 427")
 @Configuration({
         @Property(key = PARAMETER_EXCHANGE_DRY, value = "true")
 })
+@ActiveProfiles("schedule-disabled")
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 @Import(Issue427TestMock.class)
 public class Issue427Test extends BaseTest {
 
     @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
     private OrderFlux orderFlux;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     @Test
-    @DisplayName("Save local order before saving distant order")
+    @DisplayName("Local order must be saved before saving distant order")
     public void checkSaveLocalOrderBeforeRemote() throws InterruptedException {
         // Check that a distant order is not saved before the local order is created.
 
@@ -57,7 +57,7 @@ public class Issue427Test extends BaseTest {
         orderFlux.update();
 
         // We wait a bit, the order should not be here as the local order is not saved.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(0, orderRepository.count());
 
         // The local order is saved
@@ -77,7 +77,7 @@ public class Issue427Test extends BaseTest {
                 .build());
 
         // We wait a bit, the local order should be here.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(1, orderRepository.count());
         Optional<Order> o = orderRepository.findByOrderId("ORDER_000001");
         assertTrue(o.isPresent());
@@ -87,7 +87,7 @@ public class Issue427Test extends BaseTest {
         orderFlux.update();
 
         // We wait a bit, the order in database should be updated with the distant one.
-        TimeUnit.SECONDS.sleep(WAITING_TIME_IN_SECONDS);
+        TimeUnit.SECONDS.sleep(5L);
         assertEquals(1, orderRepository.count());
         o = orderRepository.findByOrderId("ORDER_000001");
         assertTrue(o.isPresent());

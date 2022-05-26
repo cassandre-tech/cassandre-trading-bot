@@ -1,0 +1,96 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="straumat" id="changelog-6.0.0">
+        <validCheckSum>ANY</validCheckSum>
+
+        <!-- Dropping strategy type -->
+        <dropColumn tableName="STRATEGIES"
+                    columnName="TYPE"/>
+
+        <!-- Dropping table BACKTESTING_TICKERS as we are now using BACKTESTING_CANDLES -->
+        <dropIndex tableName="BACKTESTING_TICKERS"
+                   indexName="IDX_BACKTESTING_TICKERS_RESPONSE_SEQUENCE_ID"/>
+        <dropTable tableName="BACKTESTING_TICKERS"/>
+
+        <!-- Table used to store candles for backtesting -->
+        <createTable tableName="BACKTESTING_CANDLES">
+
+            <!-- Primary key -->
+            <column name="TEST_SESSION_ID" type="VARCHAR(255)"
+                    remarks="Defines the test session id (To allow parallel tests)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="BACKTESTING_CANDLES_PRIMARY_KEY"/>
+            </column>
+            <column name="RESPONSE_SEQUENCE_ID" type="BIGINT"
+                    remarks="Defines to which client request those responses are corresponding to">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="BACKTESTING_CANDLES_PRIMARY_KEY"/>
+            </column>
+            <column name="CURRENCY_PAIR" type="VARCHAR(255)"
+                    remarks="Defines the currency pair">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="BACKTESTING_CANDLES_PRIMARY_KEY"/>
+            </column>
+
+            <!-- Candle fields -->
+            <column name="OPEN" type="numeric(16, 8)"
+                    remarks="Opening price (first trade) in the bucket interval"/>
+            <column name="HIGH" type="numeric(16, 8)"
+                    remarks="Highest price during the bucket interval"/>
+            <column name="LOW" type="numeric(16, 8)"
+                    remarks="Lowest price during the bucket interval"/>
+            <column name="CLOSE" type="numeric(16, 8)"
+                    remarks="Closing price (last trade) in the bucket interval"/>
+            <column name="VOLUME" type="numeric(30, 12)"
+                    remarks="Volume of trading activity during the bucket interval"/>
+            <column name="TIMESTAMP" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Bucket start time"/>
+
+        </createTable>
+
+        <!-- Index on BACKTESTING_CANDLES (TEST_SESSION_ID/RESPONSE_SEQUENCE_ID) -->
+        <createIndex clustered="false"
+                     indexName="IDX_BACKTESTING_CANDLES_RESPONSE_SEQUENCE_ID"
+                     tableName="BACKTESTING_CANDLES"
+                     unique="false">
+            <column descending="true" name="TEST_SESSION_ID"/>
+            <column descending="true" name="RESPONSE_SEQUENCE_ID"/>
+        </createIndex>
+
+        <!-- Table used to store imported candles -->
+        <createTable tableName="IMPORTED_CANDLES">
+
+            <!-- Primary key -->
+            <column name="UID" type="BIGINT"
+                    remarks="Technical ID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="IMPORTED_CANDLES_PRIMARY_KEY"/>
+            </column>
+
+            <!-- Candle fields -->
+            <column name="CURRENCY_PAIR" type="VARCHAR(255)"
+                    remarks="Defines the currency pair"/>
+            <column name="OPEN" type="numeric(16, 8)"
+                    remarks="Opening price (first trade) in the bucket interval"/>
+            <column name="HIGH" type="numeric(16, 8)"
+                    remarks="Highest price during the bucket interval"/>
+            <column name="LOW" type="numeric(16, 8)"
+                    remarks="Lowest price during the bucket interval"/>
+            <column name="CLOSE" type="numeric(16, 8)"
+                    remarks="Closing price (last trade) in the bucket interval"/>
+            <column name="VOLUME" type="numeric(30, 12)"
+                    remarks="Volume of trading activity during the bucket interval"/>
+            <column name="TIMESTAMP" type="TIMESTAMP WITH TIME ZONE"
+                    remarks="Bucket start time"/>
+
+        </createTable>
+
+        <!-- Index on IMPORTED_CANDLES (CURRENCY_PAIR/TIMESTAMP) -->
+        <createIndex clustered="false"
+                     indexName="IDX_IMPORTED_CANDLES_CURRENCY_PAIR_AND_TIMESTAMP"
+                     tableName="IMPORTED_CANDLES"
+                     unique="false">
+            <column descending="true" name="CURRENCY_PAIR"/>
+            <column descending="true" name="TIMESTAMP"/>
+        </createIndex>
+
+    </changeSet>
+</databaseChangeLog>

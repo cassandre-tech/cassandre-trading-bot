@@ -31,7 +31,7 @@ public class Issue483Test extends BaseTest {
     private TestableCassandreStrategy strategy;
 
     @Test
-    @DisplayName("Check onPositionStatusUpdate not called after restart")
+    @DisplayName("Check gains calculation")
     public void checkGainsCalculation() {
         // In the bug, position short n°24 had no gain.
         final Optional<PositionDTO> position = strategy.getPositionByPositionId(24);

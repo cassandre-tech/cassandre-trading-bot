@@ -63,13 +63,6 @@
             <version>${xchange.version}</version>
         </dependency>
 
-        <!-- Ta4j -->
-        <dependency>
-            <groupId>org.ta4j</groupId>
-            <artifactId>ta4j-core</artifactId>
-            <version>${ta4j.version}</version>
-        </dependency>
-
         <!-- Util -->
         <dependency>
             <groupId>com.github.vladimir-bukhtoyarov</groupId>
@@ -328,6 +321,13 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>${maven.lombok.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>${lombok.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
                     <outputDirectory>${project.build.directory}/delombok</outputDirectory>
@@ -365,43 +365,11 @@
     <!-- =========================================================================================================== -->
 
     <!-- =========================================================================================================== -->
-    <!-- Profiles -->
-    <profiles>
-        <profile>
-            <id>integration</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <properties>
-                                <configurationParameters>
-                                    junit.jupiter.extensions.autodetection.enabled = true
-                                </configurationParameters>
-                            </properties>
-                            <reuseForks>false</reuseForks>
-                            <forkCount>1</forkCount>
-                            <includes>
-                                <include>**/integration/**</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/core/**</exclude>
-                                <exclude>**/issues/**</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-    <!-- =========================================================================================================== -->
-
-    <!-- =========================================================================================================== -->
     <!-- Parent -->
     <parent>
         <groupId>tech.cassandre.trading.bot</groupId>
         <artifactId>cassandre-trading-bot-project</artifactId>
-        <version>5.0.8</version>
+        <version>6.0.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <!-- =========================================================================================================== -->

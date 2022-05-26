@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import tech.cassandre.trading.bot.api.graphql.test.util.base.BaseTest;
 import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
@@ -33,7 +34,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static java.math.BigDecimal.ZERO;
 import static org.knowm.xchange.dto.marketdata.Trades.TradeSortType.SortByTimestamp;
@@ -178,10 +178,22 @@ public class BaseMock extends BaseTest {
                 new Date()                  // Timestamp.
         );
 
+        Balance account01Balance2 = new Balance(
+                Currency.ETH,               // Currency.
+                new BigDecimal("11"),    // Total.
+                new BigDecimal("22"),    // Available.
+                new BigDecimal("33"),    // Frozen.
+                new BigDecimal("44"),    // Borrowed
+                new BigDecimal("55"),    // Loaned.
+                new BigDecimal("66"),    // Withdrawing.
+                new BigDecimal("77"),    // Depositing.
+                new Date()                  // Timestamp.
+        );
+
         return new AccountInfo(
                 new Wallet("trade",
                         "trade account name",
-                        List.of(account01Balance1),
+                        List.of(account01Balance1, account01Balance2),
                         Collections.emptySet(),
                         ZERO,
                         ZERO),
@@ -192,22 +204,6 @@ public class BaseMock extends BaseTest {
                         ZERO,
                         ZERO)
         );
-    }
-
-    /**
-     * Util method to return a generated ticker.
-     *
-     * @param instrument instrument (currency pair)
-     * @param value      value for all fields
-     * @return ticket
-     */
-    protected static Ticker getGeneratedTicker(final Instrument instrument, final BigDecimal value) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return getGeneratedTicker(new Date(), instrument, value);
     }
 
     /**

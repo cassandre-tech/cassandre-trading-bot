@@ -40,20 +40,21 @@ import static tech.cassandre.trading.bot.test.util.junit.configuration.Configura
 public class PositionServiceTest extends BaseTest {
 
     @Autowired
+    private TickerFlux tickerFlux;
+
+    @Autowired
     private PositionService positionService;
 
     @Autowired
     private TestableCassandreStrategy strategy;
 
-    @Autowired
-    private TickerFlux tickerFlux;
-
     @Test
     @DisplayName("Check position lifecycle")
     public void checkPositionLifecycle() {
-        assertTrue(strategy.isRunningInDryMode());
+        assertTrue(strategy.getConfiguration().isDryMode());
 
-        // First tickers - cp1 & cp2 (dry mode).
+        // =============================================================================================================
+        // First tickers (dry mode).
         // ETH/BTC - 0.2.
         // ETH/USDT - 0.3.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.2")).build());
@@ -68,11 +69,11 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopGainPercentage(100f).build());
         assertTrue(position1Result.isSuccessful());
         assertEquals("DRY_ORDER_000000001", position1Result.getPosition().getOpeningOrder().getOrderId());
-        final long position1Id = position1Result.getPosition().getId();
+        final long position1Id = position1Result.getPosition().getUid();
 
         // After position creation, its status is OPENING but order and trades arrives from dry mode.
         // One position status update because of OPENING, one position status update because of OPENED.
-        // For position updates.
+        // For position updates:
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
@@ -86,11 +87,11 @@ public class PositionServiceTest extends BaseTest {
                 PositionRulesDTO.builder().stopLossPercentage(20f).build());
         assertTrue(position2Result.isSuccessful());
         assertEquals("DRY_ORDER_000000002", position2Result.getPosition().getOpeningOrder().getOrderId());
-        final long position2Id = position2Result.getPosition().getId();
+        final long position2Id = position2Result.getPosition().getUid();
 
         // After position creation, its status is OPENING
         // One position status update because of OPENING, one position status update because of OPENED.
-        // For position updates.
+        // For position updates:
         // First: because of position creation.
         // Second: order update with status to NEW.
         // Third: trade corresponding to the order arrives.
@@ -125,26 +126,32 @@ public class PositionServiceTest extends BaseTest {
         // Position 1 (ETH/BTC, 0.0001, 100% stop gain, price of 0.2)
         // Position 2 (ETH_USDT, 0.0002, 20% stop loss, price of 0.3)
         // ETH/BTC - 0.4 - 100% gain.
-        // ETH/USDT - 0.1 - 70% loss.
+        // ETH/USDT - 0.1 - 66.67% loss.
         // Should close position 2.
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_BTC).last(new BigDecimal("0.5")).build());
         tickerFlux.emitValue(TickerDTO.builder().currencyPair(ETH_USDT).last(new BigDecimal("0.1")).build());
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position1Id).getStatus()));
         await().untilAsserted(() -> assertEquals(CLOSED, getPositionDTO(position2Id).getStatus()));
+
+        // Check gains.
+        // Because of the dry mode, the price in closing order trade is changed so position respect the rules.
+        // For position 2, with ETH/USDT at 0.1, we should have a 66.67% loss but our rules is 20% loss.
+        assertEquals(100f, getPositionDTO(position1Id).getGain().getPercentage());
+        assertEquals(-20f, getPositionDTO(position2Id).getGain().getPercentage());
     }
 
     /**
      * Retrieve position from database.
      *
-     * @param id position id
+     * @param uid position uid
      * @return position
      */
-    private PositionDTO getPositionDTO(final long id) {
-        final Optional<PositionDTO> p = positionService.getPositionById(id);
+    private PositionDTO getPositionDTO(final long uid) {
+        final Optional<PositionDTO> p = positionService.getPositionByUid(uid);
         if (p.isPresent()) {
             return p.get();
         } else {
-            throw new PositionException("Position not found : " + id);
+            throw new PositionException("Position not found : " + uid);
         }
     }
 

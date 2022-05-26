@@ -9,7 +9,7 @@ import java.text.DecimalFormat;
 
 /**
  * Position rules for {@link PositionDTO}.
- * It is used to know when cassandre should close a position.
+ * This class is used to tell cassandre on which rules it should close a position.
  * Supported rules:
  * - Stop gain in percentage.
  * - Stop loss in percentage.
@@ -81,10 +81,12 @@ public class PositionRulesDTO {
 
     @Override
     public final String toString() {
+        // Defines the decimal format to display gains.
         DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(2);
         df.setMinimumFractionDigits(0);
 
+        // Returns the gain depending on what has been selected.
         if (isStopGainPercentageSet() && isStopLossPercentageSet()) {
             return "Stop gain at " + df.format(getStopGainPercentage()) + " % / Stop loss at " + df.format(getStopLossPercentage()) + " %";
         }

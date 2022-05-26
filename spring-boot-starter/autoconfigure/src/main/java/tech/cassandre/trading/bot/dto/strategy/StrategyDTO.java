@@ -22,18 +22,15 @@ import static lombok.AccessLevel.PRIVATE;
 public class StrategyDTO {
 
     /** Technical id. */
-    Long id;
+    Long uid;
 
-    /** An identifier that uniquely identifies the strategy. */
+    /** An identifier that uniquely identifies the strategy - Comes from the Java annotation. */
     String strategyId;
 
-    /** Strategy type. */
-    StrategyTypeDTO type;
-
-    /** Strategy name. */
+    /** Strategy name - Comes from the Java annotation. */
     String name;
 
-    /** Last position id used. */
+    /** Last strategyId used in database - Used to generate the next strategyId when there is a creation. */
     @ToString.Exclude
     AtomicLong lastPositionIdUsed = new AtomicLong();
 
@@ -57,7 +54,8 @@ public class StrategyDTO {
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final boolean equals(final Object o) {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -66,17 +64,17 @@ public class StrategyDTO {
         }
         final StrategyDTO that = (StrategyDTO) o;
         return new EqualsBuilder()
-                .append(this.id, that.id)
+                .append(this.uid, that.uid)
                 .append(this.strategyId, that.strategyId)
-                .append(this.type, that.type)
                 .isEquals();
     }
 
     @Override
     @ExcludeFromCoverageGeneratedReport
-    public final int hashCode() {
+    @SuppressWarnings("checkstyle:DesignForExtension")
+    public int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
+                .append(uid)
                 .toHashCode();
     }
 
