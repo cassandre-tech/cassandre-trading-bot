@@ -1,5 +1,5 @@
 ---
-lang: en-US
+lang: fr-FR
 title: Importer des données historiques
 description: Comment importer des données historiques au démarrage de votre bot and comment les utiliser
 ---

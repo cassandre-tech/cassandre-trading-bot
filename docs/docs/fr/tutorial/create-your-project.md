@@ -1,7 +1,7 @@
 ---
+lang: fr-FR
 title: Créez votre project Cassandre
-lang: en-US
-toc: false
+description: Cassandre tutorial - Créez votre project Cassandre
 ---
 
 # Créez votre project Cassandre
@@ -17,7 +17,7 @@ mvn archetype:generate -B \
 -Dpackage=com.mycompany.bot
 ```
 
-Voici la structure du projet qui a été créé pour vous :
+Voici la structure du projet qui va être créé pour vous :
 ```
 my-trading-bot/
 ├── pom.xml

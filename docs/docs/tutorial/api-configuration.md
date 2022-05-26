@@ -1,8 +1,8 @@
 ---
-title: API configuration
-description: Cassandre GraphQL API allows you to query your data (balances, strategies, orders, trades and positions)
 lang: en-US
-toc: false
+title: API configuration
+description: Cassandre tutorial - Our GraphQL API allows you to query your data (balances, strategies, orders, trades
+and positions)
 ---
 
 # GraphQL API
@@ -16,7 +16,6 @@ Cassandre GraphQL API allows you to query your data (balances, strategies, order
 To deploy the GraphQL API on your bot, just add this spring boot starter to your `pom.xml`:
 
 ```xml
-
 <dependency>
     <groupId>tech.cassandre.trading.bot</groupId>
     <artifactId>cassandre-trading-bot-spring-boot-starter-api-graphql</artifactId>
@@ -29,7 +28,7 @@ To deploy the GraphQL API on your bot, just add this spring boot starter to your
 Start your bot and open a browser to [http://localhost:8080/graphiql](http://localhost:8080/graphiql). GraphiQL is a
 query editor that comes out of the box with the [DGS framework](https://netflix.github.io/dgs/) we are using.
 
-For example, you can try to enter this query to display all your strategies:
+For example, you can enter this query to display all your strategies:
 
 ```
 query {

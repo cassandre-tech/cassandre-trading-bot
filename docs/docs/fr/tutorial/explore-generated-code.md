@@ -1,13 +1,13 @@
 ---
+lang: fr-FR
 title: Explorez le code généré
-lang: en-US
-toc: false
+description: Cassandre tutorial - Explorez le code généré
 ---
 
 # Explorez le code généré
 
 Notre archetype a créé une stratégie que vous trouverez dans le
-fichier `my-trading-bot/src/main/java/com/mycompany/bot/SimpleStrategy.java`:
+fichier `src/main/java/com/mycompany/bot/SimpleStrategy.java`:
 
 ```java
 package com.mycompany.bot;
@@ -95,7 +95,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 
 Une strategy Cassandre doit être annotée avec
 l'annotation [@CassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/CassandreStrategy.html)
-et elle doit héritée
+et elle doit hériter
 de [BasicCassandreStrategy](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/BasicCassandreStrategy.html)
 .
 
@@ -124,6 +124,6 @@ Voici comment cela marche :
 - S'il y a un changement sur l'une de vos positions, la
   méthode [onPositionsUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionsUpdates(java.util.Map))
   sera appelée.
-- S'il y a un changement sur le statut de l'une de vos positions, la
+- S'il y a un changement du statut de l'une de vos positions, la
   méthode [onPositionsStatusUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onPositionsStatusUpdates(java.util.Map))
   sera appelée.

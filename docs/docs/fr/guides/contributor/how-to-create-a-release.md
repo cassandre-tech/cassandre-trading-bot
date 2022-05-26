@@ -1,5 +1,5 @@
 ---
-lang: en-US
+lang: fr-FR
 title: Créer une version
 description: How to create an official Cassandre release
 ---

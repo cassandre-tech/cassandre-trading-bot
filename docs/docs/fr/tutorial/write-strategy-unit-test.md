@@ -1,35 +1,31 @@
 ---
+lang: fr-FR
 title: Écrivez le test de votre stratégie
-lang: en-US
-toc: false
+description: Cassandre tutorial - Écrivez le test de votre stratégie
 ---
 
 # Écrivez le test de votre stratégie
 
-## Qu'est-ce que nous allons faire
+## Qu'est-ce que nous voulons faire ?
 
 Notre objectif est de vérifier que notre stratégie génère des gains. Comme nous ne pouvons pas prédire le futur, nous
-allons tester notre stratégie sur des données historiques et avec un exchange "simulé" fourni par Cassandre (Notre dry
-mode).
-
-TODO ajouter lien
+allons tester notre stratégie sur des données historiques et avec un exchange "simulé" fourni par Cassandre (Notre
+[dry mode](../cassandre_basics/dry-mode-and-backtesting.md)).
 
 Il y a trois étapes :
 
 - Configurez les montants d'actifs que vous utilisez pendant les tests.
 - Téléchargez et importer les données historiques pour que Cassandre les envoie à votre stratégie.
-- Écrivez le test unitaire qui vérifié les gains réalisés quand tous les tickers auront été traitées par votre
-  stratégie.
+- Écrivez le test unitaire qui vérifie les gains réalisés quand tous les tickers auront été traitées par votre stratégie.
 
 ## Configurez vos comptes.
 
 Pour simuler correctement le comportement de votre stratégie, vous avez besoin de dire au mode dry de Cassandre de
 combien d'actifs vous allez disposer pour prendre vos positions.
 
-Ceci se fait en créant des fichiers CSV commençant par `user-` et finissant par `csv` dans le
-dossier `my-trading-bot/src/test/resources`.
+Ceci se fait en créant des fichiers CSV commençant par `user-` et finissant par `csv` dans le répertoire `src/test/resources`.
 
-Si vous ouvrez le fichier `my-trading-bot/src/test/resources/user-trade.csv`, vou verrez par exemple :
+Si vous ouvrez le fichier `src/test/resources/user-trade.csv`, vous verrez :
 
 ```
 BTC,0.99962937
@@ -37,16 +33,16 @@ USDT,1000
 ETH,10
 ```
 
-Avec ce fichier, quand Cassandre démarrera en mode "dry", votre stratégie agira comme si l'exchange lui avait dit que
-votre compte avait 0,99962937 BTC, 1000 USDT et 10 ETH. Bien sûr, lors du test de votre stratégie, ces montants
+Grâce à ce fichier, quand Cassandre démarrera en mode "dry", votre stratégie agira comme si l'exchange lui avait dit que
+votre compte avait 0,99962937 BTC, 1 000 USDT et 10 ETH. Bien sûr, lors du test de votre stratégie, ces montants
 évolueront automatiquement en fonction de vos achats/ventes.
 
 ## Téléchargez un historique de données de marché
 
 Comme je l'ai indiqué un peu plus haut, nous allons tester le comportement de notre stratégie sur un historique de
 données.
-Pour ce faire, nous devons mettre les données que nous voulons utiliser dans des fichiers commençant
-par `candles-for-backtesting`, finissant par `.csv` et se trouvant dans le dossier `my-trading-bot/src/test/resources/`.
+Pour ce faire, nous devons mettre les données que nous voulons utiliser dans des fichiers commençant par 
+`candles-for-backtesting`, finissant par `.csv` et se trouvant dans le dossier `src/test/resources/`.
 
 Voici un exemple du contenu d'un de ses fichiers :
 
@@ -55,8 +51,7 @@ Voici un exemple du contenu d'un de ses fichiers :
 "1508371200","10000","10000","10000","10000","10000","10000","BTC-USDT"
 ```
 
-Comme vous pouvez le voir, il y a tous les champs typiques de données utilisées pour réaliser le backtesting. Vous
-pouvez bien sûr créer ces fichiers avec les outils/sources de données de votre choix mais voici comment je le fais
+Vous pouvez bien sûr créer ces fichiers avec les outils/sources de données de votre choix, mais voici comment je le fais
 facilement, rapidement et en ligne de commande :
 
 ```bash
@@ -70,7 +65,7 @@ curl -s "https://api.kucoin.com/api/v1/market/candles?type=15min&symbol=${SYMBOL
 ```
 
 ::: tip
-Vous pouvez ajouter autant de fichiers de backtesting dans Cassandre que vous voulez, il les chargera.
+Vous pouvez ajouter autant de fichiers de backtesting que vous voulez.
 :::
 
 ## Écrivez votre test
@@ -129,8 +124,8 @@ public class ETHStrategyTest {
 Voici les principaux points :
 - Il s'agit d'un test spring boot classique.
 - Ajouter `@Import(TickerFluxMock.class)` fait en sorte que Cassandre charge les données de backtesting et les envois à vos stratégies.
-- `private TickerFluxMock tickerFluxMock;` a été ajouter pour être capable de savoir quand toutes les données ont été traitées.
-- En utilisant `await().forever().until(() -> tickerFluxMock.isFluxDone());`, on fait en sorte que le test attendre que tout soit traitées par les stratégies.
+- `private TickerFluxMock tickerFluxMock;` a été ajouté pour que l'on soit capable de savoir quand toutes les données ont été traitées.
+- En utilisant `await().forever().until(() -> tickerFluxMock.isFluxDone());`, on fait en sorte que le test attende que tout soit traité par les stratégies.
 - On finit par afficher l'état de chaque position puis on test les valeurs des gains pour voir si on en a bien réalisé !
 
 

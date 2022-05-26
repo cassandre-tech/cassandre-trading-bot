@@ -1,5 +1,5 @@
 ---
-lang: en-US
+lang: fr-FR
 title: Construire Cassandre
 description: Comment construire Cassandre (et sa documentation) sur votre ordinateur
 ---

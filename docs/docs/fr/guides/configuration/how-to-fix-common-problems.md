@@ -1,5 +1,5 @@
 ---
-lang: en-US
+lang: fr-FR
 title: Comment résoudre les problèmes les plus courants ?
 description: Comment résoudre les problèmes les plus courants
 ---

@@ -1,16 +1,16 @@
 ---
+lang: fr-FR
 title: Écrivez votre stratégie
-lang: en-US
-toc: false
+description: Cassandre tutorial - Écrivez votre stratégie
 ---
 
 # Écrivez votre stratégie
 
-## Écrivez une stratégie minimale
+## Commencez par une stratégie minimale
 
-On va modifier le fichier `my-trading-bot/src/main/java/com/mycompany/bot/SimpleStrategy.java` pour ajouter quelques
-variables que nous utiliserons plus tard : la paire de devise sur laquelle on veut trader, le montant que l'on va
-vouloir utiliser quand on ouvrira une nouvelle position and les règles qui seront associées à cette position.
+Nous allons modifier le fichier `src/main/java/com/mycompany/bot/SimpleStrategy.java` pour ajouter quelques variables
+que nous utiliserons plus tard : la paire de devise que l'on veut trader, le montant des positions que nous
+allons créer ainsi que les règles qui seront associées à cette position.
 
 ```java
 /** Currency pair. */
@@ -78,25 +78,24 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 }
 ```
 
-## Ajout notre logique métier
+## Ajoutez la logique métier
 
 C'est le moment d'écrire notre algorithme d'investissement. Nous allons faire quelque chose de simple et pas forcément
 pertinent :
-
 - Nous allons stocker dans `CircularFifoQueue` les trois derniers tickers que nous avons reçus.
 - Nous allons ajouter un ticker dans `CircularFifoQueue` toutes les minutes.
 - Si chacun des trois tickers a un prix inférieur au précédent, nous allons créer une position.
 
-Nous commençons par ajouter une variable.
+Commençons par ajouter notre variable `CircularFifoQueue` :
 
 ```java
 /** Tickers list. */
 private final CircularFifoQueue<TickerDTO> tickerHistory=new CircularFifoQueue<>(3);
 ```
 
-Sur chaque ticker reçu
+À chaque ticker reçu
 ([onTickersUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickersUpdates(java.util.Map)))
-, nous allons comparer le timestamp du nouveau ticker avec celui dur dernier ticker ajouté à `CircularFifoQueue`. S'il y
+, nous allons comparer le timestamp du nouveau ticker avec celui du dernier ticker ajouté à `CircularFifoQueue`. S'il y
 a une différence d'une minute ou plus, on l'ajoute à `CircularFifoQueue`.
 
 Voici le code correspondant :

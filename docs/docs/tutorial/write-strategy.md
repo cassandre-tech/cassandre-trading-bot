@@ -1,16 +1,15 @@
 ---
-title: Write your strategy
 lang: en-US
-toc: false
+title: Write your strategy
+description: Cassandre tutorial - Write your strategy
 ---
 
 # Write your strategy
 
-## Writing a minimal strategy
+## Start with a minimal strategy
 
 We start by editing `my-trading-bot/src/main/java/com/mycompany/bot/SimpleStrategy.java` to add some variables that we
-will need later: the currency pair we want to deal with, the amount we will order on each position and the rules
-we will set when creating the new position.
+will need later: the currency pair we want to deal with, the amount and rules we will use when creating a new position.
 
 ```java
 /** Currency pair. */
@@ -78,7 +77,7 @@ public final class SimpleStrategy extends BasicCassandreStrategy {
 }
 ```
 
-## Adding business logic
+## Add business logic
 
 It's now time to write our business logic, we will make something simple:
 
@@ -86,7 +85,7 @@ It's now time to write our business logic, we will make something simple:
 - We add one ticker to `CircularFifoQueue`  every minute.
 - If each of the three tickers are lower than the previous one, we create a long position.
 
-We add this variable to our strategy:
+Add this variable to our strategy:
 
 ```java
 /** Tickers list. */
@@ -95,7 +94,7 @@ private final CircularFifoQueue<TickerDTO> tickerHistory=new CircularFifoQueue<>
 
 On each received ticker
  ([onTickersUpdates()](https://www.javadoc.io/doc/tech.cassandre.trading.bot/cassandre-trading-bot-spring-boot-autoconfigure/latest/tech/cassandre/trading/bot/strategy/GenericCassandreStrategy.html#onTickersUpdates(java.util.Map)))
-, we will compare the new ticker timestamp with the timestamp of the latest ticker added to `CircularFifoQueue`. If the difference is more than one minute, we add the new one to `CircularFifoQueue`.
+, we will compare the new ticker timestamp with the timestamp of the latest ticker added to `CircularFifoQueue`. If the difference is superior or equals to one minute, we add it to `CircularFifoQueue`.
 
 This is the corresponding code:
 ```java

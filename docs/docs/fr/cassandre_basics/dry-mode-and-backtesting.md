@@ -1,5 +1,5 @@
 ---
-lang: en-US
+lang: fr-FR
 title: Dry mode & backtesting
 description: Comment simuler un exchange virtuel et tester sa stratégie
 ---

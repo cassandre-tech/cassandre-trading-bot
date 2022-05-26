@@ -1,31 +1,29 @@
 ---
-title: Write your strategy unit tests
 lang: en-US
-toc: false
+title: Write your strategy unit tests
+description: Cassandre tutorial - Write your strategy unit tests
 ---
 
 # Write your strategy unit test
 
 ## What are we going to do ?
 
-Our goal is to check that our strategy is making gains. We can't predict the future, so we will test it on historical
-data with a simulated exchange provided by Cassandre (Our dry mode).
-TODO ajouter lien
+Our goal is to check that our strategy can make gains. We can't predict the future, so we will test it on historical
+data with a simulated exchange provided by Cassandre (AKA [dry mode](../cassandre_basics/dry-mode-and-backtesting.md)).
 
 There is three steps:
 
-- Configure how much fake assets you want to put on your trade account.
+- Configure how much fake assets your strategy will play with.
 - Download and import the historical data Cassandre will send to your strategy.
 - Write the unit tests that check the gains we made when all historical tickers will have been treated by your strategy.
 
 ## Configure assets
 
-To correctly simulate the behavior your strategy, you need tell Cassandre dry mode how much assets you will play with.
+To correctly simulate the behavior your strategy, you need tell Cassandre dry mode how many assets the strategy can use.
 
-This is done by creating csv files starting with `user-` and ending with `csv` in
-the `my-trading-bot/src/test/resources` directory.
+This is done by creating csv files starting with `user-` and ending with `csv` in the `src/test/resources` directory.
 
-If you open `my-trading-bot/src/test/resources/user-trade.csv`, you will find those data:
+For example, if you open `src/test/resources/user-trade.csv`, you will find those data:
 
 ```
 BTC,0.99962937
@@ -33,14 +31,13 @@ USDT,1000
 ETH,10
 ```
 
-With this file, when Cassandre will start in dry mode, your strategy will act as if it has 0.99962937 BTC, 1000 USDT and
+With this file, when Cassandre will start in dry mode, your strategy will act as if it has 0.99962937 BTC, 1,000 USDT and
 10 ETH. Of course, when your strategy will be tested, the assets will be updated at each buy/sell action.
 
 ## Download historical data
 
 As I said earlier, we will test your bot behavior on historical data. To do this, we have to put the data we want to use
-in a file starting with `candles-for-backtesting` and ending with `.csv` and located
-in `my-trading-bot/src/test/resources/`.
+in a file starting with `candles-for-backtesting` and ending with `.csv` in `src/test/resources/`.
 
 This is an example of the file content:
 
@@ -49,10 +46,8 @@ This is an example of the file content:
 "1508371200","10000","10000","10000","10000","10000","10000","BTC-USDT"
 ```
 
-As you can see, you have all typical fields you can have with a backtesting data.
-
 You can create those files with the tools/sources you want but this is how, with Linux & Kucoin, I easily generate those
-data:
+data like this:
 
 ```bash
 SYMBOL=BTC-USDT

@@ -1,5 +1,5 @@
 ---
-lang: en-US
+lang: fr-FR
 title: Configurer la connexion à un exchange
 description: Comment configurer la connexion deCassandre à un exchange (kucoin, Binance, Coinbase...)
 ---

@@ -1,5 +1,5 @@
 ---
-lang: en-US
+lang: fr-FR
 title: Installer les outils de développement
 description: Comment installer les outils de développement et de documentation sur votre ordinateur
 ---
