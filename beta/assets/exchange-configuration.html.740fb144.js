@@ -1,1 +1,0 @@
-const e={key:"v-7a9ac0a6",path:"/fr/tutorial/exchange-configuration.html",title:"Configuration de l'exchange",lang:"en-US",frontmatter:{title:"Configuration de l'exchange",lang:"en-US",toc:!1},excerpt:"",headers:[],git:{},filePathRelative:"fr/tutorial/exchange-configuration.md"};export{e as data};
