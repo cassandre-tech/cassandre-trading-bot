@@ -87,7 +87,7 @@
 		<guava.version>31.1-jre</guava.version>
 
 		<!-- Tests -->
-		<junit-pioneer.version>1.6.2</junit-pioneer.version>
+		<junit-pioneer.version>1.7.0</junit-pioneer.version>
 		<awaitility.version>4.2.0</awaitility.version>
 		<hsqldb.version>2.6.1</hsqldb.version>
 		<jackson.version>2.12.6</jackson.version>
@@ -98,7 +98,7 @@
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
 		<maven.graphqlcodegen.plugin.version>1.18</maven.graphqlcodegen.plugin.version>
-		<maven.puppycrawl.checkstyle.version>10.1</maven.puppycrawl.checkstyle.version>
+		<maven.puppycrawl.checkstyle.version>10.2</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
@@ -106,7 +106,7 @@
 		<maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
 		<maven.lombok.plugin.version>1.18.20.0</maven.lombok.plugin.version>
 		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
-		<maven.javadoc.plugin.version>3.3.2</maven.javadoc.plugin.version>
+		<maven.javadoc.plugin.version>3.4.0</maven.javadoc.plugin.version>
 		<maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
 		<maven.archetype-packaging.version>3.2.1</maven.archetype-packaging.version>
 	</properties>
@@ -159,7 +159,7 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.12</version>
+				<version>1.6.13</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>ossrh</serverId>

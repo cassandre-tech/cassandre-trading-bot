@@ -1,4 +1,4 @@
-import {defineUserConfig} from 'vuepress'
+import {defaultTheme, defineUserConfig} from 'vuepress'
 import type {DefaultThemeOptions} from 'vuepress'
 import { defaultTheme } from '@vuepress/theme-default'
 import {navbarFR} from "./i18n/fr/navbar";
@@ -117,7 +117,6 @@ export default defineUserConfig<DefaultThemeOptions>({
                 id: 'UA-158255496-1',
             }
         ],
-        // Doc search.
         [
             '@vuepress/plugin-docsearch',
             {

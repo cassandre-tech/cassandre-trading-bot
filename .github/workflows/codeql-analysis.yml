@@ -11,7 +11,7 @@ jobs:
     steps:
       # ================================================================================================================
       - name: JDK 17 Setup
-        uses: actions/setup-java@v3.1.0
+        uses: actions/setup-java@v3.3.0
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -22,7 +22,7 @@ jobs:
 
       # ================================================================================================================
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2.1.8
+        uses: github/codeql-action/init@v2.1.11
         with:
           languages: java
 
@@ -33,4 +33,4 @@ jobs:
 
       # ================================================================================================================
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2.1.8
+        uses: github/codeql-action/analyze@v2.1.11
