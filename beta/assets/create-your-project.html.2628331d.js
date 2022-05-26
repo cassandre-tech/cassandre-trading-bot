@@ -1,1 +1,0 @@
-const e={key:"v-86c5b83e",path:"/tutorial/create-your-project.html",title:"Create your Cassandre project",lang:"en-US",frontmatter:{lang:"en-US",title:"Create your Cassandre project",description:"Cassandre tutorial - Create your Cassandre project"},excerpt:"",headers:[],git:{},filePathRelative:"tutorial/create-your-project.md"};export{e as data};
