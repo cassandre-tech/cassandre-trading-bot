@@ -1,0 +1,1 @@
+const t={key:"v-05d260a2",path:"/cassandre_basics/what-is-a-strategy.html",title:"What is a trading strategy?",lang:"en-US",frontmatter:{lang:"en-US",title:"What is a trading strategy?",description:"What is a trading strategy?"},excerpt:"",headers:[],git:{},filePathRelative:"cassandre_basics/what-is-a-strategy.md"};export{t as data};
