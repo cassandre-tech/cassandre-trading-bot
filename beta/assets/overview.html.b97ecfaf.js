@@ -1,1 +1,0 @@
-const e={key:"v-18befb7c",path:"/cassandre_basics/overview.html",title:"Cassandre overview",lang:"en-US",frontmatter:{lang:"en-US",title:"Cassandre overview",description:"Cassandre trading bot framework overview"},excerpt:"",headers:[],git:{},filePathRelative:"cassandre_basics/overview.md"};export{e as data};
