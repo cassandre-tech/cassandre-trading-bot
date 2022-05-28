@@ -87,7 +87,7 @@
 		<guava.version>31.1-jre</guava.version>
 
 		<!-- Tests -->
-		<junit-pioneer.version>1.7.0</junit-pioneer.version>
+		<junit-pioneer.version>1.7.1</junit-pioneer.version>
 		<awaitility.version>4.2.0</awaitility.version>
 		<hsqldb.version>2.6.1</hsqldb.version>
 		<jackson.version>2.12.6</jackson.version>
