@@ -42,7 +42,7 @@ public interface CurrencyMapper {
         final CurrencyPair cp = (CurrencyPair) source;
         CurrencyDTO base = new CurrencyDTO(cp.base.getCurrencyCode());
         CurrencyDTO quote = new CurrencyDTO(cp.counter.getCurrencyCode());
-        return CurrencyPairDTO.builder().baseCurrency(base).quoteCurrency(quote).build();
+        return new CurrencyPairDTO(base, quote);
     }
 
     default CurrencyPairDTO mapToCurrencyPairDTO(String source) {
