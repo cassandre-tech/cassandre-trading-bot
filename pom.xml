@@ -83,7 +83,7 @@
 		<!-- Core utils -->
 		<lombok.version>1.18.24</lombok.version>
 		<lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
-		<mapstruct.version>1.4.2.Final</mapstruct.version>
+		<mapstruct.version>1.5.0.Final</mapstruct.version>
 		<guava.version>31.1-jre</guava.version>
 
 		<!-- Tests -->
