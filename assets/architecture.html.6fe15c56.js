@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-4a8531b9","path":"/fr/cassandre_basics/architecture.html","title":"Architecture","lang":"fr-FR","frontmatter":{"lang":"fr-FR","title":"Architecture","description":"Architecture logicielle de Cassandre"},"excerpt":"","headers":[],"git":{},"filePathRelative":"fr/cassandre_basics/architecture.md"}');export{e as data};
