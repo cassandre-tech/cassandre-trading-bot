@@ -145,6 +145,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
 
             // Creates XChange services.
             if (exchangeParameters.isTickerStreamEnabled()) {
+                exchangeSpecification.setShouldLoadRemoteMetaData(true); // this must be set or Streaming will not download currencies by default
                 // Create Streaming XChange services
                 xChangeExchange = StreamingExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
             } else {
