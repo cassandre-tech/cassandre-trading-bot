@@ -98,7 +98,7 @@
 		<!-- Maven -->
 		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
 		<maven.graphqlcodegen.plugin.version>1.18</maven.graphqlcodegen.plugin.version>
-		<maven.puppycrawl.checkstyle.version>10.3.2</maven.puppycrawl.checkstyle.version>
+		<maven.puppycrawl.checkstyle.version>10.3.3</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.3.0</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
