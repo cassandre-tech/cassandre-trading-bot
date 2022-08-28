@@ -96,7 +96,7 @@
 		<graphql-dgs.version>5.1.1</graphql-dgs.version>
 
 		<!-- Maven -->
-		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
+		<maven.checkstyle.plugin.version>3.2.0</maven.checkstyle.plugin.version>
 		<maven.graphqlcodegen.plugin.version>1.18</maven.graphqlcodegen.plugin.version>
 		<maven.puppycrawl.checkstyle.version>10.3.2</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.3.0</maven.resources.plugin.version>
