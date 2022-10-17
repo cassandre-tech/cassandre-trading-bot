@@ -12,6 +12,7 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TickerStreamFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.domain.ImportedCandle;
 import tech.cassandre.trading.bot.domain.ImportedTicker;
@@ -110,6 +111,9 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
     /** Ticker flux. */
     private final TickerFlux tickerFlux;
 
+    /** Ticker Stream flux. */
+    private final TickerStreamFlux tickerStreamFlux;
+
     /** Order flux. */
     private final OrderFlux orderFlux;
 
@@ -155,8 +159,13 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         final ConnectableFlux<Set<AccountDTO>> connectableAccountFlux = accountFlux.getFlux().publish();
         final ConnectableFlux<Set<PositionDTO>> connectablePositionFlux = positionFlux.getFlux().publish();
         final ConnectableFlux<Set<OrderDTO>> connectableOrderFlux = orderFlux.getFlux().publish();
-        final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux = tickerFlux.getFlux().publish();
         final ConnectableFlux<Set<TradeDTO>> connectableTradeFlux = tradeFlux.getFlux().publish();
+        final ConnectableFlux<Set<TickerDTO>> connectableTickerFlux;
+        if (exchangeParameters.isTickerStreamEnabled()) {
+            connectableTickerFlux = tickerStreamFlux.getFlux().publish();
+        } else {
+            connectableTickerFlux = tickerFlux.getFlux().publish();
+        }
 
         // =============================================================================================================
         // Configuring strategies.
@@ -447,5 +456,4 @@ public class StrategiesAutoConfiguration extends BaseConfiguration {
         }
         return Collections.emptyList();
     }
-
 }
