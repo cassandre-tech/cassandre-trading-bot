@@ -74,8 +74,8 @@ jobs:
       # ================================================================================================================
       - name: Install vuepress, set release number, and build the website
         run: |
-          yarn add -D vuepress@next
           find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.getLatestRelease.outputs.release }}/g' {} \;
+          yarn --cwd add -D vuepress@next
           yarn --cwd docs install
           yarn --cwd docs docs:build docs
 
