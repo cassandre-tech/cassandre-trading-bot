@@ -1,1 +1,0 @@
-const a=JSON.parse('{"key":"v-11ecd943","path":"/trading_basics/what-is-an-exchange.html","title":"What is an exchange?","lang":"en-US","frontmatter":{"lang":"en-US","title":"What is an exchange?","description":"Trading - What is an exchange?"},"excerpt":"","headers":[],"git":{},"filePathRelative":"trading_basics/what-is-an-exchange.md"}');export{a as data};

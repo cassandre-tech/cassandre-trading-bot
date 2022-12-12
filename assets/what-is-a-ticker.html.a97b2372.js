@@ -1,1 +1,0 @@
-const t=JSON.parse('{"key":"v-4332fd14","path":"/trading_basics/what-is-a-ticker.html","title":"What is a ticker?","lang":"en-US","frontmatter":{"lang":"en-US","title":"What is a ticker?","description":"Trading - What is a ticker?"},"excerpt":"","headers":[],"git":{},"filePathRelative":"trading_basics/what-is-a-ticker.md"}');export{t as data};

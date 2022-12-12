@@ -1,0 +1,1 @@
+const t=JSON.parse(`{"key":"v-f230d81a","path":"/fr/cassandre_basics/what-is-a-strategy.html","title":"Qu'est-ce qu'une stratégie ?","lang":"fr-FR","frontmatter":{"lang":"fr-FR","title":"Qu'est-ce qu'une stratégie ?","description":"Qu'est-ce qu'une stratégie de trading ?"},"headers":[],"git":{},"filePathRelative":"fr/cassandre_basics/what-is-a-strategy.md"}`);export{t as data};

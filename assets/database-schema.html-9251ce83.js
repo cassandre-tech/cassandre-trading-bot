@@ -1,0 +1,1 @@
+const a=JSON.parse('{"key":"v-257e9df8","path":"/cassandre_basics/database-schema.html","title":"Database schema","lang":"en-US","frontmatter":{"lang":"en-US","title":"Database schema","description":"Cassandre database schema"},"headers":[],"git":{},"filePathRelative":"cassandre_basics/database-schema.md"}');export{a as data};

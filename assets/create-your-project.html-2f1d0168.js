@@ -1,0 +1,1 @@
+const r=JSON.parse('{"key":"v-97c4cca0","path":"/fr/tutorial/create-your-project.html","title":"Créez votre project Cassandre","lang":"fr-FR","frontmatter":{"lang":"fr-FR","title":"Créez votre project Cassandre","description":"Cassandre tutorial - Créez votre project Cassandre"},"headers":[],"git":{},"filePathRelative":"fr/tutorial/create-your-project.md"}');export{r as data};

@@ -1,0 +1,1 @@
+const a=JSON.parse(`{"key":"v-7a9ac0a6","path":"/fr/tutorial/exchange-configuration.html","title":"Configuration de l'exchange","lang":"fr-FR","frontmatter":{"lang":"fr-FR","title":"Configuration de l'exchange","description":"Cassandre tutorial - Configuration de l'exchange"},"headers":[],"git":{},"filePathRelative":"fr/tutorial/exchange-configuration.md"}`);export{a as data};

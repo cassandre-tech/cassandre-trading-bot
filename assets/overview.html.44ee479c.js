@@ -1,1 +1,0 @@
-const e=JSON.parse('{"key":"v-6bcd76d3","path":"/fr/cassandre_basics/overview.html","title":"Un aperçu de Cassandre","lang":"fr-FR","frontmatter":{"lang":"fr-FR","title":"Un aperçu de Cassandre","description":"Aperçu global le framework pour trading bot Cassandre"},"excerpt":"","headers":[],"git":{},"filePathRelative":"fr/cassandre_basics/overview.md"}');export{e as data};

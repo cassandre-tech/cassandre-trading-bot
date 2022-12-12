@@ -1,1 +1,0 @@
-const e=JSON.parse('{"key":"v-a199dda6","path":"/fr/tutorial/explore-generated-code.html","title":"Explorez le code généré","lang":"fr-FR","frontmatter":{"lang":"fr-FR","title":"Explorez le code généré","description":"Cassandre tutorial - Explorez le code généré"},"excerpt":"","headers":[],"git":{},"filePathRelative":"fr/tutorial/explore-generated-code.md"}');export{e as data};
