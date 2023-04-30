@@ -22,7 +22,7 @@ jobs:
 
       # ================================================================================================================
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2.1.39
+        uses: github/codeql-action/init@v2.3.2
         with:
           languages: java
 
@@ -33,4 +33,4 @@ jobs:
 
       # ================================================================================================================
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2.1.39
+        uses: github/codeql-action/analyze@v2.3.2
