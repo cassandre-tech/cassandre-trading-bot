@@ -59,7 +59,7 @@ jobs:
 
       # ================================================================================================================
       - name: Install Go to generate the graphQL documentation with gqldoc
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: '^1.17.3'
 

@@ -55,7 +55,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.10</version>
+		<version>2.7.11</version>
 		<relativePath/>
 	</parent>
 	<!-- =========================================================================================================== -->
@@ -81,15 +81,15 @@
 		<opencsv.version>5.7.1</opencsv.version>
 
 		<!-- Core utils -->
-		<lombok.version>1.18.24</lombok.version>
+		<lombok.version>1.18.26</lombok.version>
 		<lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
-		<mapstruct.version>1.5.3.Final</mapstruct.version>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<guava.version>31.1-jre</guava.version>
 
 		<!-- Tests -->
 		<junit-pioneer.version>2.0.1</junit-pioneer.version>
 		<awaitility.version>4.2.0</awaitility.version>
-		<hsqldb.version>2.7.0</hsqldb.version>
+		<hsqldb.version>2.7.1</hsqldb.version>
 		<jackson.version>2.14.1</jackson.version>
 
 		<!-- GraphQL API -->
@@ -99,10 +99,10 @@
 		<maven.checkstyle.plugin.version>3.2.1</maven.checkstyle.plugin.version>
 		<maven.graphqlcodegen.plugin.version>1.18</maven.graphqlcodegen.plugin.version>
 		<maven.puppycrawl.checkstyle.version>10.11.0</maven.puppycrawl.checkstyle.version>
-		<maven.resources.plugin.version>3.3.0</maven.resources.plugin.version>
+		<maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-		<maven.jacoco.plugin.version>0.8.8</maven.jacoco.plugin.version>
+		<maven.jacoco.plugin.version>0.8.10</maven.jacoco.plugin.version>
 		<maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
 		<maven.lombok.plugin.version>1.18.20.0</maven.lombok.plugin.version>
 		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
