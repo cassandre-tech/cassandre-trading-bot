@@ -123,3 +123,4 @@ docs/yarn.lock
 /archetype-test-basic/
 /archetype-test-ta4j-basic/
 /util/test/api/graphql/package.json
+/docs/docs/.vuepress/
