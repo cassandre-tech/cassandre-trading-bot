@@ -90,6 +90,12 @@ public class ExchangeParameters {
 
     }
 
+    /** Checks if streams are enabled for tickers.
+     * @return Returns true if ticker rate is set to 0 and XChange driver name contains 'stream' */
+    public final boolean isTickerStreamEnabled() {
+        return getRates().getTickerValueInMs() == 0 && driverClassName.contains("stream");
+    }
+
     /** Exchange API rate calls. */
     @Validated
     @Getter
@@ -137,7 +143,7 @@ public class ExchangeParameters {
          * @return trade rate value in ms
          */
         public long getTradeValueInMs() {
-            return getRateValue(ticker);
+            return getRateValue(trade);
         }
 
         /**

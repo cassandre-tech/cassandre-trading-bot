@@ -8,6 +8,7 @@ updates:
       time: "18:00"
       timezone: "Europe/Paris"
     target-branch: development
+    open-pull-requests-limit: 10
 
   - package-ecosystem: npm
     directory: "/docs"
@@ -17,6 +18,7 @@ updates:
       time: "18:00"
       timezone: "Europe/Paris"
     target-branch: development
+    open-pull-requests-limit: 10
 
   - package-ecosystem: github-actions
     directory: "/"
@@ -26,3 +28,4 @@ updates:
       time: "18:00"
       timezone: "Europe/Paris"
     target-branch: development
+    open-pull-requests-limit: 10

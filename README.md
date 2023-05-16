@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://trading-bot.cassandre.tech/learn/quickstart">Quick Start</a> | 
+    <a href="https://trading-bot.cassandre.tech/tutorial/create-your-project.html">Quick Start</a> | 
     <a href="https://trading-bot.cassandre.tech">Documentation</a> | 
     <a href="https://discord.gg/sv3VXuTgFS">Discord</a> | 
     <a href="https://twitter.com/cassandretech">Twitter</a>
@@ -16,6 +16,8 @@
 
 <h3 align="center">Create and run your java crypto trading bot in minutes</h2>
 <p align="center">Our Spring boot starter takes care of exchange connections, accounts, orders, trades, and positions so you can focus on building your strategies.</p>
+
+<p align="center"><i>We are thrilled to share that our open source project is still actively maintained! While there won't be major upgrades in the near future, we remain dedicated to providing ongoing support and ensuring the project continues to thrive.</i></p>
 
 <p align="center">
     <a href="https://discord.gg/sv3VXuTgFS">
@@ -41,7 +43,7 @@
 </p>
 
 <p align="center">
-    <a href="https://trading-bot.cassandre.tech/learn/quickstart">Quick Start</a> | 
+    <a href="https://trading-bot.cassandre.tech/tutorial/create-your-project.html">Quick Start</a> | 
     <a href="https://trading-bot.cassandre.tech">Documentation</a> | 
     <a href="https://discord.gg/sv3VXuTgFS">Discord</a> | 
     <a href="https://twitter.com/cassandretech">Twitter</a>

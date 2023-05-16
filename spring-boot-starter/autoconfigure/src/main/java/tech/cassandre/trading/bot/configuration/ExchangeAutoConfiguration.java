@@ -1,9 +1,13 @@
 package tech.cassandre.trading.bot.configuration;
 
+import info.bitrich.xchangestream.core.ProductSubscription;
+import info.bitrich.xchangestream.core.StreamingExchange;
+import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import lombok.RequiredArgsConstructor;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.ExchangeSpecification;
+import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,6 +20,7 @@ import tech.cassandre.trading.bot.batch.AccountFlux;
 import tech.cassandre.trading.bot.batch.OrderFlux;
 import tech.cassandre.trading.bot.batch.PositionFlux;
 import tech.cassandre.trading.bot.batch.TickerFlux;
+import tech.cassandre.trading.bot.batch.TickerStreamFlux;
 import tech.cassandre.trading.bot.batch.TradeFlux;
 import tech.cassandre.trading.bot.repository.OrderRepository;
 import tech.cassandre.trading.bot.repository.PositionRepository;
@@ -30,12 +35,16 @@ import tech.cassandre.trading.bot.service.TradeService;
 import tech.cassandre.trading.bot.service.TradeServiceXChangeImplementation;
 import tech.cassandre.trading.bot.service.UserService;
 import tech.cassandre.trading.bot.service.UserServiceXChangeImplementation;
+import tech.cassandre.trading.bot.strategy.CassandreStrategy;
+import tech.cassandre.trading.bot.strategy.internal.CassandreStrategyInterface;
 import tech.cassandre.trading.bot.util.base.configuration.BaseConfiguration;
 import tech.cassandre.trading.bot.util.exception.ConfigurationException;
 import tech.cassandre.trading.bot.util.parameters.ExchangeParameters;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * ExchangeConfiguration configures the exchange connection.
@@ -96,6 +105,9 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     /** Ticker flux. */
     private TickerFlux tickerFlux;
 
+    /** Ticker stream flux. */
+    private TickerStreamFlux tickerStreamFlux;
+
     /** Order flux. */
     private OrderFlux orderFlux;
 
@@ -132,10 +144,32 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             }
 
             // Creates XChange services.
-            xChangeExchange = ExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
+            if (exchangeParameters.isTickerStreamEnabled()) {
+                exchangeSpecification.setShouldLoadRemoteMetaData(true); // this must be set or Streaming will not download currencies by default
+                // Create Streaming XChange services
+                xChangeExchange = StreamingExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
+            } else {
+                xChangeExchange = ExchangeFactory.INSTANCE.createExchange(exchangeSpecification);
+            }
             xChangeAccountService = xChangeExchange.getAccountService();
             xChangeMarketDataService = xChangeExchange.getMarketDataService();
             xChangeTradeService = xChangeExchange.getTradeService();
+
+            if (exchangeParameters.isTickerStreamEnabled()) {
+                ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
+                applicationContext
+                        .getBeansWithAnnotation(CassandreStrategy.class)
+                        .values()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(object -> (CassandreStrategyInterface) object)
+                        .map(CassandreStrategyInterface::getRequestedCurrencyPairs)
+                        .flatMap(Set::stream)
+                        .forEach(pair -> builder.addTicker(new CurrencyPair(pair.getBaseCurrency().getCurrencyCode(), pair.getQuoteCurrency().getCode())));
+
+                // Connect to the Exchange WebSocket API. Here we use a blocking wait.
+                ((StreamingExchange) xChangeExchange).connect(builder.build()).blockingAwait();
+            }
 
             // Force login to check credentials.
             logger.info("Exchange connection with driver {}", exchangeParameters.getDriverClassName());
@@ -261,7 +295,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     @Bean
     @DependsOn("getXChangeMarketDataService")
     public MarketService getMarketService() {
-        if (marketService == null) {
+        if (marketService == null && !exchangeParameters.isTickerStreamEnabled()) {
             marketService = new MarketServiceXChangeImplementation(
                     exchangeParameters.getRates().getTickerValueInMs(),
                     getXChangeMarketDataService());
@@ -308,10 +342,23 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
     @Bean
     @DependsOn("getMarketService")
     public TickerFlux getTickerFlux() {
-        if (tickerFlux == null) {
+        if (tickerFlux == null && !exchangeParameters.isTickerStreamEnabled()) {
             tickerFlux = new TickerFlux(applicationContext, getMarketService());
         }
         return tickerFlux;
+    }
+
+    /**
+     * Getter for tickerStreamFlux.
+     *
+     * @return tickerStreamFlux
+     */
+    @Bean
+    public TickerStreamFlux getTickerStreamFlux() {
+        if (tickerStreamFlux == null && exchangeParameters.isTickerStreamEnabled()) {
+            tickerStreamFlux = new TickerStreamFlux(applicationContext, (StreamingExchange) getXChangeExchange());
+        }
+        return tickerStreamFlux;
     }
 
     /**
