@@ -105,7 +105,7 @@
 		<maven.jacoco.plugin.version>0.8.10</maven.jacoco.plugin.version>
 		<maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
 		<maven.lombok.plugin.version>1.18.20.0</maven.lombok.plugin.version>
-		<maven.source.plugin.version>3.2.1</maven.source.plugin.version>
+		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
 		<maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
 		<maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
 		<maven.archetype-packaging.version>3.2.1</maven.archetype-packaging.version>
