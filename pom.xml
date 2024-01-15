@@ -73,12 +73,12 @@
 		<!-- Libraries releases -->
 
 		<!-- Core -->
-		<spring.version>2.7.16</spring.version>
+		<spring.version>2.7.18</spring.version>
 		<reactor.version>Dysprosium-SR25</reactor.version>
 		<xchange.version>5.0.13</xchange.version>
 		<bucket4j.version>7.6.0</bucket4j.version>
 		<liquibase.version>4.22.0</liquibase.version>
-		<opencsv.version>5.8</opencsv.version>
+		<opencsv.version>5.9</opencsv.version>
 
 		<!-- Core utils -->
 		<lombok.version>1.18.28</lombok.version>
@@ -87,7 +87,7 @@
 		<guava.version>32.1.2-jre</guava.version>
 
 		<!-- Tests -->
-		<junit-pioneer.version>2.1.0</junit-pioneer.version>
+		<junit-pioneer.version>2.2.0</junit-pioneer.version>
 		<awaitility.version>4.2.0</awaitility.version>
 		<hsqldb.version>2.7.2</hsqldb.version>
 		<jackson.version>2.15.2</jackson.version>
@@ -96,17 +96,17 @@
 		<graphql-dgs.version>5.3.0</graphql-dgs.version>
 
 		<!-- Maven -->
-		<maven.checkstyle.plugin.version>3.3.0</maven.checkstyle.plugin.version>
+		<maven.checkstyle.plugin.version>3.3.1</maven.checkstyle.plugin.version>
 		<maven.graphqlcodegen.plugin.version>1.18</maven.graphqlcodegen.plugin.version>
 		<maven.puppycrawl.checkstyle.version>10.12.3</maven.puppycrawl.checkstyle.version>
 		<maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-		<maven.jacoco.plugin.version>0.8.10</maven.jacoco.plugin.version>
+		<maven.jacoco.plugin.version>0.8.11</maven.jacoco.plugin.version>
 		<maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
 		<maven.lombok.plugin.version>1.18.20.0</maven.lombok.plugin.version>
 		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
-		<maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
+		<maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
 		<maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
 		<maven.archetype-packaging.version>3.2.1</maven.archetype-packaging.version>
 	</properties>
