@@ -9,14 +9,14 @@ jobs:
     steps:
       # ================================================================================================================
       - name: JDK 17 Setup
-        uses: actions/setup-java@v3.11.0
+        uses: actions/setup-java@v4.0.0
         with:
           distribution: 'temurin'
           java-version: '17'
 
       # ================================================================================================================
       - name: Retrieve the sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # ================================================================================================================
       - name: Build, run tests and deploy locally

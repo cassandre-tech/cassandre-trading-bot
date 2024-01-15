@@ -3,29 +3,20 @@ updates:
   - package-ecosystem: maven
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "18:00"
-      timezone: "Europe/Paris"
+      interval: "monthly"
     target-branch: development
     open-pull-requests-limit: 10
 
   - package-ecosystem: npm
     directory: "/docs"
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "18:00"
-      timezone: "Europe/Paris"
+      interval: "monthly"
     target-branch: development
     open-pull-requests-limit: 10
 
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "18:00"
-      timezone: "Europe/Paris"
+      interval: "monthly"
     target-branch: development
     open-pull-requests-limit: 10
