@@ -72,18 +72,18 @@ jobs:
           gqldoc -s "docs/docs/.vuepress/public/api/graphql/definition/*.graphqls" -o ./docs/docs/fr/tutorial/graphql-api-documentation
 
       # ================================================================================================================
-      - name: Install vuepress, set release number, and build the website
-        run: |
-          find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.getLatestRelease.outputs.release }}/g' {} \;
-          yarn --cwd docs add -D vuepress@next
-          yarn --cwd docs install
-          yarn --cwd docs docs:build docs
+        #- name: Install vuepress, set release number, and build the website
+          #  run: |
+          #  find . -type f -name "*.md" -exec sed -i 's/CASSANDRE_LATEST_RELEASE/${{ steps.getLatestRelease.outputs.release }}/g' {} \;
+          #  yarn --cwd docs add -D vuepress@next
+          #  yarn --cwd docs install
+        # yarn --cwd docs docs:build docs
 
       # ================================================================================================================
-      - name: Deploy the website to github pages
-        uses: JamesIves/github-pages-deploy-action@v4.4.3
-        with:
-          branch: gh-pages
-          folder: docs/docs/.vuepress/dist
-          commit-message: "Website deployment"
-          clean: true
+        #- name: Deploy the website to github pages
+        #  uses: JamesIves/github-pages-deploy-action@v4.4.3
+          # with:
+          #   branch: gh-pages
+          #  folder: docs/docs/.vuepress/dist
+          #  commit-message: "Website deployment"
+        #  clean: true
