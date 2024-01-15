@@ -76,12 +76,3 @@ jobs:
           consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
           access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
-
-      # ================================================================================================================
-      - name: Publish the announce on Discord
-        continue-on-error: true
-        uses: Ilshidur/action-discord@0.3.2
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        with:
-          args: "Cassandre trading bot ${{ steps.maven.outputs.version }} released - More information here: https://github.com/cassandre-tech/cassandre-trading-bot/releases/tag/${{ steps.maven.outputs.version }}"
