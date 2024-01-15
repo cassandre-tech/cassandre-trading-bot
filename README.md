@@ -40,6 +40,5 @@
 <p align="center">
     <a href="https://trading-bot.cassandre.tech/tutorial/create-your-project.html">Quick Start</a> | 
     <a href="https://trading-bot.cassandre.tech">Documentation</a> | 
-    <a href="https://discord.gg/sv3VXuTgFS">Discord</a> | 
     <a href="https://twitter.com/cassandretech">Twitter</a>
 </p>
