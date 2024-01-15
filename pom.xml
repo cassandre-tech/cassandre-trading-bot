@@ -102,7 +102,7 @@
 		<maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
 		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-		<maven.jacoco.plugin.version>0.8.10</maven.jacoco.plugin.version>
+		<maven.jacoco.plugin.version>0.8.11</maven.jacoco.plugin.version>
 		<maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
 		<maven.lombok.plugin.version>1.18.20.0</maven.lombok.plugin.version>
 		<maven.source.plugin.version>3.3.0</maven.source.plugin.version>
