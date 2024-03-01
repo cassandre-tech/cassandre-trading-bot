@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.netflix.graphql.dgs.codegen</groupId>
             <artifactId>graphql-dgs-codegen-core</artifactId>
-            <version>6.1.2</version>
+            <version>6.1.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
