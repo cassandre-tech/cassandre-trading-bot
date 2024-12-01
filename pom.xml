@@ -90,7 +90,7 @@
 		<!-- Tests -->
 		<junit-pioneer.version>2.2.0</junit-pioneer.version>
 		<awaitility.version>4.2.2</awaitility.version>
-		<hsqldb.version>2.7.3</hsqldb.version>
+		<hsqldb.version>2.7.4</hsqldb.version>
 		<jackson.version>2.15.2</jackson.version>
 
 		<!-- GraphQL API -->
