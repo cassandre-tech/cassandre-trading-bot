@@ -82,7 +82,7 @@
 		<javax.ws.rs.version>2.1.1</javax.ws.rs.version>
 
 		<!-- Core utils -->
-		<lombok.version>1.18.34</lombok.version>
+		<lombok.version>1.18.36</lombok.version>
 		<lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
 		<mapstruct.version>1.6.0</mapstruct.version>
 		<guava.version>33.3.0-jre</guava.version>
