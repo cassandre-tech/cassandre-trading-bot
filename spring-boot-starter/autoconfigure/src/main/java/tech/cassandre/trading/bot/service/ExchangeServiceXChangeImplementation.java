@@ -23,10 +23,10 @@ public class ExchangeServiceXChangeImplementation extends BaseService implements
     public Set<CurrencyPairDTO> getAvailableCurrencyPairs() {
         logger.debug("Retrieving available currency pairs");
         return exchange.getExchangeMetaData()
-                .getCurrencyPairs()
+                .getInstruments()
                 .keySet()
                 .stream()
-                .peek(cp -> logger.debug(" - {} available", cp))
+                .peek(instrument -> logger.debug(" - {} available", instrument))
                 .map(CURRENCY_MAPPER::mapToCurrencyPairDTO)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
