@@ -1,7 +1,7 @@
 package tech.cassandre.trading.bot.batch;
 
 import info.bitrich.xchangestream.core.StreamingExchange;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 import org.springframework.context.ApplicationContext;

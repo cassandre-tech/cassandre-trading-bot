@@ -51,7 +51,7 @@ public class CurrencyPairDTO {
      * @param currencyPair currency pair
      */
     public CurrencyPairDTO(final CurrencyPair currencyPair) {
-        this(currencyPair.base.toString(), currencyPair.counter.toString());
+        this(currencyPair.getBase().toString(), currencyPair.getCounter().toString());
     }
 
     /**
@@ -108,8 +108,8 @@ public class CurrencyPairDTO {
      */
     public CurrencyPairDTO(final Instrument instrument) {
         final CurrencyPair cp = (CurrencyPair) instrument;
-        this.baseCurrency = new CurrencyDTO(cp.base.getCurrencyCode());
-        this.quoteCurrency = new CurrencyDTO(cp.counter.getCurrencyCode());
+        this.baseCurrency = new CurrencyDTO(cp.getBase().getCurrencyCode());
+        this.quoteCurrency = new CurrencyDTO(cp.getCounter().getCurrencyCode());
         this.baseCurrencyPrecision = DEFAULT_CURRENCY_PRECISION;
         this.quoteCurrencyPrecision = DEFAULT_CURRENCY_PRECISION;
     }
@@ -122,8 +122,8 @@ public class CurrencyPairDTO {
      */
     public CurrencyPairDTO(final Instrument instrument, final int newBaseCurrencyPrecision, final int newQuoteCurrencyPrecision) {
         final CurrencyPair cp = (CurrencyPair) instrument;
-        this.baseCurrency = new CurrencyDTO(cp.base.getCurrencyCode());
-        this.quoteCurrency = new CurrencyDTO(cp.counter.getCurrencyCode());
+        this.baseCurrency = new CurrencyDTO(cp.getBase().getCurrencyCode());
+        this.quoteCurrency = new CurrencyDTO(cp.getCounter().getCurrencyCode());
         this.baseCurrencyPrecision = newBaseCurrencyPrecision;
         this.quoteCurrencyPrecision = newQuoteCurrencyPrecision;
     }
