@@ -65,8 +65,8 @@
 
         <!-- Util -->
         <dependency>
-            <groupId>com.github.vladimir-bukhtoyarov</groupId>
-            <artifactId>bucket4j-core</artifactId>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j_jdk17-core</artifactId>
             <version>${bucket4j.version}</version>
         </dependency>
         <dependency>
@@ -94,12 +94,18 @@
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>${opencsv.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-text</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>${javax.ws.rs.version}</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>${jakarta.ws.rs.version}</version>
         </dependency>
 
         <!-- Tests -->
@@ -165,7 +171,7 @@
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-binance</artifactId>
             <version>${xchange.version}</version>
-            <scope>test</scope>
+            <scope>test</scope> <!-- For 5.2.2 is needed to put in exchangeSpecification.setExchangeSpecificParametersItem an enum ExchangeType -->
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>

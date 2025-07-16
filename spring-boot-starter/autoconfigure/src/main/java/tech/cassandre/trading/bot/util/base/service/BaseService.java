@@ -18,7 +18,7 @@ public abstract class BaseService extends Base {
      * Construct a base service without rate limit.
      */
     public BaseService() {
-        Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(1));
+        Bandwidth limit = Bandwidth.builder().capacity(1).refillGreedy(1, Duration.ofMillis(1)).build();
         bucket = Bucket.builder().addLimit(limit).build();
     }
 
@@ -28,7 +28,7 @@ public abstract class BaseService extends Base {
      * @param rate rate in ms
      */
     public BaseService(final long rate) {
-        Bandwidth limit = Bandwidth.simple(1, Duration.ofMillis(rate));
+        Bandwidth limit = Bandwidth.builder().capacity(1).refillGreedy(1, Duration.ofMillis(rate)).build();
         bucket = Bucket.builder().addLimit(limit).build();
     }
 

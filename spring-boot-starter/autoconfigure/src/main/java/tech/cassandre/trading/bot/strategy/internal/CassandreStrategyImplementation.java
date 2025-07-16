@@ -196,18 +196,22 @@ public abstract class CassandreStrategyImplementation extends BaseStrategy imple
      */
     protected void updatePositionsWithTickersUpdates(final Map<CurrencyPairDTO, TickerDTO> tickers) {
         // We check if any ticker updates a position, and we close if it's time.
-        dependencies.getPositionRepository()
-                .findByStatusNot(CLOSED)
-                .stream()
+        Set<PositionDTO> positionsDtoUpdatedByTicker = dependencies.getPositionRepository().findByStatusNot(CLOSED).stream()
                 .map(POSITION_MAPPER::mapToPositionDTO)
-                // Only the positions of this strategy.
+                // Only the positionsDTO of this strategy.
                 .filter(positionDTO -> positionDTO.getStrategy().getUid().equals(configuration.getStrategyUid()))
                 // Only if we received the ticker used by the position.
                 .filter(positionDTO -> tickers.get(positionDTO.getCurrencyPair()) != null)
                 // We send the ticker corresponding to the currency pair of the position. If it returns true, we emit because price changed.
                 .filter(positionDTO -> positionDTO.tickerUpdate(tickers.get(positionDTO.getCurrencyPair())))
                 .peek(positionDTO -> logger.debug("Position {} updated with ticker {}", positionDTO.getPositionId(), tickers.get(positionDTO.getCurrencyPair())))
-                .peek(positionDTO -> dependencies.getPositionFlux().emitValue(positionDTO))
+                .collect(Collectors.toSet());
+
+        // It is faster to emit all positions at once, because emitting 1 by 1 will do
+        // the path positionUpdates >> onPositionsUpdates >> onPositionsStatusUpdates n times, holding tickersUpdates in this process
+        dependencies.getPositionFlux().emitValues(positionsDtoUpdatedByTicker);
+
+        positionsDtoUpdatedByTicker.stream()
                 // We only use tickers updates to close a position if position is set to autoclose.
                 .filter(PositionDTO::isAutoClose)
                 // We check if the position should be closed, if true, we closed and position service will emit the position.

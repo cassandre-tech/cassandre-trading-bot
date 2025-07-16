@@ -132,7 +132,7 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             exchangeSpecification.setApiKey(exchangeParameters.getKey());
             exchangeSpecification.setSecretKey(exchangeParameters.getSecret());
             exchangeSpecification.getResilience().setRateLimiterEnabled(true);
-            exchangeSpecification.setExchangeSpecificParametersItem("Use_Sandbox", exchangeParameters.getModes().getSandbox());
+            exchangeSpecification.setExchangeSpecificParametersItem(Exchange.USE_SANDBOX, exchangeParameters.getModes().getSandbox());
             exchangeSpecification.setExchangeSpecificParametersItem("passphrase", exchangeParameters.getPassphrase());
             exchangeSpecification.setProxyHost(exchangeParameters.getProxyHost());
             exchangeSpecification.setProxyPort(exchangeParameters.getProxyPort());
@@ -142,6 +142,8 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
             if (exchangeParameters.getPort() != null) {
                 exchangeSpecification.setPort(Integer.parseInt(exchangeParameters.getPort()));
             }
+            // must be set for binance
+            this.configureBinanceWalletType(exchangeClass, exchangeSpecification);
 
             // Creates XChange services.
             if (exchangeParameters.isTickerStreamEnabled()) {
@@ -215,6 +217,50 @@ public class ExchangeAutoConfiguration extends BaseConfiguration {
                     .concat(exchangeParameters.getDriverClassName().substring(1).toLowerCase())   // The rest of the exchange name (ucoin).
                     .concat("Exchange");                                                                // Adding exchange (Exchange).
         }
+    }
+
+    /**
+     * Since xchange-binance 5.2.0, the method {@code BinanceExchange::concludeHostParams}
+     * requires setting a wallet type such as {@code SPOT}, {@code FUTURES}, or {@code INVERSE}. <br>
+     * Therefore, Cassandre must explicitly define which type to use. <p>
+     * To avoid a strong compile-time dependency on xchange-binance, this method uses reflection.
+     *
+     * @param exchangeClass The XChange {@code Exchange} class.
+     * @param spec          The {@code ExchangeSpecification} to configure.
+     */
+    private void configureBinanceWalletType(final Class<? extends Exchange> exchangeClass, final ExchangeSpecification spec) {
+        try {
+            Class<?> binanceExchangeClass = Class.forName("org.knowm.xchange.binance.BinanceExchange");
+
+            if (binanceExchangeClass.isAssignableFrom(exchangeClass)) {
+                Object spotValue = getSpotEnumConstant();
+                spec.setExchangeSpecificParametersItem("Exchange_Type", spotValue);
+            }
+
+        } catch (ClassNotFoundException | IllegalArgumentException e) {
+            logger.debug("Exchange driver is not from Binance, skipping wallet specific configuration.");
+        }
+    }
+
+    /**
+     * Retrieves the {@code SPOT} enum constant from {@code org.knowm.xchange.binance.dto.ExchangeType}
+     * using reflection, in order to avoid a direct dependency on the Binance module.
+     *
+     * @param <E> The expected enum type.
+     * @return The {@code SPOT} enum constant from {@code ExchangeType}.
+     * @throws ClassNotFoundException   If the {@code ExchangeType} enum class is not found.
+     * @throws IllegalArgumentException If the {@code SPOT} constant does not exist in {@code ExchangeType}.
+     */
+    @SuppressWarnings("unchecked")
+    private <E extends Enum<E>> E getSpotEnumConstant() throws ClassNotFoundException, IllegalArgumentException {
+
+        Class<?> rawClass = Class.forName("org.knowm.xchange.binance.dto.ExchangeType");
+
+        if (!rawClass.isEnum()) {
+            throw new IllegalStateException("Expected enum type: " + "org.knowm.xchange.binance.dto.ExchangeType");
+        }
+
+        return Enum.valueOf((Class<E>) rawClass, "SPOT");
     }
 
     /**

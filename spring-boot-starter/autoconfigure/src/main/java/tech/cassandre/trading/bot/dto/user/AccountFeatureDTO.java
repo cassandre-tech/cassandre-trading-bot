@@ -15,6 +15,8 @@ public enum AccountFeatureDTO {
     MARGIN_TRADING,
 
     /** You can fund other margin traders with funds allocated to this wallet to earn an interest. */
-    MARGIN_FUNDING
+    MARGIN_FUNDING,
 
+    /** Wallet for futures platform. */
+    FUTURES_TRADING;
 }

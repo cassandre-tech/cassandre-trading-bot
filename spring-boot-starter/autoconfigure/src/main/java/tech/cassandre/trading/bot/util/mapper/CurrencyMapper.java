@@ -40,8 +40,8 @@ public interface CurrencyMapper {
 
     default CurrencyPairDTO mapToCurrencyPairDTO(Instrument source) {
         final CurrencyPair cp = (CurrencyPair) source;
-        CurrencyDTO base = new CurrencyDTO(cp.base.getCurrencyCode());
-        CurrencyDTO quote = new CurrencyDTO(cp.counter.getCurrencyCode());
+        CurrencyDTO base = new CurrencyDTO(cp.getBase().getCurrencyCode());
+        CurrencyDTO quote = new CurrencyDTO(cp.getCounter().getCurrencyCode());
         return new CurrencyPairDTO(base, quote);
     }
 

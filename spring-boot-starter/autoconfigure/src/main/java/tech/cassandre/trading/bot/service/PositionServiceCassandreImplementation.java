@@ -34,14 +34,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.FLOOR;
+import static java.math.RoundingMode.CEILING;
 import static java.math.RoundingMode.HALF_UP;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.CLOSED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENED;
 import static tech.cassandre.trading.bot.dto.position.PositionStatusDTO.OPENING;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.LONG;
 import static tech.cassandre.trading.bot.dto.position.PositionTypeDTO.SHORT;
-import static tech.cassandre.trading.bot.util.math.MathConstants.BIGINTEGER_SCALE;
 import static tech.cassandre.trading.bot.util.math.MathConstants.ONE_HUNDRED_BIG_DECIMAL;
 
 /**
@@ -185,7 +184,9 @@ public class PositionServiceCassandreImplementation extends BaseService implemen
                 // We will use those 10 USDT to buy back ETH when the rule is triggered.
                 // CP2: ETH/USDT - 1 ETH costs 2 USDT - We buy 5 ETH, and it will cost us 10 USDT.
                 // We can now use those 10 USDT to buy 5 ETH (amount sold / price).
-                final BigDecimal amountToBuy = positionDTO.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(BIGINTEGER_SCALE, FLOOR);
+                Integer baseCurrencyPrecision = position.get().getBaseCurrencyPrecision(); // You can set in DB to avoid LOT_SIZE error, when exchange set a maximum decimal places to a currency.
+                // e.g. in Binance 0.00105 BTC is allowed (5 decimal places), but 0.001059 is not allowed (6 decimal places)
+                final BigDecimal amountToBuy = positionDTO.getAmountToLock().getValue().divide(ticker.getLast(), HALF_UP).setScale(baseCurrencyPrecision, CEILING); // Changed to CEILING
                 orderCreationResult = tradeService.createBuyMarketOrder(strategy, positionDTO.getCurrencyPair(), amountToBuy);
             }
 
